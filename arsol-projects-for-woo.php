@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Arsol Projects for WooCommerce
+ * Plugin Name: Arsol Projects for Woo
  * Plugin URI: https://your-site.com/arsol-projects-for-woo
  * Description: A WordPress plugin to manage projects with WooCommerce integration
  * Version: 1.0.0
