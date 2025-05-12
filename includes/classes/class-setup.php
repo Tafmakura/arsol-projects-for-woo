@@ -29,7 +29,7 @@ class Setup {
      */
     private function require_files() {
         // Core Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-setup-custom-post-types.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
     }
 
     /**
