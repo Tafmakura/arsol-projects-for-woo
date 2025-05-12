@@ -11,6 +11,7 @@ class Setup {
         add_action('init', array($this, 'register_post_type'));
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
+        add_action('do_meta_boxes', array($this, 'move_author_metabox_to_side'));
     }
 
     public function register_post_type() {
@@ -59,7 +60,7 @@ class Setup {
     }
 
     /**
-     * Modify the author dropdown to include all users
+     * Modify the author dropdown to include WooCommerce customers
      */
     public function modify_author_dropdown($query_args, $r) {
         if (!is_admin()) {
@@ -68,10 +69,31 @@ class Setup {
 
         $screen = get_current_screen();
         if ($screen && $screen->post_type === 'project') {
-            $query_args['who'] = '';  // Show all users regardless of role
+            // Get customers who have made orders
+            $customer_ids = get_users(array(
+                'role'    => 'customer',
+                'fields'  => 'ID',
+            ));
+
+            $query_args['include'] = $customer_ids;
             $query_args['orderby'] = 'display_name';
             $query_args['order'] = 'ASC';
         }
         return $query_args;
+    }
+
+    /**
+     * Move author metabox to side
+     */
+    public function move_author_metabox_to_side() {
+        remove_meta_box('authordiv', 'project', 'normal');
+        add_meta_box(
+            'authordiv',
+            __('Author', 'arsol-projects-for-woo'),
+            'post_author_meta_box',
+            'project',
+            'side',
+            'low'
+        );
     }
 }
