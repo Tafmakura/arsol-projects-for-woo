@@ -32,7 +32,7 @@ class AdminOrders {
         ]);
 
         echo '<div class="form-field form-field-wide">';
-        echo '<label for="project_selector"Project:</label>';
+        echo '<label for="project_selector">Project:</label>';
         echo '<select name="assigned_project" id="project_selector" class="wc-customer-search">';
         echo '<option value="">None</option>';
         foreach ($projects as $project) {
