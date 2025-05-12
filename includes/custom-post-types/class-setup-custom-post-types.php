@@ -18,6 +18,6 @@ class Setup {
     }
 
     private function instantiate_classes() {
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Setup();
+      //  new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Setup();
     }
 }
