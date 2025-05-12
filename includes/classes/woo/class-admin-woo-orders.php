@@ -11,6 +11,7 @@ class AdminOrders {
         // Initialize hooks
         add_action('init', array($this, 'init'));
         add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_selector_to_order'));
+        add_action('woocommerce_process_shop_order_meta', array($this, 'save_project_field'));
     }
 
     public function init() {
@@ -41,5 +42,17 @@ class AdminOrders {
         }
         echo '</select>';
         echo '</div>';
+    }
+
+    /**
+     * Save the selected project ID to order meta
+     *
+     * @param int $order_id The order ID
+     */
+    public function save_project_field($order_id) {
+        if (isset($_POST['assigned_project'])) {
+            $project_id = sanitize_text_field($_POST['assigned_project']);
+            update_post_meta($order_id, 'arsol_project', $project_id);
+        }
     }
 }
