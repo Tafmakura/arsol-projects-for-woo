@@ -10,7 +10,7 @@ class AdminOrders {
     public function __construct() {
         // Initialize hooks
         add_action('init', array($this, 'init'));
-        add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_selector_to_order'));
+        add_action('woocommerce_admin_order_data_after_billing_address', array($this, 'add_project_selector_to_order'));
     }
 
     public function init() {
@@ -31,13 +31,15 @@ class AdminOrders {
             'numberposts' => -1
         ]);
 
-        echo '<p><label for="project_selector">Assign to Project:</label><br>';
-        echo '<select name="assigned_project" id="project_selector">';
+        echo '<div class="form-field form-field-wide">';
+        echo '<label for="project_selector">Assign to Project:</label>';
+        echo '<select name="assigned_project" id="project_selector" class="wc-customer-search">';
         echo '<option value="">None</option>';
         foreach ($projects as $project) {
             $selected = ($selected_project == $project->ID) ? 'selected' : '';
             echo "<option value='{$project->ID}' $selected>{$project->post_title}</option>";
         }
-        echo '</select></p>';
+        echo '</select>';
+        echo '</div>';
     }
 }
