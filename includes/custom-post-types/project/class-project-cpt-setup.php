@@ -9,6 +9,7 @@ if (!defined('ABSPATH')) {
 class Setup {
     public function __construct() {
         add_action('init', array($this, 'register_post_type'));
+        add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
     }
 
     public function register_post_type() {
@@ -40,9 +41,19 @@ class Setup {
             'supports'           => array('title', 'editor', 'thumbnail', 'excerpt'),
             'has_archive'        => true,
             'rewrite'           => array('slug' => 'projects'),
-            'show_in_rest'      => true,
+            'show_in_rest'      => false, // Disable Gutenberg
         );
 
         register_post_type('project', $args);
+    }
+
+    /**
+     * Disable Gutenberg for projects post type
+     */
+    public function disable_gutenberg_for_projects($use_block_editor, $post_type) {
+        if ($post_type === 'project') {
+            return false;
+        }
+        return $use_block_editor;
     }
 }
