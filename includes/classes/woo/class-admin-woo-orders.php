@@ -10,7 +10,7 @@ class AdminOrders {
     public function __construct() {
         // Initialize hooks
         add_action('init', array($this, 'init'));
-        add_action('woocommerce_admin_order_data_after_billing_address', array($this, 'add_project_selector_to_order'));
+        add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_selector_to_order'));
     }
 
     public function init() {
