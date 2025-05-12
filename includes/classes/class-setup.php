@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
 
 class Setup {
     public function __construct() {
+        $this->include_files();
         add_action('plugins_loaded', array($this, 'init'));
     }
 
@@ -20,6 +21,17 @@ class Setup {
         
         // Load plugin text domain
         load_plugin_textdomain('arsol-projects-for-woo', false, dirname(ARSOL_PROJECTS_PLUGIN_BASENAME) . '/languages');
+    }
+
+    /**
+     * Include necessary files.
+     */
+    private function include_files() {
+        // Core Classes
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-setup.php';
+        
+        // Initialize CPT
+        new Custom_Post_Types\Project_CPT_Setup();
     }
 
     public function woocommerce_notice() {
