@@ -40,7 +40,7 @@ define('ARSOL_PROJECTS_PLUGIN_BASENAME', plugin_basename(__FILE__));
 use Arsol_Projects_For_Woo\Setup;
 
 // Include the Setup class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
+// require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
 // Prevent direct access to this file
 if (!defined('ABSPATH')) {
