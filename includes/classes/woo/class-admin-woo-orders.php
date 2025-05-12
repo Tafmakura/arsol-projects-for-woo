@@ -25,7 +25,9 @@ class AdminOrders {
      */
     public function add_project_selector_to_order($order) {
         $order_id = $order->get_id();
-        $selected_project = get_post_meta($order_id, '_assigned_project', true);
+        $selected_project = get_post_meta($order_id, 'arsol_project', true);
+
+        wp_nonce_field('save_project_field', 'project_field_nonce');
 
         $projects = get_posts([
             'post_type' => 'project',
@@ -50,6 +52,11 @@ class AdminOrders {
      * @param int $order_id The order ID
      */
     public function save_project_field($order_id) {
+        // Verify nonce
+        if (!isset($_POST['project_field_nonce']) || !wp_verify_nonce($_POST['project_field_nonce'], 'save_project_field')) {
+            return;
+        }
+
         if (isset($_POST['assigned_project'])) {
             $project_id = sanitize_text_field($_POST['assigned_project']);
             update_post_meta($order_id, 'arsol_project', $project_id);
