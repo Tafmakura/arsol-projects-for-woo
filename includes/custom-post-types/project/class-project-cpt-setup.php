@@ -89,11 +89,11 @@ class Setup {
         remove_meta_box('authordiv', 'project', 'normal');
         add_meta_box(
             'authordiv',
-            __('Author', 'arsol-projects-for-woo'),
+            __('Customer', 'arsol-projects-for-woo'),
             'post_author_meta_box',
             'project',
             'side',
-            'low'
+            'high'
         );
     }
 }
