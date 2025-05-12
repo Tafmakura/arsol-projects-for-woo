@@ -12,7 +12,6 @@ class AdminOrders {
         add_action('init', array($this, 'init'));
         add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_selector_to_order'));
         add_action('woocommerce_process_shop_order_meta', array($this, 'save_project_field'));
-        add_action('init', array($this, 'register_order_meta'));
     }
 
     public function init() {
@@ -27,8 +26,6 @@ class AdminOrders {
     public function add_project_selector_to_order($order) {
         $order_id = $order->get_id();
         $selected_project = get_post_meta($order_id, 'arsol_project', true);
-
-        wp_nonce_field('save_project_field', 'project_field_nonce');
 
         $projects = get_posts([
             'post_type' => 'project',
@@ -53,30 +50,9 @@ class AdminOrders {
      * @param int $order_id The order ID
      */
     public function save_project_field($order_id) {
-        // Verify nonce
-        if (!isset($_POST['project_field_nonce']) || !wp_verify_nonce($_POST['project_field_nonce'], 'save_project_field')) {
-            return;
-        }
-
         if (isset($_POST['assigned_project'])) {
             $project_id = sanitize_text_field($_POST['assigned_project']);
             update_post_meta($order_id, 'arsol_project', $project_id);
         }
-    }
-
-    /**
-     * Register the arsol_project meta field
-     */
-    public function register_order_meta() {
-        register_post_meta('shop_order', 'arsol_project', [
-            'type'              => 'string',
-            'description'       => 'Associated Project ID',
-            'single'           => true,
-            'show_in_rest'     => true,
-            'sanitize_callback' => 'sanitize_text_field',
-            'auth_callback'     => function() {
-                return current_user_can('edit_shop_orders');
-            }
-        ]);
     }
 }
