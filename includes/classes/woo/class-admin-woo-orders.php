@@ -12,6 +12,7 @@ class AdminOrders {
         add_action('init', array($this, 'init'));
         add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_selector_to_order'));
         add_action('woocommerce_process_shop_order_meta', array($this, 'save_project_field'));
+        add_action('init', array($this, 'register_order_meta'));
     }
 
     public function init() {
@@ -61,5 +62,21 @@ class AdminOrders {
             $project_id = sanitize_text_field($_POST['assigned_project']);
             update_post_meta($order_id, 'arsol_project', $project_id);
         }
+    }
+
+    /**
+     * Register the arsol_project meta field
+     */
+    public function register_order_meta() {
+        register_post_meta('shop_order', 'arsol_project', [
+            'type'              => 'string',
+            'description'       => 'Associated Project ID',
+            'single'           => true,
+            'show_in_rest'     => true,
+            'sanitize_callback' => 'sanitize_text_field',
+            'auth_callback'     => function() {
+                return current_user_can('edit_shop_orders');
+            }
+        ]);
     }
 }
