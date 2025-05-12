@@ -8,7 +8,8 @@ if (!defined('ABSPATH')) {
 
 class Setup {
     public function __construct() {
-        $this->include_files();
+        $this->require_files();
+        $this->instantiate_classes();
         add_action('plugins_loaded', array($this, 'init'));
     }
 
@@ -26,11 +27,15 @@ class Setup {
     /**
      * Include necessary files.
      */
-    private function include_files() {
+    private function require_files() {
         // Core Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-setup-custom-post-types.php';
-        
-        // Initialize CPT
+    }
+
+    /**
+     * Instantiate plugin classes.
+     */
+    private function instantiate_classes() {
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Setup();
     }
 
