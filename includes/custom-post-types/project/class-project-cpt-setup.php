@@ -1,12 +1,12 @@
 <?php
 
-namespace Arsol_Projects_For_Woo\Custom_Post_Types\Project;
+namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Project_CPT_Setup {
+class Setup {
     public function __construct() {
         add_action('init', array($this, 'register_post_type'));
     }

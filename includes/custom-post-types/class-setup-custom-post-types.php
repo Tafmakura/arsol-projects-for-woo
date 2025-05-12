@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Setup_Custom_Post_Types {
+class Setup {
     public function __construct() {
         $this->require_files();
         $this->instantiate_classes();
@@ -18,6 +18,6 @@ class Setup_Custom_Post_Types {
     }
 
     private function instantiate_classes() {
-        new Project\Project_CPT_Setup();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Setup();
     }
 }

@@ -28,10 +28,10 @@ class Setup {
      */
     private function include_files() {
         // Core Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-setup-custom-post-types.php';
         
         // Initialize CPT
-        \Custom_Post_Types\Project\Project_CPT_Setup();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Setup();
     }
 
     public function woocommerce_notice() {
