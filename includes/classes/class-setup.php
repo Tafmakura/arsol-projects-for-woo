@@ -30,6 +30,7 @@ class Setup {
     private function require_files() {
         // Core Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/woo/class-admin-woo-orders.php';
     }
 
     /**
@@ -44,6 +45,7 @@ class Setup {
         echo esc_html__('Arsol Projects for WooCommerce requires WooCommerce to be installed and active.', 'arsol-projects-for-woo');
         echo '</p></div>';
     }
+    
 }
 
 // Initialize the setup class
