@@ -31,7 +31,7 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-setup.php';
         
         // Initialize CPT
-        new Custom_Post_Types\Project_CPT_Setup();
+        new Arsol_Projects_For_Woo\Custom_Post_Types\Project_CPT_Setup();
     }
 
     public function woocommerce_notice() {
