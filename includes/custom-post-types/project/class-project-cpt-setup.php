@@ -10,6 +10,7 @@ class Setup {
     public function __construct() {
         add_action('init', array($this, 'register_post_type'));
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
+        add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
     }
 
     public function register_post_type() {
@@ -38,7 +39,7 @@ class Setup {
             'menu_icon'          => 'dashicons-portfolio',
             'capability_type'    => 'post',
             'hierarchical'       => false,
-            'supports'           => array('title', 'editor', 'thumbnail', 'excerpt'),
+            'supports'           => array('title', 'editor', 'thumbnail', 'excerpt', 'author'),
             'has_archive'        => true,
             'rewrite'           => array('slug' => 'projects'),
             'show_in_rest'      => false, // Disable Gutenberg
@@ -55,5 +56,22 @@ class Setup {
             return false;
         }
         return $use_block_editor;
+    }
+
+    /**
+     * Modify the author dropdown to include all users
+     */
+    public function modify_author_dropdown($query_args, $r) {
+        if (!is_admin()) {
+            return $query_args;
+        }
+
+        $screen = get_current_screen();
+        if ($screen && $screen->post_type === 'project') {
+            $query_args['who'] = '';  // Show all users regardless of role
+            $query_args['orderby'] = 'display_name';
+            $query_args['order'] = 'ASC';
+        }
+        return $query_args;
     }
 }
