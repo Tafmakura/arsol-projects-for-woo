@@ -36,7 +36,7 @@ class Setup {
      * Instantiate plugin classes.
      */
     private function instantiate_classes() {
-     //   new \Arsol_Projects_For_Woo\Custom_Post_Types\Setup();
+     new \Arsol_Projects_For_Woo\Custom_Post_Types\Setup();
     }
 
     public function woocommerce_notice() {
