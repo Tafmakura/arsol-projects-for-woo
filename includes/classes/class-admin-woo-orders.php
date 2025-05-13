@@ -196,7 +196,7 @@ class AdminOrders {
                         <span><?php echo esc_html($project_name); ?></span>
                     </p>
                     <p class="form-field form-field-wide">
-                        <em><?php esc_html_e('Projects can only be modified from the parent order.', 'arsol-projects-for-woo'); ?></em>
+                        <?php esc_html_e('Note: Projects can only be modified from the parent order.', 'arsol-projects-for-woo'); ?>
                     </p>
                     <?php
                 }
