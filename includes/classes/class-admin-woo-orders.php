@@ -131,6 +131,28 @@ class AdminOrders {
     }
 
     /**
+     * Get all available projects for selection
+     * 
+     * @param int|null $user_id Optional. Filter projects by author ID
+     * @return array Array of project post objects
+     */
+    private function get_projects($user_id = null) {
+        $args = [
+            'post_type' => 'project',
+            'numberposts' => -1,
+            'orderby' => 'title',
+            'order' => 'ASC'
+        ];
+        
+        // Add author filtering if user ID provided
+        if (!empty($user_id)) {
+            $args['author'] = absint($user_id);
+        }
+        
+        return get_posts($args);
+    }
+
+    /**
      * Adds a project selector dropdown to the order details page
      *
      * @param \WC_Order $order The order object
@@ -188,12 +210,7 @@ class AdminOrders {
         $selected_project = $order->get_meta(self::PROJECT_META_KEY);
         
         // Get all projects
-        $projects = get_posts([
-            'post_type' => 'project',
-            'numberposts' => -1,
-            'orderby' => 'title',
-            'order' => 'ASC'
-        ]);
+        $projects = $this->get_projects();
         ?>
         <div class="options_group">
             <p class="form-field form-field-wide">
