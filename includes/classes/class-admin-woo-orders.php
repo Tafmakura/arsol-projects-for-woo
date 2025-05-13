@@ -195,9 +195,6 @@ class AdminOrders {
                         <label><strong><?php esc_html_e('Assigned Project:', 'arsol-projects-for-woo'); ?></strong></label>
                         <span><?php echo esc_html($project_name); ?></span>
                     </p>
-                    <p class="form-field form-field-wide">
-                        <?php esc_html_e('Note: Projects can only be modified from the parent order.', 'arsol-projects-for-woo'); ?>
-                    </p>
                     <?php
                 }
             } else {
