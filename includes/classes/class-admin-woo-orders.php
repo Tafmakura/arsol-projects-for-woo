@@ -333,19 +333,23 @@ class AdminOrders {
             'order'          => 'ASC',
         ]);
 
+        // Change the options format to use the required structure
         $options = [];
         foreach ($user_projects as $project) {
-            $options[$project->ID] = $project->post_title;
+            $options[] = [
+                'value' => $project->ID,
+                'label' => $project->post_title
+            ];
         }
 
         woocommerce_register_additional_checkout_field(
             array(
-                'id'         => 'arsol-projects-for-woo/project', // Use namespace/name format
+                'id'         => 'arsol-projects-for-woo/project',
                 'label'      => __('Select Project', 'arsol-projects-for-woo'),
                 'location'   => 'order',
                 'required'   => true,
                 'type'       => 'select',
-                'options'    => $options,
+                'options'    => $options, // Now properly formatted
                 'validate'   => function($value) use ($user_id) {
                     if (empty($value)) {
                         return new \WP_Error('required_field', __('Please select a project.', 'arsol-projects-for-woo'));
@@ -358,7 +362,6 @@ class AdminOrders {
         
                     return true;
                 },
-                // Add a save callback to map the new field ID to your existing meta key
                 'save' => function($order, $value) {
                     $order->update_meta_data(self::PROJECT_META_KEY, $value);
                 }
