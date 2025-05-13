@@ -387,7 +387,8 @@ class AdminOrders {
                     if ($value === 'none') {
                         $order->delete_meta_data(self::PROJECT_META_KEY);
                     } else {
-                        $order->update_meta_data(self::PROJECT_META_KEY, $value);
+                        // Cast to integer to match admin format
+                        $order->update_meta_data(self::PROJECT_META_KEY, (int)$value);
                     }
                 }
             )
