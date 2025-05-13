@@ -362,7 +362,7 @@ class AdminOrders {
                 'location'   => 'order',
                 'required'   => true,
                 'type'       => 'select',
-                'placeholder' => __('Please select a project', 'arsol-projects-for-woo'),
+                'placeholder' => __('Select a project', 'arsol-projects-for-woo'),
                 'options'    => $options,
                 'validate'   => function($value) use ($user_id) {
                     // Accept "none" as valid
