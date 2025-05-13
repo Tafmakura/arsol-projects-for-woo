@@ -24,6 +24,11 @@ class AdminOrders {
         // Add new column management
         add_filter('manage_edit-shop_order_columns', array($this, 'add_project_column'));
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
+        
+        // Add checkout project selection field
+        add_filter('woocommerce_checkout_fields', array($this, 'add_project_checkout_field'));
+        add_action('woocommerce_checkout_process', array($this, 'validate_project_checkout_field'));
+        add_action('woocommerce_checkout_create_order', array($this, 'save_project_checkout_field'), 10, 2);
     }
 
     public function init() {
@@ -310,6 +315,113 @@ class AdminOrders {
                 }
             } else {
                 echo '—';
+            }
+        }
+    }
+
+    /**
+     * Add project selection field to checkout
+     *
+     * @param array $fields Checkout fields
+     * @return array Modified checkout fields
+     */
+    public function add_project_checkout_field($fields) {
+        // Only add field for logged-in users
+        if (!is_user_logged_in()) {
+            return $fields;
+        }
+        
+        $user_id = get_current_user_id();
+        
+        // Get user's projects
+        $user_projects = get_posts([
+            'post_type'      => 'project',
+            'post_status'    => 'publish',
+            'author'         => $user_id,
+            'posts_per_page' => -1,
+            'orderby'        => 'title',
+            'order'          => 'ASC',
+        ]);
+        
+        // Don't add field if user has no projects
+        if (empty($user_projects)) {
+            return $fields;
+        }
+        
+        // Create options array
+        $options = array('' => __('Select a project', 'arsol-projects-for-woo'));
+        foreach ($user_projects as $project) {
+            $options[$project->ID] = $project->post_title;
+        }
+        
+        // Add custom field to the order section
+        $fields['order'][self::PROJECT_META_KEY] = array(
+            'type'        => 'select',
+            'label'       => __('Select Project', 'arsol-projects-for-woo'),
+            'required'    => true,
+            'class'       => array('form-row-wide'),
+            'options'     => $options,
+            'priority'    => 100,
+            'clear'       => true,
+            'description' => __('Choose a project to associate with this order.', 'arsol-projects-for-woo'),
+        );
+        
+        return $fields;
+    }
+    
+    /**
+     * Validate project field at checkout
+     */
+    public function validate_project_checkout_field() {
+        // Only validate for logged-in users
+        if (!is_user_logged_in()) {
+            return;
+        }
+        
+        $user_id = get_current_user_id();
+        
+        // Check if user has any projects
+        $user_projects = get_posts([
+            'post_type'      => 'project',
+            'post_status'    => 'publish',
+            'author'         => $user_id,
+            'posts_per_page' => 1,
+        ]);
+        
+        // Only validate if user has projects
+        if (empty($user_projects)) {
+            return;
+        }
+        
+        // Check if project is selected
+        if (empty($_POST[self::PROJECT_META_KEY])) {
+            wc_add_notice(__('Please select a project for this order.', 'arsol-projects-for-woo'), 'error');
+            return;
+        }
+        
+        // Verify project belongs to user
+        $selected_project_id = sanitize_text_field($_POST[self::PROJECT_META_KEY]);
+        $project = get_post($selected_project_id);
+        
+        if (!$project || $project->post_type !== 'project' || $project->post_author != $user_id) {
+            wc_add_notice(__('Please select a valid project.', 'arsol-projects-for-woo'), 'error');
+        }
+    }
+    
+    /**
+     * Save project field value to order meta
+     *
+     * @param \WC_Order $order The order object
+     * @param array $data Posted data
+     */
+    public function save_project_checkout_field($order, $data) {
+        if (!empty($data[self::PROJECT_META_KEY])) {
+            $project_id = sanitize_text_field($data[self::PROJECT_META_KEY]);
+            
+            // Verify this is a valid project before saving
+            $project = get_post($project_id);
+            if ($project && $project->post_type === 'project') {
+                $order->update_meta_data(self::PROJECT_META_KEY, $project_id);
             }
         }
     }
