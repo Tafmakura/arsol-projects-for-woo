@@ -30,7 +30,8 @@ class Setup {
     private function require_files() {
         // Core Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/woo/class-admin-woo-orders.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-woo-orders.php';
     }
 
     /**
@@ -38,6 +39,7 @@ class Setup {
      */
     private function instantiate_classes() {
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Setup();
+        new \Arsol_Projects_For_Woo\Shortcodes();
         new \Arsol_Projects_For_Woo\Woo\AdminOrders();
     }
 
