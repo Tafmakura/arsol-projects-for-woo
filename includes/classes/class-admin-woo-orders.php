@@ -29,46 +29,26 @@ class AdminOrders {
      */
     public function add_project_selector_to_order($order) {
         $selected_project = $order->get_meta('arsol_project', true);
-        $current_project_title = 'Project:';
-        
-        if ($selected_project) {
-            $project = get_post($selected_project);
-            if ($project) {
-                $current_project_title = $project->post_title;
-            }
-        }
 
         wp_nonce_field('arsol_save_project_data', 'arsol_project_nonce');
 
-        ?>
-        <div class="order_data_column">
-            <h3>
-                <?php esc_html_e('Project', 'arsol-projects-for-woo'); ?>
-                <a href="#" class="edit_address"><?php esc_html_e('Edit', 'woocommerce'); ?></a>
-            </h3>
-            <div class="address">
-                <p><?php echo esc_html($current_project_title); ?></p>
-            </div>
-            <div class="edit_address">
-                <?php
-                $projects = get_posts([
-                    'post_type' => 'project',
-                    'numberposts' => -1
-                ]);
-                ?>
-                <p class="form-field">
-                    <select name="assigned_project" id="project_selector" class="wc-enhanced-select">
-                        <option value=""><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
-                        <?php foreach ($projects as $project) : ?>
-                            <option value="<?php echo esc_attr($project->ID); ?>" <?php selected($selected_project, $project->ID); ?>>
-                                <?php echo esc_html($project->post_title); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </p>
-            </div>
-        </div>
-        <?php
+        $projects = get_posts([
+            'post_type' => 'project',
+            'numberposts' => -1
+        ]);
+
+        echo '<div class="form-field form-field-wide">';
+        echo '<p class="form-field">';
+        echo '<label for="project_selector"><strong>Project:</strong></label>';
+        echo '<select name="assigned_project" id="project_selector" class="wc-enhanced-select" style="width: 100%;">';
+        echo '<option value="">None</option>';
+        foreach ($projects as $project) {
+            $selected = ($selected_project == $project->ID) ? 'selected' : '';
+            echo "<option value='{$project->ID}' $selected>{$project->post_title}</option>";
+        }
+        echo '</select>';
+        echo '</p>';
+        echo '</div>';
     }
 
     /**
