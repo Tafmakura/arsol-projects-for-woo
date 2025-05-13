@@ -16,10 +16,6 @@ class AdminOrders {
         // Add new column management
         add_filter('manage_edit-shop_order_columns', array($this, 'add_project_column'));
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
-
-        // Add AJAX and scripts
-        add_action('wp_ajax_search_projects', array($this, 'ajax_search_projects'));
-        add_action('admin_footer', array($this, 'add_select2_scripts'));
     }
 
     public function init() {
@@ -33,23 +29,22 @@ class AdminOrders {
      */
     public function add_project_selector_to_order($order) {
         $selected_project = $order->get_meta('arsol_project', true);
-        $selected_project_title = '';
         
-        if ($selected_project) {
-            $project = get_post($selected_project);
-            if ($project) {
-                $selected_project_title = $project->post_title;
-            }
-        }
+        $projects = get_posts([
+            'post_type' => 'project',
+            'numberposts' => -1
+        ]);
         ?>
         <p class="form-field form-field-wide">
             <label for="project_selector">Project:</label>
-            <select name="assigned_project" id="project_selector" class="wc-enhanced-select-nostd" style="width: 100%;">
-                <?php if ($selected_project) : ?>
-                    <option value="<?php echo esc_attr($selected_project); ?>" selected>
-                        <?php echo esc_html($selected_project_title); ?>
+            <select name="assigned_project" id="project_selector" class="wc-enhanced-select" style="width: 100%;">
+                <option value="">None</option>
+                <?php foreach ($projects as $project) : ?>
+                    <option value="<?php echo esc_attr($project->ID); ?>" 
+                        <?php selected($selected_project, $project->ID); ?>>
+                        <?php echo esc_html($project->post_title); ?>
                     </option>
-                <?php endif; ?>
+                <?php endforeach; ?>
             </select>
         </p>
         <?php
@@ -118,69 +113,5 @@ class AdminOrders {
                 echo '—';
             }
         }
-    }
-
-    /**
-     * Handle AJAX search for projects
-     */
-    public function ajax_search_projects() {
-        check_ajax_referer('search-projects', 'security');
-
-        $term = isset($_GET['term']) ? sanitize_text_field($_GET['term']) : '';
-        
-        $projects = get_posts([
-            'post_type' => 'project',
-            'posts_per_page' => 10,
-            's' => $term,
-        ]);
-
-        $results = array();
-        foreach ($projects as $project) {
-            $results[] = array(
-                'id' => $project->ID,
-                'text' => $project->post_title
-            );
-        }
-
-        wp_send_json([
-            'results' => $results
-        ]);
-    }
-
-    /**
-     * Add JavaScript for select2 with AJAX
-     */
-    public function add_select2_scripts() {
-        global $pagenow;
-        if (!in_array($pagenow, array('post.php', 'post-new.php')) || get_post_type() !== 'shop_order') {
-            return;
-        }
-        ?>
-        <script type="text/javascript">
-            jQuery(function($) {
-                $('#project_selector').select2({
-                    ajax: {
-                        url: ajaxurl,
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                term: params.term,
-                                action: 'search_projects',
-                                security: '<?php echo wp_create_nonce("search-projects"); ?>'
-                            };
-                        },
-                        processResults: function(data) {
-                            return data;
-                        },
-                        cache: true
-                    },
-                    minimumInputLength: 1,
-                    placeholder: 'Search for a project...',
-                    allowClear: true
-                });
-            });
-        </script>
-        <?php
     }
 }
