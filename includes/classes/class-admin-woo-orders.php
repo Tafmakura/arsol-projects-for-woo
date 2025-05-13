@@ -184,7 +184,7 @@ class AdminOrders {
                 ?>
                
                 <p class="form-field form-field-wide">
-                    <label><?php esc_html_e('Order Type:', 'arsol-projects-for-woo'); ?></label>
+                    <?php esc_html_e('Order Type:', 'arsol-projects-for-woo'); ?>
                     <span><?php echo esc_html($parent_info['type']); ?></span>
                 </p>
                 <?php if (!empty($parent_info['id'])) : ?>
@@ -196,7 +196,7 @@ class AdminOrders {
                     </p>
                 <?php endif; ?>
                 <p class="form-field form-field-wide">
-                    <label><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
+                    <?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?>
                     <span><?php echo esc_html($project_name); ?></span>
                 </p>
         
