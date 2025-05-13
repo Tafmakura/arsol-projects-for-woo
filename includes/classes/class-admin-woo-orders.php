@@ -339,9 +339,9 @@ class AdminOrders {
         ]);
         
         // Don't add field if user has no projects
-        if (empty($user_projects)) {
-            return;
-        }
+       // if (empty($user_projects)) {
+       //     return;
+     //   }
         
         // Build options for the select dropdown
         $options = ['' => __('Select a project', 'arsol-projects-for-woo')];
