@@ -15,7 +15,13 @@ class AdminOrders {
     public function __construct() {
         // Initialize hooks
         add_action('init', array($this, 'init'));
-        add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_selector_to_order'));
+        
+        // Remove existing hook that adds the project selector
+        // add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_selector_to_order'));
+        
+        // Add new hook to display project information in a data column
+        add_action('woocommerce_admin_order_data_after_billing_address', array($this, 'add_project_data_column'));
+        
         add_action('woocommerce_process_shop_order_meta', array($this, 'save_project_field'));
         
         // Add new column management
@@ -153,70 +159,81 @@ class AdminOrders {
     }
 
     /**
-     * Adds a project selector dropdown to the order details page
+     * Adds a project data column to the order details page
      *
      * @param \WC_Order $order The order object
      */
-    public function add_project_selector_to_order($order) {
-        // Check if this is a parent order
-        if (!$this->is_parent_order($order)) {
-            // This is a child order - get parent order info
-            $parent_info = $this->get_parent_order_info($order);
-            if ($parent_info) {
-                $project_name = __('None', 'arsol-projects-for-woo');
-                $project_id = '';
-                
-                // Only try to get parent project if we have a parent order
-                if (empty($parent_info['no_parent'])) {
-                    // Get parent order
-                    $parent_order = wc_get_order($parent_info['id']);
-                    $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
+    public function add_project_data_column($order) {
+        // Start the data column
+        ?>
+        <div class="order_data_column">
+            <h3><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></h3>
+            
+            <?php
+            // Check if this is a parent order
+            if (!$this->is_parent_order($order)) {
+                // This is a child order - get parent order info
+                $parent_info = $this->get_parent_order_info($order);
+                if ($parent_info) {
+                    $project_name = __('None', 'arsol-projects-for-woo');
+                    $project_id = '';
                     
-                    if (!empty($project_id)) {
-                        $project = get_post($project_id);
-                        if ($project) {
-                            $project_name = $project->post_title;
+                    // Only try to get parent project if we have a parent order
+                    if (empty($parent_info['no_parent'])) {
+                        // Get parent order
+                        $parent_order = wc_get_order($parent_info['id']);
+                        $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
+                        
+                        if (!empty($project_id)) {
+                            $project = get_post($project_id);
+                            if ($project) {
+                                $project_name = $project->post_title;
+                            }
                         }
                     }
+                    
+                    // Display order type info
+                    ?>
+                    <p class="form-field form-field-wide">
+                        <?php esc_html_e('Order Type:', 'arsol-projects-for-woo'); ?>
+                        <span><?php echo esc_html($parent_info['type']); ?></span>
+                    </p>
+                    
+                    <?php if (!empty($parent_info['id'])) : ?>
+                    <p class="form-field form-field-wide">
+                        <?php esc_html_e('Parent order:', 'arsol-projects-for-woo'); ?>
+                        <a href="<?php echo esc_url(admin_url('post.php?post=' . $parent_info['id'] . '&action=edit')); ?>">
+                            #<?php echo esc_html($parent_info['id']); ?>
+                        </a>
+                    </p>
+                    <?php endif; ?>
+                    
+                    <p class="form-field form-field-wide">
+                        <label><strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong></label>
+                        <span><?php echo esc_html($project_name); ?></span>
+                    </p>
+                    <?php
                 }
-                
-                // Display read-only information
+            } else {
+                // Parent order - show selector
+                $selected_project = $order->get_meta(self::PROJECT_META_KEY);
+                $projects = $this->get_projects();
                 ?>
-               
                 <p class="form-field form-field-wide">
-                    <?php esc_html_e('Order Type:', 'arsol-projects-for-woo'); ?>
-                    <span><?php echo esc_html($parent_info['type']); ?></span>
+                    <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
+                    <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
+                        <option value=""><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
+                        <?php foreach ($projects as $project) : ?>
+                            <option value="<?php echo esc_attr($project->ID); ?>" 
+                                <?php selected($selected_project, $project->ID); ?>>
+                                <?php echo esc_html($project->post_title); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </p>
-                <p class="form-field form-field-wide">
-                    <labe><strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong></label>
-                    <span><?php echo esc_html($project_name); ?></span>
-                </p>
-        
                 <?php
-                return;
             }
-        }
-        
-        // Parent order - show selector
-        // Get the currently assigned project (if any)
-        $selected_project = $order->get_meta(self::PROJECT_META_KEY);
-        
-        // Get all projects
-        $projects = $this->get_projects();
-        ?>
-        <div class="options_group">
-            <p class="form-field form-field-wide">
-                <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
-                <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
-                    <option value=""><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
-                    <?php foreach ($projects as $project) : ?>
-                        <option value="<?php echo esc_attr($project->ID); ?>" 
-                            <?php selected($selected_project, $project->ID); ?>>
-                            <?php echo esc_html($project->post_title); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
+            ?>
         </div>
         <?php
     }
