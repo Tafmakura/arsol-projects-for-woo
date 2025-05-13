@@ -358,7 +358,7 @@ class AdminOrders {
         woocommerce_register_additional_checkout_field(
             array(
                 'id'         => 'arsol-projects-for-woo/project',
-                'label'      => __('Select Project', 'arsol-projects-for-woo'),
+                'label'      => __('Project', 'arsol-projects-for-woo'),
                 'location'   => 'order',
                 'required'   => true,
                 'type'       => 'select',
