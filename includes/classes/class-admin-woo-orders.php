@@ -7,6 +7,11 @@ if (!defined('ABSPATH')) {
 }
 
 class AdminOrders {
+    /**
+     * Meta key used for storing project data
+     */
+    const PROJECT_META_KEY = 'arsol_project';
+
     public function __construct() {
         // Initialize hooks
         add_action('init', array($this, 'init'));
@@ -28,25 +33,34 @@ class AdminOrders {
      * @param \WC_Order $order The order object
      */
     public function add_project_selector_to_order($order) {
-        $selected_project = $order->get_meta('arsol_project', true);
+        // Get the order ID
+        $order_id = $order->get_id();
         
+        // Get the currently assigned project (if any)
+        $selected_project = get_post_meta($order_id, self::PROJECT_META_KEY, true);
+        
+        // Get all projects
         $projects = get_posts([
             'post_type' => 'project',
-            'numberposts' => -1
+            'numberposts' => -1,
+            'orderby' => 'title',
+            'order' => 'ASC'
         ]);
         ?>
-        <p class="form-field form-field-wide">
-            <label for="project_selector">Project:</label>
-            <select name="assigned_project" id="project_selector" class="wc-enhanced-select" style="width: 100%;">
-                <option value="">None</option>
-                <?php foreach ($projects as $project) : ?>
-                    <option value="<?php echo esc_attr($project->ID); ?>" 
-                        <?php selected($selected_project, $project->ID); ?>>
-                        <?php echo esc_html($project->post_title); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </p>
+        <div class="options_group">
+            <p class="form-field form-field-wide">
+                <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
+                <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
+                    <option value=""><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
+                    <?php foreach ($projects as $project) : ?>
+                        <option value="<?php echo esc_attr($project->ID); ?>" 
+                            <?php selected($selected_project, $project->ID); ?>>
+                            <?php echo esc_html($project->post_title); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
+        </div>
         <?php
     }
 
@@ -56,20 +70,20 @@ class AdminOrders {
      * @param int $order_id The order ID
      */
     public function save_project_field($order_id) {
-        // Verify nonce
-        if (!isset($_POST['arsol_project_nonce']) || !wp_verify_nonce($_POST['arsol_project_nonce'], 'arsol_save_project_data')) {
-            return;
-        }
-
-        $order = wc_get_order($order_id);
-        if (!$order) {
-            return;
-        }
-
-        if (isset($_POST['assigned_project'])) {
-            $project_id = sanitize_text_field($_POST['assigned_project']);
-            $order->update_meta_data('arsol_project', $project_id);
-            $order->save();
+        // Check if our custom field is set
+        if (isset($_POST['arsol_project'])) {
+            $project_id = sanitize_text_field($_POST['arsol_project']);
+            
+            // If empty, delete the meta
+            if (empty($project_id)) {
+                delete_post_meta($order_id, self::PROJECT_META_KEY);
+            } else {
+                // Verify this is a valid project before saving
+                $project = get_post($project_id);
+                if ($project && $project->post_type === 'project') {
+                    update_post_meta($order_id, self::PROJECT_META_KEY, $project_id);
+                }
+            }
         }
     }
 
@@ -98,16 +112,12 @@ class AdminOrders {
      */
     public function display_project_column_content($column, $order_id) {
         if ($column === 'project') {
-            $order = wc_get_order($order_id);
-            if (!$order) {
-                return;
-            }
+            $project_id = get_post_meta($order_id, self::PROJECT_META_KEY, true);
             
-            $project_id = $order->get_meta('arsol_project', true);
-            if ($project_id) {
+            if (!empty($project_id)) {
                 $project = get_post($project_id);
                 if ($project) {
-                    echo esc_html($project->post_title);
+                    echo '<a href="' . esc_url(get_edit_post_link($project_id)) . '">' . esc_html($project->post_title) . '</a>';
                 }
             } else {
                 echo '—';
