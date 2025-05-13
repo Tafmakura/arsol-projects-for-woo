@@ -37,7 +37,7 @@ class AdminOrders {
         ?>
         <div class="form-field form-field-wide">
             <p class="form-field">
-                <label for="project_selector"><strong>Project:</strong></label>
+                <label for="project_selector">Project:</label>
                 <select name="assigned_project" id="project_selector" class="wc-enhanced-select" style="width: 100%;">
                     <option value="">None</option>
                     <?php foreach ($projects as $project) : ?>
