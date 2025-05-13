@@ -65,6 +65,7 @@ class AdminOrders {
         $is_switch = $order->get_meta('_subscription_switch');
         $is_resubscribe = $order->get_meta('_subscription_resubscribe');
         
+        // Handle renewal, switch, resubscribe orders
         if (!empty($is_renewal)) {
             return [
                 'id' => $is_renewal,
@@ -84,6 +85,19 @@ class AdminOrders {
                 'id' => $is_resubscribe,
                 'type' => __('Resubscribe Order', 'arsol-projects-for-woo')
             ];
+        }
+        
+        // Handle subscription objects
+        if (function_exists('wcs_is_subscription') && wcs_is_subscription($order)) {
+            // Get the original order that created this subscription
+            $original_order_id = $order->get_meta('_original_order');
+            
+            if (!empty($original_order_id)) {
+                return [
+                    'id' => $original_order_id,
+                    'type' => __('Subscription', 'arsol-projects-for-woo')
+                ];
+            }
         }
         
         return false;
