@@ -10,7 +10,7 @@ class AdminOrders {
     /**
      * Meta key used for storing project data
      */
-    const PROJECT_META_KEY = 'arsol_project';
+    const PROJECT_META_KEY = '_arsol_project';
 
     public function __construct() {
         // Initialize hooks
