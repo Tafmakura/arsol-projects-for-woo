@@ -196,15 +196,6 @@ class AdminOrders {
                         <span><?php echo esc_html($parent_info['type']); ?></span>
                     </p>
                     
-                    <?php if (!empty($parent_info['id'])) : ?>
-                    <p class="form-field form-field-wide">
-                        <?php esc_html_e('Parent order:', 'arsol-projects-for-woo'); ?>
-                        <a href="<?php echo esc_url(admin_url('post.php?post=' . $parent_info['id'] . '&action=edit')); ?>">
-                            #<?php echo esc_html($parent_info['id']); ?>
-                        </a>
-                    </p>
-                    <?php endif; ?>
-                    
                     <p class="form-field form-field-wide">
                         <label><strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong></label>
                         <span><?php echo esc_html($project_name); ?></span>
@@ -217,7 +208,7 @@ class AdminOrders {
                 $projects = $this->get_projects();
                 ?>
                 <p class="form-field form-field-wide">
-                    <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
+                    <label for="arsol_project_selector"><?php esc_html_e('Assigned Project:', 'arsol-projects-for-woo'); ?></label>
                     <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
                         <option value=""><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
                         <?php foreach ($projects as $project) : ?>
