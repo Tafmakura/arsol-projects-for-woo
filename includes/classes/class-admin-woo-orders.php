@@ -215,10 +215,10 @@ class AdminOrders {
                 <p class="form-field form-field-wide">
                     <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
                     <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
-                        <option value="none"><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
+                        <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
                         <?php foreach ($projects as $project) : ?>
                             <option value="<?php echo esc_attr($project->ID); ?>" 
-                                <?php selected($selected_project, (int)$project->ID); ?>>
+                                <?php selected((int)$selected_project, (int)$project->ID); ?>>
                                 <?php echo esc_html($project->post_title); ?>
                             </option>
                         <?php endforeach; ?>
@@ -245,8 +245,8 @@ class AdminOrders {
             
             $project_id = sanitize_text_field($_POST['arsol_project']);
             
-            // If empty, delete the meta
-            if (empty($project_id)) {
+            // Handle "none" value consistently with checkout field
+            if ($project_id === 'none' || empty($project_id)) {
                 $order->delete_meta_data(self::PROJECT_META_KEY);
             } else {
                 // Verify this is a valid project before saving
