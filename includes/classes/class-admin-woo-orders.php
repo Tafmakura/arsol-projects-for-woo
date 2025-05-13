@@ -29,26 +29,27 @@ class AdminOrders {
      */
     public function add_project_selector_to_order($order) {
         $selected_project = $order->get_meta('arsol_project', true);
-
-        wp_nonce_field('arsol_save_project_data', 'arsol_project_nonce');
-
+        
         $projects = get_posts([
             'post_type' => 'project',
             'numberposts' => -1
         ]);
-
-        echo '<div class="form-field form-field-wide">';
-        echo '<p class="form-field">';
-        echo '<label for="project_selector"><strong>Project:</strong></label>';
-        echo '<select name="assigned_project" id="project_selector" class="wc-enhanced-select" style="width: 100%;">';
-        echo '<option value="">None</option>';
-        foreach ($projects as $project) {
-            $selected = ($selected_project == $project->ID) ? 'selected' : '';
-            echo "<option value='{$project->ID}' $selected>{$project->post_title}</option>";
-        }
-        echo '</select>';
-        echo '</p>';
-        echo '</div>';
+        ?>
+        <div class="form-field form-field-wide">
+            <p class="form-field">
+                <label for="project_selector"><strong>Project:</strong></label>
+                <select name="assigned_project" id="project_selector" class="wc-enhanced-select" style="width: 100%;">
+                    <option value="">None</option>
+                    <?php foreach ($projects as $project) : ?>
+                        <option value="<?php echo esc_attr($project->ID); ?>" 
+                            <?php selected($selected_project, $project->ID); ?>>
+                            <?php echo esc_html($project->post_title); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
+        </div>
+        <?php
     }
 
     /**
