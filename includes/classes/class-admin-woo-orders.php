@@ -333,8 +333,15 @@ class AdminOrders {
             'order'          => 'ASC',
         ]);
 
-        // Change the options format to use the required structure
-        $options = [];
+        // Add "None" option first with explicit "none" value
+        $options = [
+            [
+                'value' => 'none',
+                'label' => __('None', 'arsol-projects-for-woo')
+            ]
+        ];
+        
+        // Then add the project options
         foreach ($user_projects as $project) {
             $options[] = [
                 'value' => $project->ID,
@@ -352,6 +359,12 @@ class AdminOrders {
                 'placeholder' => __('Please select a project', 'arsol-projects-for-woo'),
                 'options'    => $options,
                 'validate'   => function($value) use ($user_id) {
+                    // Accept "none" as valid
+                    if ($value === 'none') {
+                        return true;
+                    }
+                    
+                    // For other values, perform normal validation
                     if (empty($value)) {
                         return new \WP_Error('required_field', __('Please select a project.', 'arsol-projects-for-woo'));
                     }
@@ -364,7 +377,12 @@ class AdminOrders {
                     return true;
                 },
                 'save' => function($order, $value) {
-                    $order->update_meta_data(self::PROJECT_META_KEY, $value);
+                    // Delete the meta if "none" is selected
+                    if ($value === 'none') {
+                        $order->delete_meta_data(self::PROJECT_META_KEY);
+                    } else {
+                        $order->update_meta_data(self::PROJECT_META_KEY, $value);
+                    }
                 }
             )
         );
