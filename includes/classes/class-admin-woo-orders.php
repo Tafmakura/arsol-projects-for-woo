@@ -25,8 +25,11 @@ class AdminOrders {
         add_filter('manage_edit-shop_order_columns', array($this, 'add_project_column'));
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
         
-        // Register additional checkout fields (Gutenberg compatible)
-        add_action('woocommerce_register_additional_checkout_field', array($this, 'register_project_checkout_field'));
+        // Register the project checkout field on init or plugins_loaded
+        add_action('init', array($this, 'register_project_checkout_field'));
+        
+        // Fallback method for older WooCommerce versions
+        add_filter('woocommerce_checkout_fields', array($this, 'add_project_checkout_field_classic'));
     }
 
     public function init() {
@@ -371,6 +374,37 @@ class AdminOrders {
                 $context->order()->update_meta_data(self::PROJECT_META_KEY, $value);
             }
         ]);
+    }
+
+    public function add_project_checkout_field_classic($fields) {
+        if (!is_user_logged_in()) {
+            return $fields;
+        }
+        
+        $user_id = get_current_user_id();
+        $user_projects = get_posts([
+            'post_type'      => 'project',
+            'post_status'    => 'publish',
+            'author'         => $user_id,
+            'posts_per_page' => -1,
+            'orderby'        => 'title',
+            'order'          => 'ASC',
+        ]);
+        
+        $options = ['' => __('Select a project', 'arsol-projects-for-woo')];
+        foreach ($user_projects as $project) {
+            $options[$project->ID] = $project->post_title;
+        }
+        
+        $fields['order'][self::PROJECT_META_KEY] = array(
+            'type'        => 'select',
+            'label'       => __('Select Project', 'arsol-projects-for-woo'),
+            'required'    => true,
+            'class'       => array('form-row-wide'),
+            'options'     => $options,
+        );
+        
+        return $fields;
     }
     
 }
