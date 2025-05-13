@@ -25,11 +25,9 @@ class AdminOrders {
         add_filter('manage_edit-shop_order_columns', array($this, 'add_project_column'));
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
         
-        // Register the project checkout field on init or plugins_loaded
-        add_action('init', array($this, 'register_project_checkout_field'));
-        
-        // Fallback method for older WooCommerce versions
-        add_filter('woocommerce_checkout_fields', array($this, 'add_project_checkout_field_classic'));
+        // Register the project checkout field on woocommerce_init
+        add_action('woocommerce_init', array($this, 'register_project_checkout_field'));
+      
     }
 
     public function init() {
@@ -321,18 +319,7 @@ class AdminOrders {
     }
 
     public function register_project_checkout_field() {
-
-        error_log('HOYO.');
-        error_log('Project checkout field function called');
-
-
-        if (!function_exists('woocommerce_register_additional_checkout_field')) {
-            error_log('Function does not exist.');
-            return;
-        }
-    
         if (!is_user_logged_in()) {
-            error_log('Not logged in.');
             return;
         }
     
@@ -346,65 +333,33 @@ class AdminOrders {
             'order'          => 'ASC',
         ]);
     
-        $options = ['' => __('Select a project', 'arsol-projects-for-woo')];
+        $options = [];
         foreach ($user_projects as $project) {
             $options[$project->ID] = $project->post_title;
         }
     
-        woocommerce_register_additional_checkout_field(self::PROJECT_META_KEY, [
-            'type'        => 'string',
-            'required'    => true,
-            'label'       => __('Select Project', 'arsol-projects-for-woo'),
-            'description' => __('Choose a project to associate with this order.', 'arsol-projects-for-woo'),
-            'location'    => 'order',
-            'options'     => $options,
-            'validate_callback' => function($value) use ($user_id) {
-                if (empty($value)) {
-                    return new \WP_Error('required_field', __('Please select a project.', 'arsol-projects-for-woo'));
+        woocommerce_register_additional_checkout_field(
+            array(
+                'id'         => self::PROJECT_META_KEY, // Use your existing meta key
+                'label'      => __('Select Project', 'arsol-projects-for-woo'),
+                'location'   => 'order', // This is a key setting - keep it as 'order'
+                'required'   => true,
+                'type'       => 'select',
+                'options'    => $options,
+                'validate'   => function($value) use ($user_id) {
+                    if (empty($value)) {
+                        return new \WP_Error('required_field', __('Please select a project.', 'arsol-projects-for-woo'));
+                    }
+        
+                    $project = get_post($value);
+                    if (!$project || $project->post_type !== 'project' || $project->post_author != $user_id) {
+                        return new \WP_Error('invalid_project', __('Invalid project selected.', 'arsol-projects-for-woo'));
+                    }
+        
+                    return true;
                 }
-    
-                $project = get_post($value);
-                if (!$project || $project->post_type !== 'project' || $project->post_author != $user_id) {
-                    return new \WP_Error('invalid_project', __('Invalid project selected.', 'arsol-projects-for-woo'));
-                }
-    
-                return $value;
-            },
-            'save_callback' => function($value, $field_config, $context) {
-                $context->order()->update_meta_data(self::PROJECT_META_KEY, $value);
-            }
-        ]);
-    }
-
-    public function add_project_checkout_field_classic($fields) {
-        if (!is_user_logged_in()) {
-            return $fields;
-        }
-        
-        $user_id = get_current_user_id();
-        $user_projects = get_posts([
-            'post_type'      => 'project',
-            'post_status'    => 'publish',
-            'author'         => $user_id,
-            'posts_per_page' => -1,
-            'orderby'        => 'title',
-            'order'          => 'ASC',
-        ]);
-        
-        $options = ['' => __('Select a project', 'arsol-projects-for-woo')];
-        foreach ($user_projects as $project) {
-            $options[$project->ID] = $project->post_title;
-        }
-        
-        $fields['order'][self::PROJECT_META_KEY] = array(
-            'type'        => 'select',
-            'label'       => __('Select Project', 'arsol-projects-for-woo'),
-            'required'    => true,
-            'class'       => array('form-row-wide'),
-            'options'     => $options,
+            )
         );
-        
-        return $fields;
     }
-    
+
 }
