@@ -35,20 +35,18 @@ class AdminOrders {
             'numberposts' => -1
         ]);
         ?>
-        <div class="form-field form-field-wide">
-            <p class="form-field">
-                <label for="project_selector">Project:</label>
-                <select name="assigned_project" id="project_selector" class="wc-enhanced-select" style="width: 100%;">
-                    <option value="">None</option>
-                    <?php foreach ($projects as $project) : ?>
-                        <option value="<?php echo esc_attr($project->ID); ?>" 
-                            <?php selected($selected_project, $project->ID); ?>>
-                            <?php echo esc_html($project->post_title); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
-        </div>
+        <p class="form-field form-field-wide">
+            <label for="project_selector">Project:</label>
+            <select name="assigned_project" id="project_selector" class="wc-enhanced-select" style="width: 100%;">
+                <option value="">None</option>
+                <?php foreach ($projects as $project) : ?>
+                    <option value="<?php echo esc_attr($project->ID); ?>" 
+                        <?php selected($selected_project, $project->ID); ?>>
+                        <?php echo esc_html($project->post_title); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </p>
         <?php
     }
 
