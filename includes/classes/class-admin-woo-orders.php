@@ -192,7 +192,7 @@ class AdminOrders {
 
                     
                     <p class="form-field form-field-wide">
-                        <label><strong><?php esc_html_e('Assigned Project:', 'arsol-projects-for-woo'); ?></strong></label>
+                        <label><strong><?php esc_html_e('Assigned Project', 'arsol-projects-for-woo'); ?></strong><?php esc_html_e(' (via parent order):', 'arsol-projects-for-woo'); ?></label>
                         <span><?php echo esc_html($project_name); ?></span>
                     </p>
                     <?php
