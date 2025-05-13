@@ -28,16 +28,116 @@ class AdminOrders {
     }
 
     /**
+     * Check if an order is a parent order
+     *
+     * @param \WC_Order $order The order object
+     * @return bool Whether this is a parent order
+     */
+    private function is_parent_order($order) {
+        // Check for renewal, switch, or resubscribe meta
+        $is_renewal = $order->get_meta('_subscription_renewal');
+        $is_switch = $order->get_meta('_subscription_switch');
+        $is_resubscribe = $order->get_meta('_subscription_resubscribe');
+        
+        if (!empty($is_renewal) || !empty($is_switch) || !empty($is_resubscribe)) {
+            return false;
+        }
+        
+        // If WooCommerce Subscriptions is active, use its functions for additional checks
+        if (function_exists('wcs_is_subscription')) {
+            $order_id = $order->get_id();
+            if (wcs_is_subscription($order_id)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Get parent order information for a child order
+     *
+     * @param \WC_Order $order The order object
+     * @return array|false Parent order data or false if not a child order
+     */
+    private function get_parent_order_info($order) {
+        $is_renewal = $order->get_meta('_subscription_renewal');
+        $is_switch = $order->get_meta('_subscription_switch');
+        $is_resubscribe = $order->get_meta('_subscription_resubscribe');
+        
+        if (!empty($is_renewal)) {
+            return [
+                'id' => $is_renewal,
+                'type' => __('Renewal Order', 'arsol-projects-for-woo')
+            ];
+        }
+        
+        if (!empty($is_switch)) {
+            return [
+                'id' => $is_switch,
+                'type' => __('Switch Order', 'arsol-projects-for-woo')
+            ];
+        }
+        
+        if (!empty($is_resubscribe)) {
+            return [
+                'id' => $is_resubscribe,
+                'type' => __('Resubscribe Order', 'arsol-projects-for-woo')
+            ];
+        }
+        
+        return false;
+    }
+
+    /**
      * Adds a project selector dropdown to the order details page
      *
      * @param \WC_Order $order The order object
      */
     public function add_project_selector_to_order($order) {
-        // Get the order ID
-        $order_id = $order->get_id();
+        // Check if this is a parent order
+        if (!$this->is_parent_order($order)) {
+            // This is a child order - get parent order info
+            $parent_info = $this->get_parent_order_info($order);
+            if ($parent_info) {
+                // Get parent order
+                $parent_order = wc_get_order($parent_info['id']);
+                $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
+                $project_name = __('None', 'arsol-projects-for-woo');
+                
+                if (!empty($project_id)) {
+                    $project = get_post($project_id);
+                    if ($project) {
+                        $project_name = $project->post_title;
+                    }
+                }
+                
+                // Display read-only information
+                ?>
+                <div class="options_group">
+                    <p class="form-field form-field-wide">
+                        <label><?php esc_html_e('Order Type:', 'arsol-projects-for-woo'); ?></label>
+                        <span><?php echo esc_html($parent_info['type']); ?></span>
+                    </p>
+                    <p class="form-field form-field-wide">
+                        <label><?php esc_html_e('Parent Order:', 'arsol-projects-for-woo'); ?></label>
+                        <a href="<?php echo esc_url(admin_url('post.php?post=' . $parent_info['id'] . '&action=edit')); ?>">
+                            #<?php echo esc_html($parent_info['id']); ?>
+                        </a>
+                    </p>
+                    <p class="form-field form-field-wide">
+                        <label><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
+                        <span><?php echo esc_html($project_name); ?></span>
+                    </p>
+                </div>
+                <?php
+                return;
+            }
+        }
         
+        // Parent order - show selector
         // Get the currently assigned project (if any)
-        $selected_project = get_post_meta($order_id, self::PROJECT_META_KEY, true);
+        $selected_project = $order->get_meta(self::PROJECT_META_KEY);
         
         // Get all projects
         $projects = get_posts([
@@ -72,18 +172,25 @@ class AdminOrders {
     public function save_project_field($order_id) {
         // Check if our custom field is set
         if (isset($_POST['arsol_project'])) {
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                return;
+            }
+            
             $project_id = sanitize_text_field($_POST['arsol_project']);
             
             // If empty, delete the meta
             if (empty($project_id)) {
-                delete_post_meta($order_id, self::PROJECT_META_KEY);
+                $order->delete_meta_data(self::PROJECT_META_KEY);
             } else {
                 // Verify this is a valid project before saving
                 $project = get_post($project_id);
                 if ($project && $project->post_type === 'project') {
-                    update_post_meta($order_id, self::PROJECT_META_KEY, $project_id);
+                    $order->update_meta_data(self::PROJECT_META_KEY, $project_id);
                 }
             }
+            
+            $order->save();
         }
     }
 
@@ -112,8 +219,33 @@ class AdminOrders {
      */
     public function display_project_column_content($column, $order_id) {
         if ($column === 'project') {
-            $project_id = get_post_meta($order_id, self::PROJECT_META_KEY, true);
+            $order = wc_get_order($order_id);
+            if (!$order) {
+                return;
+            }
             
+            // Check if this is a child order
+            if (!$this->is_parent_order($order)) {
+                $parent_info = $this->get_parent_order_info($order);
+                if ($parent_info) {
+                    $parent_order = wc_get_order($parent_info['id']);
+                    if ($parent_order) {
+                        $project_id = $parent_order->get_meta(self::PROJECT_META_KEY);
+                        if (!empty($project_id)) {
+                            $project = get_post($project_id);
+                            if ($project) {
+                                echo '<a href="' . esc_url(get_edit_post_link($project_id)) . '">' . 
+                                     esc_html($project->post_title) . '</a>' .
+                                     '<br><small>(' . esc_html__('From parent order', 'arsol-projects-for-woo') . ')</small>';
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // For parent orders or if parent relationship not found
+            $project_id = $order->get_meta(self::PROJECT_META_KEY);
             if (!empty($project_id)) {
                 $project = get_post($project_id);
                 if ($project) {
