@@ -322,7 +322,7 @@ class AdminOrders {
         if (!is_user_logged_in()) {
             return;
         }
-    
+
         $user_id = get_current_user_id();
         $user_projects = get_posts([
             'post_type'      => 'project',
@@ -332,17 +332,17 @@ class AdminOrders {
             'orderby'        => 'title',
             'order'          => 'ASC',
         ]);
-    
+
         $options = [];
         foreach ($user_projects as $project) {
             $options[$project->ID] = $project->post_title;
         }
-    
+
         woocommerce_register_additional_checkout_field(
             array(
-                'id'         => self::PROJECT_META_KEY, // Use your existing meta key
+                'id'         => 'arsol-projects-for-woo/project', // Use namespace/name format
                 'label'      => __('Select Project', 'arsol-projects-for-woo'),
-                'location'   => 'order', // This is a key setting - keep it as 'order'
+                'location'   => 'order',
                 'required'   => true,
                 'type'       => 'select',
                 'options'    => $options,
@@ -357,6 +357,10 @@ class AdminOrders {
                     }
         
                     return true;
+                },
+                // Add a save callback to map the new field ID to your existing meta key
+                'save' => function($order, $value) {
+                    $order->update_meta_data(self::PROJECT_META_KEY, $value);
                 }
             )
         );
