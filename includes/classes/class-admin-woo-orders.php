@@ -16,11 +16,8 @@ class AdminOrders {
         // Initialize hooks
         add_action('init', array($this, 'init'));
         
-        // Remove existing hook that adds the project selector
-        // add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_selector_to_order'));
-        
-        // Add new hook to display project information in a data column
-        add_action('woocommerce_admin_order_data_after_billing_address', array($this, 'add_project_data_column'));
+        // Move project data column to appear after order details (general section)
+        add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_data_column'));
         
         add_action('woocommerce_process_shop_order_meta', array($this, 'save_project_field'));
         
