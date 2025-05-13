@@ -321,6 +321,22 @@ class AdminOrders {
      * Register the project selection field for checkout (Gutenberg compatible)
      */
     public function register_project_checkout_field() {
+        // Debug logging
+        error_log('Project checkout field function called');
+        
+        // Check if function exists (WooCommerce 7.5+)
+        if (!function_exists('woocommerce_register_additional_checkout_field')) {
+            error_log('woocommerce_register_additional_checkout_field function not found');
+            return;
+        }
+        
+        // Only add field for logged-in users
+        if (!is_user_logged_in()) {
+            error_log('User not logged in');
+            return;
+        }
+        
+        error_log('Proceeding with field registration');
         // Check if function exists (WooCommerce 7.5+)
         if (!function_exists('woocommerce_register_additional_checkout_field')) {
             return;
