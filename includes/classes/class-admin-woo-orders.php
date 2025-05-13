@@ -29,7 +29,7 @@ class AdminOrders {
      */
     public function add_project_selector_to_order($order) {
         $selected_project = $order->get_meta('arsol_project', true);
-        $current_project_title = '—';
+        $current_project_title = 'Project:';
         
         if ($selected_project) {
             $project = get_post($selected_project);
