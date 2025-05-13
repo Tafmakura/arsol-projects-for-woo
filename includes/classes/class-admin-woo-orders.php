@@ -321,6 +321,11 @@ class AdminOrders {
      * Register the project selection field for checkout (Gutenberg compatible)
      */
     public function register_project_checkout_field() {
+        // Check if function exists (WooCommerce 7.5+)
+        if (!function_exists('woocommerce_register_additional_checkout_field')) {
+            return;
+        }
+        
         // Only add field for logged-in users
         if (!is_user_logged_in()) {
             return;
@@ -338,10 +343,10 @@ class AdminOrders {
             'order'          => 'ASC',
         ]);
         
-        // Don't add field if user has no projects
-       // if (empty($user_projects)) {
-       //     return;
-     //   }
+        // Uncomment this if you want to skip showing the field when no projects exist
+        // if (empty($user_projects)) {
+        //     return;
+        // }
         
         // Build options for the select dropdown
         $options = ['' => __('Select a project', 'arsol-projects-for-woo')];
@@ -355,7 +360,7 @@ class AdminOrders {
             'required'    => true,
             'label'       => __('Select Project', 'arsol-projects-for-woo'),
             'description' => __('Choose a project to associate with this order.', 'arsol-projects-for-woo'),
-            'location'    => 'order',
+            'location'    => 'checkout', // Changed from 'order' to 'checkout'
             'options'     => $options,
             'validate_callback' => function($value) {
                 $user_id = get_current_user_id();
