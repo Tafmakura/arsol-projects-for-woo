@@ -89,8 +89,28 @@ class AdminOrders {
         
         // Handle subscription objects
         if (function_exists('wcs_is_subscription') && wcs_is_subscription($order)) {
-            // Get the original order that created this subscription
+            // First try the standard meta
             $original_order_id = $order->get_meta('_original_order');
+            
+            // If empty, try alternative methods to find parent order
+            if (empty($original_order_id) && function_exists('wcs_get_subscription')) {
+                // Try to get the related orders
+                if (method_exists($order, 'get_related_orders')) {
+                    $related_orders = $order->get_related_orders('ids', 'parent');
+                    if (!empty($related_orders)) {
+                        $original_order_id = reset($related_orders); // Get first parent order
+                    }
+                }
+                
+                // If still empty and we have the subscription ID, try another approach
+                if (empty($original_order_id)) {
+                    $subscription_id = $order->get_id();
+                    $subscription = wcs_get_subscription($subscription_id);
+                    if ($subscription && method_exists($subscription, 'get_parent_id')) {
+                        $original_order_id = $subscription->get_parent_id();
+                    }
+                }
+            }
             
             if (!empty($original_order_id)) {
                 return [
@@ -98,6 +118,13 @@ class AdminOrders {
                     'type' => __('Subscription', 'arsol-projects-for-woo')
                 ];
             }
+            
+            // If we still don't have a parent order, display a special message
+            return [
+                'id' => '',
+                'type' => __('Subscription (no parent found)', 'arsol-projects-for-woo'),
+                'no_parent' => true
+            ];
         }
         
         return false;
@@ -114,15 +141,20 @@ class AdminOrders {
             // This is a child order - get parent order info
             $parent_info = $this->get_parent_order_info($order);
             if ($parent_info) {
-                // Get parent order
-                $parent_order = wc_get_order($parent_info['id']);
-                $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
                 $project_name = __('None', 'arsol-projects-for-woo');
+                $project_id = '';
                 
-                if (!empty($project_id)) {
-                    $project = get_post($project_id);
-                    if ($project) {
-                        $project_name = $project->post_title;
+                // Only try to get parent project if we have a parent order
+                if (empty($parent_info['no_parent'])) {
+                    // Get parent order
+                    $parent_order = wc_get_order($parent_info['id']);
+                    $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
+                    
+                    if (!empty($project_id)) {
+                        $project = get_post($project_id);
+                        if ($project) {
+                            $project_name = $project->post_title;
+                        }
                     }
                 }
                 
@@ -133,12 +165,14 @@ class AdminOrders {
                         <label><?php esc_html_e('Order Type:', 'arsol-projects-for-woo'); ?></label>
                         <span><?php echo esc_html($parent_info['type']); ?></span>
                     </p>
+                    <?php if (!empty($parent_info['id'])) : ?>
                     <p class="form-field form-field-wide">
                         <label><?php esc_html_e('Parent Order:', 'arsol-projects-for-woo'); ?></label>
                         <a href="<?php echo esc_url(admin_url('post.php?post=' . $parent_info['id'] . '&action=edit')); ?>">
                             #<?php echo esc_html($parent_info['id']); ?>
                         </a>
                     </p>
+                    <?php endif; ?>
                     <p class="form-field form-field-wide">
                         <label><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
                         <span><?php echo esc_html($project_name); ?></span>
