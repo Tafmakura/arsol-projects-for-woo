@@ -215,10 +215,10 @@ class AdminOrders {
                 <p class="form-field form-field-wide">
                     <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
                     <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
-                        <option value=""><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
+                        <option value="none"><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
                         <?php foreach ($projects as $project) : ?>
                             <option value="<?php echo esc_attr($project->ID); ?>" 
-                                <?php selected($selected_project, $project->ID); ?>>
+                                <?php selected($selected_project, (int)$project->ID); ?>>
                                 <?php echo esc_html($project->post_title); ?>
                             </option>
                         <?php endforeach; ?>
@@ -237,7 +237,6 @@ class AdminOrders {
      * @param int $order_id The order ID
      */
     public function save_project_field($order_id) {
-        // Check if our custom field is set
         if (isset($_POST['arsol_project'])) {
             $order = wc_get_order($order_id);
             if (!$order) {
@@ -253,7 +252,8 @@ class AdminOrders {
                 // Verify this is a valid project before saving
                 $project = get_post($project_id);
                 if ($project && $project->post_type === 'project') {
-                    $order->update_meta_data(self::PROJECT_META_KEY, $project_id);
+                    // Cast to integer to match checkout format
+                    $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
                 }
             }
             
@@ -471,10 +471,8 @@ class AdminOrders {
                 // Verify this is a valid project before saving
                 $project = get_post($project_id);
                 if ($project && $project->post_type === 'project') {
-                    // Verify project belongs to the user (security check)
-                    if ($project->post_author == get_current_user_id()) {
-                        $order->update_meta_data(self::PROJECT_META_KEY, $project_id);
-                    }
+                    // Cast to integer to match other methods
+                    $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
                 }
             }
             
