@@ -26,7 +26,7 @@ class AdminOrders {
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
         
         // Register additional checkout fields (Gutenberg compatible)
-        add_action('woocommerce_register_additional_checkout_fields', array($this, 'register_project_checkout_field'));
+        add_action('woocommerce_register_additional_checkout_field', array($this, 'register_project_checkout_field'));
     }
 
     public function init() {
