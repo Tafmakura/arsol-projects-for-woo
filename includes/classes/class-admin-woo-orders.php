@@ -191,10 +191,7 @@ class AdminOrders {
                     
                     // Display order type info
                     ?>
-                    <p class="form-field form-field-wide">
-                        <?php esc_html_e('Order Type:', 'arsol-projects-for-woo'); ?>
-                        <span><?php echo esc_html($parent_info['type']); ?></span>
-                    </p>
+
                     
                     <p class="form-field form-field-wide">
                         <label><strong><?php esc_html_e('Assigned Project:', 'arsol-projects-for-woo'); ?></strong></label>
