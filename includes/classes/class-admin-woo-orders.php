@@ -349,7 +349,8 @@ class AdminOrders {
                 'location'   => 'order',
                 'required'   => true,
                 'type'       => 'select',
-                'options'    => $options, // Now properly formatted
+                'placeholder' => __('Please select a project', 'arsol-projects-for-woo'),
+                'options'    => $options,
                 'validate'   => function($value) use ($user_id) {
                     if (empty($value)) {
                         return new \WP_Error('required_field', __('Please select a project.', 'arsol-projects-for-woo'));
