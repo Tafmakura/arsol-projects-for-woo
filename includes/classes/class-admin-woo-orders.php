@@ -163,7 +163,7 @@ class AdminOrders {
     public function add_project_data_column($order) {
         // Start the data column
         ?>
-        <div class="order_data_column">
+        <div >
             <h3><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></h3>
             
             <?php
