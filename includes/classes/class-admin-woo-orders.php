@@ -245,8 +245,8 @@ class AdminOrders {
             
             $project_id = sanitize_text_field($_POST['arsol_project']);
             
-            // If empty, delete the meta
-            if (empty($project_id)) {
+            // Handle "none" value consistently with checkout field
+            if ($project_id === 'none' || empty($project_id)) {
                 $order->delete_meta_data(self::PROJECT_META_KEY);
             } else {
                 // Verify this is a valid project before saving
