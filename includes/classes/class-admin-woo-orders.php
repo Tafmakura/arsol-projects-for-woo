@@ -37,10 +37,36 @@ class AdminOrders {
         // Deprecated approach - Add fallback for classic shortcode based checkout field
         add_filter('woocommerce_checkout_fields', array($this, 'add_project_checkout_field_classic'));
         add_action('woocommerce_checkout_update_order_meta', array($this, 'save_project_field_classic'));
+
+        // Remove duplicate project field
+        add_action('current_screen', array($this, 'remove_duplicate_project_field'));
     }
 
     public function init() {
         // Add your initialization code here
+    }
+
+    /**
+     * Remove duplicate project field that WooCommerce Core generates
+     */
+    public function remove_duplicate_project_field() {
+        // Only run on order edit pages
+        $screen = get_current_screen();
+        if (!$screen || $screen->id !== 'shop_order') {
+            return;
+        }
+        
+        // Enqueue inline script to remove the duplicate field
+        add_action('admin_footer', function() {
+            ?>
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                // Find and remove the duplicate project field
+                $('p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field').remove();
+            });
+            </script>
+            <?php
+        });
     }
 
     /**
