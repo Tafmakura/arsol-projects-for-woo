@@ -20,7 +20,7 @@ class AdminOrders {
         add_action('init', array($this, 'init'));
         
         // Move project data column to appear after order details (general section)
-        add_action('woocommerce_admin_order_data_after_shipping_address', array($this, 'add_project_data_column'));
+        add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_data_column'));
         
         add_action('woocommerce_process_shop_order_meta', array($this, 'save_project_field'));
         
@@ -414,7 +414,7 @@ class AdminOrders {
                 'id'         => 'arsol-projects-for-woo/project',
                 'label'      => __('Project', 'arsol-projects-for-woo'),
                 'location'   => 'order',
-                'required'   => false,
+                'required'   => true,
                 'type'       => 'select',
                 'placeholder' => __('Select a project', 'arsol-projects-for-woo'),
                 'options'    => $options,
