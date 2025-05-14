@@ -324,6 +324,12 @@ class AdminOrders {
     /**
      * Register project field for modern WooCommerce Blocks checkout
      */
+    /**
+     * Register project field for modern WooCommerce Blocks checkout
+     * 
+     * IMPORTANT: This is the field that appears during checkout for customers.
+     * It needs to save data to the same meta key used by the admin screen.
+     */
     public function register_project_checkout_field() {
         if (!is_user_logged_in()) {
             return;
@@ -350,7 +356,7 @@ class AdminOrders {
         // Then add the project options
         foreach ($user_projects as $project) {
             $options[] = [
-                'value' => (string)$project->ID, // Convert to string to match form data format
+                'value' => (string)$project->ID, // Convert to string for the form field
                 'label' => $project->post_title
             ];
         }
@@ -359,7 +365,9 @@ class AdminOrders {
         if (function_exists('woocommerce_register_additional_checkout_field')) {
             woocommerce_register_additional_checkout_field(
                 array(
-                    'id'         => 'arsol-projects-for-woo/project',
+                    // IMPORTANT: The field ID should be 'arsol_project' to match admin field
+                    // This is the critical difference - using the same field ID 
+                    'id'         => 'arsol_project',
                     'label'      => __('Project', 'arsol-projects-for-woo'),
                     'location'   => 'order',
                     'required'   => true,
