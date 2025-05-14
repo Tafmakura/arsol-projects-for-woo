@@ -210,6 +210,7 @@ class AdminOrders {
             } else {
                 // Parent order - show selector
                 $selected_project = $order->get_meta(self::PROJECT_META_KEY);
+                $selected_project = $order->get_meta( 'arsol-projects-for-woo/project' );
                 $projects = $this->get_projects();
                 ?>
                 <p class="form-field form-field-wide">
