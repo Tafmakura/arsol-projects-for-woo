@@ -54,7 +54,6 @@ class AdminOrders {
      * the duplicate field that WooCommerce generates to prevent confusion.
      */
     public function remove_duplicate_project_field() {
-     
         
         // Add script to remove duplicate fields
         add_action('admin_footer', function() {
@@ -65,8 +64,8 @@ class AdminOrders {
                 // 1. The standard form field with the class name
                 // 2. Any project fields in the order_data_column > address section
                 var projectFields = $(
-                    'p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field, ' // + 
-                   // 'div.order_data_column div.address p:contains("Project:")'
+                    'p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field'
+                    // + ', div.order_data_column div.address p:contains("Project:")'
                 );
                 
                 if (projectFields.length > 0) {
