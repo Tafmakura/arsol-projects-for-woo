@@ -173,7 +173,7 @@ class AdminOrders {
     public function add_project_data_column($order) {
         // Start the data column
         ?>
-
+    
         <?php
             // Check if this is a parent order
             if (!$this->is_parent_order($order)) {
@@ -214,7 +214,7 @@ class AdminOrders {
                 ?>
                 <p class="form-field form-field-wide">
                     <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
-                    <select name="arsol-projects-for-woo_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
+                    <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
                         <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
                         <?php foreach ($projects as $project) : ?>
                             <option value="<?php echo esc_attr($project->ID); ?>" 
@@ -237,18 +237,16 @@ class AdminOrders {
      * @param int $order_id The order ID
      */
     public function save_project_field($order_id) {
-        if (isset($_POST['arsol-projects-for-woo_project'])) {
+        if (isset($_POST['arsol_project'])) {
             $order = wc_get_order($order_id);
             if (!$order) {
                 return;
             }
-
             
+            $project_id = sanitize_text_field($_POST['arsol_project']);
             
-            $project_id = sanitize_text_field($_POST['arsol-projects-for-woo_project']);
-            
-            // Handle "none" value consistently with checkout field
-            if ($project_id === 'none' || empty($project_id)) {
+            // If empty, delete the meta
+            if (empty($project_id)) {
                 $order->delete_meta_data(self::PROJECT_META_KEY);
             } else {
                 // Verify this is a valid project before saving
