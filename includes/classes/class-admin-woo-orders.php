@@ -46,40 +46,38 @@ class AdminOrders {
         // Add your initialization code here
     }
 
-  /**
- * Remove duplicate project field that WooCommerce Core automatically generates
- * 
- * WooCommerce renders registered checkout fields on the admin order edit page.
- * Since we're already adding our custom UI for the project field, we remove
- * the duplicate field that WooCommerce generates to prevent confusion.
- */
-public function remove_duplicate_project_field() {
-    // Only run on admin order edit pages
-    $screen = get_current_screen();
-    if (!$screen || 'shop_order' !== $screen->id) {
-        return;
-    }
-    
-    // Use wp_add_inline_script instead of raw script tags for better dependency management
-    wp_enqueue_script('jquery');
-    wp_add_inline_script('jquery', '
-        jQuery(function($) {
-            // Wait for DOM to be fully loaded
-            $(document).ready(function() {
-                // More specific selectors to avoid potential conflicts
-                var $fields = $(
-                    \'p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field, \' + 
-                    \'div.order_data_column div.edit_address p:contains("Project:")\' 
+    /**
+     * Remove duplicate project field that WooCommerce Core automatically generates
+     * 
+     * WooCommerce renders registered checkout fields on the admin order edit page.
+     * Since we're already adding our custom UI for the project field, we remove
+     * the duplicate field that WooCommerce generates to prevent confusion.
+     */
+    public function remove_duplicate_project_field() {
+     
+        
+        // Add script to remove duplicate fields
+        add_action('admin_footer', function() {
+            ?>
+            <script type="text/javascript">
+            jQuery(function($) {
+                // Target both project field locations:
+                // 1. The standard form field with the class name
+                // 2. Any project fields in the order_data_column > address section
+                var projectFields = $(
+                    'p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field, ' + 
+                    'div.order_data_column div.address p:contains("Project:")'
                 );
                 
-                if ($fields.length > 0) {
-                    console.log("Removed " + $fields.length + " duplicate project field(s)");
-                    $fields.remove();
+                if (projectFields.length > 0) {
+                    console.log('Removed ' + projectFields.length + ' duplicate project field(s)');
+                    projectFields.remove();
                 }
             });
+            </script>
+            <?php
         });
-    ');
-}
+    }
 
     /**
      * Check if an order is a parent order
