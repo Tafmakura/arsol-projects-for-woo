@@ -20,7 +20,7 @@ class AdminOrders {
         add_action('init', array($this, 'init'));
         
         // Move project data column to appear after order details (general section)
-        add_action('woocommerce_admin_order_data_after_order_details', array($this, 'add_project_data_column'));
+        add_action('woocommerce_admin_order_data_after_shipping_details', array($this, 'add_project_data_column'));
         
         add_action('woocommerce_process_shop_order_meta', array($this, 'save_project_field'));
         
