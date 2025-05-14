@@ -237,13 +237,15 @@ class AdminOrders {
      * @param int $order_id The order ID
      */
     public function save_project_field($order_id) {
-        if (isset($_POST['arsol_project'])) {
+        if (isset($_POST['arsol-projects-for-woo_project'])) {
             $order = wc_get_order($order_id);
             if (!$order) {
                 return;
             }
+
             
-            $project_id = sanitize_text_field($_POST['arsol_project']);
+            
+            $project_id = sanitize_text_field($_POST['arsol-projects-for-woo_project']);
             
             // Handle "none" value consistently with checkout field
             if ($project_id === 'none' || empty($project_id)) {
