@@ -54,7 +54,11 @@ class AdminOrders {
      * the duplicate field that WooCommerce generates to prevent confusion.
      */
     public function remove_duplicate_project_field() {
-     
+        // Only run on admin order edit pages
+        $screen = get_current_screen();
+        if (!$screen || 'shop_order' !== $screen->id) {
+            return;
+        }
         
         // Add script to remove duplicate fields
         add_action('admin_footer', function() {
