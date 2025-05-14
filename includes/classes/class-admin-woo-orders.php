@@ -10,7 +10,10 @@ class AdminOrders {
     /**
      * Meta key used for storing project data
      */
-    const PROJECT_META_KEY = '_arsol_project';
+
+
+    //const PROJECT_META_KEY = '_arsol_project';
+    const PROJECT_META_KEY = '_wc_other/arsol-projects-for-woo/project';
 
     public function __construct() {
         // Initialize hooks
@@ -210,7 +213,6 @@ class AdminOrders {
             } else {
                 // Parent order - show selector
                 $selected_project = $order->get_meta(self::PROJECT_META_KEY);
-                $selected_project = $order->get_meta( '_wc_other/arsol-projects-for-woo/project' );
                 echo 'red>>>>>>'.$selected_project;
                 $projects = $this->get_projects();
                 ?>
