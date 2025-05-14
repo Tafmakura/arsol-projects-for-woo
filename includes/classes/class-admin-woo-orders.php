@@ -155,6 +155,7 @@ class AdminOrders {
     private function get_project_from_order($order) {
         // Legacy approach fallback
         $project_id = $order->get_meta(self::PROJECT_META_KEY);
+        $project_id = 'bodo';
         
         // Modern WooCommerce Blocks approach if available
         if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
