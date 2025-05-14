@@ -57,12 +57,7 @@ class AdminOrders {
      * need to remove it from the DOM to prevent conflicts and ensure our custom field works correctly.
      */
     public function remove_duplicate_project_field() {
-        // Only run on order edit pages
-        $screen = get_current_screen();
-        if (!$screen || $screen->id !== 'shop_order') {
-            return;
-        }
-        
+ 
         // Enqueue inline script to remove the duplicate field
         add_action('admin_footer', function() {
             ?>
