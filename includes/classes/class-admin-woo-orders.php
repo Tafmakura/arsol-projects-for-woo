@@ -37,6 +37,14 @@ class AdminOrders {
         // Deprecated approach - Add fallback for classic shortcode based checkout field
         add_filter('woocommerce_checkout_fields', array($this, 'add_project_checkout_field_classic'));
         add_action('woocommerce_checkout_update_order_meta', array($this, 'save_project_field_classic'));
+
+        // Add a centralized handler for project field saving
+        add_action(
+            'woocommerce_set_additional_field_value',
+            array($this, 'handle_project_field_save'),
+            10,
+            4
+        );
     }
 
     public function init() {
@@ -219,7 +227,7 @@ class AdminOrders {
                 ?>
                 <p class="form-field form-field-wide">
                     <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
-                    <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
+                    <select name="arsol-projects-for-woo_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
                         <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
                         <?php foreach ($projects as $project) : ?>
                             <option value="<?php echo esc_attr($project->ID); ?>" 
@@ -241,48 +249,48 @@ class AdminOrders {
      *
      * @param int $order_id The order ID
      */
-    /*
     public function save_project_field($order_id) {
-        if (isset($_POST['arsol_project'])) {
+        if (isset($_POST['arsol-projects-for-woo_project'])) {
             $order = wc_get_order($order_id);
             if (!$order) {
                 return;
             }
             
-            $project_id = sanitize_text_field($_POST['arsol_project']);
-            
-            // Handle "none" value consistently with checkout field
-            if ($project_id === 'none' || empty($project_id)) {
-                $order->delete_meta_data(self::PROJECT_META_KEY);
-            } else {
-                // Verify this is a valid project before saving
-                $project = get_post($project_id);
-                if ($project && $project->post_type === 'project') {
-                    // Cast to integer to match checkout format
-                    $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
-                }
+            // Let the hook handle the saving
+            do_action('woocommerce_set_additional_field_value', 
+                'arsol-projects-for-woo/project', 
+                sanitize_text_field($_POST['arsol-projects-for-woo_project']), 
+                'order', 
+                $order
+            );
+        }
+    }
+
+    /**
+     * Centralized handler for project field saving
+     *
+     * @param string $key Field key/ID
+     * @param mixed $value Field value
+     * @param string $group Field group
+     * @param WC_Data $wc_object WooCommerce data object (order, etc.)
+     */
+    public function handle_project_field_save($key, $value, $group, $wc_object) {
+        // Only process our field
+        if ('arsol-projects-for-woo/project' !== $key) {
+            return;
+        }
+
+        // Handle "none" value
+        if ($value === 'none') {
+            $wc_object->delete_meta_data(self::PROJECT_META_KEY);
+        } else {
+            // Verify it's a valid project before saving
+            $project = get_post($value);
+            if ($project && $project->post_type === 'project') {
+                $wc_object->update_meta_data(self::PROJECT_META_KEY, (int)$value);
             }
-            
-            $order->save();
         }
     }
-    */
-
-    public function save_project_field($order_id) {
-        if (isset($_POST['arsol_project'])) {
-            $order = wc_get_order($order_id);
-            $project_id = absint($_POST['arsol_project']);
-            $order->update_meta_data(self::PROJECT_META_KEY, $project_id);
-            $order->save();
-        }
-        error_log('Saving project field...');
-    error_log('POST data: ' . print_r($_POST, true));
-    }
-    
-
-
-
-
 
     /**
      * Add a custom column to the orders list
