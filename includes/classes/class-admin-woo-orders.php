@@ -66,7 +66,7 @@ class AdminOrders {
                 // Target both project field locations:
                 // 1. The standard form field with the class name
                 // 2. Any project fields in the order_data_column > edit_address section
-                var $fields = $('p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field, div.order_data_column div.edit_address p:contains("Project")');
+                var $fields = $('p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field, div.order_data_column div.edit_address p:contains("Project:")');
                 
                 console.log('Found ' + $fields.length + ' project field(s) to remove');
                 $fields.remove();
