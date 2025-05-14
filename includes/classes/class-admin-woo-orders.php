@@ -213,6 +213,7 @@ class AdminOrders {
             } else {
                 // Parent order - show selector
                 $selected_project = $order->get_meta(self::PROJECT_META_KEY);
+                echo 'red>>>>>>'.$selected_project;
                 $projects = $this->get_projects();
                 ?>
                 <p class="form-field form-field-wide">
