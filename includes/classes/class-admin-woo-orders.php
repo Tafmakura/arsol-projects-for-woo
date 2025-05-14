@@ -327,8 +327,8 @@ class AdminOrders {
     /**
      * Register project field for modern WooCommerce Blocks checkout
      * 
-     * IMPORTANT: This is the field that appears during checkout for customers.
-     * It needs to save data to the same meta key used by the admin screen.
+     * IMPORTANT: This field appears during checkout for customers.
+     * It must save data to the same meta key used by the admin screen.
      */
     public function register_project_checkout_field() {
         if (!is_user_logged_in()) {
@@ -356,7 +356,7 @@ class AdminOrders {
         // Then add the project options
         foreach ($user_projects as $project) {
             $options[] = [
-                'value' => (string)$project->ID, // Convert to string for the form field
+                'value' => (string)$project->ID, // Convert to string for form field
                 'label' => $project->post_title
             ];
         }
@@ -365,9 +365,8 @@ class AdminOrders {
         if (function_exists('woocommerce_register_additional_checkout_field')) {
             woocommerce_register_additional_checkout_field(
                 array(
-                    // IMPORTANT: The field ID should be 'arsol_project' to match admin field
-                    // This is the critical difference - using the same field ID 
-                    'id'         => 'arsol_project',
+                    // Use the required namespace/name format
+                    'id'         => 'arsol-projects-for-woo/project',
                     'label'      => __('Project', 'arsol-projects-for-woo'),
                     'location'   => 'order',
                     'required'   => true,
@@ -403,6 +402,21 @@ class AdminOrders {
                     }
                 )
             );
+            
+            // IMPORTANT: Add a filter to copy the checkout field data to the expected admin field
+            add_action('woocommerce_checkout_create_order', function($order, $data) {
+                if (isset($data['arsol-projects-for-woo/project'])) {
+                    $project_id = $data['arsol-projects-for-woo/project'];
+                    
+                    // Handle the project data the same way as in the save callback
+                    if ($project_id === 'none') {
+                        $order->delete_meta_data(self::PROJECT_META_KEY);
+                    } else {
+                        // Cast to integer for consistent format with admin editing
+                        $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
+                    }
+                }
+            }, 10, 2);
         }
     }
 
