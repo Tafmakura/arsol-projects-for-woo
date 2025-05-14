@@ -65,8 +65,8 @@ class AdminOrders {
                 // 1. The standard form field with the class name
                 // 2. Any project fields in the order_data_column > address section
                 var projectFields = $(
-                    'p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field, ' + 
-                    'div.order_data_column div.address p:contains("Project:")'
+                    'p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field, ' // + 
+                   // 'div.order_data_column div.address p:contains("Project:")'
                 );
                 
                 if (projectFields.length > 0) {
