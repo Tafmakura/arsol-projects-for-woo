@@ -46,7 +46,7 @@ class AdminOrders {
         // Add your initialization code here
     }
 
-    /**
+   /**
      * Remove duplicate project field that WooCommerce Core automatically generates
      * 
      * WooCommerce renders registered checkout fields on the admin order edit page.
@@ -54,10 +54,18 @@ class AdminOrders {
      * the duplicate field that WooCommerce generates to prevent confusion.
      */
     public function remove_duplicate_project_field() {
-     
-        
         // Add script to remove duplicate fields
         add_action('admin_footer', function() {
+            // Check if we're on the shop order edit screen
+            global $pagenow, $post_type;
+            $is_order_edit = ($pagenow == 'post.php' && isset($_GET['post']) && 
+                            get_post_type($_GET['post']) == 'shop_order') || 
+                            ($post_type == 'shop_order');
+                            
+            // Only run on order edit screens
+            if (!$is_order_edit) {
+                return;
+            }
             ?>
             <script type="text/javascript">
             jQuery(function($) {
