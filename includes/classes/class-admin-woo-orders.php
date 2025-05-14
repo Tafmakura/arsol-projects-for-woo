@@ -25,7 +25,10 @@ class AdminOrders {
         add_filter('manage_edit-shop_order_columns', array($this, 'add_project_column'));
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
         
-        // Register the project checkout field
+        // Register the project checkout field on woocommerce_init
+        add_action('woocommerce_init', array($this, 'register_project_checkout_field'));
+
+        // Modern approach - WooCommerce Blocks checkout field
         add_action('woocommerce_init', array($this, 'register_project_checkout_field'));
         
         // Deprecated approach - Add fallback for classic shortcode based checkout field
@@ -249,7 +252,7 @@ class AdminOrders {
                 // Verify this is a valid project before saving
                 $project = get_post($project_id);
                 if ($project && $project->post_type === 'project') {
-                    // Cast to integer for consistency with block checkout
+                    // Cast to integer to match checkout format
                     $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
                 }
             }
@@ -321,15 +324,6 @@ class AdminOrders {
         }
     }
 
-    /**
-     * Register project field for modern WooCommerce Blocks checkout
-     */
-    /**
-     * Register project field for modern WooCommerce Blocks checkout
-     * 
-     * IMPORTANT: This field appears during checkout for customers.
-     * It must save data to the same meta key used by the admin screen.
-     */
     public function register_project_checkout_field() {
         if (!is_user_logged_in()) {
             return;
@@ -356,68 +350,49 @@ class AdminOrders {
         // Then add the project options
         foreach ($user_projects as $project) {
             $options[] = [
-                'value' => (string)$project->ID, // Convert to string for form field
+                'value' => $project->ID,
                 'label' => $project->post_title
             ];
         }
 
-        // Check if woocommerce_register_additional_checkout_field function exists
-        if (function_exists('woocommerce_register_additional_checkout_field')) {
-            woocommerce_register_additional_checkout_field(
-                array(
-                    // Use the required namespace/name format
-                    'id'         => 'arsol-projects-for-woo/project',
-                    'label'      => __('Project', 'arsol-projects-for-woo'),
-                    'location'   => 'order',
-                    'required'   => true,
-                    'type'       => 'select',
-                    'placeholder' => __('Select a project', 'arsol-projects-for-woo'),
-                    'options'    => $options,
-                    'validate'   => function($value) use ($user_id) {
-                        // Accept "none" as valid
-                        if ($value === 'none') {
-                            return true;
-                        }
-                        
-                        // For other values, perform normal validation
-                        if (empty($value)) {
-                            return new \WP_Error('required_field', __('Please select a project.', 'arsol-projects-for-woo'));
-                        }
-            
-                        $project = get_post($value);
-                        if (!$project || $project->post_type !== 'project' || $project->post_author != $user_id) {
-                            return new \WP_Error('invalid_project', __('Invalid project selected.', 'arsol-projects-for-woo'));
-                        }
-            
+        woocommerce_register_additional_checkout_field(
+            array(
+                'id'         => 'arsol-projects-for-woo/project',
+                'label'      => __('Project', 'arsol-projects-for-woo'),
+                'location'   => 'order',
+                'required'   => true,
+                'type'       => 'select',
+                'placeholder' => __('Select a project', 'arsol-projects-for-woo'),
+                'options'    => $options,
+                'validate'   => function($value) use ($user_id) {
+                    // Accept "none" as valid
+                    if ($value === 'none') {
                         return true;
-                    },
-                    'save' => function($order, $value) {
-                        // Delete the meta if "none" is selected
-                        if ($value === 'none') {
-                            $order->delete_meta_data(self::PROJECT_META_KEY);
-                        } else {
-                            // Cast to integer for consistent format with admin editing
-                            $order->update_meta_data(self::PROJECT_META_KEY, (int)$value);
-                        }
                     }
-                )
-            );
-            
-            // IMPORTANT: Add a filter to copy the checkout field data to the expected admin field
-            add_action('woocommerce_checkout_create_order', function($order, $data) {
-                if (isset($data['arsol-projects-for-woo/project'])) {
-                    $project_id = $data['arsol-projects-for-woo/project'];
                     
-                    // Handle the project data the same way as in the save callback
-                    if ($project_id === 'none') {
+                    // For other values, perform normal validation
+                    if (empty($value)) {
+                        return new \WP_Error('required_field', __('Please select a project.', 'arsol-projects-for-woo'));
+                    }
+        
+                    $project = get_post($value);
+                    if (!$project || $project->post_type !== 'project' || $project->post_author != $user_id) {
+                        return new \WP_Error('invalid_project', __('Invalid project selected.', 'arsol-projects-for-woo'));
+                    }
+        
+                    return true;
+                },
+                'save' => function($order, $value) {
+                    // Delete the meta if "none" is selected
+                    if ($value === 'none') {
                         $order->delete_meta_data(self::PROJECT_META_KEY);
                     } else {
-                        // Cast to integer for consistent format with admin editing
-                        $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
+                        // Cast to integer to match admin format
+                        $order->update_meta_data(self::PROJECT_META_KEY, (int)$value);
                     }
                 }
-            }, 10, 2);
-        }
+            )
+        );
     }
 
     /**
@@ -496,7 +471,7 @@ class AdminOrders {
                 // Verify this is a valid project before saving
                 $project = get_post($project_id);
                 if ($project && $project->post_type === 'project') {
-                    // Cast to integer for consistency with block checkout
+                    // Cast to integer to match other methods
                     $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
                 }
             }
@@ -504,4 +479,5 @@ class AdminOrders {
             $order->save();
         }
     }
+
 }
