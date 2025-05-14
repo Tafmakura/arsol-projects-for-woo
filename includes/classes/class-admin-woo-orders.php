@@ -414,7 +414,7 @@ class AdminOrders {
                 'id'         => 'arsol-projects-for-woo/project',
                 'label'      => __('Project', 'arsol-projects-for-woo'),
                 'location'   => 'order',
-                'required'   => true,
+                'required'   => false,
                 'type'       => 'select',
                 'placeholder' => __('Select a project', 'arsol-projects-for-woo'),
                 'options'    => $options,
@@ -493,7 +493,7 @@ class AdminOrders {
         $fields['order']['arsol_project'] = array(
             'type'        => 'select',
             'label'       => __('Select Project', 'arsol-projects-for-woo'),
-            'required'    => false,
+            'required'    => true,
             'class'       => array('form-row-wide'),
             'options'     => $options,
             'default'     => 'none',
