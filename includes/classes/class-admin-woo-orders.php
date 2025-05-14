@@ -147,6 +147,36 @@ class AdminOrders {
     }
 
     /**
+     * Get project ID from order using WooCommerce Blocks API
+     *
+     * @param \WC_Order $order The order object
+     * @return int|string Project ID or empty string if not set
+     */
+    private function get_project_from_order($order) {
+        // Legacy approach fallback
+        $project_id = $order->get_meta(self::PROJECT_META_KEY);
+        
+        // Modern WooCommerce Blocks approach if available
+        if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
+            try {
+                $field_id = 'arsol-projects-for-woo/project';
+                $checkout_fields = \Automattic\WooCommerce\Blocks\Package::container()->get(
+                    \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
+                );
+                $field_value = $checkout_fields->get_field_from_object($field_id, $order, 'order');
+                
+                if (!empty($field_value)) {
+                    $project_id = $field_value;
+                }
+            } catch (\Exception $e) {
+                // Fallback to legacy approach already handled
+            }
+        }
+        
+        return $project_id;
+    }
+
+    /**
      * Get all available projects for selection
      * 
      * @param int|null $user_id Optional. Filter projects by author ID
@@ -212,7 +242,8 @@ class AdminOrders {
                 }
             } else {
                 // Parent order - show selector
-                $selected_project = $order->get_meta(self::PROJECT_META_KEY);
+                //$selected_project = $order->get_meta(self::PROJECT_META_KEY);
+                $selected_project = $this->get_project_from_order($order);
                 echo 'red>>>>>>'.$selected_project;
                 $projects = $this->get_projects();
                 ?>
