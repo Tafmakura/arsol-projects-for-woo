@@ -240,6 +240,7 @@ class AdminOrders {
      *
      * @param int $order_id The order ID
      */
+    /*
     public function save_project_field($order_id) {
         if (isset($_POST['arsol_project'])) {
             $order = wc_get_order($order_id);
@@ -264,6 +265,21 @@ class AdminOrders {
             $order->save();
         }
     }
+    */
+
+    public function save_project_field($order_id) {
+        if (isset($_POST['arsol_project'])) {
+        
+            $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
+            
+            $order->save();
+        }
+    }
+
+
+
+
+
 
     /**
      * Add a custom column to the orders list
