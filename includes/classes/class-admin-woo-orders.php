@@ -173,7 +173,7 @@ class AdminOrders {
     public function add_project_data_column($order) {
         // Start the data column
         ?>
-    
+
         <?php
             // Check if this is a parent order
             if (!$this->is_parent_order($order)) {
@@ -214,7 +214,7 @@ class AdminOrders {
                 ?>
                 <p class="form-field form-field-wide">
                     <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
-                    <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
+                    <select name="arsol-projects-for-woo_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
                         <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
                         <?php foreach ($projects as $project) : ?>
                             <option value="<?php echo esc_attr($project->ID); ?>" 
