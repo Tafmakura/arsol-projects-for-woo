@@ -270,15 +270,14 @@ class AdminOrders {
     public function save_project_field($order_id) {
         if (isset($_POST['arsol_project'])) {
             $order = wc_get_order($order_id);
-            $project_id = sanitize_text_field($_POST['arsol_project']);
-            
-           
-            $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
-            
+            $project_id = absint($_POST['arsol_project']);
+            $order->update_meta_data(self::PROJECT_META_KEY, $project_id);
             $order->save();
         }
+        error_log('Saving project field...');
+        error_log('POST data: ' . print_r($_POST, true));
     }
-
+    
 
 
 
