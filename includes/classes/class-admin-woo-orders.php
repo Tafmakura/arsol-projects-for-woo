@@ -10,9 +10,6 @@ class AdminOrders {
     /**
      * Meta key used for storing project data
      */
-
-
-    //const PROJECT_META_KEY = '_arsol_project';
     const PROJECT_META_KEY = '_wc_other/arsol-projects-for-woo/project';
 
     public function __construct() {
@@ -29,9 +26,6 @@ class AdminOrders {
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
         
         // Register the project checkout field on woocommerce_init
-        add_action('woocommerce_init', array($this, 'register_project_checkout_field'));
-
-        // Modern approach - WooCommerce Blocks checkout field
         add_action('woocommerce_init', array($this, 'register_project_checkout_field'));
         
         // Remove duplicate project field
@@ -53,7 +47,6 @@ class AdminOrders {
      * the duplicate field that WooCommerce generates to prevent confusion.
      */
     public function remove_duplicate_project_field() {
-        
         // Add script to remove duplicate fields
         add_action('admin_footer', function() {
             ?>
@@ -189,7 +182,6 @@ class AdminOrders {
     private function get_project_from_order($order) {
         // Legacy approach fallback
         $project_id = $order->get_meta(self::PROJECT_META_KEY);
-        $project_id = 'bodo';
         
         // Modern WooCommerce Blocks approach if available
         if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
@@ -306,7 +298,6 @@ class AdminOrders {
      *
      * @param int $order_id The order ID
      */
-    /*
     public function save_project_field($order_id) {
         if (isset($_POST['arsol_project'])) {
             $order = wc_get_order($order_id);
@@ -331,19 +322,6 @@ class AdminOrders {
             $order->save();
         }
     }
-    */
-
-    public function save_project_field($order_id) {
-        if (isset($_POST['arsol_project'])) {
-            $order = wc_get_order($order_id);
-            $project_id = absint($_POST['arsol_project']);
-            $order->update_meta_data(self::PROJECT_META_KEY, $project_id);
-            $order->save();
-        }
-        error_log('Saving project field...');
-    error_log('POST data: ' . print_r($_POST, true));
-    }
-    
 
     /**
      * Display project information in order details table
