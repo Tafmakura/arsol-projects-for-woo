@@ -39,7 +39,7 @@ class AdminOrders {
         add_action('woocommerce_checkout_update_order_meta', array($this, 'save_project_field_classic'));
 
         // Remove duplicate project field
-        add_action('current_screen', array($this, 'remove_duplicate_project_field'));
+        add_action('admin_enqueue_scripts', array($this, 'remove_duplicate_project_field'));
     }
 
     public function init() {
