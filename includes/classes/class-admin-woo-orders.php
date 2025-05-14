@@ -34,10 +34,6 @@ class AdminOrders {
         // Modern approach - WooCommerce Blocks checkout field
         add_action('woocommerce_init', array($this, 'register_project_checkout_field'));
         
-        // Deprecated approach - Add fallback for classic shortcode based checkout field
-        add_filter('woocommerce_checkout_fields', array($this, 'add_project_checkout_field_classic'));
-        add_action('woocommerce_checkout_update_order_meta', array($this, 'save_project_field_classic'));
-
         // Remove duplicate project field
         add_action('admin_enqueue_scripts', array($this, 'remove_duplicate_project_field'));
     }
@@ -284,7 +280,7 @@ class AdminOrders {
                 $projects = $this->get_projects();
                 ?>
                 <p class="form-field form-field-wide">
-                    <label for="arsol_project_selector"><strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong></label>
+                    <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
                     <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
                         <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
                         <?php foreach ($projects as $project) : ?>
@@ -482,91 +478,6 @@ class AdminOrders {
                 }
             )
         );
-    }
-
-    /**
-     * Add project field to classic checkout (deprecated)
-     * 
-     * @deprecated 2.0.0 Classic checkout is deprecated in favor of blocks checkout
-     * @param array $fields Checkout fields
-     * @return array Modified fields
-     */
-    public function add_project_checkout_field_classic($fields) {
-        // Show deprecation notice in admin area
-        if (is_admin() && !wp_doing_ajax()) {
-            _deprecated_function(__METHOD__, '2.0.0', 'WooCommerce Blocks checkout');
-        }
-        
-        if (!is_user_logged_in()) {
-            return $fields;
-        }
-        
-        $user_id = get_current_user_id();
-        $user_projects = get_posts([
-            'post_type'      => 'project',
-            'post_status'    => 'publish',
-            'author'         => $user_id,
-            'posts_per_page' => -1,
-            'orderby'        => 'title',
-            'order'          => 'ASC',
-        ]);
-        
-        // Create options array with "None" as first option
-        $options = array(
-            'none' => __('None', 'arsol-projects-for-woo')
-        );
-        
-        foreach ($user_projects as $project) {
-            $options[$project->ID] = $project->post_title;
-        }
-        
-        // Add to order fields section
-        if (!isset($fields['order'])) {
-            $fields['order'] = array();
-        }
-        
-        $fields['order']['arsol_project'] = array(
-            'type'        => 'select',
-            'label'       => __('Select Project', 'arsol-projects-for-woo'),
-            'required'    => true,
-            'class'       => array('form-row-wide'),
-            'options'     => $options,
-            'default'     => 'none',
-            'priority'    => 10,
-        );
-        
-        return $fields;
-    }
-
-    /**
-     * Save project field data from classic checkout (deprecated)
-     *
-     * @deprecated 2.0.0 Classic checkout is deprecated in favor of blocks checkout
-     * @param int $order_id Order ID
-     */
-    public function save_project_field_classic($order_id) {
-        if (isset($_POST['arsol_project'])) {
-            $order = wc_get_order($order_id);
-            if (!$order) {
-                return;
-            }
-            
-            $project_id = sanitize_text_field($_POST['arsol_project']);
-            
-            // If "none" or empty, delete the meta
-            if ($project_id === 'none' || empty($project_id)) {
-                $order->delete_meta_data(self::PROJECT_META_KEY);
-            } else {
-                // Verify this is a valid project before saving
-                $project = get_post($project_id);
-                if ($project && $project->post_type === 'project') {
-                    // Cast to integer to match other methods
-                    $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
-                }
-            }
-            
-            $order->save();
-        }
     }
 
 }
