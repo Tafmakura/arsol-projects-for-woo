@@ -217,7 +217,7 @@ class AdminOrders {
                 $projects = $this->get_projects();
                 ?>
                 <p class="form-field form-field-wide">
-                    <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
+                    <label for="arsol_project_selector"><strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong></label>
                     <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
                         <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
                         <?php foreach ($projects as $project) : ?>
