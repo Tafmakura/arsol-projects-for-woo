@@ -36,6 +36,9 @@ class AdminOrders {
         
         // Remove duplicate project field
         add_action('admin_enqueue_scripts', array($this, 'remove_duplicate_project_field'));
+
+        // Add project information to order details table
+        add_action('woocommerce_order_details_after_order_table_items', array($this, 'display_project_in_order_details'));
     }
 
     public function init() {
@@ -342,9 +345,80 @@ class AdminOrders {
     }
     
 
+    /**
+     * Display project information in order details table
+     *
+     * @param \WC_Order $order The order object
+     */
+    public function display_project_in_order_details($order) {
+        // Check if this is a parent order
+        if (!$this->is_parent_order($order)) {
+            // This is a child order - get parent order info
+            $parent_info = $this->get_parent_order_info($order);
+            if ($parent_info) {
+                $project_name = __('None', 'arsol-projects-for-woo');
+                $project_id = '';
+                
+                // Only try to get parent project if we have a parent order
+                if (empty($parent_info['no_parent'])) {
+                    // Get parent order
+                    $parent_order = wc_get_order($parent_info['id']);
+                    $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
+                    
+                    if (!empty($project_id)) {
+                        $project = get_post($project_id);
+                        if ($project) {
+                            $project_name = $project->post_title;
+                            // Output project information in order details table
+                            $this->output_project_row($project_id, $project_name, true);
+                            return;
+                        }
+                    }
+                }
+            }
+        } else {
+            // Parent order - get project directly
+            $project_id = $this->get_project_from_order($order);
+            if (!empty($project_id) && $project_id !== 'none') {
+                $project = get_post($project_id);
+                if ($project) {
+                    $this->output_project_row($project_id, $project->post_title);
+                    return;
+                }
+            }
+        }
+        
+        // If we get here, either there's no project or we couldn't determine it
+        // Optionally display "None" row
+        $this->output_project_row(0, __('None', 'arsol-projects-for-woo'), false, true);
+    }
 
-
-
+    /**
+     * Output project information row in order details table
+     *
+     * @param int $project_id Project ID
+     * @param string $project_name Project name
+     * @param bool $is_parent Whether this is from a parent order
+     * @param bool $is_none Whether this is a "None" value
+     */
+    private function output_project_row($project_id, $project_name, $is_parent = false, $is_none = false) {
+        ?>
+        <tr>
+            <th scope="row"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></th>
+            <td>
+                <?php if (!$is_none) : ?>
+                    <a href="<?php echo esc_url(get_permalink($project_id)); ?>"><?php echo esc_html($project_name); ?></a>
+                <?php else : ?>
+                    <?php echo esc_html($project_name); ?>
+                <?php endif; ?>
+                
+                <?php if ($is_parent) : ?>
+                    <small>(<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?>)</small>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php
+    }
 
     /**
      * Add a custom column to the orders list
