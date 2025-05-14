@@ -48,21 +48,40 @@ class AdminOrders {
 
     /**
      * Remove duplicate project field that WooCommerce Core generates
+     * 
+     * WooCommerce automatically renders registered checkout fields on the admin order edit page.
+     * Since we're already adding our own custom UI for the project field, we need to remove
+     * the duplicate field that WooCommerce generates to prevent confusion.
+     * 
+     * Note: The field may be hidden by default in some WooCommerce versions, but we still
+     * need to remove it from the DOM to prevent conflicts and ensure our custom field works correctly.
      */
     public function remove_duplicate_project_field() {
-        // Only run on order edit pages
+        // Only run on order edit pages to avoid unnecessary JavaScript on other admin screens
         $screen = get_current_screen();
         if (!$screen || $screen->id !== 'shop_order') {
             return;
         }
         
-        // Enqueue inline script to remove the duplicate field
+        // Enqueue inline script to remove the duplicate field after the page is fully loaded
         add_action('admin_footer', function() {
             ?>
             <script type="text/javascript">
             jQuery(document).ready(function($) {
                 // Find and remove the duplicate project field
-                $('p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field').remove();
+                // The selector uses escaped backslashes because the field name contains slashes
+                // that need to be properly escaped in the jQuery selector.
+                // This targets the exact field structure regardless of visibility: 
+                // <p class="form-field _wc_other/arsol-projects-for-woo/project_field">
+                var $duplicateField = $('p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field');
+                
+                // Log removal for debugging (can be removed in production)
+                if ($duplicateField.length) {
+                    console.log('Found and removed duplicate project field');
+                }
+                
+                // Remove the field from the DOM completely
+                $duplicateField.remove();
             });
             </script>
             <?php
