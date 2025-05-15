@@ -28,15 +28,17 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                 while ($projects_query->have_posts()) {
                     $projects_query->the_post();
                     $project_id = get_the_ID();
+                    // Generate account endpoint URL for project overview
+                    $project_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
                     ?>
                     <tr class="woocommerce-orders-table__row project">
                         <th class="woocommerce-orders-table__cell woocommerce-orders-table__cell-project-name" data-title="<?php esc_attr_e('Name', 'arsol-projects-for-woo'); ?>" scope="row">
-                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>" aria-label="<?php echo esc_attr(sprintf(__('View project %s', 'arsol-projects-for-woo'), get_the_title())); ?>">
+                            <a href="<?php echo esc_url($project_url); ?>" aria-label="<?php echo esc_attr(sprintf(__('View project %s', 'arsol-projects-for-woo'), get_the_title())); ?>">
                                 <?php echo esc_html(get_the_title()); ?>
                             </a>
                         </th>
                         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-project-actions" data-title="">
-                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view<?php echo esc_attr($wp_button_class); ?>"><?php esc_html_e('View', 'arsol-projects-for-woo'); ?></a>
+                            <a href="<?php echo esc_url($project_url); ?>" class="woocommerce-button button view<?php echo esc_attr($wp_button_class); ?>"><?php esc_html_e('View', 'arsol-projects-for-woo'); ?></a>
                         </td>
                     </tr>
                     <?php
