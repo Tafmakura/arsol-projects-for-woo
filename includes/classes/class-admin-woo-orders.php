@@ -620,7 +620,7 @@ class AdminOrders {
         $total_orders = wc_get_orders(array_merge($args, array('limit' => -1, 'return' => 'ids')));
         
         // Create result object similar to WooCommerce customer orders
-        $result = new stdClass();
+        $result = new \stdClass(); // Added the backslash here
         $result->orders = $orders;
         $result->total = count($total_orders);
         $result->max_num_pages = ceil($result->total / $per_page);
