@@ -393,7 +393,7 @@ class AdminOrders {
         <header>
             <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
         </header>
-        <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table woocommerce-MyAccount-projects woocommerce-orders-table--projects">
+        <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table woocommerce-MyAccount-subscriptions woocommerce-orders-table--subscriptions projects-row">
             <thead>
                 <tr>
                     <th class="project-name woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></span></th>
