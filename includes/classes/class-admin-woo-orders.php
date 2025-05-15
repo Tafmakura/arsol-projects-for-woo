@@ -414,9 +414,8 @@ class AdminOrders {
                     <?php endif; ?>
                     
                     <?php if ($is_from_parent) : ?>
-                        <small>(<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
+                        (<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
                         <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>)
-                        </small>
                     <?php endif; ?>
                 </p>
             </div>
