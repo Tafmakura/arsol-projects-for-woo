@@ -9,7 +9,7 @@
 /* Hide additional info wrapper */
 
 section.wc-block-order-confirmation-additional-fields-wrapper {
-    display: none;
+    display: none !important;
 }
 
 
