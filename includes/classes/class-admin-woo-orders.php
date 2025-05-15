@@ -328,54 +328,42 @@ class AdminOrders {
 
 
     /**
-     * Display project information in a simple div format
+     * Display project information in a table format that matches WooCommerce styles
      *
      * @param \WC_Order|\WC_Subscription $order The order or subscription object
      */
     public function display_project_details($order) {
-        // Determine if this is a subscription
+        // All the logic to determine project remains the same
         $is_subscription = function_exists('wcs_is_subscription') && wcs_is_subscription($order);
-        $context = $is_subscription ? 'subscription' : 'order';
-        
         $project_id = '';
         $is_from_parent = false;
         
+        // Get project based on order/subscription type
         if ($is_subscription) {
-            // Get the parent order of the subscription
-            $parent_order_id = $order->get_parent_id(); 
-            
+            $parent_order_id = $order->get_parent_id();
             if ($parent_order_id) {
-                // Get parent order
                 $parent_order = wc_get_order($parent_order_id);
                 if ($parent_order) {
                     $project_id = $parent_order->get_meta(self::PROJECT_META_KEY);
                     $is_from_parent = true;
                 }
             } else {
-                // If no parent order, try getting from subscription directly
                 $project_id = $order->get_meta(self::PROJECT_META_KEY);
             }
         } else {
-            // Regular order handling
             if (!$this->is_parent_order($order)) {
-                // This is a child order - get parent order info
                 $parent_info = $this->get_parent_order_info($order);
-                if ($parent_info) {
-                    // Only try to get parent project if we have a parent order
-                    if (empty($parent_info['no_parent'])) {
-                        // Get parent order
-                        $parent_order = wc_get_order($parent_info['id']);
-                        $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
-                        $is_from_parent = true;
-                    }
+                if ($parent_info && empty($parent_info['no_parent'])) {
+                    $parent_order = wc_get_order($parent_info['id']);
+                    $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
+                    $is_from_parent = true;
                 }
             } else {
-                // Parent order - get project directly
                 $project_id = $this->get_project_from_order($order);
             }
         }
         
-        // Display project information
+        // Format project information
         $project_name = __('None', 'arsol-projects-for-woo');
         $has_link = false;
         
@@ -387,39 +375,57 @@ class AdminOrders {
             }
         }
         
-        // When showing the parent order reference, include order number and link
+        // Get parent order info for display if applicable
         if ($is_from_parent) {
-            // Get the parent order object or ID depending on context
             $parent_order_id = $is_subscription ? $order->get_parent_id() : $parent_info['id'];
             $parent_order_obj = wc_get_order($parent_order_id);
             $parent_order_number = $parent_order_obj ? $parent_order_obj->get_order_number() : $parent_order_id;
-            
-            // Create the link to parent order
             $order_url = $parent_order_obj ? 
                 $parent_order_obj->get_view_order_url() : 
                 wc_get_endpoint_url('view-order', $parent_order_id, wc_get_page_permalink('myaccount'));
         }
         
-        // Simple div output format for both contexts
+        // Output in a table format that matches WooCommerce tables
         ?>
-        <section>
-            <div class="arsol-project-details">
-                <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
-                <p>
-                    <strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong>
-                    <?php if ($has_link) : ?>
-                        <a href="<?php echo esc_url(get_permalink($project_id)); ?>"><?php echo esc_html($project_name); ?></a>
-                    <?php else : ?>
-                        <?php echo esc_html($project_name); ?>
+        <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
+        <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table">
+            <thead>
+                <tr>
+                    <th class="woocommerce-orders-table__header"><span class="nobr"><?php esc_html_e('Project Name', 'arsol-projects-for-woo'); ?></span></th>
+                    <th class="woocommerce-orders-table__header"><span class="nobr"><?php esc_html_e('Status', 'arsol-projects-for-woo'); ?></span></th>
+                    <?php if ($is_from_parent): ?>
+                    <th class="woocommerce-orders-table__header"><span class="nobr"><?php esc_html_e('Parent Order', 'arsol-projects-for-woo'); ?></span></th>
                     <?php endif; ?>
-                    
-                    <?php if ($is_from_parent) : ?>
-                        (<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
-                        <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>)
+                    <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="woocommerce-orders-table__row">
+                    <td class="woocommerce-orders-table__cell" data-title="<?php esc_attr_e('Project Name', 'arsol-projects-for-woo'); ?>">
+                        <?php if ($has_link) : ?>
+                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>">
+                                <?php echo esc_html($project_name); ?>
+                            </a>
+                        <?php else : ?>
+                            <?php echo esc_html($project_name); ?>
+                        <?php endif; ?>
+                    </td>
+                    <td class="woocommerce-orders-table__cell" data-title="<?php esc_attr_e('Status', 'arsol-projects-for-woo'); ?>">
+                        <?php echo esc_html__('Active', 'arsol-projects-for-woo'); ?>
+                    </td>
+                    <?php if ($is_from_parent): ?>
+                    <td class="woocommerce-orders-table__cell" data-title="<?php esc_attr_e('Parent Order', 'arsol-projects-for-woo'); ?>">
+                        <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>
+                    </td>
                     <?php endif; ?>
-                </p>
-            </div>
-        </section>
+                    <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions">
+                        <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view">
+                            <?php esc_html_e('View', 'arsol-projects-for-woo'); ?>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <?php
     }
 
