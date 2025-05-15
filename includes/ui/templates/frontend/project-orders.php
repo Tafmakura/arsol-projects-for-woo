@@ -50,7 +50,7 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
                             echo wp_kses_post(sprintf(_n('%1$s for %2$s item', '%1$s for %2$s items', $item_count, 'arsol-projects-for-woo'), $order->get_formatted_order_total(), $item_count));
                             ?>
                         </td>
-                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-ars_order_actions" data-title="">
+                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions woocommerce-orders-table__cell-ars_order_actions" data-title="">
                             <a href="<?php echo esc_url($order->get_view_order_url()); ?>" class="woocommerce-button button view"><?php esc_html_e('View', 'arsol-projects-for-woo'); ?></a>
                         </td>
                     </tr>
