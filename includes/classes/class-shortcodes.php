@@ -9,7 +9,9 @@
  */
 
 
- namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo;
+
+use Arsol_Projects_For_Woo\Woo\AdminOrders;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,13 +32,6 @@ class Shortcodes {
 		add_shortcode( 'arsol_project', array( $this, 'render_single_project' ) );
 		add_shortcode( 'arsol_project_categories', array( $this, 'render_project_categories' ) );
 		add_shortcode( 'project_orders', array( $this, 'project_orders_shortcode' ) );
-	}
-
-	/**
-	 * Initialize shortcodes
-	 */
-	public static function init() {
-		add_shortcode('project_orders', array(__CLASS__, 'project_orders_shortcode'));
 	}
 
 	/**
@@ -130,7 +125,7 @@ class Shortcodes {
 	 * @param array $atts Shortcode attributes
 	 * @return string HTML output
 	 */
-	public static function project_orders_shortcode($atts) {
+	public function project_orders_shortcode($atts) {
 		// Start output buffering
 		ob_start();
 
@@ -164,7 +159,7 @@ class Shortcodes {
 		}
 
 		// Verify user has access to this project
-		if (!Arsol_Projects_Admin_Woo_Orders::user_can_view_project($current_user_id, $project_id)) {
+		if (!AdminOrders::user_can_view_project($current_user_id, $project_id)) {
 			return '<p>' . __('You do not have permission to view orders for this project.', 'arsol-projects-for-woo') . '</p>';
 		}
 
