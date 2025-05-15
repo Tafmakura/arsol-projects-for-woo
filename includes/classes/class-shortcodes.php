@@ -135,7 +135,7 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
 			'per_page' => 10,
-			'paged' => 1,  // Change from 'page' to 'paged'
+			'paged' => 1,
 		), $atts);
 
 		// Get current user
@@ -166,7 +166,7 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['paged']);  // Use 'paged' instead of 'page'
+		$current_page = max(1, (int) $atts['paged']);
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project orders using the admin orders class
@@ -182,8 +182,8 @@ class Shortcodes {
 		$customer_orders = $project_orders;
 		$wp_button_class = wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
-		// Load template
-		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/templates/frontend/project-orders.php');
+		// Load component template - UPDATED PATH
+		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/components/frontend/section-project-orders-table.php');
 		
 		// Return buffered content
 		return ob_get_clean();
@@ -203,7 +203,7 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
 			'per_page' => 10,
-			'paged' => 1,  // Change from 'page' to 'paged'
+			'paged' => 1,
 		), $atts);
 
 		// Get current user
@@ -234,7 +234,7 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['paged']);  // Use 'paged' instead of 'page'
+		$current_page = max(1, (int) $atts['paged']);
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project subscriptions using the admin orders class
@@ -250,8 +250,8 @@ class Shortcodes {
 		$customer_subscriptions = $project_subscriptions;
 		$wp_button_class = wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
-		// Load template
-		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/templates/frontend/project-subscriptions.php');
+		// Load component template - UPDATED PATH
+		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/components/frontend/section-project-subscriptions-table.php');
 		
 		// Return buffered content
 		return ob_get_clean();
@@ -306,8 +306,8 @@ class Shortcodes {
 		$total_pages = $projects_query->max_num_pages;
 		$wp_button_class = wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 		
-		// Load template
-		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/templates/frontend/projects.php');
+		// Load component template - UPDATED PATH
+		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/components/frontend/section-projects-table.php');
 		
 		// Return buffered content
 		return ob_get_clean();
