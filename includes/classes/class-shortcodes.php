@@ -8,6 +8,9 @@
  * @since 1.0.0
  */
 
+
+ namespace Arsol_Projects_For_Woo;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class responsible for managing shortcodes
  */
-class Arsol_Projects_Shortcodes {
+class Shortcodes {
 
 	/**
 	 * Constructor.
