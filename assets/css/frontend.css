@@ -8,7 +8,7 @@
 
 /* Hide additional info wrapper */
 
-.wc-block-order-confirmation-additional-fields-wrapper {
+section.wc-block-order-confirmation-additional-fields-wrapper {
     display: none;
 }
 
