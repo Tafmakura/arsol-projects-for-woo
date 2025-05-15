@@ -28,13 +28,12 @@ class Shortcodes {
 	 */
 	public function __construct() {
 		// Register your existing shortcodes
-		add_shortcode( 'arsol_projects', array( $this, 'render_projects' ) );
-		add_shortcode( 'arsol_project', array( $this, 'render_single_project' ) );
-		add_shortcode( 'arsol_project_categories', array( $this, 'render_project_categories' ) );
-		add_shortcode( 'project_orders', array( $this, 'project_orders_shortcode' ) );
-		
-		// Add the new subscription shortcode
-		add_shortcode( 'project_subscriptions', array( $this, 'project_subscriptions_shortcode' ) );
+		add_shortcode('arsol_projects', array($this, 'render_projects'));
+		add_shortcode('arsol_project', array($this, 'render_single_project'));
+		add_shortcode('arsol_project_categories', array($this, 'render_project_categories'));
+		add_shortcode('project_orders', array($this, 'project_orders_shortcode'));
+		add_shortcode('project_subscriptions', array($this, 'project_subscriptions_shortcode'));
+		add_shortcode('user_projects', array($this, 'user_projects_shortcode'));
 	}
 
 	/**
@@ -136,7 +135,7 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
 			'per_page' => 10,
-			'paged' => 1,  // Change from 'page' to 'paged'
+			'paged' => 1,
 		), $atts);
 
 		// Get current user
@@ -167,11 +166,11 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['paged']);  // Use 'paged' instead of 'page'
+		$current_page = max(1, (int) $atts['paged']);
 		$per_page = max(1, (int) $atts['per_page']);
 
-		// Get project orders using the admin orders class
-		$project_orders = AdminOrders::get_project_orders(
+		// Get project orders including child orders whose parent belongs to this project
+		$project_orders = AdminOrders::get_project_orders_with_children(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 
@@ -204,7 +203,7 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
 			'per_page' => 10,
-			'paged' => 1,  // Change from 'page' to 'paged'
+			'paged' => 1,
 		), $atts);
 
 		// Get current user
@@ -235,11 +234,11 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['paged']);  // Use 'paged' instead of 'page'
+		$current_page = max(1, (int) $atts['paged']);
 		$per_page = max(1, (int) $atts['per_page']);
 
-		// Get project subscriptions using the admin orders class
-		$project_subscriptions = AdminOrders::get_project_subscriptions(
+		// Get project subscriptions based on parent order association only
+		$project_subscriptions = AdminOrders::get_project_subscriptions_by_parent_order(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 
@@ -253,6 +252,67 @@ class Shortcodes {
 
 		// Load template
 		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/templates/frontend/project-subscriptions.php');
+		
+		// Return buffered content
+		return ob_get_clean();
+	}
+
+	/**
+	 * Shortcode to display a list of user's projects
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function user_projects_shortcode($atts) {
+		// Start output buffering
+		ob_start();
+
+		// Normalize attributes
+		$atts = shortcode_atts(array(
+			'per_page' => 10,
+			'paged' => 1,
+		), $atts);
+
+		// Get current user
+		$current_user_id = get_current_user_id();
+		
+		// If no user is logged in, show login message
+		if (!$current_user_id) {
+			return '<p>' . __('Please log in to view your projects.', 'arsol-projects-for-woo') . '</p>';
+		}
+
+		// Get current page for pagination
+		$current_page = max(1, (int) $atts['paged']);
+		$per_page = max(1, (int) $atts['per_page']);
+		
+		// Get user's projects
+		$args = array(
+			'post_type' => 'project',
+			'posts_per_page' => $per_page,
+			'paged' => $current_page,
+			'orderby' => 'title',
+			'order' => 'ASC',
+			'meta_query' => array(
+				array(
+					'key' => '_project_user_id',
+					'value' => $current_user_id,
+					'compare' => '='
+				)
+			)
+		);
+		
+		// Apply additional filtering if needed
+		$args = apply_filters('arsol_projects_user_projects_query_args', $args, $current_user_id);
+		
+		$projects_query = new \WP_Query($args);
+		
+		// Prepare template variables
+		$has_projects = $projects_query->have_posts();
+		$total_pages = $projects_query->max_num_pages;
+		$wp_button_class = wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
+		
+		// Load template
+		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/templates/frontend/projects.php');
 		
 		// Return buffered content
 		return ob_get_clean();

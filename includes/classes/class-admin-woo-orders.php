@@ -749,4 +749,106 @@ class AdminOrders {
         return $result;
     }
 
+    /**
+     * Get orders associated with a project, including child orders whose parent belongs to this project
+     *
+     * @param int $project_id Project ID
+     * @param int $user_id User ID
+     * @param int $current_page Current page for pagination
+     * @param int $per_page Items per page
+     * @return object Object containing orders array and pagination info
+     */
+    public static function get_project_orders_with_children($project_id, $user_id, $current_page = 1, $per_page = 10) {
+        // First get orders directly associated with the project
+        $direct_orders = self::get_project_orders($project_id, $user_id);
+        
+        // Now get parent order IDs from these orders
+        $parent_order_ids = array();
+        foreach ($direct_orders->orders as $order_id) {
+            $parent_order_ids[] = $order_id;
+        }
+        
+        // Get child orders whose parent belongs to this project
+        $args = array(
+            'post_type'      => 'shop_order',
+            'post_status'    => array_keys(wc_get_order_statuses()),
+            'posts_per_page' => -1, // Get all to find children
+            'meta_query'     => array(
+                'relation' => 'AND',
+                array(
+                    'key'     => '_customer_user',
+                    'value'   => $user_id,
+                    'compare' => '='
+                ),
+                array(
+                    'key'     => '_arsol_projects_parent_order',
+                    'value'   => $parent_order_ids,
+                    'compare' => 'IN'
+                )
+            )
+        );
+        
+        $child_orders_query = new \WP_Query($args);
+        $child_order_ids = wp_list_pluck($child_orders_query->posts, 'ID');
+        
+        // Combine direct and child orders
+        $all_order_ids = array_unique(array_merge($direct_orders->orders, $child_order_ids));
+        
+        // Now paginate the combined results
+        $offset = ($current_page - 1) * $per_page;
+        $paginated_orders = array_slice($all_order_ids, $offset, $per_page);
+        
+        // Return in same format as get_project_orders
+        $results = new \stdClass();
+        $results->orders = $paginated_orders;
+        $results->max_num_pages = ceil(count($all_order_ids) / $per_page);
+        
+        return $results;
+    }
+
+    /**
+     * Get subscriptions associated with a project based only on parent order association
+     *
+     * @param int $project_id Project ID
+     * @param int $user_id User ID
+     * @param int $current_page Current page for pagination
+     * @param int $per_page Items per page
+     * @return object Object containing subscriptions array and pagination info
+     */
+    public static function get_project_subscriptions_by_parent_order($project_id, $user_id, $current_page = 1, $per_page = 10) {
+        // First get orders directly associated with the project
+        $direct_orders = self::get_project_orders($project_id, $user_id);
+        
+        // Find subscriptions based on these parent orders
+        $args = array(
+            'post_type'      => 'shop_subscription',
+            'post_status'    => array_keys(wcs_get_subscription_statuses()),
+            'posts_per_page' => $per_page,
+            'paged'          => $current_page,
+            'meta_query'     => array(
+                'relation' => 'AND',
+                array(
+                    'key'     => '_customer_user',
+                    'value'   => $user_id,
+                    'compare' => '='
+                ),
+                array(
+                    'key'     => '_order_id', // This is the parent order ID stored on the subscription
+                    'value'   => $direct_orders->orders,
+                    'compare' => 'IN'
+                )
+            )
+        );
+        
+        $subscriptions_query = new \WP_Query($args);
+        $subscription_ids = wp_list_pluck($subscriptions_query->posts, 'ID');
+        
+        // Return in same format as get_project_subscriptions
+        $results = new \stdClass();
+        $results->subscriptions = $subscription_ids;
+        $results->max_num_pages = $subscriptions_query->max_num_pages;
+        
+        return $results;
+    }
+
 }
