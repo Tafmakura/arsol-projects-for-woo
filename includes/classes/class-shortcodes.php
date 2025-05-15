@@ -160,7 +160,7 @@ class Arsol_Projects_Shortcodes {
 		}
 
 		// Verify user has access to this project
-		if (!self::user_can_view_project($current_user_id, $project_id)) {
+		if (!Arsol_Projects_Admin_Woo_Orders::user_can_view_project($current_user_id, $project_id)) {
 			return '<p>' . __('You do not have permission to view orders for this project.', 'arsol-projects-for-woo') . '</p>';
 		}
 
@@ -168,8 +168,13 @@ class Arsol_Projects_Shortcodes {
 		$current_page = max(1, (int) $atts['page']);
 		$per_page = max(1, (int) $atts['per_page']);
 
-		// Get project orders
-		$project_orders = self::get_project_orders($project_id, $current_user_id, $current_page, $per_page);
+		// Get project orders using the admin orders class
+		$project_orders = Arsol_Projects_Admin_Woo_Orders::get_project_orders(
+			$project_id, 
+			$current_user_id, 
+			$current_page, 
+			$per_page
+		);
 		
 		// Prepare template variables
 		$has_orders = !empty($project_orders->orders);
@@ -183,69 +188,5 @@ class Arsol_Projects_Shortcodes {
 		return ob_get_clean();
 	}
 
-	/**
-	 * Check if user can view the project
-	 *
-	 * @param int $user_id User ID
-	 * @param int $project_id Project ID
-	 * @return bool
-	 */
-	private static function user_can_view_project($user_id, $project_id) {
-		// Check if user is admin
-		if (user_can($user_id, 'manage_options')) {
-			return true;
-		}
-
-		// Check if user is project owner or collaborator
-		$project_owner = get_post_field('post_author', $project_id);
-		if ($project_owner == $user_id) {
-			return true;
-		}
-
-		// Check if user is a collaborator (implement your own logic here)
-		$collaborators = get_post_meta($project_id, '_project_collaborators', true);
-		if (is_array($collaborators) && in_array($user_id, $collaborators)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Get orders associated with a project
-	 *
-	 * @param int $project_id Project ID
-	 * @param int $user_id User ID
-	 * @param int $current_page Current page number
-	 * @param int $per_page Orders per page
-	 * @return object Orders object with pagination data
-	 */
-	private static function get_project_orders($project_id, $user_id, $current_page = 1, $per_page = 10) {
-		// Query orders that have meta data connecting them to this project
-		$args = array(
-			'customer_id' => $user_id,
-			'limit' => $per_page,
-			'page' => $current_page,
-			'meta_key' => '_project_id',
-			'meta_value' => $project_id,
-			'return' => 'ids',
-		);
-
-		// Get orders
-		$orders = wc_get_orders($args);
-		$total_orders = wc_get_orders(array_merge($args, array('limit' => -1, 'return' => 'ids')));
-		
-		// Create result object similar to WooCommerce customer orders
-		$result = new stdClass();
-		$result->orders = $orders;
-		$result->total = count($total_orders);
-		$result->max_num_pages = ceil($result->total / $per_page);
-
-		return $result;
-	}
+	
 }
-
-// Initialize the shortcodes.
-new Arsol_Projects_Shortcodes();
-add_action('init', array('Arsol_Projects_Shortcodes', 'init'));
-

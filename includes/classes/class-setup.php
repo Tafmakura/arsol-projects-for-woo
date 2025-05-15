@@ -10,6 +10,7 @@ class Setup {
     public function __construct() {
         $this->require_files();
         $this->instantiate_classes();
+        $this->init_shortcodes();
         add_action('plugins_loaded', array($this, 'init'));
     }
 
@@ -43,6 +44,17 @@ class Setup {
        // new \Arsol_Projects_For_Woo\Shortcodes();
         new \Arsol_Projects_For_Woo\Woo\AdminOrders();
         new \Arsol_Projects_For_Woo\Assets();
+    }
+
+    /**
+     * Initialize shortcodes
+     */
+    private function init_shortcodes() {
+        // Initialize instance shortcodes
+        new Arsol_Projects_Shortcodes();
+        
+        // Initialize static shortcodes
+        add_action('init', array('Arsol_Projects_Shortcodes', 'init'));
     }
 
     public function woocommerce_notice() {

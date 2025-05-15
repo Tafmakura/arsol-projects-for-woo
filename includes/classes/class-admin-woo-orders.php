@@ -567,4 +567,65 @@ class AdminOrders {
         );
     }
 
+    /**
+     * Check if user can view the project
+     *
+     * @param int $user_id User ID
+     * @param int $project_id Project ID
+     * @return bool
+     */
+    public static function user_can_view_project($user_id, $project_id) {
+        // Check if user is admin
+        if (user_can($user_id, 'manage_options')) {
+            return true;
+        }
+
+        // Check if user is project owner
+        $project_owner = get_post_field('post_author', $project_id);
+        if ($project_owner == $user_id) {
+            return true;
+        }
+
+        // Check if user is a collaborator
+        $collaborators = get_post_meta($project_id, '_project_collaborators', true);
+        if (is_array($collaborators) && in_array($user_id, $collaborators)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get orders associated with a project
+     *
+     * @param int $project_id Project ID
+     * @param int $user_id User ID
+     * @param int $current_page Current page number
+     * @param int $per_page Orders per page
+     * @return object Orders object with pagination data
+     */
+    public static function get_project_orders($project_id, $user_id, $current_page = 1, $per_page = 10) {
+        // Query orders that have meta data connecting them to this project
+        $args = array(
+            'customer_id' => $user_id,
+            'limit' => $per_page,
+            'page' => $current_page,
+            'meta_key' => '_project_id',
+            'meta_value' => $project_id,
+            'return' => 'ids',
+        );
+
+        // Get orders
+        $orders = wc_get_orders($args);
+        $total_orders = wc_get_orders(array_merge($args, array('limit' => -1, 'return' => 'ids')));
+        
+        // Create result object similar to WooCommerce customer orders
+        $result = new stdClass();
+        $result->orders = $orders;
+        $result->total = count($total_orders);
+        $result->max_num_pages = ceil($result->total / $per_page);
+
+        return $result;
+    }
+
 }
