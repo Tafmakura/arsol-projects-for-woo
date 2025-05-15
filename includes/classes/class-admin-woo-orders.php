@@ -390,7 +390,7 @@ class AdminOrders {
         // Simple div output format for both contexts
         ?>
         <div class="arsol-project-details">
-            <h3><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h3>
+            <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
             <p>
                 <strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong>
                 <?php if ($has_link) : ?>
