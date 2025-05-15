@@ -326,41 +326,44 @@ class AdminOrders {
         }
     }
 
-
     /**
-     * Display project information in a simplified table format
+     * Display project information in a consistent table format
      *
      * @param \WC_Order|\WC_Subscription $order The order or subscription object
      */
     public function display_project_details($order) {
-        // All the logic to determine project remains the same
+        // Determine if this is a subscription
         $is_subscription = function_exists('wcs_is_subscription') && wcs_is_subscription($order);
         $project_id = '';
         $is_from_parent = false;
+        $parent_info = false;
         
-        // Get project based on order/subscription type
-        if ($is_subscription) {
-            $parent_order_id = $order->get_parent_id();
-            if ($parent_order_id) {
-                $parent_order = wc_get_order($parent_order_id);
-                if ($parent_order) {
-                    $project_id = $parent_order->get_meta(self::PROJECT_META_KEY);
-                    $is_from_parent = true;
+        // Get project based on context (same logic, cleaner implementation)
+        if (!$this->is_parent_order($order)) {
+            // Child order or subscription - get from parent
+            if ($is_subscription) {
+                $parent_order_id = $order->get_parent_id();
+                if ($parent_order_id) {
+                    $parent_order = wc_get_order($parent_order_id);
+                    if ($parent_order) {
+                        $project_id = $parent_order->get_meta(self::PROJECT_META_KEY);
+                        $is_from_parent = true;
+                    }
+                } else {
+                    $project_id = $order->get_meta(self::PROJECT_META_KEY);
                 }
             } else {
-                $project_id = $order->get_meta(self::PROJECT_META_KEY);
-            }
-        } else {
-            if (!$this->is_parent_order($order)) {
+                // Regular child order
                 $parent_info = $this->get_parent_order_info($order);
                 if ($parent_info && empty($parent_info['no_parent'])) {
                     $parent_order = wc_get_order($parent_info['id']);
                     $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
                     $is_from_parent = true;
                 }
-            } else {
-                $project_id = $this->get_project_from_order($order);
             }
+        } else {
+            // Parent order - get directly
+            $project_id = $this->get_project_from_order($order);
         }
         
         // Format project information
@@ -385,7 +388,7 @@ class AdminOrders {
                 wc_get_endpoint_url('view-order', $parent_order_id, wc_get_page_permalink('myaccount'));
         }
         
-        // Output in a simplified table format with only two columns
+        // Always use the same formatting regardless of context
         ?>
         <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
         <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table">
