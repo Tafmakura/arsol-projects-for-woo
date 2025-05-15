@@ -328,7 +328,7 @@ class AdminOrders {
 
 
     /**
-     * Display project information in a table format that matches WooCommerce styles
+     * Display project information in a simplified table format
      *
      * @param \WC_Order|\WC_Subscription $order The order or subscription object
      */
@@ -385,23 +385,19 @@ class AdminOrders {
                 wc_get_endpoint_url('view-order', $parent_order_id, wc_get_page_permalink('myaccount'));
         }
         
-        // Output in a table format that matches WooCommerce tables
+        // Output in a simplified table format with only two columns
         ?>
         <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
         <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table">
             <thead>
                 <tr>
-                    <th class="woocommerce-orders-table__header"><span class="nobr"><?php esc_html_e('Project Name', 'arsol-projects-for-woo'); ?></span></th>
-                    <th class="woocommerce-orders-table__header"><span class="nobr"><?php esc_html_e('Status', 'arsol-projects-for-woo'); ?></span></th>
-                    <?php if ($is_from_parent): ?>
-                    <th class="woocommerce-orders-table__header"><span class="nobr"><?php esc_html_e('Parent Order', 'arsol-projects-for-woo'); ?></span></th>
-                    <?php endif; ?>
+                    <th class="woocommerce-orders-table__header"><span class="nobr"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></span></th>
                     <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions">&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="woocommerce-orders-table__row">
-                    <td class="woocommerce-orders-table__cell" data-title="<?php esc_attr_e('Project Name', 'arsol-projects-for-woo'); ?>">
+                    <td class="woocommerce-orders-table__cell" data-title="<?php esc_attr_e('Project', 'arsol-projects-for-woo'); ?>">
                         <?php if ($has_link) : ?>
                             <a href="<?php echo esc_url(get_permalink($project_id)); ?>">
                                 <?php echo esc_html($project_name); ?>
@@ -409,19 +405,21 @@ class AdminOrders {
                         <?php else : ?>
                             <?php echo esc_html($project_name); ?>
                         <?php endif; ?>
+                        
+                        <?php if ($is_from_parent): ?>
+                            <br>
+                            <small>
+                                <?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
+                                <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>
+                            </small>
+                        <?php endif; ?>
                     </td>
-                    <td class="woocommerce-orders-table__cell" data-title="<?php esc_attr_e('Status', 'arsol-projects-for-woo'); ?>">
-                        <?php echo esc_html__('Active', 'arsol-projects-for-woo'); ?>
-                    </td>
-                    <?php if ($is_from_parent): ?>
-                    <td class="woocommerce-orders-table__cell" data-title="<?php esc_attr_e('Parent Order', 'arsol-projects-for-woo'); ?>">
-                        <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>
-                    </td>
-                    <?php endif; ?>
                     <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions">
-                        <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view">
-                            <?php esc_html_e('View', 'arsol-projects-for-woo'); ?>
-                        </a>
+                        <?php if ($has_link) : ?>
+                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view">
+                                <?php esc_html_e('View', 'arsol-projects-for-woo'); ?>
+                            </a>
+                        <?php endif; ?>
                     </td>
                 </tr>
             </tbody>
