@@ -98,7 +98,7 @@ class Endpoints {
             ' ' . wc_wp_theme_get_element_class_name('button') : '';
         
         // Include the template
-        include ARSOL_PFW_PATH . 'includes/ui/templates/frontend/projects.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/projects.php';
     }
 }
 
