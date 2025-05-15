@@ -265,7 +265,7 @@ class AdminOrders {
 
                     
                     <p class="form-field form-field-wide">
-                        <label><strong><?php esc_html_e('Parent project', 'arsol-projects-for-woo'); ?></strong></label>
+                        <label><strong><?php esc_html_e('Parent project:', 'arsol-projects-for-woo'); ?></strong></label>
                         <span><?php echo esc_html($project_name); ?></span>
                     </p>
                     <?php
@@ -278,7 +278,7 @@ class AdminOrders {
                 $projects = $this->get_projects();
                 ?>
                 <p class="form-field form-field-wide">
-                    <label for="arsol_project_selector"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></label>
+                    <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
                     <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
                         <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
                         <?php foreach ($projects as $project) : ?>
@@ -385,7 +385,7 @@ class AdminOrders {
     private function output_project_row($project_id, $project_name, $is_parent = false, $is_none = false) {
         ?>
         <tr>
-            <th scope="row"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></th>
+            <th scope="row"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></th>
             <td>
                 <?php if (!$is_none) : ?>
                     <a href="<?php echo esc_url(get_permalink($project_id)); ?>"><?php echo esc_html($project_name); ?></a>
