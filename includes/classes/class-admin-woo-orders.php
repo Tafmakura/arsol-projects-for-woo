@@ -391,7 +391,7 @@ class AdminOrders {
         // Always use the same formatting regardless of context
         ?>
         <header>
-            <h2><?php esc_html_e('Project Details', 'arsol-projects-for-woo'); ?></h2>
+            <h2><?php esc_html_e('Related Project', 'arsol-projects-for-woo'); ?></h2>
         </header>
         <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table woocommerce-MyAccount-subscriptions woocommerce-orders-table--subscriptions projects-row">
             <thead>
