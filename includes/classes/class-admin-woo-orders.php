@@ -33,6 +33,9 @@ class AdminOrders {
 
         // Add project information to order details table
         add_action('woocommerce_order_details_after_order_table_items', array($this, 'display_project_in_order_details'));
+
+        // Add project to subscription details table (WooCommerce Subscriptions)
+        add_action('woocommerce_subscription_details_after_subscription_table', array($this, 'display_project_in_subscription_details'));
     }
 
     public function init() {
