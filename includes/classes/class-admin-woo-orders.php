@@ -469,8 +469,8 @@ class AdminOrders {
                                 
                                 echo '<a href="' . esc_url(get_edit_post_link($project_id)) . '">' . 
                                      esc_html($project->post_title) . '</a>' .
-                                     '<br><small>(' . esc_html__('From parent order', 'arsol-projects-for-woo') . ' ' .
-                                     '<a href="' . esc_url($parent_order_url) . '">#' . esc_html($parent_order_number) . '</a>)</small>';
+                                     '<br>(' . esc_html__('From parent order', 'arsol-projects-for-woo') . ' ' .
+                                     '<a href="' . esc_url($parent_order_url) . '">#' . esc_html($parent_order_number) . '</a>)';
                                 return;
                             }
                         }
