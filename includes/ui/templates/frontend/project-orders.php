@@ -51,12 +51,15 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
                     </td>
                     <td class="order-actions">
                         <?php
+                        // Get standard WooCommerce order actions
                         $actions = wc_get_account_orders_actions($order);
-
-                        if (!empty($actions)) {
-                            foreach ($actions as $key => $action) {
-                                echo '<a href="' . esc_url($action['url']) . '" class="woocommerce-button' . esc_attr($wp_button_class) . ' button ' . sanitize_html_class($key) . '">' . esc_html($action['name']) . '</a>';
-                            }
+                        
+                        // Only show view action if available
+                        if (!empty($actions['view'])) {
+                            echo '<a href="' . esc_url($actions['view']['url']) . '" class="woocommerce-button' . esc_attr($wp_button_class) . ' button view">' . esc_html($actions['view']['name']) . '</a>';
+                        } else {
+                            // Fallback: create view action manually if WooCommerce doesn't provide one
+                            echo '<a href="' . esc_url($order->get_view_order_url()) . '" class="woocommerce-button' . esc_attr($wp_button_class) . ' button view">' . esc_html__('View', 'arsol-projects-for-woo') . '</a>';
                         }
                         ?>
                     </td>

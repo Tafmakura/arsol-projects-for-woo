@@ -54,11 +54,15 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
                     </td>
                     <td class="subscription-actions">
                         <?php
+                        // Get standard WooCommerce subscription actions
                         $actions = wcs_get_all_user_actions_for_subscription($subscription, get_current_user_id());
-                        if (!empty($actions)) {
-                            foreach ($actions as $key => $action) {
-                                echo '<a href="' . esc_url($action['url']) . '" class="woocommerce-button' . esc_attr($wp_button_class) . ' button ' . sanitize_html_class($key) . '">' . esc_html($action['name']) . '</a>';
-                            }
+                        
+                        // Only show view action if available
+                        if (!empty($actions['view'])) {
+                            echo '<a href="' . esc_url($actions['view']['url']) . '" class="woocommerce-button' . esc_attr($wp_button_class) . ' button view">' . esc_html($actions['view']['name']) . '</a>';
+                        } else {
+                            // Fallback: create view action manually if WooCommerce doesn't provide one
+                            echo '<a href="' . esc_url($subscription->get_view_order_url()) . '" class="woocommerce-button' . esc_attr($wp_button_class) . ' button view">' . esc_html__('View', 'arsol-projects-for-woo') . '</a>';
                         }
                         ?>
                     </td>
