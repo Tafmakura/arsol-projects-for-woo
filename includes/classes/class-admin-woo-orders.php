@@ -610,7 +610,7 @@ class AdminOrders {
             'customer_id' => $user_id,
             'limit' => $per_page,
             'page' => $current_page,
-            'meta_key' => '_project_id',
+            'meta_key' => self::PROJECT_META_KEY, // Fix: Use the class constant
             'meta_value' => $project_id,
             'return' => 'ids',
         );
@@ -648,7 +648,7 @@ class AdminOrders {
             'customer_id' => $user_id,
             'limit' => $per_page,
             'page' => $current_page,
-            'meta_key' => '_project_id',
+            'meta_key' => self::PROJECT_META_KEY, // Fix: Use the class constant
             'meta_value' => $project_id,
             'return' => 'ids',
             'type' => 'shop_subscription',
