@@ -558,17 +558,36 @@ class AdminOrders {
             $project_id = $subscription->get_meta(self::PROJECT_META_KEY);
         }
         
-        // Only display if we have a project
+        // Prepare display information
+        $project_name = __('None', 'arsol-projects-for-woo');
+        $has_link = false;
+        
+        // Only use project details if we have a valid project
         if (!empty($project_id) && $project_id !== 'none') {
             $project = get_post($project_id);
             if ($project) {
-                $this->output_project_row($project_id, $project->post_title, $is_from_parent);
-                return;
+                $project_name = $project->post_title;
+                $has_link = true;
             }
         }
         
-        // If we get here, display "None"
-        $this->output_project_row(0, __('None', 'arsol-projects-for-woo'), false, true);
+        // Output in the requested format
+        ?>
+        <tr>
+            <td><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></td>
+            <td>
+                <?php if ($has_link) : ?>
+                    <a href="<?php echo esc_url(get_permalink($project_id)); ?>"><?php echo esc_html($project_name); ?></a>
+                <?php else : ?>
+                    <?php echo esc_html($project_name); ?>
+                <?php endif; ?>
+                
+                <?php if ($is_from_parent) : ?>
+                    <small>(<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?>)</small>
+                <?php endif; ?>
+            </td>
+        </tr>
+        <?php
     }
 
 }
