@@ -2,6 +2,19 @@
  * Arsol Projects for WooCommerce - Frontend Styles
  */
 
+
+
+/* Temporary CSS */
+
+/* Hide additional info wrapper */
+
+.wc-block-order-confirmation-additional-fields-wrapper {
+    display: none;
+}
+
+
+
+
 /* Project select field on checkout */
 .woocommerce-checkout .form-row label[for="arsol-projects-for-woo-project"] {
     font-weight: bold;
