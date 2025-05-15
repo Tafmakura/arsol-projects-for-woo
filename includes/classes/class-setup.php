@@ -20,8 +20,8 @@ class Setup {
             return;
         }
         
-        // Load plugin text domain
-        load_plugin_textdomain('arsol-projects-for-woo', false, dirname(ARSOL_PROJECTS_PLUGIN_BASENAME) . '/languages');
+        // Load plugin text domain with updated domain name
+        load_plugin_textdomain('arsol-pfw', false, dirname(ARSOL_PROJECTS_PLUGIN_BASENAME) . '/languages');
     }
 
     /**
@@ -47,7 +47,7 @@ class Setup {
 
     public function woocommerce_notice() {
         echo '<div class="error"><p>';
-        echo esc_html__('Arsol Projects for WooCommerce requires WooCommerce to be installed and active.', 'arsol-projects-for-woo');
+        echo esc_html__('Arsol Projects for WooCommerce requires WooCommerce to be installed and active.', 'arsol-pfw');
         echo '</p></div>';
     }
     

@@ -10,7 +10,7 @@
  * Author URI: https://your-site.com
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: arsol-projects-for-woo
+ * Text Domain: arsol-pfw
  * Domain Path: /languages
  * 
  * @package Arsol_Projects_For_Woo

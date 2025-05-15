@@ -115,21 +115,21 @@ class AdminOrders {
         if (!empty($is_renewal)) {
             return [
                 'id' => $is_renewal,
-                'type' => __('Renewal Order', 'arsol-projects-for-woo')
+                'type' => __('Renewal Order', 'arsol-pfw')
             ];
         }
         
         if (!empty($is_switch)) {
             return [
                 'id' => $is_switch,
-                'type' => __('Switch Order', 'arsol-projects-for-woo')
+                'type' => __('Switch Order', 'arsol-pfw')
             ];
         }
         
         if (!empty($is_resubscribe)) {
             return [
                 'id' => $is_resubscribe,
-                'type' => __('Resubscribe Order', 'arsol-projects-for-woo')
+                'type' => __('Resubscribe Order', 'arsol-pfw')
             ];
         }
         
@@ -161,14 +161,14 @@ class AdminOrders {
             if (!empty($original_order_id)) {
                 return [
                     'id' => $original_order_id,
-                    'type' => __('Subscription', 'arsol-projects-for-woo')
+                    'type' => __('Subscription', 'arsol-pfw')
                 ];
             }
             
             // If we still don't have a parent order, display a special message
             return [
                 'id' => '',
-                'type' => __('Subscription (no parent found)', 'arsol-projects-for-woo'),
+                'type' => __('Subscription (no parent found)', 'arsol-pfw'),
                 'no_parent' => true
             ];
         }
@@ -243,7 +243,7 @@ class AdminOrders {
                 // This is a child order - get parent order info
                 $parent_info = $this->get_parent_order_info($order);
                 if ($parent_info) {
-                    $project_name = __('None', 'arsol-projects-for-woo');
+                    $project_name = __('None', 'arsol-pfw');
                     $project_id = '';
                     
                     // Only try to get parent project if we have a parent order
@@ -265,7 +265,7 @@ class AdminOrders {
 
                     
                     <p class="form-field form-field-wide">
-                        <label><strong><?php esc_html_e('Parent project:', 'arsol-projects-for-woo'); ?></strong></label>
+                        <label><strong><?php esc_html_e('Parent project:', 'arsol-pfw'); ?></strong></label>
                         <span><?php echo esc_html($project_name); ?></span>
                     </p>
                     <?php
@@ -278,9 +278,9 @@ class AdminOrders {
                 $projects = $this->get_projects();
                 ?>
                 <p class="form-field form-field-wide">
-                    <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></label>
+                    <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-pfw'); ?></label>
                     <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
-                        <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-projects-for-woo'); ?></option>
+                        <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
                         <?php foreach ($projects as $project) : ?>
                             <option value="<?php echo esc_attr($project->ID); ?>" 
                                 <?php selected((int)$selected_project, (int)$project->ID); ?>>
@@ -367,7 +367,7 @@ class AdminOrders {
         }
         
         // Format project information
-        $project_name = __('None', 'arsol-projects-for-woo');
+        $project_name = __('None', 'arsol-pfw');
         $has_link = false;
         
         if (!empty($project_id) && $project_id !== 'none') {
@@ -391,18 +391,18 @@ class AdminOrders {
         // Always use the same formatting regardless of context
         ?>
         <header class="arsol-pfw-header">
-            <h2><?php esc_html_e('Related Project', 'arsol-projects-for-woo'); ?></h2>
+            <h2><?php esc_html_e('Related Project', 'arsol-pfw'); ?></h2>
         </header>
         <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table woocommerce-MyAccount-subscriptions woocommerce-orders-table--subscriptions arsol-pfw-projects-row">
             <thead>
                 <tr>
-                    <th class="arsol-pfw-project-name woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></span></th>
+                    <th class="arsol-pfw-project-name woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project', 'arsol-pfw'); ?></span></th>
                     <th class="arsol-pfw-project-actions order-actions woocommerce-orders-table__header woocommerce-orders-table__header-order-actions woocommerce-orders-table__header-project-actions">&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="woocommerce-orders-table__row <?php echo $has_link ? 'arsol-pfw-status-active' : 'arsol-pfw-status-inactive'; ?>">
-                    <td class="woocommerce-orders-table__cell arsol-pfw-project-cell" data-title="<?php esc_attr_e('Project', 'arsol-projects-for-woo'); ?>">
+                    <td class="woocommerce-orders-table__cell arsol-pfw-project-cell" data-title="<?php esc_attr_e('Project', 'arsol-pfw'); ?>">
                         <?php if ($has_link) : ?>
                             <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="arsol-pfw-project-link">
                                 <?php echo esc_html($project_name); ?>
@@ -412,14 +412,14 @@ class AdminOrders {
                         <?php endif; ?>
                         
                         <?php if ($is_from_parent): ?>
-                            <span class="arsol-pfw-parent-info"><?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
+                            <span class="arsol-pfw-parent-info"><?php esc_html_e('From parent order', 'arsol-pfw'); ?> 
                             <a href="<?php echo esc_url($order_url); ?>" class="arsol-pfw-parent-link">#<?php echo esc_html($parent_order_number); ?></a></span>          
                         <?php endif; ?>
                         </td>
                     <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions arsol-pfw-actions-cell">
                         <?php if ($has_link) : ?>
                             <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view arsol-pfw-view-button">
-                                <?php esc_html_e('View', 'arsol-projects-for-woo'); ?>
+                                <?php esc_html_e('View', 'arsol-pfw'); ?>
                             </a>
                         <?php endif; ?>
                     </td>
@@ -440,7 +440,7 @@ class AdminOrders {
         foreach ($columns as $key => $column) {
             $new_columns[$key] = $column;
             if ($key === 'order_status') {
-                $new_columns['project'] = __('Project', 'arsol-projects-for-woo');
+                $new_columns['project'] = __('Project', 'arsol-pfw');
             }
         }
         return $new_columns;
@@ -474,7 +474,7 @@ class AdminOrders {
                                 
                                 echo '<a href="' . esc_url(get_edit_post_link($project_id)) . '">' . 
                                      esc_html($project->post_title) . '</a>' .
-                                     '<br>(' . esc_html__('From parent order', 'arsol-projects-for-woo') . ' ' .
+                                     '<br>(' . esc_html__('From parent order', 'arsol-pfw') . ' ' .
                                      '<a href="' . esc_url($parent_order_url) . '">#' . esc_html($parent_order_number) . '</a>)';
                                 return;
                             }
@@ -515,7 +515,7 @@ class AdminOrders {
         $options = [
             [
                 'value' => 'none',
-                'label' => __('None', 'arsol-projects-for-woo')
+                'label' => __('None', 'arsol-pfw')
             ]
         ];
         
@@ -529,12 +529,12 @@ class AdminOrders {
 
         woocommerce_register_additional_checkout_field(
             array(
-                'id'         => 'arsol-projects-for-woo/project',
-                'label'      => __('Project', 'arsol-projects-for-woo'),
+                'id'         => 'arsol-pfw/project', // Update this from arsol-projects-for-woo/project
+                'label'      => __('Project', 'arsol-pfw'),
                 'location'   => 'order',
                 'required'   => true,
                 'type'       => 'select',
-                'placeholder' => __('Select a project', 'arsol-projects-for-woo'),
+                'placeholder' => __('Select a project', 'arsol-pfw'),
                 'options'    => $options,
                 'validate'   => function($value) use ($user_id) {
                     // Accept "none" as valid
@@ -544,12 +544,12 @@ class AdminOrders {
                     
                     // For other values, perform normal validation
                     if (empty($value)) {
-                        return new \WP_Error('required_field', __('Please select a project.', 'arsol-projects-for-woo'));
+                        return new \WP_Error('required_field', __('Please select a project.', 'arsol-pfw'));
                     }
         
                     $project = get_post($value);
                     if (!$project || $project->post_type !== 'project' || $project->post_author != $user_id) {
-                        return new \WP_Error('invalid_project', __('Invalid project selected.', 'arsol-projects-for-woo'));
+                        return new \WP_Error('invalid_project', __('Invalid project selected.', 'arsol-pfw'));
                     }
         
                     return true;
