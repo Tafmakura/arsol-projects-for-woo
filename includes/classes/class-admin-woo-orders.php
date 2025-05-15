@@ -387,6 +387,19 @@ class AdminOrders {
             }
         }
         
+        // When showing the parent order reference, include order number and link
+        if ($is_from_parent) {
+            // Get the parent order object or ID depending on context
+            $parent_order_id = $is_subscription ? $order->get_parent_id() : $parent_info['id'];
+            $parent_order_obj = wc_get_order($parent_order_id);
+            $parent_order_number = $parent_order_obj ? $parent_order_obj->get_order_number() : $parent_order_id;
+            
+            // Create the link to parent order
+            $order_url = $parent_order_obj ? 
+                $parent_order_obj->get_view_order_url() : 
+                wc_get_endpoint_url('view-order', $parent_order_id, wc_get_page_permalink('myaccount'));
+        }
+        
         // Simple div output format for both contexts
         ?>
         <section>
@@ -401,7 +414,9 @@ class AdminOrders {
                     <?php endif; ?>
                     
                     <?php if ($is_from_parent) : ?>
-                        <small>(<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?>)</small>
+                        <small>(<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
+                        <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>)
+                        </small>
                     <?php endif; ?>
                 </p>
             </div>
@@ -449,9 +464,13 @@ class AdminOrders {
                         if (!empty($project_id)) {
                             $project = get_post($project_id);
                             if ($project) {
+                                $parent_order_number = $parent_order->get_order_number();
+                                $parent_order_url = $parent_order->get_edit_order_url(); // Admin URL for editing
+                                
                                 echo '<a href="' . esc_url(get_edit_post_link($project_id)) . '">' . 
                                      esc_html($project->post_title) . '</a>' .
-                                     '<br><small>(' . esc_html__('From parent order', 'arsol-projects-for-woo') . ')</small>';
+                                     '<br><small>(' . esc_html__('From parent order', 'arsol-projects-for-woo') . ' ' .
+                                     '<a href="' . esc_url($parent_order_url) . '">#' . esc_html($parent_order_number) . '</a>)</small>';
                                 return;
                             }
                         }
