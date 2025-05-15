@@ -285,20 +285,15 @@ class Shortcodes {
 		$current_page = max(1, (int) $atts['paged']);
 		$per_page = max(1, (int) $atts['per_page']);
 		
-		// Get user's projects
+		// Get user's projects - using author parameter instead of meta query
 		$args = array(
 			'post_type' => 'project',
 			'posts_per_page' => $per_page,
 			'paged' => $current_page,
 			'orderby' => 'title',
 			'order' => 'ASC',
-			'meta_query' => array(
-				array(
-					'key' => '_project_user_id',
-					'value' => $current_user_id,
-					'compare' => '='
-				)
-			)
+			'post_status' => 'publish',  // Only published projects
+			'author' => $current_user_id // Using the author parameter to match the logged-in user
 		);
 		
 		// Apply additional filtering if needed
