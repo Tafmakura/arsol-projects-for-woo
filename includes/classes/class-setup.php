@@ -43,9 +43,6 @@ class Setup {
         new \Arsol_Projects_For_Woo\Woo\AdminOrders();
         new \Arsol_Projects_For_Woo\Assets();
         new \Arsol_Projects_For_Woo\Shortcodes();
-        
-        // Initialize static shortcodes
-        add_action('init', array('\Arsol_Projects_For_Woo\Shortcodes', 'init'));
     }
 
     public function woocommerce_notice() {
