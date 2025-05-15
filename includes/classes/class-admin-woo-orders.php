@@ -389,21 +389,23 @@ class AdminOrders {
         
         // Simple div output format for both contexts
         ?>
-        <div class="arsol-project-details">
-            <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
-            <p>
-                <strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong>
-                <?php if ($has_link) : ?>
-                    <a href="<?php echo esc_url(get_permalink($project_id)); ?>"><?php echo esc_html($project_name); ?></a>
-                <?php else : ?>
-                    <?php echo esc_html($project_name); ?>
-                <?php endif; ?>
-                
-                <?php if ($is_from_parent) : ?>
-                    <small>(<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?>)</small>
-                <?php endif; ?>
-            </p>
-        </div>
+        <section>
+            <div class="arsol-project-details">
+                <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
+                <p>
+                    <strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong>
+                    <?php if ($has_link) : ?>
+                        <a href="<?php echo esc_url(get_permalink($project_id)); ?>"><?php echo esc_html($project_name); ?></a>
+                    <?php else : ?>
+                        <?php echo esc_html($project_name); ?>
+                    <?php endif; ?>
+                    
+                    <?php if ($is_from_parent) : ?>
+                        <small>(<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?>)</small>
+                    <?php endif; ?>
+                </p>
+            </div>
+        </section>
         <?php
     }
 
