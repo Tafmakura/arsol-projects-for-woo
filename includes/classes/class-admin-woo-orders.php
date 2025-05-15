@@ -417,7 +417,7 @@ class AdminOrders {
                                 <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>
                             </small>
                         <?php endif; ?>
-                    </td>
+                        </td>
                     <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions">
                         <?php if ($has_link) : ?>
                             <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view">
