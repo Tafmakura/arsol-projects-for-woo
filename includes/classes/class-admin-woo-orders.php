@@ -390,35 +390,35 @@ class AdminOrders {
         
         // Always use the same formatting regardless of context
         ?>
-        <header>
+        <header class="arsol-pfw-header">
             <h2><?php esc_html_e('Related Project', 'arsol-projects-for-woo'); ?></h2>
         </header>
-        <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table woocommerce-MyAccount-subscriptions woocommerce-orders-table--subscriptions projects-row">
+        <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table woocommerce-MyAccount-subscriptions woocommerce-orders-table--subscriptions arsol-pfw-projects-row">
             <thead>
                 <tr>
-                    <th class="project-name woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></span></th>
-                    <th class="project-actions order-actions woocommerce-orders-table__header woocommerce-orders-table__header-order-actions woocommerce-orders-table__header-project-actions">&nbsp;</th>
+                    <th class="arsol-pfw-project-name woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></span></th>
+                    <th class="arsol-pfw-project-actions order-actions woocommerce-orders-table__header woocommerce-orders-table__header-order-actions woocommerce-orders-table__header-project-actions">&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="woocommerce-orders-table__row <?php echo $has_link ? 'woocommerce-orders-table__row--status-active' : 'woocommerce-orders-table__row--status-inactive'; ?>">
-                    <td class="woocommerce-orders-table__cell" data-title="<?php esc_attr_e('Project', 'arsol-projects-for-woo'); ?>">
+                <tr class="woocommerce-orders-table__row <?php echo $has_link ? 'arsol-pfw-status-active' : 'arsol-pfw-status-inactive'; ?>">
+                    <td class="woocommerce-orders-table__cell arsol-pfw-project-cell" data-title="<?php esc_attr_e('Project', 'arsol-projects-for-woo'); ?>">
                         <?php if ($has_link) : ?>
-                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>">
+                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="arsol-pfw-project-link">
                                 <?php echo esc_html($project_name); ?>
                             </a>
                         <?php else : ?>
-                            <?php echo esc_html($project_name); ?>
+                            <span class="arsol-pfw-project-name-text"><?php echo esc_html($project_name); ?></span>
                         <?php endif; ?>
                         
                         <?php if ($is_from_parent): ?>
-                            <?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
-                            <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>          
+                            <span class="arsol-pfw-parent-info"><?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
+                            <a href="<?php echo esc_url($order_url); ?>" class="arsol-pfw-parent-link">#<?php echo esc_html($parent_order_number); ?></a></span>          
                         <?php endif; ?>
                         </td>
-                    <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions">
+                    <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions arsol-pfw-actions-cell">
                         <?php if ($has_link) : ?>
-                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view">
+                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view arsol-pfw-view-button">
                                 <?php esc_html_e('View', 'arsol-projects-for-woo'); ?>
                             </a>
                         <?php endif; ?>
