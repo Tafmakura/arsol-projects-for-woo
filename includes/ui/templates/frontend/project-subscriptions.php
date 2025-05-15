@@ -53,7 +53,7 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
                         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-total" data-title="<?php esc_attr_e('Total', 'arsol-projects-for-woo'); ?>">
                             <?php echo wp_kses_post($subscription->get_formatted_order_total()); ?>
                         </td>
-                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-actions .woocommerce-orders-table__cell-ars_order_actions" data-title="">
+                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-actions woocommerce-orders-table__cell-ars_order_actions" data-title="">
                             <a href="<?php echo esc_url($subscription->get_view_order_url()); ?>" class="woocommerce-button button view"><?php esc_html_e('View', 'arsol-projects-for-woo'); ?></a>
                         </td>
                     </tr>
