@@ -136,7 +136,7 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
 			'per_page' => 10,
-			'page' => 1,
+			'paged' => 1,  // Change from 'page' to 'paged'
 		), $atts);
 
 		// Get current user
@@ -167,7 +167,7 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['page']);
+		$current_page = max(1, (int) $atts['paged']);  // Use 'paged' instead of 'page'
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project orders using the admin orders class
@@ -204,7 +204,7 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
 			'per_page' => 10,
-			'page' => 1,
+			'paged' => 1,  // Change from 'page' to 'paged'
 		), $atts);
 
 		// Get current user
@@ -235,7 +235,7 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['page']);
+		$current_page = max(1, (int) $atts['paged']);  // Use 'paged' instead of 'page'
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project subscriptions using the admin orders class

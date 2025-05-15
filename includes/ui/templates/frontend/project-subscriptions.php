@@ -73,12 +73,22 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
 
     <?php if (1 < $customer_subscriptions->max_num_pages) : ?>
         <div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination">
+            <?php 
+            // Get current URL and preserve existing query args
+            $current_url = remove_query_arg('paged');
+            
+            // Preserve project_id if it exists in shortcode attributes
+            if (!empty($atts['project_id'])) {
+                $current_url = add_query_arg('project_id', $atts['project_id'], $current_url);
+            }
+            ?>
+            
             <?php if (1 !== $current_page) : ?>
-                <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('page', $current_page - 1)); ?>"><?php esc_html_e('Previous', 'arsol-projects-for-woo'); ?></a>
+                <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page - 1, $current_url)); ?>"><?php esc_html_e('Previous', 'arsol-projects-for-woo'); ?></a>
             <?php endif; ?>
 
             <?php if (intval($customer_subscriptions->max_num_pages) !== $current_page) : ?>
-                <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('page', $current_page + 1)); ?>"><?php esc_html_e('Next', 'arsol-projects-for-woo'); ?></a>
+                <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page + 1, $current_url)); ?>"><?php esc_html_e('Next', 'arsol-projects-for-woo'); ?></a>
             <?php endif; ?>
         </div>
     <?php endif; ?>
