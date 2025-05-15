@@ -628,4 +628,57 @@ class AdminOrders {
         return $result;
     }
 
+    /**
+     * Get subscriptions associated with a project
+     *
+     * @param int $project_id Project ID
+     * @param int $user_id User ID
+     * @param int $current_page Current page number
+     * @param int $per_page Subscriptions per page
+     * @return object Subscriptions object with pagination data
+     */
+    public static function get_project_subscriptions($project_id, $user_id, $current_page = 1, $per_page = 10) {
+        // Check if WooCommerce Subscriptions is active
+        if (!class_exists('WC_Subscriptions')) {
+            return self::create_empty_subscriptions_result();
+        }
+        
+        // Query subscriptions that have meta data connecting them to this project
+        $args = array(
+            'customer_id' => $user_id,
+            'limit' => $per_page,
+            'page' => $current_page,
+            'meta_key' => '_project_id',
+            'meta_value' => $project_id,
+            'return' => 'ids',
+            'type' => 'shop_subscription',
+        );
+
+        // Get subscriptions
+        $subscriptions = wcs_get_subscriptions($args);
+        $count_args = array_merge($args, array('limit' => -1, 'return' => 'ids'));
+        $total_subscriptions = wcs_get_subscriptions($count_args);
+        
+        // Create result object similar to WooCommerce customer subscriptions
+        $result = new \stdClass();
+        $result->subscriptions = $subscriptions;
+        $result->total = count($total_subscriptions);
+        $result->max_num_pages = ceil($result->total / $per_page);
+
+        return $result;
+    }
+
+    /**
+     * Create an empty subscriptions result when WooCommerce Subscriptions is not active
+     *
+     * @return object Empty subscriptions result
+     */
+    private static function create_empty_subscriptions_result() {
+        $result = new \stdClass();
+        $result->subscriptions = array();
+        $result->total = 0;
+        $result->max_num_pages = 1;
+        return $result;
+    }
+
 }

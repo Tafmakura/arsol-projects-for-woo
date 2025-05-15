@@ -27,11 +27,14 @@ class Shortcodes {
 	 * Constructor.
 	 */
 	public function __construct() {
-		// Register shortcodes.
+		// Register your existing shortcodes
 		add_shortcode( 'arsol_projects', array( $this, 'render_projects' ) );
 		add_shortcode( 'arsol_project', array( $this, 'render_single_project' ) );
 		add_shortcode( 'arsol_project_categories', array( $this, 'render_project_categories' ) );
 		add_shortcode( 'project_orders', array( $this, 'project_orders_shortcode' ) );
+		
+		// Add the new subscription shortcode
+		add_shortcode( 'project_subscriptions', array( $this, 'project_subscriptions_shortcode' ) );
 	}
 
 	/**
@@ -187,5 +190,71 @@ class Shortcodes {
 		return ob_get_clean();
 	}
 
-	
+	/**
+	 * Shortcode to display subscriptions associated with a project
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function project_subscriptions_shortcode($atts) {
+		// Start output buffering
+		ob_start();
+
+		// Normalize attributes
+		$atts = shortcode_atts(array(
+			'project_id' => 0,
+			'per_page' => 10,
+			'page' => 1,
+		), $atts);
+
+		// Get current user
+		$current_user_id = get_current_user_id();
+		
+		// If no user is logged in, show login message
+		if (!$current_user_id) {
+			return '<p>' . __('Please log in to view project subscriptions.', 'arsol-projects-for-woo') . '</p>';
+		}
+
+		// Get project ID (from attribute or current page)
+		$project_id = (int) $atts['project_id'];
+		if (!$project_id) {
+			// Try to get from current page if it's a project
+			global $post;
+			if ($post && $post->post_type === 'project') {
+				$project_id = $post->ID;
+			}
+		}
+
+		if (!$project_id) {
+			return '<p>' . __('No project specified.', 'arsol-projects-for-woo') . '</p>';
+		}
+
+		// Verify user has access to this project
+		if (!AdminOrders::user_can_view_project($current_user_id, $project_id)) {
+			return '<p>' . __('You do not have permission to view subscriptions for this project.', 'arsol-projects-for-woo') . '</p>';
+		}
+
+		// Get current page for pagination
+		$current_page = max(1, (int) $atts['page']);
+		$per_page = max(1, (int) $atts['per_page']);
+
+		// Get project subscriptions using the admin orders class
+		$project_subscriptions = AdminOrders::get_project_subscriptions(
+			$project_id, 
+			$current_user_id, 
+			$current_page, 
+			$per_page
+		);
+		
+		// Prepare template variables
+		$has_subscriptions = !empty($project_subscriptions->subscriptions);
+		$customer_subscriptions = $project_subscriptions;
+		$wp_button_class = wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
+
+		// Load template
+		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/templates/frontend/project-subscriptions.php');
+		
+		// Return buffered content
+		return ob_get_clean();
+	}
 }
