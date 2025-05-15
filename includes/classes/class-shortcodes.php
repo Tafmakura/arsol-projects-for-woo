@@ -135,7 +135,7 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
 			'per_page' => 10,
-			'paged' => 1,
+			'paged' => 1,  // Change from 'page' to 'paged'
 		), $atts);
 
 		// Get current user
@@ -166,11 +166,11 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['paged']);
+		$current_page = max(1, (int) $atts['paged']);  // Use 'paged' instead of 'page'
 		$per_page = max(1, (int) $atts['per_page']);
 
-		// Get project orders including child orders whose parent belongs to this project
-		$project_orders = AdminOrders::get_project_orders_with_children(
+		// Get project orders using the admin orders class
+		$project_orders = AdminOrders::get_project_orders(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 
@@ -203,7 +203,7 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
 			'per_page' => 10,
-			'paged' => 1,
+			'paged' => 1,  // Change from 'page' to 'paged'
 		), $atts);
 
 		// Get current user
@@ -234,11 +234,11 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['paged']);
+		$current_page = max(1, (int) $atts['paged']);  // Use 'paged' instead of 'page'
 		$per_page = max(1, (int) $atts['per_page']);
 
-		// Get project subscriptions based on parent order association only
-		$project_subscriptions = AdminOrders::get_project_subscriptions_by_parent_order(
+		// Get project subscriptions using the admin orders class
+		$project_subscriptions = AdminOrders::get_project_subscriptions(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 
