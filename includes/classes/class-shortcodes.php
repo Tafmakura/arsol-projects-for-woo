@@ -168,7 +168,7 @@ class Shortcodes {
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project orders using the admin orders class
-		$project_orders = Arsol_Projects_Admin_Woo_Orders::get_project_orders(
+		$project_orders = AdminOrders::get_project_orders(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 
