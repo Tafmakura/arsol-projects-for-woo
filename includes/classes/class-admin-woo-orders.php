@@ -532,4 +532,40 @@ class AdminOrders {
         );
     }
 
+    /**
+     * Display project information in subscription details table
+     *
+     * @param \WC_Subscription $subscription The subscription object
+     */
+    public function display_project_in_subscription_details($subscription) {
+        // Get the parent order of the subscription
+        $parent_order_id = $subscription->get_parent_id();
+        $project_id = '';
+        $is_from_parent = false;
+        
+        if ($parent_order_id) {
+            // Get parent order
+            $parent_order = wc_get_order($parent_order_id);
+            if ($parent_order) {
+                $project_id = $parent_order->get_meta(self::PROJECT_META_KEY);
+                $is_from_parent = true;
+            }
+        } else {
+            // If no parent order, try getting from subscription directly
+            $project_id = $subscription->get_meta(self::PROJECT_META_KEY);
+        }
+        
+        // Only display if we have a project
+        if (!empty($project_id) && $project_id !== 'none') {
+            $project = get_post($project_id);
+            if ($project) {
+                $this->output_project_row($project_id, $project->post_title, $is_from_parent);
+                return;
+            }
+        }
+        
+        // If we get here, display "None"
+        $this->output_project_row(0, __('None', 'arsol-projects-for-woo'), false, true);
+    }
+
 }
