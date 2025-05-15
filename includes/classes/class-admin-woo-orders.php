@@ -391,7 +391,7 @@ class AdminOrders {
         // Always use the same formatting regardless of context
         ?>
         <header>
-            <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
+            <h2><?php esc_html_e('Project Details', 'arsol-projects-for-woo'); ?></h2>
         </header>
         <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table woocommerce-MyAccount-subscriptions woocommerce-orders-table--subscriptions projects-row">
             <thead>
@@ -412,10 +412,8 @@ class AdminOrders {
                         <?php endif; ?>
                         
                         <?php if ($is_from_parent): ?>
-                            <small>
-                                <?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
-                                <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>
-                            </small>
+                            <?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?> 
+                            <a href="<?php echo esc_url($order_url); ?>">#<?php echo esc_html($parent_order_number); ?></a>          
                         <?php endif; ?>
                         </td>
                     <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions">
