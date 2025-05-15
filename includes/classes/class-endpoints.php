@@ -34,6 +34,9 @@ class Endpoints {
         
         // Handle endpoint content
         add_action('woocommerce_account_projects_endpoint', array($this, 'projects_endpoint_content'));
+        add_action('woocommerce_account_project-overview_endpoint', array($this, 'project_overview_endpoint_content'));
+        add_action('woocommerce_account_project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
+        add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
     }
     
     /**
@@ -43,6 +46,9 @@ class Endpoints {
      */
     public function register_endpoints() {
         add_rewrite_endpoint('projects', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('project-overview', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('project-orders', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('project-subscriptions', EP_ROOT | EP_PAGES);
     }
     
     /**
@@ -99,6 +105,92 @@ class Endpoints {
         
         // Include the template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/projects.php';
+    }
+    
+    /**
+     * Display project overview endpoint content
+     *
+     * @return void
+     */
+    public function project_overview_endpoint_content() {
+        $project_id = absint(get_query_var('project-overview'));
+        $this->render_project_page($project_id, 'overview');
+    }
+    
+    /**
+     * Display project orders endpoint content
+     *
+     * @return void
+     */
+    public function project_orders_endpoint_content() {
+        $project_id = absint(get_query_var('project-orders'));
+        $this->render_project_page($project_id, 'orders');
+    }
+    
+    /**
+     * Display project subscriptions endpoint content
+     *
+     * @return void
+     */
+    public function project_subscriptions_endpoint_content() {
+        $project_id = absint(get_query_var('project-subscriptions'));
+        $this->render_project_page($project_id, 'subscriptions');
+    }
+    
+    /**
+     * Helper method to render a project page
+     *
+     * @param int $project_id Project ID
+     * @param string $tab Current tab (overview, orders, subscriptions)
+     * @return void
+     */
+    private function render_project_page($project_id, $tab) {
+        // Get current user ID
+        $user_id = get_current_user_id();
+        
+        // Check if project exists and user has access
+        if (!$project_id || !$this->user_can_view_project($user_id, $project_id)) {
+            echo '<p>' . __('You do not have permission to view this project.', 'arsol-pfw') . '</p>';
+            return;
+        }
+        
+        // Get project data
+        $project = get_post($project_id);
+        
+        // Include appropriate template based on tab
+        switch ($tab) {
+            case 'orders':
+                echo do_shortcode('[project_orders project_id="' . esc_attr($project_id) . '" per_page="10" paged="1"]');
+                break;
+                
+            case 'subscriptions':
+                echo do_shortcode('[project_subscriptions project_id="' . esc_attr($project_id) . '" per_page="10" paged="1"]');
+                break;
+                
+            case 'overview':
+            default:
+                // Include the project overview template
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
+                break;
+        }
+    }
+    
+    /**
+     * Check if a user can view a project
+     *
+     * @param int $user_id User ID
+     * @param int $project_id Project ID
+     * @return bool Whether the user can view the project
+     */
+    private function user_can_view_project($user_id, $project_id) {
+        // If AdminOrders class has this method, use it
+        if (method_exists('Arsol_Projects_For_Woo\Woo\AdminOrders', 'user_can_view_project')) {
+            return AdminOrders::user_can_view_project($user_id, $project_id);
+        }
+        
+        // Otherwise implement simple check
+        $project_author_id = get_post_field('post_author', $project_id);
+        return ($project_author_id == $user_id);
     }
 }
 
