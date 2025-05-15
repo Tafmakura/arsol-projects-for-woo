@@ -19,7 +19,6 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
             <thead>
                 <tr>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr"><?php esc_html_e('Invoice', 'arsol-projects-for-woo'); ?></span></th>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span class="nobr"><?php esc_html_e('Date', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr"><?php esc_html_e('Status', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-total"><span class="nobr"><?php esc_html_e('Total', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-ars_order_actions"><span class="nobr"></span></th>
@@ -38,9 +37,6 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
                                 <?php echo esc_html(_x('#', 'hash before order number', 'arsol-projects-for-woo') . $order->get_order_number()); ?>
                             </a>
                         </th>
-                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Date">
-                            <time datetime="<?php echo esc_attr($order->get_date_created()->date('c')); ?>"><?php echo esc_html(wc_format_datetime($order->get_date_created())); ?></time>
-                        </td>
                         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="Status">
                             <?php echo esc_html(wc_get_order_status_name($order->get_status())); ?>
                         </td>

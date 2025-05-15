@@ -19,10 +19,9 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
             <thead>
                 <tr>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-number"><span class="nobr"><?php esc_html_e('Subscription', 'arsol-projects-for-woo'); ?></span></th>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-next-payment"><span class="nobr"><?php esc_html_e('Next Payment', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-status"><span class="nobr"><?php esc_html_e('Status', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-total"><span class="nobr"><?php esc_html_e('Total', 'arsol-projects-for-woo'); ?></span></th>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-actions "><span class="nobr"></span></th>
+                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-actions"><span class="nobr"></span></th>
                 </tr>
             </thead>
 
@@ -37,23 +36,13 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
                                 <?php echo esc_html(_x('#', 'hash before subscription number', 'arsol-projects-for-woo') . $subscription->get_id()); ?>
                             </a>
                         </th>
-                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-next-payment" data-title="<?php esc_attr_e('Next Payment', 'arsol-projects-for-woo'); ?>">
-                            <?php
-                            $next_payment = $subscription->get_date('next_payment');
-                            if (!empty($next_payment)) {
-                                echo esc_html(date_i18n(get_option('date_format'), strtotime($next_payment)));
-                            } else {
-                                echo esc_html__('N/A', 'arsol-projects-for-woo');
-                            }
-                            ?>
-                        </td>
                         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-status" data-title="<?php esc_attr_e('Status', 'arsol-projects-for-woo'); ?>">
                             <?php echo esc_html(wcs_get_subscription_status_name($subscription->get_status())); ?>
                         </td>
                         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-total" data-title="<?php esc_attr_e('Total', 'arsol-projects-for-woo'); ?>">
                             <?php echo wp_kses_post($subscription->get_formatted_order_total()); ?>
                         </td>
-                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-actions woocommerce-orders-table__cell-ars_order_actions" data-title="">
+                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-actions" data-title="">
                             <a href="<?php echo esc_url($subscription->get_view_order_url()); ?>" class="woocommerce-button button view"><?php esc_html_e('View', 'arsol-projects-for-woo'); ?></a>
                         </td>
                     </tr>
