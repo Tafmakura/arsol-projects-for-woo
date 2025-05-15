@@ -41,7 +41,7 @@ class Setup {
             'capability_type'    => 'post',
             'hierarchical'       => false,
             'supports'           => array('title', 'editor', 'thumbnail', 'excerpt', 'author'),
-            'has_archive'        => true,
+            'has_archive'        => false, // Change from true to false
             'rewrite'           => array('slug' => 'projects'),
             'show_in_rest'      => false, // Disable Gutenberg
         );
