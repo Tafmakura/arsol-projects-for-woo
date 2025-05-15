@@ -32,10 +32,10 @@ class AdminOrders {
         add_action('admin_enqueue_scripts', array($this, 'remove_duplicate_project_field'));
 
         // Add project information to order details table
-        add_action('woocommerce_order_details_after_order_table', array($this, 'display_project_in_order_details'));
+        add_action('woocommerce_order_details_after_order_table', array($this, 'display_project_details'));
 
         // Add project to subscription details table (WooCommerce Subscriptions)
-        add_action('woocommerce_subscription_details_before_subscription_table', array($this, 'display_project_in_subscription_details'));
+        add_action('woocommerce_subscription_details_after_subscription_table', array($this, 'display_project_details'));
     }
 
     public function init() {
@@ -326,78 +326,84 @@ class AdminOrders {
         }
     }
 
+
     /**
-     * Display project information in order details table
+     * Display project information in a simple div format
      *
-     * @param \WC_Order $order The order object
+     * @param \WC_Order|\WC_Subscription $order The order or subscription object
      */
-    public function display_project_in_order_details($order) {
-        // Check if this is a parent order
-        if (!$this->is_parent_order($order)) {
-            // This is a child order - get parent order info
-            $parent_info = $this->get_parent_order_info($order);
-            if ($parent_info) {
-                $project_name = __('None', 'arsol-projects-for-woo');
-                $project_id = '';
-                
-                // Only try to get parent project if we have a parent order
-                if (empty($parent_info['no_parent'])) {
-                    // Get parent order
-                    $parent_order = wc_get_order($parent_info['id']);
-                    $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
-                    
-                    if (!empty($project_id)) {
-                        $project = get_post($project_id);
-                        if ($project) {
-                            $project_name = $project->post_title;
-                            // Output project information in order details table
-                            $this->output_project_row($project_id, $project_name, true);
-                            return;
-                        }
-                    }
+    public function display_project_details($order) {
+        // Determine if this is a subscription
+        $is_subscription = function_exists('wcs_is_subscription') && wcs_is_subscription($order);
+        $context = $is_subscription ? 'subscription' : 'order';
+        
+        $project_id = '';
+        $is_from_parent = false;
+        
+        if ($is_subscription) {
+            // Get the parent order of the subscription
+            $parent_order_id = $order->get_parent_id(); 
+            
+            if ($parent_order_id) {
+                // Get parent order
+                $parent_order = wc_get_order($parent_order_id);
+                if ($parent_order) {
+                    $project_id = $parent_order->get_meta(self::PROJECT_META_KEY);
+                    $is_from_parent = true;
                 }
+            } else {
+                // If no parent order, try getting from subscription directly
+                $project_id = $order->get_meta(self::PROJECT_META_KEY);
             }
         } else {
-            // Parent order - get project directly
-            $project_id = $this->get_project_from_order($order);
-            if (!empty($project_id) && $project_id !== 'none') {
-                $project = get_post($project_id);
-                if ($project) {
-                    $this->output_project_row($project_id, $project->post_title);
-                    return;
+            // Regular order handling
+            if (!$this->is_parent_order($order)) {
+                // This is a child order - get parent order info
+                $parent_info = $this->get_parent_order_info($order);
+                if ($parent_info) {
+                    // Only try to get parent project if we have a parent order
+                    if (empty($parent_info['no_parent'])) {
+                        // Get parent order
+                        $parent_order = wc_get_order($parent_info['id']);
+                        $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
+                        $is_from_parent = true;
+                    }
                 }
+            } else {
+                // Parent order - get project directly
+                $project_id = $this->get_project_from_order($order);
             }
         }
         
-        // If we get here, either there's no project or we couldn't determine it
-        // Optionally display "None" row
-        $this->output_project_row(0, __('None', 'arsol-projects-for-woo'), false, true);
-    }
-
-    /**
-     * Output project information row in order details table
-     *
-     * @param int $project_id Project ID
-     * @param string $project_name Project name
-     * @param bool $is_parent Whether this is from a parent order
-     * @param bool $is_none Whether this is a "None" value
-     */
-    private function output_project_row($project_id, $project_name, $is_parent = false, $is_none = false) {
+        // Display project information
+        $project_name = __('None', 'arsol-projects-for-woo');
+        $has_link = false;
+        
+        if (!empty($project_id) && $project_id !== 'none') {
+            $project = get_post($project_id);
+            if ($project) {
+                $project_name = $project->post_title;
+                $has_link = true;
+            }
+        }
+        
+        // Simple div output format for both contexts
         ?>
-        <tr>
-            <th scope="row"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></th>
-            <td>
-                <?php if (!$is_none) : ?>
+        <div class="arsol-project-details">
+            <h3><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h3>
+            <p>
+                <strong><?php esc_html_e('Project:', 'arsol-projects-for-woo'); ?></strong>
+                <?php if ($has_link) : ?>
                     <a href="<?php echo esc_url(get_permalink($project_id)); ?>"><?php echo esc_html($project_name); ?></a>
                 <?php else : ?>
                     <?php echo esc_html($project_name); ?>
                 <?php endif; ?>
                 
-                <?php if ($is_parent) : ?>
+                <?php if ($is_from_parent) : ?>
                     <small>(<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?>)</small>
                 <?php endif; ?>
-            </td>
-        </tr>
+            </p>
+        </div>
         <?php
     }
 
@@ -533,61 +539,6 @@ class AdminOrders {
                 }
             )
         );
-    }
-
-    /**
-     * Display project information in subscription details table
-     *
-     * @param \WC_Subscription $subscription The subscription object
-     */
-    public function display_project_in_subscription_details($subscription) {
-        // Get the parent order of the subscription
-        $parent_order_id = $subscription->get_parent_id();
-        $project_id = '';
-        $is_from_parent = false;
-        
-        if ($parent_order_id) {
-            // Get parent order
-            $parent_order = wc_get_order($parent_order_id);
-            if ($parent_order) {
-                $project_id = $parent_order->get_meta(self::PROJECT_META_KEY);
-                $is_from_parent = true;
-            }
-        } else {
-            // If no parent order, try getting from subscription directly
-            $project_id = $subscription->get_meta(self::PROJECT_META_KEY);
-        }
-        
-        // Prepare display information
-        $project_name = __('None', 'arsol-projects-for-woo');
-        $has_link = false;
-        
-        // Only use project details if we have a valid project
-        if (!empty($project_id) && $project_id !== 'none') {
-            $project = get_post($project_id);
-            if ($project) {
-                $project_name = $project->post_title;
-                $has_link = true;
-            }
-        }
-        
-        // Output in the requested format
-        ?>
-        <tr>
-            <td><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></td>
-            <td>
-                <?php if ($has_link) : ?>
-                    <a href="<?php echo esc_url(get_permalink($project_id)); ?>"><?php echo esc_html($project_name); ?></a>
-                <?php else : ?>
-                    <?php echo esc_html($project_name); ?>
-                <?php endif; ?>
-                
-                <?php if ($is_from_parent) : ?>
-                    <small>(<?php esc_html_e('From parent order', 'arsol-projects-for-woo'); ?>)</small>
-                <?php endif; ?>
-            </td>
-        </tr>
-        <?php
     }
 
 }
