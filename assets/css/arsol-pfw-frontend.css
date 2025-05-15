@@ -20,18 +20,6 @@
     font-weight: bold;
 }
 
-/* Project tables - headers alignment */
-.project-orders-table th,
-.project-subscriptions-table th {
-    text-align: left !important;
-}
-
-/* Only show one action button at a time */
-.project-orders-table .order-actions .button,
-.project-subscriptions-table .subscription-actions .button {
-    margin: 0 3px 3px 0;
-}
-
 /* Responsive styling */
 @media (max-width: 768px) {
     .arsol-pfw-projects-row thead {

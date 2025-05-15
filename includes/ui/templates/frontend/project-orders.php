@@ -14,14 +14,14 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
 
 <?php if ($has_orders) : ?>
 
-    <table class="woocommerce-orders-table project-orders-table shop_table shop_table_responsive my_account_orders account-orders-table">
+    <table class="woocommerce-orders-table woocommerce-MyAccount-orders project-orders-table shop_table shop_table_responsive my_account_orders account-orders-table">
         <thead>
             <tr>
-                <th scope="col" class="order-number"><span class="nobr"><?php esc_html_e('Order', 'arsol-projects-for-woo'); ?></span></th>
-                <th scope="col" class="order-date"><span class="nobr"><?php esc_html_e('Date', 'arsol-projects-for-woo'); ?></span></th>
-                <th scope="col" class="order-status"><span class="nobr"><?php esc_html_e('Status', 'arsol-projects-for-woo'); ?></span></th>
-                <th scope="col" class="order-total"><span class="nobr"><?php esc_html_e('Total', 'arsol-projects-for-woo'); ?></span></th>
-                <th scope="col" class="order-actions"><span class="nobr"><?php esc_html_e('Actions', 'arsol-projects-for-woo'); ?></span></th>
+                <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr"><?php esc_html_e('Invoice', 'arsol-projects-for-woo'); ?></span></th>
+                <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-date"><span class="nobr"><?php esc_html_e('Date', 'arsol-projects-for-woo'); ?></span></th>
+                <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr"><?php esc_html_e('Status', 'arsol-projects-for-woo'); ?></span></th>
+                <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-total"><span class="nobr"><?php esc_html_e('Total', 'arsol-projects-for-woo'); ?></span></th>
+                <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-ars_order_actions"><span class="nobr"></span></th>
             </tr>
         </thead>
 
@@ -31,37 +31,26 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
                 $order = wc_get_order($customer_order);
                 $item_count = $order->get_item_count() - $order->get_item_count_refunded();
                 ?>
-                <tr class="woocommerce-orders-table__row project-orders-table__row--status-<?php echo esc_attr($order->get_status()); ?> order">
-                    <th class="order-number" scope="row">
-                        <a href="<?php echo esc_url($order->get_view_order_url()); ?>">
+                <tr class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($order->get_status()); ?> order">
+                    <th class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-number" data-title="Invoice" scope="row">
+                        <a href="<?php echo esc_url($order->get_view_order_url()); ?>" aria-label="<?php echo esc_attr(sprintf(__('View order number %s', 'arsol-projects-for-woo'), $order->get_order_number())); ?>">
                             <?php echo esc_html(_x('#', 'hash before order number', 'arsol-projects-for-woo') . $order->get_order_number()); ?>
                         </a>
                     </th>
-                    <td class="order-date">
+                    <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-date" data-title="Date">
                         <time datetime="<?php echo esc_attr($order->get_date_created()->date('c')); ?>"><?php echo esc_html(wc_format_datetime($order->get_date_created())); ?></time>
                     </td>
-                    <td class="order-status">
+                    <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-status" data-title="Status">
                         <?php echo esc_html(wc_get_order_status_name($order->get_status())); ?>
                     </td>
-                    <td class="order-total">
+                    <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-total" data-title="Total">
                         <?php
                         /* translators: 1: formatted order total 2: total order items */
                         echo wp_kses_post(sprintf(_n('%1$s for %2$s item', '%1$s for %2$s items', $item_count, 'arsol-projects-for-woo'), $order->get_formatted_order_total(), $item_count));
                         ?>
                     </td>
-                    <td class="order-actions">
-                        <?php
-                        // Get standard WooCommerce order actions
-                        $actions = wc_get_account_orders_actions($order);
-                        
-                        // Only show view action if available
-                        if (!empty($actions['view'])) {
-                            echo '<a href="' . esc_url($actions['view']['url']) . '" class="woocommerce-button' . esc_attr($wp_button_class) . ' button view">' . esc_html($actions['view']['name']) . '</a>';
-                        } else {
-                            // Fallback: create view action manually if WooCommerce doesn't provide one
-                            echo '<a href="' . esc_url($order->get_view_order_url()) . '" class="woocommerce-button' . esc_attr($wp_button_class) . ' button view">' . esc_html__('View', 'arsol-projects-for-woo') . '</a>';
-                        }
-                        ?>
+                    <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-ars_order_actions" data-title="">
+                        <a href="<?php echo esc_url($order->get_view_order_url()); ?>" class="woocommerce-button button view"><?php esc_html_e('View', 'arsol-projects-for-woo'); ?></a>
                     </td>
                 </tr>
                 <?php
