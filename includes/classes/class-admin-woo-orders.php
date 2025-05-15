@@ -390,16 +390,18 @@ class AdminOrders {
         
         // Always use the same formatting regardless of context
         ?>
-        <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
-        <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table">
+        <header>
+            <h2><?php esc_html_e('Project Information', 'arsol-projects-for-woo'); ?></h2>
+        </header>
+        <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table woocommerce-MyAccount-projects woocommerce-orders-table--projects">
             <thead>
                 <tr>
-                    <th class="woocommerce-orders-table__header"><span class="nobr"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></span></th>
-                    <th class="woocommerce-orders-table__header woocommerce-orders-table__header-order-actions">&nbsp;</th>
+                    <th class="project-name woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project', 'arsol-projects-for-woo'); ?></span></th>
+                    <th class="project-actions order-actions woocommerce-orders-table__header woocommerce-orders-table__header-order-actions woocommerce-orders-table__header-project-actions">&nbsp;</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="woocommerce-orders-table__row">
+                <tr class="woocommerce-orders-table__row <?php echo $has_link ? 'woocommerce-orders-table__row--status-active' : 'woocommerce-orders-table__row--status-inactive'; ?>">
                     <td class="woocommerce-orders-table__cell" data-title="<?php esc_attr_e('Project', 'arsol-projects-for-woo'); ?>">
                         <?php if ($has_link) : ?>
                             <a href="<?php echo esc_url(get_permalink($project_id)); ?>">
