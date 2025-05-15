@@ -29,6 +29,7 @@ class Shortcodes {
 		add_shortcode( 'arsol_projects', array( $this, 'render_projects' ) );
 		add_shortcode( 'arsol_project', array( $this, 'render_single_project' ) );
 		add_shortcode( 'arsol_project_categories', array( $this, 'render_project_categories' ) );
+		add_shortcode( 'project_orders', array( $this, 'project_orders_shortcode' ) );
 	}
 
 	/**
