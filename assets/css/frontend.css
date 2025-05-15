@@ -1,0 +1,40 @@
+/**
+ * Arsol Projects for WooCommerce - Frontend Styles
+ */
+
+/* Project select field on checkout */
+.woocommerce-checkout .form-row label[for="arsol-projects-for-woo-project"] {
+    font-weight: bold;
+}
+
+/* Project details table on order view page */
+.projects-row {
+    margin-bottom: 2em;
+}
+
+.projects-row th {
+    text-align: left;
+    padding: 8px;
+}
+
+.projects-row td {
+    padding: 8px;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+    .projects-row thead {
+        display: none;
+    }
+    
+    .projects-row td {
+        display: block;
+        text-align: right;
+    }
+    
+    .projects-row td:before {
+        content: attr(data-title);
+        float: left;
+        font-weight: bold;
+    }
+}

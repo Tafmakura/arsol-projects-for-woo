@@ -32,6 +32,7 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-woo-orders.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
     }
 
     /**
@@ -41,6 +42,7 @@ class Setup {
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Setup();
        // new \Arsol_Projects_For_Woo\Shortcodes();
         new \Arsol_Projects_For_Woo\Woo\AdminOrders();
+        new \Arsol_Projects_For_Woo\Assets();
     }
 
     public function woocommerce_notice() {

@@ -1,0 +1,28 @@
+/**
+ * Arsol Projects for WooCommerce - Admin Styles
+ */
+
+/* Project field styling */
+#arsol_project_selector {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Project column in orders list */
+.column-project {
+    width: 15%;
+}
+
+/* Project details table styling */
+.projects-row th {
+    text-align: left;
+    padding: 8px;
+}
+
+.projects-row td {
+    padding: 8px;
+}
+
+.projects-row .woocommerce-button.button.view {
+    margin: 0;
+}
