@@ -391,7 +391,7 @@ class AdminOrders {
         }
         
         // Load the template with the prepared variables
-        include ARSOL_PROJECTS_FOR_WOO_PATH . 'includes/ui/components/frontend/table-related-project-details.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/table-related-project-details.php';
     }
 
     /**
