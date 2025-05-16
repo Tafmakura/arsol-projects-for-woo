@@ -32,6 +32,7 @@ class Setup {
         $args = array(
             'labels'              => $labels,
             'public'              => true,
+            'publicly_queryable'  => false, // Disable single project pages
             'show_ui'            => true,
             'show_in_menu'       => true,
             'show_in_nav_menus'  => true,
@@ -41,8 +42,8 @@ class Setup {
             'capability_type'    => 'post',
             'hierarchical'       => false,
             'supports'           => array('title', 'editor', 'thumbnail', 'excerpt', 'author'),
-            'has_archive'        => false, // Change from true to false
-            'rewrite'           => array('slug' => 'projects'),
+            'has_archive'        => false, // Already disabled
+            'rewrite'           => false, // Remove rewrite rules since we don't need public URLs
             'show_in_rest'      => false, // Disable Gutenberg
         );
 

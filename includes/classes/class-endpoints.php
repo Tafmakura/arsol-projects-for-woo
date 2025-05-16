@@ -182,16 +182,7 @@ class Endpoints {
         $project_status = get_post_status($project_id);
         $project_date = get_the_date('', $project_id);
         
-        // Save original global post
-        global $post;
-        $original_post = $post;
-
-        // Set the global post to project
-        global $post;
-        $post = get_post($project_id);
-        setup_postdata($post);
-        
-
+       
         // Display the project navigation
         echo $this->get_project_navigation($project_id, $tab);
   
@@ -211,14 +202,6 @@ class Endpoints {
                 break;
         }
 
-        
-        // Restore original post
-        $post = $original_post;
-        if ($original_post) {
-            setup_postdata($original_post);
-        } else {
-            wp_reset_postdata();
-        }
     }
     
     /**
