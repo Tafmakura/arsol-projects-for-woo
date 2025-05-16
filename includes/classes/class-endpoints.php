@@ -187,6 +187,15 @@ class Endpoints {
                 
             case 'overview':
             default:
+                // Prepare project data for the template
+                $project_title = get_the_title($project_id);
+                $project_content = get_post_field('post_content', $project_id);
+                $project_excerpt = get_post_field('post_excerpt', $project_id);
+                
+                // You might want to add more variables as needed
+                $project_status = get_post_status($project_id);
+                $project_date = get_the_date('', $project_id);
+                
                 // Include the project overview template
                 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
                 break;
