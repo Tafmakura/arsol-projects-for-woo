@@ -34,7 +34,11 @@ if (!defined('ABSPATH')) {
         <tr class="woocommerce-orders-table__row <?php echo $has_link ? 'arsol-pfw-status-active' : 'arsol-pfw-status-inactive'; ?>">
             <td class="woocommerce-orders-table__cell arsol-pfw-project-cell" data-title="<?php esc_attr_e('Project', 'arsol-pfw'); ?>">
                 <?php if ($has_link) : ?>
-                    <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="arsol-pfw-project-link">
+                    <?php 
+                    // Generate account endpoint URL for project overview
+                    $project_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
+                    ?>
+                    <a href="<?php echo esc_url($project_url); ?>" class="arsol-pfw-project-link">
                         <?php echo esc_html($project_name); ?>
                     </a>
                 <?php else : ?>
@@ -45,12 +49,19 @@ if (!defined('ABSPATH')) {
                     <span class="arsol-pfw-parent-info"><?php esc_html_e('From parent order', 'arsol-pfw'); ?> 
                     <a href="<?php echo esc_url($order_url); ?>" class="arsol-pfw-parent-link">#<?php echo esc_html($parent_order_number); ?></a></span>          
                 <?php endif; ?>
-                <br>
-                <span>dsfsdf<?php echo wp_kses_post(get_the_excerpt()); ?></span>
+                
+                <?php if ($has_link && !empty($project_id)) : ?>
+                    <br>
+                    <span class="arsol-pfw-project-excerpt"><?php echo wp_kses_post(get_the_excerpt($project_id)); ?></span>
+                <?php endif; ?>
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions arsol-pfw-actions-cell">
                 <?php if ($has_link) : ?>
-                    <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view arsol-pfw-view-button">
+                    <?php 
+                    // Generate account endpoint URL for project overview
+                    $project_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
+                    ?>
+                    <a href="<?php echo esc_url($project_url); ?>" class="woocommerce-button button view arsol-pfw-view-button">
                         <?php esc_html_e('View', 'arsol-pfw'); ?>
                     </a>
                 <?php endif; ?>
