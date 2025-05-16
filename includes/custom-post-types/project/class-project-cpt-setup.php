@@ -41,7 +41,7 @@ class Setup {
             'menu_icon'          => 'dashicons-portfolio',
             'capability_type'    => 'post',
             'hierarchical'       => false,
-            'supports'           => array('title', 'editor', 'thumbnail', 'excerpt', 'author'),
+            'supports'           => array('title', 'editor', 'excerpt', 'author'), // Removed 'thumbnail'
             'has_archive'        => false, // Already disabled
             'rewrite'           => false, // Remove rewrite rules since we don't need public URLs
             'show_in_rest'      => false, // Disable Gutenberg
