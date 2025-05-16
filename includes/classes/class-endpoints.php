@@ -41,6 +41,9 @@ class Endpoints {
         add_action('woocommerce_account_project-overview_endpoint', array($this, 'project_overview_endpoint_content'));
         add_action('woocommerce_account_project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
         add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
+
+        // Add the pre_get_posts action
+        add_action('pre_get_posts', array($this, 'modify_project_query'));
     }
     
     /**
@@ -175,37 +178,24 @@ class Endpoints {
         // Get project data
         $project = get_post($project_id);
         
-        // Set common variables for templates
+        // Set common variables needed for all templates
         $project_title = get_the_title($project_id);
         $project_content = get_post_field('post_content', $project_id);
         $project_excerpt = get_post_field('post_excerpt', $project_id);
         $project_status = get_post_status($project_id);
         $project_date = get_the_date('', $project_id);
         
-        // DIRECT QUERY MODIFICATION - IMPORTANT
-        global $wp_query, $post;
-        
-        // Store original values
+        // Save original global post
+        global $post;
         $original_post = $post;
-        $original_queried_object = $wp_query->queried_object;
-        $original_queried_object_id = $wp_query->queried_object_id;
-        $original_is_singular = $wp_query->is_singular;
-        $original_is_page = $wp_query->is_page;
         
-        // Modify query to make it look like we're viewing a single project
-        $wp_query->queried_object = $project;
-        $wp_query->queried_object_id = $project_id;
-        $wp_query->is_singular = true;
-        $wp_query->is_page = false;
-        $wp_query->is_single = true;
-        
-        // Set the global post
+        // Set project as global post for dynamic tags
         $post = $project;
         setup_postdata($project);
         
         // Display the project navigation
         echo $this->get_project_navigation($project_id, $tab);
-      
+  
         // Include appropriate template based on tab
         switch ($tab) {
             case 'orders':
@@ -221,15 +211,9 @@ class Endpoints {
                 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
                 break;
         }
+
         
-        // Restore original query state
-        $wp_query->queried_object = $original_queried_object;
-        $wp_query->queried_object_id = $original_queried_object_id;
-        $wp_query->is_singular = $original_is_singular;
-        $wp_query->is_page = $original_is_page;
-        $wp_query->is_single = false;
-        
-        // Restore global post
+        // Restore original post
         $post = $original_post;
         if ($original_post) {
             setup_postdata($original_post);
@@ -272,6 +256,39 @@ class Endpoints {
         
         // Get the output buffer content
         return ob_get_clean();
+    }
+
+    /**
+     * Modify the main query for project endpoint pages
+     * 
+     * @param WP_Query $query The WordPress query object
+     * @return void
+     */
+    public function modify_project_query($query) {
+        // Only proceed if front-end main query and user is logged in
+        if (is_admin() || !$query->is_main_query() || !is_user_logged_in()) {
+            return;
+        }
+        
+        // Check if we're on a project endpoint
+        $project_id = 0;
+        if (get_query_var('project-overview')) {
+            $project_id = absint(get_query_var('project-overview'));
+        } elseif (get_query_var('project-orders')) {
+            $project_id = absint(get_query_var('project-orders'));
+        } elseif (get_query_var('project-subscriptions')) {
+            $project_id = absint(get_query_var('project-subscriptions'));
+        }
+        
+        // If we have a project ID, modify the query
+        if ($project_id > 0) {
+            // Verify the user can access this project
+            $user_id = get_current_user_id();
+            if ($this->user_can_view_project($user_id, $project_id)) {
+                $query->set('post_type', 'project');
+                $query->set('p', $project_id);
+            }
+        }
     }
 }
 
