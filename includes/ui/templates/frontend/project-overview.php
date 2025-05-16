@@ -13,8 +13,7 @@ defined('ABSPATH') || exit;
 do_action('arsol_projects_before_project_overview', $project_id);
 ?>
 
-<!-- Navigation included in includes/classes/class-endpoints.php -->
-
+<?php // Navigation included in includes/classes/class-endpoints.php  ?>
 
 <div class="project-content">
 
