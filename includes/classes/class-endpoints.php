@@ -191,10 +191,7 @@ class Endpoints {
         $post = get_post($project_id);
         setup_postdata($post);
         
-        // Set project as global post for dynamic tags
-        $post = $project;
-        setup_postdata($project);
-        
+
         // Display the project navigation
         echo $this->get_project_navigation($project_id, $tab);
   
