@@ -253,29 +253,8 @@ class Endpoints {
         // Start output buffer
         ob_start();
         
-        // Project header with back link
-        ?>
-        <div class="arsol-project-header">
-            <h2><?php echo esc_html($project_title); ?></h2>
-            <a href="<?php echo esc_url(wc_get_account_endpoint_url('projects')); ?>" class="back-to-projects">
-                <?php esc_html_e('← Back to projects', 'arsol-pfw'); ?>
-            </a>
-        </div>
-        
-        <div class="arsol-project-navigation">
-            <nav class="arsol-project-tabs">
-                <ul>
-                    <?php foreach ($tabs as $tab_id => $tab) : ?>
-                        <li class="<?php echo $current_tab === $tab_id ? 'active' : ''; ?>">
-                            <a href="<?php echo esc_url($tab['url']); ?>">
-                                <?php echo esc_html($tab['label']); ?>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </nav>
-        </div>
-        <?php
+        // Include the navigation template
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/navigation-project.php';
         
         // Get the output buffer content
         return ob_get_clean();
