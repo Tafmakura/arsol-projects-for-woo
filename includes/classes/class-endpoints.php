@@ -182,6 +182,9 @@ class Endpoints {
         $project_status = get_post_status($project_id);
         $project_date = get_the_date('', $project_id);
         
+        // Display the project navigation
+        echo $this->get_project_navigation($project_id, $tab);
+        
         // Include appropriate template based on tab
         switch ($tab) {
             case 'orders':
