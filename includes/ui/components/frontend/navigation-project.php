@@ -13,6 +13,26 @@
  */
 
 defined('ABSPATH') || exit;
+
+ // Define tabs
+ $tabs = array(
+    'overview' => array(
+        'label' => __('Overview', 'arsol-pfw'),
+        'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)
+    ),
+    'orders' => array(
+        'label' => __('Project Orders', 'arsol-pfw'),
+        'url' => wc_get_account_endpoint_url('project-orders/' . $project_id)
+    ),
+    'subscriptions' => array(
+        'label' => __('Project Service Plans', 'arsol-pfw'),
+        'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id)
+    )
+);
+
+// Start output buffer
+ob_start();
+
 ?>
 
 <div class="arsol-project-navigation">

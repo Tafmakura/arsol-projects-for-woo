@@ -232,25 +232,6 @@ class Endpoints {
         // Get project title for breadcrumb/heading
         $project_title = get_the_title($project_id);
         
-        // Define tabs
-        $tabs = array(
-            'overview' => array(
-                'label' => __('Overview', 'arsol-pfw'),
-                'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)
-            ),
-            'orders' => array(
-                'label' => __('Orders', 'arsol-pfw'),
-                'url' => wc_get_account_endpoint_url('project-orders/' . $project_id)
-            ),
-            'subscriptions' => array(
-                'label' => __('Service Plans', 'arsol-pfw'),
-                'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id)
-            )
-        );
-        
-        // Start output buffer
-        ob_start();
-        
         // Include the navigation template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/navigation-project.php';
         
