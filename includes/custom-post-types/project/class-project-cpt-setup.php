@@ -103,17 +103,17 @@ class Setup {
      * Move excerpt metabox to the top of the editor
      */
     public function move_excerpt_metabox_to_top() {
-        // First remove the default excerpt location
+        // Remove the default excerpt metabox
         remove_meta_box('postexcerpt', 'project', 'normal');
         
-        // Add it back at the top with highest priority
+        // Add it back with a new title but in the same position
         add_meta_box(
             'postexcerpt',
-            __('Project Summary', 'arsol-projects-for-woo'), // You can customize the title
+            __('Project Summary', 'arsol-projects-for-woo'), // Changed name
             'post_excerpt_meta_box',
             'project',
-            'normal',
-            'high' // High priority ensures it's at the top
+            'normal', // Keep in normal position
+            'default' // Use default priority
         );
     }
 }
