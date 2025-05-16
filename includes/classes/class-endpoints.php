@@ -41,9 +41,6 @@ class Endpoints {
         add_action('woocommerce_account_project-overview_endpoint', array($this, 'project_overview_endpoint_content'));
         add_action('woocommerce_account_project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
         add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
-
-        // Add the pre_get_posts action
-        add_action('pre_get_posts', array($this, 'modify_project_query'));
     }
     
     /**
@@ -188,6 +185,11 @@ class Endpoints {
         // Save original global post
         global $post;
         $original_post = $post;
+
+        // Set the global post to project
+        global $post;
+        $post = get_post($project_id);
+        setup_postdata($post);
         
         // Set project as global post for dynamic tags
         $post = $project;
@@ -256,39 +258,6 @@ class Endpoints {
         
         // Get the output buffer content
         return ob_get_clean();
-    }
-
-    /**
-     * Modify the main query for project endpoint pages
-     * 
-     * @param WP_Query $query The WordPress query object
-     * @return void
-     */
-    public function modify_project_query($query) {
-        // Only proceed if front-end main query and user is logged in
-        if (is_admin() || !$query->is_main_query() || !is_user_logged_in()) {
-            return;
-        }
-        
-        // Check if we're on a project endpoint
-        $project_id = 0;
-        if (get_query_var('project-overview')) {
-            $project_id = absint(get_query_var('project-overview'));
-        } elseif (get_query_var('project-orders')) {
-            $project_id = absint(get_query_var('project-orders'));
-        } elseif (get_query_var('project-subscriptions')) {
-            $project_id = absint(get_query_var('project-subscriptions'));
-        }
-        
-        // If we have a project ID, modify the query
-        if ($project_id > 0) {
-            // Verify the user can access this project
-            $user_id = get_current_user_id();
-            if ($this->user_can_view_project($user_id, $project_id)) {
-                $query->set('post_type', 'project');
-                $query->set('p', $project_id);
-            }
-        }
     }
 }
 
