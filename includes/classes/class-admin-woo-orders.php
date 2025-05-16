@@ -369,6 +369,8 @@ class AdminOrders {
         // Format project information
         $project_name = __('None', 'arsol-pfw');
         $has_link = false;
+        $order_url = '';
+        $parent_order_number = '';
         
         if (!empty($project_id) && $project_id !== 'none') {
             $project = get_post($project_id);
@@ -388,45 +390,8 @@ class AdminOrders {
                 wc_get_endpoint_url('view-order', $parent_order_id, wc_get_page_permalink('myaccount'));
         }
         
-        // Always use the same formatting regardless of context
-        ?>
-        <header class="arsol-pfw-header">
-            <h2><?php esc_html_e('Related Project', 'arsol-pfw'); ?></h2>
-        </header>
-        <table class="shop_table shop_table_responsive my_account_orders woocommerce-orders-table woocommerce-MyAccount-subscriptions woocommerce-orders-table--subscriptions arsol-pfw-projects-row">
-            <thead>
-                <tr>
-                    <th class="arsol-pfw-project-name woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project name', 'arsol-pfw'); ?></span></th>
-                    <th class="arsol-pfw-project-actions order-actions woocommerce-orders-table__header woocommerce-orders-table__header-order-actions woocommerce-orders-table__header-project-actions">&nbsp;</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="woocommerce-orders-table__row <?php echo $has_link ? 'arsol-pfw-status-active' : 'arsol-pfw-status-inactive'; ?>">
-                    <td class="woocommerce-orders-table__cell arsol-pfw-project-cell" data-title="<?php esc_attr_e('Project', 'arsol-pfw'); ?>">
-                        <?php if ($has_link) : ?>
-                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="arsol-pfw-project-link">
-                                <?php echo esc_html($project_name); ?>
-                            </a>
-                        <?php else : ?>
-                            <span class="arsol-pfw-project-name-text"><?php echo esc_html($project_name); ?></span>
-                        <?php endif; ?>
-                        
-                        <?php if ($is_from_parent): ?>
-                            <span class="arsol-pfw-parent-info"><?php esc_html_e('From parent order', 'arsol-pfw'); ?> 
-                            <a href="<?php echo esc_url($order_url); ?>" class="arsol-pfw-parent-link">#<?php echo esc_html($parent_order_number); ?></a></span>          
-                        <?php endif; ?>
-                        </td>
-                    <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions arsol-pfw-actions-cell">
-                        <?php if ($has_link) : ?>
-                            <a href="<?php echo esc_url(get_permalink($project_id)); ?>" class="woocommerce-button button view arsol-pfw-view-button">
-                                <?php esc_html_e('View', 'arsol-pfw'); ?>
-                            </a>
-                        <?php endif; ?>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <?php
+        // Load the template with the prepared variables
+        include ARSOL_PROJECTS_FOR_WOO_PATH . 'includes/ui/components/frontend/table-related-project-details.php';
     }
 
     /**
