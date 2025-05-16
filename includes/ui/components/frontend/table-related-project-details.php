@@ -45,6 +45,8 @@ if (!defined('ABSPATH')) {
                     <span class="arsol-pfw-parent-info"><?php esc_html_e('From parent order', 'arsol-pfw'); ?> 
                     <a href="<?php echo esc_url($order_url); ?>" class="arsol-pfw-parent-link">#<?php echo esc_html($parent_order_number); ?></a></span>          
                 <?php endif; ?>
+                <br>
+                <span><?php echo wp_kses_post(get_the_excerpt()); ?></span>
             </td>
             <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-actions arsol-pfw-actions-cell">
                 <?php if ($has_link) : ?>
