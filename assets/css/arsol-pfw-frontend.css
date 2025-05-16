@@ -20,6 +20,51 @@
     font-weight: bold;
 }
 
+/* Project navigation styling */
+.arsol-project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.arsol-project-header h2 {
+    margin: 0;
+}
+
+.arsol-project-navigation {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+}
+
+.arsol-project-tabs ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.arsol-project-tabs li {
+    margin-right: 10px;
+    margin-bottom: 0;
+}
+
+.arsol-project-tabs li a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-bottom: 3px solid transparent;
+}
+
+.arsol-project-tabs li.active a {
+    border-bottom-color: #333;
+    font-weight: bold;
+}
+
+.back-to-projects {
+    font-size: 14px;
+}
+
 /* Responsive styling */
 @media (max-width: 768px) {
     .arsol-pfw-projects-row thead {

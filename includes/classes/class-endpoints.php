@@ -175,6 +175,9 @@ class Endpoints {
         // Get project data
         $project = get_post($project_id);
         
+        // Display the project navigation
+        echo $this->get_project_navigation($project_id, $tab);
+        
         // Include appropriate template based on tab
         switch ($tab) {
             case 'orders':
@@ -218,6 +221,64 @@ class Endpoints {
         // Otherwise implement simple check
         $project_author_id = get_post_field('post_author', $project_id);
         return ($project_author_id == $user_id);
+    }
+
+    /**
+     * Generate project navigation tabs
+     *
+     * @param int $project_id Current project ID
+     * @param string $current_tab Current active tab
+     * @return string HTML for navigation tabs
+     */
+    private function get_project_navigation($project_id, $current_tab) {
+        // Get project title for breadcrumb/heading
+        $project_title = get_the_title($project_id);
+        
+        // Define tabs
+        $tabs = array(
+            'overview' => array(
+                'label' => __('Overview', 'arsol-pfw'),
+                'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)
+            ),
+            'orders' => array(
+                'label' => __('Orders', 'arsol-pfw'),
+                'url' => wc_get_account_endpoint_url('project-orders/' . $project_id)
+            ),
+            'subscriptions' => array(
+                'label' => __('Service Plans', 'arsol-pfw'),
+                'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id)
+            )
+        );
+        
+        // Start output buffer
+        ob_start();
+        
+        // Project header with back link
+        ?>
+        <div class="arsol-project-header">
+            <h2><?php echo esc_html($project_title); ?></h2>
+            <a href="<?php echo esc_url(wc_get_account_endpoint_url('projects')); ?>" class="back-to-projects">
+                <?php esc_html_e('← Back to projects', 'arsol-pfw'); ?>
+            </a>
+        </div>
+        
+        <div class="arsol-project-navigation">
+            <nav class="arsol-project-tabs">
+                <ul>
+                    <?php foreach ($tabs as $tab_id => $tab) : ?>
+                        <li class="<?php echo $current_tab === $tab_id ? 'active' : ''; ?>">
+                            <a href="<?php echo esc_url($tab['url']); ?>">
+                                <?php echo esc_html($tab['label']); ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </nav>
+        </div>
+        <?php
+        
+        // Get the output buffer content
+        return ob_get_clean();
     }
 }
 
