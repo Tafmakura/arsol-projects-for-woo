@@ -15,6 +15,11 @@ do_action('arsol_projects_before_project_overview', $project_id);
 
 <?php // Navigation included in includes/classes/class-endpoints.php  ?>
 
+
+<div class="project-bricks-template">
+    <?php echo do_shortcode('[bricks_template id="1491"]'); ?>
+</div>
+
 <div class="project-content">
     <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
     
