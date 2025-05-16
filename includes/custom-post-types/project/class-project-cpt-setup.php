@@ -12,6 +12,7 @@ class Setup {
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('do_meta_boxes', array($this, 'move_author_metabox_to_side'));
+        add_action('do_meta_boxes', array($this, 'move_excerpt_metabox_to_top'));
     }
 
     public function register_post_type() {
@@ -95,6 +96,24 @@ class Setup {
             'project',
             'side',
             'high'
+        );
+    }
+
+    /**
+     * Move excerpt metabox to the top of the editor
+     */
+    public function move_excerpt_metabox_to_top() {
+        // First remove the default excerpt location
+        remove_meta_box('postexcerpt', 'project', 'normal');
+        
+        // Add it back at the top with highest priority
+        add_meta_box(
+            'postexcerpt',
+            __('Project Summary', 'arsol-projects-for-woo'), // You can customize the title
+            'post_excerpt_meta_box',
+            'project',
+            'normal',
+            'high' // High priority ensures it's at the top
         );
     }
 }
