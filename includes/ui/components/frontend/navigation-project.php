@@ -15,13 +15,6 @@
 defined('ABSPATH') || exit;
 ?>
 
-<div class="arsol-project-header">
-    <h2><?php echo esc_html($project_title); ?></h2>
-    <a href="<?php echo esc_url(wc_get_account_endpoint_url('projects')); ?>" class="back-to-projects">
-        <?php esc_html_e('← Back to projects', 'arsol-pfw'); ?>
-    </a>
-</div>
-
 <div class="arsol-project-navigation">
     <nav class="arsol-project-tabs">
         <ul>
