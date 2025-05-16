@@ -37,7 +37,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                                 <?php echo esc_html(get_the_title()); ?>
                             </a>
                             <br>
-                            <span><?php echo wp_kses_post(get_the_excerpt()); ?></span>
+                             <span><?php echo wp_kses_post(get_the_excerpt()); ?></span>
                         </td>
                         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-project-actions" data-title="">
                             <a href="<?php echo esc_url($project_url); ?>" class="woocommerce-button button view<?php echo esc_attr($wp_button_class); ?>"><?php esc_html_e('View', 'arsol-projects-for-woo'); ?></a>
