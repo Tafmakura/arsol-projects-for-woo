@@ -13,10 +13,10 @@ defined('ABSPATH') || exit;
 do_action('arsol_projects_before_project_overview', $project_id);
 ?>
 
+<?php // Navigation included in includes/classes/class-endpoints.php  ?>
+
 <div class="project-content">
     <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
-    
-    <h2><?php echo esc_html($project_title); ?></h2>
     
     <div class="project-description">
         <?php echo wp_kses_post($project_content); ?>
