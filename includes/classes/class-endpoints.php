@@ -175,31 +175,25 @@ class Endpoints {
         // Get project data
         $project = get_post($project_id);
         
-        // Display the project navigation
-        echo $this->get_project_navigation($project_id, $tab);
+        // Set common variables needed for all templates
+        $project_title = get_the_title($project_id);
+        $project_content = get_post_field('post_content', $project_id);
+        $project_excerpt = get_post_field('post_excerpt', $project_id);
+        $project_status = get_post_status($project_id);
+        $project_date = get_the_date('', $project_id);
         
         // Include appropriate template based on tab
         switch ($tab) {
             case 'orders':
-                echo do_shortcode('[project_orders project_id="' . esc_attr($project_id) . '" per_page="10" paged="1"]');
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-orders.php';
                 break;
                 
             case 'subscriptions':
-                echo do_shortcode('[project_subscriptions project_id="' . esc_attr($project_id) . '" per_page="10" paged="1"]');
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-subscriptions.php';
                 break;
                 
             case 'overview':
             default:
-                // Prepare project data for the template
-                $project_title = get_the_title($project_id);
-                $project_content = get_post_field('post_content', $project_id);
-                $project_excerpt = get_post_field('post_excerpt', $project_id);
-                
-                // You might want to add more variables as needed
-                $project_status = get_post_status($project_id);
-                $project_date = get_the_date('', $project_id);
-                
-                // Include the project overview template
                 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
                 break;
         }
