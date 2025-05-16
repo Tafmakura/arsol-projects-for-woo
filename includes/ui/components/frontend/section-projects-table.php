@@ -18,7 +18,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
         <table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table user-projects-table">
             <thead>
                 <tr>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Name', 'arsol-projects-for-woo'); ?></span></th>
+                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project details', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-project-actions"><span class="nobr"></span></th>
                 </tr>
             </thead>
