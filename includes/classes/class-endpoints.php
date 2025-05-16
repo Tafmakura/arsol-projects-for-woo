@@ -185,7 +185,6 @@ class Endpoints {
         // Display the project navigation
         echo $this->get_project_navigation($project_id, $tab);
 
-        echo "HOYO";
         
         // Include appropriate template based on tab
         switch ($tab) {
