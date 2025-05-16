@@ -175,24 +175,37 @@ class Endpoints {
         // Get project data
         $project = get_post($project_id);
         
-        // Set common variables needed for all templates
+        // Set common variables for templates
         $project_title = get_the_title($project_id);
         $project_content = get_post_field('post_content', $project_id);
         $project_excerpt = get_post_field('post_excerpt', $project_id);
         $project_status = get_post_status($project_id);
         $project_date = get_the_date('', $project_id);
         
-        // Save original global post
-        global $post;
-        $original_post = $post;
+        // DIRECT QUERY MODIFICATION - IMPORTANT
+        global $wp_query, $post;
         
-        // Set project as global post for dynamic tags
+        // Store original values
+        $original_post = $post;
+        $original_queried_object = $wp_query->queried_object;
+        $original_queried_object_id = $wp_query->queried_object_id;
+        $original_is_singular = $wp_query->is_singular;
+        $original_is_page = $wp_query->is_page;
+        
+        // Modify query to make it look like we're viewing a single project
+        $wp_query->queried_object = $project;
+        $wp_query->queried_object_id = $project_id;
+        $wp_query->is_singular = true;
+        $wp_query->is_page = false;
+        $wp_query->is_single = true;
+        
+        // Set the global post
         $post = $project;
         setup_postdata($project);
         
         // Display the project navigation
         echo $this->get_project_navigation($project_id, $tab);
-  
+      
         // Include appropriate template based on tab
         switch ($tab) {
             case 'orders':
@@ -209,7 +222,14 @@ class Endpoints {
                 break;
         }
         
-        // Restore original post
+        // Restore original query state
+        $wp_query->queried_object = $original_queried_object;
+        $wp_query->queried_object_id = $original_queried_object_id;
+        $wp_query->is_singular = $original_is_singular;
+        $wp_query->is_page = $original_is_page;
+        $wp_query->is_single = false;
+        
+        // Restore global post
         $post = $original_post;
         if ($original_post) {
             setup_postdata($original_post);
