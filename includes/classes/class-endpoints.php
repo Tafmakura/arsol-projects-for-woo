@@ -32,6 +32,10 @@ class Endpoints {
         // Add Projects to account menu
         add_filter('woocommerce_account_menu_items', array($this, 'add_projects_menu_item'));
         
+        // Add custom query vars
+        add_filter('query_vars', array($this, 'add_woocommerce_query_vars'));
+        add_filter('woocommerce_get_query_vars', array($this, 'add_woocommerce_query_vars'));
+        
         // Handle endpoint content
         add_action('woocommerce_account_projects_endpoint', array($this, 'projects_endpoint_content'));
         add_action('woocommerce_account_project-overview_endpoint', array($this, 'project_overview_endpoint_content'));
@@ -63,6 +67,20 @@ class Endpoints {
         $items['projects'] = __('Projects', 'arsol-pfw');
         $items['customer-logout'] = $logout;
         return $items;
+    }
+    
+    /**
+     * Add custom endpoints to WooCommerce query vars
+     *
+     * @param array $query_vars Query vars to add to
+     * @return array
+     */
+    public function add_woocommerce_query_vars($query_vars) {
+        $query_vars['projects'] = 'projects';
+        $query_vars['project-overview'] = 'project-overview';
+        $query_vars['project-orders'] = 'project-orders';
+        $query_vars['project-subscriptions'] = 'project-subscriptions';
+        return $query_vars;
     }
     
     /**
