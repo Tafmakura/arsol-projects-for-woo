@@ -13,14 +13,13 @@ defined('ABSPATH') || exit;
 do_action('arsol_projects_before_project_overview', $project_id);
 ?>
 
-<?php // Navigation included in includes/classes/class-endpoints.php  ?>
-
 <div class="project-content">
-
-    <?php echo "Content goes here" ?>
+    <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
+    
+    <h2><?php echo esc_html($project_title); ?></h2>
     
     <div class="project-description">
-        <?php echo $project_content; ?>
+        <?php echo wp_kses_post($project_content); ?>
     </div>
     
     <div class="project-meta">
@@ -32,7 +31,8 @@ do_action('arsol_projects_before_project_overview', $project_id);
             <p><strong><?php esc_html_e('End Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
         <?php endif; ?>
     </div>
+    
+    <?php do_action('arsol_projects_overview_after_content', $project_id); ?>
 </div>
-
 
 <?php do_action('arsol_projects_after_project_overview', $project_id); ?>

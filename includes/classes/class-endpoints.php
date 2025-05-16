@@ -182,10 +182,17 @@ class Endpoints {
         $project_status = get_post_status($project_id);
         $project_date = get_the_date('', $project_id);
         
+        // Save original global post
+        global $post;
+        $original_post = $post;
+        
+        // Set project as global post for dynamic tags
+        $post = $project;
+        setup_postdata($project);
+        
         // Display the project navigation
         echo $this->get_project_navigation($project_id, $tab);
-
-        
+  
         // Include appropriate template based on tab
         switch ($tab) {
             case 'orders':
@@ -200,6 +207,14 @@ class Endpoints {
             default:
                 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
                 break;
+        }
+        
+        // Restore original post
+        $post = $original_post;
+        if ($original_post) {
+            setup_postdata($original_post);
+        } else {
+            wp_reset_postdata();
         }
     }
     
