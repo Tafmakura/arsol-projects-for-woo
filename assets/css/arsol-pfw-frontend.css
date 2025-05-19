@@ -49,13 +49,14 @@
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
-    line-height: 1.4;
+    line-height: 40px;
+    height: 40px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .arsol-status-btn {
-    font-weight: normal;
+    font-weight: 700;
     color: #666;
 }
 
