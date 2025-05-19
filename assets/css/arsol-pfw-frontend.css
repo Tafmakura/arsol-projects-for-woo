@@ -2,18 +2,11 @@
  * Arsol Projects for WooCommerce - Frontend Styles
  */
 
-
-
 /* Temporary CSS */
-
 /* Hide additional info wrapper */
-
 .wc-block-order-confirmation-additional-fields-wrapper {
     display: none !important;
 }
-
-
-
 
 /* Project select field on checkout */
 .woocommerce-checkout .form-row label[for="arsol-pfw-project"] {
@@ -35,30 +28,46 @@
 .arsol-project-navigation {
     margin-bottom: 30px;
     border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
 }
 
-.arsol-project-tabs ul {
+/* Button-based navigation */
+.arsol-button-container {
     display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+    flex-wrap: wrap;
 }
 
-.arsol-project-tabs li {
-    margin-right: 10px;
-    margin-bottom: 0;
+.arsol-button-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-.arsol-project-tabs li a {
-    display: block;
-    padding: 10px 15px;
-    text-decoration: none;
-    border-bottom: 3px solid transparent;
+.arsol-btn-secondary {
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.arsol-project-tabs li.active a {
-    border-bottom-color: #333;
-    font-weight: bold;
+.arsol-status-btn {
+    font-weight: normal;
+    color: #666;
+}
+
+.arsol-status-btn:hover {
+    background-color: #e9e9e9;
+}
+
+.arsol-status-btn.active {
+    background-color: #2271b1;
+    color: white;
+    border-color: #135e96;
+    font-weight: 500;
 }
 
 .back-to-projects {
@@ -67,6 +76,16 @@
 
 /* Responsive styling */
 @media (max-width: 768px) {
+    .arsol-button-groups {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .arsol-btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+    
     .arsol-pfw-projects-row thead {
         display: none;
     }
