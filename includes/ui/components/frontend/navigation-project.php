@@ -25,7 +25,7 @@ defined('ABSPATH') || exit;
         'url' => wc_get_account_endpoint_url('project-orders/' . $project_id)
     ),
     'subscriptions' => array(
-        'label' => __('Subscriptions', 'woocommerce'), // Using WooCommerce translation domain
+        'label' => __('Subscriptions', 'woocommerce-subscriptions'), // Using WooCommerce Subscriptions translation domain
         'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id)
     )
 );
