@@ -53,18 +53,12 @@
     cursor: pointer;
     transition: all 0.2s ease;
     font-weight: 700;
-    color: #666;
 }
 
-.arsol-btn-secondary:hover {
-    background-color: #e9e9e9;
-}
-
+.arsol-btn-secondary:hover,
 .arsol-btn-secondary.active {
-    background-color: #2271b1;
-    color: white;
-    border-color: #135e96;
-    font-weight: 500;
+    color: #2271b1;
+    background-color: #e5f3ff;
 }
 
 .arsol-project-btn {
