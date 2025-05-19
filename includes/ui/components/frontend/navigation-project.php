@@ -39,7 +39,7 @@ ob_start();
     <div class="arsol-button-container">
         <div class="arsol-button-groups">
             <?php foreach ($tabs as $tab_id => $tab) : ?>
-                <button class="arsol-btn-secondary arsol-status-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
+                <button class="arsol-btn-secondary arsol-project-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
                         onclick="window.location.href='<?php echo esc_url($tab['url']); ?>'">
                     <?php echo esc_html($tab['label']); ?>
                 </button>
