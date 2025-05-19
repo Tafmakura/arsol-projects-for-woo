@@ -36,15 +36,14 @@ ob_start();
 ?>
 
 <div class="arsol-project-navigation">
-    <nav class="arsol-project-tabs">
-        <ul>
+    <div class="arsol-button-container">
+        <div class="arsol-button-groups">
             <?php foreach ($tabs as $tab_id => $tab) : ?>
-                <li class="<?php echo $current_tab === $tab_id ? 'active' : ''; ?>">
-                    <a href="<?php echo esc_url($tab['url']); ?>">
-                        <?php echo esc_html($tab['label']); ?>
-                    </a>
-                </li>
+                <button class="arsol-status-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
+                        onclick="window.location.href='<?php echo esc_url($tab['url']); ?>'">
+                    <?php echo esc_html($tab['label']); ?>
+                </button>
             <?php endforeach; ?>
-        </ul>
-    </nav>
+        </div>
+    </div>
 </div>
