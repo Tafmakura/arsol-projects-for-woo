@@ -21,11 +21,11 @@ defined('ABSPATH') || exit;
         'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)
     ),
     'orders' => array(
-        'label' => __('Project Orders', 'arsol-pfw'),
+        'label' => __('Orders', 'woocommerce'), // Using WooCommerce translation domain
         'url' => wc_get_account_endpoint_url('project-orders/' . $project_id)
     ),
     'subscriptions' => array(
-        'label' => __('Project Service Plans', 'arsol-pfw'),
+        'label' => __('Subscriptions', 'woocommerce'), // Using WooCommerce translation domain
         'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id)
     )
 );
@@ -39,7 +39,7 @@ ob_start();
     <div class="arsol-button-container">
         <div class="arsol-button-groups">
             <?php foreach ($tabs as $tab_id => $tab) : ?>
-                <button class="arsol-status-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
+                <button class="arsol-btn-secondary arsol-status-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
                         onclick="window.location.href='<?php echo esc_url($tab['url']); ?>'">
                     <?php echo esc_html($tab['label']); ?>
                 </button>
