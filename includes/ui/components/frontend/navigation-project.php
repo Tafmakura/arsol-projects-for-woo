@@ -36,7 +36,15 @@ ob_start();
 ?>
 
 <div class="arsol-project-description">
-    <p><?php echo esc_html__('Welcome to your project dashboard. Here you can manage all aspects of your project. The Overview tab displays your project details and summary information. The Orders tab shows all purchases related to this project, and the Subscriptions tab allows you to manage ongoing service plans for this project.', 'arsol-pfw'); ?></p>
+    <p>
+        <?php 
+            echo esc_html__('Welcome to your project dashboard. Here you can manage all aspects of your project. The Overview tab displays your project details and summary information. The ', 'arsol-pfw');
+            echo esc_html__('Orders', 'woocommerce'); 
+            echo esc_html__(' tab shows all purchases related to this project, and the ', 'arsol-pfw');
+            echo esc_html__('Subscriptions', 'woocommerce-subscriptions');
+            echo esc_html__(' tab allows you to manage ongoing service plans for this project.', 'arsol-pfw');
+        ?>
+    </p>
 </div>
 
 <div class="arsol-project-navigation">
