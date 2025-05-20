@@ -27,7 +27,9 @@
 
 .arsol-project-navigation {
     margin-bottom: 30px;
+    border-top: 1px solid var(--edging-primary);
     border-bottom: 1px solid var(--edging-primary);
+    padding-top: 15px;
     padding-bottom: 15px;
     margin-top: 30px;
 }
