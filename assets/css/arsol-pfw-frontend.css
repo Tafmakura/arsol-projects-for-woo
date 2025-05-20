@@ -26,12 +26,12 @@
 }
 
 .arsol-project-navigation {
-    margin-bottom: 30px;
+    margin-bottom: var(--space-s) !important;
     border-top: 1px solid var(--edging-primary);
     border-bottom: 1px solid var(--edging-primary);
     padding-top: 15px;
     padding-bottom: 15px;
-    margin-top: 30px;
+    margin-top: var(--space-s) !important;
 }
 
 /* Button-based navigation */
