@@ -35,18 +35,21 @@ ob_start();
 
 ?>
 
-<div class="arsol-project-description">
-    <p>
-        <?php 
-            echo sprintf(
-                esc_html__('Welcome to your %s project dashboard. Here you can manage all aspects of your project. The %s tab displays your project details and summary information. The %s tab shows all purchases related to this project, and the %s tab allows you to manage ongoing service plans for this project.', 'arsol-pfw'),
-                '<strong>' . esc_html($project_title) . '</strong>',
-                '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
-                '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
-                '<strong>' . esc_html__('Subscriptions', 'woocommerce-subscriptions') . '</strong>'
-            );
-        ?>
-    </p>
+<div class="arsol-project-card card">
+    <h2 class="arsol-project-card-title"><?php echo esc_html__('Welcome to Your Project', 'arsol-pfw'); ?></h2>
+    <div class="arsol-project-card-content">
+        <p>
+            <?php 
+                echo sprintf(
+                    esc_html__('Welcome to your %s dashboard. The %s tab shows project details, %s displays your purchases, and %s manages your ongoing service plans.', 'arsol-pfw'),
+                    '<strong>' . esc_html($project_title) . '</strong>',
+                    '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
+                    '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
+                    '<strong>' . esc_html__('Subscriptions', 'woocommerce-subscriptions') . '</strong>'
+                );
+            ?>
+        </p>
+    </div>
 </div>
 
 <div class="arsol-project-navigation">
