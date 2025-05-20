@@ -46,7 +46,7 @@ ob_start();
                 '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
                 esc_html__('orders', 'woocommerce'),
                 '<strong>' . esc_html__('Subscriptions', 'woocommerce-subscriptions') . '</strong>',
-                . esc_html__('subscription', 'woocommerce-subscriptions')
+                esc_html__('subscription', 'woocommerce-subscriptions')
             );
         ?>
     </p>
