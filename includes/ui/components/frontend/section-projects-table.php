@@ -71,9 +71,17 @@ do_action('arsol_projects_before_user_projects', $has_projects);
 
     <?php else : ?>
 
-        <div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
-            <?php esc_html_e('No projects found.', 'arsol-projects-for-woo'); ?>
+    <div class="woocommerce-MyAccount-content">
+        <div class="woocommerce-notices-wrapper"></div>
+        <div class="woocommerce_account_projects">
+            <p class="no_projects woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
+                <?php esc_html_e('You have no active projects.', 'arsol-projects-for-woo'); ?>
+                <a class="woocommerce-Button button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(wc_get_page_permalink('shop')); ?>">
+                    <?php esc_html_e('Browse products', 'arsol-projects-for-woo'); ?>
+                </a>
+            </p>
         </div>
+    </div>
 
     <?php endif; ?>
 </div>
