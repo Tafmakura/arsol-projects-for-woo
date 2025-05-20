@@ -36,7 +36,7 @@ define('ARSOL_PROJECTS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ARSOL_PROJECTS_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('ARSOL_PROJECTS_PLUGIN_BASENAME', plugin_basename(__FILE__));
 define('ARSOL_PROJECTS_VERSION', '1.0.0');
-define('ARSOL_PROJECTS_ASSETS_VERSION', '1.0.2'); // Specific version for assets, helpful for cache busting
+define('ARSOL_PROJECTS_ASSETS_VERSION', '1.0.3'); // Specific version for assets, helpful for cache busting
 
 // Use correct namespace
 use Arsol_Projects_For_Woo\Setup;
