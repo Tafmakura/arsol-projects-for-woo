@@ -36,7 +36,6 @@ ob_start();
 ?>
 
 <div class="arsol-project-card card">
-    <h2 class="arsol-project-card-title"><?php echo esc_html__('Welcome to Your Project', 'arsol-pfw'); ?></h2>
     <div class="arsol-project-card-content">
         <p>
             <?php 
