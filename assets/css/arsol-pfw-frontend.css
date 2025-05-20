@@ -66,13 +66,6 @@
     font-size: 14px;
 }
 
-/* Project Card */
-.arsol-project-card {
-    margin-bottom: 25px;
-    background-color: #f5f5f5;
-    border-radius: 4px;
-}
-
 /* Responsive styling */
 @media (max-width: 768px) {
     .arsol-button-groups {

@@ -35,22 +35,20 @@ ob_start();
 
 ?>
 
-<div class="arsol-project-card card">
-    <div class="arsol-project-card-content">
-        <p>
-            <?php 
-                echo sprintf(
-                    esc_html__('Welcome to your %s dashboard. The %s tab shows project details, %s displays your purchases, and %s manages your ongoing service plans.', 'arsol-pfw'),
-                    '<strong>' . esc_html($project_title) . '</strong>',
-                    '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
-                    '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
-                    '<strong>' . esc_html__('Subscriptions', 'woocommerce-subscriptions') . '</strong>'
-                );
-            ?>
-        </p>
-    </div>
-</div>
 
+<div class="arsol-project-intro">
+    <p>
+        <?php 
+            echo sprintf(
+                esc_html__('Welcome to your %s dashboard. The %s tab shows project details, %s displays your purchases, and %s manages your ongoing service plans.', 'arsol-pfw'),
+                '<strong>' . esc_html($project_title) . '</strong>',
+                '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
+                '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
+                '<strong>' . esc_html__('Subscriptions', 'woocommerce-subscriptions') . '</strong>'
+            );
+        ?>
+    </p>
+</div>
 <div class="arsol-project-navigation">
     <div class="arsol-button-container">
         <div class="arsol-button-groups">
