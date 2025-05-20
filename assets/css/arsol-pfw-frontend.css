@@ -47,6 +47,7 @@
 .arsol-btn-secondary {
     padding: 8px 16px;
     border-radius: 4px;
+    background-color: transparent;
     font-size: 14px;
     height: 40px;
     cursor: pointer;
