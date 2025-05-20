@@ -40,7 +40,7 @@ ob_start();
     <p>
         <?php 
             echo sprintf(
-                esc_html__('Welcome to your %s project dashboard. The %s tab shows project details, the %s tab displays your %s, and the %s tab displays all your active %s.', 'arsol-pfw'),
+                esc_html__('Welcome to your %s project dashboard. The %s tab shows project details, the %s tab displays your %s, and the %s tab displays all your %s.', 'arsol-pfw'),
                 '<strong>' . esc_html($project_title) . '</strong>',
                 '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
                 '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
