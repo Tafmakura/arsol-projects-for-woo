@@ -38,11 +38,13 @@ ob_start();
 <div class="arsol-project-description">
     <p>
         <?php 
-            echo esc_html__('Welcome to your project dashboard. Here you can manage all aspects of your project. The Overview tab displays your project details and summary information. The ', 'arsol-pfw');
-            echo esc_html__('Orders', 'woocommerce'); 
-            echo esc_html__(' tab shows all purchases related to this project, and the ', 'arsol-pfw');
-            echo esc_html__('Subscriptions', 'woocommerce-subscriptions');
-            echo esc_html__(' tab allows you to manage ongoing service plans for this project.', 'arsol-pfw');
+            echo sprintf(
+                esc_html__('Welcome to your %s project. Here you can manage all aspects of your project. The %s tab displays your project details and summary information. The %s tab shows all purchases related to this project, and the %s tab allows you to manage ongoing service plans for this project.', 'arsol-pfw'),
+                '<strong>' . esc_html($project_title) . '</strong>',
+                '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
+                '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
+                '<strong>' . esc_html__('Subscriptions', 'woocommerce-subscriptions') . '</strong>'
+            );
         ?>
     </p>
 </div>
