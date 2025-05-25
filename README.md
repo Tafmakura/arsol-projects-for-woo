@@ -1,6 +1,6 @@
 # Arsol Projects for Woo
 
-A WordPress plugin that enables you to organize and track WooCommerce orders and subscriptions within projects.
+A WordPress plugin that enables you to organize and track WooCommerce orders and subscriptions within projects, with automatic tracking of subscription renewals and child orders.
 
 ## Description
 
@@ -16,6 +16,13 @@ Arsol Projects for Woo is a specialized WordPress plugin that helps you manage a
 - Project-based organization of customer orders and subscriptions
 - Easy project overview with all related financial transactions
 - Seamless integration with existing WooCommerce functionality
+- Shortcodes for displaying project information:
+  - `[arsol_projects]` - Display a grid of projects
+  - `[arsol_project]` - Show a single project
+  - `[arsol_project_categories]` - List project categories
+  - `[arsol_project_orders]` - Display orders for a specific project
+  - `[arsol_project_subscriptions]` - Show subscriptions for a project
+  - `[arsol_user_projects]` - List projects for the current user
 
 ## Requirements
 
@@ -45,6 +52,23 @@ After activation, you can find the plugin settings in your WordPress admin panel
 4. View all related orders and subscriptions on the project's dedicated page
 5. Track subscription renewals and child orders automatically
 6. Monitor project revenue through the integrated WooCommerce reporting
+
+### Shortcode Examples
+
+Display a grid of projects:
+```
+[arsol_projects limit="10" columns="3" pagination="yes"]
+```
+
+Show orders for a specific project:
+```
+[arsol_project_orders project_id="123" per_page="10"]
+```
+
+Display subscriptions for a project:
+```
+[arsol_project_subscriptions project_id="123" per_page="10"]
+```
 
 ## Support
 

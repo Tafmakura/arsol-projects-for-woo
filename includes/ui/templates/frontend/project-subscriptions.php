@@ -21,7 +21,7 @@ do_action('arsol_projects_before_project_subscriptions', $project_id);
     <div class="woocommerce">
         <?php 
         // Use the project_subscriptions shortcode to render the table
-        echo do_shortcode('[project_subscriptions project_id="' . esc_attr($project_id) . '"]');
+        echo do_shortcode('[arsol_project_subscriptions project_id="' . esc_attr($project_id) . '"]');
         ?>
     </div>
     

@@ -31,9 +31,9 @@ class Shortcodes {
 		add_shortcode('arsol_projects', array($this, 'render_projects'));
 		add_shortcode('arsol_project', array($this, 'render_single_project'));
 		add_shortcode('arsol_project_categories', array($this, 'render_project_categories'));
-		add_shortcode('project_orders', array($this, 'project_orders_shortcode'));
-		add_shortcode('project_subscriptions', array($this, 'project_subscriptions_shortcode'));
-		add_shortcode('user_projects', array($this, 'user_projects_shortcode'));
+		add_shortcode('arsol_project_orders', array($this, 'project_orders_shortcode'));
+		add_shortcode('arsol_project_subscriptions', array($this, 'project_subscriptions_shortcode'));
+		add_shortcode('arsol_user_projects', array($this, 'user_projects_shortcode'));
 	}
 
 	/**

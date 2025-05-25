@@ -18,7 +18,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
     
     <?php 
     // Use the existing shortcode to display user projects
-    echo do_shortcode('[user_projects per_page="' . esc_attr($posts_per_page) . '" paged="' . esc_attr($paged) . '"]'); 
+    echo do_shortcode('[arsol_user_projects per_page="' . esc_attr($posts_per_page) . '" paged="' . esc_attr($paged) . '"]'); 
     ?>
     
     <?php do_action('arsol_projects_after_projects_list', $has_projects); ?>
