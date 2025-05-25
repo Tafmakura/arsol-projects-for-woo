@@ -330,6 +330,11 @@ class Shortcodes {
 			return '0';
 		}
 
+		// Check if post type exists
+		if (!post_type_exists('project')) {
+			return '0';
+		}
+
 		// Get user's active projects count
 		$args = array(
 			'post_type' => 'project',
@@ -350,8 +355,15 @@ class Shortcodes {
 		$args = apply_filters('arsol_projects_user_projects_count_query_args', $args, $current_user_id);
 		
 		$projects_query = new \WP_Query($args);
-		$count = $projects_query->found_posts;
 		
+		// Ensure we have a valid query result
+		if (!is_object($projects_query) || !isset($projects_query->found_posts)) {
+			return '0';
+		}
+		
+		$count = (int) $projects_query->found_posts;
+		
+		// Always return a string, even if count is 0
 		return (string) $count;
 	}
 
