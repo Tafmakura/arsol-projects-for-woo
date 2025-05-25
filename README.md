@@ -23,8 +23,8 @@ Arsol Projects for Woo is a specialized WordPress plugin that helps you manage a
   - `[arsol_project_orders]` - Display orders for a specific project
   - `[arsol_project_subscriptions]` - Show subscriptions for a project
   - `[arsol_user_projects]` - List projects for the current user
-  - `[arsol_user_projects_count]` - Display the number of projects for the current user
-  - `[arsol_projects_count]` - Display the total number of all projects
+  - `[arsol_user_projects_count]` - Display the number of active projects for the current user
+  - `[arsol_projects_count]` - Display the total number of all active projects
 
 ## Requirements
 
@@ -105,17 +105,17 @@ Arguments:
 - `per_page` (default: 10) - Number of subscriptions per page
 - `paged` (default: 1) - Current page number
 
-Show the number of projects for the current user:
+Show the number of active projects for the current user:
 ```
 [arsol_user_projects_count]
 ```
-No arguments required.
+No arguments required. Only counts projects with 'active' status.
 
-Show the total number of all projects:
+Show the total number of all active projects:
 ```
 [arsol_projects_count]
 ```
-No arguments required.
+No arguments required. Only counts projects with 'active' status.
 
 ## Support
 

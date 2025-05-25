@@ -316,7 +316,7 @@ class Shortcodes {
 	}
 
 	/**
-	 * Shortcode to display the count of user's projects
+	 * Shortcode to display the count of user's active projects
 	 *
 	 * @param array $atts Shortcode attributes
 	 * @return string HTML output
@@ -330,13 +330,20 @@ class Shortcodes {
 			return '0';
 		}
 
-		// Get user's projects count
+		// Get user's active projects count
 		$args = array(
 			'post_type' => 'project',
 			'posts_per_page' => -1,
 			'fields' => 'ids',
 			'post_status' => 'publish',
-			'author' => $current_user_id
+			'author' => $current_user_id,
+			'meta_query' => array(
+				array(
+					'key' => '_project_status',
+					'value' => 'active',
+					'compare' => '='
+				)
+			)
 		);
 		
 		// Apply additional filtering if needed
@@ -349,18 +356,25 @@ class Shortcodes {
 	}
 
 	/**
-	 * Shortcode to display the total count of all projects
+	 * Shortcode to display the total count of all active projects
 	 *
 	 * @param array $atts Shortcode attributes
 	 * @return string HTML output
 	 */
 	public function projects_count_shortcode($atts) {
-		// Get total projects count
+		// Get total active projects count
 		$args = array(
 			'post_type' => 'project',
 			'posts_per_page' => -1,
 			'fields' => 'ids',
-			'post_status' => 'publish'
+			'post_status' => 'publish',
+			'meta_query' => array(
+				array(
+					'key' => '_project_status',
+					'value' => 'active',
+					'compare' => '='
+				)
+			)
 		);
 		
 		// Apply additional filtering if needed
