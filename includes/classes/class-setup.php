@@ -11,6 +11,10 @@ class Setup {
         $this->require_files();
         $this->instantiate_classes();
         add_action('plugins_loaded', array($this, 'init'));
+        
+        // Register activation and deactivation hooks
+        register_activation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'activate'));
+        register_deactivation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'deactivate'));
     }
 
     public function init() {
@@ -23,6 +27,7 @@ class Setup {
         // Load plugin text domain with updated domain name
         load_plugin_textdomain('arsol-pfw', false, dirname(ARSOL_PROJECTS_PLUGIN_BASENAME) . '/languages');
     }
+
 
     /**
      * Include necessary files.
@@ -52,8 +57,24 @@ class Setup {
         echo esc_html__('Arsol Projects for WooCommerce requires WooCommerce to be installed and active.', 'arsol-pfw');
         echo '</p></div>';
     }
-    
-}
 
-// Initialize the setup class
-new Setup();
+    /**
+     * Plugin activation callback
+     * 
+     * @return void
+     */
+    public function activate() {
+        // Flush rewrite rules to ensure our custom post types and endpoints are registered
+        flush_rewrite_rules();
+    }
+
+    /**
+     * Plugin deactivation callback
+     * 
+     * @return void
+     */
+    public function deactivate() {
+        // Flush rewrite rules on deactivation to clean up
+        flush_rewrite_rules();
+    }
+}

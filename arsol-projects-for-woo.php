@@ -30,6 +30,12 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+
+// Prevent direct access to this file
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 // Define plugin constants
 define('ARSOL_PROJECTS_PLUGIN_FILE', __FILE__);
 define('ARSOL_PROJECTS_PLUGIN_DIR', plugin_dir_path(__FILE__));
@@ -44,7 +50,5 @@ use Arsol_Projects_For_Woo\Setup;
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
-// Prevent direct access to this file
-if (!defined('ABSPATH')) {
-    exit;
-}
+// Instantiate the Setup class
+new Setup();
