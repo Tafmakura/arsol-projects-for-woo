@@ -23,6 +23,8 @@ Arsol Projects for Woo is a specialized WordPress plugin that helps you manage a
   - `[arsol_project_orders]` - Display orders for a specific project
   - `[arsol_project_subscriptions]` - Show subscriptions for a project
   - `[arsol_user_projects]` - List projects for the current user
+  - `[arsol_user_projects_count]` - Display the number of projects for the current user
+  - `[arsol_projects_count]` - Display the total number of all projects
 
 ## Requirements
 
@@ -57,18 +59,63 @@ After activation, you can find the plugin settings in your WordPress admin panel
 
 Display a grid of projects:
 ```
-[arsol_projects limit="10" columns="3" pagination="yes"]
+[arsol_projects limit="10" columns="3" orderby="date" order="DESC" pagination="yes" category=""]
 ```
+Arguments:
+- `limit` (default: 10) - Number of projects to display
+- `columns` (default: 3) - Number of columns in the grid
+- `orderby` (default: "date") - Order by field (date, title, etc.)
+- `order` (default: "DESC") - Sort order (ASC or DESC)
+- `pagination` (default: "yes") - Whether to show pagination
+- `category` (default: "") - Category slug to filter projects
+
+Show a single project:
+```
+[arsol_project id="123"]
+```
+Arguments:
+- `id` (required) - The ID of the project to display
+
+Display project categories:
+```
+[arsol_project_categories limit="-1" orderby="name" order="ASC" parent="" hide_empty="no"]
+```
+Arguments:
+- `limit` (default: -1) - Number of categories to display (-1 for all)
+- `orderby` (default: "name") - Order by field (name, count, etc.)
+- `order` (default: "ASC") - Sort order (ASC or DESC)
+- `parent` (default: "") - Parent category ID
+- `hide_empty` (default: "no") - Whether to hide empty categories
 
 Show orders for a specific project:
 ```
-[arsol_project_orders project_id="123" per_page="10"]
+[arsol_project_orders project_id="123" per_page="10" paged="1"]
 ```
+Arguments:
+- `project_id` (default: 0) - The ID of the project (0 to use current page)
+- `per_page` (default: 10) - Number of orders per page
+- `paged` (default: 1) - Current page number
 
 Display subscriptions for a project:
 ```
-[arsol_project_subscriptions project_id="123" per_page="10"]
+[arsol_project_subscriptions project_id="123" per_page="10" paged="1"]
 ```
+Arguments:
+- `project_id` (default: 0) - The ID of the project (0 to use current page)
+- `per_page` (default: 10) - Number of subscriptions per page
+- `paged` (default: 1) - Current page number
+
+Show the number of projects for the current user:
+```
+[arsol_user_projects_count]
+```
+No arguments required.
+
+Show the total number of all projects:
+```
+[arsol_projects_count]
+```
+No arguments required.
 
 ## Support
 

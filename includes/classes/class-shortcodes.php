@@ -34,6 +34,8 @@ class Shortcodes {
 		add_shortcode('arsol_project_orders', array($this, 'project_orders_shortcode'));
 		add_shortcode('arsol_project_subscriptions', array($this, 'project_subscriptions_shortcode'));
 		add_shortcode('arsol_user_projects', array($this, 'user_projects_shortcode'));
+		add_shortcode('arsol_user_projects_count', array($this, 'user_projects_count_shortcode'));
+		add_shortcode('arsol_projects_count', array($this, 'projects_count_shortcode'));
 	}
 
 	/**
@@ -311,5 +313,62 @@ class Shortcodes {
 		
 		// Return buffered content
 		return ob_get_clean();
+	}
+
+	/**
+	 * Shortcode to display the count of user's projects
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function user_projects_count_shortcode($atts) {
+		// Get current user
+		$current_user_id = get_current_user_id();
+		
+		// If no user is logged in, return 0
+		if (!$current_user_id) {
+			return '0';
+		}
+
+		// Get user's projects count
+		$args = array(
+			'post_type' => 'project',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+			'post_status' => 'publish',
+			'author' => $current_user_id
+		);
+		
+		// Apply additional filtering if needed
+		$args = apply_filters('arsol_projects_user_projects_count_query_args', $args, $current_user_id);
+		
+		$projects_query = new \WP_Query($args);
+		$count = $projects_query->found_posts;
+		
+		return (string) $count;
+	}
+
+	/**
+	 * Shortcode to display the total count of all projects
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function projects_count_shortcode($atts) {
+		// Get total projects count
+		$args = array(
+			'post_type' => 'project',
+			'posts_per_page' => -1,
+			'fields' => 'ids',
+			'post_status' => 'publish'
+		);
+		
+		// Apply additional filtering if needed
+		$args = apply_filters('arsol_projects_count_query_args', $args);
+		
+		$projects_query = new \WP_Query($args);
+		$count = $projects_query->found_posts;
+		
+		return (string) $count;
 	}
 }
