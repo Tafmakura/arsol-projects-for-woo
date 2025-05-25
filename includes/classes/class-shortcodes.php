@@ -316,7 +316,7 @@ class Shortcodes {
 	}
 
 	/**
-	 * Shortcode to display the count of user's active projects
+	 * Shortcode to display the count of user's projects
 	 *
 	 * @param array $atts Shortcode attributes
 	 * @return string HTML output
@@ -330,63 +330,37 @@ class Shortcodes {
 			return '0';
 		}
 
-		// Check if post type exists
-		if (!post_type_exists('project')) {
-			return '0';
-		}
-
-		// Get user's active projects count
+		// Get user's projects count
 		$args = array(
 			'post_type' => 'project',
 			'posts_per_page' => -1,
 			'fields' => 'ids',
 			'post_status' => 'publish',
-			'author' => $current_user_id,
-			'meta_query' => array(
-				array(
-					'key' => '_project_status',
-					'value' => 'active',
-					'compare' => '='
-				)
-			)
+			'author' => $current_user_id
 		);
 		
 		// Apply additional filtering if needed
 		$args = apply_filters('arsol_projects_user_projects_count_query_args', $args, $current_user_id);
 		
 		$projects_query = new \WP_Query($args);
+		$count = $projects_query->found_posts;
 		
-		// Ensure we have a valid query result
-		if (!is_object($projects_query) || !isset($projects_query->found_posts)) {
-			return '0';
-		}
-		
-		$count = (int) $projects_query->found_posts;
-		
-		// Always return a string, even if count is 0
 		return (string) $count;
 	}
 
 	/**
-	 * Shortcode to display the total count of all active projects
+	 * Shortcode to display the total count of all projects
 	 *
 	 * @param array $atts Shortcode attributes
 	 * @return string HTML output
 	 */
 	public function projects_count_shortcode($atts) {
-		// Get total active projects count
+		// Get total projects count
 		$args = array(
 			'post_type' => 'project',
 			'posts_per_page' => -1,
 			'fields' => 'ids',
-			'post_status' => 'publish',
-			'meta_query' => array(
-				array(
-					'key' => '_project_status',
-					'value' => 'active',
-					'compare' => '='
-				)
-			)
+			'post_status' => 'publish'
 		);
 		
 		// Apply additional filtering if needed
