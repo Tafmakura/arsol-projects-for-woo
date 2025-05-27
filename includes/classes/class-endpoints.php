@@ -258,6 +258,9 @@ class Endpoints {
             // Get the project overview URL
             $project_url = wc_get_account_endpoint_url('project-overview/' . $post->ID);
             
+            // Clean up the URL by removing any query parameters
+            $project_url = strtok($project_url, '?');
+            
             // Add the comment anchor
             $location = $project_url . '#comment-' . $comment->comment_ID;
         }
