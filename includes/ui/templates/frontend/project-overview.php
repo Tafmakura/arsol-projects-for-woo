@@ -24,7 +24,18 @@ do_action('arsol_projects_before_project_overview', $project_id);
     <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
     
     <div class="project-description">
-        <?php echo wp_kses_post($project_content); ?>
+        <?php 
+        // Set up the post data to ensure proper context
+        global $post;
+        $post = get_post($project_id);
+        setup_postdata($post);
+        
+        // Display the content with proper context
+        the_content();
+        
+        // Reset post data
+        wp_reset_postdata();
+        ?>
     </div>
     
     <div class="project-meta">
