@@ -42,6 +42,10 @@ $bricks_post_id = $post->ID;
     <?php 
     // Set up Bricks context
     if (function_exists('bricks_set_post_id')) {
+        // Force Bricks to use our project context
+        add_filter('bricks_dynamic_data_post_id', function($post_id) use ($bricks_post_id) {
+            return $bricks_post_id;
+        });
         bricks_set_post_id($bricks_post_id);
     }
     echo do_shortcode('[bricks_template id="1491"]'); 
@@ -72,6 +76,11 @@ $bricks_post_id = $post->ID;
 </div>
 
 <?php 
+// Remove our filter
+if (function_exists('bricks_set_post_id')) {
+    remove_all_filters('bricks_dynamic_data_post_id');
+}
+
 // Restore original query
 $wp_query = $original_query;
 wp_reset_postdata();
