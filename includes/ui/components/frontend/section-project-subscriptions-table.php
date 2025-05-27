@@ -18,7 +18,7 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
         <table class="woocommerce-orders-table woocommerce-MyAccount-orders project-subscriptions-table shop_table shop_table_responsive my_account_orders account-orders-table">
             <thead>
                 <tr>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-number"><span class="nobr"><?php esc_html_e('Subscription', 'arsol-projects-for-woo'); ?></span></th>
+                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-number"><span class="nobr"><?php esc_html_e('Subscription', 'woocommerce-subscriptions'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-status"><span class="nobr"><?php esc_html_e('Status', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-total"><span class="nobr"><?php esc_html_e('Total', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-actions"><span class="nobr"></span></th>
@@ -79,7 +79,7 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
     <?php else : ?>
 
         <div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
-            <?php esc_html_e('No subscriptions found for this project.', 'arsol-projects-for-woo'); ?>
+            <?php esc_html_e('No subscriptions found for this project.', 'woocommerce-subscriptions'); ?>
         </div>
 
     <?php endif; ?>

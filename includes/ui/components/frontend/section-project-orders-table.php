@@ -83,7 +83,7 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
     <?php else : ?>
 
         <div class="woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
-            <?php esc_html_e('No orders found for this project.', 'arsol-projects-for-woo'); ?>
+            <?php esc_html_e('No orders found for this project.', 'woocommerce-subscriptions'); ?>
         </div>
 
     <?php endif; ?>
