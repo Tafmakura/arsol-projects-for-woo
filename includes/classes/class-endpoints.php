@@ -44,10 +44,6 @@ class Endpoints {
 
         // Add comment redirect filter
         add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
-
-        // Ensure standard WordPress comments are used with Bricks
-        add_filter('bricks_comments_template', array($this, 'use_standard_comments_template'));
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_comment_scripts'));
     }
     
     /**
@@ -270,32 +266,6 @@ class Endpoints {
         }
         
         return $location;
-    }
-
-    /**
-     * Use standard WordPress comments template with Bricks
-     *
-     * @param string $template The comments template path
-     * @return string Modified template path
-     */
-    public function use_standard_comments_template($template) {
-        // Only modify for project post type
-        if (is_singular('project')) {
-            return get_template_directory() . '/comments.php';
-        }
-        return $template;
-    }
-
-    /**
-     * Enqueue necessary scripts for comments
-     */
-    public function enqueue_comment_scripts() {
-        if (is_singular('project')) {
-            // Enqueue WordPress comment-reply script
-            if (is_singular() && comments_open() && get_option('thread_comments')) {
-                wp_enqueue_script('comment-reply');
-            }
-        }
     }
 }
 
