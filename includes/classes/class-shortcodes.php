@@ -392,16 +392,31 @@ class Shortcodes {
 			'label_submit' => __('Post Comment', 'arsol-projects-for-woo'),
 		), $atts);
 
+		// Get the post
+		$post = get_post($atts['post_id']);
+		
+		// Check if post exists
+		if (!$post) {
+			return '<p>' . __('Error: Post not found.', 'arsol-projects-for-woo') . '</p>';
+		}
+
+		// Check if comments are open
+		if (!comments_open($post->ID)) {
+			return '<p>' . __('Comments are closed for this post.', 'arsol-projects-for-woo') . '</p>';
+		}
+
 		// Set up comment form arguments
 		$comment_form_args = array(
 			'title_reply' => $atts['title_reply'],
 			'title_reply_to' => $atts['title_reply_to'],
 			'cancel_reply_link' => $atts['cancel_reply_link'],
 			'label_submit' => $atts['label_submit'],
+			'comment_field' => '<p class="comment-form-comment"><label for="comment">' . _x('Comment', 'noun', 'arsol-projects-for-woo') . '</label><textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required></textarea></p>',
+			'comment_notes_before' => '<p class="comment-notes"><span id="email-notes">' . __('Your email address will not be published.', 'arsol-projects-for-woo') . '</span>' . __(' Required fields are marked ', 'arsol-projects-for-woo') . '<span class="required-field-marker">*</span></p>',
 		);
 
 		// Render the comment form
-		comment_form($comment_form_args, $atts['post_id']);
+		comment_form($comment_form_args, $post->ID);
 
 		// Return buffered content
 		return ob_get_clean();
