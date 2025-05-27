@@ -16,12 +16,21 @@ do_action('arsol_projects_before_project_overview', $project_id);
 global $post;
 $post = get_post($project_id);
 setup_postdata($post);
+
+// Store the current post ID for Bricks context
+$bricks_post_id = $post->ID;
 ?>
 
 <?php // Navigation included in includes/classes/class-endpoints.php  ?>
 
 <div class="project-bricks-template">
-    <?php echo do_shortcode('[bricks_template id="1491"]'); ?>
+    <?php 
+    // Set up Bricks context
+    if (function_exists('bricks_set_post_id')) {
+        bricks_set_post_id($bricks_post_id);
+    }
+    echo do_shortcode('[bricks_template id="1491"]'); 
+    ?>
 </div>
 
 <div class="project-content">
