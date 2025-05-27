@@ -38,6 +38,18 @@ $bricks_post_id = $post->ID;
     Debug - Post ID: <?php echo esc_html($post->ID); ?> | Project ID: <?php echo esc_html($project_id); ?> | Bricks Post ID: <?php echo esc_html($bricks_post_id); ?>
 </div>
 
+<!-- Debug: WordPress Template Tags -->
+<div style="background: #f0f0f0; padding: 5px; margin: 5px 0; font-size: 12px; color: #666;">
+    Debug - WordPress Context:<br>
+    the_title(): <?php the_title(); ?><br>
+    get_the_title(): <?php echo esc_html(get_the_title()); ?><br>
+    get_the_ID(): <?php echo esc_html(get_the_ID()); ?><br>
+    get_post_type(): <?php echo esc_html(get_post_type()); ?><br>
+    is_singular('project'): <?php echo is_singular('project') ? 'true' : 'false'; ?><br>
+    $post->post_title: <?php echo esc_html($post->post_title); ?><br>
+    $post->post_type: <?php echo esc_html($post->post_type); ?>
+</div>
+
 <div class="project-bricks-template">
     <?php 
     // Set up Bricks context
