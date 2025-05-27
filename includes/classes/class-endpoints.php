@@ -41,6 +41,9 @@ class Endpoints {
         add_action('woocommerce_account_project-overview_endpoint', array($this, 'project_overview_endpoint_content'));
         add_action('woocommerce_account_project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
         add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
+
+        // Add comment redirect filter
+        add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
     }
     
     /**
@@ -238,6 +241,28 @@ class Endpoints {
         
         // Get the output buffer content
         return ob_get_clean();
+    }
+
+    /**
+     * Handle comment redirect for project pages
+     *
+     * @param string $location The redirect location
+     * @param WP_Comment $comment The comment object
+     * @return string Modified redirect location
+     */
+    public function handle_comment_redirect($location, $comment) {
+        // Check if the comment is on a project post type
+        $post = get_post($comment->comment_post_ID);
+        
+        if ($post && $post->post_type === 'project') {
+            // Get the project overview URL
+            $project_url = wc_get_account_endpoint_url('project-overview/' . $post->ID);
+            
+            // Add the comment anchor
+            $location = $project_url . '#comment-' . $comment->comment_ID;
+        }
+        
+        return $location;
     }
 }
 
