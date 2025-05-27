@@ -374,7 +374,7 @@ class Shortcodes {
 	}
 
 	/**
-	 * Shortcode to display the standard WordPress comment form and comments list
+	 * Shortcode to display the standard WordPress comment form
 	 *
 	 * @param array $atts Shortcode attributes
 	 * @return string HTML output
@@ -390,7 +390,6 @@ class Shortcodes {
 			'title_reply_to' => __('Leave a Reply to %s', 'arsol-projects-for-woo'),
 			'cancel_reply_link' => __('Cancel Reply', 'arsol-projects-for-woo'),
 			'label_submit' => __('Post Comment', 'arsol-projects-for-woo'),
-			'comments_per_page' => 10,
 		), $atts);
 
 		// Get the post
@@ -404,29 +403,6 @@ class Shortcodes {
 		// Check if comments are open
 		if (!comments_open($post->ID)) {
 			return '<p>' . __('Comments are closed for this post.', 'arsol-projects-for-woo') . '</p>';
-		}
-
-		// Get comments for this post
-		$comments = get_comments(array(
-			'post_id' => $post->ID,
-			'status' => 'approve',
-			'order' => 'ASC',
-			'number' => $atts['comments_per_page']
-		));
-
-		// Display comments list if there are any
-		if (!empty($comments)) {
-			echo '<div class="arsol-comments-list">';
-			echo '<h3 class="comments-title">' . __('Comments', 'arsol-projects-for-woo') . '</h3>';
-			
-			wp_list_comments(array(
-				'style' => 'div',
-				'short_ping' => true,
-				'avatar_size' => 50,
-				'callback' => array($this, 'arsol_comment_callback')
-			), $comments);
-			
-			echo '</div>';
 		}
 
 		// Set up comment form arguments
@@ -444,55 +420,5 @@ class Shortcodes {
 
 		// Return buffered content
 		return ob_get_clean();
-	}
-
-	/**
-	 * Custom callback for displaying comments
-	 *
-	 * @param WP_Comment $comment The comment object
-	 * @param array $args The arguments
-	 * @param int $depth The depth of the comment
-	 */
-	public function arsol_comment_callback($comment, $args, $depth) {
-		$GLOBALS['comment'] = $comment;
-		?>
-		<div id="comment-<?php comment_ID(); ?>" <?php comment_class('arsol-comment'); ?>>
-			<div class="comment-author vcard">
-				<?php echo get_avatar($comment, 50); ?>
-				<cite class="fn"><?php comment_author_link(); ?></cite>
-				<span class="comment-meta commentmetadata">
-					<a href="<?php echo esc_url(get_comment_link($comment->comment_ID)); ?>">
-						<?php
-						printf(
-							__('%1$s at %2$s', 'arsol-projects-for-woo'),
-							get_comment_date(),
-							get_comment_time()
-						);
-						?>
-					</a>
-					<?php edit_comment_link(__('(Edit)', 'arsol-projects-for-woo'), ' '); ?>
-				</span>
-			</div>
-
-			<?php if ('0' == $comment->comment_approved) : ?>
-				<em class="comment-awaiting-moderation"><?php _e('Your comment is awaiting moderation.', 'arsol-projects-for-woo'); ?></em>
-				<br />
-			<?php endif; ?>
-
-			<div class="comment-content">
-				<?php comment_text(); ?>
-			</div>
-
-			<div class="reply">
-				<?php
-				comment_reply_link(array_merge($args, array(
-					'reply_text' => __('Reply', 'arsol-projects-for-woo'),
-					'depth' => $depth,
-					'max_depth' => $args['max_depth']
-				)));
-				?>
-			</div>
-		</div>
-		<?php
 	}
 }
