@@ -13,15 +13,30 @@ defined('ABSPATH') || exit;
 do_action('arsol_projects_before_project_overview', $project_id);
 
 // Set up the post data to ensure proper context for both Bricks and content
-global $post;
+global $post, $wp_query;
 $post = get_post($project_id);
 setup_postdata($post);
+
+// Store original query
+$original_query = $wp_query;
+
+// Create a new query to simulate project context
+$wp_query = new \WP_Query(array(
+    'post_type' => 'project',
+    'p' => $project_id,
+    'post_status' => 'publish'
+));
 
 // Store the current post ID for Bricks context
 $bricks_post_id = $post->ID;
 ?>
 
 <?php // Navigation included in includes/classes/class-endpoints.php  ?>
+
+<!-- Debug: Current Post ID -->
+<div style="background: #f0f0f0; padding: 5px; margin: 5px 0; font-size: 12px; color: #666;">
+    Debug - Post ID: <?php echo esc_html($post->ID); ?> | Project ID: <?php echo esc_html($project_id); ?> | Bricks Post ID: <?php echo esc_html($bricks_post_id); ?>
+</div>
 
 <div class="project-bricks-template">
     <?php 
@@ -57,7 +72,8 @@ $bricks_post_id = $post->ID;
 </div>
 
 <?php 
-// Reset post data after everything is done
+// Restore original query
+$wp_query = $original_query;
 wp_reset_postdata();
 
 do_action('arsol_projects_after_project_overview', $project_id); 
