@@ -214,7 +214,7 @@ class Endpoints {
      * @param int $project_id Project ID
      * @return bool Whether the user can view the project
      */
-    private function user_can_view_project($user_id, $project_id) {
+    public static function user_can_view_project($user_id, $project_id) {
         // If AdminOrders class has this method, use it
         if (method_exists('Arsol_Projects_For_Woo\Woo\AdminOrders', 'user_can_view_project')) {
             return AdminOrders::user_can_view_project($user_id, $project_id);
