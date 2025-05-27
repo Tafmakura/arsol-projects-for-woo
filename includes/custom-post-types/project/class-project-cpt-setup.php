@@ -128,6 +128,7 @@ class Setup {
             
             // Check if user can view the project
             if (!\Arsol_Projects_For_Woo\Endpoints::user_can_view_project($user_id, $project_id)) {
+                // Simple redirect to projects list
                 wp_redirect(wc_get_account_endpoint_url('projects'));
                 exit;
             }
