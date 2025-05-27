@@ -84,8 +84,32 @@ $bricks_post_id = $post->ID;
             return $bricks_post_id;
         });
         bricks_set_post_id($bricks_post_id);
+        
+        // Try to render the template using Bricks' native functions
+        if (function_exists('bricks_render_template')) {
+            // Get the template data
+            $template_id = 1491; // Your template ID
+            $template = get_post($template_id);
+            
+            if ($template && $template->post_type === 'bricks_template') {
+                // Store original post data
+                $original_post = $GLOBALS['post'];
+                $GLOBALS['post'] = $post;
+                
+                // Render the template
+                echo bricks_render_template($template_id, [
+                    'post_id' => $bricks_post_id,
+                    'post_type' => 'project'
+                ]);
+                
+                // Restore original post data
+                $GLOBALS['post'] = $original_post;
+            }
+        } else {
+            // Fallback to shortcode if native functions aren't available
+            echo do_shortcode('[bricks_template id="1491"]');
+        }
     }
-    echo do_shortcode('[bricks_template id="1491"]'); 
     ?>
 </div>
 
