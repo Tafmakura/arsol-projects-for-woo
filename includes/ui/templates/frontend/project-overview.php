@@ -20,6 +20,15 @@ do_action('arsol_projects_before_project_overview', $project_id);
     <?php echo do_shortcode('[bricks_template id="1491"]'); ?>
 </div>
 
+<?php
+// Add comments section
+if (comments_open() || get_comments_number()) {
+    echo '<div class="project-comments-section">';
+    comments_template();
+    echo '</div>';
+}
+?>
+
 <div class="project-content">
     <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
     
