@@ -36,11 +36,11 @@ setup_postdata($post);
     
     <div class="project-meta">
         <?php if (!empty($project_meta['_project_start_date'][0])) : ?>
-            <p><strong><?php esc_html_e('Start Datee:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_start_date'][0]))); ?></p>
+            <p><strong><?php esc_html_e('Start Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_start_date'][0]))); ?></p>
         <?php endif; ?>
         
         <?php if (!empty($project_meta['_project_end_date'][0])) : ?>
-            <p><strong><?php esc_html_e('End Datee:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
+            <p><strong><?php esc_html_e('End Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
         <?php endif; ?>
     </div>
     
