@@ -258,8 +258,17 @@ class Endpoints {
             // Get the project overview URL
             $project_url = wc_get_account_endpoint_url('project-overview/' . $post->ID);
             
-            // Clean up the URL by removing any query parameters
-            $project_url = strtok($project_url, '?');
+            // Parse the original location to get query parameters
+            $parsed_url = parse_url($location);
+            $query_params = array();
+            if (isset($parsed_url['query'])) {
+                parse_str($parsed_url['query'], $query_params);
+            }
+            
+            // Add necessary query parameters back
+            if (!empty($query_params)) {
+                $project_url = add_query_arg($query_params, $project_url);
+            }
             
             // Add the comment anchor
             $location = $project_url . '#comment-' . $comment->comment_ID;
