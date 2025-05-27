@@ -83,32 +83,21 @@ $bricks_post_id = $post->ID;
         add_filter('bricks_dynamic_data_post_id', function($post_id) use ($bricks_post_id) {
             return $bricks_post_id;
         });
+        
+        // Add filter for Bricks data context
+        add_filter('bricks_data_context', function($context) use ($bricks_post_id) {
+            $context['post_id'] = $bricks_post_id;
+            $context['post_type'] = 'project';
+            return $context;
+        });
+        
         bricks_set_post_id($bricks_post_id);
         
-        // Try to render the template using Bricks' native functions
-        if (function_exists('bricks_render_template')) {
-            // Get the template data
-            $template_id = 1491; // Your template ID
-            $template = get_post($template_id);
-            
-            if ($template && $template->post_type === 'bricks_template') {
-                // Store original post data
-                $original_post = $GLOBALS['post'];
-                $GLOBALS['post'] = $post;
-                
-                // Render the template
-                echo bricks_render_template($template_id, [
-                    'post_id' => $bricks_post_id,
-                    'post_type' => 'project'
-                ]);
-                
-                // Restore original post data
-                $GLOBALS['post'] = $original_post;
-            }
-        } else {
-            // Fallback to shortcode if native functions aren't available
-            echo do_shortcode('[bricks_template id="1491"]');
-        }
+        // Render the template
+        echo do_shortcode('[bricks_template id="1491"]');
+        
+        // Remove our filters
+        remove_all_filters('bricks_data_context');
     }
     ?>
 </div>
