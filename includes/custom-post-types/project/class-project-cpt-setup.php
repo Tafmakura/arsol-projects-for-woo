@@ -13,6 +13,7 @@ class Setup {
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('do_meta_boxes', array($this, 'move_author_metabox_to_side'));
         add_action('do_meta_boxes', array($this, 'move_excerpt_metabox_to_top'));
+        add_action('template_redirect', array($this, 'handle_project_template_redirect'));
     }
 
     public function register_post_type() {
@@ -33,7 +34,7 @@ class Setup {
         $args = array(
             'labels'              => $labels,
             'public'              => true,
-            'publicly_queryable'  => false, // Disable single project pages
+            'publicly_queryable'  => true, // Enable for comment handling
             'show_ui'            => true,
             'show_in_menu'       => true,
             'show_in_nav_menus'  => true,
@@ -42,10 +43,10 @@ class Setup {
             'menu_icon'          => 'dashicons-portfolio',
             'capability_type'    => 'post',
             'hierarchical'       => false,
-            'supports'           => array('title', 'editor', 'excerpt', 'author', 'comments'), // Added 'comments'
-            'has_archive'        => false, // Already disabled
-            'rewrite'           => false, // Remove rewrite rules since we don't need public URLs
-            'show_in_rest'      => false, // Disable Gutenberg
+            'supports'           => array('title', 'editor', 'excerpt', 'author', 'comments'),
+            'has_archive'        => false,
+            'rewrite'           => array('slug' => 'project', 'with_front' => false),
+            'show_in_rest'      => false,
         );
 
         register_post_type('project', $args);
@@ -115,5 +116,25 @@ class Setup {
             'normal', // Keep in normal position
             'default' // Use default priority
         );
+    }
+
+    /**
+     * Handle template redirect for project pages
+     */
+    public function handle_project_template_redirect() {
+        if (is_singular('project')) {
+            $project_id = get_the_ID();
+            $user_id = get_current_user_id();
+            
+            // Check if user can view the project
+            if (!\Arsol_Projects_For_Woo\Endpoints::user_can_view_project($user_id, $project_id)) {
+                wp_redirect(wc_get_account_endpoint_url('projects'));
+                exit;
+            }
+            
+            // Redirect to the project overview page in the account area
+            wp_redirect(wc_get_account_endpoint_url('project-overview/' . $project_id));
+            exit;
+        }
     }
 }
