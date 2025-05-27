@@ -265,16 +265,6 @@ class Endpoints {
                 parse_str($parsed_url['query'], $query_params);
             }
             
-            // Remove any project parameter as it's already in the URL structure
-            if (isset($query_params['project'])) {
-                unset($query_params['project']);
-            }
-            
-            // Remove WPACUrl as it's causing duplication
-            if (isset($query_params['WPACUrl'])) {
-                unset($query_params['WPACUrl']);
-            }
-            
             // Add necessary query parameters back
             if (!empty($query_params)) {
                 $project_url = add_query_arg($query_params, $project_url);
