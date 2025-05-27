@@ -50,6 +50,31 @@ $bricks_post_id = $post->ID;
     $post->post_type: <?php echo esc_html($post->post_type); ?>
 </div>
 
+<!-- Debug: Bricks Context -->
+<div style="background: #f0f0f0; padding: 5px; margin: 5px 0; font-size: 12px; color: #666;">
+    Debug - Bricks Context:<br>
+    <?php 
+    if (function_exists('bricks_get_post_id')) {
+        echo 'bricks_get_post_id(): ' . esc_html(bricks_get_post_id()) . '<br>';
+    }
+    if (function_exists('bricks_get_post_type')) {
+        echo 'bricks_get_post_type(): ' . esc_html(bricks_get_post_type()) . '<br>';
+    }
+    if (function_exists('bricks_get_post_title')) {
+        echo 'bricks_get_post_title(): ' . esc_html(bricks_get_post_title()) . '<br>';
+    }
+    if (function_exists('bricks_get_post_meta')) {
+        echo 'bricks_get_post_meta("_bricks_template_id"): ' . esc_html(bricks_get_post_meta('_bricks_template_id')) . '<br>';
+    }
+    if (function_exists('bricks_is_builder_main')) {
+        echo 'bricks_is_builder_main(): ' . (bricks_is_builder_main() ? 'true' : 'false') . '<br>';
+    }
+    if (function_exists('bricks_is_builder_iframe')) {
+        echo 'bricks_is_builder_iframe(): ' . (bricks_is_builder_iframe() ? 'true' : 'false') . '<br>';
+    }
+    ?>
+</div>
+
 <div class="project-bricks-template">
     <?php 
     // Set up Bricks context
