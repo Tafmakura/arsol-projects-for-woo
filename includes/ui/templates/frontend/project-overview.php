@@ -122,52 +122,45 @@ $bricks_post_id = $post->ID;
 
 
 <?php 
-// Remove our filter
-if (function_exists('bricks_set_post_id')) {
-    remove_all_filters('bricks_dynamic_data_post_id');
-}
 
-// Restore original query
-$wp_query = $original_query;
-wp_reset_postdata();
+$args = [
+    'post_type'      => 'project',
+    'p'              => $project_id,
+    'post_status'    => 'publish',
+    'posts_per_page' => 1,
+];
 
-do_action('arsol_projects_after_project_overview', $project_id); 
+$query = new WP_Query( $args );
+
+if ( $query->have_posts() ) :
+    while ( $query->have_posts() ) :
+        $query->the_post(); // Sets global $post
+
+        // Show post title (optional)
+        echo '<h2>' . get_the_title() . '</h2>';
+
+        // ✅ Show comments
+        if ( have_comments() ) {
+            echo '<div class="comments-list">';
+            wp_list_comments([
+                'style' => 'div',
+                'avatar_size' => 48,
+            ]);
+            echo '</div>';
+        } else {
+            echo '<p>No comments yet.</p>';
+        }
+
+        // ✅ Show comment form
+        if ( comments_open() ) {
+            comment_form();
+        }
+
+    endwhile;
+
+    wp_reset_postdata();
+else :
+    echo '<p>Project not found.</p>';
+endif;
 ?>
 
-
-
-<?php
-$project_id = 123; // Change this to your project ID
-
-// 1. Set global $post properly
-global $post;
-$post = get_post( $project_id );
-setup_postdata( $post );
-
-// 2. Fetch and display existing comments (if any)
-$comments = get_comments([
-    'post_id' => $project_id,
-    'status'  => 'approve',
-]);
-
-if ( $comments ) {
-    echo '<div class="comments-list">';
-    wp_list_comments([
-        'style'      => 'div',
-        'short_ping' => true,
-        'avatar_size' => 48,
-    ], $comments);
-    echo '</div>';
-} else {
-    echo '<p>No comments yet.</p>';
-}
-
-// 3. Show comment form
-if ( comments_open( $project_id ) ) {
-    comment_form([
-        'title_reply' => 'Leave a Comment',
-    ], $project_id );
-}
-
-wp_reset_postdata();
-?>
