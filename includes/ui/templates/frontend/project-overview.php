@@ -54,13 +54,17 @@ $bricks_post_id = $post->ID;
     <?php 
     // Set up Bricks context
     if (function_exists('bricks_set_post_id')) {
-        // Force Bricks to use our project context
-        add_filter('bricks_dynamic_data_post_id', function($post_id) use ($bricks_post_id) {
-            return $bricks_post_id;
+        // Add filter to set up the post context for Bricks
+        add_filter('bricks/setup/post', function($post) use ($bricks_post_id) {
+            return get_post($bricks_post_id);
         });
-        bricks_set_post_id($bricks_post_id);
+        
+        // Render the template
+        echo do_shortcode('[bricks_template id="1491"]');
+        
+        // Remove our filter
+        remove_all_filters('bricks/setup/post');
     }
-    echo do_shortcode('[bricks_template id="1491"]'); 
     ?>
 </div>
 
