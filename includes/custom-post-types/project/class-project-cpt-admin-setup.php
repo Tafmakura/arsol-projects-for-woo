@@ -29,7 +29,7 @@ class Setup {
             'search_items'      => __('Search Projects', 'arsol-projects-for-woo'),
             'not_found'         => __('No projects found', 'arsol-projects-for-woo'),
             'not_found_in_trash'=> __('No projects found in trash', 'arsol-projects-for-woo'),
-            'menu_name'         => __('Projects', 'arsol-projects-for-woo'),
+            'menu_name'         => __('Arsol Projects', 'arsol-projects-for-woo'),
         );
 
         $args = array(
@@ -41,7 +41,7 @@ class Setup {
             'show_in_nav_menus'  => true,
             'show_in_admin_bar'  => true,
             'menu_position'      => 5,
-            'menu_icon'          => 'dashicons-portfolio',
+            'menu_icon'          => 'dashicons-clipboard',
             'capability_type'    => 'post',
             'hierarchical'       => false,
             'supports'           => array('title', 'editor', 'excerpt', 'author', 'comments'),
