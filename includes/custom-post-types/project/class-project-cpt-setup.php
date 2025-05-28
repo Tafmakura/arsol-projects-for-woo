@@ -18,6 +18,7 @@ class Setup {
         add_action('restrict_manage_posts', array($this, 'add_project_status_filters'));
         add_action('pre_get_posts', array($this, 'filter_projects_by_date_range'));
         add_action('template_redirect', array($this, 'handle_project_template_redirect'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_wc_admin_styles'));
     }
 
     public function register_post_type() {
@@ -419,6 +420,17 @@ class Setup {
             if (!empty($_GET['customer'])) {
                 $query->set('author', sanitize_text_field($_GET['customer']));
             }
+        }
+    }
+
+    /**
+     * Enqueue WooCommerce admin styles for arsol-project post type
+     */
+    public function enqueue_wc_admin_styles($hook) {
+        global $typenow;
+        if ($typenow === 'arsol-project' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-project')) {
+            // WooCommerce admin styles
+            wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
         }
     }
 }
