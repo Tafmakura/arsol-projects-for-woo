@@ -112,7 +112,7 @@
 .project-content h4,
 .project-content h5,
 .project-content h6 {
-    font-size: 0.85em;
+    transform: scale(0.85);
 }
 
 .project-sidebar {
