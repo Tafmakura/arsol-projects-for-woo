@@ -48,5 +48,16 @@ use Arsol_Projects_For_Woo\Setup;
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
+// Register activation hook
+register_activation_hook(__FILE__, 'arsol_projects_activate');
+
+/**
+ * Plugin activation function
+ */
+function arsol_projects_activate() {
+    // Flush rewrite rules
+    flush_rewrite_rules();
+}
+
 // Instantiate the Setup class
 new Setup();
