@@ -16,6 +16,7 @@ class Setup {
         add_action('add_meta_boxes', array($this, 'add_project_details_meta_box'));
         add_action('save_post_arsol-project', array($this, 'save_project_details'));
         add_action('restrict_manage_posts', array($this, 'add_project_status_filters'));
+        add_action('pre_get_posts', array($this, 'filter_projects_by_date_range'));
         add_action('template_redirect', array($this, 'handle_project_template_redirect'));
     }
 
@@ -66,7 +67,7 @@ class Setup {
     }
 
     /**
-     * Modify the author dropdown to include WooCommerce customers
+     * Modify the author dropdown to include only WooCommerce customers
      */
     public function modify_author_dropdown($query_args, $r) {
         if (!is_admin()) {
@@ -75,13 +76,8 @@ class Setup {
 
         $screen = get_current_screen();
         if ($screen && $screen->post_type === 'arsol-project') {
-            // Get customers who have made orders
-            $customer_ids = get_users(array(
-                'role'    => 'customer',
-                'fields'  => 'ID',
-            ));
-
-            $query_args['include'] = $customer_ids;
+            // Get all users who can make purchases
+            $query_args['role__in'] = array('customer', 'subscriber');
             $query_args['orderby'] = 'display_name';
             $query_args['order'] = 'ASC';
         }
@@ -332,6 +328,7 @@ class Setup {
     public function add_project_status_filters() {
         global $typenow;
         if ($typenow === 'arsol-project') {
+            // Status filter
             $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
             $statuses = get_terms('project_status', array('hide_empty' => false));
             
@@ -349,6 +346,119 @@ class Setup {
                 }
                 
                 echo '</select>';
+            }
+
+            // Start date range filter
+            $start_date_from = isset($_GET['start_date_from']) ? $_GET['start_date_from'] : '';
+            $start_date_to = isset($_GET['start_date_to']) ? $_GET['start_date_to'] : '';
+            
+            echo '<span class="date-from-to-wrapper">';
+            echo '<input type="text" class="date-picker-from" name="start_date_from" value="' . esc_attr($start_date_from) . '" placeholder="' . __('Start Date From', 'arsol-projects-for-woo') . '" />';
+            echo '<input type="text" class="date-picker-to" name="start_date_to" value="' . esc_attr($start_date_to) . '" placeholder="' . __('Start Date To', 'arsol-projects-for-woo') . '" />';
+            echo '</span>';
+
+            // Due date range filter
+            $due_date_from = isset($_GET['due_date_from']) ? $_GET['due_date_from'] : '';
+            $due_date_to = isset($_GET['due_date_to']) ? $_GET['due_date_to'] : '';
+            
+            echo '<span class="date-from-to-wrapper">';
+            echo '<input type="text" class="date-picker-from" name="due_date_from" value="' . esc_attr($due_date_from) . '" placeholder="' . __('Due Date From', 'arsol-projects-for-woo') . '" />';
+            echo '<input type="text" class="date-picker-to" name="due_date_to" value="' . esc_attr($due_date_to) . '" placeholder="' . __('Due Date To', 'arsol-projects-for-woo') . '" />';
+            echo '</span>';
+
+            // Add WooCommerce date picker scripts
+            wp_enqueue_script('jquery-ui-datepicker');
+            wp_enqueue_style('jquery-ui-style', WC()->plugin_url() . '/assets/css/jquery-ui/jquery-ui.min.css', array(), WC_VERSION);
+            
+            // Add inline script for date picker initialization
+            add_action('admin_footer', function() {
+                ?>
+                <script type="text/javascript">
+                jQuery(function($) {
+                    $('.date-picker-from, .date-picker-to').datepicker({
+                        dateFormat: 'yy-mm-dd',
+                        changeMonth: true,
+                        changeYear: true,
+                        showButtonPanel: true,
+                        maxDate: '+0D'
+                    });
+                });
+                </script>
+                <style>
+                .date-from-to-wrapper {
+                    display: inline-block;
+                    margin: 0 10px;
+                }
+                .date-from-to-wrapper input {
+                    width: 130px;
+                }
+                </style>
+                <?php
+            });
+        }
+    }
+
+    /**
+     * Filter projects by date range
+     */
+    public function filter_projects_by_date_range($query) {
+        global $pagenow, $typenow;
+
+        if ($pagenow === 'edit.php' && $typenow === 'arsol-project' && $query->is_main_query()) {
+            $meta_query = array();
+
+            // Start date range
+            if (!empty($_GET['start_date_from']) || !empty($_GET['start_date_to'])) {
+                $start_date_query = array('relation' => 'AND');
+                
+                if (!empty($_GET['start_date_from'])) {
+                    $start_date_query[] = array(
+                        'key' => '_project_start_date',
+                        'value' => sanitize_text_field($_GET['start_date_from']),
+                        'compare' => '>=',
+                        'type' => 'DATE'
+                    );
+                }
+                
+                if (!empty($_GET['start_date_to'])) {
+                    $start_date_query[] = array(
+                        'key' => '_project_start_date',
+                        'value' => sanitize_text_field($_GET['start_date_to']),
+                        'compare' => '<=',
+                        'type' => 'DATE'
+                    );
+                }
+                
+                $meta_query[] = $start_date_query;
+            }
+
+            // Due date range
+            if (!empty($_GET['due_date_from']) || !empty($_GET['due_date_to'])) {
+                $due_date_query = array('relation' => 'AND');
+                
+                if (!empty($_GET['due_date_from'])) {
+                    $due_date_query[] = array(
+                        'key' => '_project_due_date',
+                        'value' => sanitize_text_field($_GET['due_date_from']),
+                        'compare' => '>=',
+                        'type' => 'DATE'
+                    );
+                }
+                
+                if (!empty($_GET['due_date_to'])) {
+                    $due_date_query[] = array(
+                        'key' => '_project_due_date',
+                        'value' => sanitize_text_field($_GET['due_date_to']),
+                        'compare' => '<=',
+                        'type' => 'DATE'
+                    );
+                }
+                
+                $meta_query[] = $due_date_query;
+            }
+
+            if (!empty($meta_query)) {
+                $query->set('meta_query', $meta_query);
             }
         }
     }
