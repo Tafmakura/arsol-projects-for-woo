@@ -19,7 +19,7 @@ do_action('arsol_projects_before_project_subscriptions', $project_id);
     <?php do_action('arsol_projects_subscriptions_before_table', $project_id); ?>
     
     <div class="woocommerce">
-        <p class="woocommerce-info"><?php printf(
+        <p><?php printf(
             /* translators: %s: subscriptions */
             esc_html__('This table gives you a live view of all %s. Monitor status, payment schedules, and manage your recurring transactions in one place.', 'arsol-projects-for-woo'),
             '<span class="woocommerce-subscriptions">' . esc_html__('subscriptions', 'woocommerce-subscriptions') . '</span>'
