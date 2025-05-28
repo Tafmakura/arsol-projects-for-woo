@@ -157,10 +157,6 @@
     margin-bottom: 1rem;
 }
 
-.project-empty-state p {
-    margin-bottom: 2.5rem;
-}
-
 .project-empty-state-actions {
     display: flex;
     gap: 1rem;
