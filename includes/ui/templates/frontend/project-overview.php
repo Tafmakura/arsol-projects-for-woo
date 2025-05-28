@@ -50,62 +50,17 @@ $bricks_post_id = $post->ID;
     $post->post_type: <?php echo esc_html($post->post_type); ?>
 </div>
 
-<!-- Debug: Bricks Builder Context -->
-<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; font-size: 12px; color: #666; border: 1px solid #ddd;">
-    <h4 style="margin: 0 0 10px 0;">Bricks Builder Debug Info Here:</h4>
-    <?php if (defined('BRICKS_VERSION')) : ?>
-        <p><strong>Bricks Version:</strong> <?php echo esc_html(BRICKS_VERSION); ?></p>
-        <p><strong>Current Post ID:</strong> <?php echo esc_html($bricks_post_id); ?></p>
-        <?php if (function_exists('bricks_get_post_id')) : ?>
-            <p><strong>Bricks Post ID:</strong> <?php echo esc_html(bricks_get_post_id()); ?></p>
-        <?php endif; ?>
-        <?php if (function_exists('bricks_get_post_type')) : ?>
-            <p><strong>Bricks Post Type:</strong> <?php echo esc_html(bricks_get_post_type()); ?></p>
-        <?php endif; ?>
-        <?php if (function_exists('bricks_is_builder_main')) : ?>
-            <p><strong>Is Builder Main:</strong> <?php echo bricks_is_builder_main() ? 'true' : 'false'; ?></p>
-        <?php endif; ?>
-        <?php if (function_exists('bricks_is_builder_iframe')) : ?>
-            <p><strong>Is Builder Iframe:</strong> <?php echo bricks_is_builder_iframe() ? 'true' : 'false'; ?></p>
-        <?php endif; ?>
-        <?php if (function_exists('bricks_get_post_meta')) : ?>
-            <p><strong>Template ID:</strong> <?php echo esc_html(bricks_get_post_meta('_bricks_template_id')); ?></p>
-        <?php endif; ?>
-    <?php else : ?>
-        <p>Bricks is not active</p>
-    <?php endif; ?>
-</div>
-
 <div class="project-bricks-template">
     <?php 
     // Set up Bricks context
-    if (defined('BRICKS_VERSION')) {
-        // Get the current URL
-        $current_url = home_url(add_query_arg([], $_SERVER['REQUEST_URI']));
-        
-        // Extract the project ID from the URL
-        $parts = explode('/', trim($current_url, '/'));
-        $project_id = end($parts); // gets project ID from the URL
-        
-        // Set up the query args
-        $query_args = [
-            'post_type'      => 'project',
-            'posts_per_page' => 1,
-            'p'              => intval($project_id), // make sure it's an integer
-        ];
-        
-        // Add filter to set up the post context for Bricks
-        add_filter('bricks/setup/post', function($post) use ($query_args) {
-            $query = new \WP_Query($query_args);
-            return $query->have_posts() ? $query->posts[0] : $post;
+    if (function_exists('bricks_set_post_id')) {
+        // Force Bricks to use our project context
+        add_filter('bricks_dynamic_data_post_id', function($post_id) use ($bricks_post_id) {
+            return $bricks_post_id;
         });
-        
-        // Render the template
-        echo do_shortcode('[bricks_template id="1491"]');
-        
-        // Remove our filter
-        remove_all_filters('bricks/setup/post');
+        bricks_set_post_id($bricks_post_id);
     }
+    echo do_shortcode('[bricks_template id="1491"]'); 
     ?>
 </div>
 
