@@ -154,10 +154,6 @@
 /* Project empty state styling */
 .project-empty-state {
     text-align: center;
-    padding: 40px 20px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 20px;
 }
 
 .project-empty-state h3 {
