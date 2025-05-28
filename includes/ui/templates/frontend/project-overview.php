@@ -40,7 +40,14 @@ do_action('arsol_projects_before_project_wrapper', $project_id);
         <?php do_action('arsol_projects_before_description', $project_id); ?>
         
         <div class="project-description">
-            <?php the_content(); ?>
+            <?php if (empty(get_the_content())) : ?>
+                <div class="project-empty-state">
+                    <h3><?php esc_html_e('Project Overview', 'arsol-projects-for-woo'); ?></h3>
+                    <p><?php esc_html_e('This project is currently being set up. Check back soon for more details.', 'arsol-projects-for-woo'); ?></p>
+                </div>
+            <?php else : ?>
+                <?php the_content(); ?>
+            <?php endif; ?>
         </div>
         
         <?php do_action('arsol_projects_after_description', $project_id); ?>

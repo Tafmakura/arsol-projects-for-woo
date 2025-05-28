@@ -185,7 +185,6 @@ class Endpoints {
         $project_status = get_post_status($project_id);
         $project_date = get_the_date('', $project_id);
         
-       
         // Display the project navigation
         echo $this->get_project_navigation($project_id, $tab);
   
@@ -201,10 +200,15 @@ class Endpoints {
                 
             case 'overview':
             default:
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
+                // If content is empty, use the project overview template
+                if (empty($project_content)) {
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
+                } else {
+                    // Use the default content display
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
+                }
                 break;
         }
-
     }
     
     /**
