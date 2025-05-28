@@ -12,35 +12,20 @@ defined('ABSPATH') || exit;
 
 do_action('arsol_projects_before_project_overview', $project_id);
 
-// Set up the post data
-global $post;
-$post = get_post($project_id);
-setup_postdata($post);
+// Get the project post
+$project = get_post($project_id);
 
-// Store original query
-$original_query = $wp_query;
+if (!$project) {
+    echo '<p>' . esc_html__('Project not found.', 'arsol-projects-for-woo') . '</p>';
+    return;
+}
 
-// Create a new query for the project
-$wp_query = new \WP_Query(array(
-    'post_type' => 'project',
-    'p' => $project_id,
-    'post_status' => 'publish',
-    'suppress_filters' => false
-));
-
-// Store the current post ID for Bricks context
-$bricks_post_id = $post->ID;
+// Set up post data
+setup_postdata($project);
 ?>
 
 <?php // Navigation included in includes/classes/class-endpoints.php ?>
 
-<div class="project-bricks-template">
-    <?php 
-    // echo do_shortcode('[bricks_template id="1491"]'); 
-    ?>
-</div>
-
-<!-- Main content and Sidebar Wrapper -->
 <div class="project-overview-wrapper">
     <!-- Main Content Area -->
     <div class="project-content">
@@ -53,13 +38,8 @@ $bricks_post_id = $post->ID;
         <!-- Comments Section -->
         <div class="project-comments">
             <?php
-            if ($wp_query->have_posts()) :
-                while ($wp_query->have_posts()) : $wp_query->the_post();
-                    if (comments_open() || get_comments_number()) :
-                        comments_template();
-                    endif;
-                endwhile;
-            endif;
+            // Load the comments template
+            comments_template();
             ?>
         </div>
         
@@ -83,8 +63,7 @@ $bricks_post_id = $post->ID;
 </div>
 
 <?php 
-// Restore original query
-$wp_query = $original_query;
+// Reset post data
 wp_reset_postdata();
 
 do_action('arsol_projects_after_project_overview', $project_id); 
