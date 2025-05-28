@@ -20,8 +20,10 @@ if (!$project) {
     return;
 }
 
-// Set up post data
-setup_postdata($project);
+// Set the global post
+global $post;
+$post = $project;
+setup_postdata($post);
 ?>
 
 <?php // Navigation included in includes/classes/class-endpoints.php ?>
@@ -37,10 +39,7 @@ setup_postdata($project);
         
         <!-- Comments Section -->
         <div class="project-comments">
-            <?php
-            // Load the comments template
-            comments_template();
-            ?>
+            <?php comments_template(); ?>
         </div>
         
         <?php do_action('arsol_projects_overview_after_content', $project_id); ?>
