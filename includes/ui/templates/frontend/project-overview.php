@@ -79,6 +79,16 @@ $bricks_post_id = $post->ID;
     <?php do_action('arsol_projects_overview_after_content', $project_id); ?>
 </div>
 
+<!-- Comments Section -->
+<div class="project-comments">
+    <?php
+    // If comments are open or we have at least one comment, load up the comment template.
+    if (comments_open() || get_comments_number()) :
+        comments_template();
+    endif;
+    ?>
+</div>
+
 <?php 
 // Remove our filter
 if (function_exists('bricks_set_post_id')) {
