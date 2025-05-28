@@ -14,11 +14,16 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
 
 <div class="woocommerce">
     <?php if ($has_orders) : ?>
+        <p class="woocommerce-info"><?php printf(
+            /* translators: %s: orders */
+            esc_html__('This table gives you a live view of all %s. Track status, totals, and manage your project transactions in one place.', 'arsol-projects-for-woo'),
+            '<span class="woocommerce">' . esc_html__('orders', 'woocommerce') . '</span>'
+        ); ?></p>
 
         <table class="woocommerce-orders-table woocommerce-MyAccount-orders project-orders-table shop_table shop_table_responsive my_account_orders account-orders-table">
             <thead>
                 <tr>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr"><?php esc_html_e('Invoice', 'arsol-projects-for-woo'); ?></span></th>
+                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-number"><span class="nobr"><?php esc_html_e('Order', 'woocommerce'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-status"><span class="nobr"><?php esc_html_e('Status', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-order-total"><span class="nobr"><?php esc_html_e('Total', 'arsol-projects-for-woo'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-ars_order_actions"><span class="nobr"></span></th>
@@ -32,7 +37,7 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
                     $item_count = $order->get_item_count() - $order->get_item_count_refunded();
                     ?>
                     <tr class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($order->get_status()); ?> order">
-                        <th class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-number" data-title="Invoice" scope="row">
+                        <th class="woocommerce-orders-table__cell woocommerce-orders-table__cell-order-number" data-title="Order" scope="row">
                             <a href="<?php echo esc_url($order->get_view_order_url()); ?>" aria-label="<?php echo esc_attr(sprintf(__('View order number %s', 'arsol-projects-for-woo'), $order->get_order_number())); ?>">
                                 <?php echo esc_html(_x('#', 'hash before order number', 'arsol-projects-for-woo') . $order->get_order_number()); ?>
                             </a>
