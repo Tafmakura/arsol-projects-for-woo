@@ -167,7 +167,7 @@ class Setup {
             __('Project Details', 'arsol-projects-for-woo'),
             array($this, 'render_project_details_meta_box'),
             'arsol-project',
-            'normal',
+            'side',
             'high'
         );
     }
@@ -198,32 +198,29 @@ class Setup {
             'echo' => false
         ));
         ?>
-        <div class="project-details-meta-box">
-            <p>
-                <label for="post_author_override"><strong><?php _e('Customer:', 'arsol-projects-for-woo'); ?></strong></label><br>
-                <?php echo $author_dropdown; ?>
-            </p>
+        <p>
+            <label for="post_author_override"><?php _e('Customer:', 'arsol-projects-for-woo'); ?></label>
+            <?php echo $author_dropdown; ?>
+        </p>
 
-            <p>
-                <label for="project_status"><strong><?php _e('Project Status:', 'arsol-projects-for-woo'); ?></strong></label><br>
-                <select name="project_status" id="project_status" style="width: 100%;">
-                    <?php foreach ($statuses as $status) : ?>
-                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
-                            <?php echo esc_html($status->name); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
+        <p>
+            <label for="project_status"><?php _e('Project Status:', 'arsol-projects-for-woo'); ?></label>
+            <select name="project_status" id="project_status">
+                <?php foreach ($statuses as $status) : ?>
+                    <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
+                        <?php echo esc_html($status->name); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </p>
 
-            <p>
-                <label for="project_due_date"><strong><?php _e('Due Date:', 'arsol-projects-for-woo'); ?></strong></label><br>
-                <input type="date" 
-                       id="project_due_date" 
-                       name="project_due_date" 
-                       value="<?php echo esc_attr($due_date); ?>" 
-                       style="width: 100%;">
-            </p>
-        </div>
+        <p>
+            <label for="project_due_date"><?php _e('Due Date:', 'arsol-projects-for-woo'); ?></label>
+            <input type="date" 
+                   id="project_due_date" 
+                   name="project_due_date" 
+                   value="<?php echo esc_attr($due_date); ?>">
+        </p>
         <?php
     }
 
