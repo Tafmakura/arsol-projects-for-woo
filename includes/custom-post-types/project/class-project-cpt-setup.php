@@ -200,13 +200,13 @@ class Setup {
         ?>
         <div class="inside">
             <p>
-                <label class="screen-reader-text" for="post_author_override"><?php _e('Customer:', 'arsol-projects-for-woo'); ?></label>
+                <label for="post_author_override"><?php _e('Customer:', 'arsol-projects-for-woo'); ?></label>
                 <?php echo $author_dropdown; ?>
             </p>
 
             <p>
-                <label class="screen-reader-text" for="project_status"><?php _e('Project Status:', 'arsol-projects-for-woo'); ?></label>
-                <select name="project_status" id="project_status" class="widefat">
+                <label for="project_status"><?php _e('Project Status:', 'arsol-projects-for-woo'); ?></label>
+                <select name="project_status" id="project_status" style="width:100%">
                     <?php foreach ($statuses as $status) : ?>
                         <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
                             <?php echo esc_html($status->name); ?>
@@ -216,12 +216,12 @@ class Setup {
             </p>
 
             <p>
-                <label class="screen-reader-text" for="project_due_date"><?php _e('Due Date:', 'arsol-projects-for-woo'); ?></label>
+                <label for="project_due_date"><?php _e('Due Date:', 'arsol-projects-for-woo'); ?></label>
                 <input type="date" 
                        id="project_due_date" 
                        name="project_due_date" 
                        value="<?php echo esc_attr($due_date); ?>"
-                       class="widefat">
+                       style="width:100%">
             </p>
         </div>
         <?php
