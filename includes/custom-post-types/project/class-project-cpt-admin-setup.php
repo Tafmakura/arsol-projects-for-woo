@@ -29,7 +29,7 @@ class Setup {
             'search_items'      => __('Search Projects', 'arsol-projects-for-woo'),
             'not_found'         => __('No projects found', 'arsol-projects-for-woo'),
             'not_found_in_trash'=> __('No projects found in trash', 'arsol-projects-for-woo'),
-            'menu_name'         => __('Arsol Projects', 'arsol-projects-for-woo'),
+            'menu_name'         => __('Arsol Projects for Woo', 'arsol-projects-for-woo'),
             'all_items'         => __('Projects', 'arsol-projects-for-woo'),
         );
 
