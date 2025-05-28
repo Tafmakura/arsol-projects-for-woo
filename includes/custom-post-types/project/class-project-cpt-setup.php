@@ -353,12 +353,12 @@ class Setup {
             $lead_dropdown = wp_dropdown_users(array(
                 'name' => 'project_lead',
                 'selected' => $current_lead,
-                'show_option_none' => __('All Project Leads', 'arsol-projects-for-woo'),
+                'show_option_none' => __('Filter by project lead', 'arsol-projects-for-woo'),
                 'role__in' => array('administrator', 'shop_manager'),
                 'orderby' => 'display_name',
                 'order' => 'ASC',
                 'echo' => false,
-                'class' => 'select2'
+                'class' => 'wc-customer-search'
             ));
             echo $lead_dropdown;
 
@@ -367,19 +367,19 @@ class Setup {
             $customer_dropdown = wp_dropdown_users(array(
                 'name' => 'customer',
                 'selected' => $current_customer,
-                'show_option_none' => __('All Customers', 'arsol-projects-for-woo'),
+                'show_option_none' => __('Filter by registered customer', 'arsol-projects-for-woo'),
                 'role__in' => array('customer', 'subscriber'),
                 'orderby' => 'display_name',
                 'order' => 'ASC',
                 'echo' => false,
-                'class' => 'select2'
+                'class' => 'wc-customer-search'
             ));
             echo $customer_dropdown;
 
             // Reset button using WordPress button class
             echo '<a href="' . esc_url(admin_url('edit.php?post_type=arsol-project')) . '" class="button">' . __('Reset Filters', 'arsol-projects-for-woo') . '</a>';
 
-            // Enqueue Select2
+            // Enqueue WooCommerce select2
             wp_enqueue_script('select2');
             wp_enqueue_style('select2');
             
@@ -388,17 +388,11 @@ class Setup {
                 ?>
                 <script type="text/javascript">
                 jQuery(function($) {
-                    $('.select2').select2({
-                        width: '200px',
+                    $('.wc-customer-search').select2({
                         allowClear: true
                     });
                 });
                 </script>
-                <style>
-                .select2-container {
-                    margin-right: 10px;
-                }
-                </style>
                 <?php
             });
         }
