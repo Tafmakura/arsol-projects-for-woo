@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Woocommerce;
 
 use Arsol_Projects_For_Woo\Woocommerce;
 
