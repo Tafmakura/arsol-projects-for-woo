@@ -392,18 +392,18 @@ class Setup {
             wp_enqueue_script('select2');
             wp_enqueue_style('select2');
             
-            // Add inline script to initialize select2 with min-width
+            // Add inline script to initialize select2 with min-width and spacing
             add_action('admin_footer', function() {
                 ?>
                 <script type="text/javascript">
                 jQuery(function($) {
                     $('.wc-customer-search, .select2-enhanced').select2({
                         allowClear: true,
-                        minimumResultsForSearch: 10,
+                        minimumResultsForSearch: 0,
                         placeholder: function(){
                             return $(this).data('placeholder');
                         }
-                    }).next('.select2-container').css('min-width', '200px');
+                    }).next('.select2-container').css({'min-width': '200px', 'margin-right': '8px'});
                 });
                 </script>
                 <?php
