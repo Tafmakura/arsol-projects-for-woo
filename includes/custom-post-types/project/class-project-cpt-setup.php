@@ -168,7 +168,7 @@ class Setup {
             array($this, 'render_project_details_meta_box'),
             'arsol-project',
             'side',
-            'high'
+            'default'
         );
     }
 
@@ -195,7 +195,8 @@ class Setup {
             'name' => 'post_author_override',
             'selected' => $post->post_author,
             'include_selected' => true,
-            'echo' => false
+            'echo' => false,
+            'class' => 'widefat'
         ));
         ?>
         <div class="inside">
