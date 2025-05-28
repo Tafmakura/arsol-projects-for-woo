@@ -6,8 +6,6 @@
  * Version: 0.0.8.1
  * Requires at least: 5.8
  * Requires PHP: 7.4
- * WC requires at least: 6.0
- * WC tested up to: 8.0
  * Author: Taf Makura
  * Author URI: https://your-site.com
  * License: GPL v2 or later
