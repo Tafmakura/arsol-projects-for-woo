@@ -183,27 +183,22 @@ class Woocommerce {
      * @return int|string Project ID or empty string if not set
      */
     private function get_project_from_order($order) {
-        // Get project ID from meta
-        $project_id = $order->get_meta(self::PROJECT_META_KEY);
-        
-        // Modern WooCommerce Blocks approach if available
+        // Use WooCommerce Blocks API to get the field value
         if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
             try {
                 $field_id = 'arsol-projects-for-woo/arsol-project';
                 $checkout_fields = \Automattic\WooCommerce\Blocks\Package::container()->get(
                     \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
                 );
-                $field_value = $checkout_fields->get_field_from_object($field_id, $order, 'order');
-                
-                if (!empty($field_value)) {
-                    $project_id = $field_value;
-                }
+                return $checkout_fields->get_field_from_object($field_id, $order, 'order');
             } catch (\Exception $e) {
-                // Fallback to meta approach already handled
+                // If Blocks API fails, fallback to meta
+                return $order->get_meta(self::PROJECT_META_KEY);
             }
         }
         
-        return $project_id;
+        // Fallback for non-Blocks environment
+        return $order->get_meta(self::PROJECT_META_KEY);
     }
 
     /**
@@ -518,15 +513,6 @@ class Woocommerce {
                     }
         
                     return true;
-                },
-                'save' => function($order, $value) {
-                    // Delete the meta if "none" is selected
-                    if ($value === 'none') {
-                        $order->delete_meta_data(self::PROJECT_META_KEY);
-                    } else {
-                        // Cast to integer to match admin format
-                        $order->update_meta_data(self::PROJECT_META_KEY, (int)$value);
-                    }
                 }
             )
         );
