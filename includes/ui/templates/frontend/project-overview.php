@@ -50,6 +50,32 @@ $bricks_post_id = $post->ID;
     $post->post_type: <?php echo esc_html($post->post_type); ?>
 </div>
 
+<!-- Debug: Bricks Builder Context -->
+<div style="background: #f0f0f0; padding: 10px; margin: 10px 0; font-size: 12px; color: #666; border: 1px solid #ddd;">
+    <h4 style="margin: 0 0 10px 0;">Bricks Builder Debug Info:</h4>
+    <?php if (defined('BRICKS_VERSION')) : ?>
+        <p><strong>Bricks Version:</strong> <?php echo esc_html(BRICKS_VERSION); ?></p>
+        <p><strong>Current Post ID:</strong> <?php echo esc_html($bricks_post_id); ?></p>
+        <?php if (function_exists('bricks_get_post_id')) : ?>
+            <p><strong>Bricks Post ID:</strong> <?php echo esc_html(bricks_get_post_id()); ?></p>
+        <?php endif; ?>
+        <?php if (function_exists('bricks_get_post_type')) : ?>
+            <p><strong>Bricks Post Type:</strong> <?php echo esc_html(bricks_get_post_type()); ?></p>
+        <?php endif; ?>
+        <?php if (function_exists('bricks_is_builder_main')) : ?>
+            <p><strong>Is Builder Main:</strong> <?php echo bricks_is_builder_main() ? 'true' : 'false'; ?></p>
+        <?php endif; ?>
+        <?php if (function_exists('bricks_is_builder_iframe')) : ?>
+            <p><strong>Is Builder Iframe:</strong> <?php echo bricks_is_builder_iframe() ? 'true' : 'false'; ?></p>
+        <?php endif; ?>
+        <?php if (function_exists('bricks_get_post_meta')) : ?>
+            <p><strong>Template ID:</strong> <?php echo esc_html(bricks_get_post_meta('_bricks_template_id')); ?></p>
+        <?php endif; ?>
+    <?php else : ?>
+        <p>Bricks is not active</p>
+    <?php endif; ?>
+</div>
+
 <div class="project-bricks-template">
     <?php 
     // Set up Bricks context
