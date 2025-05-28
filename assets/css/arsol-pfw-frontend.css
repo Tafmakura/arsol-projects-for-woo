@@ -112,10 +112,6 @@
     flex-basis: 300px; /* Set a preferred width for the sidebar */
     flex-grow: 0; /* Prevent sidebar from growing */
     flex-shrink: 0; /* Prevent sidebar from shrinking below its basis */
-    /* Add some padding and border for visual separation */
-    padding: 15px;
-    border: 1px solid #ddd;
-    background-color: #f9f9f9;
 }
 
 /* Responsive adjustment: Stack columns on smaller screens */
