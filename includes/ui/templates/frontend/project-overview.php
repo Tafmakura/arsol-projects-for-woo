@@ -76,6 +76,13 @@ $bricks_post_id = $post->ID;
         <div class="project-comments">
             dfsdfsdf
             <?php
+
+
+            global $post;
+
+            $post = get_post( $project_id ); // Set the correct post
+            setup_postdata( $post );
+
             // If comments are open or we have at least one comment, load up the comment template.
             if (comments_open() || get_comments_number()) :
                 comments_template();
