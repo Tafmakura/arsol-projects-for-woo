@@ -153,6 +153,7 @@
 /* Project empty state styling */
 .project-empty-state {
     text-align: center;
+    padding: 30px 2rem;
 }
 
 .empty-state-icon {
@@ -179,8 +180,7 @@
 }
 
 .project-empty-state p {
-    margin-bottom: 1.5rem;
-    padding: 30px 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .project-empty-state-actions {
