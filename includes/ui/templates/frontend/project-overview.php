@@ -25,57 +25,40 @@ global $post;
 $post = $project;
 setup_postdata($post);
 
-// Debug information
-$comments = get_comments(array(
-    'post_id' => $project_id,
-    'status' => 'approve'
-));
-
-echo '<!-- Debug: Project ID: ' . esc_html($project_id) . ' -->';
-echo '<!-- Debug: Comments count: ' . count($comments) . ' -->';
-echo '<!-- Debug: Comments open: ' . (comments_open() ? 'yes' : 'no') . ' -->';
-echo '<!-- Debug: Post type: ' . get_post_type() . ' -->';
+do_action('arsol_projects_before_project_wrapper', $project_id);
 ?>
 
 <?php // Navigation included in includes/classes/class-endpoints.php ?>
 
 <div class="project-overview-wrapper">
+    <?php do_action('arsol_projects_before_project_content', $project_id); ?>
+    
     <!-- Main Content Area -->
     <div class="project-content">
         <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
+        
+        <?php do_action('arsol_projects_before_description', $project_id); ?>
         
         <div class="project-description">
             <?php the_content(); ?>
         </div>
         
-        <!-- Comments Section -->
-        <div class="project-comments">
-            <?php
-            if (!empty($comments)) {
-                echo '<div class="comments-list">';
-                wp_list_comments(array(
-                    'style' => 'div',
-                    'avatar_size' => 48,
-                ), $comments);
-                echo '</div>';
-            } else {
-                echo '<p>' . esc_html__('No comments yet.', 'arsol-projects-for-woo') . '</p>';
-            }
-
-            if (comments_open()) {
-                comment_form(array(), $project_id);
-            }
-            ?>
-        </div>
+        <?php do_action('arsol_projects_after_description', $project_id); ?>
         
         <?php do_action('arsol_projects_overview_after_content', $project_id); ?>
     </div>
 
+    <?php do_action('arsol_projects_before_sidebar', $project_id); ?>
+
     <!-- Sidebar Area -->
     <div class="project-sidebar">
+        <?php do_action('arsol_projects_before_sidebar_content', $project_id); ?>
+        
         <h4><?php esc_html_e('Project Details', 'arsol-projects-for-woo'); ?></h4>
 
         <div class="project-meta">
+            <?php do_action('arsol_projects_before_meta', $project_id); ?>
+            
             <?php if (!empty($project_meta['_project_start_date'][0])) : ?>
                 <p><strong><?php esc_html_e('Start Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_start_date'][0]))); ?></p>
             <?php endif; ?>
@@ -83,11 +66,19 @@ echo '<!-- Debug: Post type: ' . get_post_type() . ' -->';
             <?php if (!empty($project_meta['_project_end_date'][0])) : ?>
                 <p><strong><?php esc_html_e('End Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
             <?php endif; ?>
+            
+            <?php do_action('arsol_projects_after_meta', $project_id); ?>
         </div>
+        
+        <?php do_action('arsol_projects_after_sidebar_content', $project_id); ?>
     </div>
+
+    <?php do_action('arsol_projects_after_sidebar', $project_id); ?>
 </div>
 
 <?php 
+do_action('arsol_projects_after_project_wrapper', $project_id);
+
 // Reset post data
 wp_reset_postdata();
 
