@@ -53,7 +53,7 @@ $bricks_post_id = $post->ID;
 <div class="project-bricks-template">
     <?php 
     // Set up Bricks context
-   // if (function_exists('bricks_set_post_id')) {
+    if (defined('BRICKS_VERSION')) {
         // Add filter to set up the post context for Bricks
         add_filter('bricks/setup/post', function($post) use ($bricks_post_id) {
             return get_post($bricks_post_id);
@@ -64,7 +64,7 @@ $bricks_post_id = $post->ID;
         
         // Remove our filter
         remove_all_filters('bricks/setup/post');
-   // }
+    }
     ?>
 </div>
 
