@@ -19,7 +19,7 @@ class Setup {
 
     public function register_post_type() {
         $labels = array(
-            'name'               => __('Projects', 'arsol-projects-for-woo'),
+            'name'               => __('Arsol Projects', 'arsol-projects-for-woo'),
             'singular_name'      => __('Project', 'arsol-projects-for-woo'),
             'add_new'           => __('Add New', 'arsol-projects-for-woo'),
             'add_new_item'      => __('Add New Project', 'arsol-projects-for-woo'),
@@ -115,7 +115,7 @@ class Setup {
             'update_item'       => __('Update Project Status', 'arsol-projects-for-woo'),
             'add_new_item'      => __('Add New Project Status', 'arsol-projects-for-woo'),
             'new_item_name'     => __('New Project Status Name', 'arsol-projects-for-woo'),
-            'menu_name'         => __('Statuses', 'arsol-projects-for-woo'),
+            'menu_name'         => __('Project Statuses', 'arsol-projects-for-woo'),
         );
 
         $args = array(
