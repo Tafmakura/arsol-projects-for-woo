@@ -45,18 +45,18 @@ class Setup {
             'hierarchical'       => false,
             'supports'           => array('title', 'editor', 'excerpt', 'author', 'comments'),
             'has_archive'        => false,
-            'rewrite'           => array('slug' => 'project', 'with_front' => false),
+            'rewrite'           => array('slug' => 'arsol-project', 'with_front' => false),
             'show_in_rest'      => false,
         );
 
-        register_post_type('project', $args);
+        register_post_type('arsol-project', $args);
     }
 
     /**
      * Disable Gutenberg for projects post type
      */
     public function disable_gutenberg_for_projects($use_block_editor, $post_type) {
-        if ($post_type === 'project') {
+        if ($post_type === 'arsol-project') {
             return false;
         }
         return $use_block_editor;
@@ -71,7 +71,7 @@ class Setup {
         }
 
         $screen = get_current_screen();
-        if ($screen && $screen->post_type === 'project') {
+        if ($screen && $screen->post_type === 'arsol-project') {
             // Get customers who have made orders
             $customer_ids = get_users(array(
                 'role'    => 'customer',
@@ -89,12 +89,12 @@ class Setup {
      * Move author metabox to side
      */
     public function move_author_metabox_to_side() {
-        remove_meta_box('authordiv', 'project', 'normal');
+        remove_meta_box('authordiv', 'arsol-project', 'normal');
         add_meta_box(
             'authordiv',
             __('Customer', 'arsol-projects-for-woo'),
             'post_author_meta_box',
-            'project',
+            'arsol-project',
             'side',
             'high'
         );
@@ -105,14 +105,14 @@ class Setup {
      */
     public function move_excerpt_metabox_to_top() {
         // Remove the default excerpt metabox
-        remove_meta_box('postexcerpt', 'project', 'normal');
+        remove_meta_box('postexcerpt', 'arsol-project', 'normal');
         
         // Add it back with a new title but in the same position
         add_meta_box(
             'postexcerpt',
             __('Project Summary', 'arsol-projects-for-woo'), // Changed name
             'post_excerpt_meta_box',
-            'project',
+            'arsol-project',
             'normal', // Keep in normal position
             'default' // Use default priority
         );
@@ -122,7 +122,7 @@ class Setup {
      * Handle template redirect for project pages
      */
     public function handle_project_template_redirect() {
-        if (is_singular('project')) {
+        if (is_singular('arsol-project')) {
             $project_id = get_the_ID();
             $user_id = get_current_user_id();
             

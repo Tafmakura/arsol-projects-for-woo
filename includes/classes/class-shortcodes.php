@@ -290,7 +290,7 @@ class Shortcodes {
 		
 		// Get user's projects - using author parameter instead of meta query
 		$args = array(
-			'post_type' => 'project',
+			'post_type' => 'arsol-project',
 			'posts_per_page' => $per_page,
 			'paged' => $current_page,
 			'orderby' => 'title',
@@ -333,7 +333,7 @@ class Shortcodes {
 
 		// Get user's projects count
 		$args = array(
-			'post_type' => 'project',
+			'post_type' => 'arsol-project',
 			'posts_per_page' => -1,
 			'fields' => 'ids',
 			'post_status' => 'publish',
@@ -358,7 +358,7 @@ class Shortcodes {
 	public function projects_count_shortcode($atts) {
 		// Get total projects count
 		$args = array(
-			'post_type' => 'project',
+			'post_type' => 'arsol-project',
 			'posts_per_page' => -1,
 			'fields' => 'ids',
 			'post_status' => 'publish'
@@ -371,5 +371,49 @@ class Shortcodes {
 		$count = $projects_query->found_posts;
 		
 		return (string) $count;
+	}
+
+	/**
+	 * Get projects for the current user
+	 * 
+	 * @return array Array of project post objects
+	 */
+	private function get_user_projects() {
+		if (!is_user_logged_in()) {
+			return [];
+		}
+
+		$user_id = get_current_user_id();
+		return get_posts([
+			'post_type'      => 'arsol-project',
+			'post_status'    => 'publish',
+			'author'         => $user_id,
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
+			'order'          => 'ASC',
+		]);
+	}
+
+	/**
+	 * Get orders for a specific project
+	 * 
+	 * @param int $project_id Project post ID
+	 * @return array Array of order objects
+	 */
+	private function get_project_orders($project_id) {
+		$args = array(
+			'post_type'      => 'shop_order',
+			'post_status'    => array('wc-completed', 'wc-processing'),
+			'posts_per_page' => -1,
+			'meta_query'     => array(
+				array(
+					'key'     => 'arsol-pfw/project',
+					'value'   => $project_id,
+					'compare' => '='
+				)
+			)
+		);
+
+		return wc_get_orders($args);
 	}
 }

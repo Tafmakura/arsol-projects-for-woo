@@ -101,16 +101,10 @@ class Endpoints {
         
         // Query user projects
         $args = array(
-            'post_type'      => 'project', // Adjust if your CPT has a different name
+            'post_type'      => 'arsol-project',
             'posts_per_page' => $posts_per_page,
             'paged'          => $paged,
-            'meta_query'     => array(
-                array(
-                    'key'     => '_project_user_id', // Adjust based on how you store user association
-                    'value'   => $user_id,
-                    'compare' => '='
-                )
-            )
+            'author'         => $user_id
         );
         
         $projects_query = new \WP_Query($args);
@@ -225,6 +219,11 @@ class Endpoints {
         }
         
         // Otherwise implement simple check
+        $project = get_post($project_id);
+        if (!$project || $project->post_type !== 'arsol-project') {
+            return false;
+        }
+        
         $project_author_id = get_post_field('post_author', $project_id);
         return ($project_author_id == $user_id);
     }
@@ -279,6 +278,29 @@ class Endpoints {
         }
         
         return $location;
+    }
+
+    /**
+     * Get project data for API response
+     * 
+     * @param int $project_id Project post ID
+     * @return array Project data
+     */
+    private function get_project_data($project_id) {
+        $project = get_post($project_id);
+        if (!$project || $project->post_type !== 'arsol-project') {
+            return null;
+        }
+
+        return [
+            'id' => $project->ID,
+            'title' => $project->post_title,
+            'content' => $project->post_content,
+            'date' => $project->post_date,
+            'modified' => $project->post_modified,
+            'status' => $project->post_status,
+            'author' => $project->post_author
+        ];
     }
 }
 

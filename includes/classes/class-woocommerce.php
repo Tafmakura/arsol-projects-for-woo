@@ -214,7 +214,7 @@ class Woocommerce {
      */
     private function get_projects($user_id = null) {
         $args = [
-            'post_type' => 'project',
+            'post_type' => 'arsol-project',
             'numberposts' => -1,
             'orderby' => 'title',
             'order' => 'ASC'
@@ -316,7 +316,7 @@ class Woocommerce {
             } else {
                 // Verify this is a valid project before saving
                 $project = get_post($project_id);
-                if ($project && $project->post_type === 'project') {
+                if ($project && $project->post_type === 'arsol-project') {
                     // Cast to integer to match checkout format
                     $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
                 }
@@ -468,7 +468,7 @@ class Woocommerce {
 
         $user_id = get_current_user_id();
         $user_projects = get_posts([
-            'post_type'      => 'project',
+            'post_type'      => 'arsol-project',
             'post_status'    => 'publish',
             'author'         => $user_id,
             'posts_per_page' => -1,
@@ -494,7 +494,7 @@ class Woocommerce {
 
         woocommerce_register_additional_checkout_field(
             array(
-                'id'         => 'arsol-pfw/project', // Update this from arsol-projects-for-woo/project
+                'id'         => 'arsol-pfw/project',
                 'label'      => __('Project', 'arsol-pfw'),
                 'location'   => 'order',
                 'required'   => true,
@@ -513,7 +513,7 @@ class Woocommerce {
                     }
         
                     $project = get_post($value);
-                    if (!$project || $project->post_type !== 'project' || $project->post_author != $user_id) {
+                    if (!$project || $project->post_type !== 'arsol-project' || $project->post_author != $user_id) {
                         return new \WP_Error('invalid_project', __('Invalid project selected.', 'arsol-pfw'));
                     }
         
