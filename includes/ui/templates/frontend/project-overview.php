@@ -80,34 +80,31 @@ $bricks_post_id = $post->ID;
     <?php 
     // Set up Bricks context
     if (defined('BRICKS_VERSION')) {
-        // Store original post data
-        global $post;
-        $original_post = $post;
+        // Get the current URL
+        $current_url = home_url(add_query_arg([], $_SERVER['REQUEST_URI']));
         
-        // Set up the post data
-        $post = get_post($bricks_post_id);
-        setup_postdata($post);
+        // Extract the project ID from the URL
+        $parts = explode('/', trim($current_url, '/'));
+        $project_id = end($parts); // gets project ID from the URL
+        
+        // Set up the query args
+        $query_args = [
+            'post_type'      => 'project',
+            'posts_per_page' => 1,
+            'p'              => intval($project_id), // make sure it's an integer
+        ];
         
         // Add filter to set up the post context for Bricks
-        add_filter('bricks/setup/post', function($post) use ($bricks_post_id) {
-            return get_post($bricks_post_id);
-        });
-        
-        // Add filter for dynamic data
-        add_filter('bricks_dynamic_data_post_id', function($post_id) use ($bricks_post_id) {
-            return $bricks_post_id;
+        add_filter('bricks/setup/post', function($post) use ($query_args) {
+            $query = new \WP_Query($query_args);
+            return $query->have_posts() ? $query->posts[0] : $post;
         });
         
         // Render the template
         echo do_shortcode('[bricks_template id="1491"]');
         
-        // Restore original post data
-        $post = $original_post;
-        setup_postdata($post);
-        
-        // Remove our filters
+        // Remove our filter
         remove_all_filters('bricks/setup/post');
-        remove_all_filters('bricks_dynamic_data_post_id');
     }
     ?>
 </div>
