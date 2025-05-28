@@ -80,16 +80,34 @@ $bricks_post_id = $post->ID;
     <?php 
     // Set up Bricks context
     if (defined('BRICKS_VERSION')) {
+        // Store original post data
+        global $post;
+        $original_post = $post;
+        
+        // Set up the post data
+        $post = get_post($bricks_post_id);
+        setup_postdata($post);
+        
         // Add filter to set up the post context for Bricks
         add_filter('bricks/setup/post', function($post) use ($bricks_post_id) {
             return get_post($bricks_post_id);
         });
         
+        // Add filter for dynamic data
+        add_filter('bricks_dynamic_data_post_id', function($post_id) use ($bricks_post_id) {
+            return $bricks_post_id;
+        });
+        
         // Render the template
         echo do_shortcode('[bricks_template id="1491"]');
         
-        // Remove our filter
+        // Restore original post data
+        $post = $original_post;
+        setup_postdata($post);
+        
+        // Remove our filters
         remove_all_filters('bricks/setup/post');
+        remove_all_filters('bricks_dynamic_data_post_id');
     }
     ?>
 </div>
