@@ -11,6 +11,7 @@
 defined('ABSPATH') || exit;
 
 do_action('arsol_projects_before_empty_state', $project_id);
+
 ?>
 <div class="project-empty-state">
     <h3><?php esc_html_e('No Project Overview at the moment', 'arsol-projects-for-woo'); ?></h3>
