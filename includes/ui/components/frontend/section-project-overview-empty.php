@@ -14,7 +14,7 @@ do_action('arsol_projects_before_empty_state', $project_id);
 
 ?>
 <div class="project-empty-state">
-    <h3><?php esc_html_e('No Project Overview at the moment', 'arsol-projects-for-woo'); ?></h3>
+    <h1><?php esc_html_e('No Project Overview at the moment', 'arsol-projects-for-woo'); ?></h1>
     <p><?php esc_html_e('This project has no overview information. This is usually the case if it is still being set up, or there is no relevant information to share. Check back soon for more details.', 'arsol-projects-for-woo'); ?></p>
     
     <div class="project-empty-state-actions">
