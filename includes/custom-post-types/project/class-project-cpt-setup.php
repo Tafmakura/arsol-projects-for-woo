@@ -335,7 +335,7 @@ class Setup {
             $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
             $statuses = get_terms('project_status', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
-                echo '<select name="project_status" id="filter-by-project-status">';
+                echo '<select name="project_status" id="filter-by-project-status" class="select2-enhanced" data-placeholder="' . esc_attr__('All Statuses', 'arsol-projects-for-woo') . '">';
                 echo '<option value="">' . __('All Statuses', 'arsol-projects-for-woo') . '</option>';
                 foreach ($statuses as $status) {
                     printf(
@@ -348,39 +348,45 @@ class Setup {
                 echo '</select>';
             }
 
-            // Project Lead filter using wp_dropdown_users with Select2
+            // Project Lead filter (manual select for Select2)
             $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
-            $lead_dropdown = wp_dropdown_users(array(
-                'name' => 'project_lead',
-                'id' => 'filter-by-project-lead',
-                'selected' => $current_lead,
-                'show_option_none' => __('Filter by project lead', 'arsol-projects-for-woo'),
+            $project_leads = get_users(array(
                 'role__in' => array('administrator', 'shop_manager'),
                 'orderby' => 'display_name',
                 'order' => 'ASC',
-                'echo' => false,
-                'class' => 'wc-customer-search select2-hidden-accessible enhanced',
-                'data-placeholder' => __('Filter by project lead', 'arsol-projects-for-woo'),
-                'data-allow_clear' => 'true',
+                'fields' => array('ID', 'display_name')
             ));
-            echo $lead_dropdown;
+            echo '<select name="project_lead" id="filter-by-project-lead" class="wc-customer-search select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by project lead', 'arsol-projects-for-woo') . '" data-allow_clear="true">';
+            echo '<option value="">' . __('Filter by project lead', 'arsol-projects-for-woo') . '</option>';
+            foreach ($project_leads as $lead) {
+                printf(
+                    '<option value="%s" %s>%s</option>',
+                    esc_attr($lead->ID),
+                    selected($current_lead, $lead->ID, false),
+                    esc_html($lead->display_name)
+                );
+            }
+            echo '</select>';
 
-            // Customer filter using wp_dropdown_users with Select2
+            // Customer filter (manual select for Select2)
             $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
-            $customer_dropdown = wp_dropdown_users(array(
-                'name' => 'customer',
-                'id' => 'filter-by-customer',
-                'selected' => $current_customer,
-                'show_option_none' => __('Filter by registered customer', 'arsol-projects-for-woo'),
+            $customers = get_users(array(
                 'role__in' => array('customer', 'subscriber'),
                 'orderby' => 'display_name',
                 'order' => 'ASC',
-                'echo' => false,
-                'class' => 'wc-customer-search select2-hidden-accessible enhanced',
-                'data-placeholder' => __('Filter by registered customer', 'arsol-projects-for-woo'),
-                'data-allow_clear' => 'true',
+                'fields' => array('ID', 'display_name')
             ));
-            echo $customer_dropdown;
+            echo '<select name="customer" id="filter-by-customer" class="wc-customer-search select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by registered customer', 'arsol-projects-for-woo') . '" data-allow_clear="true">';
+            echo '<option value="">' . __('Filter by registered customer', 'arsol-projects-for-woo') . '</option>';
+            foreach ($customers as $customer) {
+                printf(
+                    '<option value="%s" %s>%s</option>',
+                    esc_attr($customer->ID),
+                    selected($current_customer, $customer->ID, false),
+                    esc_html($customer->display_name)
+                );
+            }
+            echo '</select>';
 
             // Filter and Reset buttons
             echo '<button type="submit" name="filter_action" id="project-query-submit" class="button">' . __('Filter', 'arsol-projects-for-woo') . '</button>';
@@ -397,7 +403,7 @@ class Setup {
                 ?>
                 <script type="text/javascript">
                 jQuery(function($) {
-                    $('.wc-customer-search').select2({
+                    $('.wc-customer-search, .select2-enhanced').select2({
                         allowClear: true,
                         placeholder: function(){
                             return $(this).data('placeholder');
