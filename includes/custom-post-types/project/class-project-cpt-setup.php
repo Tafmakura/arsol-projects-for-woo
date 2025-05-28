@@ -416,26 +416,37 @@ class Setup {
     }
 
     /**
-     * Filter projects by date range
+     * Filter projects by status, lead, and customer
      */
     public function filter_projects_by_date_range($query) {
         global $pagenow, $typenow;
 
         if ($pagenow === 'edit.php' && $typenow === 'arsol-project' && $query->is_main_query()) {
-            // Filter by project lead
+            // Filter by project lead (meta)
             if (!empty($_GET['project_lead'])) {
-                $query->set('meta_query', array(
-                    array(
-                        'key' => '_project_lead',
-                        'value' => sanitize_text_field($_GET['project_lead']),
-                        'compare' => '='
-                    )
-                ));
+                $meta_query = $query->get('meta_query') ?: [];
+                $meta_query[] = [
+                    'key' => '_project_lead',
+                    'value' => sanitize_text_field($_GET['project_lead']),
+                    'compare' => '='
+                ];
+                $query->set('meta_query', $meta_query);
             }
 
             // Filter by customer (author)
             if (!empty($_GET['customer'])) {
                 $query->set('author', sanitize_text_field($_GET['customer']));
+            }
+
+            // Filter by project status (taxonomy)
+            if (!empty($_GET['project_status'])) {
+                $tax_query = $query->get('tax_query') ?: [];
+                $tax_query[] = [
+                    'taxonomy' => 'project_status',
+                    'field'    => 'slug',
+                    'terms'    => sanitize_text_field($_GET['project_status']),
+                ];
+                $query->set('tax_query', $tax_query);
             }
         }
     }
