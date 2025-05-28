@@ -50,49 +50,17 @@ $bricks_post_id = $post->ID;
     $post->post_type: <?php echo esc_html($post->post_type); ?>
 </div>
 
-<!-- Debug: Bricks Context -->
-<div style="background: #f0f0f0; padding: 5px; margin: 5px 0; font-size: 12px; color: #666;">
-    Debug - Bricks Context:<br>
-    <?php 
-    if (function_exists('bricks_get_post_id')) {
-        echo 'bricks_get_post_id(): ' . esc_html(bricks_get_post_id()) . '<br>';
-    }
-    if (function_exists('bricks_get_post_type')) {
-        echo 'bricks_get_post_type(): ' . esc_html(bricks_get_post_type()) . '<br>';
-    }
-    if (function_exists('bricks_get_post_title')) {
-        echo 'bricks_get_post_title(): ' . esc_html(bricks_get_post_title()) . '<br>';
-    }
-    if (function_exists('bricks_get_post_meta')) {
-        echo 'bricks_get_post_meta("_bricks_template_id"): ' . esc_html(bricks_get_post_meta('_bricks_template_id')) . '<br>';
-    }
-    if (function_exists('bricks_is_builder_main')) {
-        echo 'bricks_is_builder_main(): ' . (bricks_is_builder_main() ? 'true' : 'false') . '<br>';
-    }
-    if (function_exists('bricks_is_builder_iframe')) {
-        echo 'bricks_is_builder_iframe(): ' . (bricks_is_builder_iframe() ? 'true' : 'false') . '<br>';
-    }
-    ?>
-</div>
-
 <div class="project-bricks-template">
     <?php 
     // Set up Bricks context
     if (function_exists('bricks_set_post_id')) {
-        // Add filter to set up the post context for Bricks
-        add_filter('bricks/setup/post', function($post) use ($bricks_post_id) {
-            return get_post($bricks_post_id);
+        // Force Bricks to use our project context
+        add_filter('bricks_dynamic_data_post_id', function($post_id) use ($bricks_post_id) {
+            return $bricks_post_id;
         });
-        
-        // Render the template
-        echo do_shortcode('[bricks_template id="1491"]');
-        
-        // Remove our filter
-        remove_all_filters('bricks/setup/post');
-    } else {
-        // Fallback if Bricks is not active
-        echo '<p>' . esc_html__('Bricks template rendering is not available.', 'arsol-projects-for-woo') . '</p>';
+        bricks_set_post_id($bricks_post_id);
     }
+    echo do_shortcode('[bricks_template id="1491"]'); 
     ?>
 </div>
 
