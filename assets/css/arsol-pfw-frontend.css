@@ -156,10 +156,6 @@
 }
 
 .project-empty-state h3 {
-    color: #333;
     margin-bottom: 15px;
 }
 
-.project-empty-state p {
-    color: #666;
-}
