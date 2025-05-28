@@ -241,7 +241,7 @@ class Endpoints {
         $project_title = get_the_title($project_id);
         
         // Include the navigation template
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/navigation-project.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-navigation.php';
         
         // Get the output buffer content
         return ob_get_clean();
