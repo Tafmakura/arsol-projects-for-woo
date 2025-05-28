@@ -106,6 +106,16 @@
     min-width: 0; /* Prevents flex item from overflowing */
 }
 
+.project-content h1,
+.project-content h2,
+.project-content h3,
+.project-content h4,
+.project-content h5,
+.project-content h6 {
+    transform: scale(0.7);
+    transform-origin: left;
+}
+
 .project-sidebar {
     max-width: 300px;
     width: 100%;
