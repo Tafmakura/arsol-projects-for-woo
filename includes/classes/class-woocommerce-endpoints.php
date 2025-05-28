@@ -253,7 +253,7 @@ class Endpoints {
         // Check if the comment is on a project post type
         $post = get_post($comment->comment_post_ID);
         
-        if ($post && $post->post_type === 'project') {
+        if ($post && $post->post_type === 'arsol-project') {
             // Get the project overview URL
             $project_url = wc_get_account_endpoint_url('project-overview/' . $post->ID);
             
