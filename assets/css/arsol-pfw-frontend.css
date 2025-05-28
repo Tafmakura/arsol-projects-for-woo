@@ -179,3 +179,41 @@
     }
 }
 
+/* Project Status Styles */
+.project-status {
+    margin-bottom: 1em;
+}
+
+.project-status span {
+    display: inline-block;
+    padding: 0.25em 0.75em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.status-not-started {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.status-in-progress {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-on-hold {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.status-completed {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.status-cancelled {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+

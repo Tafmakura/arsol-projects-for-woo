@@ -75,6 +75,22 @@ do_action('arsol_projects_before_project_wrapper', $project_id);
                     <div class="project-meta">
                         <?php do_action('arsol_projects_before_meta', $project_id); ?>
                         
+                        <?php 
+                        // Display project status
+                        $statuses = wp_get_object_terms($project_id, 'project_status');
+                        if (!empty($statuses) && !is_wp_error($statuses)) {
+                            $status = $statuses[0];
+                            ?>
+                            <p class="project-status">
+                                <strong><?php esc_html_e('Status:', 'arsol-projects-for-woo'); ?></strong>
+                                <span class="status-<?php echo esc_attr($status->slug); ?>">
+                                    <?php echo esc_html($status->name); ?>
+                                </span>
+                            </p>
+                            <?php
+                        }
+                        ?>
+                        
                         <?php if (!empty($project_meta['_project_start_date'][0])) : ?>
                             <p><strong><?php esc_html_e('Start Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_start_date'][0]))); ?></p>
                         <?php endif; ?>

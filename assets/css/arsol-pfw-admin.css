@@ -26,3 +26,41 @@
 .projects-row .woocommerce-button.button.view {
     margin: 0;
 }
+
+/* Project Status Styles */
+.column-project_status {
+    width: 120px;
+}
+
+.column-project_status .status {
+    display: inline-block;
+    padding: 0.25em 0.75em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.column-project_status .status-not-started {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.column-project_status .status-in-progress {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.column-project_status .status-on-hold {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.column-project_status .status-completed {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.column-project_status .status-cancelled {
+    background-color: #ffebee;
+    color: #d32f2f;
+}

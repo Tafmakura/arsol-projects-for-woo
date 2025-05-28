@@ -9,10 +9,15 @@ if (!defined('ABSPATH')) {
 class Setup {
     public function __construct() {
         add_action('init', array($this, 'register_post_type'));
+        add_action('init', array($this, 'register_project_status_taxonomy'));
+        add_action('init', array($this, 'add_default_project_statuses'));
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('do_meta_boxes', array($this, 'move_author_metabox_to_side'));
         add_action('do_meta_boxes', array($this, 'move_excerpt_metabox_to_top'));
+        add_action('add_meta_boxes', array($this, 'add_project_status_meta_box'));
+        add_action('save_post_arsol-project', array($this, 'save_project_status'));
+        add_action('restrict_manage_posts', array($this, 'add_project_status_filters'));
         add_action('template_redirect', array($this, 'handle_project_template_redirect'));
     }
 
@@ -136,6 +141,145 @@ class Setup {
             // Redirect to the project overview page in the account area
             wp_redirect(wc_get_account_endpoint_url('project-overview/' . $project_id));
             exit;
+        }
+    }
+
+    /**
+     * Register project status taxonomy
+     */
+    public function register_project_status_taxonomy() {
+        $labels = array(
+            'name'              => __('Project Statuses', 'arsol-projects-for-woo'),
+            'singular_name'     => __('Project Status', 'arsol-projects-for-woo'),
+            'search_items'      => __('Search Project Statuses', 'arsol-projects-for-woo'),
+            'all_items'         => __('All Project Statuses', 'arsol-projects-for-woo'),
+            'edit_item'         => __('Edit Project Status', 'arsol-projects-for-woo'),
+            'update_item'       => __('Update Project Status', 'arsol-projects-for-woo'),
+            'add_new_item'      => __('Add New Project Status', 'arsol-projects-for-woo'),
+            'new_item_name'     => __('New Project Status Name', 'arsol-projects-for-woo'),
+            'menu_name'         => __('Status', 'arsol-projects-for-woo'),
+        );
+
+        $args = array(
+            'hierarchical'      => true,
+            'labels'            => $labels,
+            'show_ui'           => true,
+            'show_admin_column' => true,
+            'query_var'         => true,
+            'rewrite'           => array('slug' => 'project-status'),
+            'show_in_rest'      => true,
+        );
+
+        register_taxonomy('project_status', 'arsol-project', $args);
+    }
+
+    /**
+     * Add default project statuses
+     */
+    public function add_default_project_statuses() {
+        $default_statuses = array(
+            'not-started' => 'Not Started',
+            'in-progress' => 'In Progress',
+            'on-hold'     => 'On Hold',
+            'completed'   => 'Completed',
+            'cancelled'   => 'Cancelled'
+        );
+
+        foreach ($default_statuses as $slug => $name) {
+            if (!term_exists($slug, 'project_status')) {
+                wp_insert_term($name, 'project_status', array('slug' => $slug));
+            }
+        }
+    }
+
+    /**
+     * Add project status meta box
+     */
+    public function add_project_status_meta_box() {
+        add_meta_box(
+            'project_status_meta_box',
+            __('Project Status', 'arsol-projects-for-woo'),
+            array($this, 'render_project_status_meta_box'),
+            'arsol-project',
+            'side',
+            'high'
+        );
+    }
+
+    /**
+     * Render project status meta box
+     */
+    public function render_project_status_meta_box($post) {
+        $current_status = wp_get_object_terms($post->ID, 'project_status', array('fields' => 'slugs'));
+        $current_status = !empty($current_status) ? $current_status[0] : 'not-started';
+        
+        $statuses = get_terms(array(
+            'taxonomy' => 'project_status',
+            'hide_empty' => false,
+        ));
+        
+        wp_nonce_field('project_status_meta_box', 'project_status_meta_box_nonce');
+        ?>
+        <select name="project_status" id="project_status">
+            <?php foreach ($statuses as $status) : ?>
+                <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
+                    <?php echo esc_html($status->name); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <?php
+    }
+
+    /**
+     * Save project status
+     */
+    public function save_project_status($post_id) {
+        if (!isset($_POST['project_status_meta_box_nonce'])) {
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['project_status_meta_box_nonce'], 'project_status_meta_box')) {
+            return;
+        }
+
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        if (isset($_POST['project_status'])) {
+            $status = sanitize_text_field($_POST['project_status']);
+            wp_set_object_terms($post_id, $status, 'project_status');
+        }
+    }
+
+    /**
+     * Add project status filters
+     */
+    public function add_project_status_filters() {
+        global $typenow;
+        if ($typenow === 'arsol-project') {
+            $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
+            $statuses = get_terms('project_status', array('hide_empty' => false));
+            
+            if (!empty($statuses) && !is_wp_error($statuses)) {
+                echo '<select name="project_status">';
+                echo '<option value="">' . __('All Statuses', 'arsol-projects-for-woo') . '</option>';
+                
+                foreach ($statuses as $status) {
+                    printf(
+                        '<option value="%s" %s>%s</option>',
+                        esc_attr($status->slug),
+                        selected($current_status, $status->slug, false),
+                        esc_html($status->name)
+                    );
+                }
+                
+                echo '</select>';
+            }
         }
     }
 }
