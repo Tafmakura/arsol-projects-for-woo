@@ -13,9 +13,8 @@ class Setup {
         add_action('init', array($this, 'add_default_project_statuses'));
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
-        add_action('do_meta_boxes', array($this, 'move_excerpt_metabox_to_top'));
-        add_action('add_meta_boxes', array($this, 'add_project_status_meta_box'));
-        add_action('save_post_arsol-project', array($this, 'save_project_status'));
+        add_action('add_meta_boxes', array($this, 'add_project_details_meta_box'));
+        add_action('save_post_arsol-project', array($this, 'save_project_details'));
         add_action('restrict_manage_posts', array($this, 'add_project_status_filters'));
         add_action('template_redirect', array($this, 'handle_project_template_redirect'));
     }
@@ -90,37 +89,6 @@ class Setup {
     }
 
     /**
-     * Move excerpt metabox to the top of the editor
-     */
-    public function move_excerpt_metabox_to_top() {
-        // Remove the default excerpt metabox
-        remove_meta_box('postexcerpt', 'arsol-project', 'normal');
-        
-        // Add it back with a new title but in the same position
-        add_meta_box(
-            'postexcerpt',
-            __('Project Summary', 'arsol-projects-for-woo'), // Changed name
-            'post_excerpt_meta_box',
-            'arsol-project',
-            'normal', // Keep in normal position
-            'default' // Use default priority
-        );
-
-        // Remove the default author metabox
-        remove_meta_box('authordiv', 'arsol-project', 'normal');
-        
-        // Add it back with a new title
-        add_meta_box(
-            'authordiv',
-            __('Customer', 'arsol-projects-for-woo'),
-            'post_author_meta_box',
-            'arsol-project',
-            'normal',
-            'high'
-        );
-    }
-
-    /**
      * Handle template redirect for project pages
      */
     public function handle_project_template_redirect() {
@@ -191,54 +159,85 @@ class Setup {
     }
 
     /**
-     * Add project status meta box
+     * Add project details meta box
      */
-    public function add_project_status_meta_box() {
+    public function add_project_details_meta_box() {
         add_meta_box(
-            'project_status_meta_box',
-            __('Project Status', 'arsol-projects-for-woo'),
-            array($this, 'render_project_status_meta_box'),
+            'project_details_meta_box',
+            __('Project Details', 'arsol-projects-for-woo'),
+            array($this, 'render_project_details_meta_box'),
             'arsol-project',
-            'side',
+            'normal',
             'high'
         );
     }
 
     /**
-     * Render project status meta box
+     * Render project details meta box
      */
-    public function render_project_status_meta_box($post) {
+    public function render_project_details_meta_box($post) {
+        // Add nonce for security
+        wp_nonce_field('project_details_meta_box', 'project_details_meta_box_nonce');
+
+        // Get current values
         $current_status = wp_get_object_terms($post->ID, 'project_status', array('fields' => 'slugs'));
         $current_status = !empty($current_status) ? $current_status[0] : 'not-started';
+        $due_date = get_post_meta($post->ID, '_project_due_date', true);
         
+        // Get statuses
         $statuses = get_terms(array(
             'taxonomy' => 'project_status',
             'hide_empty' => false,
         ));
-        
-        wp_nonce_field('project_status_meta_box', 'project_status_meta_box_nonce');
+
+        // Get author dropdown
+        $author_dropdown = wp_dropdown_users(array(
+            'name' => 'post_author_override',
+            'selected' => $post->post_author,
+            'include_selected' => true,
+            'echo' => false
+        ));
         ?>
-        <select name="project_status" id="project_status" style="width: 100%;">
-            <?php foreach ($statuses as $status) : ?>
-                <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
-                    <?php echo esc_html($status->name); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
+        <div class="project-details-meta-box">
+            <p>
+                <label for="post_author_override"><strong><?php _e('Customer:', 'arsol-projects-for-woo'); ?></strong></label><br>
+                <?php echo $author_dropdown; ?>
+            </p>
+
+            <p>
+                <label for="project_status"><strong><?php _e('Project Status:', 'arsol-projects-for-woo'); ?></strong></label><br>
+                <select name="project_status" id="project_status" style="width: 100%;">
+                    <?php foreach ($statuses as $status) : ?>
+                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
+                            <?php echo esc_html($status->name); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
+
+            <p>
+                <label for="project_due_date"><strong><?php _e('Due Date:', 'arsol-projects-for-woo'); ?></strong></label><br>
+                <input type="date" 
+                       id="project_due_date" 
+                       name="project_due_date" 
+                       value="<?php echo esc_attr($due_date); ?>" 
+                       style="width: 100%;">
+            </p>
+        </div>
         <?php
     }
 
     /**
-     * Save project status
+     * Save project details
      */
-    public function save_project_status($post_id) {
+    public function save_project_details($post_id) {
         // Check if our nonce is set
-        if (!isset($_POST['project_status_meta_box_nonce'])) {
+        if (!isset($_POST['project_details_meta_box_nonce'])) {
             return;
         }
 
         // Verify that the nonce is valid
-        if (!wp_verify_nonce($_POST['project_status_meta_box_nonce'], 'project_status_meta_box')) {
+        if (!wp_verify_nonce($_POST['project_details_meta_box_nonce'], 'project_details_meta_box')) {
             return;
         }
 
@@ -252,16 +251,17 @@ class Setup {
             return;
         }
 
-        // Make sure that it is set
-        if (!isset($_POST['project_status'])) {
-            return;
+        // Save project status
+        if (isset($_POST['project_status'])) {
+            $status = sanitize_text_field($_POST['project_status']);
+            wp_set_object_terms($post_id, $status, 'project_status', false);
         }
 
-        // Sanitize user input
-        $status = sanitize_text_field($_POST['project_status']);
-
-        // Update the meta field in the database
-        wp_set_object_terms($post_id, $status, 'project_status', false);
+        // Save due date
+        if (isset($_POST['project_due_date'])) {
+            $due_date = sanitize_text_field($_POST['project_due_date']);
+            update_post_meta($post_id, '_project_due_date', $due_date);
+        }
     }
 
     /**
