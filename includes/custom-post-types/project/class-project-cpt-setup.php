@@ -372,16 +372,20 @@ class Setup {
                 'role__in' => array('customer', 'subscriber'),
                 'orderby' => 'display_name',
                 'order' => 'ASC',
-                'fields' => array('ID', 'display_name')
+                'fields' => array('ID', 'display_name', 'user_email')
             ));
             echo '<select name="customer" id="filter-by-customer" class="wc-customer-search select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by registered customer', 'arsol-projects-for-woo') . '" data-allow_clear="true">';
             echo '<option value="">' . __('Filter by registered customer', 'arsol-projects-for-woo') . '</option>';
             foreach ($customers as $customer) {
+                $label = esc_html($customer->display_name);
+                if (!empty($customer->user_email)) {
+                    $label .= ' (' . esc_html($customer->user_email) . ')';
+                }
                 printf(
                     '<option value="%s" %s>%s</option>',
                     esc_attr($customer->ID),
                     selected($current_customer, $customer->ID, false),
-                    esc_html($customer->display_name)
+                    $label
                 );
             }
             echo '</select>';
