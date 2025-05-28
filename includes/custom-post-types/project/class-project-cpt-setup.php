@@ -335,7 +335,6 @@ class Setup {
             if (!empty($statuses) && !is_wp_error($statuses)) {
                 echo '<select name="project_status">';
                 echo '<option value="">' . __('All Statuses', 'arsol-projects-for-woo') . '</option>';
-                
                 foreach ($statuses as $status) {
                     printf(
                         '<option value="%s" %s>%s</option>',
@@ -344,7 +343,6 @@ class Setup {
                         esc_html($status->name)
                     );
                 }
-                
                 echo '</select>';
             }
 
@@ -376,7 +374,8 @@ class Setup {
             ));
             echo $customer_dropdown;
 
-            // Reset button using WordPress button class
+            // Filter and Reset buttons
+            echo '<button type="submit" class="button">' . __('Filter', 'arsol-projects-for-woo') . '</button>';
             echo '<a href="' . esc_url(admin_url('edit.php?post_type=arsol-project')) . '" class="button">' . __('Reset Filters', 'arsol-projects-for-woo') . '</a>';
 
             // Enqueue WooCommerce select2
