@@ -212,20 +212,16 @@ class Endpoints {
      * @param int $project_id Project ID
      * @return bool Whether the user can view the project
      */
-    public static function user_can_view_project($user_id, $project_id) {
-        // If Woocommerce class has this method, use it
-        if (method_exists('Arsol_Projects_For_Woo\Woocommerce', 'user_can_view_project')) {
-            return Woocommerce::user_can_view_project($user_id, $project_id);
-        }
-        
-        // Otherwise implement simple check
-        $project = get_post($project_id);
-        if (!$project || $project->post_type !== 'arsol-project') {
+    private function user_can_view_project($user_id, $project_id) {
+        if (!is_user_logged_in()) {
             return false;
         }
-        
-        $project_author_id = get_post_field('post_author', $project_id);
-        return ($project_author_id == $user_id);
+
+        $post = get_post($project_id);
+        if ($post && $post->post_type === 'arsol-project') {
+            return $post->post_author == $user_id;
+        }
+        return false;
     }
 
     /**

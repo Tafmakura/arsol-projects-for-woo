@@ -154,7 +154,7 @@ class Shortcodes {
 		if (!$project_id) {
 			// Try to get from current page if it's a project
 			global $post;
-			if ($post && $post->post_type === 'project') {
+			if ($post && $post->post_type === 'arsol-project') {
 				$project_id = $post->ID;
 			}
 		}
@@ -222,7 +222,7 @@ class Shortcodes {
 		if (!$project_id) {
 			// Try to get from current page if it's a project
 			global $post;
-			if ($post && $post->post_type === 'project') {
+			if ($post && $post->post_type === 'arsol-project') {
 				$project_id = $post->ID;
 			}
 		}

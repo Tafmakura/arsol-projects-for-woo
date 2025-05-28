@@ -108,24 +108,27 @@ class Assets {
      * @param string $hook Current admin page hook
      */
     public function enqueue_admin_assets($hook) {
-        // Get current screen to check post type
         $screen = get_current_screen();
-        
-        // Only load on specific admin pages (orders, projects, settings)
-        $load_assets = false;
-        
-        if (
-            (in_array($hook, array('post.php', 'post-new.php')) && 
-                in_array($screen->post_type, array('shop_order', 'project'))) ||
-            $hook === 'woocommerce_page_wc-orders' ||
-            $hook === 'edit.php' && isset($_GET['post_type']) && $_GET['post_type'] === 'shop_order'
-        ) {
-            $load_assets = true;
+        if (!$screen) {
+            return;
         }
-        
-        if ($load_assets) {
-            wp_enqueue_style('arsol-pfw-admin');
-            wp_enqueue_script('arsol-pfw-admin');
+
+        // Only load on order pages and project pages
+        if (in_array($screen->post_type, array('shop_order', 'arsol-project'))) {
+            wp_enqueue_style(
+                'arsol-pfw-admin',
+                ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin.css',
+                array(),
+                ARSOL_PROJECTS_VERSION
+            );
+
+            wp_enqueue_script(
+                'arsol-pfw-admin',
+                ARSOL_PROJECTS_PLUGIN_URL . 'assets/js/arsol-pfw-admin.js',
+                array('jquery'),
+                ARSOL_PROJECTS_VERSION,
+                true
+            );
             
             // Add localized data if needed
             wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
