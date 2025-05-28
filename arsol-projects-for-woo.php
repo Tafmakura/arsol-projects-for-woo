@@ -48,6 +48,9 @@ use Arsol_Projects_For_Woo\Setup;
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
+// Include the admin settings class
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
+
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');
 
@@ -61,6 +64,11 @@ function arsol_projects_activate() {
 
 // Instantiate the Setup class
 new Setup();
+
+// Instantiate the settings class to register settings
+if (class_exists('Arsol_Projects_For_Woo\Admin\Settings_General')) {
+    new \Arsol_Projects_For_Woo\Admin\Settings_General();
+}
 
 add_action('admin_menu', function() {
     // Add 'Settings' submenu as the last submenu under 'Arsol Projects'
@@ -78,9 +86,6 @@ add_action('admin_menu', function() {
 // Use the existing settings page logic for the callback
 if (!function_exists('arsol_projects_settings_page_callback')) {
     function arsol_projects_settings_page_callback() {
-        echo '<div class="wrap"><h1>' . esc_html__('Arsol Projects Settings', 'arsol-projects-for-woo') . '</h1>';
-        // Place your existing settings form logic here
-        echo '<p>Settings page content goes here.</p>';
-        echo '</div>';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-general.php';
     }
 }
