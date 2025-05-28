@@ -396,24 +396,20 @@ class Shortcodes {
 
 	/**
 	 * Get orders for a specific project
-	 * 
-	 * @param int $project_id Project post ID
-	 * @return array Array of order objects
+	 *
+	 * @param int $project_id Project ID
+	 * @param int $user_id User ID
+	 * @return array Array of order IDs
 	 */
-	private function get_project_orders($project_id) {
+	private function get_project_orders($project_id, $user_id) {
 		$args = array(
-			'post_type'      => 'shop_order',
-			'post_status'    => array('wc-completed', 'wc-processing'),
-			'posts_per_page' => -1,
-			'meta_query'     => array(
-				array(
-					'key'     => 'arsol-pfw/project',
-					'value'   => $project_id,
-					'compare' => '='
-				)
-			)
+			'customer_id' => $user_id,
+			'meta_key'   => self::PROJECT_META_KEY,
+			'meta_value' => $project_id,
+			'return'     => 'ids',
+			'limit'      => -1
 		);
-
+		
 		return wc_get_orders($args);
 	}
 }

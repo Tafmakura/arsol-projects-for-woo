@@ -140,4 +140,24 @@ class Assets {
             ));
         }
     }
+
+    /**
+     * Check if we're on an order or project screen
+     *
+     * @param \WP_Screen $screen Current screen object
+     * @return bool
+     */
+    private function is_order_or_project_screen($screen) {
+        // Check for post type screens
+        if (in_array($screen->post_type, array('shop_order', 'arsol-project'))) {
+            return true;
+        }
+        
+        // Check for HPOS order list screen
+        if ($screen->id === 'woocommerce_page_wc-orders') {
+            return true;
+        }
+        
+        return false;
+    }
 }

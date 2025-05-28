@@ -726,43 +726,34 @@ class Woocommerce {
         }
         
         // Get child orders whose parent belongs to this project
-        $args = array(
-            'post_type'      => 'shop_order',
-            'post_status'    => array_keys(wc_get_order_statuses()),
-            'posts_per_page' => -1, // Get all to find children
-            'meta_query'     => array(
-                'relation' => 'AND',
+        $child_orders_args = array(
+            'customer_id' => $user_id,
+            'limit'      => -1, // Get all to find children
+            'return'     => 'ids',
+            'meta_query' => array(
+                'relation' => 'OR',
+                // Check for renewal orders
                 array(
-                    'key'     => '_customer_user',
-                    'value'   => $user_id,
-                    'compare' => '='
+                    'key'     => '_subscription_renewal',
+                    'value'   => $parent_order_ids,
+                    'compare' => 'IN'
                 ),
+                // Check for switch orders
                 array(
-                    'relation' => 'OR',
-                    // Check for renewal orders
-                    array(
-                        'key'     => '_subscription_renewal',
-                        'value'   => $parent_order_ids,
-                        'compare' => 'IN'
-                    ),
-                    // Check for switch orders
-                    array(
-                        'key'     => '_subscription_switch',
-                        'value'   => $parent_order_ids,
-                        'compare' => 'IN'
-                    ),
-                    // Check for resubscribe orders
-                    array(
-                        'key'     => '_subscription_resubscribe',
-                        'value'   => $parent_order_ids,
-                        'compare' => 'IN'
-                    )
+                    'key'     => '_subscription_switch',
+                    'value'   => $parent_order_ids,
+                    'compare' => 'IN'
+                ),
+                // Check for resubscribe orders
+                array(
+                    'key'     => '_subscription_resubscribe',
+                    'value'   => $parent_order_ids,
+                    'compare' => 'IN'
                 )
             )
         );
         
-        $child_orders_query = new \WP_Query($args);
-        $child_order_ids = wp_list_pluck($child_orders_query->posts, 'ID');
+        $child_order_ids = wc_get_orders($child_orders_args);
         
         // Combine direct and child orders
         $all_order_ids = array_unique(array_merge($direct_orders->orders, $child_order_ids));
