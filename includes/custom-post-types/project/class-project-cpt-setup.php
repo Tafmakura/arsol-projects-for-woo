@@ -333,7 +333,7 @@ class Setup {
             $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
             $statuses = get_terms('project_status', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
-                echo '<select name="project_status" id="filter-by-project-status">';
+                echo '<select name="project_status" id="filter-by-project-status" class="postform status-filter-dropdown">';
                 echo '<option value="">' . __('All Statuses', 'arsol-projects-for-woo') . '</option>';
                 foreach ($statuses as $status) {
                     printf(
