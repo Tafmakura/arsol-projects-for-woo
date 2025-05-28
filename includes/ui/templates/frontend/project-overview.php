@@ -52,7 +52,7 @@ $bricks_post_id = $post->ID;
 
 <div class="project-bricks-template">
     <?php 
-    echo do_shortcode('[bricks_template id="1491"]'); 
+    // echo do_shortcode('[bricks_template id="1491"]'); 
     ?>
 </div>
 
