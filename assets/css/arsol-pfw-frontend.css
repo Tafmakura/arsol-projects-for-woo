@@ -171,9 +171,7 @@
 
 .project-empty-state:hover .empty-state-icon svg path {
     text-align: center;
-    padding: 30px 2rem
-32px
-;
+    padding: 30px 2rem;
 }
 
 .project-empty-state h3 {
