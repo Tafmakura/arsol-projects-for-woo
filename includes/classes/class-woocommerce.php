@@ -738,9 +738,25 @@ class Woocommerce {
                     'compare' => '='
                 ),
                 array(
-                    'key'     => '_arsol_projects_parent_order',
-                    'value'   => $parent_order_ids,
-                    'compare' => 'IN'
+                    'relation' => 'OR',
+                    // Check for renewal orders
+                    array(
+                        'key'     => '_subscription_renewal',
+                        'value'   => $parent_order_ids,
+                        'compare' => 'IN'
+                    ),
+                    // Check for switch orders
+                    array(
+                        'key'     => '_subscription_switch',
+                        'value'   => $parent_order_ids,
+                        'compare' => 'IN'
+                    ),
+                    // Check for resubscribe orders
+                    array(
+                        'key'     => '_subscription_resubscribe',
+                        'value'   => $parent_order_ids,
+                        'compare' => 'IN'
+                    )
                 )
             )
         );
@@ -751,6 +767,9 @@ class Woocommerce {
         // Combine direct and child orders
         $all_order_ids = array_unique(array_merge($direct_orders->orders, $child_order_ids));
         
+        // Sort orders by date (most recent first)
+        rsort($all_order_ids);
+        
         // Now paginate the combined results
         $offset = ($current_page - 1) * $per_page;
         $paginated_orders = array_slice($all_order_ids, $offset, $per_page);
@@ -758,6 +777,7 @@ class Woocommerce {
         // Return in same format as get_project_orders
         $results = new \stdClass();
         $results->orders = $paginated_orders;
+        $results->total = count($all_order_ids);
         $results->max_num_pages = ceil(count($all_order_ids) / $per_page);
         
         return $results;
