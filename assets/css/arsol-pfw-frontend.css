@@ -114,6 +114,7 @@
 .project-content h6 {
     transform: scale(0.85);
     transform-origin: left;
+    margin-bottom: 1em;
 }
 
 .project-sidebar {
@@ -152,10 +153,6 @@
 }
 
 /* Project empty state styling */
-
-.project-empty-state h1 {
-    margin-bottom: 1rem;
-}
 
 .project-empty-state-actions {
     display: flex;
