@@ -113,6 +113,7 @@
 .project-content h5,
 .project-content h6 {
     transform: scale(0.85);
+    transform-origin: left;
 }
 
 .project-sidebar {
@@ -151,32 +152,9 @@
 }
 
 /* Project empty state styling */
-.project-empty-state {
-    text-align: center;
-    padding: 30px 2rem;
-}
-
-.empty-state-icon {
-    margin-bottom: 1.5rem;
-}
-
-.empty-state-icon svg {
-    width: 48px;
-    height: 48px;
-    opacity: 0.8;
-}
-
-.empty-state-icon svg path {
-    transition: stroke 0.2s ease;
-}
-
-.project-empty-state:hover .empty-state-icon svg path {
-    text-align: center;
-}
 
 .project-empty-state h3 {
     margin-bottom: 1rem;
-    color: #333;
 }
 
 .project-empty-state p {
@@ -186,7 +164,6 @@
 .project-empty-state-actions {
     display: flex;
     gap: 1rem;
-    justify-content: center;
     margin-top: 1.5rem;
 }
 
