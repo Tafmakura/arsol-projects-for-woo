@@ -13,7 +13,6 @@ class Setup {
         add_action('init', array($this, 'add_default_project_statuses'));
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
-        add_action('do_meta_boxes', array($this, 'move_author_metabox_to_side'));
         add_action('do_meta_boxes', array($this, 'move_excerpt_metabox_to_top'));
         add_action('add_meta_boxes', array($this, 'add_project_status_meta_box'));
         add_action('save_post_arsol-project', array($this, 'save_project_status'));
@@ -91,21 +90,6 @@ class Setup {
     }
 
     /**
-     * Move author metabox to side
-     */
-    public function move_author_metabox_to_side() {
-        remove_meta_box('authordiv', 'arsol-project', 'normal');
-        add_meta_box(
-            'authordiv',
-            __('Customer', 'arsol-projects-for-woo'),
-            'post_author_meta_box',
-            'arsol-project',
-            'side',
-            'high'
-        );
-    }
-
-    /**
      * Move excerpt metabox to the top of the editor
      */
     public function move_excerpt_metabox_to_top() {
@@ -120,6 +104,19 @@ class Setup {
             'arsol-project',
             'normal', // Keep in normal position
             'default' // Use default priority
+        );
+
+        // Remove the default author metabox
+        remove_meta_box('authordiv', 'arsol-project', 'normal');
+        
+        // Add it back with a new title
+        add_meta_box(
+            'authordiv',
+            __('Customer', 'arsol-projects-for-woo'),
+            'post_author_meta_box',
+            'arsol-project',
+            'normal',
+            'high'
         );
     }
 
