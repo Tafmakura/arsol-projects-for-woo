@@ -119,14 +119,14 @@ class Assets {
                 'arsol-pfw-admin',
                 ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin.css',
                 array(),
-                ARSOL_PROJECTS_VERSION
+                $this->get_file_version('assets/css/arsol-pfw-admin.css')
             );
 
             wp_enqueue_script(
                 'arsol-pfw-admin',
                 ARSOL_PROJECTS_PLUGIN_URL . 'assets/js/arsol-pfw-admin.js',
                 array('jquery'),
-                ARSOL_PROJECTS_VERSION,
+                $this->get_file_version('assets/js/arsol-pfw-admin.js'),
                 true
             );
             
