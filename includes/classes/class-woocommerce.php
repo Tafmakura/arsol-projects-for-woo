@@ -10,7 +10,7 @@ class Woocommerce {
     /**
      * Meta key used for storing project data
      */
-    const PROJECT_META_KEY = '_wc_other/arsol-projects-for-woo/project';
+    const PROJECT_META_KEY = '_wc_other/arsol-projects-for-woo/arsol-project';
 
     public function __construct() {
         // Initialize hooks
@@ -177,19 +177,19 @@ class Woocommerce {
     }
 
     /**
-     * Get project ID from order using WooCommerce Blocks API
+     * Get project ID from order
      *
      * @param \WC_Order $order The order object
      * @return int|string Project ID or empty string if not set
      */
     private function get_project_from_order($order) {
-        // Legacy approach fallback
+        // Get project ID from meta
         $project_id = $order->get_meta(self::PROJECT_META_KEY);
         
         // Modern WooCommerce Blocks approach if available
         if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
             try {
-                $field_id = 'arsol-projects-for-woo/project';
+                $field_id = 'arsol-projects-for-woo/arsol-project';
                 $checkout_fields = \Automattic\WooCommerce\Blocks\Package::container()->get(
                     \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
                 );
@@ -199,7 +199,7 @@ class Woocommerce {
                     $project_id = $field_value;
                 }
             } catch (\Exception $e) {
-                // Fallback to legacy approach already handled
+                // Fallback to meta approach already handled
             }
         }
         
