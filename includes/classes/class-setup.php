@@ -40,6 +40,7 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-endpoints.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
     }
 
     /**
@@ -52,6 +53,7 @@ class Setup {
         new \Arsol_Projects_For_Woo\Shortcodes();
         new \Arsol_Projects_For_Woo\Woocommerce\Endpoints();
         new \Arsol_Projects_For_Woo\Admin\Setup();
+        new \Arsol_Projects_For_Woo\Admin\Settings_General();
     }
 
     public function woocommerce_notice() {
