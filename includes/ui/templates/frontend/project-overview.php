@@ -54,20 +54,33 @@ do_action('arsol_projects_before_project_wrapper', $project_id);
     <div class="project-sidebar">
         <?php do_action('arsol_projects_before_sidebar_content', $project_id); ?>
         
-        <h4><?php esc_html_e('Project Details', 'arsol-projects-for-woo'); ?></h4>
+        <div class="project-sidebar-wrapper">
+            <div class="project-sidebar-card card">
+                <!-- Project Excerpt -->
+                <div class="project-excerpt">
+                    <?php do_action('arsol_projects_before_excerpt', $project_id); ?>
+                    <?php the_excerpt(); ?>
+                    <?php do_action('arsol_projects_after_excerpt', $project_id); ?>
+                </div>
 
-        <div class="project-meta">
-            <?php do_action('arsol_projects_before_meta', $project_id); ?>
-            
-            <?php if (!empty($project_meta['_project_start_date'][0])) : ?>
-                <p><strong><?php esc_html_e('Start Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_start_date'][0]))); ?></p>
-            <?php endif; ?>
-            
-            <?php if (!empty($project_meta['_project_end_date'][0])) : ?>
-                <p><strong><?php esc_html_e('End Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
-            <?php endif; ?>
-            
-            <?php do_action('arsol_projects_after_meta', $project_id); ?>
+                <div class="project-details">
+                    <h4><?php esc_html_e('Project Details', 'arsol-projects-for-woo'); ?></h4>
+
+                    <div class="project-meta">
+                        <?php do_action('arsol_projects_before_meta', $project_id); ?>
+                        
+                        <?php if (!empty($project_meta['_project_start_date'][0])) : ?>
+                            <p><strong><?php esc_html_e('Start Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_start_date'][0]))); ?></p>
+                        <?php endif; ?>
+                        
+                        <?php if (!empty($project_meta['_project_end_date'][0])) : ?>
+                            <p><strong><?php esc_html_e('End Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
+                        <?php endif; ?>
+                        
+                        <?php do_action('arsol_projects_after_meta', $project_id); ?>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <?php do_action('arsol_projects_after_sidebar_content', $project_id); ?>
