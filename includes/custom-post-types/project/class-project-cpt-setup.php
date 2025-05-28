@@ -50,7 +50,7 @@ class Setup {
             'hierarchical'       => false,
             'supports'           => array('title', 'editor', 'excerpt', 'author', 'comments'),
             'has_archive'        => false,
-            'rewrite'           => array('slug' => 'arsol-project', 'with_front' => false),
+            'rewrite'           => array('slug' => 'project', 'with_front' => false),
             'show_in_rest'      => false,
         );
 
@@ -161,13 +161,14 @@ class Setup {
         );
 
         $args = array(
-            'hierarchical'      => true,
+            'hierarchical'      => false,
             'labels'            => $labels,
             'show_ui'           => true,
             'show_admin_column' => true,
             'query_var'         => true,
             'rewrite'           => array('slug' => 'project-status'),
             'show_in_rest'      => true,
+            'meta_box_cb'       => false,
         );
 
         register_taxonomy('project_status', 'arsol-project', $args);
@@ -220,7 +221,7 @@ class Setup {
         
         wp_nonce_field('project_status_meta_box', 'project_status_meta_box_nonce');
         ?>
-        <select name="project_status" id="project_status">
+        <select name="project_status" id="project_status" style="width: 100%;">
             <?php foreach ($statuses as $status) : ?>
                 <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
                     <?php echo esc_html($status->name); ?>
@@ -234,26 +235,36 @@ class Setup {
      * Save project status
      */
     public function save_project_status($post_id) {
+        // Check if our nonce is set
         if (!isset($_POST['project_status_meta_box_nonce'])) {
             return;
         }
 
+        // Verify that the nonce is valid
         if (!wp_verify_nonce($_POST['project_status_meta_box_nonce'], 'project_status_meta_box')) {
             return;
         }
 
+        // If this is an autosave, our form has not been submitted, so we don't want to do anything
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
 
+        // Check the user's permissions
         if (!current_user_can('edit_post', $post_id)) {
             return;
         }
 
-        if (isset($_POST['project_status'])) {
-            $status = sanitize_text_field($_POST['project_status']);
-            wp_set_object_terms($post_id, $status, 'project_status');
+        // Make sure that it is set
+        if (!isset($_POST['project_status'])) {
+            return;
         }
+
+        // Sanitize user input
+        $status = sanitize_text_field($_POST['project_status']);
+
+        // Update the meta field in the database
+        wp_set_object_terms($post_id, $status, 'project_status', false);
     }
 
     /**
