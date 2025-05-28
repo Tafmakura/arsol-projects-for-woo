@@ -36,7 +36,7 @@ class Setup {
         // Core Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-woo-orders.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-endpoints.php';
     }
