@@ -112,7 +112,7 @@
 .project-content h4,
 .project-content h5,
 .project-content h6 {
-    transform: scale(0.7);
+    transform: scale(0.9);
     transform-origin: left;
 }
 
