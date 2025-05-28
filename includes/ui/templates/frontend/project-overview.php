@@ -81,6 +81,7 @@ $bricks_post_id = $post->ID;
         
         <!-- Comments Section -->
         <div class="project-comments">
+            dfsdfsdf
             <?php
             // If comments are open or we have at least one comment, load up the comment template.
             if (comments_open() || get_comments_number()) :
@@ -90,7 +91,7 @@ $bricks_post_id = $post->ID;
 
             comments_template();
             ?>
-
+        sdfsdf
             
         </div>
         
