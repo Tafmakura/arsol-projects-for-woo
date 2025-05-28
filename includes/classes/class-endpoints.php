@@ -125,7 +125,7 @@ class Endpoints {
             ' ' . wc_wp_theme_get_element_class_name('button') : '';
         
         // Include the template
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/projects.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
     }
     
     /**
@@ -191,21 +191,21 @@ class Endpoints {
         // Include appropriate template based on tab
         switch ($tab) {
             case 'orders':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-orders.php';
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-orders.php';
                 break;
                 
             case 'subscriptions':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-subscriptions.php';
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-subscriptions.php';
                 break;
                 
             case 'overview':
             default:
                 // If content is empty, use the project overview template
                 if (empty($project_content)) {
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-overview.php';
                 } else {
                     // Use the default content display
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/project-overview.php';
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-overview.php';
                 }
                 break;
         }
