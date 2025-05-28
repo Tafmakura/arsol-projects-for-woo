@@ -348,45 +348,59 @@ class Setup {
                 echo '</select>';
             }
 
-            // Project Lead filter
+            // Project Lead filter using wp_dropdown_users with Select2
             $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
-            $project_leads = get_users(array(
+            $lead_dropdown = wp_dropdown_users(array(
+                'name' => 'project_lead',
+                'selected' => $current_lead,
+                'show_option_none' => __('All Project Leads', 'arsol-projects-for-woo'),
                 'role__in' => array('administrator', 'shop_manager'),
                 'orderby' => 'display_name',
-                'fields' => array('ID', 'display_name')
+                'order' => 'ASC',
+                'echo' => false,
+                'class' => 'select2'
             ));
+            echo $lead_dropdown;
 
-            echo '<select name="project_lead">';
-            echo '<option value="">' . __('All Project Leads', 'arsol-projects-for-woo') . '</option>';
-            foreach ($project_leads as $lead) {
-                printf(
-                    '<option value="%s" %s>%s</option>',
-                    esc_attr($lead->ID),
-                    selected($current_lead, $lead->ID, false),
-                    esc_html($lead->display_name)
-                );
-            }
-            echo '</select>';
-
-            // Customer filter
+            // Customer filter using wp_dropdown_users with Select2
             $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
-            $customers = get_users(array(
+            $customer_dropdown = wp_dropdown_users(array(
+                'name' => 'customer',
+                'selected' => $current_customer,
+                'show_option_none' => __('All Customers', 'arsol-projects-for-woo'),
                 'role__in' => array('customer', 'subscriber'),
                 'orderby' => 'display_name',
-                'fields' => array('ID', 'display_name')
+                'order' => 'ASC',
+                'echo' => false,
+                'class' => 'select2'
             ));
+            echo $customer_dropdown;
 
-            echo '<select name="customer">';
-            echo '<option value="">' . __('All Customers', 'arsol-projects-for-woo') . '</option>';
-            foreach ($customers as $customer) {
-                printf(
-                    '<option value="%s" %s>%s</option>',
-                    esc_attr($customer->ID),
-                    selected($current_customer, $customer->ID, false),
-                    esc_html($customer->display_name)
-                );
-            }
-            echo '</select>';
+            // Reset button using WordPress button class
+            echo '<a href="' . esc_url(admin_url('edit.php?post_type=arsol-project')) . '" class="button">' . __('Reset Filters', 'arsol-projects-for-woo') . '</a>';
+
+            // Enqueue Select2
+            wp_enqueue_script('select2');
+            wp_enqueue_style('select2');
+            
+            // Add inline script to initialize select2
+            add_action('admin_footer', function() {
+                ?>
+                <script type="text/javascript">
+                jQuery(function($) {
+                    $('.select2').select2({
+                        width: '200px',
+                        allowClear: true
+                    });
+                });
+                </script>
+                <style>
+                .select2-container {
+                    margin-right: 10px;
+                }
+                </style>
+                <?php
+            });
         }
     }
 
