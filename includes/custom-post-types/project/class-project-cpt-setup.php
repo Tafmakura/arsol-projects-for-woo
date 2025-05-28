@@ -329,11 +329,11 @@ class Setup {
     public function add_project_status_filters() {
         global $typenow;
         if ($typenow === 'arsol-project') {
-            // Status filter
+            // Status filter (standard dropdown)
             $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
             $statuses = get_terms('project_status', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
-                echo '<select name="project_status" id="filter-by-project-status" class="select2-enhanced" data-placeholder="' . esc_attr__('All Statuses', 'arsol-projects-for-woo') . '">';
+                echo '<select name="project_status" id="filter-by-project-status">';
                 echo '<option value="">' . __('All Statuses', 'arsol-projects-for-woo') . '</option>';
                 foreach ($statuses as $status) {
                     printf(
