@@ -24,8 +24,17 @@ $original_query = $wp_query;
 $wp_query = new \WP_Query(array(
     'post_type' => 'project',
     'p' => $project_id,
-    'post_status' => 'publish'
+    'post_status' => 'publish',
+    'suppress_filters' => false // Allow filters to run
 ));
+
+// Ensure comments are enabled for this post
+add_filter('comments_open', function($open, $post_id) use ($project_id) {
+    if ($post_id === $project_id) {
+        return true;
+    }
+    return $open;
+}, 10, 2);
 
 // Store the current post ID for Bricks context
 $bricks_post_id = $post->ID;
