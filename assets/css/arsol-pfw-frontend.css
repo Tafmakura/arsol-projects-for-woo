@@ -107,6 +107,8 @@
 }
 
 .project-sidebar {
+    max-width: 300px;
+    width: 100%;
     flex-basis: 300px; /* Set a preferred width for the sidebar */
     flex-grow: 0; /* Prevent sidebar from growing */
     flex-shrink: 0; /* Prevent sidebar from shrinking below its basis */
