@@ -1,30 +1,27 @@
 # Arsol Projects for Woo
 
-A WordPress plugin that enables you to organize and track WooCommerce orders and subscriptions within projects, with automatic tracking of subscription renewals and child orders.
+A WordPress plugin to manage projects, orders, and subscriptions with deep WooCommerce integration and a modern, modular admin UI.
+
+---
 
 ## Description
 
-Arsol Projects for Woo is a specialized WordPress plugin that helps you manage and track WooCommerce orders and subscriptions within project contexts. It allows you to assign multiple orders and subscriptions to projects, providing a centralized view of all related transactions. The plugin automatically tracks subscription renewals and child orders, making it perfect for businesses that need to manage recurring revenue streams and project-based billing.
+**Arsol Projects for Woo** lets you organize, track, and manage WooCommerce orders and subscriptions within projects. It provides a centralized admin interface for project management, project statuses, and settings, with seamless integration into the WordPress and WooCommerce admin experience.
+
+---
 
 ## Features
 
-- Create and manage projects with associated WooCommerce orders and subscriptions
-- Assign multiple orders and subscriptions to a single project
+- Custom Post Type: **Project** (with "Arsol Projects for Woo" as the top-level admin menu)
+- Project Statuses taxonomy for flexible workflow management
+- Assign WooCommerce orders and subscriptions to projects
 - Automatic tracking of subscription renewals and child orders
-- Dedicated project pages showing all related transactions
-- WooCommerce Subscriptions integration for recurring revenue tracking
-- Project-based organization of customer orders and subscriptions
-- Easy project overview with all related financial transactions
-- Seamless integration with existing WooCommerce functionality
-- Shortcodes for displaying project information:
-  - `[arsol_projects]` - Display a grid of projects
-  - `[arsol_project]` - Show a single project
-  - `[arsol_project_categories]` - List project categories
-  - `[arsol_project_orders]` - Display orders for a specific project
-  - `[arsol_project_subscriptions]` - Show subscriptions for a project
-  - `[arsol_user_projects]` - List projects for the current user
-  - `[arsol_user_projects_count]` - Display the number of active projects for the current user
-  - `[arsol_projects_count]` - Display the total number of all active projects
+- Modern admin UI with filters for project status, lead, and customer
+- "Settings" page for plugin configuration, now a submenu under the main menu
+- Shortcodes for displaying project and order information on the frontend
+- Modular codebase for easy maintenance and extension
+
+---
 
 ## Requirements
 
@@ -33,111 +30,96 @@ Arsol Projects for Woo is a specialized WordPress plugin that helps you manage a
 - WooCommerce (active and installed)
 - WooCommerce Subscriptions (optional, for subscription tracking)
 
+---
+
 ## Installation
 
-1. Download the plugin zip file
-2. Go to your WordPress admin panel
-3. Navigate to Plugins > Add New
-4. Click on "Upload Plugin" and select the downloaded zip file
-5. Click "Install Now"
-6. After installation, click "Activate"
+1. Download the plugin zip file.
+2. Go to your WordPress admin panel.
+3. Navigate to **Plugins > Add New**.
+4. Click **Upload Plugin** and select the zip file.
+5. Click **Install Now** and then **Activate**.
+
+---
+
+## Admin Menu Structure
+
+- **Arsol Projects for Woo** (clipboard icon)
+  - **All Projects**: List and manage all projects
+  - **Add New Project**: Create a new project
+  - **Project Statuses**: Manage project status taxonomy
+  - **Settings**: Configure plugin options
+
+---
 
 ## Configuration
 
-After activation, you can find the plugin settings in your WordPress admin panel under the "Projects" menu. Configure your project settings and ensure WooCommerce integration is properly set up.
+After activation, visit **Arsol Projects for Woo > Settings** to configure plugin options.  
+You can manage projects, assign orders/subscriptions, and define custom statuses from the same menu.
+
+---
 
 ## Usage
 
-1. Create a new project through the WordPress admin panel
-2. Assign WooCommerce orders to your project
-3. Link WooCommerce subscriptions to your project (if using WooCommerce Subscriptions)
-4. View all related orders and subscriptions on the project's dedicated page
-5. Track subscription renewals and child orders automatically
-6. Monitor project revenue through the integrated WooCommerce reporting
+1. **Create a Project**: Go to **All Projects** or **Add New Project**.
+2. **Assign Orders/Subscriptions**: Link WooCommerce orders and subscriptions to projects.
+3. **Manage Statuses**: Use the **Project Statuses** submenu to define and organize project workflows.
+4. **Configure Settings**: Use the **Settings** submenu for plugin options.
+5. **Frontend Shortcodes**: Use the provided shortcodes to display project data on your site.
 
-### Shortcode Examples
+---
 
-Display a grid of projects:
-```
-[arsol_projects limit="10" columns="3" orderby="date" order="DESC" pagination="yes" category=""]
-```
-Arguments:
-- `limit` (default: 10) - Number of projects to display
-- `columns` (default: 3) - Number of columns in the grid
-- `orderby` (default: "date") - Order by field (date, title, etc.)
-- `order` (default: "DESC") - Sort order (ASC or DESC)
-- `pagination` (default: "yes") - Whether to show pagination
-- `category` (default: "") - Category slug to filter projects
+## Shortcodes
 
-Show a single project:
-```
-[arsol_project id="123"]
-```
-Arguments:
-- `id` (required) - The ID of the project to display
+- `[arsol_projects]` – Display a grid of projects
+- `[arsol_project id="123"]` – Show a single project
+- `[arsol_project_categories]` – List project categories
+- `[arsol_project_orders project_id="123"]` – Show orders for a project
+- `[arsol_project_subscriptions project_id="123"]` – Show subscriptions for a project
+- `[arsol_user_projects]` – List projects for the current user
+- `[arsol_user_projects_count]` – Number of active projects for the current user
+- `[arsol_projects_count]` – Total number of all active projects
 
-Display project categories:
-```
-[arsol_project_categories limit="-1" orderby="name" order="ASC" parent="" hide_empty="no"]
-```
-Arguments:
-- `limit` (default: -1) - Number of categories to display (-1 for all)
-- `orderby` (default: "name") - Order by field (name, count, etc.)
-- `order` (default: "ASC") - Sort order (ASC or DESC)
-- `parent` (default: "") - Parent category ID
-- `hide_empty` (default: "no") - Whether to hide empty categories
+See the "Shortcode Examples" section below for usage and arguments.
 
-Show orders for a specific project:
-```
-[arsol_project_orders project_id="123" per_page="10" paged="1"]
-```
-Arguments:
-- `project_id` (default: 0) - The ID of the project (0 to use current page)
-- `per_page` (default: 10) - Number of orders per page
-- `paged` (default: 1) - Current page number
-
-Display subscriptions for a project:
-```
-[arsol_project_subscriptions project_id="123" per_page="10" paged="1"]
-```
-Arguments:
-- `project_id` (default: 0) - The ID of the project (0 to use current page)
-- `per_page` (default: 10) - Number of subscriptions per page
-- `paged` (default: 1) - Current page number
-
-Show the number of active projects for the current user:
-```
-[arsol_user_projects_count]
-```
-No arguments required. Only counts projects with 'active' status.
-
-Show the total number of all active projects:
-```
-[arsol_projects_count]
-```
-No arguments required. Only counts projects with 'active' status.
+---
 
 ## Support
 
-For support, please visit [Plugin Support Page](https://your-site.com/arsol-projects-for-woo)
+For support, please visit the [Plugin Support Page](https://your-site.com/arsol-projects-for-woo).
+
+---
 
 ## License
 
 This plugin is licensed under the GPL v2 or later.
+
+---
 
 ## Author
 
 - **Author:** Taf Makura
 - **Website:** [https://your-site.com](https://your-site.com)
 
+---
+
 ## Changelog
+
+### Version 0.0.8.1
+- Major admin UI refactor: modular classes, WooCommerce-style filters, and settings as submenu
+- Improved taxonomy and menu structure
+- Bug fixes and code cleanup
 
 ### Version 0.0.7
 - Initial release
 
+---
+
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! Please submit a Pull Request.
+
+---
 
 ## Credits
 

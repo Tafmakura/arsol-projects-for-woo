@@ -6,6 +6,7 @@
  * Version: 0.0.8.1
  * Requires at least: 5.8
  * Requires PHP: 7.4
+ * Requires Plugins: woocommerce
  * Author: Taf Makura
  * Author URI: https://your-site.com
  * License: GPL v2 or later
