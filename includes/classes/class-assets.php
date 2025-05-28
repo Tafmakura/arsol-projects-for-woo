@@ -11,9 +11,15 @@ if (!defined('ABSPATH')) {
  */
 class Assets {
     /**
-     * Plugin version - used for cache busting
+     * Get file version based on file modification time
+     * 
+     * @param string $file_path Path to the file relative to plugin directory
+     * @return string|bool File modification time or false if file doesn't exist
      */
-    const VERSION = '1.0.0';
+    private function get_file_version($file_path) {
+        $full_path = ARSOL_PROJECTS_PLUGIN_DIR . $file_path;
+        return file_exists($full_path) ? filemtime($full_path) : false;
+    }
 
     /**
      * Constructor
@@ -39,7 +45,7 @@ class Assets {
             'arsol-pfw-frontend',
             $plugin_url . 'assets/css/arsol-pfw-frontend.css',
             array(),
-            ARSOL_PROJECTS_ASSETS_VERSION
+            $this->get_file_version('assets/css/arsol-pfw-frontend.css')
         );
         
         // Register JS with prefixed filename
@@ -47,7 +53,7 @@ class Assets {
             'arsol-pfw-frontend',
             $plugin_url . 'assets/js/arsol-pfw-frontend.js',
             array('jquery'),
-            ARSOL_PROJECTS_ASSETS_VERSION,
+            $this->get_file_version('assets/js/arsol-pfw-frontend.js'),
             true
         );
     }
@@ -83,7 +89,7 @@ class Assets {
             'arsol-pfw-admin',
             $plugin_url . 'assets/css/arsol-pfw-admin.css',
             array(),
-            ARSOL_PROJECTS_ASSETS_VERSION
+            $this->get_file_version('assets/css/arsol-pfw-admin.css')
         );
         
         // Register JS with prefixed filename
@@ -91,7 +97,7 @@ class Assets {
             'arsol-pfw-admin',
             $plugin_url . 'assets/js/arsol-pfw-admin.js',
             array('jquery'),
-            ARSOL_PROJECTS_ASSETS_VERSION,
+            $this->get_file_version('assets/js/arsol-pfw-admin.js'),
             true
         );
     }
