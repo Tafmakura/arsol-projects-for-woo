@@ -171,7 +171,6 @@
 
 .project-empty-state:hover .empty-state-icon svg path {
     text-align: center;
-    padding: 30px 2rem;
 }
 
 .project-empty-state h3 {
@@ -181,7 +180,7 @@
 
 .project-empty-state p {
     margin-bottom: 1.5rem;
-    color: #666;
+    padding: 30px 2rem;
 }
 
 .project-empty-state-actions {
@@ -189,23 +188,6 @@
     gap: 1rem;
     justify-content: center;
     margin-top: 1.5rem;
-}
-
-.project-empty-state-actions .bricks-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    border: 1px solid #2271b1;
-    border-radius: 4px;
-    color: #2271b1;
-    text-decoration: none;
-    transition: all 0.2s ease;
-}
-
-.project-empty-state-actions .bricks-button:hover {
-    background-color: #2271b1;
-    color: #fff;
 }
 
 @media (max-width: 768px) {
