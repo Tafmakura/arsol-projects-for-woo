@@ -12,6 +12,7 @@
 namespace Arsol_Projects_For_Woo;
 
 use Arsol_Projects_For_Woo\Woo\AdminOrders;
+use Arsol_Projects_For_Woo\Woo\Woocommerce;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -163,7 +164,7 @@ class Shortcodes {
 		}
 
 		// Verify user has access to this project
-		if (!AdminOrders::user_can_view_project($current_user_id, $project_id)) {
+		if (!Woocommerce::user_can_view_project($current_user_id, $project_id)) {
 			return '<p>' . __('You do not have permission to view orders for this project.', 'arsol-projects-for-woo') . '</p>';
 		}
 
@@ -172,7 +173,7 @@ class Shortcodes {
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project orders using the admin orders class
-		$project_orders = AdminOrders::get_project_orders(
+		$project_orders = Woocommerce::get_project_orders(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 
@@ -231,7 +232,7 @@ class Shortcodes {
 		}
 
 		// Verify user has access to this project
-		if (!AdminOrders::user_can_view_project($current_user_id, $project_id)) {
+		if (!Woocommerce::user_can_view_project($current_user_id, $project_id)) {
 			return '<p>' . __('You do not have permission to view subscriptions for this project.', 'arsol-projects-for-woo') . '</p>';
 		}
 
@@ -240,7 +241,7 @@ class Shortcodes {
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project subscriptions using the admin orders class
-		$project_subscriptions = AdminOrders::get_project_subscriptions(
+		$project_subscriptions = Woocommerce::get_project_subscriptions(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 

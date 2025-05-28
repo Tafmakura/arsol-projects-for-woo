@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class AdminOrders {
+class Woocommerce {
     /**
      * Meta key used for storing project data
      */

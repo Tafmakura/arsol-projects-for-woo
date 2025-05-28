@@ -10,7 +10,7 @@
 
 namespace Arsol_Projects_For_Woo;
 
-use Arsol_Projects_For_Woo\Woo\AdminOrders;
+use Arsol_Projects_For_Woo\Woo\Woocommerce;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -219,9 +219,9 @@ class Endpoints {
      * @return bool Whether the user can view the project
      */
     public static function user_can_view_project($user_id, $project_id) {
-        // If AdminOrders class has this method, use it
-        if (method_exists('Arsol_Projects_For_Woo\Woo\AdminOrders', 'user_can_view_project')) {
-            return AdminOrders::user_can_view_project($user_id, $project_id);
+        // If Woocommerce class has this method, use it
+        if (method_exists('Arsol_Projects_For_Woo\Woo\Woocommerce', 'user_can_view_project')) {
+            return Woocommerce::user_can_view_project($user_id, $project_id);
         }
         
         // Otherwise implement simple check
