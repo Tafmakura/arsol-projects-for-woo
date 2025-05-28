@@ -184,9 +184,7 @@ class Setup {
         $current_status = !empty($current_status) ? $current_status[0] : 'not-started';
         $due_date = get_post_meta($post->ID, '_project_due_date', true);
         $start_date = get_post_meta($post->ID, '_project_start_date', true);
-        $project_manager = get_post_meta($post->ID, '_project_manager', true);
-        $billing_type = get_post_meta($post->ID, '_project_billing_type', true);
-        $currency = get_post_meta($post->ID, '_project_currency', true);
+        $project_lead = get_post_meta($post->ID, '_project_lead', true);
         
         // Get statuses
         $statuses = get_terms(array(
@@ -203,12 +201,15 @@ class Setup {
             'class' => 'widefat'
         ));
 
-        // Get project managers (administrators)
-        $project_managers = get_users(array(
-            'role' => 'administrator',
+        // Get project leads (administrators and shop managers)
+        $project_leads = get_users(array(
+            'role__in' => array('administrator', 'shop_manager'),
             'orderby' => 'display_name',
             'fields' => array('ID', 'display_name')
         ));
+
+        // Check if current user is admin
+        $is_admin = current_user_can('administrator');
         ?>
         <p>
             <label for="project_code"><?php _e('Project Code:', 'arsol-projects-for-woo'); ?></label>
@@ -225,12 +226,12 @@ class Setup {
         </p>
 
         <p>
-            <label for="project_manager"><?php _e('Project Manager:', 'arsol-projects-for-woo'); ?></label>
-            <select name="project_manager" id="project_manager" style="width:100%">
-                <option value=""><?php _e('Select Project Manager', 'arsol-projects-for-woo'); ?></option>
-                <?php foreach ($project_managers as $manager) : ?>
-                    <option value="<?php echo esc_attr($manager->ID); ?>" <?php selected($project_manager, $manager->ID); ?>>
-                        <?php echo esc_html($manager->display_name); ?>
+            <label for="project_lead"><?php _e('Project Lead:', 'arsol-projects-for-woo'); ?></label>
+            <select name="project_lead" id="project_lead" style="width:100%">
+                <option value=""><?php _e('Select Project Lead', 'arsol-projects-for-woo'); ?></option>
+                <?php foreach ($project_leads as $lead) : ?>
+                    <option value="<?php echo esc_attr($lead->ID); ?>" <?php selected($project_lead, $lead->ID); ?>>
+                        <?php echo esc_html($lead->display_name); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -253,7 +254,8 @@ class Setup {
                    id="project_start_date" 
                    name="project_start_date" 
                    value="<?php echo esc_attr($start_date); ?>"
-                   style="width:100%">
+                   style="width:100%"
+                   <?php echo $is_admin ? '' : 'readonly'; ?>>
         </p>
 
         <p>
@@ -263,25 +265,6 @@ class Setup {
                    name="project_due_date" 
                    value="<?php echo esc_attr($due_date); ?>"
                    style="width:100%">
-        </p>
-
-        <p>
-            <label for="project_billing_type"><?php _e('Billing Type:', 'arsol-projects-for-woo'); ?></label>
-            <select name="project_billing_type" id="project_billing_type" style="width:100%">
-                <option value="time" <?php selected($billing_type, 'time'); ?>><?php _e('Time Based', 'arsol-projects-for-woo'); ?></option>
-                <option value="fixed" <?php selected($billing_type, 'fixed'); ?>><?php _e('Fixed Price', 'arsol-projects-for-woo'); ?></option>
-                <option value="non-billable" <?php selected($billing_type, 'non-billable'); ?>><?php _e('Non-Billable', 'arsol-projects-for-woo'); ?></option>
-            </select>
-        </p>
-
-        <p>
-            <label for="project_currency"><?php _e('Currency:', 'arsol-projects-for-woo'); ?></label>
-            <select name="project_currency" id="project_currency" style="width:100%">
-                <option value="USD" <?php selected($currency, 'USD'); ?>>USD</option>
-                <option value="EUR" <?php selected($currency, 'EUR'); ?>>EUR</option>
-                <option value="GBP" <?php selected($currency, 'GBP'); ?>>GBP</option>
-                <option value="ZAR" <?php selected($currency, 'ZAR'); ?>>ZAR</option>
-            </select>
         </p>
         <?php
     }
@@ -312,33 +295,34 @@ class Setup {
 
         // Save project status
         if (isset($_POST['project_status'])) {
-            $status = sanitize_text_field($_POST['project_status']);
-            wp_set_object_terms($post_id, $status, 'project_status', false);
+            $new_status = sanitize_text_field($_POST['project_status']);
+            $current_status = wp_get_object_terms($post_id, 'project_status', array('fields' => 'slugs'));
+            $current_status = !empty($current_status) ? $current_status[0] : '';
+            
+            // If status is changing to 'in-progress' and there's no start date, set it
+            if ($new_status === 'in-progress' && $current_status !== 'in-progress') {
+                $start_date = get_post_meta($post_id, '_project_start_date', true);
+                if (empty($start_date)) {
+                    update_post_meta($post_id, '_project_start_date', current_time('Y-m-d'));
+                }
+            }
+            
+            wp_set_object_terms($post_id, $new_status, 'project_status', false);
         }
 
-        // Save project manager
-        if (isset($_POST['project_manager'])) {
-            update_post_meta($post_id, '_project_manager', sanitize_text_field($_POST['project_manager']));
+        // Save project lead
+        if (isset($_POST['project_lead'])) {
+            update_post_meta($post_id, '_project_lead', sanitize_text_field($_POST['project_lead']));
         }
 
-        // Save start date
-        if (isset($_POST['project_start_date'])) {
+        // Save start date (only if user is admin)
+        if (isset($_POST['project_start_date']) && current_user_can('administrator')) {
             update_post_meta($post_id, '_project_start_date', sanitize_text_field($_POST['project_start_date']));
         }
 
         // Save due date
         if (isset($_POST['project_due_date'])) {
             update_post_meta($post_id, '_project_due_date', sanitize_text_field($_POST['project_due_date']));
-        }
-
-        // Save billing type
-        if (isset($_POST['project_billing_type'])) {
-            update_post_meta($post_id, '_project_billing_type', sanitize_text_field($_POST['project_billing_type']));
-        }
-
-        // Save currency
-        if (isset($_POST['project_currency'])) {
-            update_post_meta($post_id, '_project_currency', sanitize_text_field($_POST['project_currency']));
         }
     }
 
