@@ -28,13 +28,6 @@ $wp_query = new \WP_Query(array(
     'suppress_filters' => false // Allow filters to run
 ));
 
-// Ensure comments are enabled for this post
-add_filter('comments_open', function($open, $post_id) use ($project_id) {
-    if ($post_id === $project_id) {
-        return true;
-    }
-    return $open;
-}, 10, 2);
 
 // Store the current post ID for Bricks context
 $bricks_post_id = $post->ID;
@@ -117,6 +110,42 @@ $bricks_post_id = $post->ID;
     </div>
 
 </div> <?php // end .project-overview-wrapper ?>
+
+<?php
+
+if ( $wp_query->have_posts() ) :
+    $wp_query->the_post(); // Set global post context
+
+    // Optional: Output post data (if needed)
+    // echo '<h2>' . get_the_title() . '</h2>';
+    // echo '<div>' . get_the_content() . '</div>';
+
+    // Display existing comments
+    if ( have_comments() ) :
+        echo '<div class="comments-list">';
+        wp_list_comments([
+            'style'      => 'div',
+            'short_ping' => true,
+            'avatar_size' => 48,
+        ]);
+        echo '</div>';
+
+        the_comments_pagination([
+            'prev_text' => '← Previous',
+            'next_text' => 'Next →',
+        ]);
+    endif;
+
+    // Display the comment form
+    comment_form();
+
+    wp_reset_postdata(); // Clean up
+
+else :
+    echo '<p>No project found.</p>';
+endif;
+?>
+
 
 <?php 
 // Remove our filter
