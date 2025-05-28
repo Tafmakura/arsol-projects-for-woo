@@ -18,7 +18,7 @@ do_action('arsol_projects_before_project_orders', $project_id);
 <div class="project-content project-orders"> 
     <?php do_action('arsol_projects_orders_before_table', $project_id); ?>
     
-    <div>
+    <div class="arsol-project-table-wrapper">
         <p><?php printf(
             /* translators: %s: orders */
             esc_html__('This table gives you a live view of all %s. Track status, totals, and manage your project transactions in one place.', 'arsol-projects-for-woo'),
