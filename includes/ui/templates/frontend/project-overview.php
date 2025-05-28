@@ -86,7 +86,12 @@ $bricks_post_id = $post->ID;
             if (comments_open() || get_comments_number()) :
                 comments_template();
             endif;
+
+
+            comments_template();
             ?>
+
+            
         </div>
         
         <?php do_action('arsol_projects_overview_after_content', $project_id); ?>
