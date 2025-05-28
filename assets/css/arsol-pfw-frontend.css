@@ -153,10 +153,24 @@
 /* Project empty state styling */
 .project-empty-state {
     text-align: center;
-    padding: 2rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 2rem;
+}
+
+.empty-state-icon {
+    margin-bottom: 1.5rem;
+}
+
+.empty-state-icon svg {
+    width: 48px;
+    height: 48px;
+    opacity: 0.8;
+}
+
+.empty-state-icon svg path {
+    transition: stroke 0.2s ease;
+}
+
+.project-empty-state:hover .empty-state-icon svg path {
+    stroke: #135e96;
 }
 
 .project-empty-state h3 {
