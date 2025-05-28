@@ -133,3 +133,41 @@ wp_reset_postdata();
 
 do_action('arsol_projects_after_project_overview', $project_id); 
 ?>
+
+
+
+<?php
+$project_id = 123; // Change this to your project ID
+
+// 1. Set global $post properly
+global $post;
+$post = get_post( $project_id );
+setup_postdata( $post );
+
+// 2. Fetch and display existing comments (if any)
+$comments = get_comments([
+    'post_id' => $project_id,
+    'status'  => 'approve',
+]);
+
+if ( $comments ) {
+    echo '<div class="comments-list">';
+    wp_list_comments([
+        'style'      => 'div',
+        'short_ping' => true,
+        'avatar_size' => 48,
+    ], $comments);
+    echo '</div>';
+} else {
+    echo '<p>No comments yet.</p>';
+}
+
+// 3. Show comment form
+if ( comments_open( $project_id ) ) {
+    comment_form([
+        'title_reply' => 'Leave a Comment',
+    ], $project_id );
+}
+
+wp_reset_postdata();
+?>
