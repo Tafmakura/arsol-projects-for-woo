@@ -24,6 +24,17 @@ if (!$project) {
 global $post;
 $post = $project;
 setup_postdata($post);
+
+// Debug information
+$comments = get_comments(array(
+    'post_id' => $project_id,
+    'status' => 'approve'
+));
+
+echo '<!-- Debug: Project ID: ' . esc_html($project_id) . ' -->';
+echo '<!-- Debug: Comments count: ' . count($comments) . ' -->';
+echo '<!-- Debug: Comments open: ' . (comments_open() ? 'yes' : 'no') . ' -->';
+echo '<!-- Debug: Post type: ' . get_post_type() . ' -->';
 ?>
 
 <?php // Navigation included in includes/classes/class-endpoints.php ?>
@@ -39,7 +50,22 @@ setup_postdata($post);
         
         <!-- Comments Section -->
         <div class="project-comments">
-            <?php comments_template(); ?>
+            <?php
+            if (!empty($comments)) {
+                echo '<div class="comments-list">';
+                wp_list_comments(array(
+                    'style' => 'div',
+                    'avatar_size' => 48,
+                ), $comments);
+                echo '</div>';
+            } else {
+                echo '<p>' . esc_html__('No comments yet.', 'arsol-projects-for-woo') . '</p>';
+            }
+
+            if (comments_open()) {
+                comment_form(array(), $project_id);
+            }
+            ?>
         </div>
         
         <?php do_action('arsol_projects_overview_after_content', $project_id); ?>
