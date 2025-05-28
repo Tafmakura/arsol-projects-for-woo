@@ -93,3 +93,52 @@
         font-weight: bold;
     }
 }
+
+/* Add styles for the project overview layout with sidebar */
+.project-overview-wrapper {
+    display: flex;
+    flex-wrap: wrap; /* Allows columns to wrap on smaller screens */
+    gap: 20px; /* Adds space between columns */
+}
+
+.project-content {
+    flex: 1; /* Allows content to grow and take up available space */
+    min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.project-sidebar {
+    flex-basis: 300px; /* Set a preferred width for the sidebar */
+    flex-grow: 0; /* Prevent sidebar from growing */
+    flex-shrink: 0; /* Prevent sidebar from shrinking below its basis */
+    /* Add some padding and border for visual separation */
+    padding: 15px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+}
+
+/* Responsive adjustment: Stack columns on smaller screens */
+@media (max-width: 768px) {
+    .project-overview-wrapper {
+        flex-direction: column; /* Stack items vertically */
+        gap: 15px; /* Adjust gap for stacked layout */
+    }
+
+    .project-content,
+    .project-sidebar {
+        flex-basis: auto; /* Reset flex-basis */
+        width: 100%; /* Take full width */
+    }
+}
+
+/* Basic styling for the meta data within the sidebar */
+.project-sidebar .project-meta p {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.project-sidebar .project-meta p:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}

@@ -56,38 +56,52 @@ $bricks_post_id = $post->ID;
     ?>
 </div>
 
-<div class="project-content">
-    <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
-    
-    <div class="project-description">
-        <?php 
-        // Display the content with proper context
-        the_content();
-        ?>
-    </div>
-    
-    <div class="project-meta">
-        <?php if (!empty($project_meta['_project_start_date'][0])) : ?>
-            <p><strong><?php esc_html_e('Start Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_start_date'][0]))); ?></p>
-        <?php endif; ?>
-        
-        <?php if (!empty($project_meta['_project_end_date'][0])) : ?>
-            <p><strong><?php esc_html_e('End Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
-        <?php endif; ?>
-    </div>
-    
-    <?php do_action('arsol_projects_overview_after_content', $project_id); ?>
-</div>
+<!-- Main content and Sidebar Wrapper -->
+<div class="project-overview-wrapper">
 
-<!-- Comments Section -->
-<div class="project-comments">
-    <?php
-    // If comments are open or we have at least one comment, load up the comment template.
-    if (comments_open() || get_comments_number()) :
-        comments_template();
-    endif;
-    ?>
-</div>
+    <!-- Main Content Area -->
+    <div class="project-content">
+        <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
+        
+        <div class="project-description">
+            <?php 
+            // Display the content with proper context
+            the_content();
+            ?>
+        </div>
+        
+        <!-- Comments Section -->
+        <div class="project-comments">
+            <?php
+            // If comments are open or we have at least one comment, load up the comment template.
+            if (comments_open() || get_comments_number()) :
+                comments_template();
+            endif;
+            ?>
+        </div>
+        
+        <?php do_action('arsol_projects_overview_after_content', $project_id); ?>
+    </div>
+
+    <!-- Sidebar Area -->
+    <div class="project-sidebar">
+        <?php 
+        // Add a placeholder title or structure for the sidebar
+        ?>
+        <h4><?php esc_html_e('Project Details', 'arsol-projects-for-woo'); ?></h4>
+
+        <div class="project-meta">
+            <?php if (!empty($project_meta['_project_start_date'][0])) : ?>
+                <p><strong><?php esc_html_e('Start Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_start_date'][0]))); ?></p>
+            <?php endif; ?>
+            
+            <?php if (!empty($project_meta['_project_end_date'][0])) : ?>
+                <p><strong><?php esc_html_e('End Date:', 'arsol-projects-for-woo'); ?></strong> <?php esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+</div> <?php // end .project-overview-wrapper ?>
 
 <?php 
 // Remove our filter
