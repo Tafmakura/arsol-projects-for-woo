@@ -12,45 +12,27 @@ defined('ABSPATH') || exit;
 
 do_action('arsol_projects_before_project_overview', $project_id);
 
-// Set up the post data to ensure proper context for both Bricks and content
-global $post, $wp_query;
+// Set up the post data
+global $post;
 $post = get_post($project_id);
 setup_postdata($post);
 
 // Store original query
 $original_query = $wp_query;
 
-// Create a new query to simulate project context
+// Create a new query for the project
 $wp_query = new \WP_Query(array(
     'post_type' => 'project',
     'p' => $project_id,
     'post_status' => 'publish',
-    'suppress_filters' => false // Allow filters to run
+    'suppress_filters' => false
 ));
-
 
 // Store the current post ID for Bricks context
 $bricks_post_id = $post->ID;
 ?>
 
-<?php // Navigation included in includes/classes/class-endpoints.php  ?>
-
-<!-- Debug: Current Post ID -->
-<div style="background: #f0f0f0; padding: 5px; margin: 5px 0; font-size: 12px; color: #666;">
-    Debug - Post ID: <?php echo esc_html($post->ID); ?> | Project ID: <?php echo esc_html($project_id); ?> | Bricks Post ID: <?php echo esc_html($bricks_post_id); ?>
-</div>
-
-<!-- Debug: WordPress Template Tags -->
-<div style="background: #f0f0f0; padding: 5px; margin: 5px 0; font-size: 12px; color: #666;">
-    Debug - WordPress Context:<br>
-    the_title(): <?php the_title(); ?><br>
-    get_the_title(): <?php echo esc_html(get_the_title()); ?><br>
-    get_the_ID(): <?php echo esc_html(get_the_ID()); ?><br>
-    get_post_type(): <?php echo esc_html(get_post_type()); ?><br>
-    is_singular('project'): <?php echo is_singular('project') ? 'true' : 'false'; ?><br>
-    $post->post_title: <?php echo esc_html($post->post_title); ?><br>
-    $post->post_type: <?php echo esc_html($post->post_type); ?>
-</div>
+<?php // Navigation included in includes/classes/class-endpoints.php ?>
 
 <div class="project-bricks-template">
     <?php 
@@ -60,41 +42,25 @@ $bricks_post_id = $post->ID;
 
 <!-- Main content and Sidebar Wrapper -->
 <div class="project-overview-wrapper">
-
     <!-- Main Content Area -->
     <div class="project-content">
         <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
         
         <div class="project-description">
-            <?php 
-            // Display the content with proper context
-            the_content();
-            ?>
+            <?php the_content(); ?>
         </div>
         
         <!-- Comments Section -->
         <div class="project-comments">
-            dfsdfsdf
             <?php
-
-
-            global $post;
-
-            $post = get_post( $project_id ); // Set the correct post
-            setup_postdata( $post );
-
-            // If comments are open or we have at least one comment, load up the comment template.
-            if (comments_open() || get_comments_number()) :
-                comments_template();
+            if ($wp_query->have_posts()) :
+                while ($wp_query->have_posts()) : $wp_query->the_post();
+                    if (comments_open() || get_comments_number()) :
+                        comments_template();
+                    endif;
+                endwhile;
             endif;
-
-
-            comments_template();
-
-            wp_reset_postdata(); // Clean up after
             ?>
-        sdfsdf
-            
         </div>
         
         <?php do_action('arsol_projects_overview_after_content', $project_id); ?>
@@ -102,9 +68,6 @@ $bricks_post_id = $post->ID;
 
     <!-- Sidebar Area -->
     <div class="project-sidebar">
-        <?php 
-        // Add a placeholder title or structure for the sidebar
-        ?>
         <h4><?php esc_html_e('Project Details', 'arsol-projects-for-woo'); ?></h4>
 
         <div class="project-meta">
@@ -113,54 +76,17 @@ $bricks_post_id = $post->ID;
             <?php endif; ?>
             
             <?php if (!empty($project_meta['_project_end_date'][0])) : ?>
-                <p><strong><?php esc_html_e('End Datee:', 'arsol-projects-for-woo'); ?></strong> <?php esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
+                <p><strong><?php esc_html_e('End Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($project_meta['_project_end_date'][0]))); ?></p>
             <?php endif; ?>
         </div>
     </div>
-
-</div> <?php // end .project-overview-wrapper ?>
-
+</div>
 
 <?php 
+// Restore original query
+$wp_query = $original_query;
+wp_reset_postdata();
 
-$args = [
-    'post_type'      => 'project',
-    'p'              => $project_id,
-    'post_status'    => 'publish',
-    'posts_per_page' => 1,
-];
-
-$query = new WP_Query( $args );
-
-if ( $query->have_posts() ) :
-    while ( $query->have_posts() ) :
-        $query->the_post(); // Sets global $post
-
-        // Show post title (optional)
-        echo '<h2>' . get_the_title() . '</h2>';
-
-        // ✅ Show comments
-        if ( have_comments() ) {
-            echo '<div class="comments-list">';
-            wp_list_comments([
-                'style' => 'div',
-                'avatar_size' => 48,
-            ]);
-            echo '</div>';
-        } else {
-            echo '<p>No comments yet.</p>';
-        }
-
-        // ✅ Show comment form
-        if ( comments_open() ) {
-            comment_form();
-        }
-
-    endwhile;
-
-    wp_reset_postdata();
-else :
-    echo '<p>Project not found.</p>';
-endif;
+do_action('arsol_projects_after_project_overview', $project_id); 
 ?>
 
