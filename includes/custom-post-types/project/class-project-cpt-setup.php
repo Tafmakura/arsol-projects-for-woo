@@ -329,8 +329,6 @@ class Setup {
     public function add_project_status_filters() {
         global $typenow;
         if ($typenow === 'arsol-project') {
-            echo '<div class="alignleft actions">';
-
             // Status filter
             $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
             $statuses = get_terms('project_status', array('hide_empty' => false));
@@ -388,27 +386,24 @@ class Setup {
             }
             echo '</select>';
 
-            // Filter and Reset buttons
-            echo '<button type="submit" name="filter_action" id="project-query-submit" class="button">' . __('Filter', 'arsol-projects-for-woo') . '</button>';
-            echo '<a href="' . esc_url(admin_url('edit.php?post_type=arsol-project')) . '" class="button">' . __('Reset Filters', 'arsol-projects-for-woo') . '</a>';
-
-            echo '</div>';
+            // No custom Filter or Reset button here; let WordPress handle it
 
             // Enqueue WooCommerce select2
             wp_enqueue_script('select2');
             wp_enqueue_style('select2');
             
-            // Add inline script to initialize select2
+            // Add inline script to initialize select2 with min-width
             add_action('admin_footer', function() {
                 ?>
                 <script type="text/javascript">
                 jQuery(function($) {
                     $('.wc-customer-search, .select2-enhanced').select2({
                         allowClear: true,
+                        minimumResultsForSearch: 10,
                         placeholder: function(){
                             return $(this).data('placeholder');
                         }
-                    });
+                    }).next('.select2-container').css('min-width', '200px');
                 });
                 </script>
                 <?php
