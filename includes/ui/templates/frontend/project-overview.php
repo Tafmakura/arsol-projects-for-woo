@@ -52,7 +52,7 @@ $bricks_post_id = $post->ID;
 
 <!-- Debug: Bricks Builder Context -->
 <div style="background: #f0f0f0; padding: 10px; margin: 10px 0; font-size: 12px; color: #666; border: 1px solid #ddd;">
-    <h4 style="margin: 0 0 10px 0;">Bricks Builder Debug Info:</h4>
+    <h4 style="margin: 0 0 10px 0;">Bricks Builder Debug Info Here:</h4>
     <?php if (defined('BRICKS_VERSION')) : ?>
         <p><strong>Bricks Version:</strong> <?php echo esc_html(BRICKS_VERSION); ?></p>
         <p><strong>Current Post ID:</strong> <?php echo esc_html($bricks_post_id); ?></p>
