@@ -90,6 +90,8 @@ $bricks_post_id = $post->ID;
 
 
             comments_template();
+
+            wp_reset_postdata(); // Clean up after
             ?>
         sdfsdf
             
