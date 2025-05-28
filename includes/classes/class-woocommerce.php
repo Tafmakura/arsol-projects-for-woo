@@ -189,7 +189,7 @@ class Woocommerce {
         // Modern WooCommerce Blocks approach if available
         if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
             try {
-                $field_id = 'arsol-project';
+                $field_id = 'arsol-projects-for-woo/arsol-project';
                 $checkout_fields = \Automattic\WooCommerce\Blocks\Package::container()->get(
                     \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
                 );
@@ -494,7 +494,7 @@ class Woocommerce {
 
         woocommerce_register_additional_checkout_field(
             array(
-                'id'         => 'arsol-project',
+                'id'         => 'arsol-projects-for-woo/arsol-project',
                 'label'      => __('Project', 'arsol-pfw'),
                 'location'   => 'order',
                 'required'   => true,
