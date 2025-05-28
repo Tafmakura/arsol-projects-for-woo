@@ -212,7 +212,7 @@ class Endpoints {
      * @param int $project_id Project ID
      * @return bool Whether the user can view the project
      */
-    private function user_can_view_project($user_id, $project_id) {
+    public static function user_can_view_project($user_id, $project_id) {
         if (!is_user_logged_in()) {
             return false;
         }
