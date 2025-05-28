@@ -53,13 +53,19 @@ class Woocommerce {
         // Add script to remove duplicate fields
         add_action('admin_footer', function() {
             ?>
+            <style type="text/css">
+                /* Hide duplicate project field */
+                p.form-field._wc_other\5c /arsol-projects-for-woo\5c /arsol-project_field {
+                    display: none !important;
+                }
+            </style>
             <script type="text/javascript">
             jQuery(function($) {
                 // Target both project field locations:
                 // 1. The standard form field with the class name
                 // 2. Any project fields in the order_data_column > address section
                 var projectFields = $(
-                    'p.form-field._wc_other\\/arsol-projects-for-woo\\/project_field'
+                    'p.form-field._wc_other\\/arsol-projects-for-woo\\/arsol-project_field'
                     // + ', div.order_data_column div.address p:contains("Project:")'
                 );
                 
