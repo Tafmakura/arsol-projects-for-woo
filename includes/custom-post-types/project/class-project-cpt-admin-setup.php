@@ -6,14 +6,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Admin_Setup {
+class Setup {
     public function __construct() {
-        // Require admin classes
-        require_once __DIR__ . '/class-project-cpt-admin-project.php';
-        require_once __DIR__ . '/class-project-cpt-admin-projects.php';
-        // Instantiate admin classes
-        new Project();
-        new Projects();
 
         add_action('init', array($this, 'register_post_type'));
         add_action('init', array($this, 'register_project_status_taxonomy'));
