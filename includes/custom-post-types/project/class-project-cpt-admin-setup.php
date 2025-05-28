@@ -115,7 +115,7 @@ class Setup {
             'update_item'       => __('Update Project Status', 'arsol-projects-for-woo'),
             'add_new_item'      => __('Add New Project Status', 'arsol-projects-for-woo'),
             'new_item_name'     => __('New Project Status Name', 'arsol-projects-for-woo'),
-            'menu_name'         => __('Status', 'arsol-projects-for-woo'),
+            'menu_name'         => __('Statuses', 'arsol-projects-for-woo'),
         );
 
         $args = array(
@@ -129,7 +129,7 @@ class Setup {
             'meta_box_cb'       => false,
         );
 
-        register_taxonomy('project_status', 'arsol-project', $args);
+        register_taxonomy('arsol-project-status', 'arsol-project', $args);
     }
 
     /**
@@ -145,8 +145,8 @@ class Setup {
         );
 
         foreach ($default_statuses as $slug => $name) {
-            if (!term_exists($slug, 'project_status')) {
-                wp_insert_term($name, 'project_status', array('slug' => $slug));
+            if (!term_exists($slug, 'arsol-project-status')) {
+                wp_insert_term($name, 'arsol-project-status', array('slug' => $slug));
             }
         }
     }

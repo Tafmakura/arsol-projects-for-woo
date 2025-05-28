@@ -41,7 +41,7 @@ class Projects {
         if ($typenow === 'arsol-project') {
             // Status filter (standard dropdown)
             $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
-            $statuses = get_terms('project_status', array('hide_empty' => false));
+            $statuses = get_terms('arsol-project-status', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
                 echo '<select name="project_status" id="filter-by-project-status" class="postform status-filter-dropdown">';
                 echo '<option value="">' . __('All Statuses', 'arsol-projects-for-woo') . '</option>';
@@ -150,7 +150,7 @@ class Projects {
             if (!empty($_GET['project_status'])) {
                 $tax_query = $query->get('tax_query') ?: [];
                 $tax_query[] = [
-                    'taxonomy' => 'project_status',
+                    'taxonomy' => 'arsol-project-status',
                     'field'    => 'slug',
                     'terms'    => sanitize_text_field($_GET['project_status']),
                 ];

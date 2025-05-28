@@ -34,7 +34,7 @@ class Project {
         wp_nonce_field('project_details_meta_box', 'project_details_meta_box_nonce');
 
         // Get current values
-        $current_status = wp_get_object_terms($post->ID, 'project_status', array('fields' => 'slugs'));
+        $current_status = wp_get_object_terms($post->ID, 'arsol-project-status', array('fields' => 'slugs'));
         $current_status = !empty($current_status) ? $current_status[0] : 'not-started';
         $due_date = get_post_meta($post->ID, '_project_due_date', true);
         $start_date = get_post_meta($post->ID, '_project_start_date', true);
@@ -42,7 +42,7 @@ class Project {
         
         // Get statuses
         $statuses = get_terms(array(
-            'taxonomy' => 'project_status',
+            'taxonomy' => 'arsol-project-status',
             'hide_empty' => false,
         ));
 
@@ -150,7 +150,7 @@ class Project {
         // Save project status
         if (isset($_POST['project_status'])) {
             $new_status = sanitize_text_field($_POST['project_status']);
-            $current_status = wp_get_object_terms($post_id, 'project_status', array('fields' => 'slugs'));
+            $current_status = wp_get_object_terms($post_id, 'arsol-project-status', array('fields' => 'slugs'));
             $current_status = !empty($current_status) ? $current_status[0] : '';
             
             // If status is changing to 'in-progress' and there's no start date, set it
@@ -161,7 +161,7 @@ class Project {
                 }
             }
             
-            wp_set_object_terms($post_id, $new_status, 'project_status', false);
+            wp_set_object_terms($post_id, $new_status, 'arsol-project-status', false);
         }
 
         // Save project lead
