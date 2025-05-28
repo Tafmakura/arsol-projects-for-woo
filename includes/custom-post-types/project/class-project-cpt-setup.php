@@ -369,7 +369,7 @@ class Setup {
             // Customer filter (manual select for Select2)
             $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
             $customers = get_users(array(
-                'role__in' => array('customer', 'subscriber'),
+                //'role__in' => array('customer', 'subscriber'), // Show all users
                 'orderby' => 'display_name',
                 'order' => 'ASC',
                 'fields' => array('ID', 'user_login', 'user_email')
@@ -404,6 +404,7 @@ class Setup {
                     $('.wc-customer-search, .select2-enhanced').select2({
                         allowClear: true,
                         minimumResultsForSearch: 0,
+                        minimumInputLength: 1,
                         placeholder: function(){
                             return $(this).data('placeholder');
                         }
