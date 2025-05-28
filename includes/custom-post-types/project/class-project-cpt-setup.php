@@ -329,12 +329,13 @@ class Setup {
     public function add_project_status_filters() {
         global $typenow;
         if ($typenow === 'arsol-project') {
+            echo '<div class="alignleft actions">';
+
             // Status filter
             $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
             $statuses = get_terms('project_status', array('hide_empty' => false));
-            
             if (!empty($statuses) && !is_wp_error($statuses)) {
-                echo '<select name="project_status">';
+                echo '<select name="project_status" id="filter-by-project-status">';
                 echo '<option value="">' . __('All Statuses', 'arsol-projects-for-woo') . '</option>';
                 foreach ($statuses as $status) {
                     printf(
@@ -351,13 +352,16 @@ class Setup {
             $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
             $lead_dropdown = wp_dropdown_users(array(
                 'name' => 'project_lead',
+                'id' => 'filter-by-project-lead',
                 'selected' => $current_lead,
                 'show_option_none' => __('Filter by project lead', 'arsol-projects-for-woo'),
                 'role__in' => array('administrator', 'shop_manager'),
                 'orderby' => 'display_name',
                 'order' => 'ASC',
                 'echo' => false,
-                'class' => 'wc-customer-search'
+                'class' => 'wc-customer-search select2-hidden-accessible enhanced',
+                'data-placeholder' => __('Filter by project lead', 'arsol-projects-for-woo'),
+                'data-allow_clear' => 'true',
             ));
             echo $lead_dropdown;
 
@@ -365,19 +369,24 @@ class Setup {
             $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
             $customer_dropdown = wp_dropdown_users(array(
                 'name' => 'customer',
+                'id' => 'filter-by-customer',
                 'selected' => $current_customer,
                 'show_option_none' => __('Filter by registered customer', 'arsol-projects-for-woo'),
                 'role__in' => array('customer', 'subscriber'),
                 'orderby' => 'display_name',
                 'order' => 'ASC',
                 'echo' => false,
-                'class' => 'wc-customer-search'
+                'class' => 'wc-customer-search select2-hidden-accessible enhanced',
+                'data-placeholder' => __('Filter by registered customer', 'arsol-projects-for-woo'),
+                'data-allow_clear' => 'true',
             ));
             echo $customer_dropdown;
 
             // Filter and Reset buttons
-            echo '<button type="submit" class="button">' . __('Filter', 'arsol-projects-for-woo') . '</button>';
+            echo '<button type="submit" name="filter_action" id="project-query-submit" class="button">' . __('Filter', 'arsol-projects-for-woo') . '</button>';
             echo '<a href="' . esc_url(admin_url('edit.php?post_type=arsol-project')) . '" class="button">' . __('Reset Filters', 'arsol-projects-for-woo') . '</a>';
+
+            echo '</div>';
 
             // Enqueue WooCommerce select2
             wp_enqueue_script('select2');
@@ -389,7 +398,10 @@ class Setup {
                 <script type="text/javascript">
                 jQuery(function($) {
                     $('.wc-customer-search').select2({
-                        allowClear: true
+                        allowClear: true,
+                        placeholder: function(){
+                            return $(this).data('placeholder');
+                        }
                     });
                 });
                 </script>
