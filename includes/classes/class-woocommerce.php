@@ -1,6 +1,6 @@
 <?php
 
-namespace Arsol_Projects_For_Woo\Woo;
+namespace Arsol_Projects_For_Woo;
 
 if (!defined('ABSPATH')) {
     exit;

@@ -46,7 +46,7 @@ class Setup {
      */
     private function instantiate_classes() {
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Setup();
-        new \Arsol_Projects_For_Woo\Woo\Woocommerce();
+        new \Arsol_Projects_For_Woo\Woocommerce();
         new \Arsol_Projects_For_Woo\Assets();
         new \Arsol_Projects_For_Woo\Shortcodes();
         new \Arsol_Projects_For_Woo\Endpoints();

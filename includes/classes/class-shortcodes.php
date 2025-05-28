@@ -12,7 +12,7 @@
 namespace Arsol_Projects_For_Woo;
 
 use Arsol_Projects_For_Woo\Woo\AdminOrders;
-use Arsol_Projects_For_Woo\Woo\Woocommerce;
+use Arsol_Projects_For_Woo\Woocommerce;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

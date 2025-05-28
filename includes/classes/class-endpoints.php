@@ -10,7 +10,7 @@
 
 namespace Arsol_Projects_For_Woo;
 
-use Arsol_Projects_For_Woo\Woo\Woocommerce;
+use Arsol_Projects_For_Woo\Woocommerce;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -220,7 +220,7 @@ class Endpoints {
      */
     public static function user_can_view_project($user_id, $project_id) {
         // If Woocommerce class has this method, use it
-        if (method_exists('Arsol_Projects_For_Woo\Woo\Woocommerce', 'user_can_view_project')) {
+        if (method_exists('Arsol_Projects_For_Woo\Woocommerce', 'user_can_view_project')) {
             return Woocommerce::user_can_view_project($user_id, $project_id);
         }
         
