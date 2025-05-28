@@ -79,13 +79,37 @@ $bricks_post_id = $post->ID;
     <?php 
     // Set up Bricks context
     if (function_exists('bricks_set_post_id')) {
+        // Store original Bricks context
+        $original_bricks_post_id = function_exists('bricks_get_post_id') ? bricks_get_post_id() : null;
+        
         // Force Bricks to use our project context
         add_filter('bricks_dynamic_data_post_id', function($post_id) use ($bricks_post_id) {
             return $bricks_post_id;
         });
+        
+        // Set the post ID for Bricks
         bricks_set_post_id($bricks_post_id);
+        
+        // Add filter to ensure proper template rendering
+        add_filter('bricks_template_id', function($template_id) {
+            return '1491'; // Your template ID
+        });
+        
+        // Render the template
+        echo do_shortcode('[bricks_template id="1491"]');
+        
+        // Restore original Bricks context
+        if ($original_bricks_post_id) {
+            bricks_set_post_id($original_bricks_post_id);
+        }
+        
+        // Remove our filters
+        remove_all_filters('bricks_dynamic_data_post_id');
+        remove_all_filters('bricks_template_id');
+    } else {
+        // Fallback if Bricks is not active
+        echo '<p>' . esc_html__('Bricks template rendering is not available.', 'arsol-projects-for-woo') . '</p>';
     }
-    echo do_shortcode('[bricks_template id="1491"]'); 
     ?>
 </div>
 
