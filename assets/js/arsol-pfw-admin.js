@@ -20,42 +20,26 @@
             // Additional logic here if needed
         });
 
-        // Hide all conditional fields by default (JS-only approach)
-        // (No need to show the row until the condition is met)
-        function toggleConditionalFields() {
-            $('.arsol-conditional-field').each(function() {
-                var $row = $(this);
-                var conditionField = $row.data('condition-field');
-                var conditionValue = $row.data('condition-value');
-                var $controller = $('#' + conditionField);
-                if ($controller.length && $controller.val() === conditionValue) {
-                    $row.removeAttr('style');
-                } else {
-                    $row.css('display', 'none');
-                }
-            });
+        // Simple conditional field toggle
+        function toggleConditionalRow() {
+            if ($('#user_project_permissions').val() === 'user_specific') {
+                $('.arsol-conditional-field').removeAttr('style');
+            } else {
+                $('.arsol-conditional-field').css('display', 'none');
+            }
         }
-
-        // Set data attributes on the conditional row if config is present
-        if (window.arsolConditionalConfig) {
-            $('.arsol-conditional-field')
-                .attr('data-condition-field', window.arsolConditionalConfig.field)
-                .attr('data-condition-value', window.arsolConditionalConfig.value);
-        }
-
-        // Initial state: do not show the row until the condition is checked
-        toggleConditionalFields();
-
-        // Listen for changes on all select fields that might be condition fields
-        $('select').on('change', function() {
-            toggleConditionalFields();
+        // Initial check
+        toggleConditionalRow();
+        // Listen for changes
+        $('#user_project_permissions').on('change', function() {
+            toggleConditionalRow();
         });
 
         // MutationObserver to handle dynamic DOM changes
         var settingsTable = document.querySelector('.form-table');
         if (settingsTable && window.MutationObserver) {
             var observer = new MutationObserver(function(mutations) {
-                toggleConditionalFields();
+                toggleConditionalRow();
             });
             observer.observe(settingsTable, { childList: true, subtree: true });
         }
