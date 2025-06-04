@@ -180,19 +180,24 @@ class Settings_General {
         $settings = get_option('arsol_projects_settings', array());
         $value = isset($settings[$args['label_for']]) ? $settings[$args['label_for']] : 'none';
         ?>
-        <div class="arsol-conditional-field" data-condition-field="<?php echo esc_attr($args['condition_field']); ?>" data-condition-value="<?php echo esc_attr($args['condition_value']); ?>">
-            <select id="<?php echo esc_attr($args['label_for']); ?>"
-                    name="arsol_projects_settings[<?php echo esc_attr($args['label_for']); ?>]">
-                <?php foreach ($args['options'] as $option => $label): ?>
-                    <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
-                        <?php echo esc_html($label); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <p class="description">
-                <?php echo esc_html($args['description']); ?>
-            </p>
-        </div>
+        <tr class="arsol-conditional-field" data-condition-field="<?php echo esc_attr($args['condition_field']); ?>" data-condition-value="<?php echo esc_attr($args['condition_value']); ?>">
+            <th scope="row">
+                <label for="<?php echo esc_attr($args['label_for']); ?>"><?php echo esc_html($args['label_for']); ?></label>
+            </th>
+            <td>
+                <select id="<?php echo esc_attr($args['label_for']); ?>"
+                        name="arsol_projects_settings[<?php echo esc_attr($args['label_for']); ?>]">
+                    <?php foreach ($args['options'] as $option => $label): ?>
+                        <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
+                            <?php echo esc_html($label); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="description">
+                    <?php echo esc_html($args['description']); ?>
+                </p>
+            </td>
+        </tr>
         <?php
     }
 

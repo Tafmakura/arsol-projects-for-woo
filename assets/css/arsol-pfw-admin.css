@@ -73,7 +73,7 @@
 }
 
 .arsol-conditional-field.arsol-show-field {
-    display: block;
+    display: table-row;
     opacity: 1;
 }
 
