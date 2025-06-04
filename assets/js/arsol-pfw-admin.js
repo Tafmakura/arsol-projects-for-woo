@@ -42,6 +42,15 @@
         $('select').on('change', function() {
             toggleConditionalFields();
         });
+
+        // MutationObserver to handle dynamic DOM changes
+        var settingsTable = document.querySelector('.form-table');
+        if (settingsTable && window.MutationObserver) {
+            var observer = new MutationObserver(function(mutations) {
+                toggleConditionalFields();
+            });
+            observer.observe(settingsTable, { childList: true, subtree: true });
+        }
     });
     
 })(jQuery);
