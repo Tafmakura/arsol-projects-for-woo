@@ -54,10 +54,10 @@ class Settings_General {
             array(
                 'description' => __('Controls how user project permissions are handled globally', 'arsol-pfw'),
                 'options' => array(
-                    'none' => __('None - No users can request/create projects', 'arsol-pfw'),
+                    'none' => __('None', 'arsol-pfw'),
                     'request' => __('Users can request projects', 'arsol-pfw'),
                     'create' => __('Users can create projects', 'arsol-pfw'),
-                    'user_specific' => __('User Specific - Individual user settings apply', 'arsol-pfw')
+                    'user_specific' => __('Set per user', 'arsol-pfw')
                 )
             )
         );

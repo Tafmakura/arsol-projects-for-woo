@@ -175,8 +175,8 @@ class Users {
                             class="arsol-user-permission-select <?php echo $is_overridden ? 'arsol-permission-overridden' : ''; ?>"
                             <?php echo $is_overridden ? 'disabled' : ''; ?>>
                         <option value="none" <?php selected($display_permission, 'none'); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
-                        <option value="request" <?php selected($display_permission, 'request'); ?>><?php esc_html_e('Can request projects', 'arsol-pfw'); ?></option>
-                        <option value="create" <?php selected($display_permission, 'create'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
+                        <option value="request" <?php selected($display_permission, 'request'); ?>><?php esc_html_e('User can request projects', 'arsol-pfw'); ?></option>
+                        <option value="create" <?php selected($display_permission, 'create'); ?>><?php esc_html_e('User can create projects', 'arsol-pfw'); ?></option>
                     </select>
                     <p class="description">
                         <?php 
