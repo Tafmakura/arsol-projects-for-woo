@@ -28,9 +28,9 @@
                 var conditionValue = $row.data('condition-value');
                 var $controller = $('#' + conditionField);
                 if ($controller.length && $controller.val() === conditionValue) {
-                    $row.css('display', 'table-row');
+                    $row.addClass('arsol-show-field');
                 } else {
-                    $row.css('display', 'none');
+                    $row.removeClass('arsol-show-field');
                 }
             });
         }
