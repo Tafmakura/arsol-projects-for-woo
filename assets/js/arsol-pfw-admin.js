@@ -29,7 +29,7 @@
                 var conditionValue = $row.data('condition-value');
                 var $controller = $('#' + conditionField);
                 if ($controller.length && $controller.val() === conditionValue) {
-                    $row.css('display', 'table-row');
+                    $row.removeAttr('style');
                 } else {
                     $row.css('display', 'none');
                 }
