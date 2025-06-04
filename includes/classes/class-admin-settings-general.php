@@ -91,20 +91,6 @@ class Settings_General {
             'arsol_projects_settings'
         );
 
-        // Add a main 'Allow project comments' checkbox above the specific ones
-        add_settings_field(
-            'allow_project_comments',
-            __('Allow project comments', 'arsol-pfw'),
-            array($this, 'render_checkbox_field'),
-            'arsol_projects_settings',
-            'arsol_projects_comments_settings',
-            array(
-                'label' => __('Allow project comments', 'arsol-pfw'),
-                'field' => 'allow_project_comments',
-                'description' => ''
-            )
-        );
-
         // Add comments settings fields with short labels and no descriptions
         add_settings_field(
             'enable_project_comments',
@@ -227,6 +213,6 @@ class Settings_General {
      * Render comments settings section description
      */
     public function render_comments_settings_section() {
-        // No table header or description, just the checkboxes
+        echo '<p>' . esc_html__('Configure comment settings for Arsol Projects For Woo.', 'arsol-pfw') . '</p>';
     }
 }
