@@ -94,7 +94,7 @@ class Settings_General {
         // Add comments settings fields with short labels and no descriptions
         add_settings_field(
             'enable_project_comments',
-            __('Project comments', 'arsol-pfw'),
+            __('', 'arsol-pfw'),
             array($this, 'render_checkbox_field'),
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
@@ -106,7 +106,7 @@ class Settings_General {
         );
         add_settings_field(
             'enable_project_request_comments',
-            __('Request comments', 'arsol-pfw'),
+            __('', 'arsol-pfw'),
             array($this, 'render_checkbox_field'),
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
@@ -118,7 +118,7 @@ class Settings_General {
         );
         add_settings_field(
             'enable_project_proposal_comments',
-            __('Proposal comments', 'arsol-pfw'),
+            __('', 'arsol-pfw'),
             array($this, 'render_checkbox_field'),
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
