@@ -158,17 +158,33 @@ class Users {
                     if ($current_permission === '1') {
                         $current_permission = 'request';
                     }
-                    // Default to 'none' if empty
-                    if (empty($current_permission)) {
-                        $current_permission = 'none';
-                    }
+                    
+                    // Get the effective permission to show what the user actually has
+                    $effective_permission = $this->get_effective_user_permission($user->ID);
+                    
+                    // For display purposes, show the individual setting or the effective permission
+                    $display_permission = !empty($current_permission) ? $current_permission : $effective_permission;
                     ?>
                     <select id="arsol_pfw_project_user" name="arsol_pfw_project_user">
-                        <option value="none" <?php selected($current_permission, 'none'); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
-                        <option value="request" <?php selected($current_permission, 'request'); ?>><?php esc_html_e('Can request projects', 'arsol-pfw'); ?></option>
-                        <option value="create" <?php selected($current_permission, 'create'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
+                        <option value="none" <?php selected($display_permission, 'none'); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
+                        <option value="request" <?php selected($display_permission, 'request'); ?>><?php esc_html_e('Can request projects', 'arsol-pfw'); ?></option>
+                        <option value="create" <?php selected($display_permission, 'create'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
                     </select>
-                    <p class="description"><?php esc_html_e('Select the level of project permissions for this user.', 'arsol-pfw'); ?></p>
+                    <p class="description">
+                        <?php 
+                        $global_settings = get_option('arsol_projects_settings', array());
+                        $global_permission = isset($global_settings['user_project_permissions']) ? $global_settings['user_project_permissions'] : 'none';
+                        
+                        if ($global_permission !== 'user_specific') {
+                            printf(
+                                esc_html__('Individual user permissions are overridden by global setting: "%s"', 'arsol-pfw'),
+                                esc_html($this->get_permission_label($global_permission))
+                            );
+                        } else {
+                            esc_html_e('Select the level of project permissions for this user.', 'arsol-pfw');
+                        }
+                        ?>
+                    </p>
                 </td>
             </tr>
         </table>
@@ -219,12 +235,12 @@ class Users {
     public function fill_user_columns($value, $column_name, $user_id) {
         if ($column_name === 'arsol_projects') {
             $project_count = $this->get_user_project_count($user_id);
-            $is_project_user = get_user_meta($user_id, 'arsol_pfw_project_user', true);
+            $user_permission = $this->get_effective_user_permission($user_id);
             
-            if ($is_project_user) {
-                return sprintf('%d %s', $project_count, __('projects', 'arsol-pfw'));
+            if ($user_permission !== 'none') {
+                return sprintf('%d %s (%s)', $project_count, __('projects', 'arsol-pfw'), $this->get_permission_label($user_permission));
             } else {
-                return '<span class="dashicons dashicons-minus" title="' . esc_attr__('Not a project user', 'arsol-pfw') . '"></span>';
+                return '<span class="dashicons dashicons-minus" title="' . esc_attr__('No project permissions', 'arsol-pfw') . '"></span>';
             }
         }
         
@@ -337,7 +353,27 @@ class Users {
      */
     public function set_default_user_permission($user_id) {
         $global_settings = get_option('arsol_projects_settings', array());
-        $default_permission = isset($global_settings['default_user_permission']) ? $global_settings['default_user_permission'] : 'none';
-        update_user_meta($user_id, 'arsol_pfw_project_permission', $default_permission);
+        $global_permission = isset($global_settings['user_project_permissions']) ? $global_settings['user_project_permissions'] : 'none';
+        
+        // Only set individual permission if we're in user_specific mode
+        if ($global_permission === 'user_specific') {
+            $default_permission = isset($global_settings['default_user_permission']) ? $global_settings['default_user_permission'] : 'none';
+            update_user_meta($user_id, 'arsol_pfw_project_permission', $default_permission);
+        }
+    }
+
+    /**
+     * Get permission label based on permission level
+     *
+     * @param string $permission Permission level ('none', 'request', 'create')
+     * @return string Permission label
+     */
+    private function get_permission_label($permission) {
+        $labels = array(
+            'none' => esc_html__('None', 'arsol-pfw'),
+            'request' => esc_html__('Can request projects', 'arsol-pfw'),
+            'create' => esc_html__('Can create projects', 'arsol-pfw')
+        );
+        return isset($labels[$permission]) ? $labels[$permission] : esc_html__('Unknown', 'arsol-pfw');
     }
 }
