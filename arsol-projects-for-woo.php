@@ -3,7 +3,7 @@
  * Plugin Name: Arsol Projects for Woo
  * Plugin URI: https://your-site.com/arsol-projects-for-woo
  * Description: A WordPress plugin to manage projects with WooCommerce integration
- * Version: 0.0.8.6
+ * Version: 0.0.8.7
  * Requires at least: 5.8
  * Requires PHP: 7.4.1
  * Requires Plugins: woocommerce
@@ -68,10 +68,6 @@ new Setup();
 
 add_action('admin_menu', function() {
     $parent_slug = 'edit.php?post_type=arsol-project';
-    
-    // Remove the default WordPress submenus to avoid duplicates
-    remove_submenu_page($parent_slug, $parent_slug);
-    remove_submenu_page($parent_slug, 'post-new.php?post_type=arsol-project');
     
     // 1. All Project Requests
     add_submenu_page(
@@ -149,7 +145,26 @@ add_action('admin_menu', function() {
         'arsol_projects_settings_page_callback',
         99
     );
-}, 999); // Higher priority to ensure it runs after WordPress creates default menus
+}, 10);
+
+// Clean up menu after WordPress adds default items
+add_action('admin_menu', function() {
+    global $submenu;
+    $parent_slug = 'edit.php?post_type=arsol-project';
+    
+    if (isset($submenu[$parent_slug])) {
+        // Remove all default WordPress submenus
+        foreach ($submenu[$parent_slug] as $key => $menu_item) {
+            // Keep only our custom menus (positions 1,2,3,4,5,6,99)
+            if (!in_array($key, [1, 2, 3, 4, 5, 6, 99])) {
+                unset($submenu[$parent_slug][$key]);
+            }
+        }
+        
+        // Sort the submenu by key to ensure proper order
+        ksort($submenu[$parent_slug]);
+    }
+}, 999);
 
 // Use the existing settings page logic for the callback
 if (!function_exists('arsol_projects_settings_page_callback')) {
