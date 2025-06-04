@@ -1,3 +1,5 @@
+<?php 
+
 /**
  * Admin Capabilities Class
  *
