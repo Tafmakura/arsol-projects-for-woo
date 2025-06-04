@@ -182,7 +182,7 @@ class Users {
                         <?php 
                         if ($is_overridden) {
                             printf(
-                                esc_html__('Individual user permissions are overridden by global setting: "%s"', 'arsol-pfw'),
+                                esc_html__('Using general settings overide: "%s"', 'arsol-pfw'),
                                 esc_html($this->get_permission_label($global_permission))
                             );
                         } else {
