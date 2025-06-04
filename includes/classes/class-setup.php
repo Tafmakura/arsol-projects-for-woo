@@ -42,20 +42,25 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-users.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-capabilities.php';
     }
 
     /**
      * Instantiate plugin classes.
      */
     private function instantiate_classes() {
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Setup();
-        new \Arsol_Projects_For_Woo\Woocommerce();
-        new \Arsol_Projects_For_Woo\Assets();
-        new \Arsol_Projects_For_Woo\Shortcodes();
-        new \Arsol_Projects_For_Woo\Woocommerce\Endpoints();
-        new \Arsol_Projects_For_Woo\Admin\Settings_General();
-        new \Arsol_Projects_For_Woo\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Admin\Users();
+        // Initialize capabilities first
+        new Admin\Admin_Capabilities();
+        
+        // Initialize other classes
+        new Custom_Post_Types\Setup();
+        new Shortcodes();
+        new Woocommerce();
+        new Assets();
+        new Woocommerce\Endpoints();
+        new Admin\Settings_General();
+        new Admin\Setup();
+        new Admin\Users();
     }
 
     public function woocommerce_notice() {
