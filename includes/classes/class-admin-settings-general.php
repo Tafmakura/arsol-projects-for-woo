@@ -46,7 +46,8 @@ class Settings_General {
             'arsol_projects_general_settings',
             array(
                 'label_for' => 'enable_project_comments',
-                'description' => __('Allow users to comment on projects', 'arsol-pfw')
+                'description' => __('Allow users to comment on projects', 'arsol-pfw'),
+                'row_class' => 'arsol-settings-row arsol-settings-enable-project-comments'
             )
         );
 
@@ -58,7 +59,8 @@ class Settings_General {
             'arsol_projects_general_settings',
             array(
                 'label_for' => 'projects_per_page',
-                'description' => __('Number of projects to display per page', 'arsol-pfw')
+                'description' => __('Number of projects to display per page', 'arsol-pfw'),
+                'row_class' => 'arsol-settings-row arsol-settings-projects-per-page'
             )
         );
 
@@ -84,7 +86,8 @@ class Settings_General {
                     'request' => __('Users can request projects', 'arsol-pfw'),
                     'create' => __('Users can create projects', 'arsol-pfw'),
                     'user_specific' => __('User Specific - Individual user settings apply', 'arsol-pfw')
-                )
+                ),
+                'row_class' => 'arsol-settings-row arsol-settings-user-project-permissions'
             )
         );
 
@@ -104,7 +107,8 @@ class Settings_General {
                     'none' => __('None', 'arsol-pfw'),
                     'request' => __('Can request projects', 'arsol-pfw'),
                     'create' => __('Can create projects', 'arsol-pfw')
-                )
+                ),
+                'row_class' => 'arsol-settings-row arsol-settings-default-user-permission arsol-conditional-field'
             )
         );
     }
@@ -122,15 +126,23 @@ class Settings_General {
     public function render_checkbox_field($args) {
         $settings = get_option('arsol_projects_settings', array());
         $value = isset($settings[$args['label_for']]) ? $settings[$args['label_for']] : 0;
+        $row_class = isset($args['row_class']) ? esc_attr($args['row_class']) : 'arsol-settings-row';
         ?>
-        <input type="checkbox" 
-               id="<?php echo esc_attr($args['label_for']); ?>"
-               name="arsol_projects_settings[<?php echo esc_attr($args['label_for']); ?>]"
-               value="1"
-               <?php checked(1, $value); ?>>
-        <p class="description">
-            <?php echo esc_html($args['description']); ?>
-        </p>
+        <tr class="<?php echo $row_class; ?>">
+            <th scope="row">
+                <label for="<?php echo esc_attr($args['label_for']); ?>">&nbsp;</label>
+            </th>
+            <td>
+                <input type="checkbox" 
+                       id="<?php echo esc_attr($args['label_for']); ?>"
+                       name="arsol_projects_settings[<?php echo esc_attr($args['label_for']); ?>]"
+                       value="1"
+                       <?php checked(1, $value); ?>>
+                <p class="description">
+                    <?php echo esc_html($args['description']); ?>
+                </p>
+            </td>
+        </tr>
         <?php
     }
 
@@ -140,16 +152,24 @@ class Settings_General {
     public function render_number_field($args) {
         $settings = get_option('arsol_projects_settings', array());
         $value = isset($settings[$args['label_for']]) ? $settings[$args['label_for']] : 10;
+        $row_class = isset($args['row_class']) ? esc_attr($args['row_class']) : 'arsol-settings-row';
         ?>
-        <input type="number" 
-               id="<?php echo esc_attr($args['label_for']); ?>"
-               name="arsol_projects_settings[<?php echo esc_attr($args['label_for']); ?>]"
-               value="<?php echo esc_attr($value); ?>"
-               min="1"
-               max="100">
-        <p class="description">
-            <?php echo esc_html($args['description']); ?>
-        </p>
+        <tr class="<?php echo $row_class; ?>">
+            <th scope="row">
+                <label for="<?php echo esc_attr($args['label_for']); ?>">&nbsp;</label>
+            </th>
+            <td>
+                <input type="number" 
+                       id="<?php echo esc_attr($args['label_for']); ?>"
+                       name="arsol_projects_settings[<?php echo esc_attr($args['label_for']); ?>]"
+                       value="<?php echo esc_attr($value); ?>"
+                       min="1"
+                       max="100">
+                <p class="description">
+                    <?php echo esc_html($args['description']); ?>
+                </p>
+            </td>
+        </tr>
         <?php
     }
 
@@ -159,18 +179,26 @@ class Settings_General {
     public function render_select_field($args) {
         $settings = get_option('arsol_projects_settings', array());
         $value = isset($settings[$args['label_for']]) ? $settings[$args['label_for']] : 'none';
+        $row_class = isset($args['row_class']) ? esc_attr($args['row_class']) : 'arsol-settings-row';
         ?>
-        <select id="<?php echo esc_attr($args['label_for']); ?>"
-                name="arsol_projects_settings[<?php echo esc_attr($args['label_for']); ?>]">
-            <?php foreach ($args['options'] as $option => $label): ?>
-                <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
-                    <?php echo esc_html($label); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <p class="description">
-            <?php echo esc_html($args['description']); ?>
-        </p>
+        <tr class="<?php echo $row_class; ?>">
+            <th scope="row">
+                <label for="<?php echo esc_attr($args['label_for']); ?>">&nbsp;</label>
+            </th>
+            <td>
+                <select id="<?php echo esc_attr($args['label_for']); ?>"
+                        name="arsol_projects_settings[<?php echo esc_attr($args['label_for']); ?>]">
+                    <?php foreach ($args['options'] as $option => $label): ?>
+                        <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
+                            <?php echo esc_html($label); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="description">
+                    <?php echo esc_html($args['description']); ?>
+                </p>
+            </td>
+        </tr>
         <?php
     }
 
@@ -180,8 +208,9 @@ class Settings_General {
     public function render_conditional_select_field($args) {
         $settings = get_option('arsol_projects_settings', array());
         $value = isset($settings[$args['label_for']]) ? $settings[$args['label_for']] : 'none';
+        $row_class = isset($args['row_class']) ? esc_attr($args['row_class']) : 'arsol-settings-row';
         ?>
-        <tr class="arsol-conditional-field" data-condition-field="<?php echo esc_attr($args['condition_field']); ?>" data-condition-value="<?php echo esc_attr($args['condition_value']); ?>">
+        <tr class="<?php echo $row_class; ?>" data-condition-field="<?php echo esc_attr($args['condition_field']); ?>" data-condition-value="<?php echo esc_attr($args['condition_value']); ?>">
             <th scope="row">
                 <label for="<?php echo esc_attr($args['label_for']); ?>"><?php echo esc_html($args['label']); ?></label>
             </th>
