@@ -94,6 +94,46 @@ class Settings_General {
                 'data-condition-value' => 'user_specific'
             )
         );
+
+        // Comments Settings Section
+        add_settings_section(
+            'arsol_projects_comments_settings',
+            __('Comments Settings', 'arsol-pfw'),
+            array($this, 'render_comments_settings_section'),
+            'arsol_projects_settings'
+        );
+
+        // Add comments settings fields
+        add_settings_field(
+            'enable_project_comments',
+            __('Allow comments on Projects', 'arsol-pfw'),
+            array($this, 'render_checkbox_field'),
+            'arsol_projects_settings',
+            'arsol_projects_comments_settings',
+            array(
+                'description' => __('Allow users to comment on projects', 'arsol-pfw')
+            )
+        );
+        add_settings_field(
+            'enable_project_request_comments',
+            __('Allow comments on Project Requests', 'arsol-pfw'),
+            array($this, 'render_checkbox_field'),
+            'arsol_projects_settings',
+            'arsol_projects_comments_settings',
+            array(
+                'description' => __('Allow users to comment on project requests', 'arsol-pfw')
+            )
+        );
+        add_settings_field(
+            'enable_project_proposal_comments',
+            __('Allow comments on Project Proposals', 'arsol-pfw'),
+            array($this, 'render_checkbox_field'),
+            'arsol_projects_settings',
+            'arsol_projects_comments_settings',
+            array(
+                'description' => __('Allow users to comment on project proposals', 'arsol-pfw')
+            )
+        );
     }
 
     /**
@@ -168,5 +208,12 @@ class Settings_General {
      */
     public function render_user_permissions_section() {
         echo '<p>' . esc_html__('Configure user project permissions for Arsol Projects For Woo.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render comments settings section description
+     */
+    public function render_comments_settings_section() {
+        echo '<p>' . esc_html__('Configure comment settings for Arsol Projects For Woo.', 'arsol-pfw') . '</p>';
     }
 }
