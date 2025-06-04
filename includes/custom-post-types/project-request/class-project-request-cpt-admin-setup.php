@@ -19,7 +19,7 @@ class Setup {
     public function register_post_type() {
         // Debug logging
         if (function_exists('error_log')) {
-            error_log('ARSOL DEBUG: Registering arsol-project-request post type');
+            error_log('ARSOL DEBUG: Registering arsol-pfw-request post type');
         }
 
         $labels = array(
@@ -55,14 +55,14 @@ class Setup {
             'show_in_rest'      => false,
         );
 
-        $result = register_post_type('arsol-project-request', $args);
+        $result = register_post_type('arsol-pfw-request', $args);
         
         // Debug the result
         if (function_exists('error_log')) {
             if (is_wp_error($result)) {
-                error_log('ARSOL DEBUG: Failed to register arsol-project-request: ' . $result->get_error_message());
+                error_log('ARSOL DEBUG: Failed to register arsol-pfw-request: ' . $result->get_error_message());
             } else {
-                error_log('ARSOL DEBUG: Successfully registered arsol-project-request post type');
+                error_log('ARSOL DEBUG: Successfully registered arsol-pfw-request post type');
             }
         }
     }
@@ -71,7 +71,7 @@ class Setup {
      * Disable Gutenberg for project requests post type
      */
     public function disable_gutenberg_for_project_requests($use_block_editor, $post_type) {
-        if ($post_type === 'arsol-project-request') {
+        if ($post_type === 'arsol-pfw-request') {
             return false;
         }
         return $use_block_editor;
@@ -86,7 +86,7 @@ class Setup {
         }
 
         $screen = get_current_screen();
-        if ($screen && $screen->post_type === 'arsol-project-request') {
+        if ($screen && $screen->post_type === 'arsol-pfw-request') {
             // Get all users who can make purchases
             $query_args['role__in'] = array('customer', 'subscriber');
             $query_args['orderby'] = 'display_name';
@@ -122,7 +122,7 @@ class Setup {
             'meta_box_cb'       => false,
         );
 
-        register_taxonomy('arsol-request-status', 'arsol-project-request', $args);
+        register_taxonomy('arsol-request-status', 'arsol-pfw-request', $args);
     }
 
     /**
@@ -149,7 +149,7 @@ class Setup {
      */
     public function enqueue_wc_admin_styles($hook) {
         global $typenow;
-        if ($typenow === 'arsol-project-request' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-project-request')) {
+        if ($typenow === 'arsol-pfw-request' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-pfw-request')) {
             // WooCommerce admin styles
             wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
         }
