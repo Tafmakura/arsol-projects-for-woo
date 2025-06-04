@@ -99,7 +99,7 @@ class Settings_General {
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
             array(
-                'label' => __('Project comments', 'arsol-pfw'),
+                'label' => __('Allow project comments', 'arsol-pfw'),
                 'field' => 'enable_project_comments',
                 'description' => ''
             )
@@ -111,7 +111,7 @@ class Settings_General {
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
             array(
-                'label' => __('Request comments', 'arsol-pfw'),
+                'label' => __('Allow project request comments', 'arsol-pfw'),
                 'field' => 'enable_project_request_comments',
                 'description' => ''
             )
@@ -123,7 +123,7 @@ class Settings_General {
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
             array(
-                'label' => __('Proposal comments', 'arsol-pfw'),
+                'label' => __('Allow project proposal comments', 'arsol-pfw'),
                 'field' => 'enable_project_proposal_comments',
                 'description' => ''
             )
