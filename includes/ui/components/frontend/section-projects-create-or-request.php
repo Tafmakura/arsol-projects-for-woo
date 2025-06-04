@@ -21,9 +21,9 @@ if ($can_create) {
 
 <?php if ($button_url && $button_label): ?>
     <div style="display: flex; justify-content: flex-end; margin-bottom: 2em;">
-        <a href="<?php echo esc_url($button_url); ?>" class="arsol-create-or-request-btn" style="background-color: #2271b1; color: #fff; padding: 20px 40px; border-radius: 8px; font-size: 1.5em; font-weight: 600; text-decoration: none; display: inline-block;">
+        <button href="<?php echo esc_url($button_url); ?>" class="arsol-create-or-request-button button">
             <?php echo esc_html($button_label); ?>
-        </a>
+        </button>
     </div>
 <?php endif; ?>
 
