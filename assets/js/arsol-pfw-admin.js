@@ -19,6 +19,29 @@
             console.log('Project selected:', $(this).val());
             // Additional logic here if needed
         });
+
+        // Conditional settings fields logic
+        function toggleConditionalFields() {
+            $('.arsol-conditional-field').each(function() {
+                var $row = $(this);
+                var conditionField = $row.data('condition-field');
+                var conditionValue = $row.data('condition-value');
+                var $controller = $('#' + conditionField);
+                if ($controller.length && $controller.val() === conditionValue) {
+                    $row.show();
+                } else {
+                    $row.hide();
+                }
+            });
+        }
+
+        // Initial state
+        toggleConditionalFields();
+
+        // Listen for changes on all select fields that might be condition fields
+        $('select').on('change', function() {
+            toggleConditionalFields();
+        });
     });
     
 })(jQuery);
