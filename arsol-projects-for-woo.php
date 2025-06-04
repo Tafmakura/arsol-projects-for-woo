@@ -66,11 +66,6 @@ function arsol_projects_activate() {
 // Instantiate the Setup class
 new Setup();
 
-// Instantiate the settings class to register settings
-if (class_exists('Arsol_Projects_For_Woo\Admin\Settings_General')) {
-    new \Arsol_Projects_For_Woo\Admin\Settings_General();
-}
-
 add_action('admin_menu', function() {
     // Add 'Settings' submenu as the last submenu under 'Arsol Projects'
     add_submenu_page(
