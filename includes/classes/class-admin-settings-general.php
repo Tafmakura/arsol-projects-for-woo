@@ -146,14 +146,19 @@ class Settings_General {
         $value = isset($settings[$field]) ? $settings[$field] : 0;
         $label = isset($args['label']) ? $args['label'] : '';
         ?>
-        <label for="<?php echo esc_attr($field); ?>">
-            <input type="checkbox"
-                   id="<?php echo esc_attr($field); ?>"
-                   name="arsol_projects_settings[<?php echo esc_attr($field); ?>]"
-                   value="1"
-                   <?php checked(1, $value); ?>>
-            <?php echo esc_html($label); ?>
-        </label>
+        <tr>
+            <th scope="row"></th>
+            <td>
+                <label for="<?php echo esc_attr($field); ?>">
+                    <input type="checkbox"
+                           id="<?php echo esc_attr($field); ?>"
+                           name="arsol_projects_settings[<?php echo esc_attr($field); ?>]"
+                           value="1"
+                           <?php checked(1, $value); ?>>
+                    <?php echo esc_html($label); ?>
+                </label>
+            </td>
+        </tr>
         <?php if (!empty($args['description'])): ?>
             <p class="description"><?php echo esc_html($args['description']); ?></p>
         <?php endif; ?>
