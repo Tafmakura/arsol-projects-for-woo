@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
  * @package Arsol_Projects_For_Woo\Admin
  * @since 1.0.0
  */
-class Admin_Users {
+class Users {
     
     /**
      * Constructor
