@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
 class Setup {
     public function __construct() {
-        add_action('init', array($this, 'register_post_type'), 5);
+        add_action('init', array($this, 'register_post_type'));
         add_action('init', array($this, 'register_project_status_taxonomy'));
         add_action('init', array($this, 'add_default_project_statuses'));
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
