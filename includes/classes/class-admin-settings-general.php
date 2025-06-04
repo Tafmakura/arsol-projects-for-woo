@@ -40,12 +40,13 @@ class Settings_General {
         // Add settings fields
         add_settings_field(
             'enable_project_comments',
-            __('Enable Project Comments', 'arsol-pfw'),
+            '',
             array($this, 'render_checkbox_field'),
             'arsol_projects_settings',
             'arsol_projects_general_settings',
             array(
                 'label_for' => 'enable_project_comments',
+                'label' => __('Enable Project Comments', 'arsol-pfw'),
                 'description' => __('Allow users to comment on projects', 'arsol-pfw'),
                 'row_class' => 'arsol-settings-row arsol-settings-enable-project-comments'
             )
@@ -53,12 +54,13 @@ class Settings_General {
 
         add_settings_field(
             'projects_per_page',
-            __('Projects Per Page', 'arsol-pfw'),
+            '',
             array($this, 'render_number_field'),
             'arsol_projects_settings',
             'arsol_projects_general_settings',
             array(
                 'label_for' => 'projects_per_page',
+                'label' => __('Projects Per Page', 'arsol-pfw'),
                 'description' => __('Number of projects to display per page', 'arsol-pfw'),
                 'row_class' => 'arsol-settings-row arsol-settings-projects-per-page'
             )
@@ -74,12 +76,13 @@ class Settings_General {
 
         add_settings_field(
             'user_project_permissions',
-            __('Global Permission Setting', 'arsol-pfw'),
+            '',
             array($this, 'render_select_field'),
             'arsol_projects_settings',
             'arsol_projects_user_permissions',
             array(
                 'label_for' => 'user_project_permissions',
+                'label' => __('Global Permission Setting', 'arsol-pfw'),
                 'description' => __('Controls how user project permissions are handled globally', 'arsol-pfw'),
                 'options' => array(
                     'none' => __('None - No users can request/create projects', 'arsol-pfw'),
@@ -130,7 +133,7 @@ class Settings_General {
         ?>
         <tr class="<?php echo $row_class; ?>">
             <th scope="row">
-                <label for="<?php echo esc_attr($args['label_for']); ?>">&nbsp;</label>
+                <label for="<?php echo esc_attr($args['label_for']); ?>"><?php echo esc_html($args['label']); ?></label>
             </th>
             <td>
                 <input type="checkbox" 
@@ -156,7 +159,7 @@ class Settings_General {
         ?>
         <tr class="<?php echo $row_class; ?>">
             <th scope="row">
-                <label for="<?php echo esc_attr($args['label_for']); ?>">&nbsp;</label>
+                <label for="<?php echo esc_attr($args['label_for']); ?>"><?php echo esc_html($args['label']); ?></label>
             </th>
             <td>
                 <input type="number" 
@@ -183,7 +186,7 @@ class Settings_General {
         ?>
         <tr class="<?php echo $row_class; ?>">
             <th scope="row">
-                <label for="<?php echo esc_attr($args['label_for']); ?>">&nbsp;</label>
+                <label for="<?php echo esc_attr($args['label_for']); ?>"><?php echo esc_html($args['label']); ?></label>
             </th>
             <td>
                 <select id="<?php echo esc_attr($args['label_for']); ?>"
