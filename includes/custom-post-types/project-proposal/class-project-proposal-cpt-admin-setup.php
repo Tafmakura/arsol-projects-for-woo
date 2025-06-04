@@ -8,6 +8,8 @@ if (!defined('ABSPATH')) {
 
 class Setup {
     public function __construct() {
+        echo 'TEST';
+        // Add project proposal post type
         add_action('init', array($this, 'register_post_type'), 15);
         add_action('init', array($this, 'register_proposal_status_taxonomy'), 15);
         add_action('init', array($this, 'add_default_proposal_statuses'), 20);
