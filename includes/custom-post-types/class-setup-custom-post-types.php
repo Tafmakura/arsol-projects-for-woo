@@ -23,10 +23,13 @@ class Setup {
     }
 
     private function instantiate_classes() {
+        // Project CPT
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Setup();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Projects();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Project();
+        // Project Request CPT
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
+        // Project Proposal CPT
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
     }
 }
