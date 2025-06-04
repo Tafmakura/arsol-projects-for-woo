@@ -112,6 +112,8 @@ class Setup {
         // Debug logging for settings menu
         if (function_exists('error_log')) {
             error_log('ARSOL DEBUG: Settings menu added: ' . ($settings_result ? 'SUCCESS' : 'FAILED'));
+            error_log('ARSOL DEBUG: Settings callback method exists: ' . (method_exists($this, 'settings_page_callback') ? 'YES' : 'NO'));
+            error_log('ARSOL DEBUG: Current user can manage_options: ' . (current_user_can('manage_options') ? 'YES' : 'NO'));
         }
     }
     
@@ -131,6 +133,16 @@ class Setup {
                 }
             }
             
+            // Store our settings menu before cleanup
+            $settings_menu = null;
+            foreach ($submenu[$parent_slug] as $key => $menu_item) {
+                if (isset($menu_item[2]) && $menu_item[2] === 'arsol-projects-settings') {
+                    $settings_menu = $menu_item;
+                    error_log('ARSOL DEBUG: Found settings menu at position ' . $key);
+                    break;
+                }
+            }
+            
             // Remove all default WordPress submenus
             $removed_count = 0;
             foreach ($submenu[$parent_slug] as $key => $menu_item) {
@@ -141,10 +153,21 @@ class Setup {
                 }
             }
             
+            // Ensure settings menu is preserved at position 99
+            if ($settings_menu && !isset($submenu[$parent_slug][99])) {
+                $submenu[$parent_slug][99] = $settings_menu;
+                error_log('ARSOL DEBUG: Restored settings menu at position 99');
+            }
+            
             // Debug: Log what happened during cleanup
             if (function_exists('error_log')) {
                 error_log('ARSOL DEBUG: Removed ' . $removed_count . ' menu items');
                 error_log('ARSOL DEBUG: Menus after cleanup: ' . count($submenu[$parent_slug]));
+                
+                // Log final menu structure
+                foreach ($submenu[$parent_slug] as $key => $menu_item) {
+                    error_log('ARSOL DEBUG: Final menu position ' . $key . ': ' . $menu_item[0] . ' (' . $menu_item[2] . ')');
+                }
             }
             
             // Sort the submenu by key to ensure proper order
