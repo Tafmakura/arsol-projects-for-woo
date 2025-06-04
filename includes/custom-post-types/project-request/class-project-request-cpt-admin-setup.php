@@ -37,6 +37,14 @@ class Setup {
             'all_items'         => __('All Project Requests', 'arsol-pfw'),
         );
 
+        // Get base supports array
+        $supports = array('title', 'editor', 'excerpt', 'author');
+        
+        // Add comments support if enabled
+        if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-pfw-request')) {
+            $supports[] = 'comments';
+        }
+
         $args = array(
             'labels'              => $labels,
             'public'              => true,
@@ -49,7 +57,7 @@ class Setup {
             'menu_icon'          => 'dashicons-format-chat',
             'capability_type'    => 'post',
             'hierarchical'       => false,
-            'supports'           => array('title', 'editor', 'excerpt', 'author', 'comments'),
+            'supports'           => $supports,
             'has_archive'        => false,
             'rewrite'           => array('slug' => 'project-request', 'with_front' => false),
             'show_in_rest'      => false,

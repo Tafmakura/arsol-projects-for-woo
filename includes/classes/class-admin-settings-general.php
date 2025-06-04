@@ -21,6 +21,9 @@ class Settings_General {
     public function __construct() {
         // Register settings
         add_action('admin_init', array($this, 'register_settings'));
+        
+        // Add filter for post type supports
+        add_filter('post_type_supports', array($this, 'filter_post_type_supports'), 10, 2);
     }
 
     /**
@@ -214,5 +217,42 @@ class Settings_General {
      */
     public function render_comments_settings_section() {
         echo '<p>' . esc_html__('Configure comment settings for Arsol Projects For Woo.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Check if comments are enabled for a specific post type
+     *
+     * @param string $post_type The post type to check
+     * @return bool Whether comments are enabled for the post type
+     */
+    public static function is_comments_enabled_for_post_type($post_type) {
+        $settings = get_option('arsol_projects_settings', array());
+        
+        switch ($post_type) {
+            case 'arsol-project':
+                return isset($settings['enable_project_comments']) && $settings['enable_project_comments'];
+            case 'arsol-pfw-request':
+                return isset($settings['enable_project_request_comments']) && $settings['enable_project_request_comments'];
+            case 'arsol-pfw-proposal':
+                return isset($settings['enable_project_proposal_comments']) && $settings['enable_project_proposal_comments'];
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Filter comment support for custom post types
+     *
+     * @param array $supports The post type supports
+     * @param string $post_type The post type
+     * @return array Modified supports array
+     */
+    public static function filter_post_type_supports($supports, $post_type) {
+        if (in_array($post_type, array('arsol-project', 'arsol-pfw-request', 'arsol-pfw-proposal'))) {
+            if (!self::is_comments_enabled_for_post_type($post_type)) {
+                $supports = array_diff($supports, array('comments'));
+            }
+        }
+        return $supports;
     }
 }
