@@ -1,0 +1,298 @@
+<?php
+/**
+ * Admin Users Class
+ *
+ * Handles user-related functionality in the admin area for Arsol Projects For Woo.
+ *
+ * @package Arsol_Projects_For_Woo
+ * @since 1.0.0
+ */
+
+namespace Arsol_Projects_For_Woo\Admin;
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/**
+ * Class Admin_Users
+ *
+ * Manages user-related functionality in the WordPress admin area.
+ *
+ * @package Arsol_Projects_For_Woo\Admin
+ * @since 1.0.0
+ */
+class Admin_Users {
+    
+    /**
+     * Constructor
+     *
+     * Initialize the admin users functionality.
+     */
+    public function __construct() {
+        $this->init_hooks();
+    }
+    
+    /**
+     * Initialize WordPress hooks and filters
+     *
+     * @return void
+     */
+    private function init_hooks() {
+        // Admin menu hooks
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        
+        // User profile hooks
+        add_action('show_user_profile', array($this, 'add_user_profile_fields'));
+        add_action('edit_user_profile', array($this, 'add_user_profile_fields'));
+        add_action('personal_options_update', array($this, 'save_user_profile_fields'));
+        add_action('edit_user_profile_update', array($this, 'save_user_profile_fields'));
+        
+        // User list customization
+        add_filter('manage_users_columns', array($this, 'add_user_columns'));
+        add_filter('manage_users_custom_column', array($this, 'fill_user_columns'), 10, 3);
+        
+        // Ajax handlers
+        add_action('wp_ajax_arsol_pfw_user_action', array($this, 'handle_ajax_user_action'));
+    }
+    
+    /**
+     * Add admin menu for user management
+     *
+     * @return void
+     */
+    public function add_admin_menu() {
+        add_submenu_page(
+            'edit.php?post_type=arsol_project', // Parent slug (assuming this is your main CPT)
+            __('Project Users', 'arsol-pfw'),
+            __('Users', 'arsol-pfw'),
+            'manage_options',
+            'arsol-project-users',
+            array($this, 'render_admin_page')
+        );
+    }
+    
+    /**
+     * Render the admin page for user management
+     *
+     * @return void
+     */
+    public function render_admin_page() {
+        ?>
+        <div class="wrap">
+            <h1><?php echo esc_html__('Project Users Management', 'arsol-pfw'); ?></h1>
+            <div id="arsol-users-admin">
+                <?php $this->render_users_table(); ?>
+            </div>
+        </div>
+        <?php
+    }
+    
+    /**
+     * Render users table
+     *
+     * @return void
+     */
+    private function render_users_table() {
+        $users = get_users(array(
+            'meta_key' => 'arsol_pfw_project_user',
+            'meta_value' => '1',
+            'meta_compare' => '='
+        ));
+        
+        ?>
+        <table class="wp-list-table widefat fixed striped">
+            <thead>
+                <tr>
+                    <th><?php esc_html_e('User', 'arsol-pfw'); ?></th>
+                    <th><?php esc_html_e('Email', 'arsol-pfw'); ?></th>
+                    <th><?php esc_html_e('Role', 'arsol-pfw'); ?></th>
+                    <th><?php esc_html_e('Projects', 'arsol-pfw'); ?></th>
+                    <th><?php esc_html_e('Actions', 'arsol-pfw'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($users)) : ?>
+                    <tr>
+                        <td colspan="5"><?php esc_html_e('No project users found.', 'arsol-pfw'); ?></td>
+                    </tr>
+                <?php else : ?>
+                    <?php foreach ($users as $user) : ?>
+                        <tr>
+                            <td><?php echo esc_html($user->display_name); ?></td>
+                            <td><?php echo esc_html($user->user_email); ?></td>
+                            <td><?php echo esc_html(implode(', ', $user->roles)); ?></td>
+                            <td><?php echo esc_html($this->get_user_project_count($user->ID)); ?></td>
+                            <td>
+                                <a href="<?php echo esc_url(get_edit_user_link($user->ID)); ?>" class="button button-small">
+                                    <?php esc_html_e('Edit', 'arsol-pfw'); ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        <?php
+    }
+    
+    /**
+     * Add custom fields to user profile
+     *
+     * @param WP_User $user The user object
+     * @return void
+     */
+    public function add_user_profile_fields($user) {
+        ?>
+        <h3><?php esc_html_e('Arsol Project Settings', 'arsol-pfw'); ?></h3>
+        <table class="form-table">
+            <tr>
+                <th><label for="arsol_pfw_project_user"><?php esc_html_e('Project User', 'arsol-pfw'); ?></label></th>
+                <td>
+                    <input type="checkbox" id="arsol_pfw_project_user" name="arsol_pfw_project_user" value="1" 
+                           <?php checked(get_user_meta($user->ID, 'arsol_pfw_project_user', true), '1'); ?> />
+                    <label for="arsol_pfw_project_user"><?php esc_html_e('Allow this user to manage projects', 'arsol-pfw'); ?></label>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="arsol_pfw_project_limit"><?php esc_html_e('Project Limit', 'arsol-pfw'); ?></label></th>
+                <td>
+                    <input type="number" id="arsol_pfw_project_limit" name="arsol_pfw_project_limit" 
+                           value="<?php echo esc_attr(get_user_meta($user->ID, 'arsol_pfw_project_limit', true)); ?>" 
+                           min="0" step="1" />
+                    <p class="description"><?php esc_html_e('Maximum number of projects this user can create (0 = unlimited)', 'arsol-pfw'); ?></p>
+                </td>
+            </tr>
+        </table>
+        <?php
+    }
+    
+    /**
+     * Save user profile fields
+     *
+     * @param int $user_id The user ID
+     * @return void
+     */
+    public function save_user_profile_fields($user_id) {
+        if (!current_user_can('edit_user', $user_id)) {
+            return;
+        }
+        
+        // Save project user setting
+        $project_user = isset($_POST['arsol_pfw_project_user']) ? '1' : '0';
+        update_user_meta($user_id, 'arsol_pfw_project_user', $project_user);
+        
+        // Save project limit
+        if (isset($_POST['arsol_pfw_project_limit'])) {
+            $project_limit = absint($_POST['arsol_pfw_project_limit']);
+            update_user_meta($user_id, 'arsol_pfw_project_limit', $project_limit);
+        }
+    }
+    
+    /**
+     * Add custom columns to users list
+     *
+     * @param array $columns Existing columns
+     * @return array Modified columns
+     */
+    public function add_user_columns($columns) {
+        $columns['arsol_projects'] = __('Projects', 'arsol-pfw');
+        return $columns;
+    }
+    
+    /**
+     * Fill custom user columns
+     *
+     * @param string $value Column value
+     * @param string $column_name Column name
+     * @param int $user_id User ID
+     * @return string Column content
+     */
+    public function fill_user_columns($value, $column_name, $user_id) {
+        if ($column_name === 'arsol_projects') {
+            $project_count = $this->get_user_project_count($user_id);
+            $is_project_user = get_user_meta($user_id, 'arsol_pfw_project_user', true);
+            
+            if ($is_project_user) {
+                return sprintf('%d %s', $project_count, __('projects', 'arsol-pfw'));
+            } else {
+                return '<span class="dashicons dashicons-minus" title="' . esc_attr__('Not a project user', 'arsol-pfw') . '"></span>';
+            }
+        }
+        
+        return $value;
+    }
+    
+    /**
+     * Get count of projects for a user
+     *
+     * @param int $user_id User ID
+     * @return int Project count
+     */
+    private function get_user_project_count($user_id) {
+        $projects = get_posts(array(
+            'post_type' => 'arsol_project',
+            'author' => $user_id,
+            'post_status' => 'any',
+            'numberposts' => -1,
+            'fields' => 'ids'
+        ));
+        
+        return count($projects);
+    }
+    
+    /**
+     * Handle AJAX user actions
+     *
+     * @return void
+     */
+    public function handle_ajax_user_action() {
+        // Verify nonce
+        if (!wp_verify_nonce($_POST['nonce'], 'arsol_pfw_user_action')) {
+            wp_die(__('Security check failed', 'arsol-pfw'));
+        }
+        
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Insufficient permissions', 'arsol-pfw'));
+        }
+        
+        $action = sanitize_text_field($_POST['action_type']);
+        $user_id = absint($_POST['user_id']);
+        
+        switch ($action) {
+            case 'toggle_project_user':
+                $current_value = get_user_meta($user_id, 'arsol_pfw_project_user', true);
+                $new_value = $current_value ? '0' : '1';
+                update_user_meta($user_id, 'arsol_pfw_project_user', $new_value);
+                wp_send_json_success(array('new_value' => $new_value));
+                break;
+                
+            default:
+                wp_send_json_error(__('Invalid action', 'arsol-pfw'));
+        }
+    }
+    
+    /**
+     * Check if user can create projects
+     *
+     * @param int $user_id User ID
+     * @return bool Whether user can create projects
+     */
+    public function can_user_create_projects($user_id) {
+        $is_project_user = get_user_meta($user_id, 'arsol_pfw_project_user', true);
+        
+        if (!$is_project_user) {
+            return false;
+        }
+        
+        $project_limit = get_user_meta($user_id, 'arsol_pfw_project_limit', true);
+        
+        if ($project_limit == 0) {
+            return true; // Unlimited
+        }
+        
+        $current_count = $this->get_user_project_count($user_id);
+        return $current_count < $project_limit;
+    }
+}
