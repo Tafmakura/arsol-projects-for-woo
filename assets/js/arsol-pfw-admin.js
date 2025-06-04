@@ -36,6 +36,13 @@
             });
         }
 
+        // Set data attributes on the conditional row if config is present
+        if (window.arsolConditionalConfig) {
+            $('.arsol-conditional-field')
+                .attr('data-condition-field', window.arsolConditionalConfig.field)
+                .attr('data-condition-value', window.arsolConditionalConfig.value);
+        }
+
         // Initial state: do not show the row until the condition is checked
         toggleConditionalFields();
 
@@ -51,13 +58,6 @@
                 toggleConditionalFields();
             });
             observer.observe(settingsTable, { childList: true, subtree: true });
-        }
-
-        // Set data attributes on the conditional row if config is present
-        if (window.arsolConditionalConfig) {
-            $('.arsol-conditional-field')
-                .attr('data-condition-field', window.arsolConditionalConfig.field)
-                .attr('data-condition-value', window.arsolConditionalConfig.value);
         }
     });
     
