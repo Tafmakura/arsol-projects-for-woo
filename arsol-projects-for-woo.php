@@ -3,7 +3,7 @@
  * Plugin Name: Arsol Projects for Woo
  * Plugin URI: https://your-site.com/arsol-projects-for-woo
  * Description: A WordPress plugin to manage projects with WooCommerce integration
- * Version: 0.0.8.4
+ * Version: 0.0.8.5
  * Requires at least: 5.8
  * Requires PHP: 7.4.1
  * Requires Plugins: woocommerce
@@ -67,15 +67,78 @@ function arsol_projects_activate() {
 new Setup();
 
 add_action('admin_menu', function() {
-    // Add 'Settings' submenu as the last submenu under 'Arsol Projects'
+    $parent_slug = 'edit.php?post_type=arsol-project';
+    
+    // 1. All Project Requests
     add_submenu_page(
-        'edit.php?post_type=arsol-project', // Parent slug (Arsol Projects)
-        __('Settings', 'arsol-projects-for-woo'), // Page title
-        __('Settings', 'arsol-projects-for-woo'), // Menu title (no icon)
-        'manage_options', // Capability
-        'arsol-projects-settings', // Menu slug
-        'arsol_projects_settings_page_callback', // Callback function
-        99 // Position (last)
+        $parent_slug,
+        __('Project Requests', 'arsol-pfw'),
+        __('All Project Requests', 'arsol-pfw'),
+        'edit_posts',
+        'edit.php?post_type=arsol-pfw-request',
+        '',
+        1
+    );
+    
+    // 2. All Project Proposals
+    add_submenu_page(
+        $parent_slug,
+        __('Project Proposals', 'arsol-pfw'),
+        __('All Project Proposals', 'arsol-pfw'),
+        'edit_posts',
+        'edit.php?post_type=arsol-pfw-proposal',
+        '',
+        2
+    );
+    
+    // 3. Add Project Proposals
+    add_submenu_page(
+        $parent_slug,
+        __('Add Project Proposal', 'arsol-pfw'),
+        __('Add Project Proposal', 'arsol-pfw'),
+        'edit_posts',
+        'post-new.php?post_type=arsol-pfw-proposal',
+        '',
+        3
+    );
+    
+    // 4. Rename default "All Projects" to be in correct position
+    global $submenu;
+    if (isset($submenu[$parent_slug][5])) {
+        $submenu[$parent_slug][5][0] = __('All Projects', 'arsol-pfw');
+    }
+    
+    // 5. Add Project (Add New Project)
+    add_submenu_page(
+        $parent_slug,
+        __('Add Project', 'arsol-pfw'),
+        __('Add Project', 'arsol-pfw'),
+        'edit_posts',
+        'post-new.php?post_type=arsol-project',
+        '',
+        5
+    );
+    
+    // 6. Project Statuses
+    add_submenu_page(
+        $parent_slug,
+        __('Project Statuses', 'arsol-pfw'),
+        __('Project Statuses', 'arsol-pfw'),
+        'manage_categories',
+        'edit-tags.php?taxonomy=arsol-project-status&post_type=arsol-project',
+        '',
+        6
+    );
+    
+    // 7. Settings (last)
+    add_submenu_page(
+        $parent_slug,
+        __('Settings', 'arsol-projects-for-woo'),
+        __('Settings', 'arsol-projects-for-woo'),
+        'manage_options',
+        'arsol-projects-settings',
+        'arsol_projects_settings_page_callback',
+        99
     );
 });
 

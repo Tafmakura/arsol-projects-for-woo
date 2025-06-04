@@ -42,7 +42,7 @@ class Setup {
             'public'              => true,
             'publicly_queryable'  => true,
             'show_ui'            => true,
-            'show_in_menu'       => 'edit.php?post_type=arsol-project',
+            'show_in_menu'       => false,
             'show_in_nav_menus'  => true,
             'show_in_admin_bar'  => true,
             'menu_position'      => null,
