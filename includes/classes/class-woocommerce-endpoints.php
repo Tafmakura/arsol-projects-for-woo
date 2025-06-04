@@ -41,6 +41,7 @@ class Endpoints {
         add_action('woocommerce_account_project-overview_endpoint', array($this, 'project_overview_endpoint_content'));
         add_action('woocommerce_account_project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
         add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
+        add_action('woocommerce_account_project-create_endpoint', array($this, 'project_create_endpoint_content'));
 
         // Add comment redirect filter
         add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
@@ -56,6 +57,7 @@ class Endpoints {
         add_rewrite_endpoint('project-overview', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-orders', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-subscriptions', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('project-create', EP_ROOT | EP_PAGES);
     }
     
     /**
@@ -68,6 +70,7 @@ class Endpoints {
         $logout = $items['customer-logout'];
         unset($items['customer-logout']);
         $items['projects'] = __('Projects', 'arsol-pfw');
+        $items['project-create'] = __('Create Project', 'arsol-pfw');
         $items['customer-logout'] = $logout;
         return $items;
     }
@@ -83,6 +86,7 @@ class Endpoints {
         $query_vars['project-overview'] = 'project-overview';
         $query_vars['project-orders'] = 'project-orders';
         $query_vars['project-subscriptions'] = 'project-subscriptions';
+        $query_vars['project-create'] = 'project-create';
         return $query_vars;
     }
     
@@ -150,6 +154,15 @@ class Endpoints {
     public function project_subscriptions_endpoint_content() {
         $project_id = absint(get_query_var('project-subscriptions'));
         $this->render_project_page($project_id, 'subscriptions');
+    }
+    
+    /**
+     * Display content for the project creation endpoint
+     *
+     * @return void
+     */
+    public function project_create_endpoint_content() {
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create.php';
     }
     
     /**
