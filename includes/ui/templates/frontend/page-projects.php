@@ -16,6 +16,8 @@ do_action('arsol_projects_before_user_projects', $has_projects);
 <div class="woocommerce">
     <?php do_action('arsol_projects_before_projects_list', $has_projects); ?>
     
+    <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-create-or-request.php'; ?>
+    
     <?php 
     // Use the existing shortcode to display user projects
     echo do_shortcode('[arsol_user_projects per_page="' . esc_attr($posts_per_page) . '" paged="' . esc_attr($paged) . '"]'); 

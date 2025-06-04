@@ -58,6 +58,7 @@ class Endpoints {
         add_rewrite_endpoint('project-orders', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-subscriptions', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-create', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('project-request', EP_ROOT | EP_PAGES);
     }
     
     /**
@@ -70,7 +71,6 @@ class Endpoints {
         $logout = $items['customer-logout'];
         unset($items['customer-logout']);
         $items['projects'] = __('Projects', 'arsol-pfw');
-        $items['project-create'] = __('Create Project', 'arsol-pfw');
         $items['customer-logout'] = $logout;
         return $items;
     }
@@ -87,6 +87,7 @@ class Endpoints {
         $query_vars['project-orders'] = 'project-orders';
         $query_vars['project-subscriptions'] = 'project-subscriptions';
         $query_vars['project-create'] = 'project-create';
+        $query_vars['project-request'] = 'project-request';
         return $query_vars;
     }
     
@@ -163,6 +164,15 @@ class Endpoints {
      */
     public function project_create_endpoint_content() {
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create.php';
+    }
+    
+    /**
+     * Display content for the project request endpoint
+     *
+     * @return void
+     */
+    public function project_request_endpoint_content() {
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php';
     }
     
     /**
