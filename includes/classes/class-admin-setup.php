@@ -41,7 +41,18 @@ class Setup {
             1
         );
         
-        // 2. All Project Proposals
+        // 2. Add Project Request
+        add_submenu_page(
+            $parent_slug,
+            __('Add Project Request', 'arsol-pfw'),
+            __('Add Project Request', 'arsol-pfw'),
+            'edit_posts',
+            'post-new.php?post_type=arsol-pfw-request',
+            '',
+            2
+        );
+        
+        // 3. All Project Proposals
         add_submenu_page(
             $parent_slug,
             __('Project Proposals', 'arsol-pfw'),
@@ -49,10 +60,10 @@ class Setup {
             'edit_posts',
             'edit.php?post_type=arsol-pfw-proposal',
             '',
-            2
+            3
         );
         
-        // 3. Add Project Proposal
+        // 4. Add Project Proposal
         add_submenu_page(
             $parent_slug,
             __('Add Project Proposal', 'arsol-pfw'),
@@ -60,10 +71,10 @@ class Setup {
             'edit_posts',
             'post-new.php?post_type=arsol-pfw-proposal',
             '',
-            3
+            4
         );
         
-        // 4. All Projects
+        // 5. All Projects
         add_submenu_page(
             $parent_slug,
             __('All Projects', 'arsol-pfw'),
@@ -71,10 +82,10 @@ class Setup {
             'edit_posts',
             'edit.php?post_type=arsol-project',
             '',
-            4
+            5
         );
         
-        // 5. Add Project
+        // 6. Add Project
         add_submenu_page(
             $parent_slug,
             __('Add Project', 'arsol-pfw'),
@@ -82,10 +93,10 @@ class Setup {
             'edit_posts',
             'post-new.php?post_type=arsol-project',
             '',
-            5
+            6
         );
         
-        // 6. Project Statuses
+        // 7. Project Statuses
         add_submenu_page(
             $parent_slug,
             __('Project Statuses', 'arsol-pfw'),
@@ -93,10 +104,10 @@ class Setup {
             'manage_categories',
             'edit-tags.php?taxonomy=arsol-project-status&post_type=arsol-project',
             '',
-            6
+            7
         );
         
-        // 7. Settings (last)
+        // 8. Settings (last)
         $settings_result = add_submenu_page(
             $parent_slug,
             __('Settings', 'arsol-projects-for-woo'),
@@ -127,8 +138,8 @@ class Setup {
             
             // Remove all default WordPress submenus
             foreach ($submenu[$parent_slug] as $key => $menu_item) {
-                // Keep only our custom menus (positions 1,2,3,4,5,6,99)
-                if (!in_array($key, [1, 2, 3, 4, 5, 6, 99])) {
+                // Keep only our custom menus (positions 1,2,3,4,5,6,7,99)
+                if (!in_array($key, [1, 2, 3, 4, 5, 6, 7, 99])) {
                     unset($submenu[$parent_slug][$key]);
                 }
             }
