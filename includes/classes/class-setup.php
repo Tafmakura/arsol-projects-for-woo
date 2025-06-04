@@ -54,6 +54,7 @@ class Setup {
         new \Arsol_Projects_For_Woo\Shortcodes();
         new \Arsol_Projects_For_Woo\Woocommerce\Endpoints();
         new \Arsol_Projects_For_Woo\Admin\Settings_General();
+        new \Arsol_Projects_For_Woo\Admin\Setup();
         new \Arsol_Projects_For_Woo\Admin\Users();
     }
 

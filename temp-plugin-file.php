@@ -3,7 +3,7 @@
  * Plugin Name: Arsol Projects for Woo
  * Plugin URI: https://your-site.com/arsol-projects-for-woo
  * Description: A WordPress plugin to manage projects with WooCommerce integration
- * Version: 0.0.9.0
+ * Version: 0.0.8.9
  * Requires at least: 5.8
  * Requires PHP: 7.4.1
  * Requires Plugins: woocommerce
@@ -30,6 +30,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 
 // Prevent direct access to this file
 if (!defined('ABSPATH')) {
@@ -63,4 +64,3 @@ function arsol_projects_activate() {
 }
 
 // Instantiate the Setup class
-new Setup(); 
