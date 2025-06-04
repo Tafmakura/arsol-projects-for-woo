@@ -26,3 +26,25 @@ $settings = get_option('arsol_projects_settings', array());
         ?>
     </form>
 </div>
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    // Function to toggle the conditional field
+    function toggleDefaultUserPermission() {
+        var globalPermission = $('#user_project_permissions').val();
+        var defaultPermissionRow = $('#default_user_permission').closest('tr');
+        
+        if (globalPermission === 'user_specific') {
+            defaultPermissionRow.show();
+        } else {
+            defaultPermissionRow.hide();
+        }
+    }
+    
+    // Initial state
+    toggleDefaultUserPermission();
+    
+    // Listen for changes
+    $('#user_project_permissions').on('change', toggleDefaultUserPermission);
+});
+</script>

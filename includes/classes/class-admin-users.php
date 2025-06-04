@@ -52,6 +52,9 @@ class Users {
         add_filter('manage_users_columns', array($this, 'add_user_columns'));
         add_filter('manage_users_custom_column', array($this, 'fill_user_columns'), 10, 3);
         
+        // Set default permission for new users
+        add_action('user_register', array($this, 'set_default_user_permission'));
+        
         // Ajax handlers
         add_action('wp_ajax_arsol_pfw_user_action', array($this, 'handle_ajax_user_action'));
     }
@@ -285,9 +288,56 @@ class Users {
      * @return bool Whether user can create projects
      */
     public function can_user_create_projects($user_id) {
-        $permission = get_user_meta($user_id, 'arsol_pfw_project_permission', true);
+        return $this->get_effective_user_permission($user_id) === 'create';
+    }
+
+    /**
+     * Check if user can request projects
+     *
+     * @param int $user_id User ID
+     * @return bool Whether user can request projects
+     */
+    public function can_user_request_projects($user_id) {
+        $permission = $this->get_effective_user_permission($user_id);
+        return in_array($permission, array('request', 'create'));
+    }
+
+    /**
+     * Get effective user permission based on global and individual settings
+     *
+     * @param int $user_id User ID
+     * @return string User permission level ('none', 'request', 'create')
+     */
+    public function get_effective_user_permission($user_id) {
+        $global_settings = get_option('arsol_projects_settings', array());
+        $global_permission = isset($global_settings['user_project_permissions']) ? $global_settings['user_project_permissions'] : 'none';
         
-        // User can create projects if they have 'create' permission
-        return $permission === 'create';
+        // If global setting is not 'user_specific', it overrides individual settings
+        if ($global_permission !== 'user_specific') {
+            return $global_permission;
+        }
+        
+        // For user_specific mode, check individual user permission
+        $user_permission = get_user_meta($user_id, 'arsol_pfw_project_permission', true);
+        
+        // If no individual setting, use default for new users
+        if (empty($user_permission)) {
+            $default_permission = isset($global_settings['default_user_permission']) ? $global_settings['default_user_permission'] : 'none';
+            return $default_permission;
+        }
+        
+        return $user_permission;
+    }
+
+    /**
+     * Set default user permission when a new user is registered
+     *
+     * @param int $user_id The user ID
+     * @return void
+     */
+    public function set_default_user_permission($user_id) {
+        $global_settings = get_option('arsol_projects_settings', array());
+        $default_permission = isset($global_settings['default_user_permission']) ? $global_settings['default_user_permission'] : 'none';
+        update_user_meta($user_id, 'arsol_pfw_project_permission', $default_permission);
     }
 }
