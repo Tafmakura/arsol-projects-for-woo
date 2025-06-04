@@ -147,11 +147,11 @@ class Users {
         <h3><?php esc_html_e('Arsol Project Settings', 'arsol-pfw'); ?></h3>
         <table class="form-table">
             <tr>
-                <th><label for="arsol_pfw_project_user"><?php esc_html_e('Project User', 'arsol-pfw'); ?></label></th>
+                <th><label for="arsol_pfw_project_user"><?php esc_html_e('Project Creator', 'arsol-pfw'); ?></label></th>
                 <td>
                     <input type="checkbox" id="arsol_pfw_project_user" name="arsol_pfw_project_user" value="1" 
-                           <?php checked(get_user_meta($user->ID, 'arsol_pfw_project_user', true), '1'); ?> />
-                    <label for="arsol_pfw_project_user"><?php esc_html_e('Allow this user to manage projects', 'arsol-pfw'); ?></label>
+                           <?php checked(get_user_meta($user->ID, 'arsol_pfw_project_creator', true), '1'); ?> />
+                    <label for="arsol_pfw_project_user"><?php esc_html_e('Allow this user to create projects', 'arsol-pfw'); ?></label>
                 </td>
             </tr>
             <tr>
