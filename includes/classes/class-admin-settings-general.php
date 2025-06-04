@@ -49,17 +49,6 @@ class Settings_General {
             )
         );
 
-        add_settings_field(
-            'projects_per_page',
-            __('Projects Per Page', 'arsol-pfw'),
-            array($this, 'render_number_field'),
-            'arsol_projects_settings',
-            'arsol_projects_general_settings',
-            array(
-                'description' => __('Number of projects to display per page', 'arsol-pfw')
-            )
-        );
-
         // User Permissions Section
         add_settings_section(
             'arsol_projects_user_permissions',
@@ -126,25 +115,6 @@ class Settings_General {
                name="arsol_projects_settings[enable_project_comments]"
                value="1"
                <?php checked(1, $value); ?>>
-        <p class="description">
-            <?php echo esc_html($args['description']); ?>
-        </p>
-        <?php
-    }
-
-    /**
-     * Render number field
-     */
-    public function render_number_field($args) {
-        $settings = get_option('arsol_projects_settings', array());
-        $value = isset($settings['projects_per_page']) ? $settings['projects_per_page'] : 10;
-        ?>
-        <input type="number" 
-               id="projects_per_page"
-               name="arsol_projects_settings[projects_per_page]"
-               value="<?php echo esc_attr($value); ?>"
-               min="1"
-               max="100">
         <p class="description">
             <?php echo esc_html($args['description']); ?>
         </p>
