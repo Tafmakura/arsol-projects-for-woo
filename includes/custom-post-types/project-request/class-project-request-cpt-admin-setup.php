@@ -8,9 +8,9 @@ if (!defined('ABSPATH')) {
 
 class Setup {
     public function __construct() {
-        add_action('init', array($this, 'register_post_type'));
-        add_action('init', array($this, 'register_request_status_taxonomy'));
-        add_action('init', array($this, 'add_default_request_statuses'));
+        add_action('init', array($this, 'register_post_type'), 15);
+        add_action('init', array($this, 'register_request_status_taxonomy'), 15);
+        add_action('init', array($this, 'add_default_request_statuses'), 20);
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_requests'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_wc_admin_styles'));
