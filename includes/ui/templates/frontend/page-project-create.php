@@ -5,7 +5,8 @@ if (!defined('ABSPATH')) {
 
 // Check if user can create projects
 $user_id = get_current_user_id();
-$can_create = \Arsol_Projects_For_Woo\Admin\Users::can_user_create_projects($user_id);
+$users = new \Arsol_Projects_For_Woo\Admin\Users();
+$can_create = $users->can_user_create_projects($user_id);
 
 if (!$can_create) {
     wp_die(__('You do not have permission to create projects.', 'arsol-pfw'));
