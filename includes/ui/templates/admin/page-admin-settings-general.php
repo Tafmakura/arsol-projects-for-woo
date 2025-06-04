@@ -55,4 +55,9 @@ jQuery(document).ready(function($) {
         toggleConditionalFields();
     });
 });
+
+window.arsolConditionalConfig = {
+    field: 'user_project_permissions',
+    value: 'user_specific'
+};
 </script>
