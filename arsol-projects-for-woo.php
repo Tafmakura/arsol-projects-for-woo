@@ -3,7 +3,7 @@
  * Plugin Name: Arsol Projects for Woo
  * Plugin URI: https://your-site.com/arsol-projects-for-woo
  * Description: A WordPress plugin to manage projects with WooCommerce integration
- * Version: 0.0.8.7
+ * Version: 0.0.8.8
  * Requires at least: 5.8
  * Requires PHP: 7.4.1
  * Requires Plugins: woocommerce
@@ -65,6 +65,13 @@ function arsol_projects_activate() {
 
 // Instantiate the Setup class
 new Setup();
+
+// Define the settings page callback function
+if (!function_exists('arsol_projects_settings_page_callback')) {
+    function arsol_projects_settings_page_callback() {
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-general.php';
+    }
+}
 
 add_action('admin_menu', function() {
     $parent_slug = 'edit.php?post_type=arsol-project';
@@ -136,7 +143,7 @@ add_action('admin_menu', function() {
     );
     
     // 7. Settings (last)
-    add_submenu_page(
+    $settings_result = add_submenu_page(
         $parent_slug,
         __('Settings', 'arsol-projects-for-woo'),
         __('Settings', 'arsol-projects-for-woo'),
@@ -145,6 +152,11 @@ add_action('admin_menu', function() {
         'arsol_projects_settings_page_callback',
         99
     );
+    
+    // Debug logging for settings menu
+    if (function_exists('error_log')) {
+        error_log('ARSOL DEBUG: Settings menu added: ' . ($settings_result ? 'SUCCESS' : 'FAILED'));
+    }
 }, 10);
 
 // Clean up menu after WordPress adds default items
@@ -166,9 +178,62 @@ add_action('admin_menu', function() {
     }
 }, 999);
 
-// Use the existing settings page logic for the callback
-if (!function_exists('arsol_projects_settings_page_callback')) {
-    function arsol_projects_settings_page_callback() {
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-general.php';
+// Fix menu highlighting for custom post types
+add_filter('parent_file', function($parent_file) {
+    global $current_screen;
+    
+    if (!$current_screen) {
+        return $parent_file;
     }
-}
+    
+    // Highlight parent menu for our custom post types
+    if (in_array($current_screen->post_type, ['arsol-pfw-request', 'arsol-pfw-proposal'])) {
+        return 'edit.php?post_type=arsol-project';
+    }
+    
+    // Highlight parent menu for project status taxonomy
+    if ($current_screen->taxonomy === 'arsol-project-status') {
+        return 'edit.php?post_type=arsol-project';
+    }
+    
+    return $parent_file;
+});
+
+add_filter('submenu_file', function($submenu_file) {
+    global $current_screen;
+    
+    if (!$current_screen) {
+        return $submenu_file;
+    }
+    
+    // Highlight correct submenu for project requests
+    if ($current_screen->post_type === 'arsol-pfw-request') {
+        if ($current_screen->base === 'post') {
+            return 'post-new.php?post_type=arsol-pfw-request'; // Add new form
+        }
+        return 'edit.php?post_type=arsol-pfw-request'; // List view
+    }
+    
+    // Highlight correct submenu for project proposals
+    if ($current_screen->post_type === 'arsol-pfw-proposal') {
+        if ($current_screen->base === 'post') {
+            return 'post-new.php?post_type=arsol-pfw-proposal'; // Add new form
+        }
+        return 'edit.php?post_type=arsol-pfw-proposal'; // List view
+    }
+    
+    // Highlight correct submenu for main projects
+    if ($current_screen->post_type === 'arsol-project') {
+        if ($current_screen->base === 'post') {
+            return 'post-new.php?post_type=arsol-project'; // Add new form
+        }
+        return 'edit.php?post_type=arsol-project'; // List view
+    }
+    
+    // Highlight Project Statuses submenu
+    if ($current_screen->taxonomy === 'arsol-project-status') {
+        return 'edit-tags.php?taxonomy=arsol-project-status&post_type=arsol-project';
+    }
+    
+    return $submenu_file;
+});
