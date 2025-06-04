@@ -20,7 +20,7 @@ if ($can_create) {
 ?>
 
 <?php if ($button_url && $button_label): ?>
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 2em;">
+    <div class="arsol-table-header-button">
         <button href="<?php echo esc_url($button_url); ?>" class="arsol-create-or-request-button button">
             <?php echo esc_html($button_label); ?>
         </button>
