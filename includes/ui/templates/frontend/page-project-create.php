@@ -9,7 +9,9 @@ $users = new \Arsol_Projects_For_Woo\Admin\Users();
 $can_create = $users->can_user_create_projects($user_id);
 
 if (!$can_create) {
-    wp_die(__('You do not have permission to create projects.', 'arsol-pfw'));
+    wc_add_notice(__('You do not have permission to create projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw'), 'error');
+    wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+    exit;
 }
 
 // Handle form submission
@@ -37,9 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_project_nonce'
             update_post_meta($project_id, '_project_due_date', sanitize_text_field($_POST['project_due_date']));
         }
         
+        // Add success notice
+        wc_add_notice(__('Project created successfully!', 'arsol-pfw'), 'success');
+        
         // Redirect to project overview
         wp_redirect(add_query_arg('project', $project_id, wc_get_account_endpoint_url('project-overview')));
         exit;
+    } else {
+        // Add error notice if project creation failed
+        wc_add_notice(__('Failed to create project. Please try again.', 'arsol-pfw'), 'error');
     }
 }
 ?>
