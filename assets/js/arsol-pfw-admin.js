@@ -23,9 +23,9 @@
         // Simple conditional field toggle
         function toggleConditionalRow() {
             if ($('#user_project_permissions').val() === 'user_specific') {
-                $('.arsol-conditional-field').removeAttr('style');
+                $('.arsol-conditional-field').addClass('show-conditional-field');
             } else {
-                $('.arsol-conditional-field').css('display', 'none');
+                $('.arsol-conditional-field').removeClass('show-conditional-field');
             }
         }
         // Initial check

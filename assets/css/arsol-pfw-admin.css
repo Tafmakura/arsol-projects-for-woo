@@ -68,11 +68,11 @@
 /* Conditional Fields */
 .arsol-conditional-field {
     display: none;
-    transition: opacity 0.3s ease-in-out;
     opacity: 0;
+    transition: opacity 0.3s ease-in-out;
 }
 
-.arsol-conditional-field.arsol-show-field {
+.arsol-conditional-field.show-conditional-field {
     display: table-row;
     opacity: 1;
 }
