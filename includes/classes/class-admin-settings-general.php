@@ -87,6 +87,26 @@ class Settings_General {
                 )
             )
         );
+
+        add_settings_field(
+            'default_user_permission',
+            '',
+            array($this, 'render_conditional_select_field'),
+            'arsol_projects_settings',
+            'arsol_projects_user_permissions',
+            array(
+                'label_for' => 'default_user_permission',
+                'label' => __('Default User', 'arsol-pfw'),
+                'description' => __('Default permission level assigned to new users (only applies when "User Specific" is selected above)', 'arsol-pfw'),
+                'condition_field' => 'user_project_permissions',
+                'condition_value' => 'user_specific',
+                'options' => array(
+                    'none' => __('None', 'arsol-pfw'),
+                    'request' => __('Can request projects', 'arsol-pfw'),
+                    'create' => __('Can create projects', 'arsol-pfw')
+                )
+            )
+        );
     }
 
     /**
@@ -151,6 +171,34 @@ class Settings_General {
         <p class="description">
             <?php echo esc_html($args['description']); ?>
         </p>
+        <?php
+    }
+
+    /**
+     * Render conditional select field
+     */
+    public function render_conditional_select_field($args) {
+        $settings = get_option('arsol_projects_settings', array());
+        $value = isset($settings[$args['label_for']]) ? $settings[$args['label_for']] : 'none';
+        ?>
+        <tr class="arsol-conditional-field" data-condition-field="<?php echo esc_attr($args['condition_field']); ?>" data-condition-value="<?php echo esc_attr($args['condition_value']); ?>">
+            <th scope="row">
+                <label for="<?php echo esc_attr($args['label_for']); ?>"><?php echo esc_html($args['label']); ?></label>
+            </th>
+            <td>
+                <select id="<?php echo esc_attr($args['label_for']); ?>"
+                        name="arsol_projects_settings[<?php echo esc_attr($args['label_for']); ?>]">
+                    <?php foreach ($args['options'] as $option => $label): ?>
+                        <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
+                            <?php echo esc_html($label); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <p class="description">
+                    <?php echo esc_html($args['description']); ?>
+                </p>
+            </td>
+        </tr>
         <?php
     }
 

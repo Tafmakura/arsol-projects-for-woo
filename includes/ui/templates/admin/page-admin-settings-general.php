@@ -23,25 +23,6 @@ $settings = get_option('arsol_projects_settings', array());
             <?php
             settings_fields('arsol_projects_settings');
             do_settings_sections('arsol_projects_settings');
-            // Manually render the conditional field row for Default User
-            $value = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'none';
-            ?>
-            <tr class="arsol-conditional-field" data-condition-field="user_project_permissions" data-condition-value="user_specific">
-                <th scope="row">
-                    <label for="default_user_permission"><?php echo esc_html__('Default User', 'arsol-pfw'); ?></label>
-                </th>
-                <td>
-                    <select id="default_user_permission" name="arsol_projects_settings[default_user_permission]">
-                        <option value="none" <?php selected($value, 'none'); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
-                        <option value="request" <?php selected($value, 'request'); ?>><?php esc_html_e('Can request projects', 'arsol-pfw'); ?></option>
-                        <option value="create" <?php selected($value, 'create'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
-                    </select>
-                    <p class="description">
-                        <?php esc_html_e('Default permission level assigned to new users (only applies when "User Specific" is selected above)', 'arsol-pfw'); ?>
-                    </p>
-                </td>
-            </tr>
-            <?php
             ?>
         </table>
         <?php submit_button(); ?>
