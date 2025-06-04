@@ -20,7 +20,8 @@
             // Additional logic here if needed
         });
 
-        // Conditional settings fields logic
+        // Hide all conditional fields by default (JS-only approach)
+        // (No need to show the row until the condition is met)
         function toggleConditionalFields() {
             $('.arsol-conditional-field').each(function() {
                 var $row = $(this);
@@ -28,14 +29,14 @@
                 var conditionValue = $row.data('condition-value');
                 var $controller = $('#' + conditionField);
                 if ($controller.length && $controller.val() === conditionValue) {
-                    $row.addClass('arsol-show-field');
+                    $row.css('display', 'table-row');
                 } else {
-                    $row.removeClass('arsol-show-field');
+                    $row.css('display', 'none');
                 }
             });
         }
 
-        // Initial state
+        // Initial state: do not show the row until the condition is checked
         toggleConditionalFields();
 
         // Listen for changes on all select fields that might be condition fields
