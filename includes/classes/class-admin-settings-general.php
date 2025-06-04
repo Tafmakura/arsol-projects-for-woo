@@ -91,35 +91,41 @@ class Settings_General {
             'arsol_projects_settings'
         );
 
-        // Add comments settings fields
+        // Add comments settings fields with short labels and no descriptions
         add_settings_field(
             'enable_project_comments',
-            __('Allow comments on Projects', 'arsol-pfw'),
+            __('Project comments', 'arsol-pfw'),
             array($this, 'render_checkbox_field'),
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
             array(
-                'description' => __('Allow users to comment on projects', 'arsol-pfw')
+                'label' => __('Project comments', 'arsol-pfw'),
+                'field' => 'enable_project_comments',
+                'description' => ''
             )
         );
         add_settings_field(
             'enable_project_request_comments',
-            __('Allow comments on Project Requests', 'arsol-pfw'),
+            __('Request comments', 'arsol-pfw'),
             array($this, 'render_checkbox_field'),
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
             array(
-                'description' => __('Allow users to comment on project requests', 'arsol-pfw')
+                'label' => __('Request comments', 'arsol-pfw'),
+                'field' => 'enable_project_request_comments',
+                'description' => ''
             )
         );
         add_settings_field(
             'enable_project_proposal_comments',
-            __('Allow comments on Project Proposals', 'arsol-pfw'),
+            __('Proposal comments', 'arsol-pfw'),
             array($this, 'render_checkbox_field'),
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
             array(
-                'description' => __('Allow users to comment on project proposals', 'arsol-pfw')
+                'label' => __('Proposal comments', 'arsol-pfw'),
+                'field' => 'enable_project_proposal_comments',
+                'description' => ''
             )
         );
     }
