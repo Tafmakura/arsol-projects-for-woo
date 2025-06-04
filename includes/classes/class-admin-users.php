@@ -164,18 +164,23 @@ class Users {
                     
                     // For display purposes, show the individual setting or the effective permission
                     $display_permission = !empty($current_permission) ? $current_permission : $effective_permission;
+                    
+                    // Check if global settings override individual settings
+                    $global_settings = get_option('arsol_projects_settings', array());
+                    $global_permission = isset($global_settings['user_project_permissions']) ? $global_settings['user_project_permissions'] : 'none';
+                    $is_overridden = $global_permission !== 'user_specific';
                     ?>
-                    <select id="arsol_pfw_project_user" name="arsol_pfw_project_user">
+                    <select id="arsol_pfw_project_user" 
+                            name="arsol_pfw_project_user"
+                            class="arsol-user-permission-select <?php echo $is_overridden ? 'arsol-permission-overridden' : ''; ?>"
+                            <?php echo $is_overridden ? 'disabled' : ''; ?>>
                         <option value="none" <?php selected($display_permission, 'none'); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
                         <option value="request" <?php selected($display_permission, 'request'); ?>><?php esc_html_e('Can request projects', 'arsol-pfw'); ?></option>
                         <option value="create" <?php selected($display_permission, 'create'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
                     </select>
                     <p class="description">
                         <?php 
-                        $global_settings = get_option('arsol_projects_settings', array());
-                        $global_permission = isset($global_settings['user_project_permissions']) ? $global_settings['user_project_permissions'] : 'none';
-                        
-                        if ($global_permission !== 'user_specific') {
+                        if ($is_overridden) {
                             printf(
                                 esc_html__('Individual user permissions are overridden by global setting: "%s"', 'arsol-pfw'),
                                 esc_html($this->get_permission_label($global_permission))
