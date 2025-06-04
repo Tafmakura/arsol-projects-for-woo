@@ -96,6 +96,7 @@ class Settings_General {
             'arsol_projects_user_permissions',
             array(
                 'label_for' => 'default_user_permission',
+                'label' => __('Default User', 'arsol-pfw'),
                 'description' => __('Default permission level assigned to new users (only applies when "User Specific" is selected above)', 'arsol-pfw'),
                 'condition_field' => 'user_project_permissions',
                 'condition_value' => 'user_specific',
@@ -182,7 +183,7 @@ class Settings_General {
         ?>
         <tr class="arsol-conditional-field" data-condition-field="<?php echo esc_attr($args['condition_field']); ?>" data-condition-value="<?php echo esc_attr($args['condition_value']); ?>">
             <th scope="row">
-                <label for="<?php echo esc_attr($args['label_for']); ?>"><?php echo esc_html($args['label_for']); ?></label>
+                <label for="<?php echo esc_attr($args['label_for']); ?>"><?php echo esc_html($args['label']); ?></label>
             </th>
             <td>
                 <select id="<?php echo esc_attr($args['label_for']); ?>"
