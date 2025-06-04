@@ -37,18 +37,6 @@ class Settings_General {
             'arsol_projects_settings'
         );
 
-        // Add settings fields
-        add_settings_field(
-            'enable_project_comments',
-            __('Enable Project Comments', 'arsol-pfw'),
-            array($this, 'render_checkbox_field'),
-            'arsol_projects_settings',
-            'arsol_projects_general_settings',
-            array(
-                'description' => __('Allow users to comment on projects', 'arsol-pfw')
-            )
-        );
-
         // User Permissions Section
         add_settings_section(
             'arsol_projects_user_permissions',
@@ -148,16 +136,21 @@ class Settings_General {
      */
     public function render_checkbox_field($args) {
         $settings = get_option('arsol_projects_settings', array());
-        $value = isset($settings['enable_project_comments']) ? $settings['enable_project_comments'] : 0;
+        $field = isset($args['field']) ? $args['field'] : $args['label_for'] ?? '';
+        $value = isset($settings[$field]) ? $settings[$field] : 0;
+        $label = isset($args['label']) ? $args['label'] : '';
         ?>
-        <input type="checkbox" 
-               id="enable_project_comments"
-               name="arsol_projects_settings[enable_project_comments]"
-               value="1"
-               <?php checked(1, $value); ?>>
-        <p class="description">
-            <?php echo esc_html($args['description']); ?>
-        </p>
+        <label for="<?php echo esc_attr($field); ?>">
+            <input type="checkbox"
+                   id="<?php echo esc_attr($field); ?>"
+                   name="arsol_projects_settings[<?php echo esc_attr($field); ?>]"
+                   value="1"
+                   <?php checked(1, $value); ?>>
+            <?php echo esc_html($label); ?>
+        </label>
+        <?php if (!empty($args['description'])): ?>
+            <p class="description"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
         <?php
     }
 
