@@ -28,9 +28,9 @@
                 var conditionValue = $row.data('condition-value');
                 var $controller = $('#' + conditionField);
                 if ($controller.length && $controller.val() === conditionValue) {
-                    $row.show();
+                    $row.css('display', 'table-row');
                 } else {
-                    $row.hide();
+                    $row.css('display', 'none');
                 }
             });
         }
