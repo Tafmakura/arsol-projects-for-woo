@@ -147,20 +147,25 @@ class Users {
         <h3><?php esc_html_e('Arsol Project Settings', 'arsol-pfw'); ?></h3>
         <table class="form-table">
             <tr>
-                <th><label for="arsol_pfw_project_user"><?php esc_html_e('Project Creator', 'arsol-pfw'); ?></label></th>
+                <th><label for="arsol_pfw_project_user"><?php esc_html_e('Project Permissions', 'arsol-pfw'); ?></label></th>
                 <td>
-                    <input type="checkbox" id="arsol_pfw_project_user" name="arsol_pfw_project_user" value="1" 
-                           <?php checked(get_user_meta($user->ID, 'arsol_pfw_project_creator', true), '1'); ?> />
-                    <label for="arsol_pfw_project_user"><?php esc_html_e('Allow this user to create projects', 'arsol-pfw'); ?></label>
-                </td>
-            </tr>
-            <tr>
-                <th><label for="arsol_pfw_project_limit"><?php esc_html_e('Project Limit', 'arsol-pfw'); ?></label></th>
-                <td>
-                    <input type="number" id="arsol_pfw_project_limit" name="arsol_pfw_project_limit" 
-                           value="<?php echo esc_attr(get_user_meta($user->ID, 'arsol_pfw_project_limit', true)); ?>" 
-                           min="0" step="1" />
-                    <p class="description"><?php esc_html_e('Maximum number of projects this user can create (0 = unlimited)', 'arsol-pfw'); ?></p>
+                    <?php 
+                    $current_permission = get_user_meta($user->ID, 'arsol_pfw_project_permission', true);
+                    // Handle legacy values - if it's '1' from old checkbox, default to 'request'
+                    if ($current_permission === '1') {
+                        $current_permission = 'request';
+                    }
+                    // Default to 'none' if empty
+                    if (empty($current_permission)) {
+                        $current_permission = 'none';
+                    }
+                    ?>
+                    <select id="arsol_pfw_project_user" name="arsol_pfw_project_user">
+                        <option value="none" <?php selected($current_permission, 'none'); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
+                        <option value="request" <?php selected($current_permission, 'request'); ?>><?php esc_html_e('Can request projects', 'arsol-pfw'); ?></option>
+                        <option value="create" <?php selected($current_permission, 'create'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
+                    </select>
+                    <p class="description"><?php esc_html_e('Select the level of project permissions for this user.', 'arsol-pfw'); ?></p>
                 </td>
             </tr>
         </table>
@@ -179,13 +184,13 @@ class Users {
         }
         
         // Save project user setting
-        $project_user = isset($_POST['arsol_pfw_project_user']) ? '1' : '0';
-        update_user_meta($user_id, 'arsol_pfw_project_user', $project_user);
-        
-        // Save project limit
-        if (isset($_POST['arsol_pfw_project_limit'])) {
-            $project_limit = absint($_POST['arsol_pfw_project_limit']);
-            update_user_meta($user_id, 'arsol_pfw_project_limit', $project_limit);
+        if (isset($_POST['arsol_pfw_project_user'])) {
+            $project_permission = sanitize_text_field($_POST['arsol_pfw_project_user']);
+            // Validate the value
+            $allowed_values = array('none', 'request', 'create');
+            if (in_array($project_permission, $allowed_values)) {
+                update_user_meta($user_id, 'arsol_pfw_project_permission', $project_permission);
+            }
         }
     }
     
@@ -280,19 +285,9 @@ class Users {
      * @return bool Whether user can create projects
      */
     public function can_user_create_projects($user_id) {
-        $is_project_user = get_user_meta($user_id, 'arsol_pfw_project_user', true);
+        $permission = get_user_meta($user_id, 'arsol_pfw_project_permission', true);
         
-        if (!$is_project_user) {
-            return false;
-        }
-        
-        $project_limit = get_user_meta($user_id, 'arsol_pfw_project_limit', true);
-        
-        if ($project_limit == 0) {
-            return true; // Unlimited
-        }
-        
-        $current_count = $this->get_user_project_count($user_id);
-        return $current_count < $project_limit;
+        // User can create projects if they have 'create' permission
+        return $permission === 'create';
     }
 }
