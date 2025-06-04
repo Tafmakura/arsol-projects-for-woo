@@ -19,11 +19,13 @@ $settings = get_option('arsol_projects_settings', array());
     <h1>Arsol Projects for Woo</h1>
     
     <form action="options.php" method="post">
-        <?php
-        settings_fields('arsol_projects_settings');
-        do_settings_sections('arsol_projects_settings');
-        submit_button();
-        ?>
+        <table class="form-table">
+            <?php
+            settings_fields('arsol_projects_settings');
+            do_settings_sections('arsol_projects_settings');
+            ?>
+        </table>
+        <?php submit_button(); ?>
     </form>
 </div>
 
