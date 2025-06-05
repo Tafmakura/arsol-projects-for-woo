@@ -161,7 +161,7 @@ class Endpoints {
                 break;
             case 'requests':
                 $args['post_type'] = array('arsol-pfw-request');
-                $args['post_status'] = 'pending';
+                $args['post_status'] = 'published';
                 break;
             case 'active':
             default:
