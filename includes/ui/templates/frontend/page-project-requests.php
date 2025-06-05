@@ -23,38 +23,35 @@ do_action('arsol_projects_before_user_requests', $has_items);
     <table class="woocommerce-projects-table shop_table shop_table_responsive">
         <thead>
             <tr>
-                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-title"><?php _e('Title', 'arsol-pfw'); ?></th>
-                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-status"><?php _e('Status', 'arsol-pfw'); ?></th>
-                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-budget"><?php _e('Budget', 'arsol-pfw'); ?></th>
-                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-timeline"><?php _e('Timeline', 'arsol-pfw'); ?></th>
-                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-date"><?php _e('Date', 'arsol-pfw'); ?></th>
-                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-actions"><?php _e('Actions', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-info"><?php _e('Request', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-actions">&nbsp;</th>
             </tr>
         </thead>
         <tbody>
             <?php while ($query->have_posts()) : $query->the_post(); 
                 $request_id = get_the_ID();
-                $status = wp_get_post_terms($request_id, 'arsol-request-status', array('fields' => 'names'));
-                $status = !empty($status) ? $status[0] : '';
-                $budget = get_post_meta($request_id, '_request_budget', true);
-                $timeline = get_post_meta($request_id, '_request_timeline', true);
-                    $view_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
+                $status_terms = wp_get_post_terms($request_id, 'arsol-request-status', array('fields' => 'names'));
+                $status = !empty($status_terms) ? $status_terms[0] : '';
+                $view_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
+                $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
                 ?>
                     <tr class="woocommerce-projects-table__row">
-                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-title" data-title="<?php _e('Title', 'arsol-pfw'); ?>">
-                            <a href="<?php echo esc_url($view_url); ?>" class="project-title-link">
-                            <?php the_title(); ?>
-                        </a>
-                    </td>
-                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-status" data-title="<?php _e('Status', 'arsol-pfw'); ?>"><?php echo esc_html($status); ?></td>
-                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-budget" data-title="<?php _e('Budget', 'arsol-pfw'); ?>"><?php echo esc_html($budget); ?></td>
-                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-timeline" data-title="<?php _e('Timeline', 'arsol-pfw'); ?>"><?php echo esc_html($timeline); ?></td>
-                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-date" data-title="<?php _e('Date', 'arsol-pfw'); ?>"><?php echo get_the_date(); ?></td>
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-info" data-title="<?php _e('Request', 'arsol-pfw'); ?>">
+                            <div class="project-title-status-wrapper">
+                                <a href="<?php echo esc_url($view_url); ?>" class="project-title-link">
+                                    <?php the_title(); ?>
+                                </a>
+                                <span class="project-status"><?php echo esc_html($status); ?></span>
+                            </div>
+                            <div class="project-excerpt">
+                                <?php echo esc_html($excerpt); ?>
+                            </div>
+                        </td>
                         <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-actions" data-title="<?php _e('Actions', 'arsol-pfw'); ?>">
                             <a href="<?php echo esc_url($view_url); ?>" class="button<?php echo esc_attr($wp_button_class); ?>">
-                            <?php _e('View', 'arsol-pfw'); ?>
-                        </a>
-                    </td>
+                                <?php _e('View', 'arsol-pfw'); ?>
+                            </a>
+                        </td>
                 </tr>
             <?php endwhile; ?>
         </tbody>
