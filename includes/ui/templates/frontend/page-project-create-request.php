@@ -48,10 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
             update_post_meta($request_id, '_request_delivery_date', $delivery_date);
         }
         
-        // Add success notice
-        wc_add_notice(__('Project request submitted successfully!', 'arsol-pfw'), 'success');
-        
-        // Redirect to project request view page
+        // Redirect to the created request view page
         $redirect_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
         wp_safe_redirect($redirect_url);
         exit;
