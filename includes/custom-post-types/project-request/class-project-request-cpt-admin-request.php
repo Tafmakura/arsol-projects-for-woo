@@ -22,7 +22,7 @@ class Request {
             array($this, 'render_request_details_meta_box'),
             'arsol-pfw-request',
             'side',
-            'high'
+            'default'
         );
     }
 
