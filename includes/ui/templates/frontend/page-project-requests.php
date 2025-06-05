@@ -23,12 +23,12 @@ do_action('arsol_projects_before_user_requests', $has_items);
     <table class="woocommerce-projects-table shop_table shop_table_responsive">
         <thead>
             <tr>
-                    <th><?php _e('Title', 'arsol-pfw'); ?></th>
-                    <th><?php _e('Status', 'arsol-pfw'); ?></th>
-                    <th><?php _e('Budget', 'arsol-pfw'); ?></th>
-                    <th><?php _e('Timeline', 'arsol-pfw'); ?></th>
-                    <th><?php _e('Date', 'arsol-pfw'); ?></th>
-                    <th><?php _e('Actions', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-title"><?php _e('Title', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-status"><?php _e('Status', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-budget"><?php _e('Budget', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-timeline"><?php _e('Timeline', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-date"><?php _e('Date', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-actions"><?php _e('Actions', 'arsol-pfw'); ?></th>
             </tr>
         </thead>
         <tbody>
@@ -40,18 +40,18 @@ do_action('arsol_projects_before_user_requests', $has_items);
                 $timeline = get_post_meta($request_id, '_request_timeline', true);
                     $view_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
                 ?>
-                    <tr>
-                        <td>
-                            <a href="<?php echo esc_url($view_url); ?>">
+                    <tr class="woocommerce-projects-table__row">
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-title" data-title="<?php _e('Title', 'arsol-pfw'); ?>">
+                            <a href="<?php echo esc_url($view_url); ?>" class="project-title-link">
                             <?php the_title(); ?>
                         </a>
                     </td>
-                        <td><?php echo esc_html($status); ?></td>
-                        <td><?php echo esc_html($budget); ?></td>
-                        <td><?php echo esc_html($timeline); ?></td>
-                        <td><?php echo get_the_date(); ?></td>
-                        <td>
-                            <a href="<?php echo esc_url($view_url); ?>" class="button">
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-status" data-title="<?php _e('Status', 'arsol-pfw'); ?>"><?php echo esc_html($status); ?></td>
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-budget" data-title="<?php _e('Budget', 'arsol-pfw'); ?>"><?php echo esc_html($budget); ?></td>
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-timeline" data-title="<?php _e('Timeline', 'arsol-pfw'); ?>"><?php echo esc_html($timeline); ?></td>
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-date" data-title="<?php _e('Date', 'arsol-pfw'); ?>"><?php echo get_the_date(); ?></td>
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-actions" data-title="<?php _e('Actions', 'arsol-pfw'); ?>">
+                            <a href="<?php echo esc_url($view_url); ?>" class="button<?php echo esc_attr($wp_button_class); ?>">
                             <?php _e('View', 'arsol-pfw'); ?>
                         </a>
                     </td>
