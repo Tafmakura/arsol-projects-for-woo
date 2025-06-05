@@ -24,23 +24,53 @@ do_action('arsol_projects_before_user_projects', $has_projects);
         <table class="woocommerce-projects-table shop_table shop_table_responsive my_account_projects account-projects-table">
             <thead>
                 <tr>
-                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-title"><?php _e('Project Request', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-type"><?php _e('Type', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-title"><?php _e('Title', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-status"><?php _e('Status', 'arsol-pfw'); ?></th>
                     <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-date"><?php _e('Date', 'arsol-pfw'); ?></th>
                     <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-actions"><?php _e('', 'arsol-pfw'); ?></th>
                 </tr>
             </thead>
             <tbody>
-                <?php while ($query->have_posts()): $query->the_post(); ?>
-                    <tr class="woocommerce-projects-table__row woocommerce-projects-table__row--status-pending project">
-                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-title" data-title="<?php _e('Project Request', 'arsol-pfw'); ?>">
+                <?php while ($query->have_posts()): $query->the_post(); 
+                    $post_type = get_post_type();
+                    $status = wp_get_object_terms(get_the_ID(), 'arsol-project-status', array('fields' => 'names'));
+                    $status = !empty($status) ? $status[0] : 'pending';
+                    
+                    // Determine the view URL based on post type
+                    switch ($post_type) {
+                        case 'arsol-project':
+                            $view_url = wc_get_account_endpoint_url('project-overview/' . get_the_ID());
+                            $type_label = __('Project', 'arsol-pfw');
+                            break;
+                        case 'arsol-project-proposal':
+                            $view_url = add_query_arg('id', get_the_ID(), wc_get_account_endpoint_url('project-view-proposal'));
+                            $type_label = __('Proposal', 'arsol-pfw');
+                            break;
+                        case 'arsol-project-request':
+                            $view_url = add_query_arg('id', get_the_ID(), wc_get_account_endpoint_url('project-view-request'));
+                            $type_label = __('Request', 'arsol-pfw');
+                            break;
+                    }
+                ?>
+                    <tr class="woocommerce-projects-table__row woocommerce-projects-table__row--status-<?php echo esc_attr($status); ?> project">
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-type" data-title="<?php _e('Type', 'arsol-pfw'); ?>">
+                            <?php echo esc_html($type_label); ?>
+                        </td>
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-title" data-title="<?php _e('Title', 'arsol-pfw'); ?>">
                             <?php the_title(); ?>
+                        </td>
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-status" data-title="<?php _e('Status', 'arsol-pfw'); ?>">
+                            <span class="status-<?php echo esc_attr($status); ?>">
+                                <?php echo esc_html(ucfirst(str_replace('-', ' ', $status))); ?>
+                            </span>
                         </td>
                         <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-date" data-title="<?php _e('Date', 'arsol-pfw'); ?>">
                             <?php echo get_the_date(); ?>
                         </td>
                         <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-actions" data-title="<?php _e('Actions', 'arsol-pfw'); ?>">
-                            <a href="<?php echo esc_url(add_query_arg('id', get_the_ID(), wc_get_account_endpoint_url('project-view-request'))); ?>" class="woocommerce-button button view">
-                                <?php _e('Review', 'arsol-pfw'); ?>
+                            <a href="<?php echo esc_url($view_url); ?>" class="woocommerce-button button view">
+                                <?php _e('View', 'arsol-pfw'); ?>
                             </a>
                         </td>
                     </tr>
@@ -67,7 +97,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
 
     <?php else: ?>
         <div class="woocommerce-info">
-            <p><?php _e('No pending project requests to review.', 'arsol-pfw'); ?></p>
+            <p><?php _e('You have no projects, proposals, or requests yet.', 'arsol-pfw'); ?></p>
         </div>
     <?php endif; ?>
 

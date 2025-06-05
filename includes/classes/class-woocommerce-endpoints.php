@@ -104,31 +104,34 @@ class Endpoints {
      * @return void
      */
     public function projects_endpoint_content() {
-        $current_user = wp_get_current_user();
-        $current_page = get_query_var('paged') ? get_query_var('paged') : 1;
-        $posts_per_page = 10;
-
-        // Get pending project requests
+        // Get current user ID
+        $user_id = get_current_user_id();
+        
+        // Set up pagination
+        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+        $posts_per_page = 10; // Number of items per page
+        
+        // Query all user's content
         $args = array(
-            'post_type'      => 'arsol-project-request',
-            'post_status'    => 'publish',
+            'post_type'      => array('arsol-project', 'arsol-project-proposal', 'arsol-project-request'),
             'posts_per_page' => $posts_per_page,
-            'paged'          => $current_page,
-            'meta_query'     => array(
-                array(
-                    'key'     => '_arsol_project_request_status',
-                    'value'   => 'pending',
-                    'compare' => '='
-                )
-            ),
+            'paged'          => $paged,
+            'author'         => $user_id,
             'orderby'        => 'date',
             'order'          => 'DESC'
         );
-
-        $query = new WP_Query($args);
+        
+        $query = new \WP_Query($args);
         $has_items = $query->have_posts();
+        
+        // Pagination data
         $total_pages = $query->max_num_pages;
-
+        $current_page = max(1, $paged);
+        
+        // Button class for WooCommerce 3.5+
+        $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? 
+            ' ' . wc_wp_theme_get_element_class_name('button') : '';
+        
         // Include the template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
     }
