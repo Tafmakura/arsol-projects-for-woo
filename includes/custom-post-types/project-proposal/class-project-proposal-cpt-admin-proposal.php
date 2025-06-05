@@ -37,7 +37,8 @@ class Proposal {
         $current_status = wp_get_object_terms($post->ID, 'arsol-proposal-status', array('fields' => 'slugs'));
         $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         $budget = get_post_meta($post->ID, '_proposal_budget', true);
-        $timeline = get_post_meta($post->ID, '_proposal_timeline', true);
+        $start_date = get_post_meta($post->ID, '_proposal_start_date', true);
+        $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
         $related_request = get_post_meta($post->ID, '_related_request', true);
         
         // Get statuses
@@ -103,24 +104,35 @@ class Proposal {
             </p>
 
             <p>
-                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                <label for="proposal_start_date" style="display:block;margin-bottom:5px;"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
+                <input type="date" 
+                       id="proposal_start_date" 
+                       name="proposal_start_date" 
+                       value="<?php echo esc_attr($start_date); ?>"
+                       class="widefat"
+                       required>
+            </p>
+
+            <p>
+                <label for="proposal_delivery_date" style="display:block;margin-bottom:5px;"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
+                <input type="date" 
+                       id="proposal_delivery_date" 
+                       name="proposal_delivery_date" 
+                       value="<?php echo esc_attr($delivery_date); ?>"
+                       class="widefat"
+                       required>
+            </p>
+
+            <p>
+                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php _e('Proposed Budget:', 'arsol-pfw'); ?></label>
                 <input type="number" 
                        id="proposal_budget" 
                        name="proposal_budget" 
                        value="<?php echo esc_attr($budget); ?>"
                        class="widefat"
                        step="0.01"
-                       min="0">
-            </p>
-
-            <p>
-                <label for="proposal_timeline" style="display:block;margin-bottom:5px;"><?php _e('Timeline (days):', 'arsol-pfw'); ?></label>
-                <input type="number" 
-                       id="proposal_timeline" 
-                       name="proposal_timeline" 
-                       value="<?php echo esc_attr($timeline); ?>"
-                       class="widefat"
-                       min="1">
+                       min="0"
+                       required>
             </p>
         </div>
         <?php
@@ -160,14 +172,19 @@ class Proposal {
             update_post_meta($post_id, '_related_request', sanitize_text_field($_POST['related_request']));
         }
 
+        // Save start date
+        if (isset($_POST['proposal_start_date'])) {
+            update_post_meta($post_id, '_proposal_start_date', sanitize_text_field($_POST['proposal_start_date']));
+        }
+
+        // Save delivery date
+        if (isset($_POST['proposal_delivery_date'])) {
+            update_post_meta($post_id, '_proposal_delivery_date', sanitize_text_field($_POST['proposal_delivery_date']));
+        }
+
         // Save budget
         if (isset($_POST['proposal_budget'])) {
             update_post_meta($post_id, '_proposal_budget', sanitize_text_field($_POST['proposal_budget']));
-        }
-
-        // Save timeline
-        if (isset($_POST['proposal_timeline'])) {
-            update_post_meta($post_id, '_proposal_timeline', sanitize_text_field($_POST['proposal_timeline']));
         }
     }
 }

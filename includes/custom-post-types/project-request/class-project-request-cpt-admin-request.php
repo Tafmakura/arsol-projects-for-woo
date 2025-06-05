@@ -38,7 +38,8 @@ class Request {
         $customer = get_user_by('id', $post->post_author);
         $status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'names'));
         $budget = get_post_meta($post->ID, '_request_budget', true);
-        $timeline = get_post_meta($post->ID, '_request_timeline', true);
+        $start_date = get_post_meta($post->ID, '_request_start_date', true);
+        $delivery_date = get_post_meta($post->ID, '_request_delivery_date', true);
 
         // Output fields
         ?>
@@ -82,24 +83,35 @@ class Request {
             </p>
 
             <p>
-                <label for="request_budget" style="display:block;margin-bottom:5px;"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                <label for="request_start_date" style="display:block;margin-bottom:5px;"><?php _e('Required Start Date:', 'arsol-pfw'); ?></label>
+                <input type="date" 
+                       id="request_start_date" 
+                       name="request_start_date" 
+                       value="<?php echo esc_attr($start_date); ?>" 
+                       class="widefat"
+                       required>
+            </p>
+
+            <p>
+                <label for="request_delivery_date" style="display:block;margin-bottom:5px;"><?php _e('Required Delivery Date:', 'arsol-pfw'); ?></label>
+                <input type="date" 
+                       id="request_delivery_date" 
+                       name="request_delivery_date" 
+                       value="<?php echo esc_attr($delivery_date); ?>" 
+                       class="widefat"
+                       required>
+            </p>
+
+            <p>
+                <label for="request_budget" style="display:block;margin-bottom:5px;"><?php _e('Available Budget:', 'arsol-pfw'); ?></label>
                 <input type="number" 
                        id="request_budget" 
                        name="request_budget" 
                        value="<?php echo esc_attr($budget); ?>" 
                        step="0.01" 
                        min="0"
-                       class="widefat">
-            </p>
-
-            <p>
-                <label for="request_timeline" style="display:block;margin-bottom:5px;"><?php _e('Timeline (days):', 'arsol-pfw'); ?></label>
-                <input type="number" 
-                       id="request_timeline" 
-                       name="request_timeline" 
-                       value="<?php echo esc_attr($timeline); ?>" 
-                       min="1"
-                       class="widefat">
+                       class="widefat"
+                       required>
             </p>
         </div>
         <?php
@@ -134,14 +146,19 @@ class Request {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status');
         }
 
+        // Save start date
+        if (isset($_POST['request_start_date'])) {
+            update_post_meta($post_id, '_request_start_date', sanitize_text_field($_POST['request_start_date']));
+        }
+
+        // Save delivery date
+        if (isset($_POST['request_delivery_date'])) {
+            update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($_POST['request_delivery_date']));
+        }
+
         // Save budget
         if (isset($_POST['request_budget'])) {
             update_post_meta($post_id, '_request_budget', floatval($_POST['request_budget']));
-        }
-
-        // Save timeline
-        if (isset($_POST['request_timeline'])) {
-            update_post_meta($post_id, '_request_timeline', intval($_POST['request_timeline']));
         }
     }
 }
