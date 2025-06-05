@@ -70,8 +70,8 @@ register_activation_hook(__FILE__, 'arsol_projects_activate');
  * Plugin activation function
  */
 function arsol_projects_activate() {
-    // Flush rewrite rules
-    flush_rewrite_rules();
+    // Set flag to flush rewrite rules on next init
+    update_option('arsol_projects_flush_rewrite_rules', false);
 }
 
 // Register deactivation hook
