@@ -65,11 +65,13 @@ class Endpoints {
         add_rewrite_endpoint('project-view-proposal', EP_PAGES);
         add_rewrite_endpoint('project-view-request', EP_PAGES);
 
-        // Only flush if we haven't already
-        if (!get_option('arsol_projects_flush_rewrite_rules')) {
-            flush_rewrite_rules();
-            update_option('arsol_projects_flush_rewrite_rules', true);
+        // Debug logging
+        if (function_exists('error_log')) {
+            error_log('ARSOL DEBUG: Registering endpoints');
         }
+
+        // Always flush rewrite rules to ensure endpoints are registered
+        flush_rewrite_rules();
     }
     
     /**
@@ -101,6 +103,12 @@ class Endpoints {
         $query_vars['project-request'] = 'project-request';
         $query_vars['project-view-proposal'] = 'project-view-proposal';
         $query_vars['project-view-request'] = 'project-view-request';
+        
+        // Debug logging
+        if (function_exists('error_log')) {
+            error_log('ARSOL DEBUG: Registered query vars: ' . print_r($query_vars, true));
+        }
+        
         return $query_vars;
     }
     

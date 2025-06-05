@@ -48,7 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
             update_post_meta($request_id, '_request_delivery_date', $delivery_date);
         }
         
-        // Redirect to the created request view page
+        // Debug logging
+        if (function_exists('error_log')) {
+            error_log('ARSOL DEBUG: Request ID: ' . $request_id);
+            error_log('ARSOL DEBUG: Redirect URL: ' . wc_get_account_endpoint_url('project-view-request/' . $request_id));
+        }
+        
+        // Redirect to the specific request view
         $redirect_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
         wp_safe_redirect($redirect_url);
         exit;
