@@ -125,7 +125,7 @@ class Endpoints {
             'order'          => 'DESC'
         );
 
-        $query = new WP_Query($args);
+        $query = new \WP_Query($args);
         $has_items = $query->have_posts();
         $total_pages = $query->max_num_pages;
 
