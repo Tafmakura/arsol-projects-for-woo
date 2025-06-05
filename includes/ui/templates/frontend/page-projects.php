@@ -8,7 +8,9 @@
  * @version 1.0.0
  */
 
-defined('ABSPATH') || exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 do_action('arsol_projects_before_user_projects', $has_projects);
 ?>
@@ -17,16 +19,89 @@ do_action('arsol_projects_before_user_projects', $has_projects);
    <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-create-or-request.php'; ?>
 </div>
 
-<div class="woocommerce">
-    <?php do_action('arsol_projects_before_projects_list', $has_projects); ?>
-    
-    
-    <?php 
-    // Use the existing shortcode to display user projects
-    echo do_shortcode('[arsol_user_projects per_page="' . esc_attr($posts_per_page) . '" paged="' . esc_attr($paged) . '"]'); 
-    ?>
-    
-    <?php do_action('arsol_projects_after_projects_list', $has_projects); ?>
+<div class="arsol-projects-list">
+    <?php if ($has_items): ?>
+        <table class="arsol-pfw-projects-row">
+            <thead>
+                <tr>
+                    <th><?php _e('Type', 'arsol-pfw'); ?></th>
+                    <th><?php _e('Title', 'arsol-pfw'); ?></th>
+                    <th><?php _e('Status', 'arsol-pfw'); ?></th>
+                    <th><?php _e('Date', 'arsol-pfw'); ?></th>
+                    <th><?php _e('Actions', 'arsol-pfw'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($query->have_posts()): $query->the_post(); 
+                    $post_type = get_post_type();
+                    $status = wp_get_object_terms(get_the_ID(), 'arsol-project-status', array('fields' => 'names'));
+                    $status = !empty($status) ? $status[0] : 'pending';
+                    
+                    // Determine the view URL based on post type
+                    switch ($post_type) {
+                        case 'arsol-project':
+                            $view_url = wc_get_account_endpoint_url('project-overview/' . get_the_ID());
+                            $type_label = __('Project', 'arsol-pfw');
+                            break;
+                        case 'arsol-project-proposal':
+                            $view_url = add_query_arg('id', get_the_ID(), wc_get_account_endpoint_url('project-view-proposal'));
+                            $type_label = __('Proposal', 'arsol-pfw');
+                            break;
+                        case 'arsol-project-request':
+                            $view_url = add_query_arg('id', get_the_ID(), wc_get_account_endpoint_url('project-view-request'));
+                            $type_label = __('Request', 'arsol-pfw');
+                            break;
+                    }
+                ?>
+                    <tr>
+                        <td data-title="<?php _e('Type', 'arsol-pfw'); ?>">
+                            <?php echo esc_html($type_label); ?>
+                        </td>
+                        <td data-title="<?php _e('Title', 'arsol-pfw'); ?>">
+                            <?php the_title(); ?>
+                        </td>
+                        <td data-title="<?php _e('Status', 'arsol-pfw'); ?>">
+                            <span class="status-<?php echo esc_attr($status); ?>">
+                                <?php echo esc_html(ucfirst(str_replace('-', ' ', $status))); ?>
+                            </span>
+                        </td>
+                        <td data-title="<?php _e('Date', 'arsol-pfw'); ?>">
+                            <?php echo get_the_date(); ?>
+                        </td>
+                        <td data-title="<?php _e('Actions', 'arsol-pfw'); ?>">
+                            <a href="<?php echo esc_url($view_url); ?>" class="button<?php echo esc_attr($wp_button_class); ?>">
+                                <?php _e('View', 'arsol-pfw'); ?>
+                            </a>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+
+        <?php
+        // Pagination
+        if ($total_pages > 1) {
+            echo '<div class="arsol-pagination">';
+            echo paginate_links(array(
+                'base'      => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
+                'format'    => '?paged=%#%',
+                'current'   => $current_page,
+                'total'     => $total_pages,
+                'prev_text' => '&larr;',
+                'next_text' => '&rarr;',
+                'type'      => 'list',
+            ));
+            echo '</div>';
+        }
+        ?>
+
+    <?php else: ?>
+        <div class="arsol-empty-state">
+            <p><?php _e('You have no projects, proposals, or requests yet.', 'arsol-pfw'); ?></p>
+        </div>
+    <?php endif; ?>
+
+    <?php wp_reset_postdata(); ?>
 </div>
 
 <?php do_action('arsol_projects_after_user_projects', $has_projects); ?>

@@ -43,6 +43,8 @@ class Endpoints {
         add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
         add_action('woocommerce_account_project-create_endpoint', array($this, 'project_create_endpoint_content'));
         add_action('woocommerce_account_project-request_endpoint', array($this, 'project_request_endpoint_content'));
+        add_action('woocommerce_account_project-view-proposal_endpoint', array($this, 'project_view_proposal_endpoint_content'));
+        add_action('woocommerce_account_project-view-request_endpoint', array($this, 'project_view_request_endpoint_content'));
 
         // Add comment redirect filter
         add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
@@ -60,6 +62,8 @@ class Endpoints {
         add_rewrite_endpoint('project-subscriptions', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-create', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-request', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('project-view-proposal', EP_ROOT | EP_PAGES);
+        add_rewrite_endpoint('project-view-request', EP_ROOT | EP_PAGES);
     }
     
     /**
@@ -89,6 +93,8 @@ class Endpoints {
         $query_vars['project-subscriptions'] = 'project-subscriptions';
         $query_vars['project-create'] = 'project-create';
         $query_vars['project-request'] = 'project-request';
+        $query_vars['project-view-proposal'] = 'project-view-proposal';
+        $query_vars['project-view-request'] = 'project-view-request';
         return $query_vars;
     }
     
@@ -103,21 +109,23 @@ class Endpoints {
         
         // Set up pagination
         $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-        $posts_per_page = 10; // Number of projects per page
+        $posts_per_page = 10; // Number of items per page
         
-        // Query user projects
+        // Query all user's content
         $args = array(
-            'post_type'      => 'arsol-project',
+            'post_type'      => array('arsol-project', 'arsol-project-proposal', 'arsol-project-request'),
             'posts_per_page' => $posts_per_page,
             'paged'          => $paged,
-            'author'         => $user_id
+            'author'         => $user_id,
+            'orderby'        => 'date',
+            'order'          => 'DESC'
         );
         
-        $projects_query = new \WP_Query($args);
-        $has_projects = $projects_query->have_posts();
+        $query = new \WP_Query($args);
+        $has_items = $query->have_posts();
         
         // Pagination data
-        $total_pages = $projects_query->max_num_pages;
+        $total_pages = $query->max_num_pages;
         $current_page = max(1, $paged);
         
         // Button class for WooCommerce 3.5+
@@ -190,6 +198,62 @@ class Endpoints {
         }
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php';
+    }
+    
+    /**
+     * Display content for the project view proposal endpoint
+     *
+     * @return void
+     */
+    public function project_view_proposal_endpoint_content() {
+        $user_id = get_current_user_id();
+        $proposal_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        
+        if (!$proposal_id) {
+            wc_add_notice(__('Invalid proposal ID.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            exit;
+        }
+
+        // Check if user has permission to view this proposal
+        $proposal = get_post($proposal_id);
+        if (!$proposal || $proposal->post_type !== 'arsol-project-proposal' || $proposal->post_author !== $user_id) {
+            wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            exit;
+        }
+
+        // Set the type for the template
+        $_GET['type'] = 'proposal';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-approval.php';
+    }
+    
+    /**
+     * Display content for the project view request endpoint
+     *
+     * @return void
+     */
+    public function project_view_request_endpoint_content() {
+        $user_id = get_current_user_id();
+        $request_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        
+        if (!$request_id) {
+            wc_add_notice(__('Invalid request ID.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            exit;
+        }
+
+        // Check if user has permission to view this request
+        $request = get_post($request_id);
+        if (!$request || $request->post_type !== 'arsol-project-request' || $request->post_author !== $user_id) {
+            wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            exit;
+        }
+
+        // Set the type for the template
+        $_GET['type'] = 'request';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-approval.php';
     }
     
     /**
