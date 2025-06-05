@@ -21,7 +21,7 @@ class Request {
             __('Request Details', 'arsol-pfw'),
             array($this, 'render_request_details_meta_box'),
             'arsol-pfw-request',
-            'normal',
+            'side',
             'high'
         );
     }
@@ -44,18 +44,27 @@ class Request {
         ?>
         <div class="request-details">
             <p>
-                <label for="request_code"><?php _e('Request Code:', 'arsol-pfw'); ?></label>
-                <input type="text" id="request_code" name="request_code" value="<?php echo esc_attr($request_code); ?>" readonly>
+                <label for="request_code" style="display:block;margin-bottom:5px;"><?php _e('Request Code:', 'arsol-pfw'); ?></label>
+                <input type="text" 
+                       id="request_code" 
+                       name="request_code" 
+                       value="<?php echo esc_attr($request_code); ?>" 
+                       readonly
+                       class="widefat">
             </p>
 
             <p>
-                <label for="customer"><?php _e('Customer:', 'arsol-pfw'); ?></label>
-                <input type="text" id="customer" value="<?php echo esc_attr($customer ? $customer->display_name : ''); ?>" readonly>
+                <label for="customer" style="display:block;margin-bottom:5px;"><?php _e('Customer:', 'arsol-pfw'); ?></label>
+                <input type="text" 
+                       id="customer" 
+                       value="<?php echo esc_attr($customer ? $customer->display_name : ''); ?>" 
+                       readonly
+                       class="widefat">
             </p>
 
             <p>
-                <label for="request_status"><?php _e('Status:', 'arsol-pfw'); ?></label>
-                <select id="request_status" name="request_status">
+                <label for="request_status" style="display:block;margin-bottom:5px;"><?php _e('Status:', 'arsol-pfw'); ?></label>
+                <select id="request_status" name="request_status" class="widefat">
                     <?php
                     $statuses = get_terms('arsol-request-status', array('hide_empty' => false));
                     if (!empty($statuses) && !is_wp_error($statuses)) {
@@ -73,13 +82,24 @@ class Request {
             </p>
 
             <p>
-                <label for="request_budget"><?php _e('Budget:', 'arsol-pfw'); ?></label>
-                <input type="number" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget); ?>" step="0.01" min="0">
+                <label for="request_budget" style="display:block;margin-bottom:5px;"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                <input type="number" 
+                       id="request_budget" 
+                       name="request_budget" 
+                       value="<?php echo esc_attr($budget); ?>" 
+                       step="0.01" 
+                       min="0"
+                       class="widefat">
             </p>
 
             <p>
-                <label for="request_timeline"><?php _e('Timeline (days):', 'arsol-pfw'); ?></label>
-                <input type="number" id="request_timeline" name="request_timeline" value="<?php echo esc_attr($timeline); ?>" min="1">
+                <label for="request_timeline" style="display:block;margin-bottom:5px;"><?php _e('Timeline (days):', 'arsol-pfw'); ?></label>
+                <input type="number" 
+                       id="request_timeline" 
+                       name="request_timeline" 
+                       value="<?php echo esc_attr($timeline); ?>" 
+                       min="1"
+                       class="widefat">
             </p>
         </div>
         <?php

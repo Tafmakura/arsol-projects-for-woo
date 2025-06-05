@@ -64,63 +64,65 @@ class Proposal {
             'post_status' => 'publish'
         ));
         ?>
-        <p>
-            <label for="proposal_code"><?php _e('Proposal Code:', 'arsol-pfw'); ?></label>
-            <input type="text" 
-                   id="proposal_code" 
-                   value="<?php echo esc_attr($post->ID); ?>"
-                   disabled
-                   style="width:100%">
-        </p>
+        <div class="proposal-details">
+            <p>
+                <label for="proposal_code" style="display:block;margin-bottom:5px;"><?php _e('Proposal Code:', 'arsol-pfw'); ?></label>
+                <input type="text" 
+                       id="proposal_code" 
+                       value="<?php echo esc_attr($post->ID); ?>"
+                       disabled
+                       class="widefat">
+            </p>
 
-        <p>
-            <label for="post_author_override"><?php _e('Customer:', 'arsol-pfw'); ?></label>
-            <?php echo $author_dropdown; ?>
-        </p>
+            <p>
+                <label for="post_author_override" style="display:block;margin-bottom:5px;"><?php _e('Customer:', 'arsol-pfw'); ?></label>
+                <?php echo $author_dropdown; ?>
+            </p>
 
-        <p>
-            <label for="related_request"><?php _e('Related Request:', 'arsol-pfw'); ?></label>
-            <select name="related_request" id="related_request" style="width:100%">
-                <option value=""><?php _e('Select Related Request', 'arsol-pfw'); ?></option>
-                <?php foreach ($requests as $request) : ?>
-                    <option value="<?php echo esc_attr($request->ID); ?>" <?php selected($related_request, $request->ID); ?>>
-                        <?php echo esc_html($request->post_title); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </p>
+            <p>
+                <label for="related_request" style="display:block;margin-bottom:5px;"><?php _e('Related Request:', 'arsol-pfw'); ?></label>
+                <select name="related_request" id="related_request" class="widefat">
+                    <option value=""><?php _e('Select Related Request', 'arsol-pfw'); ?></option>
+                    <?php foreach ($requests as $request) : ?>
+                        <option value="<?php echo esc_attr($request->ID); ?>" <?php selected($related_request, $request->ID); ?>>
+                            <?php echo esc_html($request->post_title); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
 
-        <p>
-            <label for="proposal_status"><?php _e('Proposal Status:', 'arsol-pfw'); ?></label>
-            <select name="proposal_status" id="proposal_status" style="width:100%">
-                <?php foreach ($statuses as $status) : ?>
-                    <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
-                        <?php echo esc_html($status->name); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </p>
+            <p>
+                <label for="proposal_status" style="display:block;margin-bottom:5px;"><?php _e('Proposal Status:', 'arsol-pfw'); ?></label>
+                <select name="proposal_status" id="proposal_status" class="widefat">
+                    <?php foreach ($statuses as $status) : ?>
+                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
+                            <?php echo esc_html($status->name); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
 
-        <p>
-            <label for="proposal_budget"><?php _e('Budget:', 'arsol-pfw'); ?></label>
-            <input type="number" 
-                   id="proposal_budget" 
-                   name="proposal_budget" 
-                   value="<?php echo esc_attr($budget); ?>"
-                   style="width:100%"
-                   step="0.01"
-                   min="0">
-        </p>
+            <p>
+                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                <input type="number" 
+                       id="proposal_budget" 
+                       name="proposal_budget" 
+                       value="<?php echo esc_attr($budget); ?>"
+                       class="widefat"
+                       step="0.01"
+                       min="0">
+            </p>
 
-        <p>
-            <label for="proposal_timeline"><?php _e('Timeline (days):', 'arsol-pfw'); ?></label>
-            <input type="number" 
-                   id="proposal_timeline" 
-                   name="proposal_timeline" 
-                   value="<?php echo esc_attr($timeline); ?>"
-                   style="width:100%"
-                   min="1">
-        </p>
+            <p>
+                <label for="proposal_timeline" style="display:block;margin-bottom:5px;"><?php _e('Timeline (days):', 'arsol-pfw'); ?></label>
+                <input type="number" 
+                       id="proposal_timeline" 
+                       name="proposal_timeline" 
+                       value="<?php echo esc_attr($timeline); ?>"
+                       class="widefat"
+                       min="1">
+            </p>
+        </div>
         <?php
     }
 
