@@ -263,7 +263,20 @@ class Endpoints {
 
         // Check if user has permission to view this proposal
         $proposal = get_post($proposal_id);
-        if (!$proposal || $proposal->post_type !== 'arsol-pfw-proposal' || $proposal->post_author !== get_current_user_id()) {
+        $user_id = get_current_user_id();
+        
+        if (!$proposal || $proposal->post_type !== 'arsol-pfw-proposal') {
+            wc_add_notice(__('Invalid proposal.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            exit;
+        }
+
+        // Allow access if user is admin, has project management capabilities, or is the proposal author
+        $can_view = user_can($user_id, 'manage_options') || 
+                   \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id) ||
+                   $proposal->post_author === $user_id;
+
+        if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
@@ -300,7 +313,20 @@ class Endpoints {
 
         // Check if user has permission to view this request
         $request = get_post($request_id);
-        if (!$request || $request->post_type !== 'arsol-pfw-request' || $request->post_author !== get_current_user_id()) {
+        $user_id = get_current_user_id();
+        
+        if (!$request || $request->post_type !== 'arsol-pfw-request') {
+            wc_add_notice(__('Invalid request.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            exit;
+        }
+
+        // Allow access if user is admin, has project management capabilities, or is the request author
+        $can_view = user_can($user_id, 'manage_options') || 
+                   \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id) ||
+                   $request->post_author === $user_id;
+
+        if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
