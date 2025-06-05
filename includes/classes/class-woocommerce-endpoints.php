@@ -105,12 +105,15 @@ class Endpoints {
         // Get current tab from URL parameter
         $current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'active';
 
+        // Include the create/request section above navigation
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-create-or-request.php';
+
         // Include the navigation component
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-navigation.php';
 
         // Get current user ID
         $user_id = get_current_user_id();
-
+        
         // Query arguments based on tab
         $args = array(
             'post_type' => array(),
