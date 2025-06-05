@@ -48,6 +48,9 @@ class Endpoints {
 
         // Add comment redirect filter
         add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
+
+        // Add rewrite rules for single project URLs
+        add_action('init', array($this, 'add_project_rewrite_rules'));
     }
     
     /**
@@ -452,6 +455,27 @@ class Endpoints {
             'status' => $project->post_status,
             'author' => $project->post_author
         ];
+    }
+
+    /**
+     * Add rewrite rules for single project URLs
+     */
+    public function add_project_rewrite_rules() {
+        add_rewrite_rule(
+            'my-account/project-overview/([0-9]+)/?$',
+            'index.php?project-overview=$matches[1]',
+            'top'
+        );
+        add_rewrite_rule(
+            'my-account/project-view-proposal/([0-9]+)/?$',
+            'index.php?project-view-proposal=$matches[1]',
+            'top'
+        );
+        add_rewrite_rule(
+            'my-account/project-view-request/([0-9]+)/?$',
+            'index.php?project-view-request=$matches[1]',
+            'top'
+        );
     }
 }
 
