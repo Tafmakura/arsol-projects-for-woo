@@ -61,28 +61,19 @@ do_action('arsol_projects_before_user_proposals', $has_items);
         </table>
 
         <?php if ($total_pages > 1) : ?>
-            <nav class="woocommerce-pagination">
-                <?php
-                $links = paginate_links(
-                    array(
-                        'base'      => trailingslashit(wc_get_account_endpoint_url('projects')) . 'page/%#%/',
-                        'format'    => '',
-                        'current'   => max(1, $paged),
-                        'total'     => $total_pages,
-                        'prev_text' => esc_html__('Previous', 'woocommerce'),
-                        'next_text' => esc_html__('Next', 'woocommerce'),
-                        'type'      => 'list',
-                        'end_size'  => 0,
-                        'mid_size'  => 0,
-                        'add_args'  => array('tab' => 'proposals'),
-                    )
-                );
-                
-                if ($links) {
-                    echo $links;
-                }
+            <div class="woocommerce-pagination woocommerce-pagination--without-numbers">
+                <?php if ($paged > 1) :
+                    $prev_url = ($paged > 2) ? trailingslashit(wc_get_account_endpoint_url('projects')) . 'page/' . ($paged - 1) . '/' : wc_get_account_endpoint_url('projects');
                 ?>
-            </nav>
+                    <a class="woocommerce-button woocommerce-button--previous button" href="<?php echo esc_url( add_query_arg( 'tab', 'proposals', $prev_url ) ); ?>"><?php esc_html_e('Previous', 'woocommerce'); ?></a>
+                <?php endif; ?>
+
+                <?php if ($paged < $total_pages) :
+                    $next_url = trailingslashit(wc_get_account_endpoint_url('projects')) . 'page/' . ($paged + 1) . '/';
+                ?>
+                    <a class="woocommerce-button woocommerce-button--next button" href="<?php echo esc_url( add_query_arg( 'tab', 'proposals', $next_url ) ); ?>"><?php esc_html_e('Next', 'woocommerce'); ?></a>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
 
     <?php else : ?>
