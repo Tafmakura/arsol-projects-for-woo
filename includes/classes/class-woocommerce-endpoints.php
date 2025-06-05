@@ -284,6 +284,8 @@ class Endpoints {
      */
     public function project_view_request_endpoint_content() {
         $user_id = get_current_user_id();
+        
+        // Get request ID from the URL path
         $request_id = absint(get_query_var('project-view-request'));
         
         if (!$request_id) {
