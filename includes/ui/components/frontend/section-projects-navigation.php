@@ -38,7 +38,7 @@ $tabs = array(
         <div class="arsol-button-groups">
             <?php foreach ($tabs as $tab_id => $tab) : ?>
                 <button 
-                    class="arsol-btn-secondary arsol-project-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
+                    class="arsol-btn-secondary <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
                     onclick="window.location.href='<?php echo esc_url($tab['url']); ?>'"
                 >
                     <?php echo esc_html($tab['label']); ?>
@@ -47,38 +47,3 @@ $tabs = array(
         </div>
     </div>
 </div>
-
-<style>
-.arsol-project-navigation {
-    margin-bottom: 2rem;
-}
-
-.arsol-button-container {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 1rem;
-}
-
-.arsol-button-groups {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.arsol-project-btn {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ddd;
-    background: #fff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.arsol-project-btn:hover {
-    background: #f5f5f5;
-}
-
-.arsol-project-btn.active {
-    background: #2271b1;
-    color: #fff;
-    border-color: #2271b1;
-}
-</style>
