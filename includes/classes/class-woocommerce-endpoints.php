@@ -362,9 +362,20 @@ class Endpoints {
         }
 
         $post = get_post($project_id);
-        if ($post && $post->post_type === 'arsol-project') {
+        if (!$post) {
+            return false;
+        }
+
+        // Allow access to own projects
+        if ($post->post_author == $user_id) {
+            return true;
+        }
+
+        // Allow access to proposals and requests
+        if (in_array($post->post_type, array('arsol-project-proposal', 'arsol-project-request'))) {
             return $post->post_author == $user_id;
         }
+
         return false;
     }
 
