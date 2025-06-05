@@ -42,9 +42,9 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                     <tr class="woocommerce-projects-table__row">
                         <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-info" data-title="<?php _e('Project', 'arsol-pfw'); ?>">
                             <div class="project-title-status-wrapper">
-                                <a href="<?php echo esc_url($view_url); ?>" class="project-title-link">
-                                    <?php echo esc_html($project->post_title); ?>
-                                </a>
+                            <a href="<?php echo esc_url($view_url); ?>" class="project-title-link">
+                                <?php echo esc_html($project->post_title); ?>
+                            </a>
                                 <span class="project-status"><?php echo esc_html($status); ?></span>
                             </div>
                             <div class="project-excerpt">
