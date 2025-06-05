@@ -81,7 +81,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
                       name="request_description" 
                       rows="5" 
                       required></textarea>
-            <span class="description"><?php _e('Please provide a detailed description of your project requirements.', 'arsol-pfw'); ?></span>
         </p>
         
         <p class="form-row">
@@ -92,7 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
                    step="0.01"
                    min="0"
                    placeholder="<?php esc_attr_e('Enter your budget amount', 'arsol-pfw'); ?>">
-            <span class="description"><?php _e('Optional: Enter your budget for this project.', 'arsol-pfw'); ?></span>
         </p>
         
         <p class="form-row">
@@ -100,7 +98,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
             <input type="date" 
                    id="request_start_date" 
                    name="request_start_date">
-            <span class="description"><?php _e('Optional: When would you like to start this project?', 'arsol-pfw'); ?></span>
         </p>
         
         <p class="form-row">
@@ -108,7 +105,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
             <input type="date" 
                    id="request_delivery_date" 
                    name="request_delivery_date">
-            <span class="description"><?php _e('Optional: When do you need this project completed?', 'arsol-pfw'); ?></span>
         </p>
         
         <p class="form-row">
