@@ -42,6 +42,7 @@ class Endpoints {
         add_action('woocommerce_account_project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
         add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
         add_action('woocommerce_account_project-create_endpoint', array($this, 'project_create_endpoint_content'));
+        add_action('woocommerce_account_project-request_endpoint', array($this, 'project_request_endpoint_content'));
 
         // Add comment redirect filter
         add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
