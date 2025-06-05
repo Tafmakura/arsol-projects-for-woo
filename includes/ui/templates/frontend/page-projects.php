@@ -12,6 +12,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Define $has_projects based on whether there are any items
+$has_projects = isset($has_items) && $has_items;
+
 do_action('arsol_projects_before_user_projects', $has_projects);
 ?>
 
