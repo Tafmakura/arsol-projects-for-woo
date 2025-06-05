@@ -13,56 +13,6 @@ if (!$can_create) {
     wp_safe_redirect(wc_get_account_endpoint_url('projects'));
     exit;
 }
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce']) && wp_verify_nonce($_POST['create_request_nonce'], 'create_request')) {
-    $title = sanitize_text_field($_POST['request_title']);
-    $description = wp_kses_post($_POST['request_description']);
-    $budget = isset($_POST['request_budget']) ? sanitize_text_field($_POST['request_budget']) : '';
-    $start_date = isset($_POST['request_start_date']) ? sanitize_text_field($_POST['request_start_date']) : '';
-    $delivery_date = isset($_POST['request_delivery_date']) ? sanitize_text_field($_POST['request_delivery_date']) : '';
-    
-    // Create project request post
-    $request_data = array(
-        'post_title'    => $title,
-        'post_content'  => $description,
-        'post_status'   => 'publish',
-        'post_type'     => 'arsol-pfw-request',
-        'post_author'   => $user_id
-    );
-    
-    $request_id = wp_insert_post($request_data);
-    
-    if (!is_wp_error($request_id)) {
-        // Set default request status
-        wp_set_object_terms($request_id, 'pending', 'arsol-request-status');
-        
-        // Save additional request meta
-        if (!empty($budget)) {
-            update_post_meta($request_id, '_request_budget', $budget);
-        }
-        if (!empty($start_date)) {
-            update_post_meta($request_id, '_request_start_date', $start_date);
-        }
-        if (!empty($delivery_date)) {
-            update_post_meta($request_id, '_request_delivery_date', $delivery_date);
-        }
-        
-        // Debug logging
-        if (function_exists('error_log')) {
-            error_log('ARSOL DEBUG: Request ID: ' . $request_id);
-            error_log('ARSOL DEBUG: Redirect URL: ' . wc_get_account_endpoint_url('project-view-request/' . $request_id));
-        }
-        
-        // Redirect to the specific request view
-        $redirect_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
-        wp_safe_redirect($redirect_url);
-        exit;
-    } else {
-        // Add error notice if request creation failed
-        wc_add_notice(__('Failed to submit project request. Please try again.', 'arsol-pfw'), 'error');
-    }
-}
 ?>
 
 <div class="arsol-project-request">

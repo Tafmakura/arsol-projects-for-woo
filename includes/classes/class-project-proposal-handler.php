@@ -19,8 +19,7 @@ class Project_Proposal_Handler {
      * Constructor
      */
     public function __construct() {
-        add_action('admin_post_arsol_submit_project_proposal', array($this, 'handle_project_proposal_submission'));
-        add_action('admin_post_nopriv_arsol_submit_project_proposal', array($this, 'handle_project_proposal_submission'));
+        add_action('template_redirect', array($this, 'handle_project_proposal_submission'));
     }
 
     /**
@@ -28,21 +27,24 @@ class Project_Proposal_Handler {
      */
     public function handle_project_proposal_submission() {
         // Verify nonce
-        if (!isset($_POST['arsol_project_proposal_nonce']) || 
+        if ('POST' !== $_SERVER['REQUEST_METHOD'] || !isset($_POST['arsol_project_proposal_nonce']) ||
             !wp_verify_nonce($_POST['arsol_project_proposal_nonce'], 'arsol_submit_project_proposal')) {
-            wp_die(__('Security check failed', 'arsol-pfw'));
+            return;
         }
 
         // Check if user is logged in
         if (!is_user_logged_in()) {
-            wp_die(__('You must be logged in to submit a project proposal', 'arsol-pfw'));
+            wc_add_notice(__('You must be logged in to submit a project proposal', 'arsol-pfw'), 'error');
+            return;
         }
 
         $user_id = get_current_user_id();
 
         // Check if user can create project proposals
         if (!\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_project_proposals($user_id)) {
-            wp_die(__('You do not have permission to create project proposals', 'arsol-pfw'));
+            wc_add_notice(__('You do not have permission to create project proposals', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            exit;
         }
 
         // Sanitize and validate input
@@ -54,7 +56,8 @@ class Project_Proposal_Handler {
 
         // Validate required fields
         if (empty($title) || empty($description)) {
-            wp_die(__('Please fill in all required fields', 'arsol-pfw'));
+            wc_add_notice(__('Please fill in all required fields', 'arsol-pfw'), 'error');
+            return;
         }
 
         // Create project proposal post
@@ -72,7 +75,8 @@ class Project_Proposal_Handler {
         $proposal_id = wp_insert_post($proposal_data);
 
         if (is_wp_error($proposal_id)) {
-            wp_die($proposal_id->get_error_message());
+            wc_add_notice($proposal_id->get_error_message(), 'error');
+            return;
         }
 
         // Set default proposal status

@@ -12,50 +12,6 @@ if (!$can_create) {
     wp_safe_redirect(wc_get_account_endpoint_url('projects'));
     exit;
 }
-
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_project_nonce']) && wp_verify_nonce($_POST['create_project_nonce'], 'create_project')) {
-    $title = sanitize_text_field($_POST['project_title']);
-    $description = wp_kses_post($_POST['project_description']);
-    $budget = isset($_POST['project_budget']) ? sanitize_text_field($_POST['project_budget']) : '';
-    $start_date = isset($_POST['project_start_date']) ? sanitize_text_field($_POST['project_start_date']) : '';
-    $delivery_date = isset($_POST['project_delivery_date']) ? sanitize_text_field($_POST['project_delivery_date']) : '';
-    
-    // Create project post
-    $project_data = array(
-        'post_title'    => $title,
-        'post_content'  => $description,
-        'post_status'   => 'publish',
-        'post_type'     => 'arsol-project',
-        'post_author'   => $user_id
-    );
-    
-    $project_id = wp_insert_post($project_data);
-    
-    if (!is_wp_error($project_id)) {
-        // Set default project status
-        wp_set_object_terms($project_id, 'not-started', 'arsol-project-status');
-        
-        // Save additional project meta
-        if (!empty($budget)) {
-            update_post_meta($project_id, '_project_budget', $budget);
-        }
-        if (!empty($start_date)) {
-            update_post_meta($project_id, '_project_start_date', $start_date);
-        }
-        if (!empty($delivery_date)) {
-            update_post_meta($project_id, '_project_delivery_date', $delivery_date);
-        }
-        
-        // Redirect to project overview
-        $redirect_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
-        wp_safe_redirect($redirect_url);
-        exit;
-    } else {
-        // Add error notice if project creation failed
-        wc_add_notice(__('Failed to create project. Please try again.', 'arsol-pfw'), 'error');
-    }
-}
 ?>
 
 <div class="arsol-project-create">
