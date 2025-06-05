@@ -19,16 +19,16 @@ do_action('arsol_projects_before_user_projects', $has_projects);
    <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-create-or-request.php'; ?>
 </div>
 
-<div class="arsol-projects-list">
+<div class="woocommerce-MyAccount-content">
     <?php if ($has_items): ?>
-        <table class="arsol-pfw-projects-row">
+        <table class="woocommerce-projects-table shop_table shop_table_responsive my_account_projects account-projects-table">
             <thead>
                 <tr>
-                    <th><?php _e('Type', 'arsol-pfw'); ?></th>
-                    <th><?php _e('Title', 'arsol-pfw'); ?></th>
-                    <th><?php _e('Status', 'arsol-pfw'); ?></th>
-                    <th><?php _e('Date', 'arsol-pfw'); ?></th>
-                    <th><?php _e('Actions', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-type"><?php _e('Type', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-title"><?php _e('Title', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-status"><?php _e('Status', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-date"><?php _e('Date', 'arsol-pfw'); ?></th>
+                    <th class="woocommerce-projects-table__header woocommerce-projects-table__header-project-actions"><?php _e('', 'arsol-pfw'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -53,22 +53,22 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                             break;
                     }
                 ?>
-                    <tr>
-                        <td data-title="<?php _e('Type', 'arsol-pfw'); ?>">
+                    <tr class="woocommerce-projects-table__row woocommerce-projects-table__row--status-<?php echo esc_attr($status); ?> project">
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-type" data-title="<?php _e('Type', 'arsol-pfw'); ?>">
                             <?php echo esc_html($type_label); ?>
                         </td>
-                        <td data-title="<?php _e('Title', 'arsol-pfw'); ?>">
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-title" data-title="<?php _e('Title', 'arsol-pfw'); ?>">
                             <?php the_title(); ?>
                         </td>
-                        <td data-title="<?php _e('Status', 'arsol-pfw'); ?>">
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-status" data-title="<?php _e('Status', 'arsol-pfw'); ?>">
                             <span class="status-<?php echo esc_attr($status); ?>">
                                 <?php echo esc_html(ucfirst(str_replace('-', ' ', $status))); ?>
                             </span>
                         </td>
-                        <td data-title="<?php _e('Date', 'arsol-pfw'); ?>">
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-date" data-title="<?php _e('Date', 'arsol-pfw'); ?>">
                             <?php echo get_the_date(); ?>
                         </td>
-                        <td data-title="<?php _e('Actions', 'arsol-pfw'); ?>">
+                        <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-actions" data-title="<?php _e('Actions', 'arsol-pfw'); ?>">
                             <a href="<?php echo esc_url($view_url); ?>" class="woocommerce-button button view">
                                 <?php _e('View', 'arsol-pfw'); ?>
                             </a>
@@ -77,11 +77,11 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                 <?php endwhile; ?>
             </tbody>
         </table>
-
-        <?php
+    
+        <?php 
         // Pagination
         if ($total_pages > 1) {
-            echo '<div class="arsol-pagination">';
+            echo '<div class="woocommerce-pagination">';
             echo paginate_links(array(
                 'base'      => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
                 'format'    => '?paged=%#%',
@@ -96,7 +96,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
         ?>
 
     <?php else: ?>
-        <div class="arsol-empty-state">
+        <div class="woocommerce-info">
             <p><?php _e('You have no projects, proposals, or requests yet.', 'arsol-pfw'); ?></p>
         </div>
     <?php endif; ?>
