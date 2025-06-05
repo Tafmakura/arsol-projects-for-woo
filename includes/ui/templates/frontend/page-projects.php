@@ -73,22 +73,25 @@ do_action('arsol_projects_before_user_projects', $has_projects);
         </table>
     
         <?php if ($total_pages > 1) : ?>
-            <nav class="woocommerce-pagination">
-                <?php
-                echo paginate_links(array(
-                    'base'      => esc_url_raw(str_replace(999999999, '%#%', remove_query_arg('add-to-cart', get_pagenum_link(999999999, false)))),
-                    'format'    => '',
-                    'add_args'  => false,
-                    'current'   => max(1, get_query_var('paged')),
-                    'total'     => $total_pages,
-                    'prev_text' => is_rtl() ? '&rarr;' : '&larr;',
-                    'next_text' => is_rtl() ? '&larr;' : '&rarr;',
-                    'type'      => 'list',
-                    'end_size'  => 3,
-                    'mid_size'  => 3,
-                ));
+            <div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination">
+                <?php 
+                // Get current URL and preserve existing query args
+                $current_url = remove_query_arg('paged');
+                
+                // Preserve tab if it exists
+                if (!empty($_GET['tab'])) {
+                    $current_url = add_query_arg('tab', sanitize_text_field($_GET['tab']), $current_url);
+                }
                 ?>
-            </nav>
+                
+                <?php if (1 !== $current_page) : ?>
+                    <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page - 1, $current_url)); ?>"><?php esc_html_e('Previous', 'arsol-projects-for-woo'); ?></a>
+                <?php endif; ?>
+
+                <?php if (intval($total_pages) !== $current_page) : ?>
+                    <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page + 1, $current_url)); ?>"><?php esc_html_e('Next', 'arsol-projects-for-woo'); ?></a>
+                <?php endif; ?>
+            </div>
         <?php endif; ?>
 
     <?php else: ?>
