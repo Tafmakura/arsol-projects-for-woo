@@ -123,7 +123,6 @@
 .project-content h6 {
     transform: scale(0.85);
     transform-origin: left;
-
 }
 
 .project-sidebar {
@@ -162,7 +161,6 @@
 }
 
 /* Project empty state styling */
-
 .project-empty-state-actions {
     display: flex;
     gap: 1rem;
@@ -290,197 +288,6 @@
     background-color: #135e96;
 }
 
-/* Project Approval Styles */
-.arsol-project-approval {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.arsol-proposal-details,
-.arsol-request-details {
-    background: #fff;
-    border-radius: 4px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.proposal-content,
-.request-content {
-    margin-bottom: 20px;
-}
-
-.proposal-meta,
-.request-meta {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 4px;
-}
-
-.proposal-meta h4,
-.request-meta h4 {
-    margin: 0 0 10px 0;
-    color: #333;
-    font-size: 16px;
-}
-
-.proposal-meta p,
-.request-meta p {
-    margin: 0;
-    color: #666;
-}
-
-.proposal-actions,
-.request-actions {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-}
-
-.arsol-proposal-form,
-.arsol-request-form {
-    max-width: 600px;
-}
-
-.arsol-proposal-form .form-row,
-.arsol-request-form .form-row {
-    margin-bottom: 15px;
-}
-
-.arsol-proposal-form label,
-.arsol-request-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-.arsol-proposal-form textarea,
-.arsol-request-form textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    min-height: 100px;
-}
-
-.arsol-proposal-form button,
-.arsol-request-form button {
-    margin-right: 10px;
-}
-
-.arsol-proposal-form button:last-child,
-.arsol-request-form button:last-child {
-    margin-right: 0;
-}
-
-/* Status-specific styles */
-.status-pending {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.status-approved {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.status-rejected {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .proposal-meta,
-    .request-meta {
-        grid-template-columns: 1fr;
-    }
-
-    .arsol-proposal-form button,
-    .arsol-request-form button {
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 10px;
-    }
-
-    .arsol-proposal-form button:last-child,
-    .arsol-request-form button:last-child {
-        margin-bottom: 0;
-    }
-}
-
-/* Projects List Styles */
-.arsol-projects-list {
-    margin: 20px 0;
-}
-
-.arsol-pfw-projects-row {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-.arsol-pfw-projects-row th,
-.arsol-pfw-projects-row td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-}
-
-.arsol-pfw-projects-row th {
-    font-weight: 600;
-    color: #333;
-    background-color: #f8f9fa;
-}
-
-.arsol-pfw-projects-row tr:hover {
-    background-color: #f8f9fa;
-}
-
-.arsol-pagination {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.arsol-pagination .page-numbers {
-    display: inline-block;
-    padding: 8px 12px;
-    margin: 0 4px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    text-decoration: none;
-    color: #333;
-}
-
-.arsol-pagination .page-numbers.current {
-    background-color: #2271b1;
-    color: #fff;
-    border-color: #2271b1;
-}
-
-.arsol-pagination .page-numbers:hover:not(.current) {
-    background-color: #f8f9fa;
-}
-
-.arsol-empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    margin: 20px 0;
-}
-
-.arsol-empty-state p {
-    margin: 0;
-    color: #666;
-    font-size: 16px;
-}
-
 /* Status badges in the list */
 .arsol-pfw-projects-row .status-pending {
     background-color: #fff3cd;
@@ -518,32 +325,5 @@
     border-radius: 3px;
     font-size: 0.9em;
     font-weight: 500;
-}
-
-/* Responsive table adjustments */
-@media (max-width: 768px) {
-    .arsol-pfw-projects-row thead {
-        display: none;
-    }
-    
-    .arsol-pfw-projects-row td {
-        display: block;
-        text-align: right;
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-    }
-    
-    .arsol-pfw-projects-row td:before {
-        content: attr(data-title);
-        float: left;
-        font-weight: bold;
-    }
-    
-    .arsol-pfw-projects-row tr {
-        display: block;
-        margin-bottom: 15px;
-        border: 1px solid #eee;
-        border-radius: 4px;
-    }
 }
 
