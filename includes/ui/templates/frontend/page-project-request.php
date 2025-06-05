@@ -3,7 +3,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Check if user can create project requests
+
+// Check if user can create project requests 
+/*
 $user_id = get_current_user_id();
 $can_create = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_project_requests($user_id);
 
@@ -89,3 +91,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
         </p>
     </form>
 </div>
+*/ 
+?>
+Hello World
