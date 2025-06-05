@@ -6,9 +6,10 @@
  * @since 1.0.0
  */
 
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-
-/* 
 // Get the post type and ID
 $type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
 $post_id = 0;
@@ -55,7 +56,3 @@ if (file_exists($component_path)) {
     wp_safe_redirect(wc_get_account_endpoint_url('projects'));
     exit;
 }
-*/
-
-?>
-Hello World
