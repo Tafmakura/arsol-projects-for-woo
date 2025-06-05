@@ -146,26 +146,27 @@ class Endpoints {
 
         // Query arguments based on tab
         $args = array(
-            'post_type' => array(),
             'posts_per_page' => 10,
             'paged' => $paged,
             'author' => $user_id,
             'orderby' => 'date',
             'order' => 'DESC',
-            'post_status' => 'any'
         );
 
-        // Set post types based on current tab
+        // Set post types and statuses based on current tab
         switch ($current_tab) {
             case 'proposals':
                 $args['post_type'] = array('arsol-pfw-proposal');
+                $args['post_status'] = 'publish';
                 break;
             case 'requests':
                 $args['post_type'] = array('arsol-pfw-request');
+                $args['post_status'] = 'pending';
                 break;
             case 'active':
             default:
                 $args['post_type'] = array('arsol-project');
+                $args['post_status'] = 'publish';
                 // For active projects, only show those that are not completed
                 $args['tax_query'] = array(
                     array(
