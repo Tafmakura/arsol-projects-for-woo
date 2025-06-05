@@ -247,7 +247,7 @@ class Endpoints {
      */
     public function project_view_proposal_endpoint_content() {
         $user_id = get_current_user_id();
-        $proposal_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        $proposal_id = absint(get_query_var('project-view-proposal'));
         
         if (!$proposal_id) {
             wc_add_notice(__('Invalid proposal ID.', 'arsol-pfw'), 'error');
@@ -275,7 +275,7 @@ class Endpoints {
      */
     public function project_view_request_endpoint_content() {
         $user_id = get_current_user_id();
-        $request_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+        $request_id = absint(get_query_var('project-view-request'));
         
         if (!$request_id) {
             wc_add_notice(__('Invalid request ID.', 'arsol-pfw'), 'error');
