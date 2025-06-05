@@ -252,8 +252,8 @@ class Endpoints {
      * @return void
      */
     public function project_view_proposal_endpoint_content() {
-        $user_id = get_current_user_id();
-        $proposal_id = absint(get_query_var('project-view-proposal'));
+        global $wp;
+        $proposal_id = absint($wp->query_vars['project-view-proposal']);
         
         if (!$proposal_id) {
             wc_add_notice(__('Invalid proposal ID.', 'arsol-pfw'), 'error');
@@ -263,7 +263,7 @@ class Endpoints {
 
         // Check if user has permission to view this proposal
         $proposal = get_post($proposal_id);
-        if (!$proposal || $proposal->post_type !== 'arsol-project-proposal' || $proposal->post_author !== $user_id) {
+        if (!$proposal || $proposal->post_type !== 'arsol-pfw-proposal' || $proposal->post_author !== get_current_user_id()) {
             wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
@@ -280,8 +280,8 @@ class Endpoints {
      * @return void
      */
     public function project_view_request_endpoint_content() {
-        $user_id = get_current_user_id();
-        $request_id = absint(get_query_var('project-view-request'));
+        global $wp;
+        $request_id = absint($wp->query_vars['project-view-request']);
         
         if (!$request_id) {
             wc_add_notice(__('Invalid request ID.', 'arsol-pfw'), 'error');
@@ -291,7 +291,7 @@ class Endpoints {
 
         // Check if user has permission to view this request
         $request = get_post($request_id);
-        if (!$request || $request->post_type !== 'arsol-project-request' || $request->post_author !== $user_id) {
+        if (!$request || $request->post_type !== 'arsol-pfw-request' || $request->post_author !== get_current_user_id()) {
             wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
@@ -378,7 +378,7 @@ class Endpoints {
         }
 
         // Allow access to proposals and requests
-        if (in_array($post->post_type, array('arsol-project-proposal', 'arsol-project-request'))) {
+        if (in_array($post->post_type, array('arsol-pfw-proposal', 'arsol-pfw-request'))) {
             return $post->post_author == $user_id;
         }
 
