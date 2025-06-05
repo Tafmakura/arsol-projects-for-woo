@@ -67,6 +67,9 @@ class Endpoints {
         add_rewrite_endpoint('project-request', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-view-proposal', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-view-request', EP_ROOT | EP_PAGES);
+
+        // Flush rewrite rules to ensure endpoints are registered
+        flush_rewrite_rules();
     }
     
     /**
@@ -480,8 +483,8 @@ class Endpoints {
      */
     public function add_project_rewrite_rules() {
         add_rewrite_rule(
-            'my-account/project-overview/([0-9]+)/?$',
-            'index.php?project-overview=$matches[1]',
+            'my-account/project-view-request/([0-9]+)/?$',
+            'index.php?project-view-request=$matches[1]',
             'top'
         );
         add_rewrite_rule(
@@ -490,8 +493,8 @@ class Endpoints {
             'top'
         );
         add_rewrite_rule(
-            'my-account/project-view-request/([0-9]+)/?$',
-            'index.php?project-view-request=$matches[1]',
+            'my-account/project-overview/([0-9]+)/?$',
+            'index.php?project-overview=$matches[1]',
             'top'
         );
     }
