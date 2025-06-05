@@ -217,3 +217,76 @@
     color: #d32f2f;
 }
 
+/* Create/Request Button Styles */
+.arsol-create-or-request-button {
+    transition: background 0.2s;
+}
+.arsol-create-or-request-button:hover {
+    background-color: #135e96;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* No Permission Message Styles */
+.arsol-no-permission {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 20px 0;
+}
+
+.arsol-no-permission h3 {
+    color: #dc3545;
+    margin-bottom: 10px;
+}
+
+.arsol-no-permission p {
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Project Create Form Styles */
+.arsol-project-create {
+    max-width: 800px;
+    margin: 2em auto;
+    padding: 20px;
+}
+
+.arsol-project-form .form-row {
+    margin-bottom: 1.5em;
+}
+
+.arsol-project-form label {
+    display: block;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+.arsol-project-form input[type="text"],
+.arsol-project-form input[type="date"],
+.arsol-project-form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.arsol-project-form .required {
+    color: #e2401c;
+}
+
+.arsol-project-form button {
+    background-color: #2271b1;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.arsol-project-form button:hover {
+    background-color: #135e96;
+}
+

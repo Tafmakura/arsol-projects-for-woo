@@ -26,14 +26,3 @@ if ($can_create) {
         </a>
     </div>
 <?php endif; ?>
-
-<style>
-.arsol-create-or-request-button {
-    transition: background 0.2s;
-}
-.arsol-create-or-request-button:hover {
-    background-color: #135e96;
-    color: #fff;
-    text-decoration: none;
-}
-</style>
