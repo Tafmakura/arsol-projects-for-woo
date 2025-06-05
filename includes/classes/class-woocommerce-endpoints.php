@@ -56,6 +56,16 @@ class Endpoints {
      * @return void
      */
     public function register_endpoints() {
+        $account_page_id = wc_get_page_id('myaccount');
+        if ($account_page_id) {
+            $account_page_slug = get_post_field('post_name', $account_page_id);
+            add_rewrite_rule(
+                '^' . $account_page_slug . '/projects/page/([0-9]+)/?$',
+                'index.php?pagename=' . $account_page_slug . '&projects=1&paged=$matches[1]',
+                'top'
+            );
+        }
+
         add_rewrite_endpoint('projects', EP_PAGES);
         add_rewrite_endpoint('project-overview', EP_PAGES);
         add_rewrite_endpoint('project-orders', EP_PAGES);
@@ -69,9 +79,6 @@ class Endpoints {
         if (function_exists('error_log')) {
             error_log('ARSOL DEBUG: Registering endpoints');
         }
-
-        // Always flush rewrite rules to ensure endpoints are registered
-        flush_rewrite_rules();
     }
     
     /**
