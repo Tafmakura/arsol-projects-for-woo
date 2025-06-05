@@ -272,9 +272,8 @@ class Endpoints {
         }
 
         // Allow access if user is admin, has project management capabilities, or is the proposal author
-        $can_view = user_can($user_id, 'manage_options') || 
-                   \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id) ||
-                   $proposal->post_author === $user_id;
+        $can_view = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id) ||
+                   (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id) && $proposal->post_author === $user_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
@@ -322,9 +321,8 @@ class Endpoints {
         }
 
         // Allow access if user is admin, has project management capabilities, or is the request author
-        $can_view = user_can($user_id, 'manage_options') || 
-                   \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id) ||
-                   $request->post_author === $user_id;
+        $can_view = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id) ||
+                   (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id) && $request->post_author === $user_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
@@ -416,14 +414,14 @@ class Endpoints {
             return false;
         }
 
-        // Allow access to own projects
-        if ($post->post_author == $user_id) {
+        // Project managers can view all projects
+        if (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id)) {
             return true;
         }
 
-        // Allow access to proposals and requests
-        if (in_array($post->post_type, array('arsol-pfw-proposal', 'arsol-pfw-request'))) {
-            return $post->post_author == $user_id;
+        // Project creators can view their own projects
+        if (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id) && $post->post_author == $user_id) {
+            return true;
         }
 
         return false;

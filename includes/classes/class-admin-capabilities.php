@@ -32,10 +32,8 @@ class Admin_Capabilities {
             return;
         }
 
-        // Base capability for project management
+        // Project Management capabilities (for admins/managers)
         $admin_role->add_cap('arsol-manage-projects');
-
-        // Project capabilities
         $admin_role->add_cap('edit_arsol_project');
         $admin_role->add_cap('read_arsol_project');
         $admin_role->add_cap('delete_arsol_project');
@@ -49,6 +47,13 @@ class Admin_Capabilities {
         $admin_role->add_cap('delete_others_arsol_projects');
         $admin_role->add_cap('edit_private_arsol_projects');
         $admin_role->add_cap('edit_published_arsol_projects');
+
+        // Project Creation capabilities (for regular users)
+        $admin_role->add_cap('arsol-create-projects');
+        $admin_role->add_cap('edit_own_arsol_projects');
+        $admin_role->add_cap('read_own_arsol_projects');
+        $admin_role->add_cap('delete_own_arsol_projects');
+        $admin_role->add_cap('publish_own_arsol_projects');
 
         // Project Request capabilities
         $admin_role->add_cap('edit_arsol_project_request');
@@ -82,7 +87,7 @@ class Admin_Capabilities {
     }
 
     /**
-     * Check if user can manage projects
+     * Check if user can manage projects (admin capability)
      *
      * @param int $user_id User ID
      * @return bool Whether user can manage projects
@@ -96,17 +101,17 @@ class Admin_Capabilities {
     }
 
     /**
-     * Check if user can create projects
+     * Check if user can create projects (user capability)
      *
      * @param int $user_id User ID
      * @return bool Whether user can create projects
      */
     public static function can_create_projects($user_id) {
-        if (!self::can_manage_projects($user_id)) {
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
             return false;
         }
-        $admin_users = new Users();
-        return $admin_users->can_user_create_projects($user_id);
+        return $user->has_cap('arsol-create-projects');
     }
 
     /**
@@ -116,11 +121,8 @@ class Admin_Capabilities {
      * @return bool Whether user can create project requests
      */
     public static function can_create_project_requests($user_id) {
-        if (!self::can_manage_projects($user_id)) {
-            return false;
-        }
-        $admin_users = new Users();
-        return $admin_users->can_user_request_projects($user_id);
+        // Users with either management or creation capabilities can create requests
+        return self::can_manage_projects($user_id) || self::can_create_projects($user_id);
     }
 
     /**
@@ -130,12 +132,8 @@ class Admin_Capabilities {
      * @return bool Whether user can create project proposals
      */
     public static function can_create_project_proposals($user_id) {
-        $user = get_user_by('id', $user_id);
-        if (!$user) {
-            return false;
-        }
-
-        return $user->has_cap('publish_arsol_project_proposals');
+        // Users with either management or creation capabilities can create proposals
+        return self::can_manage_projects($user_id) || self::can_create_projects($user_id);
     }
 
     /**
@@ -156,7 +154,17 @@ class Admin_Capabilities {
             return false;
         }
 
-        return $user->has_cap('edit_arsol_project', $project_id);
+        // Project managers can edit any project
+        if (self::can_manage_projects($user_id)) {
+            return true;
+        }
+
+        // Project creators can only edit their own projects
+        if (self::can_create_projects($user_id) && $project->post_author == $user_id) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -177,7 +185,17 @@ class Admin_Capabilities {
             return false;
         }
 
-        return $user->has_cap('edit_arsol_project_request', $request_id);
+        // Project managers can edit any request
+        if (self::can_manage_projects($user_id)) {
+            return true;
+        }
+
+        // Project creators can only edit their own requests
+        if (self::can_create_projects($user_id) && $request->post_author == $user_id) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -198,6 +216,16 @@ class Admin_Capabilities {
             return false;
         }
 
-        return $user->has_cap('edit_arsol_project_proposal', $proposal_id);
+        // Project managers can edit any proposal
+        if (self::can_manage_projects($user_id)) {
+            return true;
+        }
+
+        // Project creators can only edit their own proposals
+        if (self::can_create_projects($user_id) && $proposal->post_author == $user_id) {
+            return true;
+        }
+
+        return false;
     }
 } 
