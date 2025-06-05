@@ -146,6 +146,11 @@ class Users {
      * @return void
      */
     public function add_user_profile_fields($user) {
+        // Check if user has project management capability
+        if (!$user->has_cap('arsol-manage-projects')) {
+            return;
+        }
+
         ?>
         <h3><?php esc_html_e('Arsol Project Settings', 'arsol-pfw'); ?></h3>
         <table class="form-table">
@@ -182,7 +187,7 @@ class Users {
                         <?php 
                         if ($is_overridden) {
                             printf(
-                                esc_html__('Using general settings overide: "%s"', 'arsol-pfw'),
+                                esc_html__('Using general settings override: "%s"', 'arsol-pfw'),
                                 esc_html($this->get_permission_label($global_permission))
                             );
                         } else {
@@ -204,6 +209,12 @@ class Users {
      */
     public function save_user_profile_fields($user_id) {
         if (!current_user_can('edit_user', $user_id)) {
+            return;
+        }
+
+        // Check if user has project management capability
+        $user = get_user_by('id', $user_id);
+        if (!$user || !$user->has_cap('arsol-manage-projects')) {
             return;
         }
         
