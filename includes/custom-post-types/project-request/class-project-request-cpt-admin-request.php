@@ -31,54 +31,53 @@ class Request {
      */
     public function render_request_details_meta_box($post) {
         // Add nonce for security
-        wp_nonce_field('request_details_nonce', 'request_details_nonce');
+        wp_nonce_field('request_details_meta_box', 'request_details_meta_box_nonce');
 
-        // Get request details
-        $request_code = get_post_meta($post->ID, '_request_code', true);
-        $customer = get_user_by('id', $post->post_author);
-        $status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'names'));
+        // Get current values
+        $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
+        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         $budget = get_post_meta($post->ID, '_request_budget', true);
         $start_date = get_post_meta($post->ID, '_request_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_request_delivery_date', true);
+        
+        // Get statuses
+        $statuses = get_terms(array(
+            'taxonomy' => 'arsol-request-status',
+            'hide_empty' => false,
+        ));
 
-        // Output fields
+        // Get author dropdown
+        $author_dropdown = wp_dropdown_users(array(
+            'name' => 'post_author_override',
+            'selected' => $post->post_author,
+            'include_selected' => true,
+            'echo' => false,
+            'class' => 'widefat'
+        ));
         ?>
         <div class="request-details">
             <p>
                 <label for="request_code" style="display:block;margin-bottom:5px;"><?php _e('Request Code:', 'arsol-pfw'); ?></label>
                 <input type="text" 
                        id="request_code" 
-                       name="request_code" 
-                       value="<?php echo esc_attr($request_code); ?>" 
-                       readonly
+                       value="<?php echo esc_attr($post->ID); ?>"
+                       disabled
                        class="widefat">
             </p>
 
             <p>
-                <label for="customer" style="display:block;margin-bottom:5px;"><?php _e('Customer:', 'arsol-pfw'); ?></label>
-                <input type="text" 
-                       id="customer" 
-                       value="<?php echo esc_attr($customer ? $customer->display_name : ''); ?>" 
-                       readonly
-                       class="widefat">
+                <label for="post_author_override" style="display:block;margin-bottom:5px;"><?php _e('Customer:', 'arsol-pfw'); ?></label>
+                <?php echo $author_dropdown; ?>
             </p>
 
             <p>
-                <label for="request_status" style="display:block;margin-bottom:5px;"><?php _e('Status:', 'arsol-pfw'); ?></label>
-                <select id="request_status" name="request_status" class="widefat">
-                    <?php
-                    $statuses = get_terms('arsol-request-status', array('hide_empty' => false));
-                    if (!empty($statuses) && !is_wp_error($statuses)) {
-                        foreach ($statuses as $status_term) {
-                            printf(
-                                '<option value="%s" %s>%s</option>',
-                                esc_attr($status_term->slug),
-                                selected(!empty($status) && $status[0] === $status_term->name, true, false),
-                                esc_html($status_term->name)
-                            );
-                        }
-                    }
-                    ?>
+                <label for="request_status" style="display:block;margin-bottom:5px;"><?php _e('Request Status:', 'arsol-pfw'); ?></label>
+                <select name="request_status" id="request_status" class="widefat">
+                    <?php foreach ($statuses as $status) : ?>
+                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
+                            <?php echo esc_html($status->name); ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </p>
 
@@ -87,10 +86,10 @@ class Request {
                 <input type="number" 
                        id="request_budget" 
                        name="request_budget" 
-                       value="<?php echo esc_attr($budget); ?>" 
-                       step="0.01" 
-                       min="0"
-                       class="widefat">
+                       value="<?php echo esc_attr($budget); ?>"
+                       class="widefat"
+                       step="0.01"
+                       min="0">
             </p>
 
             <p>
@@ -98,7 +97,7 @@ class Request {
                 <input type="date" 
                        id="request_start_date" 
                        name="request_start_date" 
-                       value="<?php echo esc_attr($start_date); ?>" 
+                       value="<?php echo esc_attr($start_date); ?>"
                        class="widefat">
             </p>
 
@@ -107,7 +106,7 @@ class Request {
                 <input type="date" 
                        id="request_delivery_date" 
                        name="request_delivery_date" 
-                       value="<?php echo esc_attr($delivery_date); ?>" 
+                       value="<?php echo esc_attr($delivery_date); ?>"
                        class="widefat">
             </p>
         </div>
@@ -118,34 +117,34 @@ class Request {
      * Save request details
      */
     public function save_request_details($post_id) {
-        // Check if nonce is set
-        if (!isset($_POST['request_details_nonce'])) {
+        // Check if our nonce is set
+        if (!isset($_POST['request_details_meta_box_nonce'])) {
             return;
         }
 
-        // Verify nonce
-        if (!wp_verify_nonce($_POST['request_details_nonce'], 'request_details_nonce')) {
+        // Verify that the nonce is valid
+        if (!wp_verify_nonce($_POST['request_details_meta_box_nonce'], 'request_details_meta_box')) {
             return;
         }
 
-        // Check if this is an autosave
+        // If this is an autosave, our form has not been submitted, so we don't want to do anything
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
 
-        // Check user permissions
+        // Check the user's permissions
         if (!current_user_can('edit_post', $post_id)) {
             return;
         }
 
-        // Save status
+        // Save request status
         if (isset($_POST['request_status'])) {
-            wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status');
+            wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status', false);
         }
 
         // Save budget
         if (isset($_POST['request_budget'])) {
-            update_post_meta($post_id, '_request_budget', floatval($_POST['request_budget']));
+            update_post_meta($post_id, '_request_budget', sanitize_text_field($_POST['request_budget']));
         }
 
         // Save start date
