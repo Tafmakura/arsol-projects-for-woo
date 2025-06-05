@@ -128,8 +128,14 @@ class Endpoints {
         // Get current user ID
         $user_id = get_current_user_id();
         
-        // Determine current page
-        $paged = (isset($_GET['paged'])) ? absint($_GET['paged']) : 1;
+        // Determine current page from query vars, supporting both /page/N and ?paged=N
+        if (get_query_var('paged')) {
+            $paged = get_query_var('paged');
+        } elseif (get_query_var('page')) {
+            $paged = get_query_var('page');
+        } else {
+            $paged = 1;
+        }
 
         // Query arguments based on tab
         $args = array(
@@ -171,7 +177,6 @@ class Endpoints {
         // Set up common variables for all templates
         $has_items = $query->have_posts();
         $total_pages = $query->max_num_pages;
-        $current_page = max(1, get_query_var('paged'));
         $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? 
             ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
