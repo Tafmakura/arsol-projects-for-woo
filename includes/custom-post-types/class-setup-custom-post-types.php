@@ -20,8 +20,17 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-project.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-projects.php';
+        
+        // Project Request CPT
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-requests.php';
+        
+        // Project Proposal CPT
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposals.php';
+        
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-endpoints.php';
     }
 
@@ -30,10 +39,16 @@ class Setup {
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Setup();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Projects();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Project();
+        
         // Project Request CPT
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Request();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Requests();
+        
         // Project Proposal CPT
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposals();
     }
 
     /**
