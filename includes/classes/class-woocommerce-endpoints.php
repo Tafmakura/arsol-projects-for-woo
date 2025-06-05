@@ -161,6 +161,22 @@ class Endpoints {
                 break;
             case 'active':
             default:
+                // Get user's projects
+                $user_projects = get_posts(array(
+                    'post_type' => 'arsol-project',
+                    'author' => $user_id,
+                    'posts_per_page' => -1,
+                    'post_status' => 'any'
+                ));
+
+                // Set up variables for the template
+                $has_items = !empty($user_projects);
+                $total_pages = $query->max_num_pages;
+                $current_page = max(1, get_query_var('paged'));
+                $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? 
+                    ' ' . wc_wp_theme_get_element_class_name('button') : '';
+
+                // Include the projects table template
                 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
                 break;
         }
