@@ -163,6 +163,14 @@ class Endpoints {
      * @return void
      */
     public function project_create_endpoint_content() {
+        $user_id = get_current_user_id();
+        $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
+        
+        if (!$admin_users->can_user_create_projects($user_id)) {
+            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-no-permission.php';
+            return;
+        }
+        
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create.php';
     }
     
@@ -172,6 +180,14 @@ class Endpoints {
      * @return void
      */
     public function project_request_endpoint_content() {
+        $user_id = get_current_user_id();
+        $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
+        
+        if (!$admin_users->can_user_request_projects($user_id)) {
+            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-no-permission.php';
+            return;
+        }
+        
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php';
     }
     
