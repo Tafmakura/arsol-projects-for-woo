@@ -169,7 +169,7 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['paged']);
+		$current_page = max(1, get_query_var('paged') ? get_query_var('paged') : (isset($_GET['page']) ? absint($_GET['page']) : (int) $atts['paged']));
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project orders using the admin orders class
@@ -237,7 +237,7 @@ class Shortcodes {
 		}
 
 		// Get current page for pagination
-		$current_page = max(1, (int) $atts['paged']);
+		$current_page = max(1, get_query_var('paged') ? get_query_var('paged') : (isset($_GET['page']) ? absint($_GET['page']) : (int) $atts['paged']));
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project subscriptions using the admin orders class

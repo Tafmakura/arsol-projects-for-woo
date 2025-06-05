@@ -117,11 +117,14 @@ class Endpoints {
         // Get current user ID
         $user_id = get_current_user_id();
         
+        // Get current page number from query vars or URL parameter
+        $current_page = max(1, get_query_var('paged') ? get_query_var('paged') : (isset($_GET['page']) ? absint($_GET['page']) : 1));
+        
         // Query arguments based on tab
         $args = array(
             'post_type' => array(),
             'posts_per_page' => 10,
-            'paged' => get_query_var('paged') ? get_query_var('paged') : 1,
+            'paged' => $current_page,
             'author' => $user_id,
             'orderby' => 'date',
             'order' => 'DESC',
@@ -157,7 +160,6 @@ class Endpoints {
         // Set up common variables for all templates
         $has_items = $query->have_posts();
         $total_pages = $query->max_num_pages;
-        $current_page = max(1, get_query_var('paged'));
         $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? 
             ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
@@ -326,16 +328,26 @@ class Endpoints {
         $project_status = get_post_status($project_id);
         $project_date = get_the_date('', $project_id);
         
+        // Get current page number from query vars or URL parameter
+        $current_page = max(1, get_query_var('paged') ? get_query_var('paged') : (isset($_GET['page']) ? absint($_GET['page']) : 1));
+        $per_page = 10; // Default items per page
+        
         // Display the project navigation
         echo $this->get_project_navigation($project_id, $tab);
   
         // Include appropriate template based on tab
         switch ($tab) {
             case 'orders':
+                // Get project orders with pagination
+                $customer_orders = Woocommerce::get_project_orders($project_id, $user_id, $current_page, $per_page);
+                $has_orders = !empty($customer_orders->orders);
                 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-orders.php';
                 break;
                 
             case 'subscriptions':
+                // Get project subscriptions with pagination
+                $customer_subscriptions = Woocommerce::get_project_subscriptions($project_id, $user_id, $current_page, $per_page);
+                $has_subscriptions = !empty($customer_subscriptions->subscriptions);
                 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-subscriptions.php';
                 break;
                 
