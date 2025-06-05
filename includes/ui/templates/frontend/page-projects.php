@@ -74,19 +74,27 @@ do_action('arsol_projects_before_user_projects', $has_projects);
         </table>
     
         <?php if ($total_pages > 1) : ?>
-            <div class="woocommerce-pagination">
+            <nav class="woocommerce-pagination">
                 <?php
-                echo paginate_links(array(
-                    'base'      => trailingslashit(wc_get_account_endpoint_url('projects')) . '%_%',
-                    'format'    => 'page/%#%/',
-                    'current'   => $paged,
-                    'total'     => $total_pages,
-                    'prev_text' => '&larr;',
-                    'next_text' => '&rarr;',
-                    'type'      => 'list',
-                ));
+                $links = paginate_links(
+                    array(
+                        'base'      => trailingslashit(wc_get_account_endpoint_url('projects')) . 'page/%#%/',
+                        'format'    => '',
+                        'current'   => max(1, $paged),
+                        'total'     => $total_pages,
+                        'prev_text' => esc_html__('Previous', 'woocommerce'),
+                        'next_text' => esc_html__('Next', 'woocommerce'),
+                        'type'      => 'list',
+                        'end_size'  => 0,
+                        'mid_size'  => 0,
+                    )
+                );
+                
+                if ($links) {
+                    echo $links;
+                }
                 ?>
-            </div>
+            </nav>
         <?php endif; ?>
 
     <?php else: ?>
