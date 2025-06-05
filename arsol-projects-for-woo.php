@@ -74,5 +74,75 @@ function arsol_projects_activate() {
     flush_rewrite_rules();
 }
 
+// Add form submission handlers
+add_action('admin_post_arsol_create_project_request', 'arsol_handle_project_request_submission');
+add_action('admin_post_nopriv_arsol_create_project_request', 'arsol_handle_project_request_submission');
+
+/**
+ * Handle project request form submission
+ */
+function arsol_handle_project_request_submission() {
+    // Verify nonce
+    if (!isset($_POST['arsol_project_request_nonce']) || !wp_verify_nonce($_POST['arsol_project_request_nonce'], 'arsol_create_project_request')) {
+        wp_die(__('Security check failed', 'arsol-pfw'));
+    }
+
+    // Get current user
+    $user_id = get_current_user_id();
+    if (!$user_id) {
+        wp_die(__('You must be logged in to submit a project request', 'arsol-pfw'));
+    }
+
+    // Check permissions
+    if (!\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_project_requests($user_id)) {
+        wp_die(__('You do not have permission to create project requests', 'arsol-pfw'));
+    }
+
+    // Get and sanitize form data
+    $title = isset($_POST['request_title']) ? sanitize_text_field($_POST['request_title']) : '';
+    $description = isset($_POST['request_description']) ? wp_kses_post($_POST['request_description']) : '';
+    $budget = isset($_POST['request_budget']) ? sanitize_text_field($_POST['request_budget']) : '';
+    $timeline = isset($_POST['request_timeline']) ? sanitize_text_field($_POST['request_timeline']) : '';
+
+    // Validate required fields
+    if (empty($title) || empty($description)) {
+        wc_add_notice(__('Please fill in all required fields', 'arsol-pfw'), 'error');
+        wp_safe_redirect(wc_get_account_endpoint_url('project-request'));
+        exit;
+    }
+
+    // Create the project request
+    $request_data = array(
+        'post_title'    => $title,
+        'post_content'  => $description,
+        'post_status'   => 'pending',
+        'post_type'     => 'arsol-pfw-request',
+        'post_author'   => $user_id
+    );
+
+    $request_id = wp_insert_post($request_data);
+
+    if (is_wp_error($request_id)) {
+        wc_add_notice(__('Error creating project request. Please try again.', 'arsol-pfw'), 'error');
+        wp_safe_redirect(wc_get_account_endpoint_url('project-request'));
+        exit;
+    }
+
+    // Add meta data
+    if (!empty($budget)) {
+        update_post_meta($request_id, '_arsol_request_budget', $budget);
+    }
+    if (!empty($timeline)) {
+        update_post_meta($request_id, '_arsol_request_timeline', $timeline);
+    }
+
+    // Add success message
+    wc_add_notice(__('Project request submitted successfully!', 'arsol-pfw'), 'success');
+
+    // Redirect to the request view page
+    wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $request_id));
+    exit;
+}
+
 // Instantiate the Setup class
 new Setup(); 
