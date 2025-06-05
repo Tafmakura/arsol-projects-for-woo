@@ -18,10 +18,6 @@ $has_projects = isset($has_items) && $has_items;
 do_action('arsol_projects_before_user_projects', $has_projects);
 ?>
 
-<div> 
-   <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-create-or-request.php'; ?>
-</div>
-
 <div class="woocommerce-MyAccount-content">
     <?php if ($has_items): ?>
         <table class="woocommerce-projects-table shop_table shop_table_responsive my_account_projects account-projects-table">
