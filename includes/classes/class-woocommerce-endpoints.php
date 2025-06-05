@@ -64,6 +64,20 @@ class Endpoints {
         add_rewrite_endpoint('project-request', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-view-proposal', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-view-request', EP_ROOT | EP_PAGES);
+
+        // Flush rewrite rules
+        $this->flush_rewrite_rules();
+    }
+    
+    /**
+     * Flush rewrite rules
+     */
+    private function flush_rewrite_rules() {
+        // Only flush if we haven't already
+        if (!get_option('arsol_projects_flush_rewrite_rules')) {
+            flush_rewrite_rules();
+            update_option('arsol_projects_flush_rewrite_rules', true);
+        }
     }
     
     /**

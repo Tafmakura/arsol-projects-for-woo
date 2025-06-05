@@ -74,5 +74,18 @@ function arsol_projects_activate() {
     flush_rewrite_rules();
 }
 
+// Register deactivation hook
+register_deactivation_hook(__FILE__, 'arsol_projects_deactivate');
+
+/**
+ * Plugin deactivation function
+ */
+function arsol_projects_deactivate() {
+    // Delete the flush rewrite rules option
+    delete_option('arsol_projects_flush_rewrite_rules');
+    // Flush rewrite rules
+    flush_rewrite_rules();
+}
+
 // Instantiate the Setup class
 new Setup(); 
