@@ -1,6 +1,6 @@
 <?php
 /**
- * Project Request Handler Class
+ * Project Request Frontend Handler Class
  *
  * Handles frontend project request submissions.
  *
@@ -8,13 +8,13 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Project_Request_Handler {
+class Frontend_Handler {
     /**
      * Constructor
      */

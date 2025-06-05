@@ -43,6 +43,11 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-users.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-capabilities.php';
+
+        // Frontend Handlers
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-frontend-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-frontend-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-frontend-handler.php';
     }
 
     /**
@@ -61,6 +66,11 @@ class Setup {
         new Admin\Settings_General();
         new Admin\Setup();
         new Admin\Users();
+
+        // Frontend Handlers
+        new Custom_Post_Types\Project\Frontend_Handler();
+        new Custom_Post_Types\ProjectRequest\Frontend_Handler();
+        new Custom_Post_Types\ProjectProposal\Frontend_Handler();
     }
 
     public function woocommerce_notice() {

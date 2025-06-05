@@ -51,18 +51,6 @@ require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 // Include the admin settings class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
 
-// Initialize Project Request Handler
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-project-request-handler.php';
-new \Arsol_Projects_For_Woo\Project_Request_Handler();
-
-// Initialize Project Proposal Handler
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-project-proposal-handler.php';
-new \Arsol_Projects_For_Woo\Project_Proposal_Handler();
-
-// Initialize Project Handler
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-project-handler.php';
-new \Arsol_Projects_For_Woo\Project_Handler();
-
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');
 
