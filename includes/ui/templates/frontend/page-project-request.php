@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
         'post_title'    => $title,
         'post_content'  => $description,
         'post_status'   => 'publish',
-        'post_type'     => 'arsol-project-request',
+        'post_type'     => 'arsol-pfw-request',
         'post_author'   => $user_id
     );
     

@@ -128,10 +128,10 @@ class Endpoints {
         // Set post types based on current tab
         switch ($current_tab) {
             case 'proposals':
-                $args['post_type'] = array('arsol-project-proposal');
+                $args['post_type'] = array('arsol-pfw-proposal');
                 break;
             case 'requests':
-                $args['post_type'] = array('arsol-project-request');
+                $args['post_type'] = array('arsol-pfw-request');
                 break;
             case 'active':
             default:
