@@ -44,8 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
         }
         
         // Redirect to project request view page
-        $redirect_url = wc_get_account_endpoint_url('project-view-request');
-        $redirect_url = add_query_arg('id', $request_id, $redirect_url);
+        $redirect_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
         wp_safe_redirect($redirect_url);
         exit;
     } else {
