@@ -89,8 +89,7 @@ class Project_Handler {
         do_action('arsol_after_project_insert', $project_id);
 
         // Redirect to project overview page
-        $redirect_url = wc_get_account_endpoint_url('project-overview');
-        $redirect_url = add_query_arg('project', $project_id, $redirect_url);
+        $redirect_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
         wp_safe_redirect($redirect_url);
         exit;
     }

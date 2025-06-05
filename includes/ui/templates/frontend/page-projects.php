@@ -46,8 +46,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                     $status = wp_get_post_terms($project_id, 'arsol-project-status', array('fields' => 'names'));
                     $status = !empty($status) ? $status[0] : '';
                     $due_date = get_post_meta($project_id, '_project_due_date', true);
-                    $view_url = wc_get_account_endpoint_url('project-overview');
-                    $view_url = add_query_arg('project', $project_id, $view_url);
+                    $view_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
                 ?>
                     <tr class="woocommerce-projects-table__row">
                         <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-title" data-title="<?php _e('Title', 'arsol-pfw'); ?>">
