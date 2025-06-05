@@ -28,5 +28,4 @@ do_action('arsol_projects_before_project_orders', $project_id);
     
     <?php do_action('arsol_projects_orders_after_table', $project_id); ?>
 </div>
-
 <?php do_action('arsol_projects_after_project_orders', $project_id); ?>
