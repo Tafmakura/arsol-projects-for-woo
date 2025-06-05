@@ -32,6 +32,9 @@ class Admin_Capabilities {
             return;
         }
 
+        // Base capability for project management
+        $admin_role->add_cap('arsol-manage-projects');
+
         // Project capabilities
         $admin_role->add_cap('edit_arsol_project');
         $admin_role->add_cap('read_arsol_project');
@@ -79,18 +82,31 @@ class Admin_Capabilities {
     }
 
     /**
+     * Check if user can manage projects
+     *
+     * @param int $user_id User ID
+     * @return bool Whether user can manage projects
+     */
+    public static function can_manage_projects($user_id) {
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        return $user->has_cap('arsol-manage-projects');
+    }
+
+    /**
      * Check if user can create projects
      *
      * @param int $user_id User ID
      * @return bool Whether user can create projects
      */
     public static function can_create_projects($user_id) {
-        $user = get_user_by('id', $user_id);
-        if (!$user) {
+        if (!self::can_manage_projects($user_id)) {
             return false;
         }
-
-        return $user->has_cap('publish_arsol_projects');
+        $admin_users = new Users();
+        return $admin_users->can_user_create_projects($user_id);
     }
 
     /**
@@ -100,12 +116,11 @@ class Admin_Capabilities {
      * @return bool Whether user can create project requests
      */
     public static function can_create_project_requests($user_id) {
-        $user = get_user_by('id', $user_id);
-        if (!$user) {
+        if (!self::can_manage_projects($user_id)) {
             return false;
         }
-
-        return $user->has_cap('publish_arsol_project_requests');
+        $admin_users = new Users();
+        return $admin_users->can_user_request_projects($user_id);
     }
 
     /**

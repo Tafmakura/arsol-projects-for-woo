@@ -4,8 +4,9 @@ if (!defined('ABSPATH')) {
 }
 
 $user_id = get_current_user_id();
-$can_create = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id);
-$can_request = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_project_requests($user_id);
+$admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
+$can_create = $admin_users->can_user_create_projects($user_id);
+$can_request = $admin_users->can_user_request_projects($user_id);
 
 $button_url = '';
 $button_label = '';
@@ -27,10 +28,10 @@ if ($can_create) {
 <?php endif; ?>
 
 <style>
-.arsol-create-or-request-btn {
+.arsol-create-or-request-button {
     transition: background 0.2s;
 }
-.arsol-create-or-request-btn:hover {
+.arsol-create-or-request-button:hover {
     background-color: #135e96;
     color: #fff;
     text-decoration: none;
