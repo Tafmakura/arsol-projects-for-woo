@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
         'post_title'    => $title,
         'post_content'  => $description,
         'post_status'   => 'publish',
-        'post_type'     => 'arsol-pfw-request',
+        'post_type'     => 'arsol-project-request',
         'post_author'   => $user_id
     );
     
@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
 <div class="arsol-project-request">
     <h2><?php _e('Submit Project Request', 'arsol-pfw'); ?></h2>
     
-    <form method="post" class="arsol-request-form">
+    <form method="post" class="arsol-request-form" action="<?php echo esc_url(wc_get_account_endpoint_url('project-request')); ?>">
         <?php wp_nonce_field('create_request', 'create_request_nonce'); ?>
         
         <p class="form-row">
