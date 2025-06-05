@@ -10,9 +10,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Start output buffering
-ob_start();
-
 // Get the post type and ID
 $type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : '';
 $post_id = 0;
@@ -55,9 +52,3 @@ if ($type === 'proposal') {
 } elseif ($type === 'request') {
     include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-approval-request.php';
 }
-
-// Get the buffered content
-$content = ob_get_clean();
-
-// Output the content
-echo $content;

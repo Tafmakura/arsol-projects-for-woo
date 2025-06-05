@@ -269,9 +269,18 @@ class Endpoints {
             exit;
         }
 
+        // Start output buffering
+        ob_start();
+
         // Set the type for the template
         $_GET['type'] = 'proposal';
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-approval.php';
+
+        // Get the buffered content
+        $content = ob_get_clean();
+
+        // Output the content
+        echo $content;
     }
     
     /**
@@ -297,9 +306,18 @@ class Endpoints {
             exit;
         }
 
+        // Start output buffering
+        ob_start();
+
         // Set the type for the template
         $_GET['type'] = 'request';
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-approval.php';
+
+        // Get the buffered content
+        $content = ob_get_clean();
+
+        // Output the content
+        echo $content;
     }
     
     /**
