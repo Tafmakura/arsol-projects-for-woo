@@ -118,7 +118,7 @@ class Endpoints {
         $user_id = get_current_user_id();
         
         // Get current page number from query vars or URL parameter
-        $current_page = max(1, get_query_var('paged') ? get_query_var('paged') : (isset($_GET['page']) ? absint($_GET['page']) : 1));
+        $current_page = max(1, get_query_var('paged') ? get_query_var('paged') : (isset($_GET['paged']) ? absint($_GET['paged']) : 1));
         
         // Query arguments based on tab
         $args = array(
@@ -329,7 +329,7 @@ class Endpoints {
         $project_date = get_the_date('', $project_id);
         
         // Get current page number from query vars or URL parameter
-        $current_page = max(1, get_query_var('paged') ? get_query_var('paged') : (isset($_GET['page']) ? absint($_GET['page']) : 1));
+        $current_page = max(1, get_query_var('paged') ? get_query_var('paged') : (isset($_GET['paged']) ? absint($_GET['paged']) : 1));
         $per_page = 10; // Default items per page
         
         // Display the project navigation
