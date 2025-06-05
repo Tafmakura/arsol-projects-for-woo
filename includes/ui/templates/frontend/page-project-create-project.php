@@ -17,6 +17,9 @@ if (!$can_create) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_project_nonce']) && wp_verify_nonce($_POST['create_project_nonce'], 'create_project')) {
     $title = sanitize_text_field($_POST['project_title']);
     $description = wp_kses_post($_POST['project_description']);
+    $budget = isset($_POST['project_budget']) ? sanitize_text_field($_POST['project_budget']) : '';
+    $start_date = isset($_POST['project_start_date']) ? sanitize_text_field($_POST['project_start_date']) : '';
+    $delivery_date = isset($_POST['project_delivery_date']) ? sanitize_text_field($_POST['project_delivery_date']) : '';
     
     // Create project post
     $project_data = array(
@@ -34,8 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_project_nonce'
         wp_set_object_terms($project_id, 'not-started', 'arsol-project-status');
         
         // Save additional project meta
-        if (isset($_POST['project_due_date'])) {
-            update_post_meta($project_id, '_project_due_date', sanitize_text_field($_POST['project_due_date']));
+        if (!empty($budget)) {
+            update_post_meta($project_id, '_project_budget', $budget);
+        }
+        if (!empty($start_date)) {
+            update_post_meta($project_id, '_project_start_date', $start_date);
+        }
+        if (!empty($delivery_date)) {
+            update_post_meta($project_id, '_project_delivery_date', $delivery_date);
         }
         
         // Add success notice
@@ -52,26 +61,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_project_nonce'
 ?>
 
 <div class="arsol-project-create">
-
     <form method="post" class="arsol-project-form">
-
         <h4><?php _e('Create New Project', 'arsol-pfw'); ?></h4>
-
         <?php wp_nonce_field('create_project', 'create_project_nonce'); ?>
         
         <p class="form-row">
             <label for="project_title"><?php _e('Project Title', 'arsol-pfw'); ?> <span class="required">*</span></label>
-            <input type="text" id="project_title" name="project_title" required>
+            <input type="text" 
+                   id="project_title" 
+                   name="project_title" 
+                   required>
         </p>
         
         <p class="form-row">
-            <label for="project_description"><?php _e('Project Description', 'arsol-pfw'); ?></label>
-            <textarea id="project_description" name="project_description" rows="5"></textarea>
+            <label for="project_description"><?php _e('Project Description', 'arsol-pfw'); ?> <span class="required">*</span></label>
+            <textarea id="project_description" 
+                      name="project_description" 
+                      rows="5" 
+                      required></textarea>
+            <span class="description"><?php _e('Please provide a detailed description of the project.', 'arsol-pfw'); ?></span>
         </p>
         
         <p class="form-row">
-            <label for="project_due_date"><?php _e('Due Date', 'arsol-pfw'); ?></label>
-            <input type="date" id="project_due_date" name="project_due_date">
+            <label for="project_budget"><?php _e('Budget', 'arsol-pfw'); ?></label>
+            <input type="number" 
+                   id="project_budget" 
+                   name="project_budget" 
+                   step="0.01"
+                   min="0"
+                   placeholder="<?php esc_attr_e('Enter project budget', 'arsol-pfw'); ?>">
+            <span class="description"><?php _e('Optional: Enter the project budget.', 'arsol-pfw'); ?></span>
+        </p>
+        
+        <p class="form-row">
+            <label for="project_start_date"><?php _e('Start Date', 'arsol-pfw'); ?></label>
+            <input type="date" 
+                   id="project_start_date" 
+                   name="project_start_date">
+            <span class="description"><?php _e('Optional: When will this project start?', 'arsol-pfw'); ?></span>
+        </p>
+        
+        <p class="form-row">
+            <label for="project_delivery_date"><?php _e('Delivery Date', 'arsol-pfw'); ?></label>
+            <input type="date" 
+                   id="project_delivery_date" 
+                   name="project_delivery_date">
+            <span class="description"><?php _e('Optional: When should this project be completed?', 'arsol-pfw'); ?></span>
         </p>
         
         <p class="form-row">
