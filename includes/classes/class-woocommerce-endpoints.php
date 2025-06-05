@@ -99,42 +99,68 @@ class Endpoints {
     }
     
     /**
-     * Display content for the projects endpoint
-     *
-     * @return void
+     * Projects endpoint content
      */
     public function projects_endpoint_content() {
+        // Get current tab from URL parameter
+        $current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'active';
+
+        // Include the navigation component
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-navigation.php';
+
         // Get current user ID
         $user_id = get_current_user_id();
-        
-        // Set up pagination
-        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-        $posts_per_page = 10; // Number of items per page
-        
-        // Query all user's content
+
+        // Query arguments based on tab
         $args = array(
-            'post_type'      => array('arsol-project', 'arsol-project-proposal', 'arsol-project-request'),
-            'posts_per_page' => $posts_per_page,
-            'paged'          => $paged,
-            'author'         => $user_id,
-            'orderby'        => 'date',
-            'order'          => 'DESC',
-            'post_status'    => 'any' // Include all post statuses
+            'post_type' => array(),
+            'posts_per_page' => 10,
+            'paged' => get_query_var('paged') ? get_query_var('paged') : 1,
+            'author' => $user_id,
+            'orderby' => 'date',
+            'order' => 'DESC',
+            'post_status' => 'any'
         );
-        
+
+        // Set post types based on current tab
+        switch ($current_tab) {
+            case 'proposals':
+                $args['post_type'] = array('arsol-project-proposal');
+                break;
+            case 'requests':
+                $args['post_type'] = array('arsol-project-request');
+                break;
+            case 'active':
+            default:
+                $args['post_type'] = array('arsol-project');
+                // For active projects, only show those that are not completed
+                $args['tax_query'] = array(
+                    array(
+                        'taxonomy' => 'arsol-project-status',
+                        'field' => 'slug',
+                        'terms' => array('completed'),
+                        'operator' => 'NOT IN'
+                    )
+                );
+                break;
+        }
+
+        // Get posts
         $query = new \WP_Query($args);
-        $has_items = $query->have_posts();
-        
-        // Pagination data
-        $total_pages = $query->max_num_pages;
-        $current_page = max(1, $paged);
-        
-        // Button class for WooCommerce 3.5+
-        $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? 
-            ' ' . wc_wp_theme_get_element_class_name('button') : '';
-        
-        // Include the template
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
+
+        // Include the appropriate template based on tab
+        switch ($current_tab) {
+            case 'proposals':
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-proposals.php';
+                break;
+            case 'requests':
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-requests.php';
+                break;
+            case 'active':
+            default:
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
+                break;
+        }
     }
     
     /**
