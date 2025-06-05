@@ -8,7 +8,9 @@
  * @version 1.0.0
  */
 
-defined('ABSPATH') || exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 do_action('arsol_projects_before_project_overview', $project_id);
 
@@ -34,17 +36,32 @@ do_action('arsol_projects_before_project_wrapper', $project_id);
     <?php do_action('arsol_projects_before_project_content', $project_id); ?>
     
     <!-- Main Content Area -->
-    <div class="project-content">
+    <div class="project-content project-overview">
         <?php do_action('arsol_projects_overview_before_content', $project_id); ?>
         
         <?php do_action('arsol_projects_before_description', $project_id); ?>
         
-        <div class="project-description">
-            <?php if (empty(get_the_content())) : ?>
-                <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-overview-empty.php'; ?>
-            <?php else : ?>
-                <?php the_content(); ?>
-            <?php endif; ?>
+        <h1><?php echo esc_html($project_title); ?></h1>
+        
+        <div class="project-meta">
+            <p class="project-date">
+                <strong><?php _e('Date:', 'arsol-pfw'); ?></strong>
+                <?php echo esc_html($project_date); ?>
+            </p>
+            <p class="project-status">
+                <strong><?php _e('Status:', 'arsol-pfw'); ?></strong>
+                <?php echo esc_html($project_status); ?>
+            </p>
+        </div>
+
+        <?php if (!empty($project_excerpt)) : ?>
+            <div class="project-excerpt">
+                <?php echo wp_kses_post($project_excerpt); ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="project-content">
+            <?php echo wp_kses_post($project_content); ?>
         </div>
         
         <?php do_action('arsol_projects_after_description', $project_id); ?>
