@@ -18,9 +18,8 @@ if (!$can_create) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce']) && wp_verify_nonce($_POST['create_request_nonce'], 'create_request')) {
     $title = sanitize_text_field($_POST['request_title']);
     $description = wp_kses_post($_POST['request_description']);
-    $budget = isset($_POST['request_budget']) ? floatval($_POST['request_budget']) : '';
-    $start_date = isset($_POST['request_start_date']) ? sanitize_text_field($_POST['request_start_date']) : '';
-    $delivery_date = isset($_POST['request_delivery_date']) ? sanitize_text_field($_POST['request_delivery_date']) : '';
+    $budget = isset($_POST['request_budget']) ? sanitize_text_field($_POST['request_budget']) : '';
+    $timeline = isset($_POST['request_timeline']) ? sanitize_text_field($_POST['request_timeline']) : '';
     
     // Create project request post
     $request_data = array(
@@ -41,11 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
         if (!empty($budget)) {
             update_post_meta($request_id, '_request_budget', $budget);
         }
-        if (!empty($start_date)) {
-            update_post_meta($request_id, '_request_start_date', $start_date);
-        }
-        if (!empty($delivery_date)) {
-            update_post_meta($request_id, '_request_delivery_date', $delivery_date);
+        if (!empty($timeline)) {
+            update_post_meta($request_id, '_request_timeline', $timeline);
         }
         
         // Redirect to project request view page
@@ -60,9 +56,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
 ?>
 
 <div class="arsol-project-request">
-    <form method="post" class="arsol-request-form">
+     
+    <form method="post" class="arsol-request-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
         <h4><?php _e('Submit a Project Request', 'arsol-pfw'); ?></h4>
-        <?php wp_nonce_field('create_request', 'create_request_nonce'); ?>
+        <input type="hidden" name="action" value="arsol_submit_project_request">
+        <?php wp_nonce_field('arsol_submit_project_request', 'arsol_project_request_nonce'); ?>
         
         <p class="form-row">
             <label for="request_title"><?php _e('Request Title', 'arsol-pfw'); ?> <span class="required">*</span></label>
@@ -76,32 +74,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
         </p>
         
         <p class="form-row">
-            <label for="request_start_date"><?php _e('Required Start Date', 'arsol-pfw'); ?> <span class="required">*</span></label>
-            <input type="date" 
-                   id="request_start_date" 
-                   name="request_start_date" 
-                   required>
-            <span class="description"><?php _e('When would you like the project to start?', 'arsol-pfw'); ?></span>
+            <label for="request_budget"><?php _e('Budget Range', 'arsol-pfw'); ?></label>
+            <input type="text" id="request_budget" name="request_budget" placeholder="<?php esc_attr_e('e.g., $1000 - $2000', 'arsol-pfw'); ?>">
+            <span class="description"><?php _e('Optional: Provide your budget range for this project.', 'arsol-pfw'); ?></span>
         </p>
         
         <p class="form-row">
-            <label for="request_delivery_date"><?php _e('Required Delivery Date', 'arsol-pfw'); ?> <span class="required">*</span></label>
-            <input type="date" 
-                   id="request_delivery_date" 
-                   name="request_delivery_date" 
-                   required>
-            <span class="description"><?php _e('When do you need the project completed?', 'arsol-pfw'); ?></span>
-        </p>
-        
-        <p class="form-row">
-            <label for="request_budget"><?php _e('Available Budget', 'arsol-pfw'); ?> <span class="required">*</span></label>
-            <input type="number" 
-                   id="request_budget" 
-                   name="request_budget" 
-                   step="0.01"
-                   min="0"
-                   required>
-            <span class="description"><?php _e('What is your available budget for this project?', 'arsol-pfw'); ?></span>
+            <label for="request_timeline"><?php _e('Timeline', 'arsol-pfw'); ?></label>
+            <input type="text" id="request_timeline" name="request_timeline" placeholder="<?php esc_attr_e('e.g., 2-3 weeks', 'arsol-pfw'); ?>">
+            <span class="description"><?php _e('Optional: When do you need this project completed?', 'arsol-pfw'); ?></span>
         </p>
         
         <p class="form-row">

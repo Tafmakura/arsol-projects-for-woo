@@ -104,13 +104,23 @@ class Proposal {
             </p>
 
             <p>
+                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                <input type="number" 
+                       id="proposal_budget" 
+                       name="proposal_budget" 
+                       value="<?php echo esc_attr($budget); ?>"
+                       class="widefat"
+                       step="0.01"
+                       min="0">
+            </p>
+
+            <p>
                 <label for="proposal_start_date" style="display:block;margin-bottom:5px;"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="proposal_start_date" 
                        name="proposal_start_date" 
                        value="<?php echo esc_attr($start_date); ?>"
-                       class="widefat"
-                       required>
+                       class="widefat">
             </p>
 
             <p>
@@ -119,20 +129,7 @@ class Proposal {
                        id="proposal_delivery_date" 
                        name="proposal_delivery_date" 
                        value="<?php echo esc_attr($delivery_date); ?>"
-                       class="widefat"
-                       required>
-            </p>
-
-            <p>
-                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php _e('Proposed Budget:', 'arsol-pfw'); ?></label>
-                <input type="number" 
-                       id="proposal_budget" 
-                       name="proposal_budget" 
-                       value="<?php echo esc_attr($budget); ?>"
-                       class="widefat"
-                       step="0.01"
-                       min="0"
-                       required>
+                       class="widefat">
             </p>
         </div>
         <?php
@@ -172,6 +169,11 @@ class Proposal {
             update_post_meta($post_id, '_related_request', sanitize_text_field($_POST['related_request']));
         }
 
+        // Save budget
+        if (isset($_POST['proposal_budget'])) {
+            update_post_meta($post_id, '_proposal_budget', sanitize_text_field($_POST['proposal_budget']));
+        }
+
         // Save start date
         if (isset($_POST['proposal_start_date'])) {
             update_post_meta($post_id, '_proposal_start_date', sanitize_text_field($_POST['proposal_start_date']));
@@ -180,11 +182,6 @@ class Proposal {
         // Save delivery date
         if (isset($_POST['proposal_delivery_date'])) {
             update_post_meta($post_id, '_proposal_delivery_date', sanitize_text_field($_POST['proposal_delivery_date']));
-        }
-
-        // Save budget
-        if (isset($_POST['proposal_budget'])) {
-            update_post_meta($post_id, '_proposal_budget', sanitize_text_field($_POST['proposal_budget']));
         }
     }
 }

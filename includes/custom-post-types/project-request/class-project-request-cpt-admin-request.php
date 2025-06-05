@@ -83,13 +83,23 @@ class Request {
             </p>
 
             <p>
+                <label for="request_budget" style="display:block;margin-bottom:5px;"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                <input type="number" 
+                       id="request_budget" 
+                       name="request_budget" 
+                       value="<?php echo esc_attr($budget); ?>" 
+                       step="0.01" 
+                       min="0"
+                       class="widefat">
+            </p>
+
+            <p>
                 <label for="request_start_date" style="display:block;margin-bottom:5px;"><?php _e('Required Start Date:', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="request_start_date" 
                        name="request_start_date" 
                        value="<?php echo esc_attr($start_date); ?>" 
-                       class="widefat"
-                       required>
+                       class="widefat">
             </p>
 
             <p>
@@ -98,20 +108,7 @@ class Request {
                        id="request_delivery_date" 
                        name="request_delivery_date" 
                        value="<?php echo esc_attr($delivery_date); ?>" 
-                       class="widefat"
-                       required>
-            </p>
-
-            <p>
-                <label for="request_budget" style="display:block;margin-bottom:5px;"><?php _e('Available Budget:', 'arsol-pfw'); ?></label>
-                <input type="number" 
-                       id="request_budget" 
-                       name="request_budget" 
-                       value="<?php echo esc_attr($budget); ?>" 
-                       step="0.01" 
-                       min="0"
-                       class="widefat"
-                       required>
+                       class="widefat">
             </p>
         </div>
         <?php
@@ -146,6 +143,11 @@ class Request {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status');
         }
 
+        // Save budget
+        if (isset($_POST['request_budget'])) {
+            update_post_meta($post_id, '_request_budget', floatval($_POST['request_budget']));
+        }
+
         // Save start date
         if (isset($_POST['request_start_date'])) {
             update_post_meta($post_id, '_request_start_date', sanitize_text_field($_POST['request_start_date']));
@@ -154,11 +156,6 @@ class Request {
         // Save delivery date
         if (isset($_POST['request_delivery_date'])) {
             update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($_POST['request_delivery_date']));
-        }
-
-        // Save budget
-        if (isset($_POST['request_budget'])) {
-            update_post_meta($post_id, '_request_budget', floatval($_POST['request_budget']));
         }
     }
 }
