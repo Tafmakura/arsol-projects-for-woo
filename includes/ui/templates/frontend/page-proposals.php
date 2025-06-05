@@ -66,7 +66,8 @@ do_action('arsol_projects_before_user_proposals', $has_items);
                 <?php
                 echo paginate_links(array(
                     'base'      => trailingslashit(wc_get_account_endpoint_url('projects')) . '%_%',
-                    'format'    => 'page/%#%/?tab=proposals',
+                    'format'    => 'page/%#%/',
+                    'add_args'  => array('tab' => 'proposals'),
                     'current'   => $paged,
                     'total'     => $total_pages,
                     'prev_text' => '&larr;',
