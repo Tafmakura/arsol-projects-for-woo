@@ -61,7 +61,7 @@ class Project_Request_Handler {
             'post_title'    => $title,
             'post_content'  => $description,
             'post_status'   => 'publish',
-            'post_type'     => 'arsol-project-request',
+            'post_type'     => 'arsol-pfw-request',
             'post_author'   => $user_id
         );
 

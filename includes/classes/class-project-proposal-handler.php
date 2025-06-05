@@ -62,7 +62,7 @@ class Project_Proposal_Handler {
             'post_title'    => $title,
             'post_content'  => $description,
             'post_status'   => 'publish',
-            'post_type'     => 'arsol-project-proposal',
+            'post_type'     => 'arsol-pfw-proposal',
             'post_author'   => $user_id
         );
 
