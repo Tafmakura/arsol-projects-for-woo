@@ -128,7 +128,8 @@ class Endpoints {
             'author' => $user_id,
             'orderby' => 'date',
             'order' => 'DESC',
-            'post_status' => 'any'
+            'post_status' => 'any',
+            'suppress_filters' => false // Allow filters to modify the query
         );
 
         // Set post types based on current tab
@@ -171,7 +172,7 @@ class Endpoints {
                 break;
             case 'requests':
                 $user_projects = $query->posts;
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-requests.php';
                 break;
             case 'active':
             default:
@@ -179,6 +180,9 @@ class Endpoints {
                 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
                 break;
         }
+
+        // Reset post data
+        wp_reset_postdata();
     }
     
     /**

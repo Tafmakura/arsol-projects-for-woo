@@ -82,6 +82,9 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                 if (!empty($_GET['tab'])) {
                     $current_url = add_query_arg('tab', sanitize_text_field($_GET['tab']), $current_url);
                 }
+
+                // Ensure we're using the correct page parameter
+                $current_page = max(1, get_query_var('paged') ? get_query_var('paged') : (isset($_GET['paged']) ? absint($_GET['paged']) : 1));
                 ?>
                 
                 <?php if (1 !== $current_page) : ?>
