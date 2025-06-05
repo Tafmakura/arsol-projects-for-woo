@@ -19,7 +19,7 @@ $account_url = wc_get_account_endpoint_url('projects');
 // Define tabs
 $tabs = array(
     'active' => array(
-        'label' => __('Active Projects', 'arsol-pfw'),
+        'label' => __('Active', 'arsol-pfw'),
         'url' => add_query_arg('tab', 'active', $account_url)
     ),
     'proposals' => array(
