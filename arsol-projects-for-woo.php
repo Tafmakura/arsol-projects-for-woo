@@ -64,15 +64,15 @@ require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-project-handler
 new \Arsol_Projects_For_Woo\Project_Handler();
 
 // Register activation hook
-register_activation_hook(__FILE__, 'arsol_projects_activate');
+register_activation_hook(__FILE__, array('Arsol_Projects_For_Woo\Core\Activator', 'activate'));
 
-/**
- * Plugin activation function
- */
-function arsol_projects_activate() {
-    // Flush rewrite rules
+// Register deactivation hook
+register_deactivation_hook(__FILE__, function() {
+    // Flush rewrite rules on deactivation
     flush_rewrite_rules();
-}
+    // Clear the rewrite rules flushed flag
+    delete_option('arsol_projects_rewrite_rules_flushed');
+});
 
 // Instantiate the Setup class
 new Setup(); 
