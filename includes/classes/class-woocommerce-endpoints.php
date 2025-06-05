@@ -168,11 +168,11 @@ class Endpoints {
         switch ($current_tab) {
             case 'proposals':
                 $user_projects = $query->posts;
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-proposals.php';
                 break;
             case 'requests':
                 $user_projects = $query->posts;
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-requests.php';
                 break;
             case 'active':
             default:
