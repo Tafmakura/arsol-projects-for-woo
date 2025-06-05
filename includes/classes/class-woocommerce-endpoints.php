@@ -118,7 +118,8 @@ class Endpoints {
             'paged'          => $paged,
             'author'         => $user_id,
             'orderby'        => 'date',
-            'order'          => 'DESC'
+            'order'          => 'DESC',
+            'post_status'    => 'any' // Include all post statuses
         );
         
         $query = new \WP_Query($args);
