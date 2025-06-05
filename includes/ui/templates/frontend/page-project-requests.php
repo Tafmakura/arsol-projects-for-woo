@@ -39,7 +39,7 @@ do_action('arsol_projects_before_user_requests', $has_items);
                     <?php _e('Date', 'arsol-pfw'); ?>
                 </th>
                 <th class="woocommerce-projects-table__header woocommerce-projects-table__header-request-actions">
-                    <?php _e('Actions', 'arsol-pfw'); ?>
+                    <?php _e('', 'arsol-pfw'); ?>
                 </th>
             </tr>
         </thead>
