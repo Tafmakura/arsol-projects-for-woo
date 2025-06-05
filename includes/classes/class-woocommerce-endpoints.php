@@ -128,11 +128,14 @@ class Endpoints {
         // Get current user ID
         $user_id = get_current_user_id();
         
+        // Determine current page
+        $paged = (isset($_GET['paged'])) ? absint($_GET['paged']) : 1;
+
         // Query arguments based on tab
         $args = array(
             'post_type' => array(),
             'posts_per_page' => 10,
-            'paged' => get_query_var('paged') ? get_query_var('paged') : 1,
+            'paged' => $paged,
             'author' => $user_id,
             'orderby' => 'date',
             'order' => 'DESC',
