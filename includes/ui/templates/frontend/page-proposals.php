@@ -50,8 +50,7 @@ do_action('arsol_projects_before_user_proposals', $has_items);
                 $status = !empty($status) ? $status[0] : '';
                 $budget = get_post_meta($proposal_id, '_proposal_budget', true);
                 $timeline = get_post_meta($proposal_id, '_proposal_timeline', true);
-                $view_url = wc_get_account_endpoint_url('project-view-proposal');
-                $view_url = add_query_arg('id', $proposal_id, $view_url);
+                $view_url = wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id);
             ?>
                 <tr class="woocommerce-projects-table__row">
                     <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-proposal-title" data-title="<?php _e('Title', 'arsol-pfw'); ?>">

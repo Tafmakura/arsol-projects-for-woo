@@ -93,8 +93,7 @@ class Project_Proposal_Handler {
         do_action('arsol_after_project_proposal_insert', $proposal_id);
 
         // Redirect to project proposal view page
-        $redirect_url = wc_get_account_endpoint_url('project-view-proposal');
-        $redirect_url = add_query_arg('id', $proposal_id, $redirect_url);
+        $redirect_url = wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id);
         wp_safe_redirect($redirect_url);
         exit;
     }
