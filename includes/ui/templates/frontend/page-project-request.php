@@ -58,8 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_request_nonce'
 <div class="arsol-project-request">
     <h2><?php _e('Submit Project Request', 'arsol-pfw'); ?></h2>
     
-    <form method="post" class="arsol-request-form" action="<?php echo esc_url(wc_get_account_endpoint_url('project-request')); ?>">
-        <?php wp_nonce_field('create_request', 'create_request_nonce'); ?>
+    <form method="post" class="arsol-request-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+        <input type="hidden" name="action" value="arsol_submit_project_request">
+        <?php wp_nonce_field('arsol_submit_project_request', 'arsol_project_request_nonce'); ?>
         
         <p class="form-row">
             <label for="request_title"><?php _e('Request Title', 'arsol-pfw'); ?> <span class="required">*</span></label>
