@@ -52,9 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['create_project_nonce'
 ?>
 
 <div class="arsol-project-create">
-    <h4><?php _e('Create New Project', 'arsol-pfw'); ?></h4>
-    
+
     <form method="post" class="arsol-project-form">
+
+        <h4><?php _e('Create New Project', 'arsol-pfw'); ?></h4>
+
         <?php wp_nonce_field('create_project', 'create_project_nonce'); ?>
         
         <p class="form-row">
