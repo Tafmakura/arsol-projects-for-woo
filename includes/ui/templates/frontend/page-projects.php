@@ -69,7 +69,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                             <?php echo get_the_date(); ?>
                         </td>
                         <td data-title="<?php _e('Actions', 'arsol-pfw'); ?>">
-                            <a href="<?php echo esc_url($view_url); ?>" class="button<?php echo esc_attr($wp_button_class); ?>">
+                            <a href="<?php echo esc_url($view_url); ?>" class="woocommerce-button button view">
                                 <?php _e('View', 'arsol-pfw'); ?>
                             </a>
                         </td>
