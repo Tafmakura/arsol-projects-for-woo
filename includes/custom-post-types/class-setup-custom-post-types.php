@@ -13,9 +13,6 @@ class Setup {
         
         // Add manual menu registration as backup
         add_action('admin_menu', array($this, 'ensure_submenus'), 20);
-
-        // Ensure post types are registered with proper priority
-        add_action('init', array($this, 'force_register_post_types'), 5);
     }
 
     private function require_files() {
@@ -57,26 +54,5 @@ class Setup {
                 error_log('ARSOL DEBUG: Submenus under parent: ' . count($submenu[$parent_slug]));
             }
         }
-    }
-
-    /**
-     * Force register post types
-     */
-    public function force_register_post_types() {
-        // Force register project post type
-        $project_setup = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Setup();
-        $project_setup->register_post_type();
-
-        // Force register project request post type
-        $request_setup = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
-        $request_setup->register_post_type();
-
-        // Force register project proposal post type
-        $proposal_setup = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
-        $proposal_setup->register_post_type();
-
-        // Force flush rewrite rules
-        $endpoints = new \Arsol_Projects_For_Woo\Woocommerce\Endpoints();
-        $endpoints->force_flush_rewrite_rules();
     }
 }

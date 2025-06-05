@@ -59,7 +59,6 @@ class Endpoints {
      * @return void
      */
     public function register_endpoints() {
-        // Register endpoints with proper priority
         add_rewrite_endpoint('projects', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-overview', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-orders', EP_ROOT | EP_PAGES);
@@ -69,14 +68,8 @@ class Endpoints {
         add_rewrite_endpoint('project-view-proposal', EP_ROOT | EP_PAGES);
         add_rewrite_endpoint('project-view-request', EP_ROOT | EP_PAGES);
 
-        // Add rewrite rules for single project URLs
-        $this->add_project_rewrite_rules();
-
-        // Flush rewrite rules only if they haven't been flushed recently
-        if (!get_option('arsol_projects_rewrite_rules_flushed')) {
-            flush_rewrite_rules();
-            update_option('arsol_projects_rewrite_rules_flushed', true);
-        }
+        // Flush rewrite rules to ensure endpoints are registered
+        flush_rewrite_rules();
     }
     
     /**
@@ -504,14 +497,6 @@ class Endpoints {
             'index.php?project-overview=$matches[1]',
             'top'
         );
-    }
-
-    /**
-     * Force flush rewrite rules
-     */
-    public function force_flush_rewrite_rules() {
-        flush_rewrite_rules();
-        update_option('arsol_projects_rewrite_rules_flushed', true);
     }
 }
 
