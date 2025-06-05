@@ -6,9 +6,7 @@
  * @since 1.0.0
  */
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+
 
 /* 
 // Get the post type and ID
