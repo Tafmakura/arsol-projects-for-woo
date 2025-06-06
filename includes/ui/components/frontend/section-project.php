@@ -12,14 +12,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get the type from GET parameters or default to 'overview'
-$type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'overview';
+// Get the type from GET parameters or default to 'active'
+$type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'active';
 
 // Map of valid types to their template files
 $templates = array(
-    'overview' => array(
-        'content' => 'section-project-content-overview.php',
-        'sidebar' => 'section-project-sidebar-overview.php'
+    'active' => array(
+        'content' => 'section-project-content-active.php',
+        'sidebar' => 'section-project-sidebar-active.php'
     ),
     'proposal' => array(
         'content' => 'section-project-content-proposal.php',
@@ -31,9 +31,9 @@ $templates = array(
     )
 );
 
-// Default to overview if type is not valid
+// Default to active if type is not valid
 if (!isset($templates[$type])) {
-    $type = 'overview';
+    $type = 'active';
 }
 
 // Get template paths

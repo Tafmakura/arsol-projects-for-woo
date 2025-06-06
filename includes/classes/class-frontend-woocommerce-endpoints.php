@@ -187,7 +187,7 @@ class Frontend_Endpoints {
      */
     public function project_overview_endpoint_content() {
         $project_id = absint(get_query_var('project-overview'));
-        $this->render_project_page($project_id, 'overview');
+        $this->render_project_page($project_id, 'active');
     }
     
     /**
