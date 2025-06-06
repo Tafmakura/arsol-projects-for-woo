@@ -43,11 +43,11 @@ class Settings_General {
             'arsol_projects_settings'
         );
 
-        // Role Settings Section
+        // User Permissions Section
         add_settings_section(
-            'arsol_projects_role_settings',
-            __('Role Settings', 'arsol-pfw'),
-            array($this, 'render_role_settings_section'),
+            'arsol_projects_user_permissions',
+            __('User Project Permissions', 'arsol-pfw'),
+            array($this, 'render_user_permissions_section'),
             'arsol_projects_settings'
         );
 
@@ -56,18 +56,10 @@ class Settings_General {
             __('Allowed Roles', 'arsol-pfw'),
             array($this, 'render_roles_field'),
             'arsol_projects_settings',
-            'arsol_projects_role_settings',
-            array(
-                'description' => __('Select which roles can manage projects', 'arsol-pfw')
-            )
-        );
-
-        // User Permissions Section
-        add_settings_section(
             'arsol_projects_user_permissions',
-            __('User Project Permissions', 'arsol-pfw'),
-            array($this, 'render_user_permissions_section'),
-            'arsol_projects_settings'
+            array(
+                'description' => __('Select which roles can manage projects, create projects, or request projects.', 'arsol-pfw')
+            )
         );
 
         add_settings_field(
@@ -248,44 +240,35 @@ class Settings_General {
         $settings = get_option('arsol_projects_settings', array());
         $selected_roles = isset($settings['allowed_roles']) ? $settings['allowed_roles'] : array('administrator');
         
-        // Get all roles except administrator (always has access)
-        $roles = wp_roles()->get_names();
-        unset($roles['administrator']);
+        // Get all editable roles
+        $editable_roles = get_editable_roles();
         
-        // Display administrator role as always enabled
-        ?>
-        <label style="display: block; margin-bottom: 8px; color: #666;">
-            <input type="checkbox" checked disabled>
-            <?php echo esc_html__('Administrator', 'arsol-pfw'); ?> 
-            <em>(<?php esc_html_e('always enabled', 'arsol-pfw'); ?>)</em>
-        </label>
-        <?php
+        // Define the desired order of roles
+        $role_order = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
         
-        foreach ($roles as $role_id => $role_name) {
-            ?>
-            <label style="display: block; margin-bottom: 8px;">
-                <input type="checkbox"
-                       name="arsol_projects_settings[allowed_roles][]"
-                       value="<?php echo esc_attr($role_id); ?>"
-                       <?php checked(in_array($role_id, $selected_roles)); ?>>
-                <?php echo esc_html($role_name); ?>
-            </label>
-            <?php
-        }
-        ?>
-        <p class="description">
-            <?php echo esc_html($args['description']); ?>
-            <br>
-            <em><?php esc_html_e('Note: Administrators always have full access to manage projects.', 'arsol-pfw'); ?></em>
-        </p>
-        <?php
-    }
+        // Sort the roles based on the defined order
+        uksort($editable_roles, function ($a, $b) use ($role_order) {
+            $a_pos = array_search($a, $role_order);
+            $b_pos = array_search($b, $role_order);
+            
+            if ($a_pos === false && $b_pos === false) return 0; // Both not in order list
+            if ($a_pos === false) return 1; // a is not in list, so b is higher
+            if ($b_pos === false) return -1; // b is not in list, so a is higher
+            
+            return $a_pos - $b_pos;
+        });
 
-    /**
-     * Render role settings section description
-     */
-    public function render_role_settings_section() {
-        echo '<p>' . esc_html__('Configure which roles can manage projects.', 'arsol-pfw') . '</p>';
+        foreach ($editable_roles as $role => $details) {
+            $checked = in_array($role, $selected_roles) ? 'checked' : '';
+            echo '<label>';
+            echo '<input type="checkbox" name="arsol_projects_settings[allowed_roles][]" value="' . esc_attr($role) . '" ' . $checked . '> ';
+            echo esc_html($details['name']);
+            echo '</label><br>';
+        }
+
+        if (!empty($args['description'])) {
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
+        }
     }
 
     /**
@@ -328,38 +311,33 @@ class Settings_General {
     /**
      * Update capabilities when settings are saved
      *
-     * @param array $old_value Old settings value
-     * @param array $new_value New settings value
+     * @param mixed $old_value Old settings value
+     * @param mixed $new_value New settings value
      */
     public function update_capabilities($old_value, $new_value) {
-        // Get all roles
-        $roles = wp_roles()->get_names();
-        
-        // Get selected roles (default to administrator if none selected)
-        $allowed_roles = isset($new_value['allowed_roles']) ? $new_value['allowed_roles'] : array('administrator');
-        
-        // Ensure administrator role always has capabilities
-        $admin_role = get_role('administrator');
-        if ($admin_role) {
-            $admin_role->add_cap('arsol-manage-projects');
+        $allowed_roles = isset($new_value['allowed_roles']) ? $new_value['allowed_roles'] : array();
+
+        // Ensure administrator is always included
+        if (!in_array('administrator', $allowed_roles)) {
+            $allowed_roles[] = 'administrator';
         }
         
-        // Update capabilities for other roles
-        foreach ($roles as $role_id => $role_name) {
-            // Skip administrator role as it's already handled
-            if ($role_id === 'administrator') {
-                continue;
-            }
-            
-            $role = get_role($role_id);
-            if (!$role) {
-                continue;
-            }
-            
-            if (in_array($role_id, $allowed_roles)) {
-                $role->add_cap('arsol-manage-projects');
-            } else {
-                $role->remove_cap('arsol-manage-projects');
+        $all_roles = wp_roles()->get_names();
+
+        foreach ($all_roles as $role_slug => $role_name) {
+            $role = get_role($role_slug);
+            if ($role) {
+                if (in_array($role_slug, $allowed_roles)) {
+                    // Add capabilities for allowed roles
+                    $role->add_cap('manage_projects');
+                    $role->add_cap('create_projects');
+                    $role->add_cap('request_projects');
+                } else {
+                    // Remove capabilities for disallowed roles
+                    $role->remove_cap('manage_projects');
+                    $role->remove_cap('create_projects');
+                    $role->remove_cap('request_projects');
+                }
             }
         }
     }
