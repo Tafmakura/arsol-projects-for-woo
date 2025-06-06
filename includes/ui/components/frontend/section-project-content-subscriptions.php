@@ -1,6 +1,6 @@
 <?php
 /**
- * Project Subscriptions
+ * Project Subscriptions Content
  *
  * Shows subscriptions associated with a project.
  *
@@ -10,7 +10,34 @@
 
 defined('ABSPATH') || exit;
 
-do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $project_id); ?>
+// The $project variable is passed from the page template
+$project_id = isset($project['id']) ? $project['id'] : 0;
+
+if (!class_exists('WC_Subscriptions') || !$project_id) {
+    if (!$project_id) {
+        echo '<p>' . esc_html__('Project ID not found.', 'arsol-pfw') . '</p>';
+    } else {
+        echo '<p>' . esc_html__('WooCommerce Subscriptions is not active.', 'arsol-pfw') . '</p>';
+    }
+    return;
+}
+
+// Get paginated subscriptions for the project.
+$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+$args = array(
+    'post_type' => 'shop_subscription',
+    'post_status' => 'any',
+    'meta_key' => '_arsol_project_id',
+    'meta_value' => $project_id,
+    'posts_per_page' => 10,
+    'paged' => $paged,
+    'author' => get_current_user_id(),
+);
+$customer_subscriptions = new WP_Query($args);
+$has_subscriptions = $customer_subscriptions->have_posts();
+
+do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $project_id);
+?>
 
 <div class="woocommerce">
     <?php if ($has_subscriptions) : ?>
@@ -27,8 +54,9 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
 
             <tbody>
                 <?php
-                foreach ($customer_subscriptions->subscriptions as $subscription_id) {
-                    $subscription = wcs_get_subscription($subscription_id);
+                while ($customer_subscriptions->have_posts()) {
+                    $customer_subscriptions->the_post();
+                    $subscription = wcs_get_subscription(get_the_ID());
                     ?>
                     <tr class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($subscription->get_status()); ?> subscription">
                         <th class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-number" data-title="<?php esc_attr_e('Subscription', 'arsol-projects-for-woo'); ?>" scope="row">
@@ -48,33 +76,31 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
                     </tr>
                     <?php
                 }
+                wp_reset_postdata();
                 ?>
             </tbody>
         </table>
 
         <?php do_action('arsol_projects_before_project_subscriptions_pagination'); ?>
 
-        <?php if (1 < $customer_subscriptions->max_num_pages) : ?>
-            <div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination">
-                <?php 
-                // Get current URL and preserve existing query args
-                $current_url = remove_query_arg('paged');
-                
-                // Preserve project_id if it exists in shortcode attributes
-                if (!empty($atts['project_id'])) {
-                    $current_url = add_query_arg('project_id', $atts['project_id'], $current_url);
-                }
-                ?>
-                
-                <?php if (1 !== $current_page) : ?>
-                    <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page - 1, $current_url)); ?>"><?php esc_html_e('Previous', 'arsol-projects-for-woo'); ?></a>
-                <?php endif; ?>
+        <?php
+        // Manually create pagination links
+        $total_pages = $customer_subscriptions->max_num_pages;
 
-                <?php if (intval($customer_subscriptions->max_num_pages) !== $current_page) : ?>
-                    <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page + 1, $current_url)); ?>"><?php esc_html_e('Next', 'arsol-projects-for-woo'); ?></a>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
+        if ($total_pages > 1) {
+            echo '<nav class="woocommerce-pagination">';
+            echo paginate_links(array(
+                'base' => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
+                'format' => '?paged=%#%',
+                'current' => max(1, $paged),
+                'total' => $total_pages,
+                'prev_text' => '&larr;',
+                'next_text' => '&rarr;',
+                'type' => 'list',
+            ));
+            echo '</nav>';
+        }
+        ?>
 
     <?php else : ?>
 

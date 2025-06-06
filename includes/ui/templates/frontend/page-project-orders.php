@@ -1,32 +1,26 @@
 <?php
 /**
- * Project Orders
+ * Project Orders Page
  *
- * Shows orders associated with a project.
+ * This template acts as the main container for the project orders content.
+ * It calls the overridable content section.
  *
  * @package Arsol_Projects_For_Woo
  * @version 1.0.0
  */
 
-defined('ABSPATH') || exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
-do_action('arsol_projects_before_project_orders', $project_id);
-?>
+// The $project variable is passed from the render_project_page function
+if (!isset($project)) {
+    return;
+}
 
-<?php // Navigation included in includes/classes/class-endpoints.php  ?>
-
-<div class="project-content project-orders"> 
-    <?php do_action('arsol_projects_orders_before_table', $project_id); ?>
-    
-    <div class="arsol-project-table-wrapper">
-       
-        <?php 
-        // Use the project_orders shortcode to render the table
-        echo do_shortcode('[arsol_project_orders project_id="' . esc_attr($project_id) . '"]');
-        ?>
-    </div>
-    
-    <?php do_action('arsol_projects_orders_after_table', $project_id); ?>
-</div>
-
-<?php do_action('arsol_projects_after_project_orders', $project_id); ?>
+// Render the project orders content, allowing for overrides
+\Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+    'project_orders',
+    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-orders.php',
+    compact('project')
+);

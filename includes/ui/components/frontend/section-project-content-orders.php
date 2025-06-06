@@ -1,6 +1,6 @@
 <?php
 /**
- * Project Orders
+ * Project Orders Content
  *
  * Shows orders associated with a project.
  *
@@ -10,7 +10,26 @@
 
 defined('ABSPATH') || exit;
 
-do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
+// The $project variable is passed from the page template
+$project_id = isset($project['id']) ? $project['id'] : 0;
+
+if (!$project_id) {
+    echo '<p>' . esc_html__('Project ID not found.', 'arsol-pfw') . '</p>';
+    return;
+}
+
+// Get paginated orders for the project.
+$paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
+$customer_orders = wc_get_orders(array(
+    'meta_key' => '_arsol_project_id',
+    'meta_value' => $project_id,
+    'paged' => $paged,
+    'customer' => get_current_user_id(),
+));
+$has_orders = !empty($customer_orders);
+
+do_action('arsol_projects_before_project_orders', $has_orders, $project_id);
+?>
 
 <div class="woocommerce">
     <?php if ($has_orders) : ?>
@@ -26,7 +45,7 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
 
             <tbody>
                 <?php
-                foreach ($customer_orders->orders as $customer_order) {
+                foreach ($customer_orders as $customer_order) {
                     $order = wc_get_order($customer_order);
                     $item_count = $order->get_item_count() - $order->get_item_count_refunded();
                     ?>
@@ -57,27 +76,24 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id); ?>
 
         <?php do_action('arsol_projects_before_project_orders_pagination'); ?>
 
-        <?php if (1 < $customer_orders->max_num_pages) : ?>
-            <div class="woocommerce-pagination woocommerce-pagination--without-numbers woocommerce-Pagination">
-                <?php 
-                // Get current URL and preserve existing query args
-                $current_url = remove_query_arg('paged');
-                
-                // Preserve project_id if it exists in shortcode attributes
-                if (!empty($atts['project_id'])) {
-                    $current_url = add_query_arg('project_id', $atts['project_id'], $current_url);
-                }
-                ?>
-                
-                <?php if (1 !== $current_page) : ?>
-                    <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page - 1, $current_url)); ?>"><?php esc_html_e('Previous', 'arsol-projects-for-woo'); ?></a>
-                <?php endif; ?>
+        <?php
+        // Manually create pagination links
+        $total_pages = wc_get_orders(array('meta_key' => '_arsol_project_id', 'meta_value' => $project_id, 'paginate' => true, 'customer' => get_current_user_id()))->max_num_pages;
 
-                <?php if (intval($customer_orders->max_num_pages) !== $current_page) : ?>
-                    <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page + 1, $current_url)); ?>"><?php esc_html_e('Next', 'arsol-projects-for-woo'); ?></a>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
+        if ($total_pages > 1) {
+            echo '<nav class="woocommerce-pagination">';
+            echo paginate_links(array(
+                'base' => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
+                'format' => '?paged=%#%',
+                'current' => max(1, $paged),
+                'total' => $total_pages,
+                'prev_text' => '&larr;',
+                'next_text' => '&rarr;',
+                'type' => 'list',
+            ));
+            echo '</nav>';
+        }
+        ?>
 
     <?php else : ?>
 

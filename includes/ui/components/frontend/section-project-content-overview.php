@@ -42,25 +42,6 @@ $due_date = get_post_meta($project['id'], '_project_due_date', true);
             <?php endif; ?>
         </div>
     </div>
-    <div class="project-sidebar">
-        <div class="project-sidebar-wrapper">
-            <div class="project-sidebar-card card">
-                <div class="project-details">
-                    <h4><?php esc_html_e('Project Details', 'arsol-projects-for-woo'); ?></h4>
-                    <div class="project-meta">
-                        <p><strong><?php esc_html_e('Status:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html($status); ?></p>
-                        <?php if ($start_date) : ?>
-                            <p><strong><?php esc_html_e('Start Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($start_date))); ?></p>
-                        <?php endif; ?>
-                        <?php if ($due_date) : ?>
-                            <p><strong><?php esc_html_e('Due Date:', 'arsol-projects-for-woo'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($due_date))); ?></p>
-                        <?php endif; ?>
-                        <p><strong><?php esc_html_e('Date Created:', 'arsol-projects-for-woo'); ?></strong> <?php echo get_the_date(); ?></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <?php 
