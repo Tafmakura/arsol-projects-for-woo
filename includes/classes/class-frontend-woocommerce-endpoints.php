@@ -124,87 +124,60 @@ class Frontend_Endpoints {
      * Projects endpoint content
      */
     public function projects_endpoint_content() {
-        // Get current tab from URL parameter
+        // Get current tab from URL parameter, default to 'active'
         $current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'active';
-
-        // Include the create/request section above navigation
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-create-or-request.php';
-
-        // Include the navigation component
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-navigation.php';
 
         // Get current user ID
         $user_id = get_current_user_id();
         
-        // Determine current page from query vars, supporting both /page/N and ?paged=N
-        if (get_query_var('paged')) {
-            $paged = get_query_var('paged');
-        } elseif (get_query_var('page')) {
-            $paged = get_query_var('page');
-        } else {
-            $paged = 1;
-        }
+        // Determine current page from query vars
+        $paged = get_query_var('paged') ? get_query_var('paged') : 1;
 
-        // Query arguments based on tab
+        // Base query arguments
         $args = array(
             'posts_per_page' => 10,
-            'paged' => $paged,
-            'author' => $user_id,
-            'orderby' => 'date',
-            'order' => 'DESC',
+            'paged'          => $paged,
+            'author'         => $user_id,
+            'orderby'        => 'date',
+            'order'          => 'DESC',
         );
 
         // Set post types and statuses based on current tab
         switch ($current_tab) {
             case 'proposals':
-                $args['post_type'] = array('arsol-pfw-proposal');
+                $args['post_type']   = 'arsol-pfw-proposal';
                 $args['post_status'] = 'publish';
                 break;
             case 'requests':
-                $args['post_type'] = array('arsol-pfw-request');
-                $args['post_status'] = 'published';
+                $args['post_type']   = 'arsol-pfw-request';
+                $args['post_status'] = 'publish';
                 break;
             case 'active':
             default:
-                $args['post_type'] = array('arsol-project');
+                $args['post_type'] = 'arsol-project';
                 $args['post_status'] = 'publish';
-                // For active projects, only show those that are not completed
                 $args['tax_query'] = array(
                     array(
                         'taxonomy' => 'arsol-project-status',
-                        'field' => 'slug',
-                        'terms' => array('completed'),
-                        'operator' => 'NOT IN'
-                    )
+                        'field'    => 'slug',
+                        'terms'    => array('completed'),
+                        'operator' => 'NOT IN',
+                    ),
                 );
                 break;
         }
 
-        // Get posts
+        // Perform the query
         $query = new \WP_Query($args);
 
-        // Set up common variables for all templates
-        $has_items = $query->have_posts();
+        // Set up variables for the template
         $total_pages = $query->max_num_pages;
-        $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? 
-            ' ' . wc_wp_theme_get_element_class_name('button') : '';
+        $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') 
+            ? ' ' . wc_wp_theme_get_element_class_name('button') 
+            : '';
 
-        // Include the appropriate template based on tab
-        switch ($current_tab) {
-            case 'proposals':
-                $user_projects = $query->posts;
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-proposals.php';
-                break;
-            case 'requests':
-                $user_projects = $query->posts;
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-requests.php';
-                break;
-            case 'active':
-            default:
-                $user_projects = $query->posts;
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
-                break;
-        }
+        // Load the single master template and pass all necessary data
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
     }
     
     /**
