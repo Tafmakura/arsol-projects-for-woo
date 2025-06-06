@@ -92,12 +92,20 @@ class Settings_General {
             )
         );
 
+        // Proposal Invoice Settings Section
+        add_settings_section(
+            'arsol_projects_proposal_invoice_settings',
+            __('Proposal Invoice Settings', 'arsol-pfw'),
+            array($this, 'render_proposal_invoice_settings_section'),
+            'arsol_projects_settings'
+        );
+
         add_settings_field(
             'proposal_invoice_product',
             __('Proposal Invoice Product', 'arsol-pfw'),
             array($this, 'render_single_product_select_field'),
             'arsol_projects_settings',
-            'arsol_projects_product_settings',
+            'arsol_projects_proposal_invoice_settings',
             array(
                 'field' => 'proposal_invoice_product',
                 'description' => __('Select a product to be used for single proposal invoices.', 'arsol-pfw'),
@@ -111,7 +119,7 @@ class Settings_General {
             __('Proposal Recurring Invoice Product', 'arsol-pfw'),
             array($this, 'render_single_product_select_field'),
             'arsol_projects_settings',
-            'arsol_projects_product_settings',
+            'arsol_projects_proposal_invoice_settings',
             array(
                 'field' => 'proposal_recurring_invoice_product',
                 'description' => __('Select a subscription product to be used for recurring proposal invoices.', 'arsol-pfw'),
@@ -238,6 +246,13 @@ class Settings_General {
      */
     public function render_product_settings_section() {
         echo '<p>' . esc_html__('Configure which products or categories should show the project selector during checkout.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render proposal invoice settings section description
+     */
+    public function render_proposal_invoice_settings_section() {
+        echo '<p>' . esc_html__('Configure which products should be added to the project invoice when a proposal is accepted by the customer.', 'arsol-pfw') . '</p>';
     }
 
     /**
