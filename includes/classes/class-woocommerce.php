@@ -511,44 +511,40 @@ class Woocommerce {
                     \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
                 );
 
-                // This check is to ensure we are in a block context.
-                if (did_action('woocommerce_blocks_checkout_enqueue_data')) {
+                $current_user_id = get_current_user_id();
+                $projects = $this->get_projects($current_user_id);
 
-                    $current_user_id = get_current_user_id();
-                    $projects = $this->get_projects($current_user_id);
+                $options = array(
+                    array(
+                        'value' => '',
+                        'label' => __('None', 'arsol-pfw'),
+                    ),
+                );
 
-                    $options = array(
-                        array(
-                            'value' => '',
-                            'label' => __('None', 'arsol-pfw'),
-                        ),
-                    );
-
-                    foreach ($projects as $project) {
-                        // Only show projects that the user can view
-                        if (self::user_can_view_project($current_user_id, $project->ID)) {
-                            $options[] = array(
-                                'value' => (string) $project->ID,
-                                'label' => esc_html($project->post_title),
-                            );
-                        }
+                foreach ($projects as $project) {
+                    // Only show projects that the user can view
+                    if (self::user_can_view_project($current_user_id, $project->ID)) {
+                        $options[] = array(
+                            'value' => (string) $project->ID,
+                            'label' => esc_html($project->post_title),
+                        );
                     }
-                    
-                    $checkout_fields_controller->register_checkout_field(
-                        array(
-                            'id' => $field_id,
-                            'type' => 'select',
-                            'label' => __('Project', 'arsol-pfw'),
-                            'location' => 'address',
-                            'options' => $options,
-                            'required' => false,
-                            'hidden' => !$this->should_display_project_field(),
-                            'attributes' => array(),
-                            'experimental_attributes' => array(),
-                            'default' => '',
-                        )
-                    );
                 }
+                
+                $checkout_fields_controller->register_checkout_field(
+                    array(
+                        'id' => $field_id,
+                        'type' => 'select',
+                        'label' => __('Project', 'arsol-pfw'),
+                        'location' => 'address',
+                        'options' => $options,
+                        'required' => false,
+                        'hidden' => !$this->should_display_project_field(),
+                        'attributes' => array(),
+                        'experimental_attributes' => array(),
+                        'default' => '',
+                    )
+                );
             } catch (\Exception $e) {
                 // Log error or handle gracefully
             }
