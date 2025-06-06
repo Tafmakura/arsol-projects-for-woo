@@ -50,17 +50,18 @@ $project_id = isset($project['id']) ? $project['id'] : 0;
 <div class="project-overview-wrapper">
     <div class="project-content">
         <?php
-        \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-            'project_content_' . $type,
-            $content_template,
-            compact('project', 'project_id')
-        );
+        if (file_exists($content_template)) {
+            include $content_template;
+        } else {
+            echo '<p>' . esc_html__('Content template not found.', 'arsol-pfw') . '</p>';
+        }
         ?>
     </div>
     
     <div class="project-sidebar">
         <div class="project-sidebar-wrapper">
             <div class="project-sidebar-card card">
+
                 <?php
                 if (file_exists($sidebar_template)) {
                     include $sidebar_template;
