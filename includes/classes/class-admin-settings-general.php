@@ -383,7 +383,6 @@ class Settings_General {
         ?>
         <div class="<?php echo $class; ?>">
         <select id="user_project_permissions"
-                class="regular-text"
                 name="arsol_projects_settings[user_project_permissions]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
@@ -408,7 +407,6 @@ class Settings_General {
         ?>
         <div class="<?php echo $class; ?>">
         <select id="default_user_permission"
-                class="regular-text"
                 name="arsol_projects_settings[default_user_permission]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
