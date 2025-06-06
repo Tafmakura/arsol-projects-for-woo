@@ -1,6 +1,6 @@
 <?php
 /**
- * Project Endpoints Class
+ * Frontend Project Endpoints Class
  *
  * Handles custom endpoints for project pages.
  *
@@ -10,7 +10,7 @@
 
 namespace Arsol_Projects_For_Woo\Woocommerce;
 
-use Arsol_Projects_For_Woo\Template_Overrides;
+use Arsol_Projects_For_Woo\Frontend_Template_Overrides;
 use Arsol_Projects_For_Woo\Woocommerce;
 
 // Exit if accessed directly.
@@ -19,9 +19,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Project Endpoints class
+ * Frontend Project Endpoints class
  */
-class Endpoints {
+class Frontend_Endpoints {
     
     /**
      * Constructor
@@ -193,7 +193,7 @@ class Endpoints {
         switch ($current_tab) {
             case 'proposals':
                 $user_projects = $query->posts;
-                Template_Overrides::render_template(
+                Frontend_Template_Overrides::render_template(
                     'project_proposal_listings',
                     ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-proposals.php',
                     compact('user_projects', 'has_items', 'paged', 'total_pages', 'wp_button_class')
@@ -201,7 +201,7 @@ class Endpoints {
                 break;
             case 'requests':
                 $user_projects = $query->posts;
-                Template_Overrides::render_template(
+                Frontend_Template_Overrides::render_template(
                     'project_requests_listings',
                     ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-requests.php',
                     compact('user_projects', 'has_items', 'paged', 'total_pages', 'wp_button_class')
@@ -210,7 +210,7 @@ class Endpoints {
             case 'active':
             default:
                 $user_projects = $query->posts;
-                Template_Overrides::render_template(
+                Frontend_Template_Overrides::render_template(
                     'projects_listing',
                     ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php',
                     compact('user_projects', 'has_items', 'paged', 'total_pages', 'wp_button_class')
@@ -259,14 +259,14 @@ class Endpoints {
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
         
         if (!$admin_users->can_user_create_projects($user_id)) {
-            Template_Overrides::render_template(
+            Frontend_Template_Overrides::render_template(
                 'access_denied',
                 ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-no-permission.php'
             );
             return;
         }
         
-        Template_Overrides::render_template(
+        Frontend_Template_Overrides::render_template(
             'create_project_form',
             ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create.php'
         );
@@ -282,14 +282,14 @@ class Endpoints {
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
 
         if (!$admin_users->can_user_request_projects($user_id)) {
-            Template_Overrides::render_template(
+            Frontend_Template_Overrides::render_template(
                 'access_denied',
                 ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-no-permission.php'
             );
             return;
         }
 
-        Template_Overrides::render_template(
+        Frontend_Template_Overrides::render_template(
             'request_project_form',
             ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php'
         );
@@ -429,7 +429,7 @@ class Endpoints {
                 break;
             case 'overview':
             default:
-                Template_Overrides::render_template(
+                Frontend_Template_Overrides::render_template(
                     'project_overview',
                     ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-overview.php',
                     compact('project')
@@ -542,5 +542,4 @@ class Endpoints {
             'author' => $project->post_author
         ];
     }
-}
-
+} 

@@ -1,10 +1,10 @@
 <?php
 /**
- * Template Overrides Class
+ * Frontend Template Overrides Class
  *
- * Handles template override logic.
+ * Handles template override logic for the frontend.
  *
- * @package Arsol_Projects_For_Woo\Admin
+ * @package Arsol_Projects_For_Woo
  * @version 1.0.0
  */
 
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Template_Overrides {
+class Frontend_Template_Overrides {
 
     /**
      * Get the override shortcode for a given template

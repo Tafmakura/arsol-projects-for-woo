@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Woocommerce_Checkout {
+class Frontend_Woocommerce_Checkout {
 
     public function __construct() {
         // Register the project checkout field when WordPress and WooCommerce are fully loaded
@@ -79,7 +79,7 @@ class Woocommerce_Checkout {
 
     public function register_project_checkout_field() {
         // Use new Blocks-compatible registration if available
-        if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
+        if (class_exists('Automattic\\WooCommerce\\Blocks\\Package')) {
             if ($this->should_display_project_field()) {
                 try {
                     $settings = get_option('arsol_projects_settings', array());
@@ -194,4 +194,4 @@ class Woocommerce_Checkout {
             // The order->save() is called by WooCommerce after this hook.
         }
     }
-}
+} 

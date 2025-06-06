@@ -38,11 +38,12 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-endpoints.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-endpoints.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-checkout.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-advanced.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-integrations.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-template-overrides.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-overrides.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-users.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-capabilities.php';
@@ -65,7 +66,8 @@ class Setup {
         new Shortcodes();
         new Woocommerce();
         new Assets();
-        new Woocommerce\Endpoints();
+        new Woocommerce\Frontend_Endpoints();
+        new Frontend_Woocommerce_Checkout();
         new Admin\Settings_General();
         new Admin\Settings_Advanced();
         new Admin\Settings_Integrations();
