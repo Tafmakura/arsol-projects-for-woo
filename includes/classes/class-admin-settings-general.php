@@ -86,9 +86,8 @@ class Settings_General {
             'arsol_projects_product_settings',
             array(
                 'field' => 'require_project_selection',
-                'label' => __('Make project selection mandatory when the field is displayed at checkout.', 'arsol-pfw'),
-                'description' => __('If unchecked, customers can proceed without selecting a project.', 'arsol-pfw'),
-                'class' => 'arsol-pfw-require-selection'
+                'label' => __('Make project selection mandatory on frontend.', 'arsol-pfw'),
+             'class' => 'arsol-pfw-require-selection'
             )
         );
 
@@ -266,7 +265,7 @@ class Settings_General {
         <div class="<?php echo $class; ?>">
             <select class="wc-product-search"
                     multiple="multiple"
-                    style="width: 50%;"
+                    style="width: 25em;"
                     name="arsol_projects_settings[project_products][]"
                     data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
                     data-action="woocommerce_json_search_products_and_variations">
@@ -299,7 +298,7 @@ class Settings_General {
         <div class="<?php echo $class; ?>">
             <select class="wc-enhanced-select"
                     multiple="multiple"
-                    style="width: 50%;"
+                    style="width: 25em;"
                     name="arsol_projects_settings[project_categories][]"
                     data-placeholder="<?php esc_attr_e('Search for a category…', 'arsol-pfw'); ?>">
                 <?php
@@ -384,6 +383,7 @@ class Settings_General {
         ?>
         <div class="<?php echo $class; ?>">
         <select id="user_project_permissions"
+                style="width: 25em;"
                 name="arsol_projects_settings[user_project_permissions]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
@@ -408,6 +408,7 @@ class Settings_General {
         ?>
         <div class="<?php echo $class; ?>">
         <select id="default_user_permission"
+                style="width: 25em;"
                 name="arsol_projects_settings[default_user_permission]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
@@ -506,7 +507,7 @@ class Settings_General {
         ?>
         <div class="<?php echo esc_attr($class); ?>">
             <select class="wc-product-search"
-                    style="width: 50%;"
+                    style="width: 25em;"
                     id="<?php echo esc_attr($field_name); ?>"
                     name="arsol_projects_settings[<?php echo esc_attr($field_name); ?>]"
                     data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
