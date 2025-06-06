@@ -33,7 +33,6 @@ $due_date = get_post_meta($project['id'], '_project_due_date', true);
 
 <div class="project-overview-wrapper">
     <div class="project-content">
-        <h3 class="project-title"><?php the_title(); ?></h3>
         <div class="project-description">
             <?php if (empty(get_the_content())) : ?>
                 <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-overview-empty.php'; ?>
