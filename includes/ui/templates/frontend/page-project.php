@@ -59,14 +59,7 @@ $tabs = array(
     </div>
 </div>
 <?php
-// --- Render Page Content and Conditional Sidebar ---
-$is_overview = (!isset($tab) || $tab === 'overview');
-if ($is_overview) :
-?>
-<div class="project-overview-wrapper">
-    <div class="project-content">
-<?php endif; ?>
-<?php
+// --- Render Page Content ---
 switch ($tab) {
     case 'orders':
         \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
@@ -90,12 +83,4 @@ switch ($tab) {
         );
         break;
 }
-?>
-<?php if ($is_overview) : ?>
-    </div>
-    <?php
-    $sidebar_type = 'overview';
-    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar.php';
-    ?>
-</div>
-<?php endif; ?> 
+?> 

@@ -42,6 +42,11 @@ $due_date = get_post_meta($project['id'], '_project_due_date', true);
             <?php endif; ?>
         </div>
     </div>
+    <?php
+    $sidebar_type = 'overview';
+    $project_id = $project['id'];
+    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar.php';
+    ?>
 </div>
 
 <?php 

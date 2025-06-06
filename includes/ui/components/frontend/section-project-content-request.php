@@ -39,23 +39,9 @@ $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' .
             </div>
         <?php endif; ?>
     </div>
-    <div class="project-sidebar">
-        <div class="project-sidebar-wrapper">
-            <div class="project-sidebar-card card">
-                <div class="project-details">
-                    <h4><?php _e('Request Details', 'arsol-pfw'); ?></h4>
-                    <div class="project-meta">
-                        <p><strong><?php _e('Status:', 'arsol-pfw'); ?></strong> <?php echo esc_html($status); ?></p>
-                        <?php if ($request_budget): ?>
-                            <p><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php echo esc_html($request_budget); ?></p>
-                        <?php endif; ?>
-                        <?php if ($request_timeline): ?>
-                            <p><strong><?php _e('Timeline:', 'arsol-pfw'); ?></strong> <?php echo esc_html($request_timeline); ?></p>
-                        <?php endif; ?>
-                        <p><strong><?php _e('Date:', 'arsol-pfw'); ?></strong> <?php echo get_the_date('', $post->ID); ?></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <?php
+    $sidebar_type = 'request';
+    $project_id = $post->ID;
+    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar.php';
+    ?>
 </div>
