@@ -93,7 +93,7 @@ switch ($tab) {
 ?>
 <?php if ($is_overview) : ?>
     </div>
-    <div class="project-sidebar">
+    <div class="project-sidebar card">
         <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-overview.php'; ?>
     </div>
 </div>
