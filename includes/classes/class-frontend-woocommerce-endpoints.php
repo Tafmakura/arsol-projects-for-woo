@@ -279,18 +279,7 @@ class Frontend_Endpoints {
             exit;
         }
 
-        // Start output buffering
-        ob_start();
-
-        // Set the type for the template
-        $_GET['type'] = 'proposal';
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-active.php';
-
-        // Get the buffered content
-        $content = ob_get_clean();
-
-        // Output the content
-        echo $content;
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-proposal.php';
     }
     
     /**
@@ -328,18 +317,7 @@ class Frontend_Endpoints {
             exit;
         }
 
-        // Start output buffering
-        ob_start();
-
-        // Set the type for the template
-        $_GET['type'] = 'request';
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-active.php';
-
-        // Get the buffered content
-        $content = ob_get_clean();
-
-        // Output the content
-        echo $content;
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php';
     }
     
     /**
