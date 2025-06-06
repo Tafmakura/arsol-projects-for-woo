@@ -508,6 +508,18 @@ class Woocommerce {
                 try {
                     $settings = get_option('arsol_projects_settings', array());
                     $is_required = !empty($settings['require_project_selection']);
+                    $link_url = !empty($settings['checkout_link_url']) ? esc_url($settings['checkout_link_url']) : '';
+                    $link_text = !empty($settings['checkout_link_text']) ? esc_html($settings['checkout_link_text']) : __('contact sales', 'arsol-pfw');
+
+                    $description = '';
+                    if (!empty($link_url)) {
+                        $description = sprintf(
+                            '%s <a href="%s" target="_blank">%s</a>',
+                            __('Having challenges selecting a project?', 'arsol-pfw'),
+                            $link_url,
+                            $link_text
+                        );
+                    }
 
                     $field_id = 'arsol-projects-for-woo/arsol-project';
                     
@@ -532,17 +544,18 @@ class Woocommerce {
                                 'value' => (string) $project->ID,
                                 'label' => esc_html($project->post_title),
                             );
-                        }
+        }
                     }
                     
                     $checkout_fields_controller->register_checkout_field(
-                        array(
+            array(
                             'id' => $field_id,
                             'type' => 'select',
                             'label' => __('Project', 'arsol-pfw'),
                             'location' => 'order',
                             'options' => $options,
                             'required' => $is_required,
+                            'description' => $description,
                             'attributes' => array(),
                             'experimental_attributes' => array(),
                             'default' => '',
@@ -571,6 +584,18 @@ class Woocommerce {
 
         $settings = get_option('arsol_projects_settings', array());
         $is_required = !empty($settings['require_project_selection']);
+        $link_url = !empty($settings['checkout_link_url']) ? esc_url($settings['checkout_link_url']) : '';
+        $link_text = !empty($settings['checkout_link_text']) ? esc_html($settings['checkout_link_text']) : __('contact sales', 'arsol-pfw');
+
+        $description = '';
+        if (!empty($link_url)) {
+            $description = sprintf(
+                '%s <a href="%s" target="_blank">%s</a>',
+                __('Having challenges selecting a project?', 'arsol-pfw'),
+                $link_url,
+                $link_text
+            );
+        }
 
         $current_user_id = get_current_user_id();
         $projects = $this->get_projects($current_user_id);
@@ -589,6 +614,7 @@ class Woocommerce {
             'required'      => $is_required,
             'placeholder'   => __('Select a project…', 'arsol-pfw'),
             'options'       => $options,
+            'description'   => $description,
         );
 
         echo '<div id="arsol-project-checkout-field">';
@@ -613,8 +639,8 @@ class Woocommerce {
         // For block checkout
         elseif (isset($data['arsol-projects-for-woo/arsol-project'])) {
             $project_id = sanitize_text_field($data['arsol-projects-for-woo/arsol-project']);
-        }
-
+                    }
+        
         if (!empty($project_id)) {
             $order = wc_get_order($order_id);
             $order->update_meta_data(self::PROJECT_META_KEY, $project_id);

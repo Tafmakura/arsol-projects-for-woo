@@ -89,6 +89,31 @@ class Settings_General {
             )
         );
 
+        add_settings_field(
+            'checkout_link_url',
+            __('Checkout Link URL', 'arsol-pfw'),
+            array($this, 'render_text_field'),
+            'arsol_projects_settings',
+            'arsol_projects_product_settings',
+            array(
+                'field' => 'checkout_link_url',
+                'description' => __('The URL for the contact link shown below the project selector. The description will not appear if this is empty.', 'arsol-pfw')
+            )
+        );
+
+        add_settings_field(
+            'checkout_link_text',
+            __('Checkout Link Text', 'arsol-pfw'),
+            array($this, 'render_text_field'),
+            'arsol_projects_settings',
+            'arsol_projects_product_settings',
+            array(
+                'field' => 'checkout_link_text',
+                'description' => __('The text for the contact link. Defaults to "contact sales".', 'arsol-pfw'),
+                'default' => __('contact sales', 'arsol-pfw')
+            )
+        );
+
         // User Permissions Section
         add_settings_section(
             'arsol_projects_user_permissions',
@@ -482,5 +507,25 @@ class Settings_General {
                 }
             }
         }
+    }
+
+    /**
+     * Render text field
+     */
+    public function render_text_field($args) {
+        $settings = get_option('arsol_projects_settings', array());
+        $field = $args['field'];
+        $default = isset($args['default']) ? $args['default'] : '';
+        $value = isset($settings[$field]) && $settings[$field] !== '' ? $settings[$field] : $default;
+        ?>
+        <input type="text"
+               id="<?php echo esc_attr($field); ?>"
+               name="arsol_projects_settings[<?php echo esc_attr($field); ?>]"
+               value="<?php echo esc_attr($value); ?>"
+               class="regular-text">
+        <?php if (!empty($args['description'])): ?>
+            <p class="description"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
+        <?php
     }
 }
