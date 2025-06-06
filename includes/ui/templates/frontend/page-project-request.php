@@ -39,4 +39,4 @@ $status = !empty($status_terms) ? $status_terms[0] : '';
 $_GET['type'] = 'request';
 
 // Include the project template which will load the appropriate content
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/page-project.php';
+include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project.php';
