@@ -46,13 +46,13 @@ include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-pro
 // --- Main Content ---
 switch ($current_tab) {
     case 'proposals':
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-content-proposals.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-proposals.php';
         break;
     case 'requests':
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-content-requests.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-requests.php';
         break;
     case 'active':
     default:
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-content-active.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-active.php';
         break;
 }

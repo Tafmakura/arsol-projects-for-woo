@@ -71,14 +71,14 @@ switch ($tab) {
     case 'orders':
         \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
             'project_orders',
-            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-orders.php',
+            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-listing-orders.php',
             compact('project')
         );
         break;
     case 'subscriptions':
         \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
             'project_subscriptions',
-            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-subscriptions.php',
+            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-listing-subscriptions.php',
             compact('project')
         );
         break;
@@ -93,8 +93,9 @@ switch ($tab) {
 ?>
 <?php if ($is_overview) : ?>
     </div>
-    <div class="project-sidebar card">
-        <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-overview.php'; ?>
-    </div>
+    <?php
+    $sidebar_type = 'overview';
+    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar.php';
+    ?>
 </div>
 <?php endif; ?> 

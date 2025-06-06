@@ -47,12 +47,25 @@ if ($type === 'proposal') {
     $status = !empty($status_terms) ? $status_terms[0] : '';
 }
 
-// Include the appropriate component
-$component_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-approval-' . $type . '.php';
-if (file_exists($component_path)) {
-    include $component_path;
-} else {
-    wc_add_notice(__('Template not found.', 'arsol-pfw'), 'error');
-    wp_safe_redirect(wc_get_account_endpoint_url('projects'));
-    exit;
-}
+// --- Render Page ---
+?>
+<div class="project-overview-wrapper">
+    <div class="project-content">
+        <?php
+        // Include the appropriate content component
+        $component_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-approval-' . $type . '.php';
+        if (file_exists($component_path)) {
+            include $component_path;
+        } else {
+            wc_add_notice(__('Template not found.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            exit;
+        }
+        ?>
+    </div>
+    <?php
+    // Include the sidebar
+    $sidebar_type = $type; // 'proposal' or 'request'
+    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar.php';
+    ?>
+</div>
