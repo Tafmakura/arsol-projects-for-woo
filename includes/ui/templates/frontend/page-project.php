@@ -74,8 +74,12 @@ $tabs = array(
 // --- End Inlined Project Navigation ---
 
 ?>
+
+<?php if ($tab === 'overview' || !isset($tab)) : // Show sidebar layout for overview tab ?>
 <div class="arsol-project-content-wrapper">
     <div class="arsol-project-main-content">
+<?php endif; ?>
+
         <?php
         // Render content based on tab, allowing for overrides
         switch ($tab) {
@@ -103,22 +107,14 @@ $tabs = array(
                 break;
         }
         ?>
+
+<?php if ($tab === 'overview' || !isset($tab)) : // Close wrapper and add sidebar for overview ?>
     </div>
     <div class="arsol-project-sidebar-content">
         <?php
-        // Include the project sidebar based on the current tab
-        switch ($tab) {
-            case 'orders':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-orders.php';
-                break;
-            case 'subscriptions':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-subscriptions.php';
-                break;
-            case 'overview':
-            default:
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-overview.php';
-                break;
-        }
+        // Include the project sidebar only for the overview tab
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-overview.php';
         ?>
     </div>
 </div>
+<?php endif; ?>
