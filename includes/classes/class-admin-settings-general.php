@@ -94,7 +94,7 @@ class Settings_General {
 
         add_settings_field(
             'default_user_permission',
-            __('Default User', 'arsol-pfw'),
+            __('New User Permissions', 'arsol-pfw'),
             array($this, 'render_conditional_select_field'),
             'arsol_projects_settings',
             'arsol_projects_user_permissions',
