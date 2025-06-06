@@ -536,7 +536,7 @@ class Woocommerce {
                         'id' => $field_id,
                         'type' => 'select',
                         'label' => __('Project', 'arsol-pfw'),
-                        'location' => 'address',
+                        'location' => 'order',
                         'options' => $options,
                         'required' => false,
                         'hidden' => !$this->should_display_project_field(),
