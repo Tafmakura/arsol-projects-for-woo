@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// The $project_id variable is passed from page-project.php
+// The $project_id variable is passed from page-project-active.php
 if (!isset($project_id)) {
     return;
 }

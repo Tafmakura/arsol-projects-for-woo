@@ -72,8 +72,8 @@ switch ($tab) {
         break;
     default:
         \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-            'project_overview',
-            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-overview.php',
+            'project_content',
+            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project.php',
             compact('project')
         );
         break;

@@ -40,9 +40,4 @@ $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' .
             </div>
         <?php endif; ?>
     </div>
-    <?php
-    $sidebar_type = 'proposal';
-    $project_id = $post->ID;
-    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar.php';
-    ?>
 </div>
