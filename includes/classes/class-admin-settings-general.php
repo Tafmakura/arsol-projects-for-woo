@@ -22,6 +22,9 @@ class Settings_General {
         // Register settings
         add_action('admin_init', array($this, 'register_settings'));
         
+        // Add scripts for admin page
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+        
         // Add filter for post type supports
         add_filter('post_type_supports', array($this, 'filter_post_type_supports'), 10, 2);
 
@@ -41,6 +44,36 @@ class Settings_General {
             __('General Settings', 'arsol-pfw'),
             array($this, 'render_general_settings_section'),
             'arsol_projects_settings'
+        );
+
+        // Product Settings Section
+        add_settings_section(
+            'arsol_projects_product_settings',
+            __('Product Settings', 'arsol-pfw'),
+            array($this, 'render_product_settings_section'),
+            'arsol_projects_settings'
+        );
+
+        add_settings_field(
+            'project_products',
+            __('Project Products', 'arsol-pfw'),
+            array($this, 'render_products_select_field'),
+            'arsol_projects_settings',
+            'arsol_projects_product_settings',
+            array(
+                'description' => __('Show the project selector at checkout only if these products are in the cart. Leave empty to show for all products.', 'arsol-pfw')
+            )
+        );
+
+        add_settings_field(
+            'project_categories',
+            __('Project Categories', 'arsol-pfw'),
+            array($this, 'render_categories_select_field'),
+            'arsol_projects_settings',
+            'arsol_projects_product_settings',
+            array(
+                'description' => __('Show the project selector at checkout if a product from these categories is in the cart. Leave empty to show for all products.', 'arsol-pfw')
+            )
         );
 
         // User Permissions Section
@@ -131,10 +164,81 @@ class Settings_General {
     }
 
     /**
+     * Enqueue admin scripts
+     */
+    public function enqueue_admin_scripts($hook) {
+        // Only load on our settings page
+        if ($hook !== 'toplevel_page_arsol-projects') {
+            return;
+        }
+
+        wp_enqueue_script('wc-enhanced-select');
+        wp_enqueue_script('wc-product-search');
+    }
+
+    /**
      * Render general settings section description
      */
     public function render_general_settings_section() {
         echo '<p>' . esc_html__('Configure general settings for Arsol Projects For Woo.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render product settings section description
+     */
+    public function render_product_settings_section() {
+        echo '<p>' . esc_html__('Configure which products or categories should show the project selector during checkout.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render products select field
+     */
+    public function render_products_select_field() {
+        $settings = get_option('arsol_projects_settings', array());
+        $product_ids = isset($settings['project_products']) ? $settings['project_products'] : array();
+        ?>
+        <select class="wc-product-search"
+                multiple="multiple"
+                style="width: 50%;"
+                name="arsol_projects_settings[project_products][]"
+                data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
+                data-action="woocommerce_json_search_products_and_variations">
+            <?php
+            if (!empty($product_ids)) {
+                foreach ($product_ids as $product_id) {
+                    $product = wc_get_product($product_id);
+                    if (is_object($product)) {
+                        echo '<option value="' . esc_attr($product_id) . '"' . selected(true, true, false) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
+                    }
+                }
+            }
+            ?>
+        </select>
+        <?php
+    }
+
+    /**
+     * Render categories select field
+     */
+    public function render_categories_select_field() {
+        $settings = get_option('arsol_projects_settings', array());
+        $category_ids = isset($settings['project_categories']) ? $settings['project_categories'] : array();
+        ?>
+        <select class="wc-enhanced-select"
+                multiple="multiple"
+                style="width: 50%;"
+                name="arsol_projects_settings[project_categories][]"
+                data-placeholder="<?php esc_attr_e('Search for a category…', 'arsol-pfw'); ?>">
+            <?php
+            $categories = get_terms('product_cat', array('hide_empty' => false));
+            if (!empty($categories)) {
+                foreach ($categories as $category) {
+                    echo '<option value="' . esc_attr($category->term_id) . '"' . selected(in_array($category->term_id, $category_ids), true, false) . '>' . esc_html($category->name) . '</option>';
+                }
+            }
+            ?>
+        </select>
+        <?php
     }
 
     /**
