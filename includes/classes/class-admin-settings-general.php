@@ -119,6 +119,34 @@ class Settings_General {
             )
         );
 
+        add_settings_field(
+            'proposal_invoice_product',
+            __('Proposal Invoice Product', 'arsol-pfw'),
+            array($this, 'render_single_product_select_field'),
+            'arsol_projects_settings',
+            'arsol_projects_product_settings',
+            array(
+                'field' => 'proposal_invoice_product',
+                'description' => __('Select a product to be used for single proposal invoices.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-proposal-invoice-product',
+                'product_type' => 'simple'
+            )
+        );
+
+        add_settings_field(
+            'proposal_recurring_invoice_product',
+            __('Proposal Recurring Invoice Product', 'arsol-pfw'),
+            array($this, 'render_single_product_select_field'),
+            'arsol_projects_settings',
+            'arsol_projects_product_settings',
+            array(
+                'field' => 'proposal_recurring_invoice_product',
+                'description' => __('Select a subscription product to be used for recurring proposal invoices.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-proposal-recurring-invoice-product',
+                'product_type' => 'subscription'
+            )
+        );
+
         // User Permissions Section
         add_settings_section(
             'arsol_projects_user_permissions',
@@ -462,6 +490,55 @@ class Settings_General {
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
         }
         echo '</div>';
+    }
+
+    /**
+     * Render single product select field
+     */
+    public function render_single_product_select_field($args) {
+        $field_name = $args['field'];
+        $product_type = isset($args['product_type']) ? $args['product_type'] : 'any';
+
+        if ($product_type === 'subscription' && !class_exists('WC_Subscriptions')) {
+            echo '<p class="description">' . esc_html__('WooCommerce Subscriptions plugin is not active.', 'arsol-pfw') . '</p>';
+            return;
+        }
+
+        $settings = get_option('arsol_projects_settings', array());
+        $product_id = isset($settings[$field_name]) ? $settings[$field_name] : '';
+        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
+
+        $custom_attributes = '';
+        if ($product_type === 'simple') {
+            $custom_attributes = 'data-exclude-type="subscription,variable-subscription"';
+        } elseif ($product_type === 'subscription') {
+            $custom_attributes = 'data-include-type="subscription,variable-subscription"';
+        }
+
+        ?>
+        <div class="<?php echo esc_attr($class); ?>">
+            <select class="wc-product-search"
+                    style="width: 50%;"
+                    id="<?php echo esc_attr($field_name); ?>"
+                    name="arsol_projects_settings[<?php echo esc_attr($field_name); ?>]"
+                    data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
+                    data-action="woocommerce_json_search_products_and_variations"
+                    data-allow_clear="true"
+                    <?php echo $custom_attributes; ?>>
+                <?php
+                if (!empty($product_id)) {
+                    $product = wc_get_product($product_id);
+                    if (is_object($product)) {
+                        echo '<option value="' . esc_attr($product_id) . '"' . selected(true, true, false) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
+                    }
+                }
+                ?>
+            </select>
+            <?php if (!empty($args['description'])): ?>
+                <p class="description"><?php echo esc_html($args['description']); ?></p>
+            <?php endif; ?>
+        </div>
+        <?php
     }
 
     /**
