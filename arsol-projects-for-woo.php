@@ -75,5 +75,16 @@ function arsol_projects_deactivate() {
     flush_rewrite_rules();
 }
 
-// Instantiate the Setup class
-new Setup(); 
+/**
+ * Initializes the Arsol Projects for Woo plugin.
+ *
+ * This function is hooked to the 'plugins_loaded' action to ensure that all
+ * dependent plugins are loaded before our plugin's main logic runs.
+ *
+ * @return void
+ */
+function arsol_projects_init() {
+    // Instantiate the Setup class
+    new Setup();
+}
+add_action('plugins_loaded', 'arsol_projects_init'); 
