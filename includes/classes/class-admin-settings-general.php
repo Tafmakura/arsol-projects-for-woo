@@ -41,8 +41,8 @@ class Settings_General {
         // General Settings Section
         add_settings_section(
             'arsol_projects_general_settings',
-            __('General Settings', 'arsol-pfw'),
-            array($this, 'render_general_settings_section'),
+            null,
+            null,
             'arsol_projects_settings'
         );
 
@@ -237,7 +237,7 @@ class Settings_General {
      * Render general settings section description
      */
     public function render_general_settings_section() {
-        echo '<p>' . esc_html__('Configure general settings for Arsol Projects For Woo.', 'arsol-pfw') . '</p>';
+        // This section is intentionally left blank.
     }
 
     /**

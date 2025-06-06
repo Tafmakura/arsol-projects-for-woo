@@ -128,7 +128,7 @@ class Setup {
         $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
         ?>
         <div class="wrap">
-            <h1><?php _e('Arsol Projects Settings', 'arsol-pfw'); ?></h1>
+            <h1><?php _e('Arsol Projects for Woo', 'arsol-pfw'); ?></h1>
             <h2 class="nav-tab-wrapper">
                 <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php _e('General', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=advanced" class="nav-tab <?php echo $active_tab == 'advanced' ? 'nav-tab-active' : ''; ?>"><?php _e('Advanced', 'arsol-pfw'); ?></a>
