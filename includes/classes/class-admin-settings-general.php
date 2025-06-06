@@ -52,13 +52,26 @@ class Settings_General {
         );
 
         add_settings_field(
-            'allowed_roles',
-            __('Allowed Roles', 'arsol-pfw'),
+            'manage_roles',
+            __('Manage Roles', 'arsol-pfw'),
             array($this, 'render_roles_field'),
             'arsol_projects_settings',
             'arsol_projects_user_permissions',
             array(
-                'description' => __('Select which roles can manage projects, create projects, or request projects.', 'arsol-pfw')
+                'field' => 'manage_roles',
+                'description' => __('Users with these roles can manage all projects, proposals, and requests.', 'arsol-pfw')
+            )
+        );
+
+        add_settings_field(
+            'create_roles',
+            __('Create/Request Roles', 'arsol-pfw'),
+            array($this, 'render_roles_field'),
+            'arsol_projects_settings',
+            'arsol_projects_user_permissions',
+            array(
+                'field' => 'create_roles',
+                'description' => __('Users with these roles can create new projects and requests.', 'arsol-pfw')
             )
         );
 
@@ -237,31 +250,26 @@ class Settings_General {
      * Render roles field
      */
     public function render_roles_field($args) {
+        $field_name = $args['field'];
         $settings = get_option('arsol_projects_settings', array());
-        $selected_roles = isset($settings['allowed_roles']) ? $settings['allowed_roles'] : array('administrator');
+        $selected_roles = isset($settings[$field_name]) ? $settings[$field_name] : array('administrator');
         
-        // Get all editable roles
         $editable_roles = get_editable_roles();
-        
-        // Define the desired order of roles
         $role_order = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
         
-        // Sort the roles based on the defined order
         uksort($editable_roles, function ($a, $b) use ($role_order) {
             $a_pos = array_search($a, $role_order);
             $b_pos = array_search($b, $role_order);
-            
-            if ($a_pos === false && $b_pos === false) return 0; // Both not in order list
-            if ($a_pos === false) return 1; // a is not in list, so b is higher
-            if ($b_pos === false) return -1; // b is not in list, so a is higher
-            
+            if ($a_pos === false && $b_pos === false) return 0;
+            if ($a_pos === false) return 1;
+            if ($b_pos === false) return -1;
             return $a_pos - $b_pos;
         });
 
         foreach ($editable_roles as $role => $details) {
             $checked = in_array($role, $selected_roles) ? 'checked' : '';
             echo '<label>';
-            echo '<input type="checkbox" name="arsol_projects_settings[allowed_roles][]" value="' . esc_attr($role) . '" ' . $checked . '> ';
+            echo '<input type="checkbox" name="arsol_projects_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . '> ';
             echo esc_html($details['name']);
             echo '</label><br>';
         }
@@ -315,26 +323,38 @@ class Settings_General {
      * @param mixed $new_value New settings value
      */
     public function update_capabilities($old_value, $new_value) {
-        $allowed_roles = isset($new_value['allowed_roles']) ? $new_value['allowed_roles'] : array();
+        $manage_roles = isset($new_value['manage_roles']) ? $new_value['manage_roles'] : array();
+        $create_roles = isset($new_value['create_roles']) ? $new_value['create_roles'] : array();
 
-        // Ensure administrator is always included
-        if (!in_array('administrator', $allowed_roles)) {
-            $allowed_roles[] = 'administrator';
+        if (!in_array('administrator', $manage_roles)) {
+            $manage_roles[] = 'administrator';
         }
-        
+
         $all_roles = wp_roles()->get_names();
 
         foreach ($all_roles as $role_slug => $role_name) {
             $role = get_role($role_slug);
-            if ($role) {
-                if (in_array($role_slug, $allowed_roles)) {
-                    // Add capabilities for allowed roles
-                    $role->add_cap('manage_projects');
-                    $role->add_cap('create_projects');
-                    $role->add_cap('request_projects');
-                } else {
-                    // Remove capabilities for disallowed roles
-                    $role->remove_cap('manage_projects');
+            if (!$role) {
+                continue;
+            }
+
+            if (in_array($role_slug, $manage_roles)) {
+                $role->add_cap('manage_projects');
+                $role->add_cap('create_projects');
+                $role->add_cap('request_projects');
+            } else {
+                $role->remove_cap('manage_projects');
+                if (!in_array($role_slug, $create_roles)) {
+                    $role->remove_cap('create_projects');
+                    $role->remove_cap('request_projects');
+                }
+            }
+
+            if (in_array($role_slug, $create_roles)) {
+                $role->add_cap('create_projects');
+                $role->add_cap('request_projects');
+            } else {
+                if (!in_array($role_slug, $manage_roles)) {
                     $role->remove_cap('create_projects');
                     $role->remove_cap('request_projects');
                 }
