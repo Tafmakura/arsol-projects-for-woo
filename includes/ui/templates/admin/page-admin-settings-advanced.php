@@ -11,6 +11,11 @@ if (!defined('ABSPATH')) {
 
 ?>
 <div class="wrap">
-    <h3><?php _e('Advanced Settings', 'arsol-pfw'); ?></h3>
-    <p><?php _e('Advanced settings content will go here.', 'arsol-pfw'); ?></p>
+    <form action="options.php" method="post">
+        <?php
+        settings_fields('arsol_projects_advanced_settings');
+        do_settings_sections('arsol_projects_advanced_settings');
+        submit_button();
+        ?>
+    </form>
 </div> 
