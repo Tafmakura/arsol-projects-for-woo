@@ -73,48 +73,46 @@ $tabs = array(
 <?php
 // --- End Inlined Project Navigation ---
 
+$is_overview = (!isset($tab) || $tab === 'overview');
+
+if ($is_overview) {
+    echo '<div class="arsol-project-content-wrapper"><div class="arsol-project-main-content">';
+}
+
+// Render content based on tab, allowing for overrides
+switch ($tab) {
+    case 'orders':
+        \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+            'project_orders',
+            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-orders.php',
+            compact('project')
+        );
+        break;
+    case 'subscriptions':
+        \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+            'project_subscriptions',
+            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-subscriptions.php',
+            compact('project')
+        );
+        break;
+    case 'overview':
+    default:
+        \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+            'project_overview',
+            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-overview.php',
+            compact('project')
+        );
+        break;
+}
+
+if ($is_overview) {
+    echo '</div>'; // Close .arsol-project-main-content
+    echo '<div class="arsol-project-sidebar-content">';
+    
+    // Include the project sidebar only for the overview tab
+    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-overview.php';
+    
+    echo '</div>'; // Close .arsol-project-sidebar-content
+    echo '</div>'; // Close .arsol-project-content-wrapper
+}
 ?>
-
-<?php if ($tab === 'overview' || !isset($tab)) : // Show sidebar layout for overview tab ?>
-<div class="arsol-project-content-wrapper">
-    <div class="arsol-project-main-content">
-<?php endif; ?>
-
-        <?php
-        // Render content based on tab, allowing for overrides
-        switch ($tab) {
-            case 'orders':
-                \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-                    'project_orders',
-                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-orders.php',
-                    compact('project')
-                );
-                break;
-            case 'subscriptions':
-                \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-                    'project_subscriptions',
-                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-subscriptions.php',
-                    compact('project')
-                );
-                break;
-            case 'overview':
-            default:
-                \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-                    'project_overview',
-                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-overview.php',
-                    compact('project')
-                );
-                break;
-        }
-        ?>
-
-<?php if ($tab === 'overview' || !isset($tab)) : // Close wrapper and add sidebar for overview ?>
-    </div>
-    <div class="arsol-project-sidebar-content">
-        <?php
-        // Include the project sidebar only for the overview tab
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-overview.php';
-        ?>
-    </div>
-</div>
-<?php endif; ?>
