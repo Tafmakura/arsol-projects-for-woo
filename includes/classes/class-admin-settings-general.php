@@ -76,6 +76,19 @@ class Settings_General {
             )
         );
 
+        add_settings_field(
+            'require_project_selection',
+            __('Require Project Selection', 'arsol-pfw'),
+            array($this, 'render_checkbox_field'),
+            'arsol_projects_settings',
+            'arsol_projects_product_settings',
+            array(
+                'field' => 'require_project_selection',
+                'label' => __('Make project selection mandatory when the field is displayed at checkout.', 'arsol-pfw'),
+                'description' => __('If unchecked, customers can proceed without selecting a project.', 'arsol-pfw')
+            )
+        );
+
         // User Permissions Section
         add_settings_section(
             'arsol_projects_user_permissions',
