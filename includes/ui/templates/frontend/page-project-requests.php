@@ -4,7 +4,7 @@
  *
  * This template acts as the main container for the project requests listing.
  * It calls the overridable content section.
- * 
+ *
  * @package Arsol_Projects_For_Woo
  * @since 1.0.0
  */

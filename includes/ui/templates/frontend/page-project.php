@@ -19,6 +19,11 @@ if (!defined('ABSPATH')) {
 $project_title = get_the_title($project_id);
 $current_tab = $tab;
 
+// --- Render Page Header ---
+if (isset($project)) {
+    echo '<h2>' . esc_html($project['title']) . '</h2>';
+}
+
 // --- Render Page Navigation ---
 $tabs = array(
     'overview' => array('label' => __('Overview', 'arsol-pfw'), 'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)),
@@ -58,8 +63,8 @@ $tabs = array(
 $is_overview = (!isset($tab) || $tab === 'overview');
 if ($is_overview) :
 ?>
-<div class="arsol-project-content-wrapper">
-    <div class="arsol-project-main-content">
+<div class="project-overview-wrapper">
+    <div class="project-content">
 <?php endif; ?>
 <?php
 switch ($tab) {
@@ -88,7 +93,7 @@ switch ($tab) {
 ?>
 <?php if ($is_overview) : ?>
     </div>
-    <div class="arsol-project-sidebar-content">
+    <div class="project-sidebar">
         <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-overview.php'; ?>
     </div>
 </div>
