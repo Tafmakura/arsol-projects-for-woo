@@ -42,6 +42,9 @@ $sidebar_template = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend
 
 // Set sidebar type for backward compatibility
 $sidebar_type = $type;
+
+// Get project ID from the project data
+$project_id = isset($project['id']) ? $project['id'] : 0;
 ?>
 
 <div class="project-overview-wrapper">
