@@ -6,8 +6,6 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once __DIR__ . '/class-woocommerce-checkout.php';
-
 class Woocommerce {
     /**
      * Meta key used for storing project data
@@ -37,7 +35,7 @@ class Woocommerce {
         add_action('woocommerce_subscription_details_after_subscription_table', array($this, 'display_project_details'));
 
         // Initialize checkout functionality
-        new Woocommerce_Checkout();
+        new Frontend_Woocommerce_Checkout();
     }
 
     public function init() {
