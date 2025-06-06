@@ -10,6 +10,7 @@
 
 namespace Arsol_Projects_For_Woo\Woocommerce;
 
+use Arsol_Projects_For_Woo\Template_Overrides;
 use Arsol_Projects_For_Woo\Woocommerce;
 
 // Exit if accessed directly.
@@ -192,16 +193,28 @@ class Endpoints {
         switch ($current_tab) {
             case 'proposals':
                 $user_projects = $query->posts;
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-proposals.php';
+                Template_Overrides::render_template(
+                    'project_proposal_listings',
+                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-proposals.php',
+                    compact('user_projects', 'has_items', 'paged', 'total_pages', 'wp_button_class')
+                );
                 break;
             case 'requests':
                 $user_projects = $query->posts;
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-requests.php';
+                Template_Overrides::render_template(
+                    'project_requests_listings',
+                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-requests.php',
+                    compact('user_projects', 'has_items', 'paged', 'total_pages', 'wp_button_class')
+                );
                 break;
             case 'active':
             default:
                 $user_projects = $query->posts;
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
+                Template_Overrides::render_template(
+                    'projects_listing',
+                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php',
+                    compact('user_projects', 'has_items', 'paged', 'total_pages', 'wp_button_class')
+                );
                 break;
         }
     }
@@ -246,11 +259,17 @@ class Endpoints {
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
         
         if (!$admin_users->can_user_create_projects($user_id)) {
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-no-permission.php';
+            Template_Overrides::render_template(
+                'access_denied',
+                ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-no-permission.php'
+            );
             return;
         }
         
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create-project.php';
+        Template_Overrides::render_template(
+            'create_project_form',
+            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create.php'
+        );
     }
     
     /**
@@ -261,13 +280,19 @@ class Endpoints {
     public function project_request_endpoint_content() {
         $user_id = get_current_user_id();
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
-        
+
         if (!$admin_users->can_user_request_projects($user_id)) {
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-no-permission.php';
+            Template_Overrides::render_template(
+                'access_denied',
+                ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-no-permission.php'
+            );
             return;
         }
-        
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create-request.php';
+
+        Template_Overrides::render_template(
+            'request_project_form',
+            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php'
+        );
     }
     
     /**
@@ -381,42 +406,34 @@ class Endpoints {
         
         // Check if project exists and user has access
         if (!$project_id || !$this->user_can_view_project($user_id, $project_id)) {
-            echo '<p>' . __('You do not have permission to view this project.', 'arsol-pfw') . '</p>';
+            echo '<div class="woocommerce-error">' . esc_html__('You do not have permission to view this project.', 'arsol-pfw') . '</div>';
             return;
         }
+
+        // Project data
+        $project = $this->get_project_data($project_id);
+
+        // Navigation
+        $project_navigation = $this->get_project_navigation($project_id, $tab);
         
-        // Get project data
-        $project = get_post($project_id);
+        // Render project header
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-header.php';
         
-        // Set common variables needed for all templates
-        $project_title = get_the_title($project_id);
-        $project_content = get_post_field('post_content', $project_id);
-        $project_excerpt = get_post_field('post_excerpt', $project_id);
-        $project_status = get_post_status($project_id);
-        $project_date = get_the_date('', $project_id);
-        
-        // Display the project navigation
-        echo $this->get_project_navigation($project_id, $tab);
-  
-        // Include appropriate template based on tab
+        // Render content based on tab
         switch ($tab) {
             case 'orders':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-orders.php';
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-orders.php';
                 break;
-                
             case 'subscriptions':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-subscriptions.php';
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-subscriptions.php';
                 break;
-                
             case 'overview':
             default:
-                // If content is empty, use the project overview template
-                if (empty($project_content)) {
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-overview.php';
-                } else {
-                    // Use the default content display
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-overview.php';
-                }
+                Template_Overrides::render_template(
+                    'project_overview',
+                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-overview.php',
+                    compact('project')
+                );
                 break;
         }
     }
