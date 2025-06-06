@@ -387,7 +387,7 @@ class Frontend_Endpoints {
             return;
         }
 
-        // Project data
+        // Project data, available to all included parts of the page
         $project = $this->get_project_data($project_id);
 
         // Load the main project template, which now handles the entire page structure

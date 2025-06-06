@@ -7,7 +7,7 @@
  * as a frame for the different project sections like overview, orders, etc.
  *
  * @package Arsol_Projects_For_Woo
- * @version 1.0.0
+ * @version 1.0.2
  */
 
 if (!defined('ABSPATH')) {
@@ -16,31 +16,19 @@ if (!defined('ABSPATH')) {
 
 // The following variables are passed from the render_project_page function:
 // $project, $project_id, $tab
-
-// Get project title for breadcrumb/heading
 $project_title = get_the_title($project_id);
-$current_tab = $tab; // Pass current tab to navigation component
+$current_tab = $tab;
 
-// --- Start Inlined Project Header ---
+// --- Render Page Header ---
 if (isset($project)) {
     echo '<h2>' . esc_html($project['title']) . '</h2>';
 }
-// --- End Inlined Project Header ---
 
-// --- Start Inlined Project Navigation ---
+// --- Render Page Navigation ---
 $tabs = array(
-    'overview' => array(
-        'label' => __('Overview', 'arsol-pfw'),
-        'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)
-    ),
-    'orders' => array(
-        'label' => __('Orders', 'woocommerce'),
-        'url' => wc_get_account_endpoint_url('project-orders/' . $project_id)
-    ),
-    'subscriptions' => array(
-        'label' => __('Subscriptions', 'woocommerce-subscriptions'),
-        'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id)
-    )
+    'overview' => array('label' => __('Overview', 'arsol-pfw'), 'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)),
+    'orders' => array('label' => __('Orders', 'woocommerce'), 'url' => wc_get_account_endpoint_url('project-orders/' . $project_id)),
+    'subscriptions' => array('label' => __('Subscriptions', 'woocommerce-subscriptions'), 'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id))
 );
 ?>
 <div class="arsol-project-intro">
@@ -61,28 +49,24 @@ $tabs = array(
 <div class="arsol-project-navigation">
     <div class="arsol-button-container">
         <div class="arsol-button-groups">
-            <?php foreach ($tabs as $tab_id => $tab) : ?>
+            <?php foreach ($tabs as $tab_id => $tab_data) : ?>
                 <button class="arsol-btn-secondary arsol-project-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
-                        onclick="window.location.href='<?php echo esc_url($tab['url']); ?>'">
-                    <?php echo esc_html($tab['label']); ?>
+                        onclick="window.location.href='<?php echo esc_url($tab_data['url']); ?>'">
+                    <?php echo esc_html($tab_data['label']); ?>
                 </button>
             <?php endforeach; ?>
         </div>
     </div>
 </div>
 <?php
-// --- End Inlined Project Navigation ---
-
+// --- Render Page Content and Conditional Sidebar ---
 $is_overview = (!isset($tab) || $tab === 'overview');
+if ($is_overview) :
 ?>
-
-<?php if ($is_overview) : ?>
 <div class="arsol-project-content-wrapper">
     <div class="arsol-project-main-content">
 <?php endif; ?>
-
 <?php
-// Render content based on tab, allowing for overrides
 switch ($tab) {
     case 'orders':
         \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
@@ -98,7 +82,6 @@ switch ($tab) {
             compact('project')
         );
         break;
-    case 'overview':
     default:
         \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
             'project_overview',
@@ -108,14 +91,10 @@ switch ($tab) {
         break;
 }
 ?>
-
 <?php if ($is_overview) : ?>
     </div>
     <div class="arsol-project-sidebar-content">
-        <?php
-        // Include the project sidebar only for the overview tab
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-overview.php';
-        ?>
+        <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-overview.php'; ?>
     </div>
 </div>
-<?php endif; ?>
+<?php endif; ?> 
