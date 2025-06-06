@@ -419,6 +419,8 @@ class Frontend_Endpoints {
         // Render project header
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-header.php';
         
+        echo $project_navigation;
+
         // Render content based on tab
         switch ($tab) {
             case 'orders':
@@ -476,6 +478,7 @@ class Frontend_Endpoints {
      * @return string HTML for navigation tabs
      */
     private function get_project_navigation($project_id, $current_tab) {
+        ob_start();
         // Get project title for breadcrumb/heading
         $project_title = get_the_title($project_id);
         
