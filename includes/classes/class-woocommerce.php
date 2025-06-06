@@ -6,6 +6,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once __DIR__ . '/class-woocommerce-checkout.php';
+
 class Woocommerce {
     /**
      * Meta key used for storing project data
@@ -25,9 +27,6 @@ class Woocommerce {
         add_filter('manage_edit-shop_order_columns', array($this, 'add_project_column'));
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
         
-        // Register the project checkout field when WordPress and WooCommerce are fully loaded
-        add_action('wp_loaded', array($this, 'register_project_checkout_field'));
-        
         // Remove duplicate project field
         add_action('admin_enqueue_scripts', array($this, 'remove_duplicate_project_field'));
 
@@ -36,6 +35,9 @@ class Woocommerce {
 
         // Add project to subscription details table (WooCommerce Subscriptions)
         add_action('woocommerce_subscription_details_after_subscription_table', array($this, 'display_project_details'));
+
+        // Initialize checkout functionality
+        new Woocommerce_Checkout();
     }
 
     public function init() {
@@ -498,127 +500,6 @@ class Woocommerce {
             } else {
                 echo '—';
             }
-        }
-    }
-
-    public function register_project_checkout_field() {
-        // Use new Blocks-compatible registration if available
-        if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
-            if ($this->should_display_project_field()) {
-                try {
-                    $settings = get_option('arsol_projects_settings', array());
-                    $is_required = !empty($settings['require_project_selection']);
-
-                    $field_id = 'arsol-projects-for-woo/arsol-project';
-                    
-                    $checkout_fields_controller = \Automattic\WooCommerce\Blocks\Package::container()->get(
-                        \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
-                    );
-
-                    $current_user_id = get_current_user_id();
-                    $projects = $this->get_projects($current_user_id);
-
-                    $options = array(
-                        array(
-                            'value' => '',
-                            'label' => __('Select a project…', 'arsol-pfw'),
-                        ),
-                    );
-
-                    foreach ($projects as $project) {
-                        // Only show projects that the user can view
-                        if (self::user_can_view_project($current_user_id, $project->ID)) {
-                            $options[] = array(
-                                'value' => (string) $project->ID,
-                                'label' => esc_html($project->post_title),
-                            );
-                        }
-                    }
-                    
-                    $checkout_fields_controller->register_checkout_field(
-                        array(
-                            'id' => $field_id,
-                            'type' => 'select',
-                            'label' => __('Project', 'arsol-pfw'),
-                            'location' => 'order',
-                            'options' => $options,
-                            'required' => $is_required,
-                            'attributes' => array(),
-                            'experimental_attributes' => array(),
-                            'default' => '',
-                        )
-                    );
-                } catch (\Exception $e) {
-                    // Log error or handle gracefully
-                }
-            }
-        } else {
-            // Fallback for classic checkout
-            add_action('woocommerce_after_order_notes', array($this, 'display_classic_project_field'));
-        }
-        
-        // This hook saves the data from both classic and block checkouts.
-        add_action('woocommerce_checkout_update_order_meta', array($this, 'save_project_from_checkout'), 10, 2);
-    }
-
-    /**
-     * Display the project field for classic checkout
-     */
-    public function display_classic_project_field($checkout) {
-        if (!$this->should_display_project_field()) {
-            return;
-        }
-
-        $settings = get_option('arsol_projects_settings', array());
-        $is_required = !empty($settings['require_project_selection']);
-
-        $current_user_id = get_current_user_id();
-        $projects = $this->get_projects($current_user_id);
-
-        $options = array();
-        foreach ($projects as $project) {
-            if (self::user_can_view_project($current_user_id, $project->ID)) {
-                $options[$project->ID] = esc_html($project->post_title);
-            }
-        }
-
-        $field_args = array(
-            'type'          => 'select',
-            'class'         => array('form-row-wide'),
-            'label'         => __('Project', 'arsol-pfw'),
-            'required'      => $is_required,
-            'placeholder'   => __('Select a project…', 'arsol-pfw'),
-            'options'       => $options,
-        );
-
-        echo '<div id="arsol-project-checkout-field">';
-        woocommerce_form_field(
-            'arsol_project_id',
-            $field_args,
-            $checkout->get_value('arsol_project_id')
-        );
-        echo '</div>';
-    }
-
-    /**
-     * Save project from checkout
-     */
-    public function save_project_from_checkout($order_id, $data) {
-        $project_id = '';
-        
-        // For classic checkout
-        if (isset($_POST['arsol_project_id'])) {
-            $project_id = sanitize_text_field($_POST['arsol_project_id']);
-        }
-        // For block checkout
-        elseif (isset($data['arsol-projects-for-woo/arsol-project'])) {
-            $project_id = sanitize_text_field($data['arsol-projects-for-woo/arsol-project']);
-        }
-
-        if (!empty($project_id)) {
-            $order = wc_get_order($order_id);
-            $order->update_meta_data(self::PROJECT_META_KEY, $project_id);
-            // The order->save() is called by WooCommerce after this hook.
         }
     }
 
