@@ -263,9 +263,8 @@ class Settings_General {
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-            <select class="wc-product-search"
+            <select class="wc-product-search regular-text"
                     multiple="multiple"
-                    style="width: 25em;"
                     name="arsol_projects_settings[project_products][]"
                     data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
                     data-action="woocommerce_json_search_products_and_variations">
@@ -296,9 +295,8 @@ class Settings_General {
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-            <select class="wc-enhanced-select"
+            <select class="wc-enhanced-select regular-text"
                     multiple="multiple"
-                    style="width: 25em;"
                     name="arsol_projects_settings[project_categories][]"
                     data-placeholder="<?php esc_attr_e('Search for a category…', 'arsol-pfw'); ?>">
                 <?php
@@ -383,7 +381,7 @@ class Settings_General {
         ?>
         <div class="<?php echo $class; ?>">
         <select id="user_project_permissions"
-                style="width: 25em;"
+                class="regular-text"
                 name="arsol_projects_settings[user_project_permissions]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
@@ -408,7 +406,7 @@ class Settings_General {
         ?>
         <div class="<?php echo $class; ?>">
         <select id="default_user_permission"
-                style="width: 25em;"
+                class="regular-text"
                 name="arsol_projects_settings[default_user_permission]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
