@@ -98,3 +98,7 @@
     color: #666;
     margin-top: 5px;
 }
+
+.arsol-pfw-admin-multi-select {
+    min-height: 60px;
+}
