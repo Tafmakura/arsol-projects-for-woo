@@ -1,4 +1,11 @@
 <?php
+/**
+ * Request Project Form
+ *
+ * @package Arsol_Projects_For_Woo
+ * @version 1.0.0
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -64,4 +71,4 @@ if (!$can_create) {
             <button type="submit" class="button"><?php _e('Submit Request', 'arsol-pfw'); ?></button>
         </p>
     </form>
-</div>
+</div> 
