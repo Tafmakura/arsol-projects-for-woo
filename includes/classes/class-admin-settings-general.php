@@ -95,20 +95,20 @@ class Settings_General {
         // Proposal Invoice Settings Section
         add_settings_section(
             'arsol_projects_proposal_invoice_settings',
-            __('Proposal Invoice Settings', 'arsol-pfw'),
+            '',
             array($this, 'render_proposal_invoice_settings_section'),
             'arsol_projects_settings'
         );
 
         add_settings_field(
             'proposal_invoice_product',
-            __('Proposal Invoice Product', 'arsol-pfw'),
+            __('Project Invoice', 'arsol-pfw'),
             array($this, 'render_single_product_select_field'),
             'arsol_projects_settings',
             'arsol_projects_proposal_invoice_settings',
             array(
                 'field' => 'proposal_invoice_product',
-                'description' => __('Select a product to be used for single proposal invoices.', 'arsol-pfw'),
+                'description' => __('Select a product to be used for single project invoices.', 'arsol-pfw'),
                 'class' => 'arsol-pfw-proposal-invoice-product',
                 'product_type' => 'simple'
             )
@@ -116,13 +116,13 @@ class Settings_General {
 
         add_settings_field(
             'proposal_recurring_invoice_product',
-            __('Proposal Recurring Invoice Product', 'arsol-pfw'),
+            __('Recurring Project Invoice', 'arsol-pfw'),
             array($this, 'render_single_product_select_field'),
             'arsol_projects_settings',
             'arsol_projects_proposal_invoice_settings',
             array(
                 'field' => 'proposal_recurring_invoice_product',
-                'description' => __('Select a subscription product to be used for recurring proposal invoices.', 'arsol-pfw'),
+                'description' => __('Select a subscription product to be used for recurring project invoices.', 'arsol-pfw'),
                 'class' => 'arsol-pfw-proposal-recurring-invoice-product',
                 'product_type' => 'subscription'
             )
@@ -359,17 +359,17 @@ class Settings_General {
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-            <label for="<?php echo esc_attr($field); ?>">
-                <input type="checkbox"
-                       id="<?php echo esc_attr($field); ?>"
-                       name="arsol_projects_settings[<?php echo esc_attr($field); ?>]"
-                       value="1"
-                       <?php checked(1, $value); ?>>
-                <?php echo esc_html($label); ?>
-            </label>
-            <?php if (!empty($args['description'])): ?>
-                <p class="description"><?php echo esc_html($args['description']); ?></p>
-            <?php endif; ?>
+        <label for="<?php echo esc_attr($field); ?>">
+            <input type="checkbox"
+                   id="<?php echo esc_attr($field); ?>"
+                   name="arsol_projects_settings[<?php echo esc_attr($field); ?>]"
+                   value="1"
+                   <?php checked(1, $value); ?>>
+            <?php echo esc_html($label); ?>
+        </label>
+        <?php if (!empty($args['description'])): ?>
+            <p class="description"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
         </div>
         <?php
     }
@@ -383,17 +383,17 @@ class Settings_General {
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-            <select id="user_project_permissions"
-                    name="arsol_projects_settings[user_project_permissions]">
-                <?php foreach ($args['options'] as $option => $label): ?>
-                    <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
-                        <?php echo esc_html($label); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <p class="description">
-                <?php echo esc_html($args['description']); ?>
-            </p>
+        <select id="user_project_permissions"
+                name="arsol_projects_settings[user_project_permissions]">
+            <?php foreach ($args['options'] as $option => $label): ?>
+                <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
+                    <?php echo esc_html($label); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <p class="description">
+            <?php echo esc_html($args['description']); ?>
+        </p>
         </div>
         <?php
     }
@@ -407,17 +407,17 @@ class Settings_General {
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-            <select id="default_user_permission"
-                    name="arsol_projects_settings[default_user_permission]">
-                <?php foreach ($args['options'] as $option => $label): ?>
-                    <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
-                        <?php echo esc_html($label); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <p class="description">
-                <?php echo esc_html($args['description']); ?>
-            </p>
+        <select id="default_user_permission"
+                name="arsol_projects_settings[default_user_permission]">
+            <?php foreach ($args['options'] as $option => $label): ?>
+                <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
+                    <?php echo esc_html($label); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <p class="description">
+            <?php echo esc_html($args['description']); ?>
+        </p>
         </div>
         <?php
     }
