@@ -73,7 +73,9 @@ do_action('arsol_projects_before_user_requests', $has_items);
     <?php endif; ?>
 
 <?php else : ?>
-    <p class="woocommerce-info"><?php _e('No requests found.', 'arsol-pfw'); ?></p>
+    <div class="woocommerce-info">
+        <p><?php _e('No requests found.', 'arsol-pfw'); ?></p>
+    </div>
 <?php endif; ?>
 </div>
 
