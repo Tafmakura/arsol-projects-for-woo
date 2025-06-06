@@ -53,7 +53,7 @@ class Settings_General {
 
         add_settings_field(
             'manage_roles',
-            __('Manage Roles', 'arsol-pfw'),
+            __('Project Manager Roles', 'arsol-pfw'),
             array($this, 'render_roles_field'),
             'arsol_projects_settings',
             'arsol_projects_user_permissions',
@@ -65,7 +65,7 @@ class Settings_General {
 
         add_settings_field(
             'create_roles',
-            __('Create/Request Roles', 'arsol-pfw'),
+            __('Project User Roles', 'arsol-pfw'),
             array($this, 'render_roles_field'),
             'arsol_projects_settings',
             'arsol_projects_user_permissions',
