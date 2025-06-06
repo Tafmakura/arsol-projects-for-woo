@@ -43,7 +43,7 @@ class Settings_Advanced {
                 'description' => __('Overrides the display of project requests.', 'arsol-pfw')
             ],
             'access_denied_shortcode' => [
-                'title' => __('Access Denied', 'arsol-pfw'),
+                'title' => __('Access Denied Notice', 'arsol-pfw'),
                 'description' => __('Overrides the page shown when a user has insufficient permissions.', 'arsol-pfw')
             ],
         ];
