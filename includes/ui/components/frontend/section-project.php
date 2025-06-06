@@ -58,13 +58,18 @@ $project_id = isset($project['id']) ? $project['id'] : 0;
         ?>
     </div>
     
-    <div class="project-sidebar card">
-        <?php
-        if (file_exists($sidebar_template)) {
-            include $sidebar_template;
-        } else {
-            echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
-        }
-        ?>
+    <div class="project-sidebar">
+        <div class="project-sidebar-wrapper">
+            <div class="project-sidebar-card card">
+
+                <?php
+                if (file_exists($sidebar_template)) {
+                    include $sidebar_template;
+                } else {
+                    echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
+                }
+                ?>
+            </div>
+        </div>
     </div>
 </div> 
