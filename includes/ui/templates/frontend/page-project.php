@@ -77,18 +77,29 @@ $tabs = array(
 <div class="arsol-project-content-wrapper">
     <div class="arsol-project-main-content">
         <?php
-        // Render content based on tab
+        // Render content based on tab, allowing for overrides
         switch ($tab) {
             case 'orders':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-orders.php';
+                \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+                    'project_orders',
+                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-orders.php',
+                    compact('project')
+                );
                 break;
             case 'subscriptions':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-subscriptions.php';
+                \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+                    'project_subscriptions',
+                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-subscriptions.php',
+                    compact('project')
+                );
                 break;
             case 'overview':
             default:
-                // This template already uses the override system
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-overview.php';
+                \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+                    'project_overview',
+                    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-overview.php',
+                    compact('project')
+                );
                 break;
         }
         ?>
