@@ -25,8 +25,8 @@ class Woocommerce {
         add_filter('manage_edit-shop_order_columns', array($this, 'add_project_column'));
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
         
-        // Register the project checkout field on woocommerce_init
-        add_action('woocommerce_init', array($this, 'register_project_checkout_field'));
+        // Register the project checkout field when WordPress and WooCommerce are fully loaded
+        add_action('wp_loaded', array($this, 'register_project_checkout_field'));
         
         // Remove duplicate project field
         add_action('admin_enqueue_scripts', array($this, 'remove_duplicate_project_field'));
