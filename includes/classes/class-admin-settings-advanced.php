@@ -35,7 +35,7 @@ class Settings_Advanced {
         add_settings_section(
             'arsol_projects_template_overrides_section',
             __('Template Overrides', 'arsol-pfw'),
-            null,
+            array($this, 'render_template_overrides_description'),
             'arsol_projects_advanced_settings'
         );
 
@@ -52,6 +52,10 @@ class Settings_Advanced {
                 ]
             );
         }
+    }
+
+    public function render_template_overrides_description() {
+        echo '<p>' . esc_html__('Use these settings to override the default plugin templates with your own shortcodes. This allows for custom layouts and designs for various components without needing to edit plugin files directly. Enter the shortcode you wish to use for each template override.', 'arsol-pfw') . '</p>';
     }
 
     public function render_text_field($args) {
