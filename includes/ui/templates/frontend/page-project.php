@@ -19,11 +19,6 @@ if (!defined('ABSPATH')) {
 $project_title = get_the_title($project_id);
 $current_tab = $tab;
 
-// --- Render Page Header ---
-if (isset($project)) {
-    echo '<h2>' . esc_html($project['title']) . '</h2>';
-}
-
 // --- Render Page Navigation ---
 $tabs = array(
     'overview' => array('label' => __('Overview', 'arsol-pfw'), 'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)),
