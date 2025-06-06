@@ -125,7 +125,30 @@ class Setup {
      * Settings page callback
      */
     public function settings_page_callback() {
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-general.php';
+        $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
+        ?>
+        <div class="wrap">
+            <h1><?php _e('Arsol Projects Settings', 'arsol-pfw'); ?></h1>
+            <h2 class="nav-tab-wrapper">
+                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php _e('General', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=advanced" class="nav-tab <?php echo $active_tab == 'advanced' ? 'nav-tab-active' : ''; ?>"><?php _e('Advanced', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=integrations" class="nav-tab <?php echo $active_tab == 'integrations' ? 'nav-tab-active' : ''; ?>"><?php _e('Integrations', 'arsol-pfw'); ?></a>
+            </h2>
+            <?php
+            switch ($active_tab) {
+                case 'advanced':
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-advanced.php';
+                    break;
+                case 'integrations':
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-integrations.php';
+                    break;
+                default:
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-general.php';
+                    break;
+            }
+            ?>
+        </div>
+        <?php
     }
 }
 
