@@ -506,8 +506,7 @@ class Settings_General {
 
         ?>
         <div class="<?php echo esc_attr($class); ?>">
-            <select class="wc-product-search"
-                    style="width: 25em;"
+            <select class="wc-product-search regular-text"
                     id="<?php echo esc_attr($field_name); ?>"
                     name="arsol_projects_settings[<?php echo esc_attr($field_name); ?>]"
                     data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
