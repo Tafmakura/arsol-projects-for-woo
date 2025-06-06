@@ -43,44 +43,16 @@ if ($button_url && $button_label): ?>
 // --- Navigation ---
 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-navigation.php';
 
-?>
-<div class="project-overview-wrapper">
-    <div class="project-content">
-        <?php
-        // --- Main Content ---
-        switch ($current_tab) {
-            case 'proposals':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-content-proposals.php';
-                break;
-            case 'requests':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-content-requests.php';
-                break;
-            case 'active':
-            default:
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-content-active.php';
-                break;
-        }
-        ?>
-    </div>
-    <div class="project-sidebar card">
-        <?php
-        // --- Sidebar ---
-        do_action('arsol_pfw_before_projects_sidebar');
-
-        switch ($current_tab) {
-            case 'proposals':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-sidebar-proposals.php';
-                break;
-            case 'requests':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-sidebar-requests.php';
-                break;
-            case 'active':
-            default:
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-sidebar-active.php';
-                break;
-        }
-
-        do_action('arsol_pfw_after_projects_sidebar');
-        ?>
-    </div>
-</div>
+// --- Main Content ---
+switch ($current_tab) {
+    case 'proposals':
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-content-proposals.php';
+        break;
+    case 'requests':
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-content-requests.php';
+        break;
+    case 'active':
+    default:
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-content-active.php';
+        break;
+}
