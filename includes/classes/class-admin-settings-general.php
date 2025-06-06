@@ -267,10 +267,18 @@ class Settings_General {
         });
 
         foreach ($editable_roles as $role => $details) {
-            $checked = in_array($role, $selected_roles) ? 'checked' : '';
+            $is_admin = ($role === 'administrator');
+            $checked = ($is_admin || in_array($role, $selected_roles)) ? 'checked' : '';
+            $disabled = $is_admin ? 'disabled' : '';
+
             echo '<label>';
-            echo '<input type="checkbox" name="arsol_projects_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . '> ';
+            echo '<input type="checkbox" name="arsol_projects_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . ' ' . $disabled . '> ';
             echo esc_html($details['name']);
+            if ($is_admin) {
+                echo ' <em>(' . esc_html__('always enabled', 'arsol-pfw') . ')</em>';
+                // Add a hidden input to ensure the administrator role is always submitted
+                echo '<input type="hidden" name="arsol_projects_settings[' . esc_attr($field_name) . '][]" value="administrator">';
+            }
             echo '</label><br>';
         }
 
@@ -323,8 +331,8 @@ class Settings_General {
      * @param mixed $new_value New settings value
      */
     public function update_capabilities($old_value, $new_value) {
-        $manage_roles = isset($new_value['manage_roles']) ? $new_value['manage_roles'] : array();
-        $create_roles = isset($new_value['create_roles']) ? $new_value['create_roles'] : array();
+        $manage_roles = isset($new_value['manage_roles']) ? array_unique($new_value['manage_roles']) : array('administrator');
+        $create_roles = isset($new_value['create_roles']) ? array_unique($new_value['create_roles']) : array('administrator');
 
         if (!in_array('administrator', $manage_roles)) {
             $manage_roles[] = 'administrator';
