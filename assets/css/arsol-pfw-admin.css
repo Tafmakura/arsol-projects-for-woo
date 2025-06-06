@@ -99,6 +99,6 @@
     margin-top: 5px;
 }
 
-.arsol-pfw-admin-multi-select {
+.arsol-pfw-admin-multi-select + .select2-container .select2-selection--multiple {
     min-height: 60px;
 }
