@@ -38,7 +38,7 @@ $delivery_date_formatted = $delivery_date ? date_i18n(get_option('date_format'),
     <?php if ($budget): ?>
     <p>
         <strong><?php _e('Budget:', 'arsol-pfw'); ?></strong>
-        <span><?php echo esc_html(wc_price($budget)); ?></span>
+        <span><?php echo wc_price($budget); ?></span>
     </p>
     <?php endif; ?>
     <p>
