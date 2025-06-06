@@ -263,8 +263,9 @@ class Settings_General {
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-            <select class="wc-product-search regular-text"
+            <select class="wc-product-search"
                     multiple="multiple"
+                    style="width: 50%;"
                     name="arsol_projects_settings[project_products][]"
                     data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
                     data-action="woocommerce_json_search_products_and_variations">
@@ -295,8 +296,9 @@ class Settings_General {
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-            <select class="wc-enhanced-select regular-text"
+            <select class="wc-enhanced-select"
                     multiple="multiple"
+                    style="width: 50%;"
                     name="arsol_projects_settings[project_categories][]"
                     data-placeholder="<?php esc_attr_e('Search for a category…', 'arsol-pfw'); ?>">
                 <?php
