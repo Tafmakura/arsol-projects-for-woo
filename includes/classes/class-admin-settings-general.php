@@ -121,42 +121,12 @@ class Settings_General {
             'arsol_projects_settings'
         );
 
-        // Add comments settings fields with short labels and no descriptions
         add_settings_field(
-            'enable_project_comments',
-            __('', 'arsol-pfw'),
-            array($this, 'render_checkbox_field'),
+            'comment_permissions',
+            __('Comments permissions', 'arsol-pfw'),
+            array($this, 'render_comment_permissions_group'),
             'arsol_projects_settings',
-            'arsol_projects_comments_settings',
-            array(
-                'label' => __('Allow project comments', 'arsol-pfw'),
-                'field' => 'enable_project_comments',
-                'description' => ''
-            )
-        );
-        add_settings_field(
-            'enable_project_request_comments',
-            __('', 'arsol-pfw'),
-            array($this, 'render_checkbox_field'),
-            'arsol_projects_settings',
-            'arsol_projects_comments_settings',
-            array(
-                'label' => __('Allow project request comments', 'arsol-pfw'),
-                'field' => 'enable_project_request_comments',
-                'description' => ''
-            )
-        );
-        add_settings_field(
-            'enable_project_proposal_comments',
-            __('', 'arsol-pfw'),
-            array($this, 'render_checkbox_field'),
-            'arsol_projects_settings',
-            'arsol_projects_comments_settings',
-            array(
-                'label' => __('Allow project proposal comments', 'arsol-pfw'),
-                'field' => 'enable_project_proposal_comments',
-                'description' => ''
-            )
+            'arsol_projects_comments_settings'
         );
     }
 
@@ -165,6 +135,33 @@ class Settings_General {
      */
     public function render_general_settings_section() {
         echo '<p>' . esc_html__('Configure general settings for Arsol Projects For Woo.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render comment permissions checkbox group
+     */
+    public function render_comment_permissions_group() {
+        $settings = get_option('arsol_projects_settings', array());
+        
+        $comment_options = array(
+            'enable_project_comments' => __('Allow project comments', 'arsol-pfw'),
+            'enable_project_request_comments' => __('Allow project request comments', 'arsol-pfw'),
+            'enable_project_proposal_comments' => __('Allow project proposal comments', 'arsol-pfw'),
+        );
+
+        foreach ($comment_options as $field => $label) {
+            $value = isset($settings[$field]) ? $settings[$field] : 0;
+            ?>
+            <label for="<?php echo esc_attr($field); ?>">
+                <input type="checkbox"
+                       id="<?php echo esc_attr($field); ?>"
+                       name="arsol_projects_settings[<?php echo esc_attr($field); ?>]"
+                       value="1"
+                       <?php checked(1, $value); ?>>
+                <?php echo esc_html($label); ?>
+            </label><br>
+            <?php
+        }
     }
 
     /**
