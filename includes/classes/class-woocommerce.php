@@ -502,11 +502,6 @@ class Woocommerce {
     }
 
     public function register_project_checkout_field() {
-        // Only register if the conditions are met
-        if (!$this->should_display_project_field()) {
-            return;
-        }
-
         // Use new Blocks-compatible registration if available
         if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
             try {
@@ -547,7 +542,7 @@ class Woocommerce {
                             'location' => 'address',
                             'options' => $options,
                             'required' => false,
-                            'hidden' => false,
+                            'hidden' => !$this->should_display_project_field(),
                             'attributes' => array(),
                             'experimental_attributes' => array(),
                             'default' => '',
@@ -570,6 +565,10 @@ class Woocommerce {
      * Display the project field for classic checkout
      */
     public function display_classic_project_field($checkout) {
+        if (!$this->should_display_project_field()) {
+            return;
+        }
+
         $current_user_id = get_current_user_id();
         $projects = $this->get_projects($current_user_id);
 
