@@ -38,5 +38,13 @@ $status = !empty($status_terms) ? $status_terms[0] : '';
 // Set type for template loading
 $_GET['type'] = 'request';
 
+// Set up the global post object
+global $post;
+$post = $request;
+setup_postdata($post);
+
 // Include the project template which will load the appropriate content
 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project.php';
+
+// Reset post data
+wp_reset_postdata();
