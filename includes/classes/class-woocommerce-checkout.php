@@ -84,18 +84,6 @@ class Woocommerce_Checkout {
                 try {
                     $settings = get_option('arsol_projects_settings', array());
                     $is_required = !empty($settings['require_project_selection']);
-                    $link_url = !empty($settings['checkout_link_url']) ? esc_url($settings['checkout_link_url']) : '';
-                    $link_text = !empty($settings['checkout_link_text']) ? esc_html($settings['checkout_link_text']) : __('contact sales', 'arsol-pfw');
-
-                    $description = '';
-                    if (!empty($link_url)) {
-                        $description = sprintf(
-                            '%s <a href="%s" target="_blank">%s</a>',
-                            __('Having challenges selecting a project?', 'arsol-pfw'),
-                            $link_url,
-                            $link_text
-                        );
-                    }
 
                     $field_id = 'arsol-projects-for-woo/arsol-project';
                     
@@ -131,7 +119,6 @@ class Woocommerce_Checkout {
                             'location' => 'order',
                             'options' => $options,
                             'required' => $is_required,
-                            'description' => $description,
                             'attributes' => array(),
                             'experimental_attributes' => array(),
                             'default' => '',
@@ -157,18 +144,6 @@ class Woocommerce_Checkout {
 
         $settings = get_option('arsol_projects_settings', array());
         $is_required = !empty($settings['require_project_selection']);
-        $link_url = !empty($settings['checkout_link_url']) ? esc_url($settings['checkout_link_url']) : '';
-        $link_text = !empty($settings['checkout_link_text']) ? esc_html($settings['checkout_link_text']) : __('contact sales', 'arsol-pfw');
-
-        $description = '';
-        if (!empty($link_url)) {
-            $description = sprintf(
-                '%s <a href="%s" target="_blank">%s</a>',
-                __('Having challenges selecting a project?', 'arsol-pfw'),
-                $link_url,
-                $link_text
-            );
-        }
 
         $current_user_id = get_current_user_id();
         $projects = $this->get_projects($current_user_id);
@@ -187,7 +162,6 @@ class Woocommerce_Checkout {
             'required'      => $is_required,
             'placeholder'   => __('Select a project…', 'arsol-pfw'),
             'options'       => $options,
-            'description'   => $description,
         );
 
         echo '<div id="arsol-project-checkout-field">';
