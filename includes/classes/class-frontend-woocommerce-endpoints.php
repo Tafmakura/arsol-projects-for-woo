@@ -224,7 +224,7 @@ class Frontend_Endpoints {
             return;
         }
         
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create-active.php';
     }
     
     /**
@@ -241,7 +241,7 @@ class Frontend_Endpoints {
             return;
         }
 
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create-request.php';
     }
     
     /**
