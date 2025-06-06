@@ -30,7 +30,6 @@ $start_date_formatted = $start_date ? date_i18n(get_option('date_format'), strto
 $delivery_date_formatted = $delivery_date ? date_i18n(get_option('date_format'), strtotime($delivery_date)) : __('N/A', 'arsol-pfw');
 ?>
 
-<h4><?php _e('Project Details', 'arsol-pfw'); ?></h4>
 <div class="project-meta">
     <p>
         <strong><?php _e('Status:', 'arsol-pfw'); ?></strong>
