@@ -77,7 +77,7 @@ class Settings_General {
 
         add_settings_field(
             'user_project_permissions',
-            __('Global Permission Setting', 'arsol-pfw'),
+            __('Frontend Permissions', 'arsol-pfw'),
             array($this, 'render_select_field'),
             'arsol_projects_settings',
             'arsol_projects_user_permissions',
@@ -345,7 +345,7 @@ class Settings_General {
             if (!$role) {
                 continue;
             }
-
+            
             if (in_array($role_slug, $manage_roles)) {
                 $role->add_cap('manage_projects');
                 $role->add_cap('create_projects');
