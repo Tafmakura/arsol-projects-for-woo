@@ -284,7 +284,7 @@ class Frontend_Endpoints {
 
         // Set the type for the template
         $_GET['type'] = 'proposal';
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-approval.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project.php';
 
         // Get the buffered content
         $content = ob_get_clean();
@@ -333,7 +333,7 @@ class Frontend_Endpoints {
 
         // Set the type for the template
         $_GET['type'] = 'request';
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-approval.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project.php';
 
         // Get the buffered content
         $content = ob_get_clean();
