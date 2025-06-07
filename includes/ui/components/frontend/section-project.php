@@ -47,42 +47,46 @@ $sidebar_type = $type;
 $project_id = isset($project['id']) ? $project['id'] : 0;
 ?>
 
-<div class="project-overview-wrapper">
-    <div class="project-content">
-        <?php
-        // Determine project type based on the template being loaded
-        $project_type = 'active'; // default
-        if (strpos($content_template, 'proposal') !== false) {
-            $project_type = 'proposal';
-        } elseif (strpos($content_template, 'request') !== false) {
-            $project_type = 'request';
-        }
-        
-        // Check if there's a project overview override for this project type
-        if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_override($project_type)) {
-            echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_project_overview_override($project_type);
-        } else {
-            // Use default template content
+<?php
+// Determine project type based on the template being loaded
+$project_type = 'active'; // default
+if (strpos($content_template, 'proposal') !== false) {
+    $project_type = 'proposal';
+} elseif (strpos($content_template, 'request') !== false) {
+    $project_type = 'request';
+}
+
+// Check if there's a project overview override for this project type
+if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_override($project_type)) {
+    echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_project_overview_override($project_type);
+} else {
+    // Use default template with preserved structure
+    ?>
+    <div class="project-overview-wrapper">
+        <div class="project-content">
+            <?php
             if (file_exists($content_template)) {
                 include $content_template;
             } else {
                 echo '<p>' . esc_html__('Content template not found.', 'arsol-pfw') . '</p>';
             }
-        }
-        ?>
-    </div>
-    
-    <div class="project-sidebar">
-        <div class="project-sidebar-wrapper">
-            <div class="project-sidebar-card card">
-                <?php
-                if (file_exists($sidebar_template)) {
-                    include $sidebar_template;
-                } else {
-                    echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
-                }
-                ?>
+            ?>
+        </div>
+        
+        <div class="project-sidebar">
+            <div class="project-sidebar-wrapper">
+                <div class="project-sidebar-card card">
+                    <?php
+                    if (file_exists($sidebar_template)) {
+                        include $sidebar_template;
+                    } else {
+                        echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
+                    }
+                    ?>
+                </div>
             </div>
         </div>
     </div>
-</div> 
+    <?php
+}
+?> 
