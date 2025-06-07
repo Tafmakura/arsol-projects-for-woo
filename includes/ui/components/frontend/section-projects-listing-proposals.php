@@ -29,8 +29,18 @@ do_action('arsol_projects_before_user_proposals', $has_items);
             <tbody>
                 <?php while ($query->have_posts()) : $query->the_post(); 
                     $proposal_id = get_the_ID();
-                    $status_terms = wp_get_post_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'names'));
-                    $status = !empty($status_terms) ? $status_terms[0] : '';
+                    $post_status = get_post_status($proposal_id);
+                    $status = '';
+                    if ($post_status === 'draft') {
+                        $status = __('Draft', 'arsol-pfw');
+                    } else {
+                        $review_status_terms = wp_get_post_terms($proposal_id, 'arsol-review-status', array('fields' => 'names'));
+                        if (!is_wp_error($review_status_terms) && !empty($review_status_terms)) {
+                            $status = $review_status_terms[0];
+                        } else {
+                            $status = __('Published', 'arsol-pfw');
+                        }
+                    }
                     $view_url = wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id);
                     $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
                 ?>
