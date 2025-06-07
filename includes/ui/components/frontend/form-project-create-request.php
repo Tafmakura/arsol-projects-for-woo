@@ -1,9 +1,9 @@
 <?php
 /**
- * Request Project Form
+ * Request Project Form: Project Request
  *
  * @package Arsol_Projects_For_Woo
- * @version 1.0.0
+ * @version 1.1.0
  */
 
 if (!defined('ABSPATH')) {

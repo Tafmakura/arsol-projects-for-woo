@@ -45,9 +45,7 @@ $sidebar_type = $type;
 
 // Get project ID from the project data
 $project_id = isset($project['id']) ? $project['id'] : 0;
-?>
 
-<?php
 // Determine project type based on the template being loaded
 $project_type = 'active'; // default
 if (strpos($content_template, 'proposal') !== false) {
@@ -56,14 +54,49 @@ if (strpos($content_template, 'proposal') !== false) {
     $project_type = 'request';
 }
 
+// Prepare comprehensive data for efficient hook usage
+$wrapper_data = compact('project_id', 'project_type', 'type', 'content_template', 'sidebar_template');
+?>
+
+<?php
 // Check if there's a project overview override for this project type
 if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_override($project_type)) {
     echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_project_overview_override($project_type);
 } else {
     // Use default template with preserved structure
     ?>
+    <?php
+    /**
+     * Hook: arsol_pfw_project_wrapper_before
+     * 
+     * @param string $project_type Project type: 'active', 'proposal', 'request'
+     * @param array $data Wrapper data
+     */
+    do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
+    ?>
+    
     <div class="project-overview-wrapper">
+        <?php
+        /**
+         * Hook: arsol_pfw_project_wrapper_start
+         * 
+         * @param string $project_type Project type: 'active', 'proposal', 'request'
+         * @param array $data Wrapper data
+         */
+        do_action('arsol_pfw_project_wrapper_start', $project_type, $wrapper_data);
+        ?>
+        
         <div class="project-content">
+            <?php
+            /**
+             * Hook: arsol_pfw_project_content_before
+             * 
+             * @param string $project_type Project type: 'active', 'proposal', 'request'
+             * @param array $data Wrapper data
+             */
+            do_action('arsol_pfw_project_content_before', $project_type, $wrapper_data);
+            ?>
+            
             <?php
             if (file_exists($content_template)) {
                 include $content_template;
@@ -71,9 +104,29 @@ if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_ov
                 echo '<p>' . esc_html__('Content template not found.', 'arsol-pfw') . '</p>';
             }
             ?>
+            
+            <?php
+            /**
+             * Hook: arsol_pfw_project_content_after
+             * 
+             * @param string $project_type Project type: 'active', 'proposal', 'request'
+             * @param array $data Wrapper data
+             */
+            do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
+            ?>
         </div>
         
         <div class="project-sidebar">
+            <?php
+            /**
+             * Hook: arsol_pfw_project_sidebar_wrapper_before
+             * 
+             * @param string $project_type Project type: 'active', 'proposal', 'request'
+             * @param array $data Wrapper data
+             */
+            do_action('arsol_pfw_project_sidebar_wrapper_before', $project_type, $wrapper_data);
+            ?>
+            
             <div class="project-sidebar-wrapper">
                 <div class="project-sidebar-card card">
                     <?php
@@ -85,8 +138,38 @@ if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_ov
                     ?>
                 </div>
             </div>
+            
+            <?php
+            /**
+             * Hook: arsol_pfw_project_sidebar_wrapper_after
+             * 
+             * @param string $project_type Project type: 'active', 'proposal', 'request'
+             * @param array $data Wrapper data
+             */
+            do_action('arsol_pfw_project_sidebar_wrapper_after', $project_type, $wrapper_data);
+            ?>
         </div>
+        
+        <?php
+        /**
+         * Hook: arsol_pfw_project_wrapper_end
+         * 
+         * @param string $project_type Project type: 'active', 'proposal', 'request'
+         * @param array $data Wrapper data
+         */
+        do_action('arsol_pfw_project_wrapper_end', $project_type, $wrapper_data);
+        ?>
     </div>
+    
+    <?php
+    /**
+     * Hook: arsol_pfw_project_wrapper_after
+     * 
+     * @param string $project_type Project type: 'active', 'proposal', 'request'
+     * @param array $data Wrapper data
+     */
+    do_action('arsol_pfw_project_wrapper_after', $project_type, $wrapper_data);
+    ?>
     <?php
 }
 ?> 

@@ -3,6 +3,7 @@
  * Template for displaying related project details on order and subscription pages
  *
  * @package Arsol_Projects_For_Woo
+ * @version 1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -68,4 +69,4 @@ if (!defined('ABSPATH')) {
             </td>
         </tr>
     </tbody>
-</table>
+</table> 

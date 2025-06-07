@@ -25,5 +25,5 @@ if (!$can_create) {
 
 \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
     'create_project_form',
-    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-create-project.php'
+    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-active.php'
 );
