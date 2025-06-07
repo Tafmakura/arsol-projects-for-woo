@@ -8,8 +8,18 @@ class Proposal {
     public function __construct() {
         // Add meta boxes for single proposal admin screen
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
+        add_action('add_meta_boxes', array($this, 'add_conversion_meta_box'));
         // Save proposal data
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
+        // Action to set review status when a proposal is published
+        add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
+    }
+
+    public function set_proposal_review_status($new_status, $old_status, $post) {
+        if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
+            // Set the review status to 'under-review'
+            wp_set_object_terms($post->ID, 'under-review', 'arsol-review-status');
+        }
     }
 
     /**
@@ -27,6 +37,23 @@ class Proposal {
     }
 
     /**
+     * Add conversion meta box
+     */
+    public function add_conversion_meta_box() {
+        global $post;
+        if ($post->post_status == 'publish') {
+            add_meta_box(
+                'proposal_conversion',
+                __('Actions', 'arsol-pfw'),
+                array($this, 'render_conversion_meta_box'),
+                'arsol-pfw-proposal',
+                'side',
+                'high'
+            );
+        }
+    }
+
+    /**
      * Render proposal details meta box
      */
     public function render_proposal_details_meta_box($post) {
@@ -34,19 +61,11 @@ class Proposal {
         wp_nonce_field('proposal_details_meta_box', 'proposal_details_meta_box_nonce');
 
         // Get current values
-        $current_status = wp_get_object_terms($post->ID, 'arsol-proposal-status', array('fields' => 'slugs'));
-        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         $budget = get_post_meta($post->ID, '_proposal_budget', true);
         $start_date = get_post_meta($post->ID, '_proposal_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
         $related_request = get_post_meta($post->ID, '_related_request', true);
         
-        // Get statuses
-        $statuses = get_terms(array(
-            'taxonomy' => 'arsol-proposal-status',
-            'hide_empty' => false,
-        ));
-
         // Get author dropdown
         $author_dropdown = wp_dropdown_users(array(
             'name' => 'post_author_override',
@@ -93,17 +112,6 @@ class Proposal {
             </p>
 
             <p>
-                <label for="proposal_status" style="display:block;margin-bottom:5px;"><?php _e('Proposal Status:', 'arsol-pfw'); ?></label>
-                <select name="proposal_status" id="proposal_status" class="widefat">
-                    <?php foreach ($statuses as $status) : ?>
-                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
-                            <?php echo esc_html($status->name); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
-
-            <p>
                 <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php _e('Budget:', 'arsol-pfw'); ?></label>
                 <input type="number" 
                        id="proposal_budget" 
@@ -133,6 +141,29 @@ class Proposal {
             </p>
         </div>
         <?php
+
+        if ($post->post_status == 'publish') {
+            $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
+            $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
+            ?>
+            <div class="proposal-actions" style="margin-top: 10px;">
+                <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Project', 'arsol-pfw'); ?></a>
+            </div>
+            <?php
+        }
+    }
+
+    /**
+     * Render conversion meta box
+     */
+    public function render_conversion_meta_box($post) {
+        $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
+        $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
+        ?>
+        <div class="proposal-actions">
+            <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Project', 'arsol-pfw'); ?></a>
+        </div>
+        <?php
     }
 
     /**
@@ -157,11 +188,6 @@ class Proposal {
         // Check the user's permissions
         if (!current_user_can('edit_post', $post_id)) {
             return;
-        }
-
-        // Save proposal status
-        if (isset($_POST['proposal_status'])) {
-            wp_set_object_terms($post_id, sanitize_text_field($_POST['proposal_status']), 'arsol-proposal-status', false);
         }
 
         // Save related request

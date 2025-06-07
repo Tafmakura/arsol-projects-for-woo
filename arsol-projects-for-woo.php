@@ -44,12 +44,16 @@ define('ARSOL_PROJECTS_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
 // Use correct namespace
 use Arsol_Projects_For_Woo\Setup;
+use Arsol_Projects_For_Woo\Workflow\Workflow_Handler;
 
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
 // Include the admin settings class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
+
+// Include the workflow handler class
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-workflow-handler.php';
 
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');
@@ -86,5 +90,7 @@ function arsol_projects_deactivate() {
 function arsol_projects_init() {
     // Instantiate the Setup class
     new Setup();
+    // Instantiate the Workflow_Handler class
+    new Workflow_Handler();
 }
 add_action('plugins_loaded', 'arsol_projects_init'); 

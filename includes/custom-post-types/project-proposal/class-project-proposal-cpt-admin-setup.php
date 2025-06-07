@@ -10,8 +10,8 @@ class Setup {
     public function __construct() {
         // Add project proposal post type
         add_action('init', array($this, 'register_post_type'), 15);
-        add_action('init', array($this, 'register_proposal_status_taxonomy'), 15);
-        add_action('init', array($this, 'add_default_proposal_statuses'), 20);
+        add_action('init', array($this, 'register_review_status_taxonomy'), 15);
+        add_action('init', array($this, 'add_default_review_statuses'), 20);
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_proposals'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_wc_admin_styles'));
@@ -106,19 +106,19 @@ class Setup {
     }
 
     /**
-     * Register project proposal status taxonomy
+     * Register project proposal review status taxonomy
      */
-    public function register_proposal_status_taxonomy() {
+    public function register_review_status_taxonomy() {
         $labels = array(
-            'name'              => __('Proposal Statuses', 'arsol-pfw'),
-            'singular_name'     => __('Proposal Status', 'arsol-pfw'),
-            'search_items'      => __('Search Proposal Statuses', 'arsol-pfw'),
-            'all_items'         => __('All Proposal Statuses', 'arsol-pfw'),
-            'edit_item'         => __('Edit Proposal Status', 'arsol-pfw'),
-            'update_item'       => __('Update Proposal Status', 'arsol-pfw'),
-            'add_new_item'      => __('Add New Proposal Status', 'arsol-pfw'),
-            'new_item_name'     => __('New Proposal Status Name', 'arsol-pfw'),
-            'menu_name'         => __('Proposal Statuses', 'arsol-pfw'),
+            'name'              => __('Review Statuses', 'arsol-pfw'),
+            'singular_name'     => __('Review Status', 'arsol-pfw'),
+            'search_items'      => __('Search Review Statuses', 'arsol-pfw'),
+            'all_items'         => __('All Review Statuses', 'arsol-pfw'),
+            'edit_item'         => __('Edit Review Status', 'arsol-pfw'),
+            'update_item'       => __('Update Review Status', 'arsol-pfw'),
+            'add_new_item'      => __('Add New Review Status', 'arsol-pfw'),
+            'new_item_name'     => __('New Review Status Name', 'arsol-pfw'),
+            'menu_name'         => __('Review Statuses', 'arsol-pfw'),
         );
 
         $args = array(
@@ -127,30 +127,25 @@ class Setup {
             'show_ui'           => true,
             'show_admin_column' => true,
             'query_var'         => true,
-            'rewrite'           => array('slug' => 'proposal-status'),
+            'rewrite'           => array('slug' => 'review-status'),
             'show_in_rest'      => true,
             'meta_box_cb'       => false,
         );
 
-        register_taxonomy('arsol-proposal-status', 'arsol-pfw-proposal', $args);
+        register_taxonomy('arsol-review-status', 'arsol-pfw-proposal', $args);
     }
 
     /**
-     * Add default proposal statuses
+     * Add default review statuses
      */
-    public function add_default_proposal_statuses() {
+    public function add_default_review_statuses() {
         $default_statuses = array(
-            'draft'       => 'Draft',
-            'submitted'   => 'Submitted',
-            'under-review'=> 'Under Review',
-            'approved'    => 'Approved',
-            'rejected'    => 'Rejected',
-            'revised'     => 'Needs Revision'
+            'under-review'      => 'Under Review',
         );
 
         foreach ($default_statuses as $slug => $name) {
-            if (!term_exists($slug, 'arsol-proposal-status')) {
-                wp_insert_term($name, 'arsol-proposal-status', array('slug' => $slug));
+            if (!term_exists($slug, 'arsol-review-status')) {
+                wp_insert_term($name, 'arsol-review-status', array('slug' => $slug));
             }
         }
     }

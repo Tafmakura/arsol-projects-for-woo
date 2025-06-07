@@ -139,11 +139,8 @@ class Setup {
      */
     public function add_default_request_statuses() {
         $default_statuses = array(
-            'pending'     => 'Pending Review',
+            'pending'     => 'Pending',
             'under-review'=> 'Under Review',
-            'approved'    => 'Approved',
-            'rejected'    => 'Rejected',
-            'cancelled'   => 'Cancelled'
         );
 
         foreach ($default_statuses as $slug => $name) {

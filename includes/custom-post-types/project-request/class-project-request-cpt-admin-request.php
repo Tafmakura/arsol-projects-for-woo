@@ -8,6 +8,7 @@ class Request {
     public function __construct() {
         // Add meta boxes
         add_action('add_meta_boxes', array($this, 'add_request_details_meta_box'));
+        add_action('add_meta_boxes', array($this, 'add_conversion_meta_box'));
         // Save request details
         add_action('save_post_arsol-pfw-request', array($this, 'save_request_details'));
     }
@@ -156,5 +157,32 @@ class Request {
         if (isset($_POST['request_delivery_date'])) {
             update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($_POST['request_delivery_date']));
         }
+    }
+
+    /**
+     * Add conversion meta box
+     */
+    public function add_conversion_meta_box() {
+        add_meta_box(
+            'request_conversion',
+            __('Actions', 'arsol-pfw'),
+            array($this, 'render_conversion_meta_box'),
+            'arsol-pfw-request',
+            'side',
+            'high'
+        );
+    }
+
+    /**
+     * Render conversion meta box
+     */
+    public function render_conversion_meta_box($post) {
+        $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
+        $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
+        ?>
+        <div class="request-actions">
+            <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Proposal', 'arsol-pfw'); ?></a>
+        </div>
+        <?php
     }
 }
