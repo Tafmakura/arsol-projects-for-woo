@@ -32,8 +32,18 @@ if (!$proposal || $proposal->post_type !== 'arsol-pfw-proposal') {
 }
 
 // Get proposal status
-$status_terms = wp_get_post_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'names'));
-$status = !empty($status_terms) ? $status_terms[0] : '';
+$post_status = get_post_status($proposal->ID);
+$status = '';
+if ($post_status === 'draft') {
+    $status = __('Draft', 'arsol-pfw');
+} else {
+    $review_status_terms = wp_get_post_terms($proposal->ID, 'arsol-review-status', array('fields' => 'names'));
+    if (!is_wp_error($review_status_terms) && !empty($review_status_terms)) {
+        $status = $review_status_terms[0];
+    } else {
+        $status = __('Published', 'arsol-pfw');
+    }
+}
 
 // Set type for template loading
 $_GET['type'] = 'proposal';
