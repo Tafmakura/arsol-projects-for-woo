@@ -52,7 +52,7 @@ class Settings_Advanced {
             ],
             'access_denied_shortcode' => [
                 'title' => __('Access Denied Notice', 'arsol-pfw'),
-                'description' => __('Overrides the page shown when a user has insufficient permissions.', 'arsol-pfw')
+                'description' => __('Overrides denied access notice.', 'arsol-pfw')
             ],
         ];
         add_action('admin_init', array($this, 'register_settings'));
