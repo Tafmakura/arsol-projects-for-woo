@@ -39,16 +39,16 @@ class Settings_Advanced {
                 'description' => __('Overrides the form for requesting new projects.', 'arsol-pfw')
             ],
             'projects_listing_shortcode' => [
-                'title' => __('Projects Listing', 'arsol-pfw'),
-                'description' => __('Overrides the display of all projects for a user.', 'arsol-pfw')
+                'title' => __('Active Projects Listing', 'arsol-pfw'),
+                'description' => __('Overrides the display of all active projects for a user.', 'arsol-pfw')
             ],
             'project_proposal_listings_shortcode' => [
-                'title' => __('Project Proposal Listings', 'arsol-pfw'),
-                'description' => __('Overrides the display of project proposals.', 'arsol-pfw')
+                'title' => __('Project Proposals Listing', 'arsol-pfw'),
+                'description' => __('Overrides the display of all project proposals for a user.', 'arsol-pfw')
             ],
             'project_requests_listings_shortcode' => [
-                'title' => __('Project Requests Listings', 'arsol-pfw'),
-                'description' => __('Overrides the display of project requests.', 'arsol-pfw')
+                'title' => __('Project Requests Listing', 'arsol-pfw'),
+                'description' => __('Overrides the display of all project requests for a user.', 'arsol-pfw')
             ],
             'access_denied_shortcode' => [
                 'title' => __('Access Denied Notice', 'arsol-pfw'),
