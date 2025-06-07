@@ -40,6 +40,22 @@ class Frontend_Template_Overrides {
     ];
 
     /**
+     * Get template map with conditional subscription support
+     *
+     * @return array Template mapping array
+     */
+    public static function get_template_map() {
+        $map = self::$template_map;
+        
+        // Only include subscription-related templates if WooCommerce Subscriptions is active
+        if (class_exists('WC_Subscriptions')) {
+            $map['project_subscriptions'] = 'project_subscriptions_shortcode';
+        }
+        
+        return $map;
+    }
+
+    /**
      * Render a template with potential shortcode override
      * 
      * NOTE: This method is designed for templates that don't have their own wrappers.
@@ -56,7 +72,8 @@ class Frontend_Template_Overrides {
         $advanced_settings = get_option('arsol_projects_advanced_settings', []);
         
         // Check if there's a shortcode override for this template type
-        $setting_key = isset(self::$template_map[$template_type]) ? self::$template_map[$template_type] : '';
+        $template_map = self::get_template_map();
+        $setting_key = isset($template_map[$template_type]) ? $template_map[$template_type] : '';
         $shortcode_override = '';
         
         if (!empty($setting_key) && isset($advanced_settings[$setting_key])) {
@@ -132,7 +149,7 @@ class Frontend_Template_Overrides {
      * @return array Array of template types
      */
     public static function get_template_types() {
-        return array_keys(self::$template_map);
+        return array_keys(self::get_template_map());
     }
 
     /**
@@ -143,7 +160,8 @@ class Frontend_Template_Overrides {
      */
     public static function has_template_override($template_type) {
         $advanced_settings = get_option('arsol_projects_advanced_settings', []);
-        $setting_key = isset(self::$template_map[$template_type]) ? self::$template_map[$template_type] : '';
+        $template_map = self::get_template_map();
+        $setting_key = isset($template_map[$template_type]) ? $template_map[$template_type] : '';
         
         if (empty($setting_key)) {
             return false;
@@ -162,7 +180,8 @@ class Frontend_Template_Overrides {
      */
     public static function get_template_override($template_type) {
         $advanced_settings = get_option('arsol_projects_advanced_settings', []);
-        $setting_key = isset(self::$template_map[$template_type]) ? self::$template_map[$template_type] : '';
+        $template_map = self::get_template_map();
+        $setting_key = isset($template_map[$template_type]) ? $template_map[$template_type] : '';
         
         if (empty($setting_key)) {
             return '';
@@ -185,8 +204,9 @@ class Frontend_Template_Overrides {
     public static function get_active_overrides() {
         $advanced_settings = get_option('arsol_projects_advanced_settings', []);
         $active_overrides = [];
+        $template_map = self::get_template_map();
         
-        foreach (self::$template_map as $template_type => $setting_key) {
+        foreach ($template_map as $template_type => $setting_key) {
             if (isset($advanced_settings[$setting_key])) {
                 $shortcode = trim($advanced_settings[$setting_key]);
                 if (!empty($shortcode) && self::is_valid_shortcode($shortcode)) {
@@ -205,16 +225,18 @@ class Frontend_Template_Overrides {
      */
     public static function debug_overrides() {
         $advanced_settings = get_option('arsol_projects_advanced_settings', []);
+        $template_map = self::get_template_map();
         $debug_info = [
             'settings_exist' => !empty($advanced_settings),
-            'template_map' => self::$template_map,
+            'template_map' => $template_map,
             'raw_settings' => $advanced_settings,
             'active_overrides' => self::get_active_overrides(),
-            'invalid_shortcodes' => []
+            'invalid_shortcodes' => [],
+            'woocommerce_subscriptions_active' => class_exists('WC_Subscriptions')
         ];
 
         // Check for invalid shortcodes
-        foreach (self::$template_map as $template_type => $setting_key) {
+        foreach ($template_map as $template_type => $setting_key) {
             if (isset($advanced_settings[$setting_key])) {
                 $shortcode = trim($advanced_settings[$setting_key]);
                 if (!empty($shortcode) && !self::is_valid_shortcode($shortcode)) {

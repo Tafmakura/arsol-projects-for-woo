@@ -41,7 +41,12 @@ class Frontend_Endpoints {
         add_action('woocommerce_account_projects_endpoint', array($this, 'projects_endpoint_content'));
         add_action('woocommerce_account_project-overview_endpoint', array($this, 'project_overview_endpoint_content'));
         add_action('woocommerce_account_project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
-        add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
+        
+        // Only register subscription endpoint if WooCommerce Subscriptions is active
+        if (class_exists('WC_Subscriptions')) {
+            add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
+        }
+        
         add_action('woocommerce_account_project-create_endpoint', array($this, 'project_create_endpoint_content'));
         add_action('woocommerce_account_project-request_endpoint', array($this, 'project_request_endpoint_content'));
         add_action('woocommerce_account_project-view-proposal_endpoint', array($this, 'project_view_proposal_endpoint_content'));
@@ -70,7 +75,12 @@ class Frontend_Endpoints {
         add_rewrite_endpoint('projects', EP_PAGES);
         add_rewrite_endpoint('project-overview', EP_PAGES);
         add_rewrite_endpoint('project-orders', EP_PAGES);
-        add_rewrite_endpoint('project-subscriptions', EP_PAGES);
+        
+        // Only register subscription endpoint if WooCommerce Subscriptions is active
+        if (class_exists('WC_Subscriptions')) {
+            add_rewrite_endpoint('project-subscriptions', EP_PAGES);
+        }
+        
         add_rewrite_endpoint('project-create', EP_PAGES);
         add_rewrite_endpoint('project-request', EP_PAGES);
         add_rewrite_endpoint('project-view-proposal', EP_PAGES);
@@ -106,7 +116,12 @@ class Frontend_Endpoints {
         $query_vars['projects'] = 'projects';
         $query_vars['project-overview'] = 'project-overview';
         $query_vars['project-orders'] = 'project-orders';
-        $query_vars['project-subscriptions'] = 'project-subscriptions';
+        
+        // Only add subscription query var if WooCommerce Subscriptions is active
+        if (class_exists('WC_Subscriptions')) {
+            $query_vars['project-subscriptions'] = 'project-subscriptions';
+        }
+        
         $query_vars['project-create'] = 'project-create';
         $query_vars['project-request'] = 'project-request';
         $query_vars['project-view-proposal'] = 'project-view-proposal';
@@ -206,6 +221,13 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_subscriptions_endpoint_content() {
+        // Check if WooCommerce Subscriptions is active
+        if (!class_exists('WC_Subscriptions')) {
+            wc_add_notice(__('WooCommerce Subscriptions plugin is required for this feature.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            exit;
+        }
+        
         $project_id = absint(get_query_var('project-subscriptions'));
         $this->render_project_page($project_id, 'subscriptions');
     }

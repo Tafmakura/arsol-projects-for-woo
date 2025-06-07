@@ -33,7 +33,12 @@ class Shortcodes {
 		add_shortcode('arsol_project', array($this, 'render_single_project'));
 		add_shortcode('arsol_project_categories', array($this, 'render_project_categories'));
 		add_shortcode('arsol_project_orders', array($this, 'project_orders_shortcode'));
-		add_shortcode('arsol_project_subscriptions', array($this, 'project_subscriptions_shortcode'));
+		
+		// Only register subscription shortcode if WooCommerce Subscriptions is active
+		if (class_exists('WC_Subscriptions')) {
+			add_shortcode('arsol_project_subscriptions', array($this, 'project_subscriptions_shortcode'));
+		}
+		
 		add_shortcode('arsol_user_projects', array($this, 'user_projects_shortcode'));
 		add_shortcode('arsol_user_projects_count', array($this, 'user_projects_count_shortcode'));
 		add_shortcode('arsol_projects_count', array($this, 'projects_count_shortcode'));
@@ -202,6 +207,11 @@ class Shortcodes {
 	 * @return string HTML output
 	 */
 	public function project_subscriptions_shortcode($atts) {
+		// Check if WooCommerce Subscriptions is active
+		if (!class_exists('WC_Subscriptions')) {
+			return '<p>' . __('WooCommerce Subscriptions plugin is required to display subscription information.', 'arsol-pfw') . '</p>';
+		}
+
 		// Start output buffering
 		ob_start();
 

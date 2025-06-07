@@ -22,13 +22,20 @@ $current_tab = $tab;
 // --- Render Page Navigation ---
 $tabs = array(
     'overview' => array('label' => __('Overview', 'arsol-pfw'), 'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)),
-    'orders' => array('label' => __('Orders', 'woocommerce'), 'url' => wc_get_account_endpoint_url('project-orders/' . $project_id)),
-    'subscriptions' => array('label' => __('Subscriptions', 'woocommerce-subscriptions'), 'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id))
+    'orders' => array('label' => __('Orders', 'woocommerce'), 'url' => wc_get_account_endpoint_url('project-orders/' . $project_id))
 );
+
+// Only add subscriptions tab if WooCommerce Subscriptions is active
+if (class_exists('WC_Subscriptions')) {
+    $tabs['subscriptions'] = array('label' => __('Subscriptions', 'woocommerce-subscriptions'), 'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id));
+}
 ?>
 <div class="arsol-project-intro">
     <p>
         <?php 
+        // Create intro text based on available features
+        if (class_exists('WC_Subscriptions')) {
+            // Full intro with subscriptions
             echo sprintf(
                 esc_html__('This is your %s project dashboard. The %s tab shows project details, the %s tab displays your project %s, and the %s tab displays all your project %s.', 'arsol-pfw'),
                 '<strong>' . esc_html($project_title) . '</strong>',
@@ -38,6 +45,16 @@ $tabs = array(
                 '<strong>' . esc_html__('Subscriptions', 'woocommerce-subscriptions') . '</strong>',
                 esc_html__('subscriptions', 'woocommerce-subscriptions')
             );
+        } else {
+            // Simplified intro without subscriptions
+            echo sprintf(
+                esc_html__('This is your %s project dashboard. The %s tab shows project details and the %s tab displays your project %s.', 'arsol-pfw'),
+                '<strong>' . esc_html($project_title) . '</strong>',
+                '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
+                '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
+                esc_html__('orders', 'woocommerce')
+            );
+        }
         ?>
     </p>
 </div>
@@ -64,11 +81,18 @@ switch ($tab) {
         );
         break;
     case 'subscriptions':
-        \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-            'project_subscriptions',
-            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-listing-subscriptions.php',
-            compact('project')
-        );
+        // Only render subscriptions if WooCommerce Subscriptions is active
+        if (class_exists('WC_Subscriptions')) {
+            \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+                'project_subscriptions',
+                ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-listing-subscriptions.php',
+                compact('project')
+            );
+        } else {
+            // Redirect to overview if subscriptions plugin is not active
+            wp_safe_redirect(wc_get_account_endpoint_url('project-overview/' . $project_id));
+            exit;
+        }
         break;
     default:
         \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
