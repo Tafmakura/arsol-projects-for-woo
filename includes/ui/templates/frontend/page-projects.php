@@ -44,15 +44,32 @@ if ($button_url && $button_label): ?>
 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-navigation.php';
 
 // --- Main Content ---
-switch ($current_tab) {
-    case 'proposals':
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-proposals.php';
-        break;
-    case 'requests':
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-requests.php';
-        break;
-    case 'active':
-    default:
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-active.php';
-        break;
-}
+?>
+<div class="woocommerce-MyAccount-content">
+    <?php
+    switch ($current_tab) {
+        case 'proposals':
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_proposal_listings')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('project_proposal_listings');
+            } else {
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-proposals.php';
+            }
+            break;
+        case 'requests':
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_requests_listings')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('project_requests_listings');
+            } else {
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-requests.php';
+            }
+            break;
+        case 'active':
+        default:
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('projects_listing')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('projects_listing');
+            } else {
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-active.php';
+            }
+            break;
+    }
+    ?>
+</div>

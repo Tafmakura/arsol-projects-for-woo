@@ -33,13 +33,23 @@ $due_date = get_post_meta($project['id'], '_project_due_date', true);
 
 <div class="project-overview-wrapper">
     <div class="project-content">
-        <div class="project-description">
-            <?php if (empty(get_the_content())) : ?>
-                <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-overview-empty.php'; ?>
-            <?php else : ?>
-                <?php the_content(); ?>
-            <?php endif; ?>
-        </div>
+        <?php 
+        // Check if there's a project overview override for active projects
+        if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_override('active')) {
+            echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_project_overview_override('active');
+        } else {
+            // Use default template content
+            ?>
+            <div class="project-description">
+                <?php if (empty(get_the_content())) : ?>
+                    <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-overview-empty.php'; ?>
+                <?php else : ?>
+                    <?php the_content(); ?>
+                <?php endif; ?>
+            </div>
+            <?php
+        }
+        ?>
     </div>
 </div>
 

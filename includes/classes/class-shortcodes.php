@@ -37,6 +37,9 @@ class Shortcodes {
 		add_shortcode('arsol_user_projects', array($this, 'user_projects_shortcode'));
 		add_shortcode('arsol_user_projects_count', array($this, 'user_projects_count_shortcode'));
 		add_shortcode('arsol_projects_count', array($this, 'projects_count_shortcode'));
+		
+		// Template override example/demo shortcode
+		add_shortcode('arsol_template_override_demo', array($this, 'template_override_demo_shortcode'));
 	}
 
 	/**
@@ -411,5 +414,50 @@ class Shortcodes {
 		);
 		
 		return wc_get_orders($args);
+	}
+
+	/**
+	 * Demo shortcode for testing template overrides
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function template_override_demo_shortcode($atts) {
+		$atts = shortcode_atts(array(
+			'title' => __('Custom Template Override', 'arsol-pfw'),
+			'message' => __('This content is being displayed using a shortcode override instead of the default template.', 'arsol-pfw'),
+			'style' => 'default',
+			'type' => 'active'
+		), $atts);
+
+		$style_class = '';
+		switch ($atts['style']) {
+			case 'success':
+				$style_class = 'notice-success';
+				break;
+			case 'warning':
+				$style_class = 'notice-warning';
+				break;
+			case 'error':
+				$style_class = 'notice-error';
+				break;
+			default:
+				$style_class = 'notice-info';
+				break;
+		}
+
+		ob_start();
+		?>
+		<div class="arsol-template-override-demo <?php echo esc_attr($style_class); ?>" style="padding: 20px; margin: 20px 0; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9;">
+			<h3 style="margin-top: 0; color: #333;"><?php echo esc_html($atts['title']); ?></h3>
+			<p style="margin-bottom: 0; color: #666;"><?php echo esc_html($atts['message']); ?></p>
+			<p style="font-size: 11px; color: #999; margin: 10px 0 0 0;">
+				<strong><?php _e('Project Type:', 'arsol-pfw'); ?></strong> <?php echo esc_html(ucfirst($atts['type'])); ?><br>
+				<strong><?php _e('Demo Shortcode:', 'arsol-pfw'); ?></strong> 
+				[arsol_template_override_demo title="<?php echo esc_attr($atts['title']); ?>" message="<?php echo esc_attr($atts['message']); ?>" type="<?php echo esc_attr($atts['type']); ?>" style="<?php echo esc_attr($atts['style']); ?>"]
+			</p>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 }

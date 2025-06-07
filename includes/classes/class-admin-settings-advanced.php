@@ -18,9 +18,17 @@ class Settings_Advanced {
 
     public function __construct() {
         $this->shortcode_fields = [
-            'project_overview_shortcode' => [
-                'title' => __('Project Overview', 'arsol-pfw'),
-                'description' => __('Overrides the single project view.', 'arsol-pfw')
+            'project_overview_active_shortcode' => [
+                'title' => __('Active Project Overview', 'arsol-pfw'),
+                'description' => __('Overrides the overview section for active projects.', 'arsol-pfw')
+            ],
+            'project_overview_proposal_shortcode' => [
+                'title' => __('Project Proposal Overview', 'arsol-pfw'),
+                'description' => __('Overrides the overview section for project proposals.', 'arsol-pfw')
+            ],
+            'project_overview_request_shortcode' => [
+                'title' => __('Project Request Overview', 'arsol-pfw'),
+                'description' => __('Overrides the overview section for project requests.', 'arsol-pfw')
             ],
             'create_project_form_shortcode' => [
                 'title' => __('Create Project Form', 'arsol-pfw'),
@@ -78,6 +86,7 @@ class Settings_Advanced {
 
     public function render_template_overrides_description() {
         echo '<p>' . esc_html__('Use these settings to override the default plugin templates with your own shortcodes. This allows for custom layouts and designs for various components without needing to edit plugin files directly. Enter the shortcode you wish to use for each template override.', 'arsol-pfw') . '</p>';
+        echo '<p><strong>' . esc_html__('Important:', 'arsol-pfw') . '</strong> ' . esc_html__('Template overrides are placed inside existing wrapper elements to preserve page structure and styling. Your shortcode content will appear within the appropriate container divs.', 'arsol-pfw') . '</p>';
     }
 
     public function render_text_field($args) {
