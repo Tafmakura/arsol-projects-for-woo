@@ -192,7 +192,7 @@ class Frontend_Endpoints {
             : '';
 
         // Load the single master template and pass all necessary data
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects-listing.php';
     }
     
     /**
