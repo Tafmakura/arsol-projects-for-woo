@@ -43,6 +43,8 @@ class Project {
         $recurring_budget = get_post_meta($post->ID, '_project_recurring_budget', true);
         $billing_interval = get_post_meta($post->ID, '_project_billing_interval', true);
         $billing_period = get_post_meta($post->ID, '_project_billing_period', true);
+        $standard_order_id = get_post_meta($post->ID, '_standard_order_id', true);
+        $recurring_order_id = get_post_meta($post->ID, '_recurring_order_id', true);
         
         // Get statuses
         $statuses = get_terms(array(
@@ -78,6 +80,32 @@ class Project {
                        disabled
                        class="widefat">
             </p>
+
+            <?php if (!empty($budget)) : ?>
+                <p>
+                    <label><?php _e('Proposed Budget:', 'arsol-projects-for-woo'); ?></label>
+                    <strong class="arsol-pfw-budget-amount"><?php echo wc_price($budget); ?></strong>
+                </p>
+            <?php endif; ?>
+
+            <?php if (!empty($recurring_budget)) : ?>
+                <p>
+                    <label><?php _e('Proposed Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
+                    <?php
+                    $intervals = array('1' => __('every', 'arsol-pfw'), '2' => __('every 2nd', 'arsol-pfw'), '3' => __('every 3rd', 'arsol-pfw'), '4' => __('every 4th', 'arsol-pfw'), '5' => __('every 5th', 'arsol-pfw'), '6' => __('every 6th', 'arsol-pfw'));
+                    $periods = array('day' => __('day', 'arsol-pfw'), 'week' => __('week', 'arsol-pfw'), 'month' => __('month', 'arsol-pfw'), 'year' => __('year', 'arsol-pfw'));
+                    $interval_text = isset($intervals[$billing_interval]) ? $intervals[$billing_interval] : '';
+                    $period_text = isset($periods[$billing_period]) ? $periods[$billing_period] : '';
+                    $cycle_text = trim($interval_text . ' ' . $period_text);
+                    ?>
+                    <strong class="arsol-pfw-budget-amount">
+                        <?php echo wc_price($recurring_budget); ?>
+                        <?php if(!empty($cycle_text)) : ?>
+                            <?php echo esc_html($cycle_text); ?>
+                        <?php endif; ?>
+                    </strong>
+                </p>
+            <?php endif; ?>
 
             <p>
                 <label for="post_author_override"><?php _e('Customer:', 'arsol-projects-for-woo'); ?></label>
@@ -126,42 +154,22 @@ class Project {
                        style="width:100%">
             </p>
 
-            <?php if (!empty($budget)) : ?>
+            <?php if ($standard_order_id || $recurring_order_id) : ?>
                 <p>
-                    <label for="project_budget"><?php _e('Budget:', 'arsol-projects-for-woo'); ?></label>
-                    <input type="text" 
-                           id="project_budget" 
-                           value="<?php echo esc_attr(wc_price($budget)); ?>"
-                           disabled
-                           style="width:100%">
+                    <label><?php _e('Proposal Invoices:', 'arsol-projects-for-woo'); ?></label>
+                    <span class="arsol-pfw-invoice-links">
+                        <?php 
+                        $links = array();
+                        if ($standard_order_id) {
+                            $links[] = '<a href="' . get_edit_post_link($standard_order_id) . '">#' . esc_html($standard_order_id) . '</a>';
+                        }
+                        if ($recurring_order_id) {
+                             $links[] = '<a href="' . get_edit_post_link($recurring_order_id) . '">#' . esc_html($recurring_order_id) . '</a>';
+                        }
+                        echo implode(', ', $links);
+                        ?>
+                    </span>
                 </p>
-            <?php endif; ?>
-
-            <?php if (!empty($recurring_budget)) : ?>
-                <p>
-                    <label for="project_recurring_budget"><?php _e('Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
-                    <input type="text" 
-                           id="project_recurring_budget" 
-                           value="<?php echo esc_attr(wc_price($recurring_budget)); ?>"
-                           disabled
-                           style="width:100%">
-                </p>
-
-                <?php
-                $intervals = array('1' => __('Every', 'arsol-pfw'), '2' => __('Every 2nd', 'arsol-pfw'), '3' => __('Every 3rd', 'arsol-pfw'), '4' => __('Every 4th', 'arsol-pfw'), '5' => __('Every 5th', 'arsol-pfw'), '6' => __('Every 6th', 'arsol-pfw'));
-                $periods = array('day' => __('Day', 'arsol-pfw'), 'week' => __('Week', 'arsol-pfw'), 'month' => __('Month', 'arsol-pfw'), 'year' => __('Year', 'arsol-pfw'));
-                $interval_text = isset($intervals[$billing_interval]) ? $intervals[$billing_interval] : '';
-                $period_text = isset($periods[$billing_period]) ? $periods[$billing_period] : '';
-                ?>
-                <p>
-                    <label for="project_billing_cycle"><?php _e('Recurring Billing Cycle:', 'arsol-projects-for-woo'); ?></label>
-                    <input type="text" 
-                           id="project_billing_cycle" 
-                           value="<?php echo esc_attr($interval_text . ' ' . $period_text); ?>"
-                           disabled
-                           style="width:100%">
-                </p>
-
             <?php endif; ?>
         </div>
         <?php

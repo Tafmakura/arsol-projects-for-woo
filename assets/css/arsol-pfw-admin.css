@@ -18,6 +18,19 @@ body.post-type-arsol-pfw-proposal .select2-container {
     margin-top: 10px;
 }
 
+.arsol-pfw-read-only-field {
+    background-color: #f0f0f1;
+    border: 1px solid #ddd;
+    padding: 3px 8px;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: default;
+    color: #50575e;
+    display: block;
+    line-height: 1.4;
+    min-height: 30px; /* Match WP input height */
+}
+
 /* Project field styling */
 #arsol_project_selector {
     width: 100%;
