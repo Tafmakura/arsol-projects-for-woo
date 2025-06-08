@@ -92,6 +92,9 @@ function arsol_projects_deactivate() {
  * @return void
  */
 function arsol_projects_init() {
+    // Initialize default settings (including comment settings)
+    \Arsol_Projects_For_Woo\Admin\Settings_General::init_default_settings();
+    
     // Instantiate the Setup class
     new Setup();
     // Instantiate the Workflow_Handler class

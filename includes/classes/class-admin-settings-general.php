@@ -657,4 +657,50 @@ class Settings_General {
             }
         }
     }
+
+    /**
+     * Get default settings with proper defaults for comment functionality
+     *
+     * @return array Default settings
+     */
+    public static function get_default_settings() {
+        return array(
+            // Project creation permissions
+            'user_project_permissions' => 'none',
+            'default_user_permission' => 'none',
+            
+            // Comment settings with sensible defaults
+            'enable_project_comments' => '1',
+            'enable_project_request_comments' => '1', 
+            'enable_project_proposal_comments' => '1',
+            'comment_roles' => array('administrator', 'editor', 'author', 'contributor', 'subscriber'),
+            'require_comment_moderation' => '0',
+            'enable_comment_notifications' => '1',
+            
+            // Other settings
+            'selected_products' => array(),
+            'selected_categories' => array(),
+            'enable_category_selection' => '0',
+            'proposal_invoice_products' => array(),
+            'manage_roles' => array('administrator'),
+            'create_roles' => array('administrator'),
+            'view_roles' => array('administrator', 'editor')
+        );
+    }
+
+    /**
+     * Initialize settings with defaults if they don't exist
+     */
+    public static function init_default_settings() {
+        $current_settings = get_option('arsol_projects_settings', array());
+        $default_settings = self::get_default_settings();
+        
+        // Merge current settings with defaults, keeping existing values
+        $merged_settings = wp_parse_args($current_settings, $default_settings);
+        
+        // Only update if there are missing settings
+        if ($current_settings !== $merged_settings) {
+            update_option('arsol_projects_settings', $merged_settings);
+        }
+    }
 }

@@ -38,13 +38,9 @@ class Setup {
             'all_items'         => __('All Projects', 'arsol-pfw'),
         );
 
-        // Get base supports array
-        $supports = array('title', 'editor', 'excerpt', 'author');
-        
-        // Add comments support if enabled
-        if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-project')) {
-            $supports[] = 'comments';
-        }
+        // Get base supports array - always include comments support
+        // Comments will be controlled by our settings and filters
+        $supports = array('title', 'editor', 'excerpt', 'author', 'comments');
 
         $args = array(
             'labels'              => $labels,
