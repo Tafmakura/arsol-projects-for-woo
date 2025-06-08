@@ -39,13 +39,7 @@ class Project {
         $due_date = get_post_meta($post->ID, '_project_due_date', true);
         $start_date = get_post_meta($post->ID, '_project_start_date', true);
         $project_lead = get_post_meta($post->ID, '_project_lead', true);
-        $recurring_budget = get_post_meta($post->ID, '_project_recurring_budget', true);
         
-        // Get invoice product settings
-        $settings = get_option('arsol_projects_settings', array());
-        $invoice_product_id = isset($settings['proposal_invoice_product']) ? $settings['proposal_invoice_product'] : '';
-        $recurring_invoice_product_id = isset($settings['proposal_recurring_invoice_product']) ? $settings['proposal_recurring_invoice_product'] : '';
-
         // Get statuses
         $statuses = get_terms(array(
             'taxonomy' => 'arsol-project-status',
@@ -126,36 +120,6 @@ class Project {
                    value="<?php echo esc_attr($due_date); ?>"
                    style="width:100%">
         </p>
-
-        <p>
-            <label for="project_recurring_budget"><?php _e('Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
-            <input type="number"
-                   id="project_recurring_budget"
-                   name="project_recurring_budget"
-                   value="<?php echo esc_attr($recurring_budget); ?>"
-                   style="width:100%"
-                   step="0.01"
-                   min="0">
-        </p>
-
-        <div class="major-actions" style="padding-top:10px; border-top: 1px solid #ddd; margin-top: 10px;">
-            <?php if (!empty($invoice_product_id) && get_post_meta($post->ID, '_invoice_created', true) !== 'yes') : ?>
-                <p>
-                    <label for="create_invoice">
-                        <input type="checkbox" id="create_invoice" name="create_invoice">
-                        <?php _e('Create invoice for budget', 'arsol-projects-for-woo'); ?>
-                    </label>
-                </p>
-            <?php endif; ?>
-            <?php if (!empty($recurring_invoice_product_id) && get_post_meta($post->ID, '_recurring_invoice_created', true) !== 'yes') : ?>
-                <p>
-                    <label for="create_recurring_invoice">
-                        <input type="checkbox" id="create_recurring_invoice" name="create_recurring_invoice">
-                        <?php _e('Create invoice for recurring budget', 'arsol-projects-for-woo'); ?>
-                    </label>
-                </p>
-            <?php endif; ?>
-        </div>
         <?php
     }
 
@@ -213,67 +177,6 @@ class Project {
         // Save due date
         if (isset($_POST['project_due_date'])) {
             update_post_meta($post_id, '_project_due_date', sanitize_text_field($_POST['project_due_date']));
-        }
-        
-        // Save recurring budget
-        if (isset($_POST['project_recurring_budget'])) {
-            update_post_meta($post_id, '_project_recurring_budget', sanitize_text_field($_POST['project_recurring_budget']));
-        }
-
-        // Create invoices if checked
-        if (isset($_POST['create_invoice'])) {
-            $this->create_invoice($post_id, 'standard');
-        }
-        if (isset($_POST['create_recurring_invoice'])) {
-            $this->create_invoice($post_id, 'recurring');
-        }
-    }
-
-    private function create_invoice($project_id, $type = 'standard') {
-        if (!class_exists('WooCommerce') || get_post_meta($project_id, '_' . $type . '_invoice_created', true) === 'yes') {
-            return;
-        }
-
-        $project = get_post($project_id);
-        $settings = get_option('arsol_projects_settings', array());
-        $customer_id = $project->post_author;
-
-        if ($type === 'standard') {
-            $product_id = isset($settings['proposal_invoice_product']) ? $settings['proposal_invoice_product'] : '';
-            $budget = get_post_meta($project_id, '_request_budget', true);
-        } else {
-            $product_id = isset($settings['proposal_recurring_invoice_product']) ? $settings['proposal_recurring_invoice_product'] : '';
-            $budget = get_post_meta($project_id, '_project_recurring_budget', true);
-        }
-
-        if (empty($product_id) || empty($budget) || !is_numeric($budget)) {
-            return;
-        }
-
-        $product = wc_get_product($product_id);
-        if (!$product) {
-            return;
-        }
-
-        try {
-            $order = wc_create_order(array(
-                'customer_id' => $customer_id,
-                'status' => 'pending'
-            ));
-
-            if (is_wp_error($order)) {
-                return;
-            }
-
-            $order->add_product($product, 1, array('total' => $budget));
-            $order->calculate_totals();
-            $order->save();
-            
-            update_post_meta($project_id, '_' . $type . '_invoice_created', 'yes');
-            update_post_meta($project_id, '_' . $type . '_order_id', $order->get_id());
-
-        } catch (\Exception $e) {
-            // silent fail
         }
     }
 }

@@ -16,6 +16,7 @@ class Request {
      * Add request details meta box
      */
     public function add_request_details_meta_box() {
+        ob_start();
         add_meta_box(
             'request_details',
             __('Request Details', 'arsol-pfw'),

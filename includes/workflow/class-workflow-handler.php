@@ -26,6 +26,8 @@ class Workflow_Handler {
     }
 
     public function convert_request_to_proposal() {
+        ob_start();
+
         if (!isset($_GET['request_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_proposal_nonce')) {
             wp_die(__('Invalid request or nonce.', 'arsol-pfw'));
         }
@@ -67,12 +69,17 @@ class Workflow_Handler {
         // Delete the original request
         wp_delete_post($request_id, true);
 
+        // Clean the output buffer and redirect
+        ob_end_clean();
+
         // Redirect to the new proposal's edit screen
         wp_redirect(admin_url('post.php?post=' . $new_proposal_id . '&action=edit'));
         exit;
     }
 
     public function convert_proposal_to_project() {
+        ob_start();
+
         if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce')) {
             wp_die(__('Invalid proposal or nonce.', 'arsol-pfw'));
         }
@@ -129,6 +136,9 @@ class Workflow_Handler {
         // Delete the original proposal
         wp_delete_post($proposal_id, true);
 
+        // Clean the output buffer and redirect
+        ob_end_clean();
+
         // Redirect to the new project's edit screen
         wp_redirect(admin_url('post.php?post=' . $new_project_id . '&action=edit'));
         exit;
@@ -153,6 +163,7 @@ class Workflow_Handler {
 
         if (empty($product_id) || empty($budget) || !is_numeric($budget)) {
             return;
+        .
         }
 
         $product = wc_get_product($product_id);
@@ -181,4 +192,4 @@ class Workflow_Handler {
             // silent fail
         }
     }
-} 
+}
