@@ -43,8 +43,18 @@ class Proposal {
         wp_nonce_field('proposal_details_meta_box', 'proposal_details_meta_box_nonce');
 
         // Get current values
-        $budget = get_post_meta($post->ID, '_proposal_budget', true);
-        $recurring_budget = get_post_meta($post->ID, '_proposal_recurring_budget', true);
+        $budget_data = get_post_meta($post->ID, '_proposal_budget', true);
+        $recurring_budget_data = get_post_meta($post->ID, '_proposal_recurring_budget', true);
+
+        $budget_amount = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
+        $recurring_budget_amount = !empty($recurring_budget_data['amount']) ? $recurring_budget_data['amount'] : '';
+
+        // Determine currency - they should share the same currency
+        $currency_code = !empty($budget_data['currency']) 
+            ? $budget_data['currency'] 
+            : (!empty($recurring_budget_data['currency']) ? $recurring_budget_data['currency'] : get_woocommerce_currency());
+        $currency_symbol = get_woocommerce_currency_symbol($currency_code);
+
         $start_date = get_post_meta($post->ID, '_proposal_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
         $billing_interval = get_post_meta($post->ID, '_proposal_billing_interval', true);
@@ -64,7 +74,7 @@ class Proposal {
         $settings = get_option('arsol_projects_settings', array());
         $invoice_product_id = isset($settings['proposal_invoice_product']) ? $settings['proposal_invoice_product'] : '';
         $recurring_invoice_product_id = isset($settings['proposal_recurring_invoice_product']) ? $settings['proposal_recurring_invoice_product'] : '';
-        
+
         // Get author dropdown
         $author_dropdown = wp_dropdown_users(array(
             'name' => 'post_author_override',
@@ -88,7 +98,12 @@ class Proposal {
             <?php if ($original_budget || $original_start_date || $original_delivery_date) : ?>
             <div class="arsol-pfw-original-request-details">
                 <h4><?php _e('Original Request Details', 'arsol-pfw'); ?></h4>
-                <?php if ($original_budget) : ?>
+                <?php if (!empty($original_budget) && is_array($original_budget)) : ?>
+                <p>
+                    <label><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                    <strong><?php echo wc_price($original_budget['amount'], array('currency' => $original_budget['currency'])); ?></strong>
+                </p>
+                <?php elseif (!empty($original_budget)) : // Backwards compatibility ?>
                 <p>
                     <label><?php _e('Budget:', 'arsol-pfw'); ?></label>
                     <strong><?php echo wc_price($original_budget); ?></strong>
@@ -115,28 +130,28 @@ class Proposal {
             </p>
 
             <p>
-                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php _e('Proposed Budget:', 'arsol-pfw'); ?></label>
+                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php echo sprintf(__('Proposed Budget (%s):', 'arsol-pfw'), $currency_symbol); ?></label>
                 <input type="number" 
                        id="proposal_budget" 
                        name="proposal_budget" 
-                       value="<?php echo esc_attr($budget); ?>"
+                       value="<?php echo esc_attr($budget_amount); ?>"
                        class="widefat"
                        step="0.01"
                        min="0">
             </p>
 
             <p>
-                <label for="proposal_recurring_budget" style="display:block;margin-bottom:5px;"><?php _e('Proposed Recurring Budget:', 'arsol-pfw'); ?></label>
+                <label for="proposal_recurring_budget" style="display:block;margin-bottom:5px;"><?php echo sprintf(__('Proposed Recurring Budget (%s):', 'arsol-pfw'), $currency_symbol); ?></label>
                 <input type="number" 
                        id="proposal_recurring_budget" 
                        name="proposal_recurring_budget" 
-                       value="<?php echo esc_attr($recurring_budget); ?>"
+                       value="<?php echo esc_attr($recurring_budget_amount); ?>"
                        class="widefat"
                        step="0.01"
                        min="0">
             </p>
 
-            <div id="recurring_billing_cycle_wrapper" style="<?php echo empty($recurring_budget) || $recurring_budget <= 0 ? 'display: none;' : ''; ?>">
+            <div id="recurring_billing_cycle_wrapper" style="<?php echo empty($recurring_budget_amount) || $recurring_budget_amount <= 0 ? 'display: none;' : ''; ?>">
                 <p>
                     <label for="proposal_billing_cycle" style="display:block;margin-bottom:5px;"><?php _e('Recurring Billing Cycle:', 'arsol-pfw'); ?></label>
                     <span style="display: flex; justify-content: space-between;">
@@ -271,13 +286,30 @@ class Proposal {
             return;
         }
 
+        // Determine the currency for this proposal
+        $budget_data = get_post_meta($post_id, '_proposal_budget', true);
+        $recurring_budget_data = get_post_meta($post_id, '_proposal_recurring_budget', true);
+        $currency = !empty($budget_data['currency']) 
+            ? $budget_data['currency'] 
+            : (!empty($recurring_budget_data['currency']) ? $recurring_budget_data['currency'] : get_woocommerce_currency());
+
         // Save budget
         if (isset($_POST['proposal_budget'])) {
-            update_post_meta($post_id, '_proposal_budget', sanitize_text_field($_POST['proposal_budget']));
+            $amount = sanitize_text_field($_POST['proposal_budget']);
+            if (empty($amount)) {
+                delete_post_meta($post_id, '_proposal_budget');
+            } else {
+                update_post_meta($post_id, '_proposal_budget', array('amount' => $amount, 'currency' => $currency));
+            }
         }
 
         if (isset($_POST['proposal_recurring_budget'])) {
-            update_post_meta($post_id, '_proposal_recurring_budget', sanitize_text_field($_POST['proposal_recurring_budget']));
+            $amount = sanitize_text_field($_POST['proposal_recurring_budget']);
+            if (empty($amount)) {
+                delete_post_meta($post_id, '_proposal_recurring_budget');
+            } else {
+                update_post_meta($post_id, '_proposal_recurring_budget', array('amount' => $amount, 'currency' => $currency));
+            }
         }
 
         if (isset($_POST['proposal_billing_interval'])) {

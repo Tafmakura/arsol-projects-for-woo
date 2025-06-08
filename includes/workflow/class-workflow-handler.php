@@ -173,25 +173,25 @@ class Workflow_Handler {
 
         if ($type === 'standard') {
             $product_id = isset($settings['proposal_invoice_product']) ? $settings['proposal_invoice_product'] : '';
-            $budget = get_post_meta($project_id, '_project_budget', true);
-            if (empty($product_id) || empty($budget) || !is_numeric($budget)) {
+            $budget_data = get_post_meta($project_id, '_project_budget', true);
+            if (empty($product_id) || empty($budget_data) || !is_array($budget_data) || empty($budget_data['amount'])) {
                 return;
             }
             $product = wc_get_product($product_id);
             if (!$product) {
                 return;
             }
-            $this->create_standard_order($project_id, $customer_id, $product, $budget);
+            $this->create_standard_order($project_id, $customer_id, $product, $budget_data);
         } else { // recurring
             if (!class_exists('WC_Subscriptions')) {
                 return;
             }
             $product_id = isset($settings['proposal_recurring_invoice_product']) ? $settings['proposal_recurring_invoice_product'] : '';
-            $budget = get_post_meta($project_id, '_project_recurring_budget', true);
+            $budget_data = get_post_meta($project_id, '_project_recurring_budget', true);
             $billing_interval = get_post_meta($project_id, '_project_billing_interval', true);
             $billing_period = get_post_meta($project_id, '_project_billing_period', true);
             
-            if (empty($product_id) || empty($budget) || !is_numeric($budget) || empty($billing_interval) || empty($billing_period)) {
+            if (empty($product_id) || empty($budget_data) || !is_array($budget_data) || empty($budget_data['amount']) || empty($billing_interval) || empty($billing_period)) {
                 return;
             }
             
@@ -201,22 +201,23 @@ class Workflow_Handler {
                 return;
             }
 
-            $this->create_subscription_order($project_id, $customer_id, $product, $budget, $billing_interval, $billing_period);
+            $this->create_subscription_order($project_id, $customer_id, $product, $budget_data, $billing_interval, $billing_period);
         }
     }
 
-    private function create_standard_order($project_id, $customer_id, $product, $budget) {
+    private function create_standard_order($project_id, $customer_id, $product, $budget_data) {
         try {
             $order = wc_create_order(array(
                 'customer_id' => $customer_id,
-                'status' => 'pending'
+                'status' => 'pending',
+                'currency' => $budget_data['currency']
             ));
 
             if (is_wp_error($order)) {
                 return;
             }
 
-            $order->add_product($product, 1, array('total' => $budget));
+            $order->add_product($product, 1, array('total' => $budget_data['amount']));
             $order->calculate_totals();
             $order->save();
             
@@ -228,7 +229,7 @@ class Workflow_Handler {
         }
     }
 
-    private function create_subscription_order($project_id, $customer_id, $product, $budget, $billing_interval, $billing_period) {
+    private function create_subscription_order($project_id, $customer_id, $product, $budget_data, $billing_interval, $billing_period) {
         if (!function_exists('wcs_create_subscription')) {
             return;
         }
@@ -243,6 +244,7 @@ class Workflow_Handler {
                 'billing_period' => $billing_period,
                 'billing_interval' => $billing_interval,
                 'start_date' => $subscription_start_date,
+                'currency' => $budget_data['currency']
             );
 
             $subscription = wcs_create_subscription($subscription_args);
@@ -251,7 +253,7 @@ class Workflow_Handler {
                 return;
             }
 
-            $subscription->add_product($product, 1, array('subtotal' => $budget, 'total' => $budget));
+            $subscription->add_product($product, 1, array('subtotal' => $budget_data['amount'], 'total' => $budget_data['amount']));
             
             // Link project to subscription
             update_post_meta($subscription->get_id(), '_arsol_project_id', $project_id);

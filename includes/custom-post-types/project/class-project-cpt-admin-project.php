@@ -39,8 +39,8 @@ class Project {
 
         $due_date = get_post_meta($post->ID, '_project_due_date', true);
         $project_lead = get_post_meta($post->ID, '_project_lead', true);
-        $budget = get_post_meta($post->ID, '_project_budget', true);
-        $recurring_budget = get_post_meta($post->ID, '_project_recurring_budget', true);
+        $budget_data = get_post_meta($post->ID, '_project_budget', true);
+        $recurring_budget_data = get_post_meta($post->ID, '_project_recurring_budget', true);
         $billing_interval = get_post_meta($post->ID, '_project_billing_interval', true);
         $billing_period = get_post_meta($post->ID, '_project_billing_period', true);
         $standard_order_id = get_post_meta($post->ID, '_standard_order_id', true);
@@ -80,34 +80,40 @@ class Project {
         ));
         ?>
         <div class="project-details">
-            <p>
+        <p>
                 <label for="project_id" style="display:block;margin-bottom:5px;"><?php _e('Project ID:', 'arsol-pfw'); ?></label>
-                <input type="text" 
+            <input type="text" 
                        id="project_id" 
-                       value="<?php echo esc_attr($post->ID); ?>"
-                       disabled
+                   value="<?php echo esc_attr($post->ID); ?>"
+                   disabled
                        class="widefat">
             </p>
 
             <p class="arsol-pfw-budget-display">
-                <label><?php _e('Proposed Budget:', 'arsol-projects-for-woo'); ?></label>
+                <label><?php 
+                    $currency_symbol = isset($budget_data['currency']) ? get_woocommerce_currency_symbol($budget_data['currency']) : '';
+                    echo sprintf(__('Proposed Budget (%s):', 'arsol-projects-for-woo'), $currency_symbol); 
+                ?></label>
                 <span class="arsol-pfw-budget-amount">
-                    <?php echo (isset($budget) && $budget !== '') ? wc_price($budget) : '<b>N/A</b>'; ?>
+                    <?php echo (!empty($budget_data) && is_array($budget_data)) ? wc_price($budget_data['amount'], array('currency' => $budget_data['currency'])) : '<b>N/A</b>'; ?>
                 </span>
             </p>
 
             <p class="arsol-pfw-budget-display">
-                <label><?php _e('Proposed Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
+                <label><?php 
+                    $currency_symbol = isset($recurring_budget_data['currency']) ? get_woocommerce_currency_symbol($recurring_budget_data['currency']) : '';
+                    echo sprintf(__('Proposed Recurring Budget (%s):', 'arsol-projects-for-woo'), $currency_symbol); 
+                ?></label>
                 <span class="arsol-pfw-budget-amount">
                     <?php
-                    if (isset($recurring_budget) && $recurring_budget !== '') {
+                    if (!empty($recurring_budget_data) && is_array($recurring_budget_data)) {
                         $intervals = array('1' => __('every', 'arsol-pfw'), '2' => __('every 2nd', 'arsol-pfw'), '3' => __('every 3rd', 'arsol-pfw'), '4' => __('every 4th', 'arsol-pfw'), '5' => __('every 5th', 'arsol-pfw'), '6' => __('every 6th', 'arsol-pfw'));
                         $periods = array('day' => __('day', 'arsol-pfw'), 'week' => __('week', 'arsol-pfw'), 'month' => __('month', 'arsol-pfw'), 'year' => __('year', 'arsol-pfw'));
                         $interval_text = isset($intervals[$billing_interval]) ? $intervals[$billing_interval] : '';
                         $period_text = isset($periods[$billing_period]) ? $periods[$billing_period] : '';
                         $cycle_text = trim($interval_text . ' ' . $period_text);
                         
-                        echo wc_price($recurring_budget);
+                        echo wc_price($recurring_budget_data['amount'], array('currency' => $recurring_budget_data['currency']));
                         if (!empty($cycle_text)) {
                             echo ' ' . esc_html($cycle_text);
                         }
@@ -130,44 +136,44 @@ class Project {
                 <span class="arsol-pfw-budget-amount">
                      <?php echo !empty($proposed_delivery_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($proposed_delivery_date))) : '<b>N/A</b>'; ?>
                 </span>
-            </p>
+        </p>
 
-            <p>
-                <label for="post_author_override"><?php _e('Customer:', 'arsol-projects-for-woo'); ?></label>
-                <?php echo $author_dropdown; ?>
-            </p>
+        <p>
+            <label for="post_author_override"><?php _e('Customer:', 'arsol-projects-for-woo'); ?></label>
+            <?php echo $author_dropdown; ?>
+        </p>
 
-            <p>
-                <label for="project_lead"><?php _e('Project Lead:', 'arsol-projects-for-woo'); ?></label>
-                <select name="project_lead" id="project_lead" style="width:100%">
-                    <option value=""><?php _e('Select Project Lead', 'arsol-projects-for-woo'); ?></option>
-                    <?php foreach ($project_leads as $lead) : ?>
-                        <option value="<?php echo esc_attr($lead->ID); ?>" <?php selected($project_lead, $lead->ID); ?>>
-                            <?php echo esc_html($lead->display_name); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
+        <p>
+            <label for="project_lead"><?php _e('Project Lead:', 'arsol-projects-for-woo'); ?></label>
+            <select name="project_lead" id="project_lead" style="width:100%">
+                <option value=""><?php _e('Select Project Lead', 'arsol-projects-for-woo'); ?></option>
+                <?php foreach ($project_leads as $lead) : ?>
+                    <option value="<?php echo esc_attr($lead->ID); ?>" <?php selected($project_lead, $lead->ID); ?>>
+                        <?php echo esc_html($lead->display_name); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </p>
 
-            <p>
-                <label for="project_status"><?php _e('Project Status:', 'arsol-projects-for-woo'); ?></label>
-                <select name="project_status" id="project_status" style="width:100%">
-                    <?php foreach ($statuses as $status) : ?>
-                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
-                            <?php echo esc_html($status->name); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
+        <p>
+            <label for="project_status"><?php _e('Project Status:', 'arsol-projects-for-woo'); ?></label>
+            <select name="project_status" id="project_status" style="width:100%">
+                <?php foreach ($statuses as $status) : ?>
+                    <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
+                        <?php echo esc_html($status->name); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </p>
 
-            <p>
-                <label for="project_due_date"><?php _e('Due Date:', 'arsol-projects-for-woo'); ?></label>
-                <input type="date" 
-                       id="project_due_date" 
-                       name="project_due_date" 
-                       value="<?php echo esc_attr($due_date); ?>"
-                       style="width:100%">
-            </p>
+        <p>
+            <label for="project_due_date"><?php _e('Due Date:', 'arsol-projects-for-woo'); ?></label>
+            <input type="date" 
+                   id="project_due_date" 
+                   name="project_due_date" 
+                   value="<?php echo esc_attr($due_date); ?>"
+                   style="width:100%">
+        </p>
 
             <?php if ($standard_order_id || $recurring_order_id) : ?>
                 <p>

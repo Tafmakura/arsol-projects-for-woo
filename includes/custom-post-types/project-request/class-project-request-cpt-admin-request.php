@@ -37,7 +37,10 @@ class Request {
         // Get current values
         $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
         $current_status = !empty($current_status) ? $current_status[0] : 'pending';
-        $budget = get_post_meta($post->ID, '_request_budget', true);
+        $budget_data = get_post_meta($post->ID, '_request_budget', true);
+        $budget_amount = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
+        $budget_currency_code = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
+        $currency_symbol = get_woocommerce_currency_symbol($budget_currency_code);
         $start_date = get_post_meta($post->ID, '_request_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_request_delivery_date', true);
         
@@ -83,11 +86,11 @@ class Request {
             </p>
 
             <p>
-                <label for="request_budget" class="arsol-pfw-meta-label"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                <label for="request_budget" class="arsol-pfw-meta-label"><?php echo sprintf(__('Budget (%s):', 'arsol-pfw'), $currency_symbol); ?></label>
                 <input type="number" 
                        id="request_budget" 
                        name="request_budget" 
-                       value="<?php echo esc_attr($budget); ?>"
+                       value="<?php echo esc_attr($budget_amount); ?>"
                        class="widefat"
                        step="0.01"
                        min="0">
@@ -157,7 +160,19 @@ class Request {
 
         // Save budget
         if (isset($_POST['request_budget'])) {
-            update_post_meta($post_id, '_request_budget', sanitize_text_field($_POST['request_budget']));
+            $amount = sanitize_text_field($_POST['request_budget']);
+            $budget_data = get_post_meta($post_id, '_request_budget', true);
+            $currency = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
+
+            if (empty($amount)) {
+                delete_post_meta($post_id, '_request_budget');
+            } else {
+                $new_budget_data = array(
+                    'amount'   => $amount,
+                    'currency' => $currency
+                );
+                update_post_meta($post_id, '_request_budget', $new_budget_data);
+            }
         }
 
         // Save start date
