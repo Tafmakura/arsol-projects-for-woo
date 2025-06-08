@@ -34,9 +34,13 @@ class Settings_Advanced {
                 'title' => __('Create Project Form', 'arsol-pfw'),
                 'description' => __('Overrides the form for creating new projects.', 'arsol-pfw')
             ],
-            'request_project_form_shortcode' => [
-                'title' => __('Request Project Form', 'arsol-pfw'),
+            'create_project_request_form_shortcode' => [
+                'title' => __('Create Project Request Form', 'arsol-pfw'),
                 'description' => __('Overrides the form for requesting new projects.', 'arsol-pfw')
+            ],
+            'project_request_edit_form_shortcode' => [
+                'title' => __('Project Request Edit Form', 'arsol-pfw'),
+                'description' => __('Overrides the form for editing a pending project request.', 'arsol-pfw')
             ],
             'projects_listing_shortcode' => [
                 'title' => __('Active Projects Listing', 'arsol-pfw'),
