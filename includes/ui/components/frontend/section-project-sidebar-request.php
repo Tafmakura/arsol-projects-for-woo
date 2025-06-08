@@ -49,22 +49,9 @@ do_action('arsol_pfw_sidebar_fields_end', 'request', $sidebar_data);
 ?>
 
 <?php
-// Add update and cancel buttons for 'pending-review' status
+// Get status for action buttons
 $status_terms = wp_get_post_terms($request_id, 'arsol-request-status', ['fields' => 'slugs']);
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
-if ($current_status === 'pending-review') {
-    $has_override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_request_edit_form');
-    $cancel_url = wp_nonce_url(add_query_arg(['action' => 'arsol_cancel_request', 'request_id' => $request_id], admin_url('admin-post.php')), 'arsol_cancel_request_nonce');
-    $confirm_message = esc_attr__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw');
-    ?>
-    <div class="arsol-sidebar-actions">
-        <?php if (!$has_override) : ?>
-            <button type="submit" form="arsol-request-edit-form" class="button" style="width: 100%; margin-top: 8px;"><?php esc_html_e('Update Request', 'arsol-pfw'); ?></button>
-        <?php endif; ?>
-        <a href="<?php echo esc_url($cancel_url); ?>" class="brxe-button bricks-button sm outline bricks-color-primary arsol-confirm-action" data-message="<?php echo $confirm_message; ?>" style="width: 100%; margin-top: 8px; display: inline-block; text-align: center; text-decoration: none;"><?php esc_html_e('Cancel Request', 'arsol-pfw'); ?></a>
-    </div>
-    <?php
-}
 ?>
 
 <?php
@@ -75,4 +62,28 @@ if ($current_status === 'pending-review') {
  * @param array $data All sidebar data
  */
 do_action('arsol_pfw_sidebar_after', 'request', $sidebar_data);
-?> 
+?>
+
+<?php if ($current_status === 'pending-review') : ?>
+    <div class="arsol-pfw-project-action">
+        <button type="submit" form="request-edit-form" class="brxe-button bricks-button button-primary request-action-btn">
+            <?php esc_html_e('Update Request', 'arsol-pfw'); ?>
+        </button>
+    </div>
+    
+    <div class="arsol-pfw-project-action">
+        <button type="button" class="brxe-button bricks-button sm outline bricks-color-primary cancel-request-btn" data-confirm-text="<?php esc_attr_e('Are you sure you want to cancel this request?', 'arsol-pfw'); ?>">
+            <?php esc_html_e('Cancel Request', 'arsol-pfw'); ?>
+        </button>
+    </div>
+<?php endif; ?>
+
+<?php if ($current_status === 'under-review') : ?>
+    <div class="arsol-pfw-project-action">
+        <a href="/contact-us/" class="brxe-button bricks-button sm outline bricks-color-primary"><?php esc_html_e('Contact Support', 'arsol-pfw'); ?></a>
+    </div>
+    
+    <div class="arsol-pfw-project-action">
+        <a href="/services/" class="brxe-button bricks-button sm outline bricks-color-primary"><?php esc_html_e('Contact Sales', 'arsol-pfw'); ?></a>
+    </div>
+<?php endif; ?> 
