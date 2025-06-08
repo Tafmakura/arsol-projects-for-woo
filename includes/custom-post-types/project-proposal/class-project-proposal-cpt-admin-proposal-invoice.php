@@ -293,23 +293,23 @@ class Proposal_Invoice {
         
         $is_subscription = $product->is_type(array('subscription', 'subscription_variation'));
         $sub_text = '';
-        $regular_price_val = 0;
-        $sale_price_val = '';
         $sign_up_fee = 0;
+        
+        // Use get_price() and get_regular_price() to robustly determine active sale price.
+        $regular_price_val = $product->get_regular_price();
+        $active_price = $product->get_price();
+        $sale_price_val = '';
+
+        // If the active price is less than the regular price, a sale is active.
+        if (is_numeric($active_price) && is_numeric($regular_price_val) && $active_price < $regular_price_val) {
+            $sale_price_val = $active_price;
+        }
 
         if ($is_subscription && class_exists('WC_Subscriptions_Product')) {
-            // Per WooCommerce Subscriptions docs, we use the standard price getters.
-            $regular_price_val = $product->get_regular_price();
-            $sale_price_val = $product->get_sale_price();
-
             // The sign-up fee is a separate one-time charge.
             $sign_up_fee = (float) $product->get_meta('_subscription_sign_up_fee');
             // The sub_text should describe the full billing terms for clarity.
             $sub_text = $product->get_price_string();
-        } else {
-            // For simple/variable products, it's the standard price.
-            $regular_price_val = $product->get_regular_price();
-            $sale_price_val = $product->get_sale_price();
         }
 
         // Ensure we have numeric values before formatting, as get_price() can return ''
