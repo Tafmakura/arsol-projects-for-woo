@@ -124,8 +124,7 @@ class Workflow_Handler {
         ob_end_clean();
 
         // Redirect to the new proposal's edit screen
-        wp_redirect(admin_url('post.php?post=' . $new_proposal_id . '&action=edit'));
-        exit;
+        $this->safe_redirect(admin_url('post.php?post=' . $new_proposal_id . '&action=edit'));
     }
 
     public function convert_proposal_to_project($proposal_id = 0) {
@@ -171,8 +170,7 @@ class Workflow_Handler {
 
         if (is_wp_error($new_project_id)) {
             if ($is_internal_call) {
-                wp_safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
-                exit;
+                $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
             } else {
                 wp_die($new_project_id->get_error_message());
             }
@@ -215,11 +213,10 @@ class Workflow_Handler {
 
         // Redirect based on how the function was called
         if ($is_internal_call) {
-            wp_safe_redirect(wc_get_account_endpoint_url('project-overview/' . $new_project_id));
+            $this->safe_redirect(wc_get_account_endpoint_url('project-overview/' . $new_project_id));
         } else {
-            wp_redirect(admin_url('post.php?post=' . $new_project_id . '&action=edit'));
+            $this->safe_redirect(admin_url('post.php?post=' . $new_project_id . '&action=edit'));
         }
-        exit;
     }
 
     private function create_invoice_from_project($project_id, $type = 'standard') {
@@ -345,8 +342,7 @@ class Workflow_Handler {
         $request_id = intval($_GET['request_id']);
         if (self::user_can_view_post(get_current_user_id(), $request_id)) {
             wp_delete_post($request_id, true); // Delete the request
-            wp_safe_redirect(wc_get_account_endpoint_url('projects')); // Redirect to projects page
-            exit;
+            $this->safe_redirect(wc_get_account_endpoint_url('projects')); // Redirect to projects page
         } else {
             wp_die(__('You do not have permission to cancel this request.', 'arsol-pfw'));
         }
@@ -377,8 +373,7 @@ class Workflow_Handler {
         $proposal_id = intval($_GET['proposal_id']);
         if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
             wp_set_object_terms($proposal_id, 'rejected', 'arsol-review-status');
-            wp_safe_redirect(wp_get_referer());
-            exit;
+            $this->safe_redirect(wp_get_referer());
         } else {
             wp_die(__('You do not have permission to reject this proposal.', 'arsol-pfw'));
         }
@@ -399,16 +394,14 @@ class Workflow_Handler {
         $post_id = wp_insert_post($post_data);
         
         if (is_wp_error($post_id)) {
-            wp_safe_redirect(wc_get_account_endpoint_url('project-create-request'));
-            exit;
+            $this->safe_redirect(wc_get_account_endpoint_url('project-create-request'));
         }
 
         wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
         $this->update_request_meta($post_id, $_POST);
 
         
-        wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
-        exit;
+        $this->safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
     }
 
     public function handle_edit_request() {
@@ -435,8 +428,7 @@ class Workflow_Handler {
 
         $this->update_request_meta($post_id, $_POST);
         
-        wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
-        exit;
+        $this->safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
     }
 
     private function update_request_meta($post_id, $data) {
@@ -450,6 +442,22 @@ class Workflow_Handler {
         }
         if (isset($data['request_delivery_date'])) {
             update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($data['request_delivery_date']));
+        }
+    }
+
+    /**
+     * Safe redirect that handles "headers already sent" issues
+     */
+    private function safe_redirect($url) {
+        if (headers_sent()) {
+            // If headers are already sent, use JavaScript redirect
+            echo '<script type="text/javascript">window.location.href="' . esc_url($url) . '";</script>';
+            echo '<noscript><meta http-equiv="refresh" content="0;url=' . esc_url($url) . '" /></noscript>';
+            exit;
+        } else {
+            // Use normal redirect
+            wp_safe_redirect($url);
+            exit;
         }
     }
 }
