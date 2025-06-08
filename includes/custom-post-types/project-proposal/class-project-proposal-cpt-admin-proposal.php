@@ -50,6 +50,11 @@ class Proposal {
         $billing_interval = get_post_meta($post->ID, '_proposal_billing_interval', true);
         $billing_period = get_post_meta($post->ID, '_proposal_billing_period', true);
         
+        // Default billing period to 'month' for new proposals
+        if (empty($billing_period)) {
+            $billing_period = 'month';
+        }
+        
         // Get invoice product settings
         $settings = get_option('arsol_projects_settings', array());
         $invoice_product_id = isset($settings['proposal_invoice_product']) ? $settings['proposal_invoice_product'] : '';
@@ -105,34 +110,36 @@ class Proposal {
             <div id="recurring_billing_cycle_wrapper" style="<?php echo empty($recurring_budget) || $recurring_budget <= 0 ? 'display: none;' : ''; ?>">
                 <p>
                     <label for="proposal_billing_cycle" style="display:block;margin-bottom:5px;"><?php _e('Recurring Billing Cycle:', 'arsol-pfw'); ?></label>
-                    <select id="proposal_billing_interval" name="proposal_billing_interval" style="width: 48%; margin-right: 4%;">
-                        <?php
-                        $intervals = array(
-                            '1' => __('Every', 'arsol-pfw'),
-                            '2' => __('Every 2nd', 'arsol-pfw'),
-                            '3' => __('Every 3rd', 'arsol-pfw'),
-                            '4' => __('Every 4th', 'arsol-pfw'),
-                            '5' => __('Every 5th', 'arsol-pfw'),
-                            '6' => __('Every 6th', 'arsol-pfw'),
-                        );
-                        foreach ($intervals as $value => $label) {
-                            echo '<option value="' . esc_attr($value) . '"' . selected($billing_interval, $value, false) . '>' . esc_html($label) . '</option>';
-                        }
-                        ?>
-                    </select>
-                    <select id="proposal_billing_period" name="proposal_billing_period" style="width: 48%;">
-                        <?php
-                        $periods = array(
-                            'day' => __('Day', 'arsol-pfw'),
-                            'week' => __('Week', 'arsol-pfw'),
-                            'month' => __('Month', 'arsol-pfw'),
-                            'year' => __('Year', 'arsol-pfw'),
-                        );
-                        foreach ($periods as $value => $label) {
-                            echo '<option value="' . esc_attr($value) . '"' . selected($billing_period, $value, false) . '>' . esc_html($label) . '</option>';
-                        }
-                        ?>
-                    </select>
+                    <div style="display: flex; justify-content: space-between;">
+                        <select id="proposal_billing_interval" name="proposal_billing_interval" style="width: 48%;">
+                            <?php
+                            $intervals = array(
+                                '1' => __('Every', 'arsol-pfw'),
+                                '2' => __('Every 2nd', 'arsol-pfw'),
+                                '3' => __('Every 3rd', 'arsol-pfw'),
+                                '4' => __('Every 4th', 'arsol-pfw'),
+                                '5' => __('Every 5th', 'arsol-pfw'),
+                                '6' => __('Every 6th', 'arsol-pfw'),
+                            );
+                            foreach ($intervals as $value => $label) {
+                                echo '<option value="' . esc_attr($value) . '"' . selected($billing_interval, $value, false) . '>' . esc_html($label) . '</option>';
+                            }
+                            ?>
+                        </select>
+                        <select id="proposal_billing_period" name="proposal_billing_period" style="width: 48%;">
+                            <?php
+                            $periods = array(
+                                'day' => __('Day', 'arsol-pfw'),
+                                'week' => __('Week', 'arsol-pfw'),
+                                'month' => __('Month', 'arsol-pfw'),
+                                'year' => __('Year', 'arsol-pfw'),
+                            );
+                            foreach ($periods as $value => $label) {
+                                echo '<option value="' . esc_attr($value) . '"' . selected($billing_period, $value, false) . '>' . esc_html($label) . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
                 </p>
             </div>
 
