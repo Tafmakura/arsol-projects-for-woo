@@ -58,7 +58,7 @@ class Request {
         ?>
         <div class="request-details">
             <p>
-                <label for="request_id" style="display:block;margin-bottom:5px;"><?php _e('Request ID:', 'arsol-pfw'); ?></label>
+                <label for="request_id" class="arsol-pfw-meta-label"><?php _e('Request ID:', 'arsol-pfw'); ?></label>
                 <input type="text" 
                        id="request_id" 
                        value="<?php echo esc_attr($post->ID); ?>"
@@ -67,12 +67,12 @@ class Request {
             </p>
 
             <p>
-                <label for="post_author_override" style="display:block;margin-bottom:5px;"><?php _e('Customer:', 'arsol-pfw'); ?></label>
+                <label for="post_author_override" class="arsol-pfw-meta-label"><?php _e('Customer:', 'arsol-pfw'); ?></label>
                 <?php echo $author_dropdown; ?>
             </p>
 
             <p>
-                <label for="request_status" style="display:block;margin-bottom:5px;"><?php _e('Request Status:', 'arsol-pfw'); ?></label>
+                <label for="request_status" class="arsol-pfw-meta-label"><?php _e('Request Status:', 'arsol-pfw'); ?></label>
                 <select name="request_status" id="request_status" class="widefat">
                     <?php foreach ($statuses as $status) : ?>
                         <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
@@ -83,7 +83,7 @@ class Request {
             </p>
 
             <p>
-                <label for="request_budget" style="display:block;margin-bottom:5px;"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                <label for="request_budget" class="arsol-pfw-meta-label"><?php _e('Budget:', 'arsol-pfw'); ?></label>
                 <input type="number" 
                        id="request_budget" 
                        name="request_budget" 
@@ -94,7 +94,7 @@ class Request {
             </p>
 
             <p>
-                <label for="request_start_date" style="display:block;margin-bottom:5px;"><?php _e('Required Start Date:', 'arsol-pfw'); ?></label>
+                <label for="request_start_date" class="arsol-pfw-meta-label"><?php _e('Required Start Date:', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="request_start_date" 
                        name="request_start_date" 
@@ -103,7 +103,7 @@ class Request {
             </p>
 
             <p>
-                <label for="request_delivery_date" style="display:block;margin-bottom:5px;"><?php _e('Required Delivery Date:', 'arsol-pfw'); ?></label>
+                <label for="request_delivery_date" class="arsol-pfw-meta-label"><?php _e('Required Delivery Date:', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="request_delivery_date" 
                        name="request_delivery_date" 

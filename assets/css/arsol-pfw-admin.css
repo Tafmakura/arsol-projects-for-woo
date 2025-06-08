@@ -27,6 +27,28 @@ body.post-type-arsol-pfw-proposal .select2-container {
     font-weight: 600;
 }
 
+.arsol-pfw-meta-label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.arsol-pfw-full-width {
+    width: 100%;
+}
+
+.arsol-pfw-billing-cycle-inputs {
+    display: flex;
+    justify-content: space-between;
+}
+
+.arsol-pfw-billing-cycle-select {
+    width: 48%;
+}
+
+.arsol-pfw-hidden {
+    display: none;
+}
+
 /* Project field styling */
 #arsol_project_selector {
     width: 100%;
