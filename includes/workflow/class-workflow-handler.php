@@ -404,7 +404,7 @@ class Workflow_Handler {
             $this->update_request_meta($post_id, $_POST);
             set_transient('arsol_pfw_request_submitted_' . get_current_user_id(), $post_id, 60);
             // Manually construct the URL for robustness
-            $redirect_url = trailingslashit(wc_get_account_endpoint_url('project-view-request')) . $post_id;
+            $redirect_url = trailingslashit(wc_get_account_endpoint_url('project-view-request')) . $post_id . '/';
         }
 
         ob_end_clean();
@@ -438,7 +438,7 @@ class Workflow_Handler {
         }
         
         // Manually construct the URL for robustness
-        $redirect_url = trailingslashit(wc_get_account_endpoint_url('project-view-request')) . $post_id;
+        $redirect_url = trailingslashit(wc_get_account_endpoint_url('project-view-request')) . $post_id . '/';
         ob_end_clean();
         // Use a JS redirect for robustness
         echo '<script>window.location.href = "' . esc_url_raw($redirect_url) . '";</script>';
