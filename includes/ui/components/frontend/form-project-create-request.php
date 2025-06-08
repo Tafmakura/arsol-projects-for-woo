@@ -45,11 +45,11 @@ if (!$is_edit) {
 ?>
 
 <div class="arsol-project-request">
-    <form method="post" id="arsol-request-edit-form" class="arsol-request-form">
+    <form method="post" id="arsol-request-edit-form" class="arsol-request-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
         <h4><?php echo $is_edit ? esc_html__('Edit Your Request', 'arsol-pfw') : esc_html__('Submit a Project Request', 'arsol-pfw'); ?></h4>
         
         <input type="hidden" name="action" value="<?php echo esc_attr($form_action); ?>">
-        <?php wp_nonce_field('arsol_create_request', 'arsol_request_nonce'); ?>
+        <?php wp_nonce_field($form_action, 'arsol_request_nonce'); ?>
         <?php if ($is_edit) : ?>
             <input type="hidden" name="request_id" value="<?php echo esc_attr($post->ID); ?>">
         <?php endif; ?>

@@ -397,18 +397,18 @@ class Workflow_Handler {
         $post_id = wp_insert_post($post_data, true);
 
         if (is_wp_error($post_id)) {
-            $this->add_wc_notice(__('There was an error creating your request. Please try again.', 'arsol-pfw'), 'error');
+            wc_add_notice(__('There was an error creating your request. Please try again.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('project-request'));
             exit;
         }
 
         wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
-
         $this->update_request_meta($post_id, $_POST);
 
         // Set a transient to indicate a new submission
         set_transient('arsol_pfw_request_submitted_' . get_current_user_id(), $post_id, 60);
 
+        wc_add_notice(__('Request submitted successfully.', 'arsol-pfw'), 'success');
         wp_safe_redirect(wc_get_endpoint_url('project-view-request', $post_id));
         exit;
     }
@@ -433,10 +433,10 @@ class Workflow_Handler {
         $result = wp_update_post($post_data, true);
 
         if (is_wp_error($result)) {
-            $this->add_wc_notice(__('There was an error updating your request. Please try again.', 'arsol-pfw'), 'error');
+            wc_add_notice(__('There was an error updating your request. Please try again.', 'arsol-pfw'), 'error');
         } else {
             $this->update_request_meta($post_id, $_POST);
-            $this->add_wc_notice(__('Request updated successfully.', 'arsol-pfw'), 'success');
+            wc_add_notice(__('Request updated successfully.', 'arsol-pfw'), 'success');
         }
         
         wp_safe_redirect(wc_get_endpoint_url('project-view-request', $post_id));
@@ -454,14 +454,6 @@ class Workflow_Handler {
         }
         if (isset($data['request_delivery_date'])) {
             update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($data['request_delivery_date']));
-        }
-    }
-
-    private function add_wc_notice($message, $type = 'success') {
-        if (function_exists('WC') && WC()->session) {
-            $notices = WC()->session->get('wc_notices', array());
-            $notices[$type][] = $message;
-            WC()->session->set('wc_notices', $notices);
         }
     }
 
