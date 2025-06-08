@@ -12,8 +12,14 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+?>
 
-\Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-    'request_project_form',
-    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-request.php'
-);
+<div class="arsol-project-request-container">
+    <?php wc_print_notices(); ?>
+    <?php 
+    \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+        'create_project_request_form',
+        ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-request.php'
+    );
+    ?>
+</div>

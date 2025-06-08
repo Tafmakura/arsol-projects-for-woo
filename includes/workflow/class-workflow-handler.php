@@ -391,10 +391,20 @@ class Workflow_Handler {
             'post_type'    => 'arsol-pfw-request',
             'post_author'  => get_current_user_id(),
         );
-        $post_id = wp_insert_post($post_data);
+        $post_id = wp_insert_post($post_data, true);
+
+        if (is_wp_error($post_id)) {
+            wc_add_notice(__('There was an error creating your request. Please try again.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('project-request'));
+            exit;
+        }
+
         wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
 
         $this->update_request_meta($post_id, $_POST);
+
+        // Set a transient to indicate a new submission
+        set_transient('arsol_pfw_request_submitted_' . get_current_user_id(), $post_id, 60);
 
         wp_safe_redirect(get_permalink($post_id));
         exit;
@@ -417,9 +427,14 @@ class Workflow_Handler {
             'post_title'   => sanitize_text_field($_POST['request_title']),
             'post_content' => wp_kses_post($_POST['request_description']),
         );
-        wp_update_post($post_data);
+        $result = wp_update_post($post_data, true);
 
-        $this->update_request_meta($post_id, $_POST);
+        if (is_wp_error($result)) {
+            wc_add_notice(__('There was an error updating your request. Please try again.', 'arsol-pfw'), 'error');
+        } else {
+            $this->update_request_meta($post_id, $_POST);
+            wc_add_notice(__('Request updated successfully.', 'arsol-pfw'), 'success');
+        }
         
         wp_safe_redirect(get_permalink($post_id));
         exit;
