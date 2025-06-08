@@ -87,22 +87,24 @@ class Proposal {
 
             <?php if ($original_budget || $original_start_date || $original_delivery_date) : ?>
             <div class="arsol-pfw-original-request-details">
-                <h4><?php _e('Original Request Details', 'arsol-pfw'); ?></h4>
                 <?php if ($original_budget) : ?>
                 <p>
-                    <label><?php _e('Budget:', 'arsol-pfw'); ?></label>
-                    <strong><?php echo wc_price($original_budget); ?></strong>
+                    <label><?php _e('Requested Budget:', 'arsol-pfw'); ?></label>
+                </br>
+                <strong><?php echo wc_price($original_budget); ?></strong>
                 </p>
                 <?php endif; ?>
                 <?php if ($original_start_date) : ?>
                 <p>
                     <label><?php _e('Start Date:', 'arsol-pfw'); ?></label>
+                    </br>
                     <strong><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_start_date))); ?></strong>
                 </p>
                 <?php endif; ?>
                 <?php if ($original_delivery_date) : ?>
                 <p>
                     <label><?php _e('Delivery Date:', 'arsol-pfw'); ?></label>
+                    </br>
                     <strong><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_delivery_date))); ?></strong>
                 </p>
                 <?php endif; ?>
