@@ -469,14 +469,13 @@ class Workflow_Handler {
      * Handle request submission via AJAX
      */
     public function handle_request_submission_ajax() {
-        check_ajax_referer('arsol_create_request', 'arsol_request_nonce');
+        // Verify nonce
+        if (!check_ajax_referer('arsol_create_request', 'arsol_request_nonce', false)) {
+            wp_send_json_error(array('notice' => __('Security check failed. Please refresh the page and try again.', 'arsol-pfw')));
+        }
 
         $is_edit = isset($_POST['request_id']);
         $form_action = $is_edit ? 'arsol_edit_request' : 'arsol_create_request';
-
-        if (!wp_verify_nonce($_POST['arsol_request_nonce'], $form_action)) {
-            wp_send_json_error(array('notice' => __('Invalid nonce.', 'arsol-pfw')));
-        }
 
         if ($is_edit) {
             $post_id = intval($_POST['request_id']);

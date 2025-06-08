@@ -49,7 +49,7 @@ if (!$is_edit) {
         <h4><?php echo $is_edit ? esc_html__('Edit Your Request', 'arsol-pfw') : esc_html__('Submit a Project Request', 'arsol-pfw'); ?></h4>
         
         <input type="hidden" name="action" value="<?php echo esc_attr($form_action); ?>">
-        <?php wp_nonce_field($form_action, 'arsol_request_nonce'); ?>
+        <?php wp_nonce_field('arsol_create_request', 'arsol_request_nonce'); ?>
         <?php if ($is_edit) : ?>
             <input type="hidden" name="request_id" value="<?php echo esc_attr($post->ID); ?>">
         <?php endif; ?>
@@ -89,7 +89,10 @@ if (!$is_edit) {
 
 <script>
 jQuery(document).ready(function($) {
+    console.log('Form handler initialized');
+    
     $('#arsol-request-edit-form').on('submit', function(e) {
+        console.log('Form submitted');
         e.preventDefault();
         
         var $form = $(this);
@@ -102,6 +105,9 @@ jQuery(document).ready(function($) {
         var formData = new FormData(this);
         formData.append('action', 'arsol_handle_request_submission');
         
+        console.log('Sending AJAX request to:', arsol_pfw_ajax.ajax_url);
+        console.log('Form data:', Object.fromEntries(formData));
+        
         // Send AJAX request
         $.ajax({
             url: arsol_pfw_ajax.ajax_url,
@@ -110,6 +116,7 @@ jQuery(document).ready(function($) {
             processData: false,
             contentType: false,
             success: function(response) {
+                console.log('AJAX response:', response);
                 if (response.success) {
                     // Show success message
                     if (response.data.notice) {
@@ -133,7 +140,8 @@ jQuery(document).ready(function($) {
                     $submitButton.prop('disabled', false);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', {xhr: xhr, status: status, error: error});
                 // Show generic error message
                 wc_add_to_cart_params.i18n_view_cart = '<?php esc_html_e('An error occurred. Please try again.', 'arsol-pfw'); ?>';
                 $(document.body).trigger('added_to_cart');

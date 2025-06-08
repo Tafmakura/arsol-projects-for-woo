@@ -17,9 +17,11 @@ if (!defined('ABSPATH')) {
 <div class="arsol-project-request-container">
     <?php wc_print_notices(); ?>
     <?php 
-    // Add AJAX URL to the page
+    // Enqueue jQuery and localize script
+    wp_enqueue_script('jquery');
     wp_localize_script('jquery', 'arsol_pfw_ajax', array(
-        'ajax_url' => admin_url('admin-ajax.php')
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('arsol_create_request')
     ));
     
     \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
