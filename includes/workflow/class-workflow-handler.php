@@ -170,7 +170,13 @@ class Workflow_Handler {
         $new_project_id = wp_insert_post($project_args);
 
         if (is_wp_error($new_project_id)) {
-            wp_die($new_project_id->get_error_message());
+            if ($is_internal_call) {
+                wc_add_notice(__('Failed to create project from proposal. Please try again.', 'arsol-pfw'), 'error');
+                wp_safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
+                exit;
+            } else {
+                wp_die($new_project_id->get_error_message());
+            }
         }
 
         // Set the project status to 'not-started'
@@ -210,7 +216,7 @@ class Workflow_Handler {
 
         // Redirect based on how the function was called
         if ($is_internal_call) {
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            wp_safe_redirect(wc_get_account_endpoint_url('project-overview/' . $new_project_id));
         } else {
             wp_redirect(admin_url('post.php?post=' . $new_project_id . '&action=edit'));
         }
@@ -392,10 +398,18 @@ class Workflow_Handler {
             'post_author'  => get_current_user_id(),
         );
         $post_id = wp_insert_post($post_data);
-        wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
+        
+        if (is_wp_error($post_id)) {
+            wc_add_notice(__('Failed to create project request. Please try again.', 'arsol-pfw'), 'error');
+            wp_safe_redirect(wc_get_account_endpoint_url('project-create-request'));
+            exit;
+        }
 
+        wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
         $this->update_request_meta($post_id, $_POST);
 
+        // Add success notice for request creation
+        wc_add_notice(__('Project request created successfully.', 'arsol-pfw'), 'success');
         wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
         exit;
     }
@@ -417,7 +431,13 @@ class Workflow_Handler {
             'post_title'   => sanitize_text_field($_POST['request_title']),
             'post_content' => wp_kses_post($_POST['request_description']),
         );
-        wp_update_post($post_data);
+        $result = wp_update_post($post_data);
+
+        if (is_wp_error($result) || $result === 0) {
+            wc_add_notice(__('Failed to update project request. Please try again.', 'arsol-pfw'), 'error');
+        } else {
+            wc_add_notice(__('Project request updated successfully.', 'arsol-pfw'), 'success');
+        }
 
         $this->update_request_meta($post_id, $_POST);
         
