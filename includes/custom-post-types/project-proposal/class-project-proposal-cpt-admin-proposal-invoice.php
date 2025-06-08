@@ -294,25 +294,31 @@ class Proposal_Invoice {
         $is_subscription = $product->is_type(array('subscription', 'subscription_variation'));
         $sub_text = '';
         $sign_up_fee = 0;
-        
-        // Use get_price() and get_regular_price() to robustly determine active sale price.
-        $regular_price_val = $product->get_regular_price();
-        $active_price = $product->get_price();
+        $regular_price_val = 0;
         $sale_price_val = '';
-
-        // If the active price is less than the regular price, a sale is active.
-        if (is_numeric($active_price) && is_numeric($regular_price_val) && $active_price < $regular_price_val) {
-            $sale_price_val = $active_price;
-        }
+        $billing_interval = null;
+        $billing_period = null;
 
         if ($is_subscription && class_exists('WC_Subscriptions_Product')) {
-            // The sign-up fee is a separate one-time charge.
+            // Logic for Subscription Products
+            $regular_price_val = $product->get_regular_price();
+            $active_price = $product->get_price();
+            if (is_numeric($active_price) && is_numeric($regular_price_val) && $active_price < $regular_price_val) {
+                $sale_price_val = $active_price;
+            }
+            
             $sign_up_fee = (float) $product->get_meta('_subscription_sign_up_fee');
-            // The sub_text should describe the full billing terms for clarity.
             $sub_text = $product->get_price_string();
-        }
+            $billing_interval = $product->get_meta('_subscription_period_interval');
+            $billing_period = $product->get_meta('_subscription_period');
 
-        // Ensure we have numeric values before formatting, as get_price() can return ''
+        } else {
+            // Logic for Simple/Other Products
+            $regular_price_val = $product->get_regular_price();
+            $sale_price_val = $product->get_sale_price();
+        }
+        
+        // Ensure we have numeric values before formatting
         $regular_price_val = is_numeric($regular_price_val) ? (float) $regular_price_val : 0;
         $sale_price_val = is_numeric($sale_price_val) ? (float) $sale_price_val : '';
 
@@ -322,8 +328,8 @@ class Proposal_Invoice {
             'is_subscription' => $is_subscription,
             'sign_up_fee' => wc_format_decimal($sign_up_fee, wc_get_price_decimals()),
             'sub_text' => $sub_text,
-            'billing_interval' => $is_subscription ? $product->get_meta('_subscription_period_interval') : null,
-            'billing_period'   => $is_subscription ? $product->get_meta('_subscription_period') : null,
+            'billing_interval' => $billing_interval,
+            'billing_period'   => $billing_period,
         );
 
         wp_send_json_success($data);
