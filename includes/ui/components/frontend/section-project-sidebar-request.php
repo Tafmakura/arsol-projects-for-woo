@@ -49,10 +49,10 @@ do_action('arsol_pfw_sidebar_fields_end', 'request', $sidebar_data);
 ?>
 
 <?php
-// Add update and cancel buttons for 'pending' status
+// Add update and cancel buttons for 'pending-review' status
 $status_terms = wp_get_post_terms($request_id, 'arsol-request-status', ['fields' => 'slugs']);
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
-if ($current_status === 'pending') {
+if ($current_status === 'pending-review') {
     $has_override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_request_edit_form');
     $cancel_url = wp_nonce_url(add_query_arg(['action' => 'arsol_cancel_request', 'request_id' => $request_id], admin_url('admin-post.php')), 'arsol_cancel_request_nonce');
     $confirm_message = esc_attr__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw');
