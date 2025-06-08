@@ -107,10 +107,20 @@ class Project {
                         $period_text = isset($periods[$billing_period]) ? $periods[$billing_period] : '';
                         $cycle_text = trim($interval_text . ' ' . $period_text);
                         
-                        echo wc_price($recurring_budget_data['amount'], array('currency' => $recurring_budget_data['currency']));
+                        $recurring_start_date = get_post_meta($post->ID, '_project_recurring_start_date', true);
+                        
+                        $output_string = wc_price($recurring_budget_data['amount'], array('currency' => $recurring_budget_data['currency']));
+
                         if (!empty($cycle_text)) {
-                            echo ' ' . esc_html($cycle_text);
+                            $output_string .= ' ' . esc_html($cycle_text);
                         }
+                        
+                        if (!empty($recurring_start_date)) {
+                            $output_string .= ' ' . __('starting on', 'arsol-pfw') . ' <strong>' . esc_html(date_i18n(get_option('date_format'), strtotime($recurring_start_date))) . '</strong>';
+                        }
+                        
+                        echo $output_string;
+
                     } else {
                         echo '<b>N/A</b>';
                     }

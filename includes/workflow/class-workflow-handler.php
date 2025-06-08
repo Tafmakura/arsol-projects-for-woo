@@ -138,6 +138,7 @@ class Workflow_Handler {
             '_proposal_recurring_budget' => '_project_recurring_budget',
             '_proposal_billing_interval' => '_project_billing_interval',
             '_proposal_billing_period'   => '_project_billing_period',
+            '_proposal_recurring_start_date' => '_project_recurring_start_date',
             '_proposal_start_date'       => '_proposal_start_date', // Keep for display
             '_proposal_delivery_date'    => '_project_due_date', // Correctly map to due date
         );
@@ -241,8 +242,16 @@ class Workflow_Handler {
         }
         
         try {
-            $start_date = get_post_meta($project_id, '_project_start_date', true);
-            $subscription_start_date = !empty($start_date) ? gmdate('Y-m-d H:i:s', strtotime($start_date)) : gmdate('Y-m-d H:i:s');
+            // Prioritize the specific recurring start date
+            $recurring_start_date = get_post_meta($project_id, '_project_recurring_start_date', true);
+
+            if (!empty($recurring_start_date)) {
+                $subscription_start_date = gmdate('Y-m-d H:i:s', strtotime($recurring_start_date));
+            } else {
+                // Fallback to overall project start date or current time
+                $start_date = get_post_meta($project_id, '_project_start_date', true);
+                $subscription_start_date = !empty($start_date) ? gmdate('Y-m-d H:i:s', strtotime($start_date)) : gmdate('Y-m-d H:i:s');
+            }
 
             $subscription_args = array(
                 'status' => 'pending',

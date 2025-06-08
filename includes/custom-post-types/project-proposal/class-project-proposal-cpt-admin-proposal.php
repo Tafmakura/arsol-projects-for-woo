@@ -58,6 +58,7 @@ class Proposal {
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
         $billing_interval = get_post_meta($post->ID, '_proposal_billing_interval', true);
         $billing_period = get_post_meta($post->ID, '_proposal_billing_period', true);
+        $recurring_start_date = get_post_meta($post->ID, '_proposal_recurring_start_date', true);
 
         // Get original request data
         $original_budget = get_post_meta($post->ID, '_original_request_budget', true);
@@ -181,6 +182,14 @@ class Proposal {
                             ?>
                         </select>
                     </span>
+                </p>
+                <p>
+                    <label for="proposal_recurring_start_date" style="display:block;margin-bottom:5px;"><?php _e('Recurring Start Date:', 'arsol-pfw'); ?></label>
+                    <input type="date"
+                           id="proposal_recurring_start_date"
+                           name="proposal_recurring_start_date"
+                           value="<?php echo esc_attr($recurring_start_date); ?>"
+                           class="widefat">
                 </p>
             </div>
 
@@ -319,6 +328,10 @@ class Proposal {
 
         if (isset($_POST['proposal_billing_period'])) {
             update_post_meta($post_id, '_proposal_billing_period', sanitize_text_field($_POST['proposal_billing_period']));
+        }
+
+        if (isset($_POST['proposal_recurring_start_date'])) {
+            update_post_meta($post_id, '_proposal_recurring_start_date', sanitize_text_field($_POST['proposal_recurring_start_date']));
         }
 
         // Save checkbox states
