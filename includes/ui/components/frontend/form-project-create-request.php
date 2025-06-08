@@ -45,7 +45,7 @@ if (!$is_edit) {
 ?>
 
 <div class="arsol-project-request">
-    <form method="post" id="arsol-request-edit-form" class="arsol-request-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+    <form method="post" id="arsol-request-edit-form" class="arsol-request-form">
         <h4><?php echo $is_edit ? esc_html__('Edit Your Request', 'arsol-pfw') : esc_html__('Submit a Project Request', 'arsol-pfw'); ?></h4>
         
         <input type="hidden" name="action" value="<?php echo esc_attr($form_action); ?>">
@@ -85,4 +85,61 @@ if (!$is_edit) {
             </p>
         <?php endif; ?>
     </form>
-</div> 
+</div>
+
+<script>
+jQuery(document).ready(function($) {
+    $('#arsol-request-edit-form').on('submit', function(e) {
+        e.preventDefault();
+        
+        var $form = $(this);
+        var $submitButton = $form.find('button[type="submit"]');
+        
+        // Disable submit button
+        $submitButton.prop('disabled', true);
+        
+        // Get form data
+        var formData = new FormData(this);
+        formData.append('action', 'arsol_handle_request_submission');
+        
+        // Send AJAX request
+        $.ajax({
+            url: arsol_pfw_ajax.ajax_url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    // Show success message
+                    if (response.data.notice) {
+                        wc_add_to_cart_params.i18n_view_cart = response.data.notice;
+                        $(document.body).trigger('added_to_cart');
+                    }
+                    
+                    // If editing, reload the page to show updated content
+                    if ($form.find('input[name="request_id"]').length) {
+                        window.location.reload();
+                    } else {
+                        // If creating new, redirect to the new request
+                        window.location.href = response.data.redirect_url;
+                    }
+                } else {
+                    // Show error message
+                    if (response.data.notice) {
+                        wc_add_to_cart_params.i18n_view_cart = response.data.notice;
+                        $(document.body).trigger('added_to_cart');
+                    }
+                    $submitButton.prop('disabled', false);
+                }
+            },
+            error: function() {
+                // Show generic error message
+                wc_add_to_cart_params.i18n_view_cart = '<?php esc_html_e('An error occurred. Please try again.', 'arsol-pfw'); ?>';
+                $(document.body).trigger('added_to_cart');
+                $submitButton.prop('disabled', false);
+            }
+        });
+    });
+});
+</script> 

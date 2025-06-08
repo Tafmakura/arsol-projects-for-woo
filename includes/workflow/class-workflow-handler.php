@@ -25,6 +25,9 @@ class Workflow_Handler {
         // Form submissions
         add_action('admin_post_arsol_create_request', array($this, 'handle_create_request'));
         add_action('admin_post_arsol_edit_request', array($this, 'handle_edit_request'));
+
+        // AJAX handlers
+        add_action('wp_ajax_arsol_handle_request_submission', array($this, 'handle_request_submission_ajax'));
     }
 
     /**
@@ -459,6 +462,65 @@ class Workflow_Handler {
             $notices = WC()->session->get('wc_notices', array());
             $notices[$type][] = $message;
             WC()->session->set('wc_notices', $notices);
+        }
+    }
+
+    /**
+     * Handle request submission via AJAX
+     */
+    public function handle_request_submission_ajax() {
+        check_ajax_referer('arsol_create_request', 'arsol_request_nonce');
+
+        $is_edit = isset($_POST['request_id']);
+        $form_action = $is_edit ? 'arsol_edit_request' : 'arsol_create_request';
+
+        if (!wp_verify_nonce($_POST['arsol_request_nonce'], $form_action)) {
+            wp_send_json_error(array('notice' => __('Invalid nonce.', 'arsol-pfw')));
+        }
+
+        if ($is_edit) {
+            $post_id = intval($_POST['request_id']);
+            if (!self::user_can_view_post(get_current_user_id(), $post_id)) {
+                wp_send_json_error(array('notice' => __('You do not have permission to edit this request.', 'arsol-pfw')));
+            }
+
+            $post_data = array(
+                'ID'           => $post_id,
+                'post_title'   => sanitize_text_field($_POST['request_title']),
+                'post_content' => wp_kses_post($_POST['request_description']),
+            );
+            $result = wp_update_post($post_data, true);
+
+            if (is_wp_error($result)) {
+                wp_send_json_error(array('notice' => __('There was an error updating your request. Please try again.', 'arsol-pfw')));
+            }
+
+            $this->update_request_meta($post_id, $_POST);
+            wp_send_json_success(array('notice' => __('Request updated successfully.', 'arsol-pfw')));
+        } else {
+            $post_data = array(
+                'post_title'   => sanitize_text_field($_POST['request_title']),
+                'post_content' => wp_kses_post($_POST['request_description']),
+                'post_status'  => 'publish',
+                'post_type'    => 'arsol-pfw-request',
+                'post_author'  => get_current_user_id(),
+            );
+            $post_id = wp_insert_post($post_data, true);
+
+            if (is_wp_error($post_id)) {
+                wp_send_json_error(array('notice' => __('There was an error creating your request. Please try again.', 'arsol-pfw')));
+            }
+
+            wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
+            $this->update_request_meta($post_id, $_POST);
+
+            // Set a transient to indicate a new submission
+            set_transient('arsol_pfw_request_submitted_' . get_current_user_id(), $post_id, 60);
+
+            wp_send_json_success(array(
+                'notice' => __('Request submitted successfully.', 'arsol-pfw'),
+                'redirect_url' => wc_get_endpoint_url('project-view-request', $post_id)
+            ));
         }
     }
 }
