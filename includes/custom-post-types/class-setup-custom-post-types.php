@@ -34,9 +34,9 @@ class Setup {
 
     private function instantiate_classes() {
         // Project CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Projects();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectPost\Admin\Project();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Setup();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Projects();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Project();
         
         // Project Request CPT
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
