@@ -171,7 +171,7 @@ class Workflow_Handler {
 
         if (is_wp_error($new_project_id)) {
             if ($is_internal_call) {
-                wc_add_notice(__('Failed to create project from proposal. Please try again.', 'arsol-pfw'), 'error');
+                \wc_add_notice(__('Failed to create project from proposal. Please try again.', 'arsol-pfw'), 'error');
                 wp_safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
                 exit;
             } else {
@@ -400,7 +400,7 @@ class Workflow_Handler {
         $post_id = wp_insert_post($post_data);
         
         if (is_wp_error($post_id)) {
-            wc_add_notice(__('Failed to create project request. Please try again.', 'arsol-pfw'), 'error');
+            \wc_add_notice(__('Failed to create project request. Please try again.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('project-create-request'));
             exit;
         }
@@ -409,7 +409,7 @@ class Workflow_Handler {
         $this->update_request_meta($post_id, $_POST);
 
         // Add success notice for request creation
-        wc_add_notice(__('Project request created successfully.', 'arsol-pfw'), 'success');
+        \wc_add_notice(__('Project request created successfully.', 'arsol-pfw'), 'success');
         wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
         exit;
     }
@@ -434,9 +434,9 @@ class Workflow_Handler {
         $result = wp_update_post($post_data);
 
         if (is_wp_error($result) || $result === 0) {
-            wc_add_notice(__('Failed to update project request. Please try again.', 'arsol-pfw'), 'error');
+            \wc_add_notice(__('Failed to update project request. Please try again.', 'arsol-pfw'), 'error');
         } else {
-            wc_add_notice(__('Project request updated successfully.', 'arsol-pfw'), 'success');
+            \wc_add_notice(__('Project request updated successfully.', 'arsol-pfw'), 'success');
         }
 
         $this->update_request_meta($post_id, $_POST);
