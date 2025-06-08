@@ -17,7 +17,8 @@
             builder.on('click', '.add-line-item', this.addLineItem.bind(this));
             builder.on('click', '.remove-line-item', this.removeLineItem.bind(this));
             builder.on('change', '.product-select', this.productChanged.bind(this));
-            builder.on('input', '.quantity-input, .sale-price-input, .price-input, .fee-amount-input', this.calculateTotals.bind(this));
+            // This single binding handles all input changes for calculation
+            builder.on('input change', '.quantity-input, .sale-price-input, .price-input, .fee-amount-input, .billing-interval, .billing-period', this.calculateTotals.bind(this));
         },
         
         loadExistingItems: function() {
@@ -51,11 +52,15 @@
             } else if (type === 'recurring-fee') {
                 template = this.recurring_fee_template;
                 container = '#recurring-fee-lines-body';
+            } else {
+                return; // Exit if type is unknown
             }
             
             var $newRow = $(template(data));
             $(container).append($newRow);
-            if (type === 'product') this.initSelect2($newRow);
+            if (type === 'product') {
+                this.initSelect2($newRow);
+            }
         },
 
         initSelect2: function($row) {
