@@ -116,7 +116,7 @@ class Request {
                 $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
                 $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
             ?>
-            <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Proposal', 'arsol-pfw'); ?></a>
+            <a href="<?php echo esc_url($convert_url); ?>" class="button button-secondary"><?php _e('Convert to Proposal', 'arsol-pfw'); ?></a>
         </div>
         <?php
     }

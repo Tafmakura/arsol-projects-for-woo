@@ -163,7 +163,6 @@ class Workflow_Handler {
 
         if (empty($product_id) || empty($budget) || !is_numeric($budget)) {
             return;
-        .
         }
 
         $product = wc_get_product($product_id);

@@ -39,6 +39,8 @@ class Project {
         $due_date = get_post_meta($post->ID, '_project_due_date', true);
         $start_date = get_post_meta($post->ID, '_project_start_date', true);
         $project_lead = get_post_meta($post->ID, '_project_lead', true);
+        $budget = get_post_meta($post->ID, '_proposal_budget', true);
+        $recurring_budget = get_post_meta($post->ID, '_proposal_recurring_budget', true);
         
         // Get statuses
         $statuses = get_terms(array(
@@ -120,6 +122,28 @@ class Project {
                    value="<?php echo esc_attr($due_date); ?>"
                    style="width:100%">
         </p>
+
+        <?php if (!empty($budget)) : ?>
+            <p>
+                <label for="project_budget"><?php _e('Budget:', 'arsol-projects-for-woo'); ?></label>
+                <input type="text" 
+                       id="project_budget" 
+                       value="<?php echo esc_attr(wc_price($budget)); ?>"
+                       disabled
+                       style="width:100%">
+            </p>
+        <?php endif; ?>
+
+        <?php if (!empty($recurring_budget)) : ?>
+            <p>
+                <label for="project_recurring_budget"><?php _e('Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
+                <input type="text" 
+                       id="project_recurring_budget" 
+                       value="<?php echo esc_attr(wc_price($recurring_budget)); ?>"
+                       disabled
+                       style="width:100%">
+            </p>
+        <?php endif; ?>
         <?php
     }
 

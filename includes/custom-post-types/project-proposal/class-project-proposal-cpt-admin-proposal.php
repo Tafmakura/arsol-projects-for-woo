@@ -142,7 +142,7 @@ class Proposal {
                 $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
                 ?>
                 <div style="margin-top:10px;">
-                    <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Project', 'arsol-pfw'); ?></a>
+                    <input type="button" class="button button-secondary" value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" onclick="location.href='<?php echo esc_url($convert_url); ?>'" />
                 </div>
                 <?php
             }
