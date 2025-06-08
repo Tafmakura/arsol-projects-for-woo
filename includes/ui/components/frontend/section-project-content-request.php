@@ -28,9 +28,6 @@ do_action('arsol_projects_before_request_state', $post->ID);
         <?php else : ?>
             <div class="arsol-pfw-project-overview-empty">
                 <div class="arsol-pfw-empty-state">
-                    <div class="arsol-pfw-empty-state__icon">
-                        <span class="dashicons dashicons-visibility"></span>
-                    </div>
                     <div class="arsol-pfw-empty-state__content">
                         <h1><?php esc_html_e('Request Under Review', 'arsol-pfw'); ?></h1>
                         <p><?php printf(esc_html__('Your project request "%s" is currently being reviewed by our team. We\'ll get back to you soon with a detailed proposal.', 'arsol-pfw'), '<strong>' . esc_html($post->post_title) . '</strong>'); ?></p>
