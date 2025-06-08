@@ -8,7 +8,6 @@ class Proposal {
     public function __construct() {
         // Add meta boxes for single proposal admin screen
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
-        add_action('add_meta_boxes', array($this, 'add_conversion_meta_box'));
         // Save proposal data
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
         // Action to set review status when a proposal is published
@@ -34,23 +33,6 @@ class Proposal {
             'side',
             'default'
         );
-    }
-
-    /**
-     * Add conversion meta box
-     */
-    public function add_conversion_meta_box() {
-        global $post;
-        if ($post->post_status == 'publish') {
-            add_meta_box(
-                'proposal_conversion',
-                __('Actions', 'arsol-pfw'),
-                array($this, 'render_conversion_meta_box'),
-                'arsol-pfw-proposal',
-                'side',
-                'high'
-            );
-        }
     }
 
     /**
@@ -140,28 +122,16 @@ class Proposal {
                        class="widefat">
             </p>
         </div>
-        <?php
-
-        if ($post->post_status == 'publish') {
-            $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
-            $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
-            ?>
-            <div class="proposal-actions" style="margin-top: 10px;">
-                <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Project', 'arsol-pfw'); ?></a>
-            </div>
+        <div class="major-actions" style="padding-top:10px; border-top: 1px solid #ddd; margin-top: 10px;">
             <?php
-        }
-    }
-
-    /**
-     * Render conversion meta box
-     */
-    public function render_conversion_meta_box($post) {
-        $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
-        $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
-        ?>
-        <div class="proposal-actions">
-            <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Project', 'arsol-pfw'); ?></a>
+            if ($post->post_status == 'publish') {
+                $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
+                $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
+                ?>
+                <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Project', 'arsol-pfw'); ?></a>
+                <?php
+            }
+            ?>
         </div>
         <?php
     }
