@@ -30,7 +30,6 @@ class Setup {
             'add_new_item'      => __('Add New Project Proposal', 'arsol-pfw'),
             'edit_item'         => __('Edit Project Proposal', 'arsol-pfw'),
             'new_item'          => __('New Project Proposal', 'arsol-pfw'),
-            'view_item'         => __('View Project Proposal', 'arsol-pfw'),
             'search_items'      => __('Search Project Proposals', 'arsol-pfw'),
             'not_found'         => __('No project proposals found', 'arsol-pfw'),
             'not_found_in_trash'=> __('No project proposals found in trash', 'arsol-pfw'),
@@ -48,11 +47,11 @@ class Setup {
 
         $args = array(
             'labels'              => $labels,
-            'public'              => true,
-            'publicly_queryable'  => true,
+            'public'              => false,
+            'publicly_queryable'  => false,
             'show_ui'            => true,
             'show_in_menu'       => false,
-            'show_in_nav_menus'  => true,
+            'show_in_nav_menus'  => false,
             'show_in_admin_bar'  => true,
             'menu_position'      => null,
             'menu_icon'          => 'dashicons-portfolio',
@@ -61,7 +60,7 @@ class Setup {
             'hierarchical'       => false,
             'supports'           => $supports,
             'has_archive'        => false,
-            'rewrite'           => array('slug' => 'project-proposal', 'with_front' => false),
+            'rewrite'           => false,
             'show_in_rest'      => false,
         );
 

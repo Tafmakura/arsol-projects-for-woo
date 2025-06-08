@@ -16,6 +16,8 @@ class Requests {
         // Handle bulk actions
         add_filter('bulk_actions-edit-arsol-pfw-request', array($this, 'register_bulk_actions'));
         add_filter('handle_bulk_actions-edit-arsol-pfw-request', array($this, 'handle_bulk_actions'), 10, 3);
+        // Remove view links from admin
+        add_filter('post_row_actions', array($this, 'remove_view_link'), 10, 2);
     }
 
     /**
@@ -184,5 +186,15 @@ class Requests {
 
         $redirect_to = add_query_arg('bulk_requests_updated', count($post_ids), $redirect_to);
         return $redirect_to;
+    }
+
+    /**
+     * Remove view links from admin
+     */
+    public function remove_view_link($actions, $post) {
+        if ($post->post_type === 'arsol-pfw-request') {
+            unset($actions['view']);
+        }
+        return $actions;
     }
 }
