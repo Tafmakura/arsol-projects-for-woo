@@ -39,19 +39,18 @@ $currency_symbol = get_woocommerce_currency_symbol($currency_code);
         </p>
         
         <!-- Three column row for Budget, Start Date, and Delivery Date -->
-        <div class="form-row form-row-wide arsol-project-meta-row" style="display: flex; gap: 15px;">
-            <div class="arsol-project-field-col arsol-budget-col" style="flex: 1; min-width: 160px;">
-                <label for="project_budget"><?php echo sprintf(__('Budget (%s)', 'arsol-pfw'), $currency_symbol); ?></label>
+        <div class="form-row form-row-wide arsol-project-meta-row">
+            <div class="arsol-project-field-col arsol-budget-col">
+                <label for="project_budget"><?php echo sprintf(__('Budget (%s)', 'arsol-pfw'), $currency_code); ?> <span class="required">*</span></label>
                 <input type="text" 
                        id="project_budget" 
                        name="project_budget" 
-                       placeholder="<?php esc_attr_e('Enter project budget', 'arsol-pfw'); ?>"
                        class="arsol-budget-input arsol-money-input" 
-                       style="min-width: 160px;"
-                       inputmode="decimal">
+                       inputmode="decimal"
+                       required>
             </div>
             
-            <div class="arsol-project-field-col arsol-date-col" style="flex: 1;">
+            <div class="arsol-project-field-col arsol-date-col">
                 <label for="project_start_date"><?php _e('Start Date', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="project_start_date" 
@@ -59,7 +58,7 @@ $currency_symbol = get_woocommerce_currency_symbol($currency_code);
                        class="arsol-date-input">
             </div>
             
-            <div class="arsol-project-field-col arsol-date-col" style="flex: 1;">
+            <div class="arsol-project-field-col arsol-date-col">
                 <label for="project_delivery_date"><?php _e('Delivery Date', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="project_delivery_date" 

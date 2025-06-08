@@ -245,8 +245,6 @@
     margin: 0;
 }
 
-
-
 /* Status badges in the list */
 .arsol-pfw-projects-row .status-pending {
     background-color: #fff3cd;
@@ -280,9 +278,71 @@
 
 .arsol-pfw-projects-row span[class^="status-"] {
     display: inline-block;
-    padding: 4px 8px;
+    padding: 0.25em 0.75em;
     border-radius: 3px;
     font-size: 0.9em;
     font-weight: 500;
+}
+
+/* Frontend Form Styles */
+.arsol-project-meta-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.arsol-project-field-col {
+    flex: 1;
+}
+
+.arsol-budget-col {
+    min-width: 190px;
+}
+
+.arsol-budget-input {
+    min-width: 190px;
+    text-align: right;
+}
+
+.arsol-money-input {
+    text-align: right;
+}
+
+/* Form input spacing */
+.arsol-project-form .form-row,
+.arsol-request-form .form-row {
+    margin-bottom: 20px;
+}
+
+.arsol-project-form input,
+.arsol-project-form textarea,
+.arsol-request-form input,
+.arsol-request-form textarea {
+    margin-bottom: 10px;
+}
+
+.arsol-project-form label,
+.arsol-request-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+/* Responsive adjustments for project forms */
+@media (max-width: 768px) {
+    .arsol-project-meta-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .arsol-project-field-col {
+        width: 100%;
+    }
+    
+    .arsol-budget-col,
+    .arsol-budget-input {
+        min-width: auto;
+        width: 100%;
+    }
 }
 
