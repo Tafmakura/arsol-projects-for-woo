@@ -169,7 +169,6 @@
 
 /* Project Metadata Styling - Standard for all sidebars */
 .arsol-pfw-project-meta {
-    margin-bottom: 8px;
     padding: 1rem;
     background-color: #f8f9fa;
     border-radius: 4px;
@@ -212,9 +211,6 @@
 }
 
 /* Project Action Buttons - Full Width */
-.arsol-pfw-project-action {
-    margin-bottom: 8px;
-}
 
 .arsol-pfw-project-action .brxe-button,
 .arsol-pfw-project-action .bricks-button,
