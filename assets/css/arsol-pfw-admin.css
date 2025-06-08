@@ -12,6 +12,12 @@ body.post-type-arsol-pfw-proposal .select2-container {
     text-align: right;
 }
 
+.major-actions {
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
+}
+
 /* Project field styling */
 #arsol_project_selector {
     width: 100%;

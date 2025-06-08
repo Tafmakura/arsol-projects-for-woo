@@ -161,7 +161,7 @@ class Proposal {
                        class="widefat">
             </p>
         </div>
-        <div class="major-actions" style="padding-top:10px; border-top: 1px solid #ddd; margin-top: 10px;">
+        <div class="major-actions">
             <?php if (!empty($invoice_product_id) && get_post_meta($post->ID, '_invoice_created', true) !== 'yes') : ?>
                 <p>
                     <label for="create_invoice">
