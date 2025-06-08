@@ -17,7 +17,7 @@ $current_status = !empty($status_terms) ? $status_terms[0] : '';
         <?php if ($current_status === 'pending') : ?>
             <?php
             // Use the new template override for the edit form
-            Frontend_Template_Overrides::render_template(
+            \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
                 'project_request_edit_form',
                 ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-request.php',
                 ['is_edit' => true, 'post' => $post]
