@@ -90,15 +90,6 @@ if (!$is_edit) {
             <div class="form-row">
                 <button type="submit" class="button" style="width: 100%; margin-top: 8px;"><?php echo esc_html($button_text); ?></button>
             </div>
-        <?php else : ?>
-            <div class="form-row">
-                <button type="submit" class="button" style="width: 100%; margin-top: 8px;"><?php echo esc_html($button_text); ?></button>
-                <?php
-                $cancel_url = wp_nonce_url(add_query_arg(['action' => 'arsol_cancel_request', 'request_id' => $post->ID], admin_url('admin-post.php')), 'arsol_cancel_request_nonce');
-                $confirm_message = esc_attr__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw');
-                ?>
-                <a href="<?php echo esc_url($cancel_url); ?>" class="brxe-button bricks-button sm outline bricks-color-primary arsol-confirm-action" data-message="<?php echo $confirm_message; ?>" style="width: 100%; margin-top: 8px; display: inline-block; text-align: center; text-decoration: none;"><?php _e('Cancel Request', 'arsol-pfw'); ?></a>
-            </div>
         <?php endif; ?>
     </form>
 </div> 
