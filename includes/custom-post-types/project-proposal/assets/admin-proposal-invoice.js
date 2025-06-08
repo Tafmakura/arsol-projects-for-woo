@@ -107,18 +107,21 @@
                 var salePrice = parseFloat($row.find('.sale-price-input').val());
                 var price = parseFloat($row.find('.price-input').val()) || 0;
                 
-                var unitPrice = !isNaN(salePrice) ? salePrice : price;
+                var unitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : price;
                 var subtotal = quantity * unitPrice;
                 
                 grandTotal += subtotal;
                 
-                // Format with a simple regex for comma separation
-                var formattedSubtotal = currencySymbol + subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                $row.find('.subtotal-display').html(formattedSubtotal);
+                var formattedPrice = subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                var priceHtml = '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
+
+                $row.find('.subtotal-display').html(priceHtml);
             });
             
-            var formattedGrandTotal = currencySymbol + grandTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            $('#grand-total-display').html(formattedGrandTotal);
+            var formattedGrandPrice = grandTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var grandTotalHtml = '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedGrandPrice + '</bdi></span>';
+
+            $('#grand-total-display').html(grandTotalHtml);
             $('#line_items_grand_total').val(grandTotal.toFixed(2));
         }
     };

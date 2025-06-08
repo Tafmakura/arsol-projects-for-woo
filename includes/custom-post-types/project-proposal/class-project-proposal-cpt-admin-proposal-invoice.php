@@ -119,7 +119,7 @@ class Proposal_Invoice {
                 <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
                 <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.price || '' }}" readonly></td>
                 <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
-                <td class="subtotal-display">{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}</td>
+                <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
