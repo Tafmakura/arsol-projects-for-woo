@@ -194,18 +194,19 @@ class Proposal_Invoice {
                 </td>
                 <td class="billing-cycle-column">
                     <?php
-                        $intervals = wcs_get_subscription_period_interval_strings();
-                        $periods = wcs_get_subscription_period_strings();
+                        // Safely get subscription strings, provide fallbacks if Subscriptions plugin is not active.
+                        $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(1 => __('every', 'arsol-pfw'));
+                        $periods   = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array('month' => __('month', 'arsol-pfw'));
                     ?>
                     <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="billing-interval">
-                        <?php foreach ( $intervals as $value => $label ) : ?>
-                            <option value="<?php echo esc_attr( $value ); ?>">{{ $label }}</option>
-                        <?php endforeach; ?>
+                        <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
+                            <option value="{{ value }}" <# if (data.interval == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                        <# }); #>
                     </select>
                     <select name="line_items[recurring_fees][{{ data.id }}][period]" class="billing-period">
-                         <?php foreach ( $periods as $value => $label ) : ?>
-                            <option value="<?php echo esc_attr( $value ); ?>">{{ $label }}</option>
-                        <?php endforeach; ?>
+                         <# _.each(<?php echo json_encode($periods); ?>, function(label, value) { #>
+                            <option value="{{ value }}" <# if (data.period == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                        <# }); #>
                     </select>
                 </td>
                 <td class="taxable-column">
