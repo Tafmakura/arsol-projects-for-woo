@@ -109,7 +109,6 @@ class Proposal {
 
             <div id="recurring_billing_cycle_wrapper" style="<?php echo empty($recurring_budget) || $recurring_budget <= 0 ? 'display: none;' : ''; ?>">
                 <p>
-                    <label for="proposal_billing_cycle" style="display:block;margin-bottom:5px;"><?php _e('Recurring Billing Cycle:', 'arsol-pfw'); ?></label>
                     <span style="display: flex; justify-content: space-between;">
                         <select id="proposal_billing_interval" name="proposal_billing_interval" style="width: 48%;">
                             <?php
