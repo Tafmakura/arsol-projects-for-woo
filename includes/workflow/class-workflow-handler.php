@@ -383,7 +383,12 @@ class Workflow_Handler {
     }
 
     public function handle_create_request() {
+        // Aggressively clear all existing output buffers
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
         ob_start();
+
         if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_create_request')) {
             wp_die(__('Invalid nonce.', 'arsol-pfw'));
         }
@@ -406,13 +411,17 @@ class Workflow_Handler {
             $redirect_url = wc_get_account_endpoint_url('project-view-request', $post_id);
         }
 
-        ob_end_clean();
         wp_safe_redirect($redirect_url);
         exit;
     }
 
     public function handle_edit_request() {
+        // Aggressively clear all existing output buffers
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
         ob_start();
+
         if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_edit_request')) {
             wp_die(__('Invalid nonce.', 'arsol-pfw'));
         }
@@ -436,7 +445,6 @@ class Workflow_Handler {
         }
         
         $redirect_url = wc_get_account_endpoint_url('project-view-request', $post_id);
-        ob_end_clean();
         wp_safe_redirect($redirect_url);
         exit;
     }
