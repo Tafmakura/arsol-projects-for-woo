@@ -116,13 +116,22 @@ class Request {
         <div class="major-actions">
             <div class="arsol-pfw-admin-project-actions">
                 <?php
-                if ($current_status === 'under-review') :
-                    $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
-                    $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
-                    $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete the original request.', 'arsol-pfw'));
+                $is_disabled = $current_status !== 'under-review';
+                $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
+                $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
+                $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete the original request.', 'arsol-pfw'));
+                $tooltip_text = $is_disabled 
+                    ? __('The request status must be "Under Review" to enable conversion.', 'arsol-pfw')
+                    : __('Converts this request into a new proposal.', 'arsol-pfw');
                 ?>
-                <a href="#" class="button button-secondary arsol-confirm-conversion" data-url="<?php echo esc_url($convert_url); ?>" data-message="<?php echo $confirm_message; ?>"><?php _e('Convert to Proposal', 'arsol-pfw'); ?></a>
-                <?php endif; ?>
+                <a href="#" 
+                   class="button button-secondary arsol-confirm-conversion" 
+                   data-url="<?php echo esc_url($convert_url); ?>" 
+                   data-message="<?php echo $confirm_message; ?>"
+                   title="<?php echo esc_attr($tooltip_text); ?>"
+                   <?php disabled($is_disabled, true); ?>>
+                   <?php _e('Convert to Proposal', 'arsol-pfw'); ?>
+                </a>
             </div>
         </div>
         <?php
