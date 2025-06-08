@@ -34,6 +34,9 @@ do_action('arsol_projects_before_request_state', $post->ID);
                     <div class="arsol-pfw-empty-state__content">
                         <h1><?php esc_html_e('Request Under Review', 'arsol-pfw'); ?></h1>
                         <p><?php printf(esc_html__('Your project request "%s" is currently being reviewed by our team. We\'ll get back to you soon with a detailed proposal.', 'arsol-pfw'), '<strong>' . esc_html($post->post_title) . '</strong>'); ?></p>
+                        
+                        <h2><?php esc_html_e('Project Details', 'arsol-pfw'); ?></h2>
+                        <p><?php echo wp_kses_post($post->post_content); ?></p>
                     </div>
                 </div>
             </div>

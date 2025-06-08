@@ -36,8 +36,6 @@ do_action('arsol_pfw_sidebar_before', 'request', $sidebar_data);
 do_action('arsol_pfw_sidebar_fields_start', 'request', $sidebar_data);
 ?>
 
-<p><?php esc_html_e('Information about this request.', 'arsol-pfw'); ?></p>
-
 <?php
 /**
  * Hook: arsol_pfw_sidebar_fields_end
