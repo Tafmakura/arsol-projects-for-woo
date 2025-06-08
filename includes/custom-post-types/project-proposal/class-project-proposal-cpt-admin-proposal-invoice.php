@@ -75,8 +75,8 @@ class Proposal_Invoice {
                             <th><?php _e('Qty', 'arsol-pfw'); ?></th>
                             <th><?php _e('Price', 'arsol-pfw'); ?></th>
                             <th><?php _e('Sale Price', 'arsol-pfw'); ?></th>
-                            <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
+                            <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                         </tr>
                     </thead>
                     <tbody id="product-lines-body">
@@ -95,9 +95,9 @@ class Proposal_Invoice {
                         <tr>
                             <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
                             <th><?php _e('Amount', 'arsol-pfw'); ?></th>
-                            <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
+                            <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                         </tr>
                     </thead>
                     <tbody id="onetime-fee-lines-body">
@@ -105,6 +105,28 @@ class Proposal_Invoice {
                     </tbody>
                 </table>
                 <button type="button" class="button add-line-item" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
+            </div>
+
+            <hr>
+
+            <div class="line-items-container">
+                <h3><?php _e('Recurring Fees', 'arsol-pfw'); ?></h3>
+                <table class="widefat" id="recurring-fee-line-items">
+                    <thead>
+                        <tr>
+                            <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
+                            <th><?php _e('Amount', 'arsol-pfw'); ?></th>
+                            <th><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
+                            <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
+                            <th class="actions-column"></th>
+                            <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="recurring-fee-lines-body">
+                        <?php // Recurring fee rows will be added here by JS ?>
+                    </tbody>
+                </table>
+                <button type="button" class="button add-line-item" data-type="recurring-fee"><?php _e('+ Add Recurring Fee', 'arsol-pfw'); ?></button>
             </div>
 
             <hr>
@@ -141,8 +163,8 @@ class Proposal_Invoice {
                 <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
                 <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.price || '' }}" readonly></td>
                 <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
-                <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
+                <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
             </tr>
         </script>
 
@@ -154,11 +176,43 @@ class Proposal_Invoice {
                 <td>
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
-                <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="taxable-column">
                     <input type="checkbox" name="line_items[one_time_fees][{{ data.id }}][taxable]" <# if (data.taxable) { #>checked="checked"<# } #>>
                 </td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
+                <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+            </tr>
+        </script>
+
+        <script type="text/html" id="tmpl-arsol-recurring-fee-line-item">
+             <tr class="line-item recurring-fee-item" data-id="{{ data.id }}">
+                <td class="fee-name-column">
+                    <input type="text" class="fee-name-input" name="line_items[recurring_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>">
+                </td>
+                <td>
+                    <input type="text" class="fee-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
+                </td>
+                <td class="billing-cycle-column">
+                    <?php
+                        $intervals = wcs_get_subscription_period_interval_strings();
+                        $periods = wcs_get_subscription_period_strings();
+                    ?>
+                    <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="billing-interval">
+                        <?php foreach ( $intervals as $value => $label ) : ?>
+                            <option value="<?php echo esc_attr( $value ); ?>">{{ $label }}</option>
+                        <?php endforeach; ?>
+                    </select>
+                    <select name="line_items[recurring_fees][{{ data.id }}][period]" class="billing-period">
+                         <?php foreach ( $periods as $value => $label ) : ?>
+                            <option value="<?php echo esc_attr( $value ); ?>">{{ $label }}</option>
+                        <?php endforeach; ?>
+                    </select>
+                </td>
+                <td class="taxable-column">
+                    <input type="checkbox" name="line_items[recurring_fees][{{ data.id }}][taxable]" <# if (data.taxable) { #>checked="checked"<# } #>>
+                </td>
+                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
+                <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
             </tr>
         </script>
         <?php
