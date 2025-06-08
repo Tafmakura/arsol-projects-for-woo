@@ -383,12 +383,6 @@ class Workflow_Handler {
     }
 
     public function handle_create_request() {
-        // Aggressively clear all existing output buffers
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
-        ob_start();
-
         if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_create_request')) {
             wp_die(__('Invalid nonce.', 'arsol-pfw'));
         }
@@ -403,25 +397,20 @@ class Workflow_Handler {
         $post_id = wp_insert_post($post_data, true);
 
         if (is_wp_error($post_id)) {
-            $redirect_url = wc_get_account_endpoint_url('project-request');
-        } else {
-            wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
-            $this->update_request_meta($post_id, $_POST);
-            set_transient('arsol_pfw_request_submitted_' . get_current_user_id(), $post_id, 60);
-            $redirect_url = wc_get_account_endpoint_url('project-view-request', $post_id);
+            wp_safe_redirect(wc_get_account_endpoint_url('project-request'));
+            exit;
         }
 
-        wp_safe_redirect($redirect_url);
+        wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
+        $this->update_request_meta($post_id, $_POST);
+
+        set_transient('arsol_pfw_request_submitted_' . get_current_user_id(), $post_id, 60);
+
+        wp_safe_redirect(wc_get_account_endpoint_url('project-view-request', $post_id));
         exit;
     }
 
     public function handle_edit_request() {
-        // Aggressively clear all existing output buffers
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
-        ob_start();
-
         if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_edit_request')) {
             wp_die(__('Invalid nonce.', 'arsol-pfw'));
         }
@@ -444,8 +433,7 @@ class Workflow_Handler {
             $this->update_request_meta($post_id, $_POST);
         }
         
-        $redirect_url = wc_get_account_endpoint_url('project-view-request', $post_id);
-        wp_safe_redirect($redirect_url);
+        wp_safe_redirect(wc_get_account_endpoint_url('project-view-request', $post_id));
         exit;
     }
 

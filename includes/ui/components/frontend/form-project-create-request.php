@@ -28,7 +28,7 @@ if ($is_edit) {
     $delivery_date = '';
 }
 
-$button_text = $is_edit ? __('Update Request', 'arsol-pfw') : __('Submit Request', 'arsol-pfw');
+$button_text = $is_edit ? __('Save Request', 'arsol-pfw') : __('Submit Request', 'arsol-pfw');
 $form_action = $is_edit ? 'arsol_edit_request' : 'arsol_create_request';
 
 // Check if user can create project requests
@@ -78,11 +78,9 @@ if (!$is_edit) {
             <label for="request_delivery_date"><?php _e('Required Delivery Date', 'arsol-pfw'); ?></label>
             <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>">
         </p>
-
-        <?php if (empty($is_edit)) : ?>
-            <p class="form-row">
-                <button type="submit" class="button"><?php echo esc_html($button_text); ?></button>
-            </p>
-        <?php endif; ?>
+        
+        <p class="form-row">
+            <button type="submit" class="button"><?php echo esc_html($button_text); ?></button>
+        </p>
     </form>
 </div> 
