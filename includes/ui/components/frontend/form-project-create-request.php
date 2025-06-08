@@ -28,46 +28,8 @@ if ($is_edit) {
     $delivery_date = '';
 }
 
-$button_text = $is_edit ? __('Save Request', 'arsol-pfw') : __('Submit Request', 'arsol-pfw');
+$button_text = $is_edit ? __('Update Request', 'arsol-pfw') : __('Submit Request', 'arsol-pfw');
 $form_action = $is_edit ? 'arsol_edit_request' : 'arsol_create_request';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['arsol_request_nonce'])) {
-    $nonce_action = $is_edit ? 'arsol_edit_request' : 'arsol_create_request';
-    if (wp_verify_nonce($_POST['arsol_request_nonce'], $nonce_action)) {
-        $post_data = array(
-            'post_title'   => sanitize_text_field($_POST['request_title']),
-            'post_content' => wp_kses_post($_POST['request_description']),
-        );
-
-        if ($is_edit) {
-            $post_id = intval($_POST['request_id']);
-            $post_data['ID'] = $post_id;
-            wp_update_post($post_data);
-        } else {
-            $post_data['post_status'] = 'publish';
-            $post_data['post_type']   = 'arsol-pfw-request';
-            $post_data['post_author'] = get_current_user_id();
-            $post_id = wp_insert_post($post_data);
-            wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
-        }
-
-        // Save meta fields
-        if (isset($_POST['request_budget'])) {
-            $amount = wc_clean(wp_unslash($_POST['request_budget']));
-            $currency = get_woocommerce_currency();
-            update_post_meta($post_id, '_request_budget', ['amount' => $amount, 'currency' => $currency]);
-        }
-        if (isset($_POST['request_start_date'])) {
-            update_post_meta($post_id, '_request_start_date', sanitize_text_field($_POST['request_start_date']));
-        }
-        if (isset($_POST['request_delivery_date'])) {
-            update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($_POST['request_delivery_date']));
-        }
-        
-        wp_safe_redirect(get_permalink($post_id));
-        exit;
-    }
-}
 
 // Check if user can create project requests
 if (!$is_edit) {
@@ -83,8 +45,10 @@ if (!$is_edit) {
 ?>
 
 <div class="arsol-project-request">
-    <form method="post" class="arsol-request-form">
+    <form method="post" id="arsol-request-edit-form" class="arsol-request-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
         <h4><?php echo $is_edit ? esc_html__('Edit Your Request', 'arsol-pfw') : esc_html__('Submit a Project Request', 'arsol-pfw'); ?></h4>
+        
+        <input type="hidden" name="action" value="<?php echo esc_attr($form_action); ?>">
         <?php wp_nonce_field($form_action, 'arsol_request_nonce'); ?>
         <?php if ($is_edit) : ?>
             <input type="hidden" name="request_id" value="<?php echo esc_attr($post->ID); ?>">
@@ -115,8 +79,10 @@ if (!$is_edit) {
             <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>">
         </p>
         
-        <p class="form-row">
-            <button type="submit" class="button"><?php echo esc_html($button_text); ?></button>
-        </p>
+        <?php if (!$is_edit) : ?>
+            <p class="form-row">
+                <button type="submit" class="button"><?php echo esc_html($button_text); ?></button>
+            </p>
+        <?php endif; ?>
     </form>
 </div> 

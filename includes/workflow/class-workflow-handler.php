@@ -21,6 +21,10 @@ class Workflow_Handler {
         add_action('admin_post_arsol_cancel_request', array($this, 'customer_cancel_request'));
         add_action('admin_post_arsol_approve_proposal', array($this, 'customer_approve_proposal'));
         add_action('admin_post_arsol_reject_proposal', array($this, 'customer_reject_proposal'));
+
+        // Form submissions
+        add_action('admin_post_arsol_create_request', array($this, 'handle_create_request'));
+        add_action('admin_post_arsol_edit_request', array($this, 'handle_edit_request'));
     }
 
     /**
@@ -372,6 +376,66 @@ class Workflow_Handler {
             exit;
         } else {
             wp_die(__('You do not have permission to reject this proposal.', 'arsol-pfw'));
+        }
+    }
+
+    public function handle_create_request() {
+        if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_create_request')) {
+            wp_die(__('Invalid nonce.', 'arsol-pfw'));
+        }
+
+        $post_data = array(
+            'post_title'   => sanitize_text_field($_POST['request_title']),
+            'post_content' => wp_kses_post($_POST['request_description']),
+            'post_status'  => 'publish',
+            'post_type'    => 'arsol-pfw-request',
+            'post_author'  => get_current_user_id(),
+        );
+        $post_id = wp_insert_post($post_data);
+        wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
+
+        $this->update_request_meta($post_id, $_POST);
+
+        wp_safe_redirect(get_permalink($post_id));
+        exit;
+    }
+
+    public function handle_edit_request() {
+        if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_edit_request')) {
+            wp_die(__('Invalid nonce.', 'arsol-pfw'));
+        }
+
+        $post_id = intval($_POST['request_id']);
+
+        // Verify user has permission to edit
+        if (!self::user_can_view_post(get_current_user_id(), $post_id)) {
+            wp_die(__('You do not have permission to edit this request.', 'arsol-pfw'));
+        }
+
+        $post_data = array(
+            'ID'           => $post_id,
+            'post_title'   => sanitize_text_field($_POST['request_title']),
+            'post_content' => wp_kses_post($_POST['request_description']),
+        );
+        wp_update_post($post_data);
+
+        $this->update_request_meta($post_id, $_POST);
+        
+        wp_safe_redirect(get_permalink($post_id));
+        exit;
+    }
+
+    private function update_request_meta($post_id, $data) {
+        if (isset($data['request_budget'])) {
+            $amount = wc_clean(wp_unslash($data['request_budget']));
+            $currency = get_woocommerce_currency();
+            update_post_meta($post_id, '_request_budget', ['amount' => $amount, 'currency' => $currency]);
+        }
+        if (isset($data['request_start_date'])) {
+            update_post_meta($post_id, '_request_start_date', sanitize_text_field($data['request_start_date']));
+        }
+        if (isset($data['request_delivery_date'])) {
+            update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($data['request_delivery_date']));
         }
     }
 }
