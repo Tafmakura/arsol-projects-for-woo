@@ -233,10 +233,14 @@
                         recurringTotals[cycleKey] = { total: 0, interval: interval, period: period };
                      }
                      recurringTotals[cycleKey].total += amount;
+                     
+                     // Use the helper to show the full cycle in the subtotal
+                     var subtotalText = formatPrice(amount) + ' ' + getCycleLabel(interval, period);
+                     $row.find('.subtotal-display').html(subtotalText);
+                } else {
+                    // Fallback for when cycle isn't fully defined
+                    $row.find('.subtotal-display').html(formatPrice(amount));
                 }
-
-                var subtotalText = formatPrice(amount) + ' / ' + period;
-                $row.find('.subtotal-display').html(subtotalText);
             });
             
             $('#one-time-total-display').html(formatPrice(oneTimeTotal));
