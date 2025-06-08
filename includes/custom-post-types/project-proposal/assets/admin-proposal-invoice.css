@@ -1,0 +1,48 @@
+/* CSS for Arsol Proposal Invoice Metabox */
+
+#arsol_proposal_invoice_metabox .line-items-container {
+    margin-bottom: 20px;
+}
+
+#arsol_proposal_invoice_metabox table {
+    width: 100%;
+}
+
+#arsol_proposal_invoice_metabox table th,
+#arsol_proposal_invoice_metabox table td {
+    vertical-align: middle;
+}
+
+#arsol_proposal_invoice_metabox .product-column {
+    width: 40%;
+}
+
+#arsol_proposal_invoice_metabox .actions-column {
+    width: 50px;
+    text-align: right;
+}
+
+#arsol_proposal_invoice_metabox .remove-line-item {
+    color: #a00;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 2px 5px !important;
+    line-height: 1 !important;
+    height: auto !important;
+}
+
+#arsol_proposal_invoice_metabox .add-line-item {
+    margin-top: 10px;
+}
+
+#arsol_proposal_invoice_metabox .line-items-totals {
+    text-align: right;
+}
+
+#arsol_proposal_invoice_metabox .grand-total-amount {
+    font-size: 1.2em;
+    font-weight: bold;
+    min-width: 150px;
+    display: inline-block;
+    text-align: right;
+} 
