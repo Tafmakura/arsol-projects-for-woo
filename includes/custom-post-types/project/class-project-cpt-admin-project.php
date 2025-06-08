@@ -92,7 +92,7 @@ class Project {
             <p class="arsol-pfw-budget-display">
                 <label><?php _e('Proposed Budget:', 'arsol-projects-for-woo'); ?></label>
                 <span class="arsol-pfw-budget-amount">
-                    <?php echo (isset($budget) && $budget !== '') ? wc_price($budget) : '—'; ?>
+                    <?php echo (isset($budget) && $budget !== '') ? wc_price($budget) : '<b>N/A</b>'; ?>
                 </span>
             </p>
 
@@ -112,7 +112,7 @@ class Project {
                             echo ' ' . esc_html($cycle_text);
                         }
                     } else {
-                        echo '—';
+                        echo '<b>N/A</b>';
                     }
                     ?>
                 </span>
@@ -121,14 +121,14 @@ class Project {
              <p class="arsol-pfw-budget-display">
                 <label><?php _e('Proposed Start Date:', 'arsol-projects-for-woo'); ?></label>
                 <span class="arsol-pfw-budget-amount">
-                    <?php echo !empty($proposed_start_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($proposed_start_date))) : '—'; ?>
+                    <?php echo !empty($proposed_start_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($proposed_start_date))) : '<b>N/A</b>'; ?>
                 </span>
             </p>
 
             <p class="arsol-pfw-budget-display">
                 <label><?php _e('Proposed Delivery Date:', 'arsol-projects-for-woo'); ?></label>
                 <span class="arsol-pfw-budget-amount">
-                     <?php echo !empty($proposed_delivery_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($proposed_delivery_date))) : '—'; ?>
+                     <?php echo !empty($proposed_delivery_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($proposed_delivery_date))) : '<b>N/A</b>'; ?>
                 </span>
             </p>
 
