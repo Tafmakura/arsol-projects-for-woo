@@ -406,7 +406,7 @@ class Workflow_Handler {
         // Set a transient to indicate a new submission
         set_transient('arsol_pfw_request_submitted_' . get_current_user_id(), $post_id, 60);
 
-        wp_safe_redirect(get_permalink($post_id));
+        wp_safe_redirect(wc_get_endpoint_url('project-view-request', $post_id));
         exit;
     }
 
@@ -436,7 +436,7 @@ class Workflow_Handler {
             $this->add_wc_notice(__('Request updated successfully.', 'arsol-pfw'), 'success');
         }
         
-        wp_safe_redirect(get_permalink($post_id));
+        wp_safe_redirect(wc_get_endpoint_url('project-view-request', $post_id));
         exit;
     }
 
