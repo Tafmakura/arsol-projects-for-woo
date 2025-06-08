@@ -95,6 +95,7 @@ class Proposal_Invoice {
                         <tr>
                             <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
                             <th><?php _e('Amount', 'arsol-pfw'); ?></th>
+                            <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
                         </tr>
@@ -153,6 +154,7 @@ class Proposal_Invoice {
                 <td>
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
+                <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="taxable-column">
                     <input type="checkbox" name="line_items[one_time_fees][{{ data.id }}][taxable]" <# if (data.taxable) { #>checked="checked"<# } #>>
                 </td>

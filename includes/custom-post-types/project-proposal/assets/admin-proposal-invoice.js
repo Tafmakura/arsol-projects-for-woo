@@ -143,6 +143,11 @@
                 var $row = $(this);
                 var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
                 grandTotal += amount;
+
+                var formattedPrice = amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                var priceHtml = '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
+
+                $row.find('.subtotal-display').html(priceHtml);
             });
             
             var formattedGrandPrice = grandTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
