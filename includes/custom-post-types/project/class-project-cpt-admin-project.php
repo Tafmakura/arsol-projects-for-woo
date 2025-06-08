@@ -85,7 +85,7 @@ class Project {
                 <label><?php _e('Proposed Budget:', 'arsol-projects-for-woo'); ?></label>
                 <span class="arsol-pfw-budget-amount">
                     <b>
-                        <?php echo (isset($budget) && $budget !== '') ? wc_price($budget) : '—'; ?>
+                        <?php echo (isset($budget) && $budget !== '') ? wc_price($budget) : 'N/A'; ?>
                     </b>
                 </span>
             </p>
@@ -107,7 +107,7 @@ class Project {
                                 echo ' ' . esc_html($cycle_text);
                             }
                         } else {
-                            echo '—';
+                            echo 'N/A';
                         }
                         ?>
                     </b>
