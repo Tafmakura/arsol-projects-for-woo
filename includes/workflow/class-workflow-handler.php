@@ -132,8 +132,8 @@ class Workflow_Handler {
             '_proposal_recurring_budget' => '_project_recurring_budget',
             '_proposal_billing_interval' => '_project_billing_interval',
             '_proposal_billing_period'   => '_project_billing_period',
-            '_proposal_start_date'       => '_project_start_date',
-            '_proposal_delivery_date'    => '_project_delivery_date',
+            '_proposal_start_date'       => '_proposal_start_date', // Keep for display
+            '_proposal_delivery_date'    => '_project_due_date', // Correctly map to due date
         );
 
         foreach ($meta_to_copy as $proposal_key => $project_key) {
