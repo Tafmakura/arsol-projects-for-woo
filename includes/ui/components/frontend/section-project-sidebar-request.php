@@ -59,7 +59,7 @@ if ($current_status === 'pending') {
     ?>
     <div class="arsol-sidebar-actions">
         <?php if (!$has_override) : ?>
-            <button type="submit" form="arsol-request-edit-form" class="button is-primary"><?php esc_html_e('Update Request', 'arsol-pfw'); ?></button>
+            <button id="arsol-update-request-button" class="button is-primary"><?php esc_html_e('Update Request', 'arsol-pfw'); ?></button>
         <?php endif; ?>
         <a href="<?php echo esc_url($cancel_url); ?>" class="button is-danger arsol-confirm-action" data-message="<?php echo $confirm_message; ?>"><?php esc_html_e('Cancel Request', 'arsol-pfw'); ?></a>
     </div>

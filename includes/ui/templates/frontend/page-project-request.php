@@ -48,3 +48,13 @@ include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-pro
 
 // Reset post data
 wp_reset_postdata();
+?>
+<script>
+    jQuery(document).ready(function($) {
+        // Handle sidebar button click
+        $('#arsol-update-request-button').on('click', function(e) {
+            e.preventDefault();
+            $('#arsol-request-edit-form').submit();
+        });
+    });
+</script>
