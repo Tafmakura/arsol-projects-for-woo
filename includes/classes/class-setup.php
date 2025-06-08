@@ -11,6 +11,7 @@ class Setup {
         $this->require_files();
         $this->instantiate_classes();
         add_action('plugins_loaded', array($this, 'init'));
+        add_action('init', array($this, 'load_textdomain'));
         
         // Register activation and deactivation hooks
         register_activation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'activate'));
@@ -23,11 +24,12 @@ class Setup {
             add_action('admin_notices', array($this, 'woocommerce_notice'));
             return;
         }
-        
+    }
+
+    public function load_textdomain() {
         // Load plugin text domain with updated domain name
         load_plugin_textdomain('arsol-pfw', false, dirname(ARSOL_PROJECTS_PLUGIN_BASENAME) . '/languages');
     }
-
 
     /**
      * Include necessary files.
