@@ -156,9 +156,10 @@ class Proposal_Invoice {
                              <option value=""><?php _e('Select a product', 'arsol-pfw'); ?></option>
                         <# } #>
                     </select>
+                    <div class="product-sub-text">{{{ data.sub_text }}}</div>
                 </td>
                 <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
-                <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.price || '' }}" readonly></td>
+                <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.price || '' }}"></td>
                 <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
                 <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
@@ -191,9 +192,8 @@ class Proposal_Invoice {
                 </td>
                 <td class="billing-cycle-column">
                     <?php
-                        // Safely get subscription strings, provide fallbacks if Subscriptions plugin is not active.
-                        $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(1 => __('every', 'arsol-pfw'));
-                        $periods   = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array('month' => __('month', 'arsol-pfw'));
+                        $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(1=>1);
+                        $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array('month' => 'month');
                     ?>
                     <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="billing-interval">
                         <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
@@ -227,17 +227,22 @@ class Proposal_Invoice {
             return;
         }
 
-        $line_items = isset($_POST['line_items']) ? $_POST['line_items'] : array();
+        $line_items = isset($_POST['line_items']) ? (array) $_POST['line_items'] : array();
         
-        // Basic sanitation, more would be needed for a production plugin
-        $sanitized_line_items = array_map(function($group) {
-            return array_map(function($item) {
-                return array_map('sanitize_text_field', $item);
-            }, $group);
-        }, $line_items);
+        $sanitized_line_items = array();
+        if (!empty($line_items)) {
+            foreach ( $line_items as $group_key => $group_value ) {
+                if (!empty($group_value)) {
+                    $sanitized_line_items[$group_key] = array_map( function( $item ) {
+                        return array_map( 'sanitize_text_field', $item );
+                    }, (array) $group_value );
+                }
+            }
+        }
 
         update_post_meta($post_id, '_arsol_proposal_line_items', $sanitized_line_items);
-        update_post_meta($post_id, '_arsol_proposal_grand_total', sanitize_text_field($_POST['line_items_grand_total']));
+        update_post_meta($post_id, '_arsol_proposal_one_time_total', sanitize_text_field($_POST['line_items_one_time_total']));
+        update_post_meta($post_id, '_arsol_proposal_recurring_total', sanitize_text_field($_POST['line_items_recurring_total']));
     }
 
     public function ajax_search_products() {
@@ -250,37 +255,20 @@ class Proposal_Invoice {
 
         $product_types = apply_filters('arsol_proposal_product_types', array('simple', 'variable', 'subscription', 'variation'));
 
-        $args = array(
-            'post_type' => 'product',
-            'post_status' => 'publish',
+        $query = new \WC_Product_Query( array(
+            'limit' => 20,
+            'status' => 'publish',
             's' => $search_term,
-            'posts_per_page' => 20,
-            'tax_query' => array(
-                array(
-                    'taxonomy' => 'product_type',
-                    'field'    => 'slug',
-                    'terms'    => $product_types,
-                ),
-            ),
-            'meta_query' => array(
-                 array(
-                    'key' => '_stock_status',
-                    'value' => 'instock'
-                )
-            )
-        );
+            'stock_status' => 'instock',
+            'type' => $product_types,
+        ) );
 
-        $query = new \WP_Query($args);
         $products = array();
-
-        foreach ($query->posts as $post) {
-            $product = wc_get_product($post->ID);
-            if ($product) {
-                 $products[] = array(
-                    'id'   => $product->get_id(),
-                    'text' => $product->get_formatted_name(),
-                );
-            }
+        foreach ( $query->get_products() as $product ) {
+            $products[] = array(
+                'id'   => $product->get_id(),
+                'text' => $product->get_formatted_name(),
+            );
         }
         
         wp_send_json_success($products);
@@ -298,10 +286,19 @@ class Proposal_Invoice {
         if (!$product) {
             wp_send_json_error('Invalid product');
         }
+        
+        $is_subscription = $product->is_type(array('subscription', 'subscription_variation'));
+        $sub_text = '';
+        if ($is_subscription && function_exists('wcs_get_subscription')) {
+            $sub_text = $product->get_price_string();
+        }
 
         $data = array(
-            'price' => wc_format_decimal($product->get_regular_price(), 2),
+            'price' => wc_format_decimal($product->get_price(), 2),
+            'regular_price' => wc_format_decimal($product->get_regular_price(), 2),
             'sale_price' => $product->get_sale_price() ? wc_format_decimal($product->get_sale_price(), 2) : '',
+            'is_subscription' => $is_subscription,
+            'sub_text' => $sub_text
         );
 
         wp_send_json_success($data);
