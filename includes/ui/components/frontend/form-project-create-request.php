@@ -60,20 +60,20 @@ if (!$is_edit) {
         </p>
         
         <!-- Three column row for Budget, Start Date, and Delivery Date -->
-        <div class="form-row form-row-wide" style="display: flex; gap: 15px;">
-            <div style="flex: 1;">
+        <div class="form-row form-row-wide arsol-project-meta-row" style="display: flex; gap: 15px;">
+            <div class="arsol-project-field-col arsol-budget-col" style="flex: 1; min-width: 150px;">
                 <label for="request_budget"><?php _e('Budget', 'arsol-pfw'); ?></label>
-                <input type="number" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget); ?>" step="0.01" min="0" placeholder="<?php esc_attr_e('Enter your budget amount', 'arsol-pfw'); ?>">
+                <input type="number" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget); ?>" step="0.01" min="0" placeholder="<?php esc_attr_e('Enter your budget amount', 'arsol-pfw'); ?>" class="arsol-budget-input" style="min-width: 120px;">
             </div>
             
-            <div style="flex: 1;">
+            <div class="arsol-project-field-col arsol-date-col" style="flex: 1;">
                 <label for="request_start_date"><?php _e('Required Start Date', 'arsol-pfw'); ?></label>
-                <input type="date" id="request_start_date" name="request_start_date" value="<?php echo esc_attr($start_date); ?>">
+                <input type="date" id="request_start_date" name="request_start_date" value="<?php echo esc_attr($start_date); ?>" class="arsol-date-input">
             </div>
             
-            <div style="flex: 1;">
+            <div class="arsol-project-field-col arsol-date-col" style="flex: 1;">
                 <label for="request_delivery_date"><?php _e('Required Delivery Date', 'arsol-pfw'); ?></label>
-                <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>">
+                <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="arsol-date-input">
             </div>
         </div>
         

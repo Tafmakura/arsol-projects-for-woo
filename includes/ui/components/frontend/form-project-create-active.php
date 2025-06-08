@@ -34,36 +34,43 @@ if (!$can_create) {
                    required>
         </p>
         
+        <!-- Three column row for Budget, Start Date, and Delivery Date -->
+        <div class="form-row form-row-wide arsol-project-meta-row" style="display: flex; gap: 15px;">
+            <div class="arsol-project-field-col arsol-budget-col" style="flex: 1; min-width: 150px;">
+                <label for="project_budget"><?php _e('Budget', 'arsol-pfw'); ?></label>
+                <input type="number" 
+                       id="project_budget" 
+                       name="project_budget" 
+                       step="0.01"
+                       min="0"
+                       placeholder="<?php esc_attr_e('Enter project budget', 'arsol-pfw'); ?>"
+                       class="arsol-budget-input" 
+                       style="min-width: 120px;">
+            </div>
+            
+            <div class="arsol-project-field-col arsol-date-col" style="flex: 1;">
+                <label for="project_start_date"><?php _e('Start Date', 'arsol-pfw'); ?></label>
+                <input type="date" 
+                       id="project_start_date" 
+                       name="project_start_date"
+                       class="arsol-date-input">
+            </div>
+            
+            <div class="arsol-project-field-col arsol-date-col" style="flex: 1;">
+                <label for="project_delivery_date"><?php _e('Delivery Date', 'arsol-pfw'); ?></label>
+                <input type="date" 
+                       id="project_delivery_date" 
+                       name="project_delivery_date"
+                       class="arsol-date-input">
+            </div>
+        </div>
+        
         <p class="form-row">
             <label for="project_description"><?php _e('Project Description', 'arsol-pfw'); ?> <span class="required">*</span></label>
             <textarea id="project_description" 
                       name="project_description" 
                       rows="5" 
                       required></textarea>
-        </p>
-        
-        <p class="form-row">
-            <label for="project_budget"><?php _e('Budget', 'arsol-pfw'); ?></label>
-            <input type="number" 
-                   id="project_budget" 
-                   name="project_budget" 
-                   step="0.01"
-                   min="0"
-                   placeholder="<?php esc_attr_e('Enter project budget', 'arsol-pfw'); ?>">
-        </p>
-        
-        <p class="form-row">
-            <label for="project_start_date"><?php _e('Start Date', 'arsol-pfw'); ?></label>
-            <input type="date" 
-                   id="project_start_date" 
-                   name="project_start_date">
-        </p>
-        
-        <p class="form-row">
-            <label for="project_delivery_date"><?php _e('Delivery Date', 'arsol-pfw'); ?></label>
-            <input type="date" 
-                   id="project_delivery_date" 
-                   name="project_delivery_date">
         </p>
         
         <p class="form-row">
