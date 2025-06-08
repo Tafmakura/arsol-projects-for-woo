@@ -40,6 +40,20 @@ $due_date = get_post_meta($project['id'], '_project_due_date', true);
                 <?php the_content(); ?>
             <?php endif; ?>
         </div>
+        
+        <?php
+        // Display comments if enabled for projects
+        if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-project') && 
+            post_type_supports('arsol-project', 'comments') && 
+            (comments_open() || get_comments_number())) :
+        ?>
+            <div class="project-comments-section">
+                <?php
+                // Load WordPress native comments template
+                comments_template();
+                ?>
+            </div>
+        <?php endif; ?>
     </div>
 </div>
 

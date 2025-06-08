@@ -225,6 +225,47 @@ class Settings_General {
                 'class' => 'arsol-pfw-comment-permissions'
             )
         );
+        
+        add_settings_field(
+            'comment_roles',
+            __('Who can comment', 'arsol-pfw'),
+            array($this, 'render_roles_field'),
+            'arsol_projects_settings',
+            'arsol_projects_comments_settings',
+            array(
+                'field' => 'comment_roles',
+                'description' => __('Select which user roles can post comments on projects, proposals, and requests.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-comment-roles'
+            )
+        );
+
+        add_settings_field(
+            'comment_moderation',
+            __('Comment moderation', 'arsol-pfw'),
+            array($this, 'render_checkbox_field'),
+            'arsol_projects_settings',
+            'arsol_projects_comments_settings',
+            array(
+                'field' => 'require_comment_moderation',
+                'label' => __('Require all comments to be approved by an administrator.', 'arsol-pfw'),
+                'description' => __('When enabled, all comments will be held for moderation regardless of WordPress settings.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-comment-moderation'
+            )
+        );
+
+        add_settings_field(
+            'comment_notifications',
+            __('Comment notifications', 'arsol-pfw'),
+            array($this, 'render_checkbox_field'),
+            'arsol_projects_settings',
+            'arsol_projects_comments_settings',
+            array(
+                'field' => 'enable_comment_notifications',
+                'label' => __('Send email notifications when new comments are posted.', 'arsol-pfw'),
+                'description' => __('Project authors and administrators will receive emails about new comments.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-comment-notifications'
+            )
+        );
     }
 
     /**

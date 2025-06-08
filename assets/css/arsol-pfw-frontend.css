@@ -369,10 +369,6 @@
     margin-bottom: 20px;
 }
 
-
-
-
-
 /* Responsive adjustments for project forms */
 @media (max-width: 768px) {
     .arsol-project-meta-row {
@@ -388,6 +384,148 @@
     .arsol-budget-input {
         min-width: auto;
         width: 100%;
+    }
+}
+
+/* Project Comments Styling */
+.project-comments-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.project-comments-section .comment-respond {
+    margin-bottom: 2rem;
+}
+
+.project-comments-section .comment-form-comment label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.project-comments-section .comment-form-comment textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.project-comments-section .comment-form-comment textarea:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+.project-comments-section .form-submit {
+    margin-top: 1rem;
+}
+
+.project-comments-section .form-submit input[type="submit"] {
+    background-color: #007cba;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.project-comments-section .form-submit input[type="submit"]:hover {
+    background-color: #005a87;
+}
+
+.project-comments-section .commentlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.project-comments-section .comment {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    border-left: 3px solid #007cba;
+}
+
+.project-comments-section .comment-meta {
+    margin-bottom: 0.75rem;
+    font-size: 13px;
+    color: #666;
+}
+
+.project-comments-section .comment-author {
+    font-weight: 600;
+    color: #333;
+}
+
+.project-comments-section .comment-content {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.project-comments-section .comment-content p {
+    margin-bottom: 0.75rem;
+}
+
+.project-comments-section .comment-content p:last-child {
+    margin-bottom: 0;
+}
+
+.project-comments-section .reply {
+    font-size: 12px;
+}
+
+.project-comments-section .reply a {
+    color: #007cba;
+    text-decoration: none;
+}
+
+.project-comments-section .reply a:hover {
+    text-decoration: underline;
+}
+
+.project-comments-section .children {
+    margin-left: 2rem;
+    margin-top: 1rem;
+}
+
+.project-comments-section .children .comment {
+    background-color: #f0f0f0;
+    border-left-color: #666;
+}
+
+.project-comments-section .comment-notes {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.project-comments-section .no-comments {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .project-comments-section .children {
+        margin-left: 1rem;
+    }
+    
+    .project-comments-section .comment {
+        padding: 0.75rem;
     }
 }
 

@@ -422,4 +422,45 @@ class Frontend_Endpoints {
             'author' => $project->post_author
         ];
     }
+
+    /**
+     * Handle comment redirects for our custom post types
+     * 
+     * Ensures that after posting a comment, users are redirected back to the appropriate
+     * WooCommerce account endpoint instead of the default post URL
+     *
+     * @param string $location The redirect location
+     * @param WP_Comment $comment The comment object
+     * @return string Modified redirect location
+     */
+    public function handle_comment_redirect($location, $comment) {
+        $post = get_post($comment->comment_post_ID);
+        
+        if (!$post) {
+            return $location;
+        }
+
+        // Handle redirects for our custom post types
+        switch ($post->post_type) {
+            case 'arsol-project':
+                if (self::user_can_view_project(get_current_user_id(), $post->ID)) {
+                    $location = wc_get_account_endpoint_url('project-overview/' . $post->ID) . '#comment-' . $comment->comment_ID;
+                }
+                break;
+                
+            case 'arsol-pfw-proposal':
+                if (\Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post(get_current_user_id(), $post->ID)) {
+                    $location = wc_get_account_endpoint_url('project-view-proposal/' . $post->ID) . '#comment-' . $comment->comment_ID;
+                }
+                break;
+                
+            case 'arsol-pfw-request':
+                if (\Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post(get_current_user_id(), $post->ID)) {
+                    $location = wc_get_account_endpoint_url('project-view-request/' . $post->ID) . '#comment-' . $comment->comment_ID;
+                }
+                break;
+        }
+
+        return $location;
+    }
 } 

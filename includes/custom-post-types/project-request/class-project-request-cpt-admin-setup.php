@@ -61,6 +61,7 @@ class Setup {
             'has_archive'        => false,
             'rewrite'           => false,
             'show_in_rest'      => false,
+            'comment_status'    => 'open',
         );
 
         $result = register_post_type('arsol-pfw-request', $args);

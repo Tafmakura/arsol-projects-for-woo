@@ -16,5 +16,19 @@ $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' .
         <div class="project-description">
             <?php echo wp_kses_post($post->post_content); ?>
         </div>
+        
+        <?php
+        // Display comments if enabled for proposals
+        if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-pfw-proposal') && 
+            post_type_supports('arsol-pfw-proposal', 'comments') && 
+            (comments_open() || get_comments_number())) :
+        ?>
+            <div class="project-comments-section">
+                <?php
+                // Load WordPress native comments template
+                comments_template();
+                ?>
+            </div>
+        <?php endif; ?>
     </div>
 </div>

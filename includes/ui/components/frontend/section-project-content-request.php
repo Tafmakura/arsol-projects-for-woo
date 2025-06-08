@@ -37,6 +37,20 @@ do_action('arsol_projects_before_request_state', $post->ID);
                     </div>
                 </div>
             </div>
+            
+            <?php
+            // Display comments if enabled for requests and not in pending-review status
+            if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-pfw-request') && 
+                post_type_supports('arsol-pfw-request', 'comments') && 
+                (comments_open() || get_comments_number())) :
+            ?>
+                <div class="project-comments-section">
+                    <?php
+                    // Load WordPress native comments template
+                    comments_template();
+                    ?>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
     </div>
 </div>

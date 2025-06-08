@@ -63,6 +63,7 @@ class Setup {
             'has_archive'        => false,
             'rewrite'           => array('slug' => 'project', 'with_front' => false),
             'show_in_rest'      => false,
+            'comment_status'    => 'open',
         );
 
         $result = register_post_type('arsol-project', $args);
