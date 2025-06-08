@@ -399,7 +399,7 @@ class Workflow_Handler {
 
         $redirect_url = is_wp_error($post_id)
             ? wc_get_account_endpoint_url('project-request')
-            : wc_get_endpoint_url('project-view-request', $post_id);
+            : wc_get_account_endpoint_url('project-view-request', $post_id);
 
         if (!is_wp_error($post_id)) {
             wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
@@ -437,7 +437,7 @@ class Workflow_Handler {
             $this->update_request_meta($post_id, $_POST);
         }
         
-        $redirect_url = wc_get_endpoint_url('project-view-request', $post_id);
+        $redirect_url = wc_get_account_endpoint_url('project-view-request', $post_id);
         ob_end_clean();
         // Use a JS redirect for robustness
         echo '<script>window.location.href = "' . esc_url_raw($redirect_url) . '";</script>';
@@ -511,7 +511,7 @@ class Workflow_Handler {
 
             wp_send_json_success(array(
                 'notice' => __('Request submitted successfully.', 'arsol-pfw'),
-                'redirect_url' => wc_get_endpoint_url('project-view-request', $post_id)
+                'redirect_url' => wc_get_account_endpoint_url('project-view-request', $post_id)
             ));
         }
     }
