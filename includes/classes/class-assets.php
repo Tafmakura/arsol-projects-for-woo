@@ -113,22 +113,18 @@ class Assets {
             return;
         }
 
-        // Only load on order pages and project pages
-        if (in_array($screen->post_type, array('shop_order', 'arsol-project'))) {
-            wp_enqueue_style(
-                'arsol-pfw-admin',
-                ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin.css',
-                array(),
-                $this->get_file_version('assets/css/arsol-pfw-admin.css')
-            );
+        // Define post types that should load admin assets
+        $allowed_post_types = array(
+            'shop_order', 
+            'arsol-project', 
+            'arsol-pfw-request', 
+            'arsol-pfw-proposal'
+        );
 
-            wp_enqueue_script(
-                'arsol-pfw-admin',
-                ARSOL_PROJECTS_PLUGIN_URL . 'assets/js/arsol-pfw-admin.js',
-                array('jquery'),
-                $this->get_file_version('assets/js/arsol-pfw-admin.js'),
-                true
-            );
+        // Only load on specified post type pages
+        if (in_array($screen->post_type, $allowed_post_types)) {
+            wp_enqueue_style('arsol-pfw-admin');
+            wp_enqueue_script('arsol-pfw-admin');
             
             // Add localized data if needed
             wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(

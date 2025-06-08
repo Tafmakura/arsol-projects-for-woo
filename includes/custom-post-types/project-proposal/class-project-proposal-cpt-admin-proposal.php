@@ -140,9 +140,10 @@ class Proposal {
             if ($post->post_status == 'publish') {
                 $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
                 $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
+                $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Invoices will be created if selected.', 'arsol-pfw'));
                 ?>
                 <div style="margin-top:10px;">
-                    <input type="button" class="button button-secondary" value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" onclick="location.href='<?php echo esc_url($convert_url); ?>'" />
+                    <input type="button" class="button button-secondary arsol-confirm-conversion" value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" data-url="<?php echo esc_url($convert_url); ?>" data-message="<?php echo $confirm_message; ?>" />
                 </div>
                 <?php
             }
