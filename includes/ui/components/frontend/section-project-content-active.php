@@ -12,7 +12,7 @@ defined('ABSPATH') || exit;
 
 // The $project variable is passed from the render_project_page function
 if (!isset($project)) {
-    echo '<p>' . esc_html__('Project not found.', 'arsol-projects-for-woo') . '</p>';
+    echo '<p>' . esc_html__('Project not found.', 'arsol-pfw') . '</p>';
     return;
 }
 

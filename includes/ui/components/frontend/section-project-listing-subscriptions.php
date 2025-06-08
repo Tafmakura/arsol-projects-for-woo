@@ -45,10 +45,10 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
         <table class="woocommerce-orders-table woocommerce-MyAccount-orders project-subscriptions-table shop_table shop_table_responsive my_account_orders account-orders-table">
             <thead>
                 <tr>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-number"><span class="nobr"><?php esc_html_e('Subscription', 'woocommerce-subscriptions'); ?></span></th>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-status"><span class="nobr"><?php esc_html_e('Status', 'arsol-projects-for-woo'); ?></span></th>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-total"><span class="nobr"><?php esc_html_e('Total', 'arsol-projects-for-woo'); ?></span></th>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-subscription-actions"><span class="nobr"></span></th>
+                    <th class="subscription-id"><span class="nobr"><?php esc_html_e('Subscription', 'woocommerce-subscriptions'); ?></span></th>
+                    <th class="subscription-status"><span class="nobr"><?php esc_html_e('Status', 'arsol-pfw'); ?></span></th>
+                    <th class="subscription-total"><span class="nobr"><?php esc_html_e('Total', 'arsol-pfw'); ?></span></th>
+                    <th class="subscription-actions"><span class="nobr"></span></th>
                 </tr>
             </thead>
 
@@ -59,19 +59,19 @@ do_action('arsol_projects_before_project_subscriptions', $has_subscriptions, $pr
                     $subscription = wcs_get_subscription(get_the_ID());
                     ?>
                     <tr class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($subscription->get_status()); ?> subscription">
-                        <th class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-number" data-title="<?php esc_attr_e('Subscription', 'arsol-projects-for-woo'); ?>" scope="row">
-                            <a href="<?php echo esc_url($subscription->get_view_order_url()); ?>" aria-label="<?php echo esc_attr(sprintf(__('View subscription number %s', 'arsol-projects-for-woo'), $subscription->get_id())); ?>">
-                                <?php echo esc_html(_x('#', 'hash before subscription number', 'arsol-projects-for-woo') . $subscription->get_id()); ?>
+                        <td class="subscription-id" data-title="<?php esc_attr_e('Subscription', 'arsol-pfw'); ?>" scope="row">
+                            <a href="<?php echo esc_url($subscription->get_view_order_url()); ?>" aria-label="<?php echo esc_attr(sprintf(__('View subscription number %s', 'arsol-pfw'), $subscription->get_id())); ?>">
+                                <?php echo esc_html(_x('#', 'hash before subscription number', 'arsol-pfw') . $subscription->get_id()); ?>
                             </a>
-                        </th>
-                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-status" data-title="<?php esc_attr_e('Status', 'arsol-projects-for-woo'); ?>">
+                        </td>
+                        <td class="subscription-status" data-title="<?php esc_attr_e('Status', 'arsol-pfw'); ?>">
                             <?php echo esc_html(wcs_get_subscription_status_name($subscription->get_status())); ?>
                         </td>
-                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-total" data-title="<?php esc_attr_e('Total', 'arsol-projects-for-woo'); ?>">
+                        <td class="subscription-total" data-title="<?php esc_attr_e('Total', 'arsol-pfw'); ?>">
                             <?php echo wp_kses_post($subscription->get_formatted_order_total()); ?>
                         </td>
-                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-subscription-actions woocommerce-orders-table__cell-ars_order_actions" data-title="">
-                            <a href="<?php echo esc_url($subscription->get_view_order_url()); ?>" class="woocommerce-button button view"><?php esc_html_e('View', 'arsol-projects-for-woo'); ?></a>
+                        <td class="subscription-actions">
+                            <a href="<?php echo esc_url($subscription->get_view_order_url()); ?>" class="woocommerce-button button view"><?php esc_html_e('View', 'arsol-pfw'); ?></a>
                         </td>
                     </tr>
                     <?php

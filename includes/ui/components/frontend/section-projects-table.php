@@ -18,7 +18,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
         <table class="woocommerce-orders-table woocommerce-MyAccount-orders shop_table shop_table_responsive my_account_orders account-orders-table user-projects-table">
             <thead>
                 <tr>
-                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project details', 'arsol-projects-for-woo'); ?></span></th>
+                    <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-project-name"><span class="nobr"><?php esc_html_e('Project details', 'arsol-pfw'); ?></span></th>
                     <th scope="col" class="woocommerce-orders-table__header woocommerce-orders-table__header-project-actions"><span class="nobr"></span></th>
                 </tr>
             </thead>
@@ -32,15 +32,15 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                     $project_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
                     ?>
                     <tr class="woocommerce-orders-table__row project">
-                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-project-name" data-title="<?php esc_attr_e('Name', 'arsol-projects-for-woo'); ?>" scope="row">
-                            <a href="<?php echo esc_url($project_url); ?>" aria-label="<?php echo esc_attr(sprintf(__('View project %s', 'arsol-projects-for-woo'), get_the_title())); ?>">
+                        <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-project-name" data-title="<?php esc_attr_e('Name', 'arsol-pfw'); ?>" scope="row">
+                            <a href="<?php echo esc_url($project_url); ?>" aria-label="<?php echo esc_attr(sprintf(__('View project %s', 'arsol-pfw'), get_the_title())); ?>">
                                 <?php echo esc_html(get_the_title()); ?>
                             </a>
                             <br>
                              <span><?php echo wp_kses_post(get_the_excerpt()); ?></span>
                         </td>
                         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-project-actions" data-title="">
-                            <a href="<?php echo esc_url($project_url); ?>" class="woocommerce-button button view<?php echo esc_attr($wp_button_class); ?>"><?php esc_html_e('View', 'arsol-projects-for-woo'); ?></a>
+                            <a href="<?php echo esc_url($project_url); ?>" class="woocommerce-button button view<?php echo esc_attr($wp_button_class); ?>"><?php esc_html_e('View', 'arsol-pfw'); ?></a>
                         </td>
                     </tr>
                     <?php
@@ -60,11 +60,11 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                 ?>
                 
                 <?php if (1 !== $current_page) : ?>
-                    <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page - 1, $current_url)); ?>"><?php esc_html_e('Previous', 'arsol-projects-for-woo'); ?></a>
+                    <a class="woocommerce-button woocommerce-button--previous woocommerce-Button woocommerce-Button--previous button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page - 1, $current_url)); ?>"><?php esc_html_e('Previous', 'arsol-pfw'); ?></a>
                 <?php endif; ?>
 
                 <?php if ($total_pages !== $current_page) : ?>
-                    <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page + 1, $current_url)); ?>"><?php esc_html_e('Next', 'arsol-projects-for-woo'); ?></a>
+                    <a class="woocommerce-button woocommerce-button--next woocommerce-Button woocommerce-Button--next button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(add_query_arg('paged', $current_page + 1, $current_url)); ?>"><?php esc_html_e('Next', 'arsol-pfw'); ?></a>
                 <?php endif; ?>
             </div>
         <?php endif; ?>
@@ -75,7 +75,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
         <div class="woocommerce-notices-wrapper"></div>
         <div class="woocommerce_account_projects">
             <p class="no_projects woocommerce-message woocommerce-message--info woocommerce-Message woocommerce-Message--info woocommerce-info">
-                <?php esc_html_e('You have no active projects.', 'arsol-projects-for-woo'); ?>
+                <?php esc_html_e('You have no active projects.', 'arsol-pfw'); ?>
                 <a class="woocommerce-Button button<?php echo esc_attr($wp_button_class); ?>" href="<?php echo esc_url(wc_get_page_permalink('shop')); ?>">
                     <?php esc_html_e('Browse products', 'woocommerce'); ?>
                 </a>

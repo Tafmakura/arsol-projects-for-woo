@@ -71,9 +71,7 @@ class Assets {
             wp_localize_script('arsol-pfw-frontend', 'arsolPfw', array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('arsol-pfw-frontend'),
-                'i18n' => array(
-                    'selectProject' => __('Please select a project', 'arsol-projects-for-woo'),
-                )
+                'selectProject' => __('Please select a project', 'arsol-pfw'),
             ));
         }
     }
@@ -130,9 +128,7 @@ class Assets {
             wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('arsol-pfw-admin'),
-                'i18n' => array(
-                    'confirmDelete' => __('Are you sure you want to remove this project?', 'arsol-projects-for-woo'),
-                )
+                'confirmDelete' => __('Are you sure you want to remove this project?', 'arsol-pfw'),
             ));
         }
     }

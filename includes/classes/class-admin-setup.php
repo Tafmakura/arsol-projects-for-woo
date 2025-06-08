@@ -77,8 +77,8 @@ class Setup {
         // 5. Settings (last)
         $settings_result = add_submenu_page(
             $parent_slug,
-            __('Settings', 'arsol-projects-for-woo'),
-            __('Settings', 'arsol-projects-for-woo'),
+            __('Settings', 'arsol-pfw'),
+            __('Settings', 'arsol-pfw'),
             'manage_options',
             'arsol-projects-settings',
             array($this, 'settings_page_callback'),

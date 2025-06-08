@@ -98,7 +98,7 @@ class Shortcodes {
 		);
 
 		if ( empty( $atts['id'] ) ) {
-			return '<p>' . esc_html__( 'Please specify a project ID.', 'arsol-projects-for-woo' ) . '</p>';
+			return '<p>' . esc_html__( 'Please specify a project ID.', 'arsol-pfw' ) . '</p>';
 		}
 
 		ob_start();
@@ -139,43 +139,27 @@ class Shortcodes {
 	 * @return string HTML output
 	 */
 	public function project_orders_shortcode($atts) {
-		// Start output buffering
-		ob_start();
+		if (!is_user_logged_in()) {
+			return '<p>' . __('Please log in to view project orders.', 'arsol-pfw') . '</p>';
+		}
 
-		// Normalize attributes
 		$atts = shortcode_atts(array(
-			'project_id' => 0,
-			'per_page' => 10,
-			'paged' => 1,
-		), $atts);
+			'id' => 0,
+		), $atts, 'project_orders');
 
+		$project_id = intval($atts['id']);
+		if (!$project_id) {
+			return '<p>' . __('No project specified.', 'arsol-pfw') . '</p>';
+		}
+
+		if (!current_user_can('read_post', $project_id)) {
+			return '<p>' . __('You do not have permission to view orders for this project.', 'arsol-pfw') . '</p>';
+		}
+
+		ob_start();
 		// Get current user
 		$current_user_id = get_current_user_id();
 		
-		// If no user is logged in, show login message
-		if (!$current_user_id) {
-			return '<p>' . __('Please log in to view project orders.', 'arsol-projects-for-woo') . '</p>';
-		}
-
-		// Get project ID (from attribute or current page)
-		$project_id = (int) $atts['project_id'];
-		if (!$project_id) {
-			// Try to get from current page if it's a project
-			global $post;
-			if ($post && $post->post_type === 'arsol-project') {
-				$project_id = $post->ID;
-			}
-		}
-
-		if (!$project_id) {
-			return '<p>' . __('No project specified.', 'arsol-projects-for-woo') . '</p>';
-		}
-
-		// Verify user has access to this project
-		if (!Woocommerce::user_can_view_project($current_user_id, $project_id)) {
-			return '<p>' . __('You do not have permission to view orders for this project.', 'arsol-projects-for-woo') . '</p>';
-		}
-
 		// Get current page for pagination
 		$current_page = max(1, (int) $atts['paged']);
 		$per_page = max(1, (int) $atts['per_page']);
@@ -207,48 +191,32 @@ class Shortcodes {
 	 * @return string HTML output
 	 */
 	public function project_subscriptions_shortcode($atts) {
+		if (!is_user_logged_in()) {
+			return '<p>' . __('Please log in to view project subscriptions.', 'arsol-pfw') . '</p>';
+		}
+
+		$atts = shortcode_atts(array(
+			'id' => 0,
+		), $atts, 'project_subscriptions');
+
+		$project_id = intval($atts['id']);
+		if (!$project_id) {
+			return '<p>' . __('No project specified.', 'arsol-pfw') . '</p>';
+		}
+
+		if (!current_user_can('read_post', $project_id)) {
+			return '<p>' . __('You do not have permission to view subscriptions for this project.', 'arsol-pfw') . '</p>';
+		}
+
+		ob_start();
 		// Check if WooCommerce Subscriptions is active
 		if (!class_exists('WC_Subscriptions')) {
 			return '<p>' . __('WooCommerce Subscriptions plugin is required to display subscription information.', 'arsol-pfw') . '</p>';
 		}
 
-		// Start output buffering
-		ob_start();
-
-		// Normalize attributes
-		$atts = shortcode_atts(array(
-			'project_id' => 0,
-			'per_page' => 10,
-			'paged' => 1,
-		), $atts);
-
 		// Get current user
 		$current_user_id = get_current_user_id();
 		
-		// If no user is logged in, show login message
-		if (!$current_user_id) {
-			return '<p>' . __('Please log in to view project subscriptions.', 'arsol-projects-for-woo') . '</p>';
-		}
-
-		// Get project ID (from attribute or current page)
-		$project_id = (int) $atts['project_id'];
-		if (!$project_id) {
-			// Try to get from current page if it's a project
-			global $post;
-			if ($post && $post->post_type === 'arsol-project') {
-				$project_id = $post->ID;
-			}
-		}
-
-		if (!$project_id) {
-			return '<p>' . __('No project specified.', 'arsol-projects-for-woo') . '</p>';
-		}
-
-		// Verify user has access to this project
-		if (!Woocommerce::user_can_view_project($current_user_id, $project_id)) {
-			return '<p>' . __('You do not have permission to view subscriptions for this project.', 'arsol-projects-for-woo') . '</p>';
-		}
-
 		// Get current page for pagination
 		$current_page = max(1, (int) $atts['paged']);
 		$per_page = max(1, (int) $atts['per_page']);
@@ -280,11 +248,12 @@ class Shortcodes {
 	 * @return string HTML output
 	 */
 	public function user_projects_shortcode($atts) {
-		// Start output buffering
-		ob_start();
+		if (!is_user_logged_in()) {
+			return '<p>' . __('Please log in to view your projects.', 'arsol-pfw') . '</p>';
+		}
 
-		// Normalize attributes
 		$atts = shortcode_atts(array(
+			'status' => 'any',
 			'per_page' => 10,
 			'paged' => 1,
 		), $atts);
@@ -292,11 +261,6 @@ class Shortcodes {
 		// Get current user
 		$current_user_id = get_current_user_id();
 		
-		// If no user is logged in, show login message
-		if (!$current_user_id) {
-			return '<p>' . __('Please log in to view your projects.', 'arsol-projects-for-woo') . '</p>';
-		}
-
 		// Get current page for pagination
 		$current_page = max(1, (int) $atts['paged']);
 		$per_page = max(1, (int) $atts['per_page']);

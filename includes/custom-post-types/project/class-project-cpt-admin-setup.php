@@ -24,18 +24,18 @@ class Setup {
         }
 
         $labels = array(
-            'name'               => __('Arsol Projects', 'arsol-projects-for-woo'),
-            'singular_name'      => __('Project', 'arsol-projects-for-woo'),
-            'add_new'           => __('Add New', 'arsol-projects-for-woo'),
-            'add_new_item'      => __('Add New Project', 'arsol-projects-for-woo'),
-            'edit_item'         => __('Edit Project', 'arsol-projects-for-woo'),
-            'new_item'          => __('New Project', 'arsol-projects-for-woo'),
-            'view_item'         => __('View Project', 'arsol-projects-for-woo'),
-            'search_items'      => __('Search Projects', 'arsol-projects-for-woo'),
-            'not_found'         => __('No projects found', 'arsol-projects-for-woo'),
-            'not_found_in_trash'=> __('No projects found in trash', 'arsol-projects-for-woo'),
-            'menu_name'         => __('Arsol Projects for Woo', 'arsol-projects-for-woo'),
-            'all_items'         => __('All Projects', 'arsol-projects-for-woo'),
+            'name'               => __('Arsol Projects', 'arsol-pfw'),
+            'singular_name'      => __('Project', 'arsol-pfw'),
+            'add_new'           => __('Add New', 'arsol-pfw'),
+            'add_new_item'      => __('Add New Project', 'arsol-pfw'),
+            'edit_item'         => __('Edit Project', 'arsol-pfw'),
+            'new_item'          => __('New Project', 'arsol-pfw'),
+            'view_item'         => __('View Project', 'arsol-pfw'),
+            'search_items'      => __('Search Projects', 'arsol-pfw'),
+            'not_found'         => __('No projects found', 'arsol-pfw'),
+            'not_found_in_trash'=> __('No projects found in trash', 'arsol-pfw'),
+            'menu_name'         => __('Arsol Projects for Woo', 'arsol-pfw'),
+            'all_items'         => __('All Projects', 'arsol-pfw'),
         );
 
         // Get base supports array
@@ -131,15 +131,15 @@ class Setup {
      */
     public function register_project_status_taxonomy() {
         $labels = array(
-            'name'              => __('Project Statuses', 'arsol-projects-for-woo'),
-            'singular_name'     => __('Project Status', 'arsol-projects-for-woo'),
-            'search_items'      => __('Search Project Statuses', 'arsol-projects-for-woo'),
-            'all_items'         => __('All Project Statuses', 'arsol-projects-for-woo'),
-            'edit_item'         => __('Edit Project Status', 'arsol-projects-for-woo'),
-            'update_item'       => __('Update Project Status', 'arsol-projects-for-woo'),
-            'add_new_item'      => __('Add New Project Status', 'arsol-projects-for-woo'),
-            'new_item_name'     => __('New Project Status Name', 'arsol-projects-for-woo'),
-            'menu_name'         => __('Project Statuses', 'arsol-projects-for-woo'),
+            'name'              => __('Project Statuses', 'arsol-pfw'),
+            'singular_name'     => __('Project Status', 'arsol-pfw'),
+            'search_items'      => __('Search Project Statuses', 'arsol-pfw'),
+            'all_items'         => __('All Project Statuses', 'arsol-pfw'),
+            'edit_item'         => __('Edit Project Status', 'arsol-pfw'),
+            'update_item'       => __('Update Project Status', 'arsol-pfw'),
+            'add_new_item'      => __('Add New Project Status', 'arsol-pfw'),
+            'new_item_name'     => __('New Project Status Name', 'arsol-pfw'),
+            'menu_name'         => __('Project Statuses', 'arsol-pfw'),
         );
 
         $args = array(

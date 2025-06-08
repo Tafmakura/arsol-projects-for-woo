@@ -44,7 +44,7 @@ class Projects {
             $statuses = get_terms('arsol-project-status', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
                 echo '<select name="project_status" id="filter-by-project-status" class="postform status-filter-dropdown">';
-                echo '<option value="">' . __('All Statuses', 'arsol-projects-for-woo') . '</option>';
+                echo '<option value="">' . __('All Statuses', 'arsol-pfw') . '</option>';
                 foreach ($statuses as $status) {
                     printf(
                         '<option value="%s" %s>%s</option>',
@@ -58,44 +58,21 @@ class Projects {
 
             // Project Lead filter (manual select for Select2)
             $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
-            $project_leads = get_users(array(
-                'role__in' => array('administrator', 'shop_manager'),
-                'orderby' => 'display_name',
-                'order' => 'ASC',
-                'fields' => array('ID', 'display_name')
-            ));
-            echo '<select name="project_lead" id="filter-by-project-lead" class="wc-customer-search select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by project lead', 'arsol-projects-for-woo') . '" data-allow_clear="true">';
-            echo '<option value="">' . __('Filter by project lead', 'arsol-projects-for-woo') . '</option>';
-            foreach ($project_leads as $lead) {
-                printf(
-                    '<option value="%s" %s>%s</option>',
-                    esc_attr($lead->ID),
-                    selected($current_lead, $lead->ID, false),
-                    esc_html($lead->display_name)
-                );
+            $users = get_users(array('role__in' => array('administrator', 'shop_manager')));
+            echo '<select name="project_lead" class="arsol-pfw-admin-select2" data-placeholder="' . esc_attr__('Filter by project lead', 'arsol-pfw') . '" data-allow_clear="true">';
+            echo '<option value="">' . __('Filter by project lead', 'arsol-pfw') . '</option>';
+            foreach ($users as $user) {
+                echo '<option value="' . esc_attr($user->ID) . '"' . selected($current_lead, $user->ID, false) . '>' . esc_html($user->display_name) . '</option>';
             }
             echo '</select>';
 
             // Customer filter (manual select for Select2)
-            $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
-            $customers = get_users(array(
-                'orderby' => 'display_name',
-                'order' => 'ASC',
-                'fields' => array('ID', 'user_login', 'user_email')
-            ));
-            echo '<select name="customer" id="filter-by-customer" class="wc-customer-search select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by registered customer', 'arsol-projects-for-woo') . '" data-allow_clear="true">';
-            echo '<option value="">' . __('Filter by registered customer', 'arsol-projects-for-woo') . '</option>';
+            $current_customer = isset($_GET['customer_id']) ? $_GET['customer_id'] : '';
+            $customers = get_users(array('role__in' => array('customer', 'subscriber')));
+            echo '<select name="customer_id" class="arsol-pfw-admin-select2" data-placeholder="' . esc_attr__('Filter by registered customer', 'arsol-pfw') . '" data-allow_clear="true">';
+            echo '<option value="">' . __('Filter by registered customer', 'arsol-pfw') . '</option>';
             foreach ($customers as $customer) {
-                $label = esc_html($customer->user_login);
-                if (!empty($customer->user_email)) {
-                    $label .= ' (' . esc_html($customer->user_email) . ')';
-                }
-                printf(
-                    '<option value="%s" %s>%s</option>',
-                    esc_attr($customer->ID),
-                    selected($current_customer, $customer->ID, false),
-                    $label
-                );
+                echo '<option value="' . esc_attr($customer->ID) . '"' . selected($current_customer, $customer->ID, false) . '>' . esc_html($customer->display_name) . '</option>';
             }
             echo '</select>';
 
