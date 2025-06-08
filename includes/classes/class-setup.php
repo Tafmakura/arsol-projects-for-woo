@@ -11,6 +11,7 @@ class Setup {
         $this->require_files();
         $this->instantiate_classes();
         add_action('plugins_loaded', array($this, 'init'));
+        add_action('init', array($this, 'load_textdomain'));
         
         // Register activation and deactivation hooks
         register_activation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'activate'));
@@ -23,11 +24,12 @@ class Setup {
             add_action('admin_notices', array($this, 'woocommerce_notice'));
             return;
         }
-        
+    }
+
+    public function load_textdomain() {
         // Load plugin text domain with updated domain name
         load_plugin_textdomain('arsol-pfw', false, dirname(ARSOL_PROJECTS_PLUGIN_BASENAME) . '/languages');
     }
-
 
     /**
      * Include necessary files.
@@ -38,20 +40,46 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-endpoints.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-endpoints.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-checkout.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-advanced.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-integrations.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-overrides.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-users.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-capabilities.php';
+
+        // Frontend Handlers
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-frontend-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-frontend-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-frontend-handler.php';
     }
 
     /**
      * Instantiate plugin classes.
      */
     private function instantiate_classes() {
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Setup();
-        new \Arsol_Projects_For_Woo\Woocommerce();
-        new \Arsol_Projects_For_Woo\Assets();
-        new \Arsol_Projects_For_Woo\Shortcodes();
-        new \Arsol_Projects_For_Woo\Woocommerce\Endpoints();
-        new \Arsol_Projects_For_Woo\Admin\Settings_General();
+        // Initialize capabilities first
+        new Admin\Admin_Capabilities();
+        
+        // Initialize other classes
+        new Custom_Post_Types\Setup();
+        new Shortcodes();
+        new Woocommerce();
+        new Assets();
+        new Woocommerce\Frontend_Endpoints();
+        new Frontend_Woocommerce_Checkout();
+        new Admin\Settings_General();
+        new Admin\Settings_Advanced();
+        new Admin\Settings_Integrations();
+        new Admin\Setup();
+        new Admin\Users();
+
+        // Frontend Handlers
+        new Custom_Post_Types\Project\Frontend_Handler();
+        new Custom_Post_Types\ProjectRequest\Frontend_Handler();
+        new Custom_Post_Types\ProjectProposal\Frontend_Handler();
     }
 
     public function woocommerce_notice() {

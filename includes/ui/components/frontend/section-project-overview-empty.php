@@ -13,13 +13,16 @@ defined('ABSPATH') || exit;
 do_action('arsol_projects_before_empty_state', $project_id);
 
 ?>
-<div class="project-empty-state">
-    <h1><?php esc_html_e('No Project Overview at the moment.', 'arsol-projects-for-woo'); ?></h1>
-    <p><?php esc_html_e('This project has no overview information. This is usually the case if it is still being set up, or there is no relevant information to share. Check back soon for more details.', 'arsol-projects-for-woo'); ?></p>
-    
-    <div class="project-empty-state-actions">
-        <a class="bricks-button sm outline bricks-color-primary" href="https://portal.automatedretail.africa/contact-us/support/"><?php esc_html_e('Contact Support', 'arsol-projects-for-woo'); ?></a>
-        <a class="bricks-button sm outline bricks-color-primary" href="https://portal.automatedretail.africa/contact-us/sales/"><?php esc_html_e('Contact Sales', 'arsol-projects-for-woo'); ?></a>
+<div class="arsol-pfw-project-overview-empty">
+    <div class="arsol-pfw-empty-state">
+        <div class="arsol-pfw-empty-state__content">
+            <h1><?php esc_html_e('No Project Overview at the moment.', 'arsol-pfw'); ?></h1>
+            <p><?php esc_html_e('The project details aren\'t available at this time. Check back soon for more details.', 'arsol-pfw'); ?></p>
+            <div class="arsol-pfw-empty-state__actions">
+                <a href="/contact-us/" class="button button-primary"><?php esc_html_e('Contact Support', 'arsol-pfw'); ?></a>
+                <a href="/services/" class="button"><?php esc_html_e('Contact Sales', 'arsol-pfw'); ?></a>
+            </div>
+        </div>
     </div>
 </div>
 <?php do_action('arsol_projects_after_empty_state', $project_id); ?>

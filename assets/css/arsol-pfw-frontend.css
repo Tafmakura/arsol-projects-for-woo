@@ -123,7 +123,6 @@
 .project-content h6 {
     transform: scale(0.85);
     transform-origin: left;
-
 }
 
 .project-sidebar {
@@ -162,11 +161,65 @@
 }
 
 /* Project empty state styling */
-
 .project-empty-state-actions {
     display: flex;
     gap: 1rem;
     margin-top: 1.5rem;
+}
+
+/* Project Metadata Styling - Standard for all sidebars */
+.arsol-pfw-project-meta {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007cba;
+}
+
+.arsol-pfw-project-meta p {
+    margin: 0.5rem 0;
+    color: #23282d;
+}
+
+.arsol-pfw-project-meta p:first-child {
+    margin-top: 0;
+}
+
+.arsol-pfw-project-meta p:last-child {
+    margin-bottom: 0;
+}
+
+/* Legacy support for existing request meta */
+.arsol-pfw-empty-state__request-meta {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007cba;
+}
+
+.arsol-pfw-empty-state__request-meta p {
+    margin: 0.5rem 0;
+    color: #23282d;
+}
+
+.arsol-pfw-empty-state__request-meta p:first-child {
+    margin-top: 0;
+}
+
+.arsol-pfw-empty-state__request-meta p:last-child {
+    margin-bottom: 0;
+}
+
+/* Project Action Buttons - Full Width */
+
+.arsol-pfw-project-action .brxe-button,
+.arsol-pfw-project-action .bricks-button,
+.arsol-pfw-project-action button,
+.arsol-pfw-project-action a {
+    width: 100%;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {
@@ -215,5 +268,126 @@
 .status-cancelled {
     background-color: #ffebee;
     color: #d32f2f;
+}
+
+/* Create/Request Button Styles */
+.arsol-create-or-request-button {
+    transition: background 0.2s;
+}
+.arsol-create-or-request-button:hover {
+    background-color: #135e96;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* No Permission Message Styles */
+.arsol-no-permission {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 20px 0;
+}
+
+.arsol-no-permission h3 {
+    color: #dc3545;
+    margin-bottom: 10px;
+}
+
+.arsol-no-permission p {
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Status badges in the list */
+.arsol-pfw-projects-row .status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.arsol-pfw-projects-row .status-approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.arsol-pfw-projects-row .status-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.arsol-pfw-projects-row .status-in-progress {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.arsol-pfw-projects-row .status-completed {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.arsol-pfw-projects-row .status-cancelled {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.arsol-pfw-projects-row span[class^="status-"] {
+    display: inline-block;
+    padding: 0.25em 0.75em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+/* Frontend Form Styles */
+.arsol-project-meta-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.arsol-project-field-col {
+    flex: 1;
+}
+
+.arsol-budget-col {
+    min-width: 190px;
+}
+
+.arsol-budget-input {
+    min-width: 190px;
+    text-align: right;
+}
+
+.arsol-money-input {
+    text-align: right;
+}
+
+/* Form input spacing */
+.arsol-project-form .form-row,
+.arsol-request-form .form-row {
+    margin-bottom: 20px;
+}
+
+
+
+
+
+/* Responsive adjustments for project forms */
+@media (max-width: 768px) {
+    .arsol-project-meta-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .arsol-project-field-col {
+        width: 100%;
+    }
+    
+    .arsol-budget-col,
+    .arsol-budget-input {
+        min-width: auto;
+        width: 100%;
+    }
 }
 

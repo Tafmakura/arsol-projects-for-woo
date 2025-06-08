@@ -25,6 +25,14 @@ class Assets {
      * Constructor
      */
     public function __construct() {
+        // Delay asset hooks until after init to ensure text domain is loaded
+        add_action('init', array($this, 'setup_asset_hooks'), 20);
+    }
+
+    /**
+     * Setup asset hooks after init
+     */
+    public function setup_asset_hooks() {
         // Register hooks for frontend assets
         add_action('wp_enqueue_scripts', array($this, 'register_frontend_assets'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
@@ -71,9 +79,7 @@ class Assets {
             wp_localize_script('arsol-pfw-frontend', 'arsolPfw', array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('arsol-pfw-frontend'),
-                'i18n' => array(
-                    'selectProject' => __('Please select a project', 'arsol-projects-for-woo'),
-                )
+                'selectProject' => __('Please select a project', 'arsol-pfw'),
             ));
         }
     }
@@ -113,30 +119,24 @@ class Assets {
             return;
         }
 
-        // Only load on order pages and project pages
-        if (in_array($screen->post_type, array('shop_order', 'arsol-project'))) {
-            wp_enqueue_style(
-                'arsol-pfw-admin',
-                ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin.css',
-                array(),
-                $this->get_file_version('assets/css/arsol-pfw-admin.css')
-            );
+        // Define post types that should load admin assets
+        $allowed_post_types = array(
+            'shop_order', 
+            'arsol-project', 
+            'arsol-pfw-request', 
+            'arsol-pfw-proposal'
+        );
 
-            wp_enqueue_script(
-                'arsol-pfw-admin',
-                ARSOL_PROJECTS_PLUGIN_URL . 'assets/js/arsol-pfw-admin.js',
-                array('jquery'),
-                $this->get_file_version('assets/js/arsol-pfw-admin.js'),
-                true
-            );
+        // Only load on specified post type pages
+        if (in_array($screen->post_type, $allowed_post_types)) {
+            wp_enqueue_style('arsol-pfw-admin');
+            wp_enqueue_script('arsol-pfw-admin');
             
             // Add localized data if needed
             wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('arsol-pfw-admin'),
-                'i18n' => array(
-                    'confirmDelete' => __('Are you sure you want to remove this project?', 'arsol-projects-for-woo'),
-                )
+                'confirmDelete' => __('Are you sure you want to remove this project?', 'arsol-pfw'),
             ));
         }
     }

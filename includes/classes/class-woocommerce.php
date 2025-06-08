@@ -25,9 +25,6 @@ class Woocommerce {
         add_filter('manage_edit-shop_order_columns', array($this, 'add_project_column'));
         add_action('manage_shop_order_posts_custom_column', array($this, 'display_project_column_content'), 10, 2);
         
-        // Register the project checkout field on woocommerce_init
-        add_action('woocommerce_init', array($this, 'register_project_checkout_field'));
-        
         // Remove duplicate project field
         add_action('admin_enqueue_scripts', array($this, 'remove_duplicate_project_field'));
 
@@ -36,10 +33,52 @@ class Woocommerce {
 
         // Add project to subscription details table (WooCommerce Subscriptions)
         add_action('woocommerce_subscription_details_after_subscription_table', array($this, 'display_project_details'));
+
+        // Initialize checkout functionality
+        new Frontend_Woocommerce_Checkout();
     }
 
     public function init() {
         // Add your initialization code here
+    }
+
+    /**
+     * Check if the project field should be displayed based on cart contents
+     *
+     * @return bool
+     */
+    private function should_display_project_field() {
+        $settings = get_option('arsol_projects_settings', array());
+        $project_products = !empty($settings['project_products']) ? (array) $settings['project_products'] : array();
+        $project_categories = !empty($settings['project_categories']) ? (array) $settings['project_categories'] : array();
+
+        // If no specific products or categories are set, show the field by default
+        if (empty($project_products) && empty($project_categories)) {
+            return true;
+        }
+
+        if (WC()->cart === null) {
+            return false;
+        }
+
+        foreach (WC()->cart->get_cart() as $cart_item) {
+            $product_id = $cart_item['product_id'];
+
+            // Check if the product is in the allowed list
+            if (!empty($project_products) && in_array($product_id, $project_products)) {
+                return true;
+            }
+
+            // Check if the product's categories are in the allowed list
+            if (!empty($project_categories)) {
+                $product_category_ids = wc_get_product_term_ids($product_id, 'product_cat');
+                if (!empty(array_intersect($product_category_ids, $project_categories))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -392,7 +431,7 @@ class Woocommerce {
         }
         
         // Load the template with the prepared variables
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/table-related-project-details.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-woocommerce-table-related-project.php';
     }
 
     /**
@@ -460,68 +499,6 @@ class Woocommerce {
                 echo '—';
             }
         }
-    }
-
-    public function register_project_checkout_field() {
-        if (!is_user_logged_in()) {
-            return;
-        }
-
-        $user_id = get_current_user_id();
-        $user_projects = get_posts([
-            'post_type'      => 'arsol-project',
-            'post_status'    => 'publish',
-            'author'         => $user_id,
-            'posts_per_page' => -1,
-            'orderby'        => 'title',
-            'order'          => 'ASC',
-        ]);
-
-        // Add "None" option first with explicit "none" value
-        $options = [
-            [
-                'value' => 'none',
-                'label' => __('None', 'arsol-pfw')
-            ]
-        ];
-        
-        // Then add the project options
-        foreach ($user_projects as $project) {
-            $options[] = [
-                'value' => $project->ID,
-                'label' => $project->post_title
-            ];
-        }
-
-        woocommerce_register_additional_checkout_field(
-            array(
-                'id'         => 'arsol-projects-for-woo/arsol-project',
-                'label'      => __('Project', 'arsol-pfw'),
-                'location'   => 'order',
-                'required'   => true,
-                'type'       => 'select',
-                'placeholder' => __('Select a project', 'arsol-pfw'),
-                'options'    => $options,
-                'validate'   => function($value) use ($user_id) {
-                    // Accept "none" as valid
-                    if ($value === 'none') {
-                        return true;
-                    }
-                    
-                    // For other values, perform normal validation
-                    if (empty($value)) {
-                        return new \WP_Error('required_field', __('Please select a project.', 'arsol-pfw'));
-                    }
-        
-                    $project = get_post($value);
-                    if (!$project || $project->post_type !== 'arsol-project' || $project->post_author != $user_id) {
-                        return new \WP_Error('invalid_project', __('Invalid project selected.', 'arsol-pfw'));
-                    }
-        
-                    return true;
-                }
-            )
-        );
     }
 
     /**

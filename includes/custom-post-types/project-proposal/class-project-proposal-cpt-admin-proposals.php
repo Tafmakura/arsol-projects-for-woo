@@ -1,0 +1,243 @@
+<?php
+
+namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin;
+
+if (!defined('ABSPATH')) exit;
+
+class Proposals {
+    public function __construct() {
+        // Add custom columns to proposals table
+        add_filter('manage_arsol-pfw-proposal_posts_columns', array($this, 'add_custom_columns'));
+        add_action('manage_arsol-pfw-proposal_posts_custom_column', array($this, 'render_custom_column'), 10, 2);
+        // Add filters to proposals table
+        add_action('restrict_manage_posts', array($this, 'add_filters'));
+        // Filtering logic for proposals table
+        add_action('pre_get_posts', array($this, 'filter_proposals'));
+        // Handle bulk actions
+        add_filter('bulk_actions-edit-arsol-pfw-proposal', array($this, 'register_bulk_actions'));
+        add_filter('handle_bulk_actions-edit-arsol-pfw-proposal', array($this, 'handle_bulk_actions'), 10, 3);
+        // Remove view links from admin
+        add_filter('post_row_actions', array($this, 'remove_view_link'), 10, 2);
+    }
+
+    /**
+     * Add custom columns
+     */
+    public function add_custom_columns($columns) {
+        $new_columns = array();
+        
+        // Add columns in desired order
+        $new_columns['cb'] = $columns['cb'];
+        $new_columns['title'] = $columns['title'];
+        $new_columns['proposal_status'] = __('Status', 'arsol-pfw');
+        $new_columns['proposal_budget'] = __('Budget', 'arsol-pfw');
+        $new_columns['proposal_timeline'] = __('Timeline', 'arsol-pfw');
+        $new_columns['related_request'] = __('Related Request', 'arsol-pfw');
+        $new_columns['author'] = $columns['author'];
+        $new_columns['date'] = $columns['date'];
+        
+        return $new_columns;
+    }
+
+    /**
+     * Render custom column content
+     */
+    public function render_custom_column($column, $post_id) {
+        switch ($column) {
+            case 'proposal_status':
+                $status = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'names'));
+                if (!empty($status) && !is_wp_error($status)) {
+                    echo esc_html($status[0]);
+                }
+                break;
+                
+            case 'proposal_budget':
+                $budget = get_post_meta($post_id, '_proposal_budget', true);
+                if ($budget) {
+                    echo wc_price($budget);
+                }
+                break;
+                
+            case 'proposal_timeline':
+                $timeline = get_post_meta($post_id, '_proposal_timeline', true);
+                if ($timeline) {
+                    echo sprintf(_n('%d day', '%d days', $timeline, 'arsol-pfw'), $timeline);
+                }
+                break;
+                
+            case 'related_request':
+                $request_id = get_post_meta($post_id, '_related_request', true);
+                if ($request_id) {
+                    $request = get_post($request_id);
+                    if ($request) {
+                        echo '<a href="' . esc_url(get_edit_post_link($request_id)) . '">' . esc_html($request->post_title) . '</a>';
+                    }
+                }
+                break;
+        }
+    }
+
+    /**
+     * Add filters to proposals table
+     */
+    public function add_filters() {
+        global $typenow;
+        if ($typenow === 'arsol-pfw-proposal') {
+            // Status filter
+            $current_status = isset($_GET['proposal_status']) ? $_GET['proposal_status'] : '';
+            $statuses = get_terms('arsol-proposal-status', array('hide_empty' => false));
+            if (!empty($statuses) && !is_wp_error($statuses)) {
+                echo '<select name="proposal_status" id="filter-by-proposal-status" class="postform status-filter-dropdown">';
+                echo '<option value="">' . __('All Statuses', 'arsol-pfw') . '</option>';
+                foreach ($statuses as $status) {
+                    printf(
+                        '<option value="%s" %s>%s</option>',
+                        esc_attr($status->slug),
+                        selected($current_status, $status->slug, false),
+                        esc_html($status->name)
+                    );
+                }
+                echo '</select>';
+            }
+
+            // Customer filter
+            $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
+            $customers = get_users(array(
+                'orderby' => 'display_name',
+                'order' => 'ASC',
+                'fields' => array('ID', 'user_login', 'user_email')
+            ));
+            echo '<select name="customer" id="filter-by-customer" class="wc-customer-search select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by customer', 'arsol-pfw') . '" data-allow_clear="true">';
+            echo '<option value="">' . __('Filter by customer', 'arsol-pfw') . '</option>';
+            foreach ($customers as $customer) {
+                $label = esc_html($customer->user_login);
+                if (!empty($customer->user_email)) {
+                    $label .= ' (' . esc_html($customer->user_email) . ')';
+                }
+                printf(
+                    '<option value="%s" %s>%s</option>',
+                    esc_attr($customer->ID),
+                    selected($current_customer, $customer->ID, false),
+                    $label
+                );
+            }
+            echo '</select>';
+
+            // Related Request filter
+            $current_request = isset($_GET['related_request']) ? $_GET['related_request'] : '';
+            $requests = get_posts(array(
+                'post_type' => 'arsol-pfw-request',
+                'posts_per_page' => -1,
+                'orderby' => 'title',
+                'order' => 'ASC',
+                'post_status' => 'publish'
+            ));
+            echo '<select name="related_request" id="filter-by-related-request" class="select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by related request', 'arsol-pfw') . '" data-allow_clear="true">';
+            echo '<option value="">' . __('Filter by related request', 'arsol-pfw') . '</option>';
+            foreach ($requests as $request) {
+                printf(
+                    '<option value="%s" %s>%s</option>',
+                    esc_attr($request->ID),
+                    selected($current_request, $request->ID, false),
+                    esc_html($request->post_title)
+                );
+            }
+            echo '</select>';
+
+            // Enqueue WooCommerce select2
+            wp_enqueue_script('select2');
+            wp_enqueue_style('select2');
+            
+            // Add inline script to initialize select2
+            add_action('admin_footer', function() {
+                ?>
+                <script type="text/javascript">
+                jQuery(function($) {
+                    $('.wc-customer-search, .select2-enhanced').select2({
+                        allowClear: true,
+                        minimumResultsForSearch: 0,
+                        minimumInputLength: 1,
+                        placeholder: function(){
+                            return $(this).data('placeholder');
+                        }
+                    }).next('.select2-container').css({'min-width': '200px', 'margin-right': '8px'});
+                });
+                </script>
+                <?php
+            });
+        }
+    }
+
+    /**
+     * Filtering logic for proposals table
+     */
+    public function filter_proposals($query) {
+        global $pagenow, $typenow;
+
+        if ($pagenow === 'edit.php' && $typenow === 'arsol-pfw-proposal' && $query->is_main_query()) {
+            // Filter by customer (author)
+            if (!empty($_GET['customer'])) {
+                $query->set('author', sanitize_text_field($_GET['customer']));
+            }
+
+            // Filter by proposal status (taxonomy)
+            if (!empty($_GET['proposal_status'])) {
+                $tax_query = $query->get('tax_query') ?: [];
+                $tax_query[] = [
+                    'taxonomy' => 'arsol-proposal-status',
+                    'field'    => 'slug',
+                    'terms'    => sanitize_text_field($_GET['proposal_status']),
+                ];
+                $query->set('tax_query', $tax_query);
+            }
+
+            // Filter by related request (meta)
+            if (!empty($_GET['related_request'])) {
+                $meta_query = $query->get('meta_query') ?: [];
+                $meta_query[] = [
+                    'key' => '_related_request',
+                    'value' => sanitize_text_field($_GET['related_request']),
+                    'compare' => '='
+                ];
+                $query->set('meta_query', $meta_query);
+            }
+        }
+    }
+
+    /**
+     * Register bulk actions
+     */
+    public function register_bulk_actions($bulk_actions) {
+        $bulk_actions['mark_approved'] = __('Mark as Approved', 'arsol-pfw');
+        $bulk_actions['mark_rejected'] = __('Mark as Rejected', 'arsol-pfw');
+        return $bulk_actions;
+    }
+
+    /**
+     * Handle bulk actions
+     */
+    public function handle_bulk_actions($redirect_to, $doaction, $post_ids) {
+        if ($doaction !== 'mark_approved' && $doaction !== 'mark_rejected') {
+            return $redirect_to;
+        }
+
+        $status = $doaction === 'mark_approved' ? 'approved' : 'rejected';
+        
+        foreach ($post_ids as $post_id) {
+            wp_set_object_terms($post_id, $status, 'arsol-proposal-status', false);
+        }
+
+        $redirect_to = add_query_arg('bulk_proposals_updated', count($post_ids), $redirect_to);
+        return $redirect_to;
+    }
+
+    /**
+     * Remove view links from admin
+     */
+    public function remove_view_link($actions, $post) {
+        if ($post->post_type === 'arsol-pfw-proposal') {
+            unset($actions['view']);
+        }
+        return $actions;
+    }
+}

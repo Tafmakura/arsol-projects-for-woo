@@ -3,9 +3,9 @@
  * Plugin Name: Arsol Projects for Woo
  * Plugin URI: https://your-site.com/arsol-projects-for-woo
  * Description: A WordPress plugin to manage projects with WooCommerce integration
- * Version: 0.0.8.1
+ * Version: 0.0.9.3
  * Requires at least: 5.8
- * Requires PHP: 7.4
+ * Requires PHP: 7.4.1
  * Requires Plugins: woocommerce
  * Author: Taf Makura
  * Author URI: https://your-site.com
@@ -31,7 +31,6 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 // Prevent direct access to this file
 if (!defined('ABSPATH')) {
     exit;
@@ -45,12 +44,16 @@ define('ARSOL_PROJECTS_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
 // Use correct namespace
 use Arsol_Projects_For_Woo\Setup;
+use Arsol_Projects_For_Woo\Workflow\Workflow_Handler;
 
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
 // Include the admin settings class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
+
+// Include the workflow handler class
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-workflow-handler.php';
 
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');
@@ -59,34 +62,35 @@ register_activation_hook(__FILE__, 'arsol_projects_activate');
  * Plugin activation function
  */
 function arsol_projects_activate() {
+    // Set flag to flush rewrite rules on next init
+    update_option('arsol_projects_flush_rewrite_rules', false);
+}
+
+// Register deactivation hook
+register_deactivation_hook(__FILE__, 'arsol_projects_deactivate');
+
+/**
+ * Plugin deactivation function
+ */
+function arsol_projects_deactivate() {
+    // Delete the flush rewrite rules option
+    delete_option('arsol_projects_flush_rewrite_rules');
     // Flush rewrite rules
     flush_rewrite_rules();
 }
 
-// Instantiate the Setup class
-new Setup();
-
-// Instantiate the settings class to register settings
-if (class_exists('Arsol_Projects_For_Woo\Admin\Settings_General')) {
-    new \Arsol_Projects_For_Woo\Admin\Settings_General();
+/**
+ * Initializes the Arsol Projects for Woo plugin.
+ *
+ * This function is hooked to the 'plugins_loaded' action to ensure that all
+ * dependent plugins are loaded before our plugin's main logic runs.
+ *
+ * @return void
+ */
+function arsol_projects_init() {
+    // Instantiate the Setup class
+    new Setup();
+    // Instantiate the Workflow_Handler class
+    new Workflow_Handler();
 }
-
-add_action('admin_menu', function() {
-    // Add 'Settings' submenu as the last submenu under 'Arsol Projects'
-    add_submenu_page(
-        'edit.php?post_type=arsol-project', // Parent slug (Arsol Projects)
-        __('Settings', 'arsol-projects-for-woo'), // Page title
-        __('Settings', 'arsol-projects-for-woo'), // Menu title (no icon)
-        'manage_options', // Capability
-        'arsol-projects-settings', // Menu slug
-        'arsol_projects_settings_page_callback', // Callback function
-        99 // Position (last)
-    );
-});
-
-// Use the existing settings page logic for the callback
-if (!function_exists('arsol_projects_settings_page_callback')) {
-    function arsol_projects_settings_page_callback() {
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-general.php';
-    }
-}
+add_action('plugins_loaded', 'arsol_projects_init'); 
