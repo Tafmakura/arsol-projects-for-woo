@@ -90,20 +90,14 @@ class Project {
             </p>
 
             <p class="arsol-pfw-budget-display">
-                <label><?php 
-                    $currency_symbol = isset($budget_data['currency']) ? get_woocommerce_currency_symbol($budget_data['currency']) : '';
-                    echo sprintf(__('Proposed Budget (%s):', 'arsol-projects-for-woo'), $currency_symbol); 
-                ?></label>
+                <label><?php _e('Proposed Budget:', 'arsol-projects-for-woo'); ?></label>
                 <span class="arsol-pfw-budget-amount">
                     <?php echo (!empty($budget_data) && is_array($budget_data)) ? wc_price($budget_data['amount'], array('currency' => $budget_data['currency'])) : '<b>N/A</b>'; ?>
                 </span>
             </p>
 
             <p class="arsol-pfw-budget-display">
-                <label><?php 
-                    $currency_symbol = isset($recurring_budget_data['currency']) ? get_woocommerce_currency_symbol($recurring_budget_data['currency']) : '';
-                    echo sprintf(__('Proposed Recurring Budget (%s):', 'arsol-projects-for-woo'), $currency_symbol); 
-                ?></label>
+                <label><?php _e('Proposed Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
                 <span class="arsol-pfw-budget-amount">
                     <?php
                     if (!empty($recurring_budget_data) && is_array($recurring_budget_data)) {

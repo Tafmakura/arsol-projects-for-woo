@@ -40,7 +40,6 @@ class Request {
         $budget_data = get_post_meta($post->ID, '_request_budget', true);
         $budget_amount = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
         $budget_currency_code = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
-        $currency_symbol = get_woocommerce_currency_symbol($budget_currency_code);
         $start_date = get_post_meta($post->ID, '_request_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_request_delivery_date', true);
         
@@ -86,7 +85,7 @@ class Request {
             </p>
 
             <p>
-                <label for="request_budget" class="arsol-pfw-meta-label"><?php echo sprintf(__('Budget (%s):', 'arsol-pfw'), $currency_symbol); ?></label>
+                <label for="request_budget" class="arsol-pfw-meta-label"><?php echo sprintf(__('Budget (%s):', 'arsol-pfw'), $budget_currency_code); ?></label>
                 <input type="number" 
                        id="request_budget" 
                        name="request_budget" 

@@ -53,7 +53,6 @@ class Proposal {
         $currency_code = !empty($budget_data['currency']) 
             ? $budget_data['currency'] 
             : (!empty($recurring_budget_data['currency']) ? $recurring_budget_data['currency'] : get_woocommerce_currency());
-        $currency_symbol = get_woocommerce_currency_symbol($currency_code);
 
         $start_date = get_post_meta($post->ID, '_proposal_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
@@ -130,7 +129,7 @@ class Proposal {
             </p>
 
             <p>
-                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php echo sprintf(__('Proposed Budget (%s):', 'arsol-pfw'), $currency_symbol); ?></label>
+                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php echo sprintf(__('Proposed Budget (%s):', 'arsol-pfw'), $currency_code); ?></label>
                 <input type="number" 
                        id="proposal_budget" 
                        name="proposal_budget" 
@@ -141,7 +140,7 @@ class Proposal {
             </p>
 
             <p>
-                <label for="proposal_recurring_budget" style="display:block;margin-bottom:5px;"><?php echo sprintf(__('Proposed Recurring Budget (%s):', 'arsol-pfw'), $currency_symbol); ?></label>
+                <label for="proposal_recurring_budget" style="display:block;margin-bottom:5px;"><?php echo sprintf(__('Proposed Recurring Budget (%s):', 'arsol-pfw'), $currency_code); ?></label>
                 <input type="number" 
                        id="proposal_recurring_budget" 
                        name="proposal_recurring_budget" 
