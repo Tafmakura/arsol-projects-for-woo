@@ -50,7 +50,7 @@ if (!$is_edit) {
 
 <div class="arsol-project-request">
     <form method="post" id="arsol-request-edit-form" class="arsol-request-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-        <h4><?php echo $is_edit ? esc_html__('Edit Your Request', 'arsol-pfw') : esc_html__('Submit a Project Request', 'arsol-pfw'); ?></h4>
+        <h4><?php echo $is_edit ? esc_html__('Edit Your Project Request', 'arsol-pfw') : esc_html__('Submit a Project Request', 'arsol-pfw'); ?></h4>
         
         <input type="hidden" name="action" value="<?php echo esc_attr($form_action); ?>">
         <?php wp_nonce_field($form_action, 'arsol_request_nonce'); ?>
@@ -58,10 +58,10 @@ if (!$is_edit) {
             <input type="hidden" name="request_id" value="<?php echo esc_attr($post->ID); ?>">
         <?php endif; ?>
 
-        <p class="form-row">
+        <div class="form-row">
             <label for="request_title"><?php _e('Request Title', 'arsol-pfw'); ?> <span class="required">*</span></label>
             <input type="text" id="request_title" name="request_title" value="<?php echo esc_attr($title); ?>" required>
-        </p>
+        </div>
         
         <!-- Three column row for Budget, Start Date, and Delivery Date -->
         <div class="form-row form-row-wide arsol-project-meta-row">
@@ -81,15 +81,15 @@ if (!$is_edit) {
             </div>
         </div>
         
-        <p class="form-row">
+        <div class="form-row">
             <label for="request_description"><?php _e('Project Description', 'arsol-pfw'); ?> <span class="required">*</span></label>
             <textarea id="request_description" name="request_description" rows="5" required><?php echo esc_textarea($content); ?></textarea>
-        </p>
+        </div>
         
         <?php if (!$is_edit) : ?>
-            <p class="form-row">
+            <div class="form-row">
                 <button type="submit" class="button"><?php echo esc_html($button_text); ?></button>
-            </p>
+            </div>
         <?php endif; ?>
     </form>
 </div> 

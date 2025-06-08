@@ -30,13 +30,13 @@ $currency_symbol = get_woocommerce_currency_symbol($currency_code);
         <h4><?php _e('Create New Project', 'arsol-pfw'); ?></h4>
         <?php wp_nonce_field('create_project', 'create_project_nonce'); ?>
         
-        <p class="form-row">
+        <div class="form-row">
             <label for="project_title"><?php _e('Project Title', 'arsol-pfw'); ?> <span class="required">*</span></label>
             <input type="text" 
                    id="project_title" 
                    name="project_title" 
                    required>
-        </p>
+        </div>
         
         <!-- Three column row for Budget, Start Date, and Delivery Date -->
         <div class="form-row form-row-wide arsol-project-meta-row">
@@ -67,16 +67,16 @@ $currency_symbol = get_woocommerce_currency_symbol($currency_code);
             </div>
         </div>
         
-        <p class="form-row">
+        <div class="form-row">
             <label for="project_description"><?php _e('Project Description', 'arsol-pfw'); ?> <span class="required">*</span></label>
             <textarea id="project_description" 
                       name="project_description" 
                       rows="5" 
                       required></textarea>
-        </p>
+        </div>
         
-        <p class="form-row">
+        <div class="form-row">
             <button type="submit" class="button"><?php _e('Create Project', 'arsol-pfw'); ?></button>
-        </p>
+        </div>
     </form>
 </div> 
