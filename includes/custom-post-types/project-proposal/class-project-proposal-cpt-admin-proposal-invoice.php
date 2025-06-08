@@ -130,14 +130,13 @@ class Proposal_Invoice {
                             <td><strong><?php _e('One-Time Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="one-time-total-display"><?php echo wc_price(0); ?></td>
                         </tr>
-                         <tr>
-                            <td><strong><?php _e('Recurring Total:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="recurring-total-display"><?php echo wc_price(0); ?></td>
-                        </tr>
+                    </tbody>
+                    <tbody id="recurring-totals-body">
+                         <!-- Recurring totals will be dynamically inserted here -->
                     </tbody>
                 </table>
                  <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
-                 <input type="hidden" name="line_items_recurring_total" id="line_items_recurring_total">
+                 <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
             </div>
         </div>
         <?php
@@ -322,6 +321,8 @@ class Proposal_Invoice {
             'is_subscription' => $is_subscription,
             'sign_up_fee' => wc_format_decimal($sign_up_fee, wc_get_price_decimals()),
             'sub_text' => $sub_text,
+            'billing_interval' => $is_subscription ? $product->get_meta('_subscription_period_interval') : null,
+            'billing_period'   => $is_subscription ? $product->get_meta('_subscription_period') : null,
         );
 
         wp_send_json_success($data);

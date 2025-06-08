@@ -130,6 +130,8 @@
                          
                          $row.data('is-subscription', data.is_subscription);
                          $row.data('sign-up-fee', data.sign_up_fee || 0);
+                         $row.data('billing-interval', data.billing_interval);
+                         $row.data('billing-period', data.billing_period);
                          
                          self.calculateTotals();
                      } else {
@@ -149,13 +151,30 @@
         calculateTotals: function() {
             console.log('Arsol Proposal Invoice: Calculating totals...');
             var oneTimeTotal = 0;
-            var recurringTotal = 0;
+            var recurringTotals = {}; // Use an object to group by billing cycle
             var currencySymbol = arsol_proposal_invoice_vars.currency_symbol;
             
             var formatPrice = function(price) {
                 var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
             };
+            
+            // Helper to build a unique key for each billing cycle
+            var getCycleKey = function(interval, period) {
+                return period + '_' + interval;
+            };
+
+            // Helper to create a human-readable label for each billing cycle
+            var getCycleLabel = function(interval, period, total) {
+                 // Basic pluralization
+                var periodLabel = period.charAt(0).toUpperCase() + period.slice(1);
+                if (total > 1 && interval == 1) {
+                    periodLabel += 's';
+                }
+                var intervalLabel = interval > 1 ? 'every ' + interval : '';
+                return 'per ' + periodLabel + ' (' + intervalLabel + ')';
+            };
+
 
             $('#product-lines-body .line-item').each(function() {
                 var $row = $(this);
@@ -164,21 +183,29 @@
                 
                 var salePrice = parseFloat($row.find('.sale-price-input').val());
                 var regularPrice = parseFloat($row.find('.price-input').val()) || 0;
-                
                 var unitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : regularPrice;
                 
                 if (isSubscription) {
                     var signUpFee = parseFloat($row.data('sign-up-fee')) || 0;
-                    var recurringAmount = unitPrice;
-
                     oneTimeTotal += quantity * signUpFee;
-                    recurringTotal += quantity * recurringAmount;
                     
-                    var subtotalDisplay = formatPrice(quantity * recurringAmount);
-                    if (signUpFee > 0) {
-                        subtotalDisplay += ' + ' + formatPrice(quantity * signUpFee) + ' sign-up fee';
+                    var recurringAmount = unitPrice;
+                    var interval = $row.data('billing-interval');
+                    var period = $row.data('billing-period');
+
+                    if (interval && period) {
+                        var cycleKey = getCycleKey(interval, period);
+                        if (!recurringTotals[cycleKey]) {
+                            recurringTotals[cycleKey] = { total: 0, interval: interval, period: period };
+                        }
+                        recurringTotals[cycleKey].total += quantity * recurringAmount;
                     }
-                     $row.find('.subtotal-display').html(subtotalDisplay);
+                    
+                    var subtotalDisplay = formatPrice(quantity * recurringAmount) + ' ' + $row.find('.product-sub-text').text();
+                    if (signUpFee > 0) {
+                        subtotalDisplay += ' (+ ' + formatPrice(quantity * signUpFee) + ' sign-up)';
+                    }
+                    $row.find('.subtotal-display').html(subtotalDisplay);
 
                 } else {
                     var oneTimeSubtotal = quantity * unitPrice;
@@ -197,16 +224,39 @@
             $('#recurring-fee-lines-body .line-item').each(function() {
                 var $row = $(this);
                 var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
-                recurringTotal += amount;
-                var interval = $row.find('.billing-interval option:selected').text();
-                var period = $row.find('.billing-period option:selected').text();
-                $row.find('.subtotal-display').html(formatPrice(amount) + ' / ' + period);
+                var interval = $row.find('.billing-interval').val();
+                var period = $row.find('.billing-period').val();
+               
+                if (interval && period) {
+                     var cycleKey = getCycleKey(interval, period);
+                     if (!recurringTotals[cycleKey]) {
+                        recurringTotals[cycleKey] = { total: 0, interval: interval, period: period };
+                     }
+                     recurringTotals[cycleKey].total += amount;
+                }
+
+                var subtotalText = formatPrice(amount) + ' / ' + period;
+                $row.find('.subtotal-display').html(subtotalText);
             });
             
             $('#one-time-total-display').html(formatPrice(oneTimeTotal));
-            $('#recurring-total-display').html(formatPrice(recurringTotal));
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
-            $('#line_items_recurring_total').val(recurringTotal.toFixed(2));
+            
+            // Render recurring totals
+            var $recurringBody = $('#recurring-totals-body');
+            $recurringBody.empty();
+            if (Object.keys(recurringTotals).length > 0) {
+                 $.each(recurringTotals, function(key, data) {
+                     var label = getCycleLabel(data.interval, data.period, data.total);
+                     var $row = $('<tr>' +
+                                 '<td><strong>Recurring Total (' + label + '):</strong></td>' +
+                                 '<td class="total-amount">' + formatPrice(data.total) + '</td>' +
+                              '</tr>');
+                     $recurringBody.append($row);
+                 });
+            }
+            
+            $('#line_items_recurring_totals').val(JSON.stringify(recurringTotals));
         }
     };
 
