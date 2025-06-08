@@ -396,7 +396,7 @@ class Workflow_Handler {
 
         $this->update_request_meta($post_id, $_POST);
 
-        wp_safe_redirect(get_permalink($post_id));
+        wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
         exit;
     }
 
@@ -421,7 +421,7 @@ class Workflow_Handler {
 
         $this->update_request_meta($post_id, $_POST);
         
-        wp_safe_redirect(get_permalink($post_id));
+        wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
         exit;
     }
 
