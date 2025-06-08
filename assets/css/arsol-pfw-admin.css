@@ -18,46 +18,19 @@ body.post-type-arsol-pfw-proposal .select2-container {
     margin-top: 10px;
 }
 
-.arsol-pfw-read-only-field {
-    background-color: #f0f0f1;
-    border: 1px solid #ddd;
-    padding: 3px 8px;
-    width: 100%;
-    box-sizing: border-box;
-    cursor: default;
-    color: #50575e;
+.arsol-pfw-budget-display label {
     display: block;
-    line-height: 1.4;
-    min-height: 30px; /* Match WP input height */
+    margin-bottom: 2px;
 }
 
-.arsol-pfw-original-request-details {
-    padding: 10px;
-    border: 1px solid #e0e0e0;
-    margin-bottom: 15px;
-    background-color: #fafafa;
-}
-
-.arsol-pfw-original-request-details h4 {
-    margin: 0 0 10px 0;
-    padding: 0;
-    font-size: 14px;
-}
-
-.arsol-pfw-original-request-details p {
-    margin: 0 0 5px 0;
-    display: flex;
-    justify-content: space-between;
-}
-
-.arsol-pfw-original-request-details p label {
-    font-weight: normal;
+.arsol-pfw-budget-amount {
+    font-weight: 600;
 }
 
 /* Project field styling */
 #arsol_project_selector {
     width: 100%;
-    max-width: 400px;
+    max-width: 25em;
 }
 
 /* Project column in orders list */
