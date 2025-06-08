@@ -86,7 +86,7 @@ class Proposal {
             </p>
 
             <p>
-                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php _e('Proposed Budget:', 'arsol-pfw'); ?></label>
                 <input type="number" 
                        id="proposal_budget" 
                        name="proposal_budget" 
@@ -97,7 +97,7 @@ class Proposal {
             </p>
 
             <p>
-                <label for="proposal_recurring_budget" style="display:block;margin-bottom:5px;"><?php _e('Recurring Budget:', 'arsol-pfw'); ?></label>
+                <label for="proposal_recurring_budget" style="display:block;margin-bottom:5px;"><?php _e('Proposed Recurring Budget:', 'arsol-pfw'); ?></label>
                 <input type="number" 
                        id="proposal_recurring_budget" 
                        name="proposal_recurring_budget" 
