@@ -172,7 +172,7 @@ class Workflow_Handler {
         if (is_wp_error($new_project_id)) {
             if ($is_internal_call) {
                 \wc_add_notice(__('Failed to create project from proposal. Please try again.', 'arsol-pfw'), 'error');
-                wp_safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
+                wp_safe_redirect(wp_get_referer() ?: \wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
                 exit;
             } else {
                 wp_die($new_project_id->get_error_message());
@@ -216,7 +216,7 @@ class Workflow_Handler {
 
         // Redirect based on how the function was called
         if ($is_internal_call) {
-            wp_safe_redirect(wc_get_account_endpoint_url('project-overview/' . $new_project_id));
+            wp_safe_redirect(\wc_get_account_endpoint_url('project-overview/' . $new_project_id));
         } else {
             wp_redirect(admin_url('post.php?post=' . $new_project_id . '&action=edit'));
         }
@@ -238,7 +238,7 @@ class Workflow_Handler {
             if (empty($product_id) || empty($budget_data) || !is_array($budget_data) || empty($budget_data['amount'])) {
                 return;
             }
-            $product = wc_get_product($product_id);
+            $product = \wc_get_product($product_id);
             if (!$product) {
                 return;
             }
@@ -256,7 +256,7 @@ class Workflow_Handler {
                 return;
             }
             
-            $product = wc_get_product($product_id);
+            $product = \wc_get_product($product_id);
             // It's good practice to check if the product is a subscription type
             if (!$product || !$product->is_type(array('subscription', 'subscription_variation'))) {
                 return;
@@ -268,7 +268,7 @@ class Workflow_Handler {
 
     private function create_standard_order($project_id, $customer_id, $product, $budget_data) {
         try {
-            $order = wc_create_order(array(
+            $order = \wc_create_order(array(
                 'customer_id' => $customer_id,
                 'status' => 'pending',
                 'currency' => $budget_data['currency']
@@ -316,7 +316,7 @@ class Workflow_Handler {
                 'currency' => $budget_data['currency']
             );
 
-            $subscription = wcs_create_subscription($subscription_args);
+            $subscription = \wcs_create_subscription($subscription_args);
 
             if (is_wp_error($subscription)) {
                 return;
@@ -346,7 +346,7 @@ class Workflow_Handler {
         $request_id = intval($_GET['request_id']);
         if (self::user_can_view_post(get_current_user_id(), $request_id)) {
             wp_delete_post($request_id, true); // Delete the request
-            wp_safe_redirect(wc_get_account_endpoint_url('projects')); // Redirect to projects page
+            wp_safe_redirect(\wc_get_account_endpoint_url('projects')); // Redirect to projects page
             exit;
         } else {
             wp_die(__('You do not have permission to cancel this request.', 'arsol-pfw'));
@@ -401,7 +401,7 @@ class Workflow_Handler {
         
         if (is_wp_error($post_id)) {
             \wc_add_notice(__('Failed to create project request. Please try again.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('project-create-request'));
+            wp_safe_redirect(\wc_get_account_endpoint_url('project-create-request'));
             exit;
         }
 
@@ -410,7 +410,7 @@ class Workflow_Handler {
 
         // Add success notice for request creation
         \wc_add_notice(__('Project request created successfully.', 'arsol-pfw'), 'success');
-        wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
+        wp_safe_redirect(\wc_get_account_endpoint_url('project-view-request/' . $post_id));
         exit;
     }
 
@@ -441,14 +441,14 @@ class Workflow_Handler {
 
         $this->update_request_meta($post_id, $_POST);
         
-        wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
+        wp_safe_redirect(\wc_get_account_endpoint_url('project-view-request/' . $post_id));
         exit;
     }
 
     private function update_request_meta($post_id, $data) {
         if (isset($data['request_budget'])) {
-            $amount = wc_clean(wp_unslash($data['request_budget']));
-            $currency = get_woocommerce_currency();
+            $amount = \wc_clean(wp_unslash($data['request_budget']));
+            $currency = \get_woocommerce_currency();
             update_post_meta($post_id, '_request_budget', ['amount' => $amount, 'currency' => $currency]);
         }
         if (isset($data['request_start_date'])) {
