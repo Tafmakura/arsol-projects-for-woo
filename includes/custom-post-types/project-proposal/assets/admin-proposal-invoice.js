@@ -166,15 +166,14 @@
 
             // Helper to create a human-readable label for each billing cycle
             var getCycleLabel = function(interval, period) {
-                var periodLabel = period.charAt(0).toUpperCase() + period.slice(1);
+                var periodLabel = period;
                 interval = parseInt(interval);
 
                 if (interval > 1) {
                     periodLabel += 's';
-                    return 'Every ' + interval + ' ' + periodLabel;
-                } else { // interval is 1 or not a number
-                    return 'Every ' + periodLabel;
+                    return '/ ' + interval + ' ' + periodLabel;
                 }
+                return '/ ' + periodLabel;
             };
 
             $('#product-lines-body .line-item').each(function() {
@@ -244,17 +243,17 @@
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
             
             // Render recurring totals
-            var $recurringBody = $('#recurring-totals-body');
-            $recurringBody.empty();
+            var $recurringDisplay = $('#recurring-totals-display');
+            var recurringHtml = [];
+
             if (Object.keys(recurringTotals).length > 0) {
                  $.each(recurringTotals, function(key, data) {
                      var label = getCycleLabel(data.interval, data.period);
-                     var $row = $('<tr>' +
-                                 '<td><strong>Recurring Total (' + label + '):</strong></td>' +
-                                 '<td class="total-amount">' + formatPrice(data.total) + '</td>' +
-                              '</tr>');
-                     $recurringBody.append($row);
+                     recurringHtml.push(formatPrice(data.total) + ' ' + label);
                  });
+                 $recurringDisplay.html(recurringHtml.join('<br>'));
+            } else {
+                $recurringDisplay.html(formatPrice(0));
             }
             
             $('#line_items_recurring_totals').val(JSON.stringify(recurringTotals));

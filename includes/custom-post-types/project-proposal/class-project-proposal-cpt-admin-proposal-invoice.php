@@ -130,9 +130,10 @@ class Proposal_Invoice {
                             <td><strong><?php _e('One-Time Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="one-time-total-display"><?php echo wc_price(0); ?></td>
                         </tr>
-                    </tbody>
-                    <tbody id="recurring-totals-body">
-                         <!-- Recurring totals will be dynamically inserted here -->
+                        <tr>
+                            <td><strong><?php _e('Recurring Totals:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="recurring-totals-display"><?php echo wc_price(0); ?></td>
+                        </tr>
                     </tbody>
                 </table>
                  <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
