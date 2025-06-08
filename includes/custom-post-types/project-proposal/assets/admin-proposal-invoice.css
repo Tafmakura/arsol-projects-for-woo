@@ -17,6 +17,15 @@
     width: 40%;
 }
 
+#arsol_proposal_invoice_metabox .fee-name-column {
+    width: 60%;
+}
+
+#arsol_proposal_invoice_metabox .taxable-column {
+    width: 80px;
+    text-align: center;
+}
+
 #arsol_proposal_invoice_metabox .actions-column {
     width: 50px;
     text-align: right;

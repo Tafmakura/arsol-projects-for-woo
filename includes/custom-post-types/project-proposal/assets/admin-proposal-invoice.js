@@ -4,8 +4,9 @@
 
     var ArsolProposalInvoice = {
         init: function() {
-            this.template = wp.template('arsol-product-line-item');
-            this.line_item_id = 0;
+            this.product_template = wp.template('arsol-product-line-item');
+            this.fee_template = wp.template('arsol-onetime-fee-line-item');
+            this.line_item_id = 0; // A single counter for all line items to ensure uniqueness
             this.bindEvents();
             this.loadExistingItems();
         },
@@ -15,22 +16,35 @@
             builder.on('click', '.add-line-item', this.addLineItem.bind(this));
             builder.on('click', '.remove-line-item', this.removeLineItem.bind(this));
             builder.on('change', '.product-select', this.productChanged.bind(this));
-            builder.on('input', '.quantity-input, .sale-price-input', this.calculateTotals.bind(this));
+            builder.on('input', '.quantity-input, .sale-price-input, .fee-amount-input', this.calculateTotals.bind(this));
         },
         
         loadExistingItems: function() {
             var self = this;
             var items = arsol_proposal_invoice_vars.line_items;
+
+            // Load products
             if (items && items.products) {
                 $.each(items.products, function(id, itemData) {
                     self.line_item_id++;
                     itemData.id = self.line_item_id;
-                    var $newRow = $(self.template(itemData));
+                    var $newRow = $(self.product_template(itemData));
                     $('#product-lines-body').append($newRow);
                     self.initSelect2($newRow);
                 });
-                this.calculateTotals();
             }
+            
+            // Load fees
+            if (items && items.one_time_fees) {
+                 $.each(items.one_time_fees, function(id, itemData) {
+                    self.line_item_id++;
+                    itemData.id = self.line_item_id;
+                    var $newRow = $(self.fee_template(itemData));
+                    $('#onetime-fee-lines-body').append($newRow);
+                });
+            }
+
+            this.calculateTotals();
         },
 
         initSelect2: function($row) {
@@ -60,9 +74,16 @@
             e.preventDefault();
             this.line_item_id++;
             var templateData = { id: this.line_item_id };
-            var $newRow = $(this.template(templateData));
-            $('#product-lines-body').append($newRow);
-            this.initSelect2($newRow);
+            var itemType = $(e.currentTarget).data('type');
+
+            if (itemType === 'product') {
+                var $newRow = $(this.product_template(templateData));
+                $('#product-lines-body').append($newRow);
+                this.initSelect2($newRow);
+            } else if (itemType === 'onetime-fee') {
+                var $newRow = $(this.fee_template(templateData));
+                $('#onetime-fee-lines-body').append($newRow);
+            }
         },
 
         removeLineItem: function(e) {
@@ -116,6 +137,12 @@
                 var priceHtml = '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
 
                 $row.find('.subtotal-display').html(priceHtml);
+            });
+
+            $('#onetime-fee-lines-body .line-item').each(function() {
+                var $row = $(this);
+                var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
+                grandTotal += amount;
             });
             
             var formattedGrandPrice = grandTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
