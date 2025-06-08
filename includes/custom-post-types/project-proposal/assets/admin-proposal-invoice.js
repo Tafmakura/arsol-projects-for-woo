@@ -150,7 +150,7 @@
                 var quantity = parseFloat($row.find('.quantity-input').val()) || 0;
                 var isSubscription = $row.data('is-subscription');
                 
-                // One-time part of the product (regular price or sign-up fee)
+                // One-time part of the product (regular price OR sign-up fee)
                 var salePrice = parseFloat($row.find('.sale-price-input').val());
                 var price = parseFloat($row.find('.price-input').val()) || 0;
                 var oneTimeUnitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : price;
@@ -159,6 +159,7 @@
                 oneTimeTotal += oneTimeSubtotal;
                 
                 if (isSubscription) {
+                    // If it's a subscription, get the SEPARATE recurring amount
                     var recurringAmount = parseFloat($row.data('recurring-amount')) || 0;
                     recurringTotal += quantity * recurringAmount;
                 }
