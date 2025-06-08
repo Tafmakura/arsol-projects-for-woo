@@ -1,0 +1,568 @@
+/**
+ * Arsol Projects for WooCommerce - Frontend Styles
+ */
+
+/* Temporary CSS */
+/* Hide additional info wrapper */
+.wc-block-order-confirmation-additional-fields-wrapper {
+    display: none !important;
+}
+
+/* Project select field on checkout */
+.woocommerce-checkout .form-row label[for="arsol-pfw-project"] {
+    font-weight: bold;
+}
+
+/* Project navigation styling */
+.arsol-project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.arsol-project-header h2 {
+    margin: 0;
+}
+
+.arsol-project-navigation {
+    margin-bottom: var(--space-s) !important;
+    border-top: 1px solid var(--edging-primary);
+    border-bottom: 1px solid var(--edging-primary);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-top: var(--space-s) !important;
+}
+
+/* Button-based navigation */
+.arsol-button-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.arsol-button-groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.arsol-btn-secondary {
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: transparent;
+    font-size: 14px;
+    height: 40px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.arsol-btn-secondary:hover,
+.arsol-btn-secondary.active {
+    color: #2271b1;
+    background-color: #e5f3ff;
+}
+
+.back-to-projects {
+    font-size: 14px;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+    .arsol-button-groups {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .arsol-btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .arsol-pfw-projects-row thead {
+        display: none;
+    }
+    
+    .arsol-pfw-projects-row td {
+        display: block;
+        text-align: right;
+    }
+    
+    .arsol-pfw-projects-row td:before {
+        content: attr(data-title);
+        float: left;
+        font-weight: bold;
+    }
+}
+
+/* Add styles for the project overview layout with sidebar */
+.project-overview-wrapper {
+    display: flex;
+    flex-wrap: wrap; /* Allows columns to wrap on smaller screens */
+    gap: 20px; /* Adds space between columns */
+}
+
+.project-overview-wrapper h1,
+.project-overview-wrapper h2,
+.project-overview-wrapper h3,
+.project-overview-wrapper h4,
+.project-overview-wrapper h5,
+.project-overview-wrapper h6 {
+    margin-bottom: 0.4em;
+}
+
+.project-content {
+    flex: 1; /* Allows content to grow and take up available space */
+    min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.project-content h1,
+.project-content h2,
+.project-content h3,
+.project-content h4,
+.project-content h5,
+.project-content h6 {
+    transform: scale(0.85);
+    transform-origin: left;
+}
+
+.project-sidebar {
+    max-width: 300px;
+    width: 100%;
+    flex-basis: 300px; /* Set a preferred width for the sidebar */
+    flex-grow: 0; /* Prevent sidebar from growing */
+    flex-shrink: 0; /* Prevent sidebar from shrinking below its basis */
+}
+
+/* Responsive adjustment: Stack columns on smaller screens */
+@media (max-width: 768px) {
+    .project-overview-wrapper {
+        flex-direction: column; /* Stack items vertically */
+        gap: 15px; /* Adjust gap for stacked layout */
+    }
+
+    .project-content,
+    .project-sidebar {
+        flex-basis: auto; /* Reset flex-basis */
+        width: 100%; /* Take full width */
+    }
+}
+
+/* Basic styling for the meta data within the sidebar */
+.project-sidebar .project-meta p {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.project-sidebar .project-meta p:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+/* Project empty state styling */
+.project-empty-state-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Project Metadata Styling - Standard for all sidebars */
+.arsol-pfw-project-meta {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007cba;
+}
+
+.arsol-pfw-project-meta p {
+    margin: 0.5rem 0;
+    color: #23282d;
+}
+
+.arsol-pfw-project-meta p:first-child {
+    margin-top: 0;
+}
+
+.arsol-pfw-project-meta p:last-child {
+    margin-bottom: 0;
+}
+
+/* Legacy support for existing request meta */
+.arsol-pfw-empty-state__request-meta {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007cba;
+}
+
+.arsol-pfw-empty-state__request-meta p {
+    margin: 0.5rem 0;
+    color: #23282d;
+}
+
+.arsol-pfw-empty-state__request-meta p:first-child {
+    margin-top: 0;
+}
+
+.arsol-pfw-empty-state__request-meta p:last-child {
+    margin-bottom: 0;
+}
+
+/* Project Action Buttons - Full Width */
+
+.arsol-pfw-project-action .brxe-button,
+.arsol-pfw-project-action .bricks-button,
+.arsol-pfw-project-action button,
+.arsol-pfw-project-action a {
+    width: 100%;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .project-empty-state-actions {
+        flex-direction: column;
+    }
+    
+    .project-empty-state-actions .bricks-button {
+        width: 100%;
+    }
+}
+
+/* Project Status Styles */
+.project-status {
+    margin-bottom: 1em;
+}
+
+.project-status span {
+    display: inline-block;
+    padding: 0.25em 0.75em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.status-not-started {
+    background-color: #f0f0f0;
+    color: #666;
+}
+
+.status-in-progress {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-on-hold {
+    background-color: #fff3e0;
+    color: #f57c00;
+}
+
+.status-completed {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.status-cancelled {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+/* Create/Request Button Styles */
+.arsol-create-or-request-button {
+    transition: background 0.2s;
+}
+.arsol-create-or-request-button:hover {
+    background-color: #135e96;
+    color: #fff;
+    text-decoration: none;
+}
+
+/* No Permission Message Styles */
+.arsol-no-permission {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 20px 0;
+}
+
+.arsol-no-permission h3 {
+    color: #dc3545;
+    margin-bottom: 10px;
+}
+
+.arsol-no-permission p {
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Status badges in the list */
+.arsol-pfw-projects-row .status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.arsol-pfw-projects-row .status-approved {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.arsol-pfw-projects-row .status-rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.arsol-pfw-projects-row .status-in-progress {
+    background-color: #e3f2fd;
+    color: #1976d2;
+}
+
+.arsol-pfw-projects-row .status-completed {
+    background-color: #e8f5e9;
+    color: #388e3c;
+}
+
+.arsol-pfw-projects-row .status-cancelled {
+    background-color: #ffebee;
+    color: #d32f2f;
+}
+
+.arsol-pfw-projects-row span[class^="status-"] {
+    display: inline-block;
+    padding: 0.25em 0.75em;
+    border-radius: 3px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+/* Frontend Form Styles */
+.arsol-project-meta-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.arsol-project-field-col {
+    flex: 1;
+}
+
+.arsol-budget-col {
+    min-width: 190px;
+}
+
+.arsol-budget-input {
+    min-width: 190px;
+    text-align: right;
+}
+
+.arsol-money-input {
+    text-align: right;
+}
+
+/* Form input spacing */
+.arsol-project-form .form-row,
+.arsol-request-form .form-row {
+    margin-bottom: 20px;
+}
+
+/* Responsive adjustments for project forms */
+@media (max-width: 768px) {
+    .arsol-project-meta-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .arsol-project-field-col {
+        width: 100%;
+    }
+    
+    .arsol-budget-col,
+    .arsol-budget-input {
+        min-width: auto;
+        width: 100%;
+    }
+}
+
+/* Project Comments Styling */
+.project-comments-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.project-comments-section .comment-respond {
+    margin-bottom: 2rem;
+}
+
+.project-comments-section .comment-form-comment label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.project-comments-section .comment-form-comment textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.project-comments-section .comment-form-comment textarea:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+.project-comments-section .form-submit {
+    margin-top: 1rem;
+}
+
+.project-comments-section .form-submit input[type="submit"] {
+    background-color: #007cba;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.project-comments-section .form-submit input[type="submit"]:hover {
+    background-color: #005a87;
+}
+
+.project-comments-section .commentlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.project-comments-section .comment {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+    border-left: 3px solid #007cba;
+}
+
+.project-comments-section .comment-meta {
+    margin-bottom: 0.75rem;
+    font-size: 13px;
+    color: #666;
+}
+
+.project-comments-section .comment-author {
+    font-weight: 600;
+    color: #333;
+}
+
+.project-comments-section .comment-content {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.project-comments-section .comment-content p {
+    margin-bottom: 0.75rem;
+}
+
+.project-comments-section .comment-content p:last-child {
+    margin-bottom: 0;
+}
+
+.project-comments-section .reply {
+    font-size: 12px;
+}
+
+.project-comments-section .reply a {
+    color: #007cba;
+    text-decoration: none;
+}
+
+.project-comments-section .reply a:hover {
+    text-decoration: underline;
+}
+
+.project-comments-section .children {
+    margin-left: 2rem;
+    margin-top: 1rem;
+}
+
+.project-comments-section .children .comment {
+    background-color: #f0f0f0;
+    border-left-color: #666;
+}
+
+.project-comments-section .comment-notes {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.project-comments-section .no-comments {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .project-comments-section .children {
+        margin-left: 1rem;
+    }
+    
+    .project-comments-section .comment {
+        padding: 0.75rem;
+    }
+}
+
+/* Internal Comment Styling */
+.project-comments-section .comment.internal-comment {
+    background-color: #fff3cd;
+    border-left-color: #ffc107;
+}
+
+.project-comments-section .comment.internal-comment:before {
+    content: "🔒 Internal";
+    display: inline-block;
+    background-color: #ffc107;
+    color: #212529;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.project-comments-section .comment-form-internal {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+}
+
+.project-comments-section .comment-form-internal label {
+    font-weight: 600;
+    color: #495057;
+    margin: 0;
+}
+
+.project-comments-section .comment-form-internal input[type="checkbox"] {
+    margin-right: 8px;
+}
+
