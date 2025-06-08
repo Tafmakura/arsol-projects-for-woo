@@ -213,11 +213,7 @@ class Workflow_Handler {
 
         // Redirect based on how the function was called
         if ($is_internal_call) {
-            $this->safe_redirect_with_notice(
-                wc_get_account_endpoint_url('project-overview/' . $new_project_id),
-                'success',
-                __('Proposal approved and converted to project successfully!', 'arsol-pfw')
-            );
+            $this->safe_redirect(wc_get_account_endpoint_url('project-overview/' . $new_project_id));
         } else {
             $this->safe_redirect(admin_url('post.php?post=' . $new_project_id . '&action=edit'));
         }
@@ -346,11 +342,7 @@ class Workflow_Handler {
         $request_id = intval($_GET['request_id']);
         if (self::user_can_view_post(get_current_user_id(), $request_id)) {
             wp_delete_post($request_id, true); // Delete the request
-            $this->safe_redirect_with_notice(
-                wc_get_account_endpoint_url('projects'),
-                'success',
-                __('Request cancelled successfully.', 'arsol-pfw')
-            ); // Redirect to projects page
+            $this->safe_redirect(wc_get_account_endpoint_url('projects')); // Redirect to projects page
         } else {
             wp_die(__('You do not have permission to cancel this request.', 'arsol-pfw'));
         }
@@ -402,22 +394,14 @@ class Workflow_Handler {
         $post_id = wp_insert_post($post_data);
         
         if (is_wp_error($post_id)) {
-            $this->safe_redirect_with_notice(
-                wc_get_account_endpoint_url('project-create-request'),
-                'error',
-                __('Failed to create request. Please try again.', 'arsol-pfw')
-            );
+            $this->safe_redirect(wc_get_account_endpoint_url('project-create-request'));
         }
 
         wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
         $this->update_request_meta($post_id, $_POST);
 
         
-        $this->safe_redirect_with_notice(
-            wc_get_account_endpoint_url('project-view-request/' . $post_id),
-            'success',
-            __('Request created successfully!', 'arsol-pfw')
-        );
+        $this->safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
     }
 
     public function handle_edit_request() {
@@ -444,11 +428,7 @@ class Workflow_Handler {
 
         $this->update_request_meta($post_id, $_POST);
         
-        $this->safe_redirect_with_notice(
-            wc_get_account_endpoint_url('project-view-request/' . $post_id),
-            'success',
-            __('Request updated successfully!', 'arsol-pfw')
-        );
+        $this->safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
     }
 
     private function update_request_meta($post_id, $data) {
@@ -463,19 +443,6 @@ class Workflow_Handler {
         if (isset($data['request_delivery_date'])) {
             update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($data['request_delivery_date']));
         }
-    }
-
-    /**
-     * Safe redirect with notice support
-     */
-    private function safe_redirect_with_notice($url, $notice_type = '', $notice_message = '') {
-        if (!empty($notice_type) && !empty($notice_message)) {
-            $url = add_query_arg(array(
-                'notice_type' => $notice_type,
-                'notice_message' => urlencode($notice_message)
-            ), $url);
-        }
-        $this->safe_redirect($url);
     }
 
     /**
