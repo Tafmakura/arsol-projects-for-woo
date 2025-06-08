@@ -83,6 +83,7 @@ class Project {
 
             <p class="arsol-pfw-budget-display">
                 <label><?php _e('Proposed Budget:', 'arsol-projects-for-woo'); ?></label>
+                <br>
                 <span class="arsol-pfw-budget-amount">
                     <b>
                         <?php echo (isset($budget) && $budget !== '') ? wc_price($budget) : 'N/A'; ?>
@@ -92,6 +93,7 @@ class Project {
 
             <p class="arsol-pfw-budget-display">
                 <label><?php _e('Proposed Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
+                <br>
                 <span class="arsol-pfw-budget-amount">
                     <b>
                         <?php
