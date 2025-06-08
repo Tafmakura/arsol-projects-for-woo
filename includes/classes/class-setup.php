@@ -49,6 +49,7 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-users.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-capabilities.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-notices.php';
 
         // Frontend Handlers
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-frontend-handler.php';
@@ -75,6 +76,7 @@ class Setup {
         new Admin\Settings_Integrations();
         new Admin\Setup();
         new Admin\Users();
+        new Classes\Frontend_Notices();
 
         // Frontend Handlers
         new Custom_Post_Types\Project\Frontend_Handler();
