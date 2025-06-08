@@ -78,8 +78,8 @@ if (!$is_edit) {
             <label for="request_delivery_date"><?php _e('Required Delivery Date', 'arsol-pfw'); ?></label>
             <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>">
         </p>
-        
-        <?php if (!$is_edit) : ?>
+
+        <?php if (empty($is_edit)) : ?>
             <p class="form-row">
                 <button type="submit" class="button"><?php echo esc_html($button_text); ?></button>
             </p>
