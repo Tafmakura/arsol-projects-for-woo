@@ -65,9 +65,9 @@ class Proposal {
         ?>
         <div class="proposal-details">
             <p>
-                <label for="proposal_code" style="display:block;margin-bottom:5px;"><?php _e('Proposal Code:', 'arsol-pfw'); ?></label>
+                <label for="proposal_id" style="display:block;margin-bottom:5px;"><?php _e('Proposal ID:', 'arsol-pfw'); ?></label>
                 <input type="text" 
-                       id="proposal_code" 
+                       id="proposal_id" 
                        value="<?php echo esc_attr($post->ID); ?>"
                        disabled
                        class="widefat">

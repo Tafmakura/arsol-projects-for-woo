@@ -58,9 +58,9 @@ class Request {
         ?>
         <div class="request-details">
             <p>
-                <label for="request_code" style="display:block;margin-bottom:5px;"><?php _e('Request Code:', 'arsol-pfw'); ?></label>
+                <label for="request_id" style="display:block;margin-bottom:5px;"><?php _e('Request ID:', 'arsol-pfw'); ?></label>
                 <input type="text" 
-                       id="request_code" 
+                       id="request_id" 
                        value="<?php echo esc_attr($post->ID); ?>"
                        disabled
                        class="widefat">

@@ -67,83 +67,85 @@ class Project {
         // Check if current user is admin
         $is_admin = current_user_can('administrator');
         ?>
-        <p>
-            <label for="project_code"><?php _e('Project Code:', 'arsol-projects-for-woo'); ?></label>
-            <input type="text" 
-                   id="project_code" 
-                   value="<?php echo esc_attr($post->ID); ?>"
-                   disabled
-                   style="width:100%">
-        </p>
-
-        <p>
-            <label for="post_author_override"><?php _e('Customer:', 'arsol-projects-for-woo'); ?></label>
-            <?php echo $author_dropdown; ?>
-        </p>
-
-        <p>
-            <label for="project_lead"><?php _e('Project Lead:', 'arsol-projects-for-woo'); ?></label>
-            <select name="project_lead" id="project_lead" style="width:100%">
-                <option value=""><?php _e('Select Project Lead', 'arsol-projects-for-woo'); ?></option>
-                <?php foreach ($project_leads as $lead) : ?>
-                    <option value="<?php echo esc_attr($lead->ID); ?>" <?php selected($project_lead, $lead->ID); ?>>
-                        <?php echo esc_html($lead->display_name); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </p>
-
-        <p>
-            <label for="project_status"><?php _e('Project Status:', 'arsol-projects-for-woo'); ?></label>
-            <select name="project_status" id="project_status" style="width:100%">
-                <?php foreach ($statuses as $status) : ?>
-                    <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
-                        <?php echo esc_html($status->name); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </p>
-
-        <p>
-            <label for="project_start_date"><?php _e('Start Date:', 'arsol-projects-for-woo'); ?></label>
-            <input type="date" 
-                   id="project_start_date" 
-                   name="project_start_date" 
-                   value="<?php echo esc_attr($start_date); ?>"
-                   style="width:100%"
-                   <?php echo $is_admin ? '' : 'readonly'; ?>>
-        </p>
-
-        <p>
-            <label for="project_due_date"><?php _e('Due Date:', 'arsol-projects-for-woo'); ?></label>
-            <input type="date" 
-                   id="project_due_date" 
-                   name="project_due_date" 
-                   value="<?php echo esc_attr($due_date); ?>"
-                   style="width:100%">
-        </p>
-
-        <?php if (!empty($budget)) : ?>
+        <div class="project-details">
             <p>
-                <label for="project_budget"><?php _e('Budget:', 'arsol-projects-for-woo'); ?></label>
+                <label for="project_id" style="display:block;margin-bottom:5px;"><?php _e('Project ID:', 'arsol-pfw'); ?></label>
                 <input type="text" 
-                       id="project_budget" 
-                       value="<?php echo esc_attr(wc_price($budget)); ?>"
+                       id="project_id" 
+                       value="<?php echo esc_attr($post->ID); ?>"
                        disabled
+                       class="widefat">
+            </p>
+
+            <p>
+                <label for="post_author_override"><?php _e('Customer:', 'arsol-projects-for-woo'); ?></label>
+                <?php echo $author_dropdown; ?>
+            </p>
+
+            <p>
+                <label for="project_lead"><?php _e('Project Lead:', 'arsol-projects-for-woo'); ?></label>
+                <select name="project_lead" id="project_lead" style="width:100%">
+                    <option value=""><?php _e('Select Project Lead', 'arsol-projects-for-woo'); ?></option>
+                    <?php foreach ($project_leads as $lead) : ?>
+                        <option value="<?php echo esc_attr($lead->ID); ?>" <?php selected($project_lead, $lead->ID); ?>>
+                            <?php echo esc_html($lead->display_name); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
+
+            <p>
+                <label for="project_status"><?php _e('Project Status:', 'arsol-projects-for-woo'); ?></label>
+                <select name="project_status" id="project_status" style="width:100%">
+                    <?php foreach ($statuses as $status) : ?>
+                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
+                            <?php echo esc_html($status->name); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </p>
+
+            <p>
+                <label for="project_start_date"><?php _e('Start Date:', 'arsol-projects-for-woo'); ?></label>
+                <input type="date" 
+                       id="project_start_date" 
+                       name="project_start_date" 
+                       value="<?php echo esc_attr($start_date); ?>"
+                       style="width:100%"
+                       <?php echo $is_admin ? '' : 'readonly'; ?>>
+            </p>
+
+            <p>
+                <label for="project_due_date"><?php _e('Due Date:', 'arsol-projects-for-woo'); ?></label>
+                <input type="date" 
+                       id="project_due_date" 
+                       name="project_due_date" 
+                       value="<?php echo esc_attr($due_date); ?>"
                        style="width:100%">
             </p>
-        <?php endif; ?>
 
-        <?php if (!empty($recurring_budget)) : ?>
-            <p>
-                <label for="project_recurring_budget"><?php _e('Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
-                <input type="text" 
-                       id="project_recurring_budget" 
-                       value="<?php echo esc_attr(wc_price($recurring_budget)); ?>"
-                       disabled
-                       style="width:100%">
-            </p>
-        <?php endif; ?>
+            <?php if (!empty($budget)) : ?>
+                <p>
+                    <label for="project_budget"><?php _e('Budget:', 'arsol-projects-for-woo'); ?></label>
+                    <input type="text" 
+                           id="project_budget" 
+                           value="<?php echo esc_attr(wc_price($budget)); ?>"
+                           disabled
+                           style="width:100%">
+                </p>
+            <?php endif; ?>
+
+            <?php if (!empty($recurring_budget)) : ?>
+                <p>
+                    <label for="project_recurring_budget"><?php _e('Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
+                    <input type="text" 
+                           id="project_recurring_budget" 
+                           value="<?php echo esc_attr(wc_price($recurring_budget)); ?>"
+                           disabled
+                           style="width:100%">
+                </p>
+            <?php endif; ?>
+        </div>
         <?php
     }
 
