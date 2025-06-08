@@ -312,9 +312,13 @@ class Proposal_Invoice {
             $sale_price_val = $product->get_sale_price();
         }
 
+        // Ensure we have numeric values before formatting, as get_price() can return ''
+        $regular_price_val = is_numeric($regular_price_val) ? (float) $regular_price_val : 0;
+        $sale_price_val = is_numeric($sale_price_val) ? (float) $sale_price_val : '';
+
         $data = array(
             'regular_price' => wc_format_decimal($regular_price_val, wc_get_price_decimals()),
-            'sale_price' => $sale_price_val ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
+            'sale_price' => $sale_price_val !== '' ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
             'is_subscription' => $is_subscription,
             'sign_up_fee' => wc_format_decimal($sign_up_fee, wc_get_price_decimals()),
             'sub_text' => $sub_text,
