@@ -59,8 +59,8 @@ if ($current_status === 'under-review') {
     $reject_message = esc_attr__('Are you sure you want to reject this proposal?', 'arsol-pfw');
     ?>
     <div class="arsol-sidebar-actions">
-        <a href="<?php echo esc_url($approve_url); ?>" class="button is-success arsol-confirm-action" data-message="<?php echo $approve_message; ?>"><?php esc_html_e('Approve Proposal', 'arsol-pfw'); ?></a>
-        <a href="<?php echo esc_url($reject_url); ?>" class="button is-danger arsol-confirm-action" data-message="<?php echo $reject_message; ?>"><?php esc_html_e('Reject Proposal', 'arsol-pfw'); ?></a>
+        <a href="<?php echo esc_url($approve_url); ?>" class="button arsol-confirm-action" data-message="<?php echo $approve_message; ?>" style="width: 100%; margin-top: 8px; display: inline-block; text-align: center; text-decoration: none;"><?php esc_html_e('Approve Proposal', 'arsol-pfw'); ?></a>
+        <a href="<?php echo esc_url($reject_url); ?>" class="brxe-button bricks-button sm outline bricks-color-primary arsol-confirm-action" data-message="<?php echo $reject_message; ?>" style="width: 100%; margin-top: 8px; display: inline-block; text-align: center; text-decoration: none;"><?php esc_html_e('Reject Proposal', 'arsol-pfw'); ?></a>
     </div>
     <?php
 }

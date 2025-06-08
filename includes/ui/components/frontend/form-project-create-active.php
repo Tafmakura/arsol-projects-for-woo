@@ -76,7 +76,7 @@ $currency_symbol = get_woocommerce_currency_symbol($currency_code);
         </div>
         
         <div class="form-row">
-            <button type="submit" class="button"><?php _e('Create Project', 'arsol-pfw'); ?></button>
+            <button type="submit" class="button" style="width: 100%; margin-top: 8px;"><?php _e('Create Project', 'arsol-pfw'); ?></button>
         </div>
     </form>
 </div> 
