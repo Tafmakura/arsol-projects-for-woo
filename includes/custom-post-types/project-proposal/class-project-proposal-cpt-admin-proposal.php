@@ -96,14 +96,14 @@ class Proposal {
                 <?php endif; ?>
                 <?php if ($original_start_date) : ?>
                 <p>
-                    <label><?php _e('Start Date:', 'arsol-pfw'); ?></label>
+                    <label><?php _e('Requested Start Date:', 'arsol-pfw'); ?></label>
                     </br>
                     <strong><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_start_date))); ?></strong>
                 </p>
                 <?php endif; ?>
                 <?php if ($original_delivery_date) : ?>
                 <p>
-                    <label><?php _e('Delivery Date:', 'arsol-pfw'); ?></label>
+                    <label><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></label>
                     </br>
                     <strong><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_delivery_date))); ?></strong>
                 </p>
