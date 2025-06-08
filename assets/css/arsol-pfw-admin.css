@@ -2,6 +2,16 @@
  * Arsol Projects for WooCommerce - Admin Styles
  */
 
+/* General Admin Styles */
+body.post-type-arsol-pfw-proposal .select2-container {
+    width: 100% !important;
+}
+
+.arsol-pfw-admin-project-actions {
+    margin-top: 10px;
+    text-align: right;
+}
+
 /* Project field styling */
 #arsol_project_selector {
     width: 100%;
