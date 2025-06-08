@@ -124,14 +124,15 @@ class Request {
                     ? __('The request status must be "Under Review" to enable conversion.', 'arsol-pfw')
                     : __('Converts this request into a new proposal.', 'arsol-pfw');
                 ?>
-                <a href="#" 
-                   class="button button-secondary arsol-confirm-conversion" 
-                   data-url="<?php echo esc_url($convert_url); ?>" 
-                   data-message="<?php echo $confirm_message; ?>"
-                   title="<?php echo esc_attr($tooltip_text); ?>"
-                   <?php disabled($is_disabled, true); ?>>
-                   <?php _e('Convert to Proposal', 'arsol-pfw'); ?>
-                </a>
+                <span title="<?php echo esc_attr($tooltip_text); ?>">
+                    <a href="#" 
+                       class="button button-secondary arsol-confirm-conversion<?php if ($is_disabled) echo ' disabled'; ?>" 
+                       data-url="<?php echo esc_url($convert_url); ?>" 
+                       data-message="<?php echo $confirm_message; ?>"
+                       <?php disabled($is_disabled, true); ?>>
+                       <?php _e('Convert to Proposal', 'arsol-pfw'); ?>
+                    </a>
+                </span>
             </div>
         </div>
         <?php

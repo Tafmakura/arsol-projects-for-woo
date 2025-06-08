@@ -44,6 +44,12 @@ class Workflow_Handler {
             wp_die(__('Invalid request.', 'arsol-pfw'));
         }
 
+        // Server-side validation of the request status
+        $current_status = wp_get_object_terms($request_id, 'arsol-request-status', array('fields' => 'slugs'));
+        if (empty($current_status) || $current_status[0] !== 'under-review') {
+            wp_die(__('This request cannot be converted. The status must be "Under Review".', 'arsol-pfw'));
+        }
+
         $proposal_args = array(
             'post_title'   => $request_post->post_title,
             'post_content' => $request_post->post_content,

@@ -8,6 +8,11 @@ jQuery(document).ready(function($) {
     $('body').on('click', '.arsol-confirm-conversion', function(e) {
         e.preventDefault();
         
+        // If the button is disabled, do nothing
+        if ($(this).is(':disabled') || $(this).hasClass('disabled')) {
+            return;
+        }
+
         var message = $(this).data('message');
         var url = $(this).data('url');
 

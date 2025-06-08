@@ -233,13 +233,14 @@ class Proposal {
                 ? __('The proposal must be published before it can be converted.', 'arsol-pfw')
                 : __('Converts this proposal into a new project.', 'arsol-pfw');
             ?>
-            <input type="button" 
-                   class="button button-secondary arsol-confirm-conversion" 
-                   value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
-                   data-url="<?php echo esc_url($convert_url); ?>" 
-                   data-message="<?php echo $confirm_message; ?>"
-                   title="<?php echo esc_attr($tooltip_text); ?>"
-                   <?php disabled($is_disabled, true); ?> />
+            <span title="<?php echo esc_attr($tooltip_text); ?>">
+                <input type="button" 
+                       class="button button-secondary arsol-confirm-conversion" 
+                       value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
+                       data-url="<?php echo esc_url($convert_url); ?>" 
+                       data-message="<?php echo $confirm_message; ?>"
+                       <?php disabled($is_disabled, true); ?> />
+            </span>
             </div>
         </div>
         <script type="text/javascript">
