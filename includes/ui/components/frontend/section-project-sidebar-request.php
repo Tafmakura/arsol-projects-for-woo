@@ -49,6 +49,21 @@ do_action('arsol_pfw_sidebar_fields_end', 'request', $sidebar_data);
 ?>
 
 <?php
+// Add cancel button for 'pending' status
+$status_terms = wp_get_post_terms($request_id, 'arsol-request-status', ['fields' => 'slugs']);
+$current_status = !empty($status_terms) ? $status_terms[0] : '';
+if ($current_status === 'pending') {
+    $cancel_url = wp_nonce_url(add_query_arg(['action' => 'arsol_cancel_request', 'request_id' => $request_id], admin_url('admin-post.php')), 'arsol_cancel_request_nonce');
+    $confirm_message = esc_attr__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw');
+    ?>
+    <div class="arsol-sidebar-actions">
+        <a href="<?php echo esc_url($cancel_url); ?>" class="button is-danger arsol-confirm-action" data-message="<?php echo $confirm_message; ?>"><?php esc_html_e('Cancel Request', 'arsol-pfw'); ?></a>
+    </div>
+    <?php
+}
+?>
+
+<?php
 /**
  * Hook: arsol_pfw_sidebar_after
  * 

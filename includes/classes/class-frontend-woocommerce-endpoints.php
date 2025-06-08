@@ -291,9 +291,8 @@ class Frontend_Endpoints {
             exit;
         }
 
-        // Allow access if user is admin, has project management capabilities, or is the proposal author
-        $can_view = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id) ||
-                   (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id) && $proposal->post_author === $user_id);
+        // Allow access if user is the author or has project management capabilities
+        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $proposal_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
@@ -301,6 +300,7 @@ class Frontend_Endpoints {
             exit;
         }
 
+        // Include the master project overview template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-proposal.php';
     }
     
@@ -329,9 +329,8 @@ class Frontend_Endpoints {
             exit;
         }
 
-        // Allow access if user is admin, has project management capabilities, or is the request author
-        $can_view = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id) ||
-                   (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id) && $request->post_author === $user_id);
+        // Allow access if user is the author or has project management capabilities
+        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $request_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
@@ -339,6 +338,7 @@ class Frontend_Endpoints {
             exit;
         }
 
+        // Include the master project overview template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php';
     }
     

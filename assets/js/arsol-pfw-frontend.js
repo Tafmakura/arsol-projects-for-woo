@@ -22,6 +22,17 @@
                 console.log('View project button clicked');
             });
         }
+
+        // For example, you might want to show a loading spinner
+        // or disable the button to prevent multiple submissions.
     });
-    
+
+    // Add a confirmation dialog for actions
+    $('.arsol-confirm-action').on('click', function(e) {
+        var message = $(this).data('message');
+        if (!confirm(message)) {
+            e.preventDefault();
+        }
+    });
+
 })(jQuery);
