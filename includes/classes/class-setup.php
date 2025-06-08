@@ -10,7 +10,7 @@ class Setup {
     public function __construct() {
         $this->require_files();
         $this->instantiate_classes();
-        add_action('plugins_loaded', array($this, 'init'));
+        add_action('init', array($this, 'init'));
         
         // Register activation and deactivation hooks
         register_activation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'activate'));

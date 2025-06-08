@@ -403,13 +403,11 @@ class Workflow_Handler {
             wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
             $this->update_request_meta($post_id, $_POST);
             set_transient('arsol_pfw_request_submitted_' . get_current_user_id(), $post_id, 60);
-            // Manually construct the URL for robustness
-            $redirect_url = trailingslashit(wc_get_account_endpoint_url('project-view-request')) . $post_id . '/';
+            $redirect_url = wc_get_account_endpoint_url('project-view-request', $post_id);
         }
 
         ob_end_clean();
-        // Use a JS redirect for robustness
-        echo '<script>window.location.href = "' . esc_url_raw($redirect_url) . '";</script>';
+        wp_safe_redirect($redirect_url);
         exit;
     }
 
@@ -437,11 +435,9 @@ class Workflow_Handler {
             $this->update_request_meta($post_id, $_POST);
         }
         
-        // Manually construct the URL for robustness
-        $redirect_url = trailingslashit(wc_get_account_endpoint_url('project-view-request')) . $post_id . '/';
+        $redirect_url = wc_get_account_endpoint_url('project-view-request', $post_id);
         ob_end_clean();
-        // Use a JS redirect for robustness
-        echo '<script>window.location.href = "' . esc_url_raw($redirect_url) . '";</script>';
+        wp_safe_redirect($redirect_url);
         exit;
     }
 
