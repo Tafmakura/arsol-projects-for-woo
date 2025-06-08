@@ -159,7 +159,7 @@ class Proposal_Invoice {
                     <div class="product-sub-text">{{{ data.sub_text }}}</div>
                 </td>
                 <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
-                <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.price || '' }}"></td>
+                <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
                 <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
                 <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
@@ -234,6 +234,10 @@ class Proposal_Invoice {
             foreach ( $line_items as $group_key => $group_value ) {
                 if (!empty($group_value)) {
                     $sanitized_line_items[$group_key] = array_map( function( $item ) {
+                        // Allow HTML in sub-text for display purposes
+                        if (isset($item['sub_text'])) {
+                            $item['sub_text'] = wp_kses_post($item['sub_text']);
+                        }
                         return array_map( 'sanitize_text_field', $item );
                     }, (array) $group_value );
                 }
@@ -289,15 +293,31 @@ class Proposal_Invoice {
         
         $is_subscription = $product->is_type(array('subscription', 'subscription_variation'));
         $sub_text = '';
-        if ($is_subscription && function_exists('wcs_get_subscription')) {
-            $sub_text = $product->get_price_string();
+        $regular_price_val = 0;
+        $sale_price_val = '';
+        $recurring_amount = 0;
+
+        if ($is_subscription) {
+            if (class_exists('WC_Subscriptions')) {
+                // The sub_text should just describe the recurring part.
+                $sub_text = $product->get_price_string();
+            }
+            // The main price fields represent the one-time sign-up fee.
+            $regular_price_val = (float) $product->get_meta('_subscription_sign_up_fee');
+            $sale_price_val = ''; // No "sale sign-up fee" concept.
+            $recurring_amount = (float) $product->get_price();
+
+        } else {
+            // For simple products, it's the standard price.
+            $regular_price_val = $product->get_regular_price();
+            $sale_price_val = $product->get_sale_price();
         }
 
         $data = array(
-            'price' => wc_format_decimal($product->get_price(), 2),
-            'regular_price' => wc_format_decimal($product->get_regular_price(), 2),
-            'sale_price' => $product->get_sale_price() ? wc_format_decimal($product->get_sale_price(), 2) : '',
+            'regular_price' => wc_format_decimal($regular_price_val, 2),
+            'sale_price' => $sale_price_val ? wc_format_decimal($sale_price_val, 2) : '',
             'is_subscription' => $is_subscription,
+            'recurring_amount' => wc_format_decimal($recurring_amount, 2),
             'sub_text' => $sub_text
         );
 

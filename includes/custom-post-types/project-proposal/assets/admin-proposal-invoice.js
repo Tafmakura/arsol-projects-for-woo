@@ -17,7 +17,6 @@
             builder.on('click', '.add-line-item', this.addLineItem.bind(this));
             builder.on('click', '.remove-line-item', this.removeLineItem.bind(this));
             builder.on('change', '.product-select', this.productChanged.bind(this));
-            // This single binding handles all input changes for calculation
             builder.on('input change', '.quantity-input, .sale-price-input, .price-input, .fee-amount-input, .billing-interval, .billing-period', this.calculateTotals.bind(this));
         },
         
@@ -53,13 +52,17 @@
                 template = this.recurring_fee_template;
                 container = '#recurring-fee-lines-body';
             } else {
-                return; // Exit if type is unknown
+                return;
             }
             
             var $newRow = $(template(data));
             $(container).append($newRow);
             if (type === 'product') {
                 this.initSelect2($newRow);
+                // After rendering an existing product, re-set its data from the fields
+                 if(data.product_id) {
+                     this.fetchProductDetails($newRow, data.product_id);
+                 }
             }
         },
 
@@ -94,34 +97,41 @@
             $(e.currentTarget).closest('.line-item').remove();
             this.calculateTotals();
         },
-
+        
         productChanged: function(e) {
-            var self = this;
-            var $select = $(e.currentTarget);
-            var $row = $select.closest('.line-item');
-            var productId = $select.val();
+            var $row = $(e.currentTarget).closest('.line-item');
+            var productId = $(e.currentTarget).val();
+            this.fetchProductDetails($row, productId);
+        },
 
-            if (!productId) return;
+        fetchProductDetails: function($row, productId) {
+             var self = this;
+             if (!productId) return;
 
-            $.ajax({
-                url: arsol_proposal_invoice_vars.ajax_url,
-                type: 'POST',
-                data: {
-                    action: 'arsol_proposal_invoice_ajax_get_product_details',
-                    nonce: arsol_proposal_invoice_vars.nonce,
-                    product_id: productId,
-                },
-                success: function(response) {
-                    if (response.success) {
-                        var data = response.data;
-                        $row.find('.price-input').val(data.regular_price).prop('readonly', data.is_subscription);
-                        $row.find('.sale-price-input').val(data.sale_price).prop('readonly', data.is_subscription);
-                        $row.find('.product-sub-text').html(data.sub_text);
-                        $row.data('is-subscription', data.is_subscription);
-                        self.calculateTotals();
-                    }
-                }
-            });
+             $.ajax({
+                 url: arsol_proposal_invoice_vars.ajax_url,
+                 type: 'POST',
+                 data: {
+                     action: 'arsol_proposal_invoice_ajax_get_product_details',
+                     nonce: arsol_proposal_invoice_vars.nonce,
+                     product_id: productId,
+                 },
+                 success: function(response) {
+                     if (response.success) {
+                         var data = response.data;
+                         // Set visual fields
+                         $row.find('.price-input').val(data.regular_price);
+                         $row.find('.sale-price-input').val(data.sale_price);
+                         $row.find('.product-sub-text').html(data.sub_text);
+                         
+                         // Store data for calculation
+                         $row.data('is-subscription', data.is_subscription);
+                         $row.data('recurring-amount', data.recurring_amount);
+                         
+                         self.calculateTotals();
+                     }
+                 }
+             });
         },
         
         calculateTotals: function() {
@@ -138,20 +148,22 @@
             $('#product-lines-body .line-item').each(function() {
                 var $row = $(this);
                 var quantity = parseFloat($row.find('.quantity-input').val()) || 0;
-                var salePrice = parseFloat($row.find('.sale-price-input').val());
-                var price = parseFloat($row.find('.price-input').val()) || 0;
                 var isSubscription = $row.data('is-subscription');
                 
-                var unitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : price;
-                var subtotal = quantity * unitPrice;
-
+                // One-time part of the product (regular price or sign-up fee)
+                var salePrice = parseFloat($row.find('.sale-price-input').val());
+                var price = parseFloat($row.find('.price-input').val()) || 0;
+                var oneTimeUnitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : price;
+                var oneTimeSubtotal = quantity * oneTimeUnitPrice;
+                
+                oneTimeTotal += oneTimeSubtotal;
+                
                 if (isSubscription) {
-                    recurringTotal += subtotal;
-                } else {
-                    oneTimeTotal += subtotal;
+                    var recurringAmount = parseFloat($row.data('recurring-amount')) || 0;
+                    recurringTotal += quantity * recurringAmount;
                 }
                 
-                $row.find('.subtotal-display').html(formatPrice(subtotal));
+                $row.find('.subtotal-display').html(formatPrice(oneTimeSubtotal));
             });
             
             // One-Time Fee Totals
