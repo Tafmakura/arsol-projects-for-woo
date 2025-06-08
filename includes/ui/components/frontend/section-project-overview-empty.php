@@ -15,9 +15,6 @@ do_action('arsol_projects_before_empty_state', $project_id);
 ?>
 <div class="arsol-pfw-project-overview-empty">
     <div class="arsol-pfw-empty-state">
-        <div class="arsol-pfw-empty-state__icon">
-            <span class="dashicons dashicons-portfolio"></span>
-        </div>
         <div class="arsol-pfw-empty-state__content">
             <h1><?php esc_html_e('No Project Overview at the moment.', 'arsol-pfw'); ?></h1>
             <p><?php esc_html_e('The project details aren\'t available at this time. Check back soon for more details.', 'arsol-pfw'); ?></p>

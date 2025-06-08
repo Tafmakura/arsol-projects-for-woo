@@ -167,6 +167,29 @@
     margin-top: 1.5rem;
 }
 
+/* Project Metadata Styling - Standard for all sidebars */
+.arsol-pfw-project-meta {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007cba;
+}
+
+.arsol-pfw-project-meta p {
+    margin: 0.5rem 0;
+    color: #23282d;
+}
+
+.arsol-pfw-project-meta p:first-child {
+    margin-top: 0;
+}
+
+.arsol-pfw-project-meta p:last-child {
+    margin-bottom: 0;
+}
+
+/* Legacy support for existing request meta */
 .arsol-pfw-empty-state__request-meta {
     margin-top: 1.5rem;
     padding: 1rem;
@@ -186,6 +209,21 @@
 
 .arsol-pfw-empty-state__request-meta p:last-child {
     margin-bottom: 0;
+}
+
+/* Project Action Buttons - Full Width */
+.arsol-pfw-project-action {
+    margin-bottom: 8px;
+}
+
+.arsol-pfw-project-action .brxe-button,
+.arsol-pfw-project-action .bricks-button,
+.arsol-pfw-project-action button,
+.arsol-pfw-project-action a {
+    width: 100%;
+    display: block;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 @media (max-width: 768px) {

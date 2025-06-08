@@ -34,24 +34,6 @@ do_action('arsol_projects_before_request_state', $post->ID);
                     <div class="arsol-pfw-empty-state__content">
                         <h1><?php esc_html_e('Request Under Review', 'arsol-pfw'); ?></h1>
                         <p><?php printf(esc_html__('Your project request "%s" is currently being reviewed by our team. We\'ll get back to you soon with a detailed proposal.', 'arsol-pfw'), '<strong>' . esc_html($post->post_title) . '</strong>'); ?></p>
-                        
-                        <div class="arsol-pfw-empty-state__request-meta">
-                            <?php if (!empty($request_budget) && is_array($request_budget)) : ?>
-                                <p><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php echo wc_price($request_budget['amount'], array('currency' => $request_budget['currency'])); ?></p>
-                            <?php endif; ?>
-                            
-                            <?php 
-                            $start_date = get_post_meta($post->ID, '_request_start_date', true);
-                            if ($start_date) : ?>
-                                <p><strong><?php _e('Requested Start Date:', 'arsol-pfw'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($start_date))); ?></p>
-                            <?php endif; ?>
-                            
-                            <?php 
-                            $delivery_date = get_post_meta($post->ID, '_request_delivery_date', true);
-                            if ($delivery_date) : ?>
-                                <p><strong><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($delivery_date))); ?></p>
-                            <?php endif; ?>
-                        </div>
                     </div>
                 </div>
             </div>

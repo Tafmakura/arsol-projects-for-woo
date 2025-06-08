@@ -49,22 +49,50 @@ do_action('arsol_pfw_sidebar_fields_end', 'proposal', $sidebar_data);
 ?>
 
 <?php
-// Add approve/reject buttons for 'under-review' status
+// Get status and metadata
 $status_terms = wp_get_post_terms($proposal_id, 'arsol-review-status', ['fields' => 'slugs']);
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
-if ($current_status === 'under-review') {
-    $approve_url = wp_nonce_url(add_query_arg(['action' => 'arsol_approve_proposal', 'proposal_id' => $proposal_id], admin_url('admin-post.php')), 'arsol_approve_proposal_nonce');
-    $reject_url = wp_nonce_url(add_query_arg(['action' => 'arsol_reject_proposal', 'proposal_id' => $proposal_id], admin_url('admin-post.php')), 'arsol_reject_proposal_nonce');
-    $approve_message = esc_attr__('Are you sure you want to approve this proposal? This will convert it into a project.', 'arsol-pfw');
-    $reject_message = esc_attr__('Are you sure you want to reject this proposal?', 'arsol-pfw');
-    ?>
-    <div class="arsol-sidebar-actions">
-        <a href="<?php echo esc_url($approve_url); ?>" class="button arsol-confirm-action" data-message="<?php echo $approve_message; ?>" style="width: 100%; margin-top: 8px; display: inline-block; text-align: center; text-decoration: none;"><?php esc_html_e('Approve Proposal', 'arsol-pfw'); ?></a>
-        <a href="<?php echo esc_url($reject_url); ?>" class="brxe-button bricks-button sm outline bricks-color-primary arsol-confirm-action" data-message="<?php echo $reject_message; ?>" style="width: 100%; margin-top: 8px; display: inline-block; text-align: center; text-decoration: none;"><?php esc_html_e('Reject Proposal', 'arsol-pfw'); ?></a>
-    </div>
-    <?php
-}
+
+// Get proposal metadata
+$proposal_budget = get_post_meta($proposal_id, '_proposal_budget', true);
+$start_date = get_post_meta($proposal_id, '_proposal_start_date', true);
+$delivery_date = get_post_meta($proposal_id, '_proposal_delivery_date', true);
+$timeline = get_post_meta($proposal_id, '_proposal_timeline', true);
 ?>
+
+<?php if ($proposal_budget || $start_date || $delivery_date || $timeline) : ?>
+<div class="arsol-pfw-project-meta">
+    <?php if (!empty($proposal_budget)) : ?>
+        <p><strong><?php _e('Proposed Budget:', 'arsol-pfw'); ?></strong> <?php echo wc_price($proposal_budget); ?></p>
+    <?php endif; ?>
+    
+    <?php if ($start_date) : ?>
+        <p><strong><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($start_date))); ?></p>
+    <?php endif; ?>
+    
+    <?php if ($delivery_date) : ?>
+        <p><strong><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($delivery_date))); ?></p>
+    <?php endif; ?>
+    
+    <?php if ($timeline) : ?>
+        <p><strong><?php _e('Timeline:', 'arsol-pfw'); ?></strong> <?php echo esc_html($timeline); ?></p>
+    <?php endif; ?>
+</div>
+<?php endif; ?>
+
+<?php if ($current_status === 'under-review') : ?>
+    <div class="arsol-pfw-project-action">
+        <a href="<?php echo esc_url(wp_nonce_url(add_query_arg(['action' => 'arsol_approve_proposal', 'proposal_id' => $proposal_id], admin_url('admin-post.php')), 'arsol_approve_proposal_nonce')); ?>" class="brxe-button bricks-button button-primary arsol-confirm-action" data-message="<?php esc_attr_e('Are you sure you want to approve this proposal? This will convert it into a project.', 'arsol-pfw'); ?>">
+            <?php esc_html_e('Approve Proposal', 'arsol-pfw'); ?>
+        </a>
+    </div>
+    
+    <div class="arsol-pfw-project-action">
+        <a href="<?php echo esc_url(wp_nonce_url(add_query_arg(['action' => 'arsol_reject_proposal', 'proposal_id' => $proposal_id], admin_url('admin-post.php')), 'arsol_reject_proposal_nonce')); ?>" class="brxe-button bricks-button sm outline bricks-color-primary arsol-confirm-action" data-message="<?php esc_attr_e('Are you sure you want to reject this proposal?', 'arsol-pfw'); ?>">
+            <?php esc_html_e('Reject Proposal', 'arsol-pfw'); ?>
+        </a>
+    </div>
+<?php endif; ?>
 
 <?php
 /**

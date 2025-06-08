@@ -46,49 +46,37 @@ $sidebar_data = compact(
 do_action('arsol_pfw_sidebar_before', 'active', $sidebar_data);
 ?>
 
-<div class="project-meta">
-    <?php
-    /**
-     * Hook: arsol_pfw_sidebar_fields_start
-     * 
-     * @param string $type Sidebar type: 'active', 'proposal', 'request'
-     * @param array $data All sidebar data
-     */
-    do_action('arsol_pfw_sidebar_fields_start', 'active', $sidebar_data);
-    ?>
-    
-    <p>
-        <strong><?php _e('Status:', 'arsol-pfw'); ?></strong>
-        <span><?php echo esc_html($status); ?></span>
-    </p>
+<?php
+/**
+ * Hook: arsol_pfw_sidebar_fields_start
+ * 
+ * @param string $type Sidebar type: 'active', 'proposal', 'request'
+ * @param array $data All sidebar data
+ */
+do_action('arsol_pfw_sidebar_fields_start', 'active', $sidebar_data);
+?>
+
+<div class="arsol-pfw-project-meta">
+    <p><strong><?php _e('Status:', 'arsol-pfw'); ?></strong> <?php echo esc_html($status); ?></p>
     
     <?php if ($budget): ?>
-    <p>
-        <strong><?php _e('Budget:', 'arsol-pfw'); ?></strong>
-        <span><?php echo wc_price($budget); ?></span>
-    </p>
+        <p><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php echo wc_price($budget); ?></p>
     <?php endif; ?>
     
-    <p>
-        <strong><?php _e('Start Date:', 'arsol-pfw'); ?></strong>
-        <span><?php echo esc_html($start_date_formatted); ?></span>
-    </p>
+    <p><strong><?php _e('Start Date:', 'arsol-pfw'); ?></strong> <?php echo esc_html($start_date_formatted); ?></p>
     
-    <p>
-        <strong><?php _e('Delivery Date:', 'arsol-pfw'); ?></strong>
-        <span><?php echo esc_html($delivery_date_formatted); ?></span>
-    </p>
-    
-    <?php
-    /**
-     * Hook: arsol_pfw_sidebar_fields_end
-     * 
-     * @param string $type Sidebar type: 'active', 'proposal', 'request'
-     * @param array $data All sidebar data
-     */
-    do_action('arsol_pfw_sidebar_fields_end', 'active', $sidebar_data);
-    ?>
+    <p><strong><?php _e('Delivery Date:', 'arsol-pfw'); ?></strong> <?php echo esc_html($delivery_date_formatted); ?></p>
 </div>
+
+<?php
+/**
+ * Hook: arsol_pfw_sidebar_fields_end
+ * 
+ * @param string $type Sidebar type: 'active', 'proposal', 'request'
+ * @param array $data All sidebar data
+ */
+do_action('arsol_pfw_sidebar_fields_end', 'active', $sidebar_data);
+?>
 
 <?php
 /**
