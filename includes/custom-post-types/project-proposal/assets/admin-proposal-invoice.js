@@ -165,16 +165,17 @@
             };
 
             // Helper to create a human-readable label for each billing cycle
-            var getCycleLabel = function(interval, period, total) {
-                 // Basic pluralization
+            var getCycleLabel = function(interval, period) {
                 var periodLabel = period.charAt(0).toUpperCase() + period.slice(1);
-                if (total > 1 && interval == 1) {
-                    periodLabel += 's';
-                }
-                var intervalLabel = interval > 1 ? 'every ' + interval : '';
-                return 'per ' + periodLabel + ' (' + intervalLabel + ')';
-            };
+                interval = parseInt(interval);
 
+                if (interval > 1) {
+                    periodLabel += 's';
+                    return 'Every ' + interval + ' ' + periodLabel;
+                } else { // interval is 1 or not a number
+                    return 'Every ' + periodLabel;
+                }
+            };
 
             $('#product-lines-body .line-item').each(function() {
                 var $row = $(this);
@@ -247,7 +248,7 @@
             $recurringBody.empty();
             if (Object.keys(recurringTotals).length > 0) {
                  $.each(recurringTotals, function(key, data) {
-                     var label = getCycleLabel(data.interval, data.period, data.total);
+                     var label = getCycleLabel(data.interval, data.period);
                      var $row = $('<tr>' +
                                  '<td><strong>Recurring Total (' + label + '):</strong></td>' +
                                  '<td class="total-amount">' + formatPrice(data.total) + '</td>' +
