@@ -46,7 +46,6 @@ class Proposal {
         $budget = get_post_meta($post->ID, '_proposal_budget', true);
         $start_date = get_post_meta($post->ID, '_proposal_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
-        $related_request = get_post_meta($post->ID, '_related_request', true);
         
         // Get author dropdown
         $author_dropdown = wp_dropdown_users(array(
@@ -57,14 +56,6 @@ class Proposal {
             'class' => 'widefat'
         ));
 
-        // Get related request dropdown
-        $requests = get_posts(array(
-            'post_type' => 'arsol-pfw-request',
-            'posts_per_page' => -1,
-            'orderby' => 'title',
-            'order' => 'ASC',
-            'post_status' => 'publish'
-        ));
         ?>
         <div class="proposal-details">
             <p>
@@ -79,18 +70,6 @@ class Proposal {
             <p>
                 <label for="post_author_override" style="display:block;margin-bottom:5px;"><?php _e('Customer:', 'arsol-pfw'); ?></label>
                 <?php echo $author_dropdown; ?>
-            </p>
-
-            <p>
-                <label for="related_request" style="display:block;margin-bottom:5px;"><?php _e('Related Request:', 'arsol-pfw'); ?></label>
-                <select name="related_request" id="related_request" class="widefat">
-                    <option value=""><?php _e('Select Related Request', 'arsol-pfw'); ?></option>
-                    <?php foreach ($requests as $request) : ?>
-                        <option value="<?php echo esc_attr($request->ID); ?>" <?php selected($related_request, $request->ID); ?>>
-                            <?php echo esc_html($request->post_title); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
             </p>
 
             <p>
@@ -158,11 +137,6 @@ class Proposal {
         // Check the user's permissions
         if (!current_user_can('edit_post', $post_id)) {
             return;
-        }
-
-        // Save related request
-        if (isset($_POST['related_request'])) {
-            update_post_meta($post_id, '_related_request', sanitize_text_field($_POST['related_request']));
         }
 
         // Save budget

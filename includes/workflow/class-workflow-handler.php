@@ -16,6 +16,21 @@ class Workflow_Handler {
 
         // Action to set review status when a proposal is published
         add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
+
+        // Add convert to project button to proposal screen
+        add_action('post_submitbox_misc_actions', array($this, 'add_convert_to_project_button'));
+    }
+
+    public function add_convert_to_project_button($post) {
+        if ($post->post_type === 'arsol-pfw-proposal' && $post->post_status === 'publish') {
+            $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
+            $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
+            ?>
+            <div class="misc-pub-section">
+                <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Project', 'arsol-pfw'); ?></a>
+            </div>
+            <?php
+        }
     }
 
     public function set_proposal_review_status($new_status, $old_status, $post) {
