@@ -44,8 +44,14 @@ class Proposal {
 
         // Get current values
         $budget = get_post_meta($post->ID, '_proposal_budget', true);
+        $recurring_budget = get_post_meta($post->ID, '_proposal_recurring_budget', true);
         $start_date = get_post_meta($post->ID, '_proposal_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
+        
+        // Get invoice product settings
+        $settings = get_option('arsol_projects_settings', array());
+        $invoice_product_id = isset($settings['proposal_invoice_product']) ? $settings['proposal_invoice_product'] : '';
+        $recurring_invoice_product_id = isset($settings['proposal_recurring_invoice_product']) ? $settings['proposal_recurring_invoice_product'] : '';
         
         // Get author dropdown
         $author_dropdown = wp_dropdown_users(array(
@@ -84,6 +90,17 @@ class Proposal {
             </p>
 
             <p>
+                <label for="proposal_recurring_budget" style="display:block;margin-bottom:5px;"><?php _e('Recurring Budget:', 'arsol-pfw'); ?></label>
+                <input type="number" 
+                       id="proposal_recurring_budget" 
+                       name="proposal_recurring_budget" 
+                       value="<?php echo esc_attr($recurring_budget); ?>"
+                       class="widefat"
+                       step="0.01"
+                       min="0">
+            </p>
+
+            <p>
                 <label for="proposal_start_date" style="display:block;margin-bottom:5px;"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="proposal_start_date" 
@@ -102,12 +119,31 @@ class Proposal {
             </p>
         </div>
         <div class="major-actions" style="padding-top:10px; border-top: 1px solid #ddd; margin-top: 10px;">
+            <?php if (!empty($invoice_product_id) && get_post_meta($post->ID, '_invoice_created', true) !== 'yes') : ?>
+                <p>
+                    <label for="create_invoice">
+                        <input type="checkbox" id="create_invoice" name="create_invoice">
+                        <?php _e('Create invoice for budget', 'arsol-pfw'); ?>
+                    </label>
+                </p>
+            <?php endif; ?>
+            <?php if (!empty($recurring_invoice_product_id) && get_post_meta($post->ID, '_recurring_invoice_created', true) !== 'yes') : ?>
+                <p>
+                    <label for="create_recurring_invoice">
+                        <input type="checkbox" id="create_recurring_invoice" name="create_recurring_invoice">
+                        <?php _e('Create invoice for recurring budget', 'arsol-pfw'); ?>
+                    </label>
+                </p>
+            <?php endif; ?>
+
             <?php
             if ($post->post_status == 'publish') {
                 $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
                 $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
                 ?>
-                <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Project', 'arsol-pfw'); ?></a>
+                <div style="margin-top:10px;">
+                    <a href="<?php echo esc_url($convert_url); ?>" class="button button-primary widefat"><?php _e('Convert to Project', 'arsol-pfw'); ?></a>
+                </div>
                 <?php
             }
             ?>
@@ -143,6 +179,14 @@ class Proposal {
         if (isset($_POST['proposal_budget'])) {
             update_post_meta($post_id, '_proposal_budget', sanitize_text_field($_POST['proposal_budget']));
         }
+
+        if (isset($_POST['proposal_recurring_budget'])) {
+            update_post_meta($post_id, '_proposal_recurring_budget', sanitize_text_field($_POST['proposal_recurring_budget']));
+        }
+
+        // Save checkbox states
+        update_post_meta($post_id, '_create_invoice_checked', isset($_POST['create_invoice']));
+        update_post_meta($post_id, '_create_recurring_invoice_checked', isset($_POST['create_recurring_invoice']));
 
         // Save start date
         if (isset($_POST['proposal_start_date'])) {
