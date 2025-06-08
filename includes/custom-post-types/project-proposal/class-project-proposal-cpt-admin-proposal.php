@@ -130,24 +130,22 @@ class Proposal {
 
             <p>
                 <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php echo sprintf(__('Proposed Budget (%s):', 'arsol-pfw'), $currency_code); ?></label>
-                <input type="number" 
-                       id="proposal_budget" 
-                       name="proposal_budget" 
+                <input type="text"
+                       id="proposal_budget"
+                       name="proposal_budget"
                        value="<?php echo esc_attr($budget_amount); ?>"
-                       class="widefat"
-                       step="0.01"
-                       min="0">
+                       class="widefat arsol-money-input"
+                       inputmode="decimal">
             </p>
 
             <p>
                 <label for="proposal_recurring_budget" style="display:block;margin-bottom:5px;"><?php echo sprintf(__('Proposed Recurring Budget (%s):', 'arsol-pfw'), $currency_code); ?></label>
-                <input type="number" 
-                       id="proposal_recurring_budget" 
-                       name="proposal_recurring_budget" 
+                <input type="text"
+                       id="proposal_recurring_budget"
+                       name="proposal_recurring_budget"
                        value="<?php echo esc_attr($recurring_budget_amount); ?>"
-                       class="widefat"
-                       step="0.01"
-                       min="0">
+                       class="widefat arsol-money-input"
+                       inputmode="decimal">
             </p>
 
             <div id="recurring_billing_cycle_wrapper" style="<?php echo empty($recurring_budget_amount) || $recurring_budget_amount <= 0 ? 'display: none;' : ''; ?>">
@@ -186,6 +184,22 @@ class Proposal {
                 </p>
             </div>
 
+            <?php if (!empty($invoice_product_id) && get_post_meta($post->ID, '_invoice_created', true) !== 'yes') : ?>
+                <p>
+                    <label for="create_invoice">
+                        <input type="checkbox" id="create_invoice" name="create_invoice">
+                        <?php _e('Create invoice for budget', 'arsol-pfw'); ?>
+                    </label>
+                </p>
+            <?php endif; ?>
+            <?php if (!empty($recurring_invoice_product_id) && get_post_meta($post->ID, '_recurring_invoice_created', true) !== 'yes') : ?>
+                <p>
+                    <label for="create_recurring_invoice">
+                        <input type="checkbox" id="create_recurring_invoice" name="create_recurring_invoice">
+                        <?php _e('Create invoice for recurring budget', 'arsol-pfw'); ?>
+                    </label>
+                </p>
+            <?php endif; ?>
 
             <p>
                 <label for="proposal_start_date" style="display:block;margin-bottom:5px;"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
@@ -206,23 +220,6 @@ class Proposal {
             </p>
         </div>
         <div class="major-actions">
-            <?php if (!empty($invoice_product_id) && get_post_meta($post->ID, '_invoice_created', true) !== 'yes') : ?>
-                <p>
-                    <label for="create_invoice">
-                        <input type="checkbox" id="create_invoice" name="create_invoice">
-                        <?php _e('Create invoice for budget', 'arsol-pfw'); ?>
-                    </label>
-                </p>
-            <?php endif; ?>
-            <?php if (!empty($recurring_invoice_product_id) && get_post_meta($post->ID, '_recurring_invoice_created', true) !== 'yes') : ?>
-                <p>
-                    <label for="create_recurring_invoice">
-                        <input type="checkbox" id="create_recurring_invoice" name="create_recurring_invoice">
-                        <?php _e('Create invoice for recurring budget', 'arsol-pfw'); ?>
-                    </label>
-                </p>
-            <?php endif; ?>
-
             <div class="arsol-pfw-admin-project-actions">
             <?php
             $is_disabled = $post->post_status !== 'publish';
@@ -299,7 +296,7 @@ class Proposal {
 
         // Save budget
         if (isset($_POST['proposal_budget'])) {
-            $amount = sanitize_text_field($_POST['proposal_budget']);
+            $amount = preg_replace('/[^\d.]/', '', sanitize_text_field($_POST['proposal_budget']));
             if (empty($amount)) {
                 delete_post_meta($post_id, '_proposal_budget');
             } else {
@@ -308,7 +305,7 @@ class Proposal {
         }
 
         if (isset($_POST['proposal_recurring_budget'])) {
-            $amount = sanitize_text_field($_POST['proposal_recurring_budget']);
+            $amount = preg_replace('/[^\d.]/', '', sanitize_text_field($_POST['proposal_recurring_budget']));
             if (empty($amount)) {
                 delete_post_meta($post_id, '_proposal_recurring_budget');
             } else {

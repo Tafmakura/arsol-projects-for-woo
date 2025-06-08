@@ -86,13 +86,12 @@ class Request {
 
             <p>
                 <label for="request_budget" class="arsol-pfw-meta-label"><?php echo sprintf(__('Budget (%s):', 'arsol-pfw'), $budget_currency_code); ?></label>
-                <input type="number" 
+                <input type="text"
                        id="request_budget" 
                        name="request_budget" 
                        value="<?php echo esc_attr($budget_amount); ?>"
-                       class="widefat"
-                       step="0.01"
-                       min="0">
+                       class="widefat arsol-money-input"
+                       inputmode="decimal">
             </p>
 
             <p>
@@ -169,7 +168,7 @@ class Request {
 
         // Save budget
         if (isset($_POST['request_budget'])) {
-            $amount = sanitize_text_field($_POST['request_budget']);
+            $amount = preg_replace('/[^\d.]/', '', sanitize_text_field($_POST['request_budget']));
             $budget_data = get_post_meta($post_id, '_request_budget', true);
             $currency = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
 
