@@ -59,24 +59,27 @@ if (!$is_edit) {
             <input type="text" id="request_title" name="request_title" value="<?php echo esc_attr($title); ?>" required>
         </p>
         
+        <!-- Three column row for Budget, Start Date, and Delivery Date -->
+        <div class="form-row form-row-wide" style="display: flex; gap: 15px;">
+            <div style="flex: 1;">
+                <label for="request_budget"><?php _e('Budget', 'arsol-pfw'); ?></label>
+                <input type="number" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget); ?>" step="0.01" min="0" placeholder="<?php esc_attr_e('Enter your budget amount', 'arsol-pfw'); ?>">
+            </div>
+            
+            <div style="flex: 1;">
+                <label for="request_start_date"><?php _e('Required Start Date', 'arsol-pfw'); ?></label>
+                <input type="date" id="request_start_date" name="request_start_date" value="<?php echo esc_attr($start_date); ?>">
+            </div>
+            
+            <div style="flex: 1;">
+                <label for="request_delivery_date"><?php _e('Required Delivery Date', 'arsol-pfw'); ?></label>
+                <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>">
+            </div>
+        </div>
+        
         <p class="form-row">
             <label for="request_description"><?php _e('Project Description', 'arsol-pfw'); ?> <span class="required">*</span></label>
             <textarea id="request_description" name="request_description" rows="5" required><?php echo esc_textarea($content); ?></textarea>
-        </p>
-        
-        <p class="form-row">
-            <label for="request_budget"><?php _e('Budget', 'arsol-pfw'); ?></label>
-            <input type="number" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget); ?>" step="0.01" min="0" placeholder="<?php esc_attr_e('Enter your budget amount', 'arsol-pfw'); ?>">
-        </p>
-        
-        <p class="form-row">
-            <label for="request_start_date"><?php _e('Required Start Date', 'arsol-pfw'); ?></label>
-            <input type="date" id="request_start_date" name="request_start_date" value="<?php echo esc_attr($start_date); ?>">
-        </p>
-        
-        <p class="form-row">
-            <label for="request_delivery_date"><?php _e('Required Delivery Date', 'arsol-pfw'); ?></label>
-            <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>">
         </p>
         
         <?php if (!$is_edit) : ?>
