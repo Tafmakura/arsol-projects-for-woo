@@ -131,8 +131,8 @@ class Proposal_Invoice {
                             <td class="total-amount" id="one-time-total-display"><?php echo wc_price(0); ?></td>
                         </tr>
                         <tr>
-                            <td><strong><?php _e('Recurring Totals:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="recurring-totals-display"><?php echo wc_price(0); ?></td>
+                            <td style="vertical-align: top;"><strong><?php _e('Recurring Totals:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="recurring-totals-display" style="vertical-align: top;"><?php echo wc_price(0); ?></td>
                         </tr>
                     </tbody>
                 </table>
