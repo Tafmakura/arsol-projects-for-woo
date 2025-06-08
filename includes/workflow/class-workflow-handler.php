@@ -58,11 +58,20 @@ class Workflow_Handler {
             wp_die($new_proposal_id->get_error_message());
         }
 
-        // Copy all meta data from request to proposal
-        $request_meta = get_post_meta($request_id);
-        foreach ($request_meta as $meta_key => $meta_values) {
-            foreach ($meta_values as $meta_value) {
-                update_post_meta($new_proposal_id, $meta_key, $meta_value);
+        // Copy relevant meta data from request to proposal, renaming keys as needed
+        $meta_to_copy = array(
+            '_request_budget'         => '_proposal_budget',
+            '_request_start_date'     => '_proposal_start_date',
+            '_request_delivery_date'  => '_proposal_delivery_date',
+        );
+
+        foreach ($meta_to_copy as $request_key => $proposal_key) {
+            $value = get_post_meta($request_id, $request_key, true);
+            if ($value) {
+                // Copy to the main editable proposal field
+                update_post_meta($new_proposal_id, $proposal_key, $value);
+                // Also copy to a new field to preserve the original request data for display
+                update_post_meta($new_proposal_id, '_original' . $request_key, $value);
             }
         }
 

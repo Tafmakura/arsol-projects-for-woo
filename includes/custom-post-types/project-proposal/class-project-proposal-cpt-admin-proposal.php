@@ -49,7 +49,12 @@ class Proposal {
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
         $billing_interval = get_post_meta($post->ID, '_proposal_billing_interval', true);
         $billing_period = get_post_meta($post->ID, '_proposal_billing_period', true);
-        
+
+        // Get original request data
+        $original_budget = get_post_meta($post->ID, '_original_request_budget', true);
+        $original_start_date = get_post_meta($post->ID, '_original_request_start_date', true);
+        $original_delivery_date = get_post_meta($post->ID, '_original_request_delivery_date', true);
+
         // Default billing period to 'month' for new proposals
         if (empty($billing_period)) {
             $billing_period = 'month';
@@ -80,6 +85,30 @@ class Proposal {
                        class="widefat">
             </p>
 
+            <?php if ($original_budget || $original_start_date || $original_delivery_date) : ?>
+            <div class="arsol-pfw-original-request-details">
+                <h4><?php _e('Original Request Details', 'arsol-pfw'); ?></h4>
+                <?php if ($original_budget) : ?>
+                <p>
+                    <label><?php _e('Budget:', 'arsol-pfw'); ?></label>
+                    <strong><?php echo wc_price($original_budget); ?></strong>
+                </p>
+                <?php endif; ?>
+                <?php if ($original_start_date) : ?>
+                <p>
+                    <label><?php _e('Start Date:', 'arsol-pfw'); ?></label>
+                    <strong><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_start_date))); ?></strong>
+                </p>
+                <?php endif; ?>
+                <?php if ($original_delivery_date) : ?>
+                <p>
+                    <label><?php _e('Delivery Date:', 'arsol-pfw'); ?></label>
+                    <strong><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_delivery_date))); ?></strong>
+                </p>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
+
             <p>
                 <label for="post_author_override" style="display:block;margin-bottom:5px;"><?php _e('Customer:', 'arsol-pfw'); ?></label>
                 <?php echo $author_dropdown; ?>
@@ -109,6 +138,7 @@ class Proposal {
 
             <div id="recurring_billing_cycle_wrapper" style="<?php echo empty($recurring_budget) || $recurring_budget <= 0 ? 'display: none;' : ''; ?>">
                 <p>
+                    <label for="proposal_billing_cycle" style="display:block;margin-bottom:5px;"><?php _e('Recurring Billing Cycle:', 'arsol-pfw'); ?></label>
                     <span style="display: flex; justify-content: space-between;">
                         <select id="proposal_billing_interval" name="proposal_billing_interval" style="width: 48%;">
                             <?php
@@ -179,18 +209,20 @@ class Proposal {
                 </p>
             <?php endif; ?>
 
+            <div class="arsol-pfw-admin-project-actions">
             <?php
             if ($post->post_status == 'publish') {
                 $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
                 $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
                 $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Invoices will be created if selected.', 'arsol-pfw'));
                 ?>
-                <div class="arsol-pfw-admin-project-actions">
+                
                     <input type="button" class="button button-secondary arsol-confirm-conversion" value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" data-url="<?php echo esc_url($convert_url); ?>" data-message="<?php echo $confirm_message; ?>" />
-                </div>
+                
                 <?php
             }
             ?>
+            </div>
         </div>
         <script type="text/javascript">
             jQuery(document).ready(function($) {

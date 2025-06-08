@@ -31,6 +31,29 @@ body.post-type-arsol-pfw-proposal .select2-container {
     min-height: 30px; /* Match WP input height */
 }
 
+.arsol-pfw-original-request-details {
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 15px;
+    background-color: #fafafa;
+}
+
+.arsol-pfw-original-request-details h4 {
+    margin: 0 0 10px 0;
+    padding: 0;
+    font-size: 14px;
+}
+
+.arsol-pfw-original-request-details p {
+    margin: 0 0 5px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.arsol-pfw-original-request-details p label {
+    font-weight: normal;
+}
+
 /* Project field styling */
 #arsol_project_selector {
     width: 100%;
