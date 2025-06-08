@@ -295,30 +295,29 @@ class Proposal_Invoice {
         $sub_text = '';
         $regular_price_val = 0;
         $sale_price_val = '';
-        $recurring_amount = 0;
+        $sign_up_fee = 0;
 
-        if ($is_subscription) {
-            if (class_exists('WC_Subscriptions')) {
-                // The sub_text should just describe the recurring part.
-                $sub_text = $product->get_price_string();
-            }
-            // The main price fields represent the one-time sign-up fee.
-            $regular_price_val = (float) $product->get_meta('_subscription_sign_up_fee');
-            $sale_price_val = ''; // No "sale sign-up fee" concept.
-            $recurring_amount = (float) $product->get_price();
-
+        if ($is_subscription && class_exists('WC_Subscriptions_Product')) {
+            // For subscriptions, the main price displayed in the price field is the recurring amount.
+            $regular_price_val = $product->get_price();
+            // Subscriptions can have a sale price on their recurring amount.
+            $sale_price_val = $product->get_sale_price();
+            // The sign-up fee is a separate one-time charge.
+            $sign_up_fee = (float) $product->get_meta('_subscription_sign_up_fee');
+            // The sub_text should describe the full billing terms for clarity.
+            $sub_text = $product->get_price_string();
         } else {
-            // For simple products, it's the standard price.
+            // For simple/variable products, it's the standard price.
             $regular_price_val = $product->get_regular_price();
             $sale_price_val = $product->get_sale_price();
         }
 
         $data = array(
-            'regular_price' => wc_format_decimal($regular_price_val, 2),
-            'sale_price' => $sale_price_val ? wc_format_decimal($sale_price_val, 2) : '',
+            'regular_price' => wc_format_decimal($regular_price_val, wc_get_price_decimals()),
+            'sale_price' => $sale_price_val ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
             'is_subscription' => $is_subscription,
-            'recurring_amount' => wc_format_decimal($recurring_amount, 2),
-            'sub_text' => $sub_text
+            'sign_up_fee' => wc_format_decimal($sign_up_fee, wc_get_price_decimals()),
+            'sub_text' => $sub_text,
         );
 
         wp_send_json_success($data);

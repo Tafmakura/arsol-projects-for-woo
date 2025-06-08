@@ -4,6 +4,7 @@
 
     var ArsolProposalInvoice = {
         init: function() {
+            console.log('Arsol Proposal Invoice: Initializing...');
             this.product_template = wp.template('arsol-product-line-item');
             this.onetime_fee_template = wp.template('arsol-onetime-fee-line-item');
             this.recurring_fee_template = wp.template('arsol-recurring-fee-line-item');
@@ -21,6 +22,7 @@
         },
         
         loadExistingItems: function() {
+            console.log('Arsol Proposal Invoice: Loading existing items...', arsol_proposal_invoice_vars.line_items);
             var self = this;
             var items = arsol_proposal_invoice_vars.line_items;
 
@@ -33,11 +35,12 @@
             if (items && items.recurring_fees) {
                 $.each(items.recurring_fees, function(id, itemData) { self.renderRow('recurring-fee', itemData); });
             }
-
+            console.log('Arsol Proposal Invoice: Finished loading items.');
             this.calculateTotals();
         },
 
         renderRow: function(type, data) {
+            console.log('Arsol Proposal Invoice: Rendering row...', {type: type, data: data});
             this.line_item_id++;
             data.id = this.line_item_id;
             var template, container;
@@ -52,6 +55,7 @@
                 template = this.recurring_fee_template;
                 container = '#recurring-fee-lines-body';
             } else {
+                console.error('Arsol Proposal Invoice: Unknown row type for rendering:', type);
                 return;
             }
             
@@ -59,10 +63,9 @@
             $(container).append($newRow);
             if (type === 'product') {
                 this.initSelect2($newRow);
-                // After rendering an existing product, re-set its data from the fields
-                 if(data.product_id) {
+                if(data.product_id) {
                      this.fetchProductDetails($newRow, data.product_id);
-                 }
+                }
             }
         },
 
@@ -105,6 +108,7 @@
         },
 
         fetchProductDetails: function($row, productId) {
+             console.log('Arsol Proposal Invoice: Fetching details for product ID:', productId);
              var self = this;
              if (!productId) return;
 
@@ -117,57 +121,72 @@
                      product_id: productId,
                  },
                  success: function(response) {
+                     console.log('Arsol Proposal Invoice: AJAX success response:', response);
                      if (response.success) {
                          var data = response.data;
-                         // Set visual fields
                          $row.find('.price-input').val(data.regular_price);
                          $row.find('.sale-price-input').val(data.sale_price);
                          $row.find('.product-sub-text').html(data.sub_text);
                          
-                         // Store data for calculation
                          $row.data('is-subscription', data.is_subscription);
-                         $row.data('recurring-amount', data.recurring_amount);
+                         $row.data('sign-up-fee', data.sign_up_fee || 0);
                          
                          self.calculateTotals();
+                     } else {
+                         console.error('Arsol Proposal Invoice: AJAX call was successful but API returned an error:', response.data);
                      }
+                 },
+                 error: function(xhr, status, error) {
+                     console.error('Arsol Proposal Invoice: AJAX request failed!', {
+                         status: status,
+                         error: error,
+                         xhr: xhr
+                     });
                  }
              });
         },
         
         calculateTotals: function() {
+            console.log('Arsol Proposal Invoice: Calculating totals...');
             var oneTimeTotal = 0;
             var recurringTotal = 0;
             var currencySymbol = arsol_proposal_invoice_vars.currency_symbol;
             
             var formatPrice = function(price) {
-                var formattedPrice = price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
             };
 
-            // Product Totals
             $('#product-lines-body .line-item').each(function() {
                 var $row = $(this);
-                var quantity = parseFloat($row.find('.quantity-input').val()) || 0;
+                var quantity = parseFloat($row.find('.quantity-input').val()) || 1;
                 var isSubscription = $row.data('is-subscription');
                 
-                // One-time part of the product (regular price OR sign-up fee)
                 var salePrice = parseFloat($row.find('.sale-price-input').val());
-                var price = parseFloat($row.find('.price-input').val()) || 0;
-                var oneTimeUnitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : price;
-                var oneTimeSubtotal = quantity * oneTimeUnitPrice;
+                var regularPrice = parseFloat($row.find('.price-input').val()) || 0;
                 
-                oneTimeTotal += oneTimeSubtotal;
+                var unitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : regularPrice;
                 
                 if (isSubscription) {
-                    // If it's a subscription, get the SEPARATE recurring amount
-                    var recurringAmount = parseFloat($row.data('recurring-amount')) || 0;
+                    var signUpFee = parseFloat($row.data('sign-up-fee')) || 0;
+                    var recurringAmount = unitPrice;
+
+                    oneTimeTotal += quantity * signUpFee;
                     recurringTotal += quantity * recurringAmount;
+                    
+                    var subtotalDisplay = formatPrice(quantity * recurringAmount);
+                    if (signUpFee > 0) {
+                        subtotalDisplay += ' + ' + formatPrice(quantity * signUpFee) + ' sign-up fee';
+                    }
+                     $row.find('.subtotal-display').html(subtotalDisplay);
+
+                } else {
+                    var oneTimeSubtotal = quantity * unitPrice;
+                    oneTimeTotal += oneTimeSubtotal;
+                    $row.find('.subtotal-display').html(formatPrice(oneTimeSubtotal));
                 }
-                
-                $row.find('.subtotal-display').html(formatPrice(oneTimeSubtotal));
             });
             
-            // One-Time Fee Totals
             $('#onetime-fee-lines-body .line-item').each(function() {
                 var $row = $(this);
                 var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
@@ -175,7 +194,6 @@
                 $row.find('.subtotal-display').html(formatPrice(amount));
             });
 
-            // Recurring Fee Totals
             $('#recurring-fee-lines-body .line-item').each(function() {
                 var $row = $(this);
                 var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
