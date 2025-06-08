@@ -39,8 +39,10 @@ class Project {
         $due_date = get_post_meta($post->ID, '_project_due_date', true);
         $start_date = get_post_meta($post->ID, '_project_start_date', true);
         $project_lead = get_post_meta($post->ID, '_project_lead', true);
-        $budget = get_post_meta($post->ID, '_proposal_budget', true);
-        $recurring_budget = get_post_meta($post->ID, '_proposal_recurring_budget', true);
+        $budget = get_post_meta($post->ID, '_project_budget', true);
+        $recurring_budget = get_post_meta($post->ID, '_project_recurring_budget', true);
+        $billing_interval = get_post_meta($post->ID, '_project_billing_interval', true);
+        $billing_period = get_post_meta($post->ID, '_project_billing_period', true);
         
         // Get statuses
         $statuses = get_terms(array(
@@ -144,6 +146,22 @@ class Project {
                            disabled
                            style="width:100%">
                 </p>
+
+                <?php
+                $intervals = array('1' => __('Every', 'arsol-pfw'), '2' => __('Every 2nd', 'arsol-pfw'), '3' => __('Every 3rd', 'arsol-pfw'), '4' => __('Every 4th', 'arsol-pfw'), '5' => __('Every 5th', 'arsol-pfw'), '6' => __('Every 6th', 'arsol-pfw'));
+                $periods = array('day' => __('Day', 'arsol-pfw'), 'week' => __('Week', 'arsol-pfw'), 'month' => __('Month', 'arsol-pfw'), 'year' => __('Year', 'arsol-pfw'));
+                $interval_text = isset($intervals[$billing_interval]) ? $intervals[$billing_interval] : '';
+                $period_text = isset($periods[$billing_period]) ? $periods[$billing_period] : '';
+                ?>
+                <p>
+                    <label for="project_billing_cycle"><?php _e('Recurring Billing Cycle:', 'arsol-projects-for-woo'); ?></label>
+                    <input type="text" 
+                           id="project_billing_cycle" 
+                           value="<?php echo esc_attr($interval_text . ' ' . $period_text); ?>"
+                           disabled
+                           style="width:100%">
+                </p>
+
             <?php endif; ?>
         </div>
         <?php

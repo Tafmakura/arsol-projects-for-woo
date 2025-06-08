@@ -117,11 +117,20 @@ class Workflow_Handler {
         // Set the project status to 'not-started'
         wp_set_object_terms($new_project_id, 'not-started', 'arsol-project-status');
 
-        // Copy all meta data from proposal to project
-        $proposal_meta = get_post_meta($proposal_id);
-        foreach ($proposal_meta as $meta_key => $meta_values) {
-            foreach ($meta_values as $meta_value) {
-                update_post_meta($new_project_id, $meta_key, $meta_value);
+        // Copy and rename relevant meta data from proposal to project
+        $meta_to_copy = array(
+            '_proposal_budget'           => '_project_budget',
+            '_proposal_recurring_budget' => '_project_recurring_budget',
+            '_proposal_billing_interval' => '_project_billing_interval',
+            '_proposal_billing_period'   => '_project_billing_period',
+            '_proposal_start_date'       => '_project_start_date',
+            '_proposal_delivery_date'    => '_project_delivery_date',
+        );
+
+        foreach ($meta_to_copy as $proposal_key => $project_key) {
+            $value = get_post_meta($proposal_id, $proposal_key, true);
+            if ($value) {
+                update_post_meta($new_project_id, $project_key, $value);
             }
         }
 
@@ -155,21 +164,39 @@ class Workflow_Handler {
 
         if ($type === 'standard') {
             $product_id = isset($settings['proposal_invoice_product']) ? $settings['proposal_invoice_product'] : '';
-            $budget = get_post_meta($project_id, '_proposal_budget', true);
-        } else {
+            $budget = get_post_meta($project_id, '_project_budget', true);
+            if (empty($product_id) || empty($budget) || !is_numeric($budget)) {
+                return;
+            }
+            $product = wc_get_product($product_id);
+            if (!$product) {
+                return;
+            }
+            $this->create_standard_order($project_id, $customer_id, $product, $budget);
+        } else { // recurring
+            if (!class_exists('WC_Subscriptions')) {
+                return;
+            }
             $product_id = isset($settings['proposal_recurring_invoice_product']) ? $settings['proposal_recurring_invoice_product'] : '';
-            $budget = get_post_meta($project_id, '_proposal_recurring_budget', true);
-        }
+            $budget = get_post_meta($project_id, '_project_recurring_budget', true);
+            $billing_interval = get_post_meta($project_id, '_project_billing_interval', true);
+            $billing_period = get_post_meta($project_id, '_project_billing_period', true);
+            
+            if (empty($product_id) || empty($budget) || !is_numeric($budget) || empty($billing_interval) || empty($billing_period)) {
+                return;
+            }
+            
+            $product = wc_get_product($product_id);
+            // It's good practice to check if the product is a subscription type
+            if (!$product || !$product->is_type(array('subscription', 'subscription_variation'))) {
+                return;
+            }
 
-        if (empty($product_id) || empty($budget) || !is_numeric($budget)) {
-            return;
+            $this->create_subscription_order($project_id, $customer_id, $product, $budget, $billing_interval, $billing_period);
         }
+    }
 
-        $product = wc_get_product($product_id);
-        if (!$product) {
-            return;
-        }
-
+    private function create_standard_order($project_id, $customer_id, $product, $budget) {
         try {
             $order = wc_create_order(array(
                 'customer_id' => $customer_id,
@@ -184,8 +211,47 @@ class Workflow_Handler {
             $order->calculate_totals();
             $order->save();
             
-            update_post_meta($project_id, '_' . $type . '_invoice_created', 'yes');
-            update_post_meta($project_id, '_' . $type . '_order_id', $order->get_id());
+            update_post_meta($project_id, '_standard_invoice_created', 'yes');
+            update_post_meta($project_id, '_standard_order_id', $order->get_id());
+
+        } catch (\Exception $e) {
+            // silent fail
+        }
+    }
+
+    private function create_subscription_order($project_id, $customer_id, $product, $budget, $billing_interval, $billing_period) {
+        if (!function_exists('wcs_create_subscription')) {
+            return;
+        }
+        
+        try {
+            $start_date = get_post_meta($project_id, '_project_start_date', true);
+            $subscription_start_date = !empty($start_date) ? gmdate('Y-m-d H:i:s', strtotime($start_date)) : gmdate('Y-m-d H:i:s');
+
+            $subscription_args = array(
+                'status' => 'pending',
+                'customer_id' => $customer_id,
+                'billing_period' => $billing_period,
+                'billing_interval' => $billing_interval,
+                'start_date' => $subscription_start_date,
+            );
+
+            $subscription = wcs_create_subscription($subscription_args);
+
+            if (is_wp_error($subscription)) {
+                return;
+            }
+
+            $subscription->add_product($product, 1, array('subtotal' => $budget, 'total' => $budget));
+            
+            // Link project to subscription
+            update_post_meta($subscription->get_id(), '_arsol_project_id', $project_id);
+            
+            $subscription->calculate_totals();
+            $subscription->save();
+
+            update_post_meta($project_id, '_recurring_invoice_created', 'yes');
+            update_post_meta($project_id, '_recurring_order_id', $subscription->get_id());
 
         } catch (\Exception $e) {
             // silent fail

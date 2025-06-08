@@ -47,6 +47,8 @@ class Proposal {
         $recurring_budget = get_post_meta($post->ID, '_proposal_recurring_budget', true);
         $start_date = get_post_meta($post->ID, '_proposal_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
+        $billing_interval = get_post_meta($post->ID, '_proposal_billing_interval', true);
+        $billing_period = get_post_meta($post->ID, '_proposal_billing_period', true);
         
         // Get invoice product settings
         $settings = get_option('arsol_projects_settings', array());
@@ -100,6 +102,41 @@ class Proposal {
                        min="0">
             </p>
 
+            <div id="recurring_billing_cycle_wrapper" style="<?php echo empty($recurring_budget) || $recurring_budget <= 0 ? 'display: none;' : ''; ?>">
+                <p>
+                    <label for="proposal_billing_cycle" style="display:block;margin-bottom:5px;"><?php _e('Recurring Billing Cycle:', 'arsol-pfw'); ?></label>
+                    <select id="proposal_billing_interval" name="proposal_billing_interval" style="width: 48%; margin-right: 4%;">
+                        <?php
+                        $intervals = array(
+                            '1' => __('Every', 'arsol-pfw'),
+                            '2' => __('Every 2nd', 'arsol-pfw'),
+                            '3' => __('Every 3rd', 'arsol-pfw'),
+                            '4' => __('Every 4th', 'arsol-pfw'),
+                            '5' => __('Every 5th', 'arsol-pfw'),
+                            '6' => __('Every 6th', 'arsol-pfw'),
+                        );
+                        foreach ($intervals as $value => $label) {
+                            echo '<option value="' . esc_attr($value) . '"' . selected($billing_interval, $value, false) . '>' . esc_html($label) . '</option>';
+                        }
+                        ?>
+                    </select>
+                    <select id="proposal_billing_period" name="proposal_billing_period" style="width: 48%;">
+                        <?php
+                        $periods = array(
+                            'day' => __('Day', 'arsol-pfw'),
+                            'week' => __('Week', 'arsol-pfw'),
+                            'month' => __('Month', 'arsol-pfw'),
+                            'year' => __('Year', 'arsol-pfw'),
+                        );
+                        foreach ($periods as $value => $label) {
+                            echo '<option value="' . esc_attr($value) . '"' . selected($billing_period, $value, false) . '>' . esc_html($label) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </p>
+            </div>
+
+
             <p>
                 <label for="proposal_start_date" style="display:block;margin-bottom:5px;"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
                 <input type="date" 
@@ -149,6 +186,26 @@ class Proposal {
             }
             ?>
         </div>
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                function toggleRecurringCycle() {
+                    var recurringBudget = $('#proposal_recurring_budget').val();
+                    if (recurringBudget && parseFloat(recurringBudget) > 0) {
+                        $('#recurring_billing_cycle_wrapper').show();
+                    } else {
+                        $('#recurring_billing_cycle_wrapper').hide();
+                    }
+                }
+
+                // Initial check
+                toggleRecurringCycle();
+
+                // Check on input change
+                $('#proposal_recurring_budget').on('input', function() {
+                    toggleRecurringCycle();
+                });
+            });
+        </script>
         <?php
     }
 
@@ -183,6 +240,14 @@ class Proposal {
 
         if (isset($_POST['proposal_recurring_budget'])) {
             update_post_meta($post_id, '_proposal_recurring_budget', sanitize_text_field($_POST['proposal_recurring_budget']));
+        }
+
+        if (isset($_POST['proposal_billing_interval'])) {
+            update_post_meta($post_id, '_proposal_billing_interval', sanitize_text_field($_POST['proposal_billing_interval']));
+        }
+
+        if (isset($_POST['proposal_billing_period'])) {
+            update_post_meta($post_id, '_proposal_billing_period', sanitize_text_field($_POST['proposal_billing_period']));
         }
 
         // Save checkbox states
