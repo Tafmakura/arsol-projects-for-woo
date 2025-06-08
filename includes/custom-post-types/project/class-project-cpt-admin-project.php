@@ -81,18 +81,18 @@ class Project {
                        class="widefat">
             </p>
 
-            <p>
+            <p class="arsol-pfw-budget-display">
                 <label><?php _e('Proposed Budget:', 'arsol-projects-for-woo'); ?></label>
-                <div class="arsol-pfw-budget-amount">
-                    <?php echo ($budget !== '') ? wc_price($budget) : '—'; ?>
-                </div>
+                <span class="arsol-pfw-budget-amount">
+                    <?php echo (isset($budget) && $budget !== '') ? wc_price($budget) : '—'; ?>
+                </span>
             </p>
 
-            <p>
+            <p class="arsol-pfw-budget-display">
                 <label><?php _e('Proposed Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
-                <div class="arsol-pfw-budget-amount">
+                <span class="arsol-pfw-budget-amount">
                     <?php
-                    if ($recurring_budget !== '') {
+                    if (isset($recurring_budget) && $recurring_budget !== '') {
                         $intervals = array('1' => __('every', 'arsol-pfw'), '2' => __('every 2nd', 'arsol-pfw'), '3' => __('every 3rd', 'arsol-pfw'), '4' => __('every 4th', 'arsol-pfw'), '5' => __('every 5th', 'arsol-pfw'), '6' => __('every 6th', 'arsol-pfw'));
                         $periods = array('day' => __('day', 'arsol-pfw'), 'week' => __('week', 'arsol-pfw'), 'month' => __('month', 'arsol-pfw'), 'year' => __('year', 'arsol-pfw'));
                         $interval_text = isset($intervals[$billing_interval]) ? $intervals[$billing_interval] : '';
@@ -107,7 +107,7 @@ class Project {
                         echo '—';
                     }
                     ?>
-                </div>
+                </span>
             </p>
 
             <p>
