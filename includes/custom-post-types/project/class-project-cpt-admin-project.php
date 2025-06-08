@@ -84,29 +84,33 @@ class Project {
             <p class="arsol-pfw-budget-display">
                 <label><?php _e('Proposed Budget:', 'arsol-projects-for-woo'); ?></label>
                 <span class="arsol-pfw-budget-amount">
-                    <?php echo (isset($budget) && $budget !== '') ? wc_price($budget) : '—'; ?>
+                    <b>
+                        <?php echo (isset($budget) && $budget !== '') ? wc_price($budget) : '—'; ?>
+                    </b>
                 </span>
             </p>
 
             <p class="arsol-pfw-budget-display">
                 <label><?php _e('Proposed Recurring Budget:', 'arsol-projects-for-woo'); ?></label>
                 <span class="arsol-pfw-budget-amount">
-                    <?php
-                    if (isset($recurring_budget) && $recurring_budget !== '') {
-                        $intervals = array('1' => __('every', 'arsol-pfw'), '2' => __('every 2nd', 'arsol-pfw'), '3' => __('every 3rd', 'arsol-pfw'), '4' => __('every 4th', 'arsol-pfw'), '5' => __('every 5th', 'arsol-pfw'), '6' => __('every 6th', 'arsol-pfw'));
-                        $periods = array('day' => __('day', 'arsol-pfw'), 'week' => __('week', 'arsol-pfw'), 'month' => __('month', 'arsol-pfw'), 'year' => __('year', 'arsol-pfw'));
-                        $interval_text = isset($intervals[$billing_interval]) ? $intervals[$billing_interval] : '';
-                        $period_text = isset($periods[$billing_period]) ? $periods[$billing_period] : '';
-                        $cycle_text = trim($interval_text . ' ' . $period_text);
-                        
-                        echo wc_price($recurring_budget);
-                        if (!empty($cycle_text)) {
-                            echo ' ' . esc_html($cycle_text);
+                    <b>
+                        <?php
+                        if (isset($recurring_budget) && $recurring_budget !== '') {
+                            $intervals = array('1' => __('every', 'arsol-pfw'), '2' => __('every 2nd', 'arsol-pfw'), '3' => __('every 3rd', 'arsol-pfw'), '4' => __('every 4th', 'arsol-pfw'), '5' => __('every 5th', 'arsol-pfw'), '6' => __('every 6th', 'arsol-pfw'));
+                            $periods = array('day' => __('day', 'arsol-pfw'), 'week' => __('week', 'arsol-pfw'), 'month' => __('month', 'arsol-pfw'), 'year' => __('year', 'arsol-pfw'));
+                            $interval_text = isset($intervals[$billing_interval]) ? $intervals[$billing_interval] : '';
+                            $period_text = isset($periods[$billing_period]) ? $periods[$billing_period] : '';
+                            $cycle_text = trim($interval_text . ' ' . $period_text);
+                            
+                            echo wc_price($recurring_budget);
+                            if (!empty($cycle_text)) {
+                                echo ' ' . esc_html($cycle_text);
+                            }
+                        } else {
+                            echo '—';
                         }
-                    } else {
-                        echo '—';
-                    }
-                    ?>
+                        ?>
+                    </b>
                 </span>
             </p>
 
