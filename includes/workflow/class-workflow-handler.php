@@ -171,6 +171,10 @@ class Workflow_Handler {
 
         if (is_wp_error($new_project_id)) {
             if ($is_internal_call) {
+                // Clean output buffer and redirect
+                if (ob_get_level()) {
+                    ob_end_clean();
+                }
                 wp_safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
                 exit;
             } else {
@@ -210,11 +214,12 @@ class Workflow_Handler {
         // Delete the original proposal
         wp_delete_post($proposal_id, true);
 
-        // Clean the output buffer and redirect
-        ob_end_clean();
-
         // Redirect based on how the function was called
         if ($is_internal_call) {
+            // Clean output buffer and redirect
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
             wp_safe_redirect(wc_get_account_endpoint_url('project-overview/' . $new_project_id));
         } else {
             wp_redirect(admin_url('post.php?post=' . $new_project_id . '&action=edit'));
@@ -338,6 +343,11 @@ class Workflow_Handler {
     }
 
     public function customer_cancel_request() {
+        // Start output buffering to prevent headers already sent issues
+        if (!headers_sent()) {
+            ob_start();
+        }
+        
         if (!isset($_GET['request_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_cancel_request_nonce')) {
             wp_die(__('Invalid request or nonce.', 'arsol-pfw'));
         }
@@ -345,6 +355,10 @@ class Workflow_Handler {
         $request_id = intval($_GET['request_id']);
         if (self::user_can_view_post(get_current_user_id(), $request_id)) {
             wp_delete_post($request_id, true); // Delete the request
+            // Clean output buffer and redirect
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
             wp_safe_redirect(wc_get_account_endpoint_url('projects')); // Redirect to projects page
             exit;
         } else {
@@ -353,6 +367,11 @@ class Workflow_Handler {
     }
 
     public function customer_approve_proposal() {
+        // Start output buffering to prevent headers already sent issues
+        if (!headers_sent()) {
+            ob_start();
+        }
+        
         if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_approve_proposal_nonce')) {
             wp_die(__('Invalid proposal or nonce.', 'arsol-pfw'));
         }
@@ -370,6 +389,11 @@ class Workflow_Handler {
     }
 
     public function customer_reject_proposal() {
+        // Start output buffering to prevent headers already sent issues
+        if (!headers_sent()) {
+            ob_start();
+        }
+        
         if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_reject_proposal_nonce')) {
             wp_die(__('Invalid proposal or nonce.', 'arsol-pfw'));
         }
@@ -377,6 +401,10 @@ class Workflow_Handler {
         $proposal_id = intval($_GET['proposal_id']);
         if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
             wp_set_object_terms($proposal_id, 'rejected', 'arsol-review-status');
+            // Clean output buffer and redirect
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
             wp_safe_redirect(wp_get_referer());
             exit;
         } else {
@@ -385,6 +413,11 @@ class Workflow_Handler {
     }
 
     public function handle_create_request() {
+        // Start output buffering to prevent headers already sent issues
+        if (!headers_sent()) {
+            ob_start();
+        }
+        
         if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_create_request')) {
             wp_die(__('Invalid nonce.', 'arsol-pfw'));
         }
@@ -399,6 +432,10 @@ class Workflow_Handler {
         $post_id = wp_insert_post($post_data);
         
         if (is_wp_error($post_id)) {
+            // Clean output buffer and redirect
+            if (ob_get_level()) {
+                ob_end_clean();
+            }
             wp_safe_redirect(wc_get_account_endpoint_url('project-create-request'));
             exit;
         }
@@ -407,11 +444,20 @@ class Workflow_Handler {
         $this->update_request_meta($post_id, $_POST);
 
         
+        // Clean output buffer and redirect
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
         wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
         exit;
     }
 
     public function handle_edit_request() {
+        // Start output buffering to prevent headers already sent issues
+        if (!headers_sent()) {
+            ob_start();
+        }
+        
         // Fixed namespace issues for WooCommerce functions
         if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_edit_request')) {
             wp_die(__('Invalid nonce.', 'arsol-pfw'));
@@ -435,6 +481,10 @@ class Workflow_Handler {
 
         $this->update_request_meta($post_id, $_POST);
         
+        // Clean output buffer and redirect
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
         wp_safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
         exit;
     }
