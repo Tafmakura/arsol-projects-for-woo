@@ -25,6 +25,14 @@ class Assets {
      * Constructor
      */
     public function __construct() {
+        // Delay asset hooks until after init to ensure text domain is loaded
+        add_action('init', array($this, 'setup_asset_hooks'), 20);
+    }
+
+    /**
+     * Setup asset hooks after init
+     */
+    public function setup_asset_hooks() {
         // Register hooks for frontend assets
         add_action('wp_enqueue_scripts', array($this, 'register_frontend_assets'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));

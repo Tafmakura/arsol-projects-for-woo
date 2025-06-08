@@ -19,8 +19,8 @@ class Settings_General {
      * Constructor
      */
     public function __construct() {
-        // Register settings
-        add_action('admin_init', array($this, 'register_settings'));
+        // Register settings after init to ensure text domain is loaded
+        add_action('init', array($this, 'setup_settings'), 20);
         
         // Add scripts for admin page
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
@@ -30,6 +30,13 @@ class Settings_General {
 
         // Update capabilities when settings are saved
         add_action('update_option_arsol_projects_settings', array($this, 'update_capabilities'), 10, 2);
+    }
+
+    /**
+     * Setup settings after init
+     */
+    public function setup_settings() {
+        add_action('admin_init', array($this, 'register_settings'));
     }
 
     /**

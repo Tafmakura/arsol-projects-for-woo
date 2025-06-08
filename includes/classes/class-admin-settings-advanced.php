@@ -17,6 +17,11 @@ class Settings_Advanced {
     private $shortcode_fields = [];
 
     public function __construct() {
+        add_action('init', array($this, 'init_translations'));
+        add_action('admin_init', array($this, 'register_settings'));
+    }
+
+    public function init_translations() {
         $this->shortcode_fields = [
             'project_overview_active_shortcode' => [
                 'title' => __('Active Project Overview', 'arsol-pfw'),
@@ -59,7 +64,6 @@ class Settings_Advanced {
                 'description' => __('Overrides denied access notice.', 'arsol-pfw')
             ],
         ];
-        add_action('admin_init', array($this, 'register_settings'));
     }
 
     public function register_settings() {

@@ -20,6 +20,14 @@ class Setup {
      * Constructor
      */
     public function __construct() {
+        // Delay menu setup until after init to ensure text domain is loaded
+        add_action('init', array($this, 'setup_admin_hooks'), 20);
+    }
+    
+    /**
+     * Setup admin hooks after init
+     */
+    public function setup_admin_hooks() {
         add_action('admin_menu', array($this, 'setup_admin_menus'), 10);
         add_action('admin_menu', array($this, 'cleanup_admin_menus'), 999);
     }
