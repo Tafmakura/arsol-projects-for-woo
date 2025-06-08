@@ -19,6 +19,10 @@ if (!$can_create) {
     wp_safe_redirect(wc_get_account_endpoint_url('projects'));
     exit;
 }
+
+// Get currency information
+$currency_code = get_woocommerce_currency();
+$currency_symbol = get_woocommerce_currency_symbol($currency_code);
 ?>
 
 <div class="arsol-project-create">
@@ -36,16 +40,15 @@ if (!$can_create) {
         
         <!-- Three column row for Budget, Start Date, and Delivery Date -->
         <div class="form-row form-row-wide arsol-project-meta-row" style="display: flex; gap: 15px;">
-            <div class="arsol-project-field-col arsol-budget-col" style="flex: 1; min-width: 150px;">
-                <label for="project_budget"><?php _e('Budget', 'arsol-pfw'); ?></label>
-                <input type="number" 
+            <div class="arsol-project-field-col arsol-budget-col" style="flex: 1; min-width: 160px;">
+                <label for="project_budget"><?php echo sprintf(__('Budget (%s)', 'arsol-pfw'), $currency_symbol); ?></label>
+                <input type="text" 
                        id="project_budget" 
                        name="project_budget" 
-                       step="0.01"
-                       min="0"
                        placeholder="<?php esc_attr_e('Enter project budget', 'arsol-pfw'); ?>"
-                       class="arsol-budget-input" 
-                       style="min-width: 120px;">
+                       class="arsol-budget-input arsol-money-input" 
+                       style="min-width: 160px;"
+                       inputmode="decimal">
             </div>
             
             <div class="arsol-project-field-col arsol-date-col" style="flex: 1;">

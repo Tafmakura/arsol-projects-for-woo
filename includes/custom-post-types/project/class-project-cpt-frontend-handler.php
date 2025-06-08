@@ -80,7 +80,17 @@ class Frontend_Handler {
         
         // Save additional project meta
         if (!empty($budget)) {
-            update_post_meta($project_id, '_project_budget', $budget);
+            // Remove formatting from budget amount (commas, etc.)
+            $amount = preg_replace('/[^\d.]/', '', $budget);
+            $currency = get_woocommerce_currency();
+            
+            if (!empty($amount)) {
+                $budget_data = array(
+                    'amount'   => $amount,
+                    'currency' => $currency
+                );
+                update_post_meta($project_id, '_project_budget', $budget_data);
+            }
         }
         if (!empty($start_date)) {
             update_post_meta($project_id, '_project_start_date', $start_date);

@@ -63,7 +63,17 @@ class Frontend_Handler {
             
             // Save additional request meta
             if (!empty($budget)) {
-                update_post_meta($request_id, '_request_budget', $budget);
+                // Remove formatting from budget amount (commas, etc.)
+                $amount = preg_replace('/[^\d.]/', '', $budget);
+                $currency = get_woocommerce_currency();
+                
+                if (!empty($amount)) {
+                    $budget_data = array(
+                        'amount'   => $amount,
+                        'currency' => $currency
+                    );
+                    update_post_meta($request_id, '_request_budget', $budget_data);
+                }
             }
             if (!empty($start_date)) {
                 update_post_meta($request_id, '_request_start_date', $start_date);

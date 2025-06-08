@@ -28,6 +28,10 @@ if ($is_edit) {
     $delivery_date = '';
 }
 
+// Get currency information
+$currency_code = get_woocommerce_currency();
+$currency_symbol = get_woocommerce_currency_symbol($currency_code);
+
 $button_text = $is_edit ? __('Update Request', 'arsol-pfw') : __('Submit Request', 'arsol-pfw');
 $form_action = $is_edit ? 'arsol_edit_request' : 'arsol_create_request';
 
@@ -61,9 +65,9 @@ if (!$is_edit) {
         
         <!-- Three column row for Budget, Start Date, and Delivery Date -->
         <div class="form-row form-row-wide arsol-project-meta-row" style="display: flex; gap: 15px;">
-            <div class="arsol-project-field-col arsol-budget-col" style="flex: 1; min-width: 150px;">
-                <label for="request_budget"><?php _e('Budget', 'arsol-pfw'); ?></label>
-                <input type="number" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget); ?>" step="0.01" min="0" placeholder="<?php esc_attr_e('Enter your budget amount', 'arsol-pfw'); ?>" class="arsol-budget-input" style="min-width: 120px;">
+            <div class="arsol-project-field-col arsol-budget-col" style="flex: 1; min-width: 160px;">
+                <label for="request_budget"><?php echo sprintf(__('Budget (%s)', 'arsol-pfw'), $currency_symbol); ?></label>
+                <input type="text" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget); ?>" placeholder="<?php esc_attr_e('Enter your budget amount', 'arsol-pfw'); ?>" class="arsol-budget-input arsol-money-input" style="min-width: 160px;" inputmode="decimal">
             </div>
             
             <div class="arsol-project-field-col arsol-date-col" style="flex: 1;">
