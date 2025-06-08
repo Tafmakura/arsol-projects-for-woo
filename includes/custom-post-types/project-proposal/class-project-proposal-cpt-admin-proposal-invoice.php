@@ -298,10 +298,11 @@ class Proposal_Invoice {
         $sign_up_fee = 0;
 
         if ($is_subscription && class_exists('WC_Subscriptions_Product')) {
-            // For subscriptions, the main price displayed in the price field is the recurring amount.
-            $regular_price_val = $product->get_price();
+            // For subscriptions, get prices directly from meta for reliability.
+            // The main price displayed in the price field is the recurring amount.
+            $regular_price_val = $product->get_meta('_subscription_price');
             // Subscriptions can have a sale price on their recurring amount.
-            $sale_price_val = $product->get_sale_price();
+            $sale_price_val = $product->get_meta('_sale_price');
             // The sign-up fee is a separate one-time charge.
             $sign_up_fee = (float) $product->get_meta('_subscription_sign_up_fee');
             // The sub_text should describe the full billing terms for clarity.
