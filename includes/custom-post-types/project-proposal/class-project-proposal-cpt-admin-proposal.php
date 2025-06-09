@@ -53,7 +53,7 @@ class Proposal {
 
         $start_date = get_post_meta($post->ID, '_proposal_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
-        
+
         // Get original request data
         $original_budget = get_post_meta($post->ID, '_original_request_budget', true);
         $original_start_date = get_post_meta($post->ID, '_original_request_start_date', true);
@@ -224,8 +224,8 @@ class Proposal {
 
         // Check the user's permissions.
         if (isset($_POST['post_type']) && 'arsol-pfw-proposal' == $_POST['post_type']) {
-            if (!current_user_can('edit_post', $post_id)) {
-                return;
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
             }
         }
         
@@ -249,7 +249,7 @@ class Proposal {
             }
 
             // Sanitize and save the recurring budget amount
-            if (isset($_POST['proposal_recurring_budget'])) {
+        if (isset($_POST['proposal_recurring_budget'])) {
                 $recurring_budget_amount = wc_format_decimal(sanitize_text_field($_POST['proposal_recurring_budget']));
                 $recurring_budget_data = array(
                     'amount' => $recurring_budget_amount,
@@ -258,18 +258,18 @@ class Proposal {
                 update_post_meta($post_id, '_proposal_recurring_budget', $recurring_budget_data);
             } else {
                 delete_post_meta($post_id, '_proposal_recurring_budget');
-            }
+        }
 
             // Save billing cycle if recurring budget is set
             if (!empty($_POST['proposal_recurring_budget']) && $_POST['proposal_recurring_budget'] > 0) {
-                if (isset($_POST['proposal_billing_interval'])) {
-                    update_post_meta($post_id, '_proposal_billing_interval', sanitize_text_field($_POST['proposal_billing_interval']));
-                }
-                if (isset($_POST['proposal_billing_period'])) {
-                    update_post_meta($post_id, '_proposal_billing_period', sanitize_text_field($_POST['proposal_billing_period']));
-                }
-                if (isset($_POST['proposal_recurring_start_date'])) {
-                    update_post_meta($post_id, '_proposal_recurring_start_date', sanitize_text_field($_POST['proposal_recurring_start_date']));
+        if (isset($_POST['proposal_billing_interval'])) {
+            update_post_meta($post_id, '_proposal_billing_interval', sanitize_text_field($_POST['proposal_billing_interval']));
+        }
+        if (isset($_POST['proposal_billing_period'])) {
+            update_post_meta($post_id, '_proposal_billing_period', sanitize_text_field($_POST['proposal_billing_period']));
+        }
+        if (isset($_POST['proposal_recurring_start_date'])) {
+            update_post_meta($post_id, '_proposal_recurring_start_date', sanitize_text_field($_POST['proposal_recurring_start_date']));
                 }
             } else {
                 // If there's no recurring budget, delete the meta

@@ -1,6 +1,7 @@
 <?php
-
 namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin;
+
+use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -15,6 +16,7 @@ class Proposal_Invoice {
         // AJAX Handlers
         add_action('wp_ajax_arsol_proposal_invoice_ajax_search_products', array($this, 'ajax_search_products'));
         add_action('wp_ajax_arsol_proposal_invoice_ajax_get_product_details', array($this, 'ajax_get_product_details'));
+        add_action('wp_ajax_arsol_calculate_average_monthly_total', array($this, 'ajax_calculate_average_monthly_total'));
     }
 
     public function add_invoice_meta_box() {
@@ -56,8 +58,7 @@ class Proposal_Invoice {
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
                     'currency_symbol' => get_woocommerce_currency_symbol(),
-                    'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array(),
-                    'average_monthly_total' => get_post_meta($post->ID, '_arsol_proposal_average_monthly_total', true)
+                    'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array()
                 )
             );
         }
@@ -160,7 +161,6 @@ class Proposal_Invoice {
                 </table>
                  <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
                  <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
-                 <input type="hidden" name="line_items_average_monthly_total" id="line_items_average_monthly_total">
             </div>
         </div>
         <?php
@@ -269,22 +269,16 @@ class Proposal_Invoice {
     }
 
     public function save_invoice_meta_box($post_id) {
-        // Check if our nonce is set and valid.
         if (!isset($_POST['arsol_proposal_invoice_nonce']) || !wp_verify_nonce($_POST['arsol_proposal_invoice_nonce'], 'arsol_proposal_invoice_save')) {
             return;
         }
-
-        // Don't save on autosave.
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
-
-        // Check the user's permissions.
         if (!current_user_can('edit_post', $post_id)) {
             return;
         }
         
-        // **Only save line items if this is the selected cost proposal type.**
         $cost_proposal_type = get_post_meta($post_id, '_cost_proposal_type', true);
         if ($cost_proposal_type !== 'invoice_line_items') {
             return;
@@ -297,7 +291,6 @@ class Proposal_Invoice {
             foreach ( $line_items as $group_key => $group_value ) {
                 if (!empty($group_value)) {
                     $sanitized_line_items[$group_key] = array_map( function( $item ) {
-                        // Allow HTML in sub-text for display purposes
                         if (isset($item['sub_text'])) {
                             $item['sub_text'] = wp_kses_post($item['sub_text']);
                         }
@@ -306,6 +299,35 @@ class Proposal_Invoice {
                 }
             }
         }
+        
+        // --- Calculate and save the average monthly total ---
+        $total_monthly_cost = 0;
+
+        // Recurring products
+        if (!empty($sanitized_line_items['products'])) {
+            foreach ($sanitized_line_items['products'] as $item) {
+                if (isset($item['product_id'])) {
+                    $product = wc_get_product($item['product_id']);
+                    if ($product && $product->is_type(array('subscription', 'subscription_variation'))) {
+                        $price = !empty($item['sale_price']) ? $item['sale_price'] : $item['price'];
+                        $interval = \WC_Subscriptions_Product::get_interval($product);
+                        $period = \WC_Subscriptions_Product::get_period($product);
+                        $quantity = isset($item['quantity']) ? $item['quantity'] : 1;
+                        $total_monthly_cost += Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
+                    }
+                }
+            }
+        }
+        
+        // Recurring fees
+        if (!empty($sanitized_line_items['recurring_fees'])) {
+            foreach ($sanitized_line_items['recurring_fees'] as $item) {
+                $total_monthly_cost += Woocommerce_Subscriptions::get_monthly_cost($item['amount'], $item['interval'], $item['period']);
+            }
+        }
+        
+        update_post_meta($post_id, '_arsol_proposal_average_monthly_total', $total_monthly_cost);
+        // --- End calculation ---
 
         update_post_meta($post_id, '_arsol_proposal_line_items', $sanitized_line_items);
         update_post_meta($post_id, '_arsol_proposal_one_time_total', sanitize_text_field($_POST['line_items_one_time_total']));
@@ -313,10 +335,22 @@ class Proposal_Invoice {
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
         $recurring_totals = json_decode($recurring_totals_json, true);
         update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $recurring_totals);
-        
-        if (isset($_POST['line_items_average_monthly_total'])) {
-            update_post_meta($post_id, '_arsol_proposal_average_monthly_total', sanitize_text_field($_POST['line_items_average_monthly_total']));
+    }
+    
+    public function ajax_calculate_average_monthly_total() {
+        check_ajax_referer('arsol-proposal-invoice-nonce', 'nonce');
+
+        $recurring_items = isset($_POST['recurring_items']) ? $_POST['recurring_items'] : array();
+        $total_monthly_cost = 0;
+
+        foreach ($recurring_items as $item) {
+            $total_monthly_cost += Woocommerce_Subscriptions::get_monthly_cost($item['price'], $item['interval'], $item['period']) * $item['quantity'];
         }
+        
+        wp_send_json_success(array(
+            'raw' => $total_monthly_cost,
+            'formatted' => wc_price($total_monthly_cost)
+        ));
     }
 
     public function ajax_search_products() {
@@ -396,8 +430,7 @@ class Proposal_Invoice {
             'is_subscription' => $is_subscription,
             'sign_up_fee' => wc_format_decimal($sign_up_fee, wc_get_price_decimals()),
             'billing_interval' => $billing_interval,
-            'billing_period'   => $billing_period,
-            // We no longer send sub_text or price_html from here
+            'billing_period'   => $billing_period
         );
 
         wp_send_json_success($data);
