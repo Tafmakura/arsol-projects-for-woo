@@ -10,6 +10,9 @@ class Proposal {
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
         // Reorder meta boxes
         add_action('do_meta_boxes', array($this, 'reorder_proposal_meta_boxes'));
+        // Add styles to hide metaboxes initially
+        add_action('admin_head-post.php', array($this, 'hide_metaboxes_initially'));
+        add_action('admin_head-post-new.php', array($this, 'hide_metaboxes_initially'));
         // Save proposal data
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
         // Action to set review status when a proposal is published
@@ -185,6 +188,18 @@ class Proposal {
             });
         </script>
         <?php
+    }
+
+    public function hide_metaboxes_initially() {
+        global $post;
+        if (isset($post->post_type) && $post->post_type === 'arsol-pfw-proposal') {
+            echo '<style>
+                #arsol_budget_estimates_metabox,
+                #arsol_proposal_invoice_metabox {
+                    display: none;
+                }
+            </style>';
+        }
     }
 
     public function reorder_proposal_meta_boxes($post_type) {
