@@ -104,6 +104,7 @@
         productChanged: function(e) {
             var $row = $(e.currentTarget).closest('.line-item');
             var productId = $(e.currentTarget).val();
+            $row.find('.debug-id-display').text(productId);
             this.fetchProductDetails($row, productId);
         },
 
