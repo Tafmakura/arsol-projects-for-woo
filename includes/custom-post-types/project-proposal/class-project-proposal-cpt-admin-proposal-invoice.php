@@ -16,6 +16,7 @@ class Proposal_Invoice {
         // AJAX Handlers
         add_action('wp_ajax_arsol_proposal_invoice_ajax_search_products', array($this, 'ajax_search_products'));
         add_action('wp_ajax_arsol_proposal_invoice_ajax_get_product_details', array($this, 'ajax_get_product_details'));
+        add_action('wp_ajax_arsol_proposal_invoice_ajax_get_product_name', array($this, 'ajax_get_product_name'));
     }
 
     public function add_invoice_meta_box() {
@@ -261,8 +262,8 @@ class Proposal_Invoice {
             <tr class="line-item product-item" data-id="{{ data.id }}">
                 <td class="product-column">
                     <select class="product-select" name="line_items[products][{{ data.id }}][product_id]" style="width:100%;">
-                        <# if (data.product_id && data.product_name) { #>
-                            <option value="{{ data.product_id }}" selected="selected">{{ data.product_name }}</option>
+                        <# if (data.product_id) { #>
+                            <option value="{{ data.product_id }}" selected="selected">Loading...</option>
                         <# } else { #>
                              <option value=""><?php _e('Select a product', 'arsol-pfw'); ?></option>
                         <# } #>
@@ -270,7 +271,7 @@ class Proposal_Invoice {
                     <div class="product-sub-text">{{{ data.sub_text }}}</div>
                 </td>
                 <td class="start-date-column">
-                    <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
+                    <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
                 </td>
                 <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
                 <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
@@ -477,5 +478,21 @@ class Proposal_Invoice {
         }
 
         wp_send_json_success($data);
+    }
+
+    public function ajax_get_product_name() {
+        check_ajax_referer('arsol-proposal-invoice-nonce', 'nonce');
+        
+        $product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
+        if (!$product_id) {
+            wp_send_json_error('Missing product ID');
+        }
+
+        $product = wc_get_product($product_id);
+        if (!$product) {
+            wp_send_json_error('Invalid product');
+        }
+        
+        wp_send_json_success($product->get_name());
     }
 }

@@ -108,6 +108,9 @@
             if (items && items.shipping_fees) {
                 $.each(items.shipping_fees, function(id, itemData) { self.renderRow('shipping-fee', itemData); });
             }
+            
+            // Initialize start date column visibility
+            this.updateStartDateColumnVisibility();
             this.calculateTotals();
         },
 
@@ -164,8 +167,13 @@
             if (type === 'product') {
                 this.initSelect2($newRow);
                 if(data.product_id) {
-                     this.fetchProductDetails($newRow, data.product_id);
+                    this.fetchProductName($newRow, data.product_id);
+                    this.fetchProductDetails($newRow, data.product_id);
+                } else {
+                    // Hide start date input for new rows by default
+                    $newRow.find('.start-date-input').hide();
                 }
+                this.updateStartDateColumnVisibility();
             }
         },
 
@@ -197,7 +205,13 @@
 
         removeLineItem: function(e) {
             e.preventDefault();
-            $(e.currentTarget).closest('.line-item').remove();
+            var $row = $(e.currentTarget).closest('.line-item');
+            var isProductRow = $row.hasClass('product-item');
+            $row.remove();
+            
+            if (isProductRow) {
+                this.updateStartDateColumnVisibility();
+            }
             this.calculateTotals();
         },
         
@@ -207,9 +221,43 @@
             this.fetchProductDetails($row, productId);
         },
 
+        fetchProductName: function($row, productId) {
+            if (!productId) return;
+
+            $.ajax({
+                url: arsol_proposal_invoice_vars.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'arsol_proposal_invoice_ajax_get_product_name',
+                    nonce: arsol_proposal_invoice_vars.nonce,
+                    product_id: productId,
+                },
+                success: function(response) {
+                    if (response.success) {
+                        var productName = response.data;
+                        var $select = $row.find('.product-select');
+                        $select.empty().append('<option value="' + productId + '" selected="selected">' + productName + '</option>');
+                    }
+                },
+                error: function() {
+                    // If product doesn't exist, show a placeholder
+                    var $select = $row.find('.product-select');
+                    $select.empty().append('<option value="' + productId + '" selected="selected">Product not found (ID: ' + productId + ')</option>');
+                }
+            });
+        },
+
         fetchProductDetails: function($row, productId) {
              var self = this;
-             if (!productId) return;
+             if (!productId) {
+                 // Clear data when no product is selected
+                 $row.find('.price-input').val('');
+                 $row.find('.sale-price-input').val('');
+                 $row.find('.start-date-input').hide().val('');
+                 $row.removeData('is-subscription billing-interval billing-period sign-up-fee');
+                 this.updateStartDateColumnVisibility();
+                 return;
+             }
 
              $.ajax({
                  url: arsol_proposal_invoice_vars.ajax_url,
@@ -236,10 +284,27 @@
                              $row.find('.start-date-input').hide().val('');
                          }
                          
+                         self.updateStartDateColumnVisibility();
                          self.calculateTotals();
                      }
                  }
              });
+        },
+
+        updateStartDateColumnVisibility: function() {
+            // Check if any product rows have visible start date inputs
+            var hasVisibleStartDates = false;
+            $('#product-lines-body .start-date-input:visible').each(function() {
+                hasVisibleStartDates = true;
+                return false; // break loop
+            });
+
+            // Show/hide the start date column header and all start date cells based on visibility
+            if (hasVisibleStartDates) {
+                $('.start-date-column').addClass('show');
+            } else {
+                $('.start-date-column').removeClass('show');
+            }
         },
         
         calculateTotals: function() {

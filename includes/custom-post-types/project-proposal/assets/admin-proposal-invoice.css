@@ -22,6 +22,16 @@
     width: 60%;
 }
 
+#arsol_proposal_invoice_metabox .start-date-column {
+    width: 120px;
+    text-align: center;
+    display: none; /* Hidden by default */
+}
+
+#arsol_proposal_invoice_metabox .start-date-column.show {
+    display: table-cell; /* Show when needed */
+}
+
 #arsol_proposal_invoice_metabox .taxable-column {
     width: 80px;
     text-align: center;
