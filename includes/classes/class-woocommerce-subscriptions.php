@@ -30,6 +30,19 @@ class Woocommerce_Subscriptions {
     }
 
     /**
+     * Returns an array of constants used for date calculations.
+     * This allows the constants to be centralized and passed to other scripts.
+     *
+     * @return array
+     */
+    public static function get_calculation_constants() {
+        return array(
+            'days_in_month' => 30.417, // Average days in a month (365 / 12)
+            'days_in_year'  => 365
+        );
+    }
+
+    /**
      * Calculates the normalized daily cost of a subscription.
      *
      * @param float $price The price of the subscription.
@@ -67,8 +80,9 @@ class Woocommerce_Subscriptions {
      * @return float The calculated average monthly cost.
      */
     public static function get_monthly_cost($price, $interval, $period) {
+        $constants = self::get_calculation_constants();
         $daily_cost = self::get_daily_cost($price, $interval, $period);
-        return $daily_cost * 30.417; // Average days in a month
+        return $daily_cost * $constants['days_in_month'];
     }
 
     /**
@@ -80,7 +94,8 @@ class Woocommerce_Subscriptions {
      * @return float The calculated annual cost.
      */
     public static function get_annual_cost($price, $interval, $period) {
+        $constants = self::get_calculation_constants();
         $daily_cost = self::get_daily_cost($price, $interval, $period);
-        return $daily_cost * 365;
+        return $daily_cost * $constants['days_in_year'];
     }
 }

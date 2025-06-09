@@ -21,6 +21,7 @@
             price = parseFloat(price) || 0;
             interval = parseInt(interval) || 1;
             var days_in_period = 0;
+            var constants = arsol_proposal_invoice_vars.calculation_constants;
 
             switch (period) {
                 case 'day':
@@ -30,10 +31,10 @@
                     days_in_period = 7;
                     break;
                 case 'month':
-                    days_in_period = 30.417; // Average days in a month (365 / 12)
+                    days_in_period = constants.days_in_month;
                     break;
                 case 'year':
-                    days_in_period = 365;
+                    days_in_period = constants.days_in_year;
                     break;
             }
 
@@ -283,9 +284,9 @@
                     $row.find('.subtotal-display').html(formatPrice(itemTotal));
                 }
             });
-            var productsMonthlyTotal = productsDailyCost * 30.417;
+            var productsMonthlyTotal = productsDailyCost * arsol_proposal_invoice_vars.calculation_constants.days_in_month;
             $('#product-subtotal-display').html(formatPrice(productsOneTimeSubtotal));
-            $('#product-avg-monthly-display').html(formatPrice(productsMonthlyTotal));
+            $('#product-avg-monthly-display').html(formatPrice(productsMonthlyTotal) + ' /mo');
             grandOneTimeTotal += productsOneTimeSubtotal;
             grandTotalDailyCost += productsDailyCost;
 
@@ -310,8 +311,8 @@
                     recurringFeesDailyCost += self.getDailyCost(amount, interval, period);
                 }
             });
-            var recurringFeesMonthlyTotal = recurringFeesDailyCost * 30.417;
-            $('#recurring-fee-avg-monthly-display').html(formatPrice(recurringFeesMonthlyTotal));
+            var recurringFeesMonthlyTotal = recurringFeesDailyCost * arsol_proposal_invoice_vars.calculation_constants.days_in_month;
+            $('#recurring-fee-avg-monthly-display').html(formatPrice(recurringFeesMonthlyTotal) + ' /mo');
             grandTotalDailyCost += recurringFeesDailyCost;
 
 
@@ -326,9 +327,9 @@
             grandOneTimeTotal += shippingSubtotal;
 
             // --- Display Grand Totals ---
-            var grandAnnualTotal = grandTotalDailyCost * 365;
+            var grandAnnualTotal = grandTotalDailyCost * arsol_proposal_invoice_vars.calculation_constants.days_in_year;
             $('#one-time-total-display').html(formatPrice(grandOneTimeTotal));
-            $('#average-monthly-total-display').html(formatPrice(grandAnnualTotal));
+            $('#average-monthly-total-display').html(formatPrice(grandAnnualTotal) + ' /yr');
 
             // Update hidden inputs for saving - note we no longer save grouped recurring totals.
             // The individual line items with their intervals/periods are the source of truth.

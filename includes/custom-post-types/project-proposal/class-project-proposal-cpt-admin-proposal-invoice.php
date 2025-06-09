@@ -61,7 +61,7 @@ class Proposal_Invoice {
                     'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
                     'currency_symbol' => $saved_symbol ?: get_woocommerce_currency_symbol(),
                     'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array(),
-                    'saved_average_monthly_total' => get_post_meta($post->ID, '_arsol_proposal_average_monthly_total', true)
+                    'calculation_constants' => Woocommerce_Subscriptions::get_calculation_constants()
                 )
             );
         }
