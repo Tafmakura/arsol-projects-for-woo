@@ -215,11 +215,12 @@
                 }
             });
             
-            // Show/hide the entire start date column (header and cells)
+            // Add/remove CSS class to control column visibility
+            var $metabox = $('#arsol_proposal_invoice_metabox');
             if (hasSubscriptions) {
-                $('#product-line-items .start-date-column').show();
+                $metabox.addClass('has-subscriptions');
             } else {
-                $('#product-line-items .start-date-column').hide();
+                $metabox.removeClass('has-subscriptions');
             }
         },
         
@@ -236,6 +237,10 @@
                  return;
              }
 
+             // Add WordPress admin spinner
+             var $spinner = $('<span class="spinner is-active"></span>');
+             $row.find('.product-select').after($spinner);
+
              $.ajax({
                  url: arsol_proposal_invoice_vars.ajax_url,
                  type: 'POST',
@@ -245,28 +250,47 @@
                      product_id: productId,
                  },
                  success: function(response) {
+                     $spinner.remove();
                      if (response.success) {
                          var data = response.data;
-                         $row.find('.price-input').val(data.regular_price);
-                         $row.find('.sale-price-input').val(data.sale_price);
                          
-                         $row.data('is-subscription', data.is_subscription);
-                         $row.data('sign-up-fee', data.sign_up_fee || 0);
-                         $row.data('billing-interval', data.billing_interval);
-                         $row.data('billing-period', data.billing_period);
+                         // Store is_subscription data attribute
+                         if (data.is_subscription) {
+                             $row.attr('data-is-subscription', 'true');
+                         } else {
+                             $row.removeAttr('data-is-subscription');
+                         }
                          
+                         // Update form fields
+                         $row.find('.price-input').val(data.regular_price || '');
+                         $row.find('.sale-price-input').val(data.sale_price || '');
+                         
+                         // Show/hide start date input for this row
                          if (data.is_subscription) {
                              $row.find('.start-date-input').show();
                          } else {
                              $row.find('.start-date-input').hide().val('');
                          }
                          
+                         // Update sub text if needed
+                         if (data.short_description) {
+                             $row.find('.description').html(data.short_description);
+                         }
+                         
                          self.calculateTotals();
                          self.toggleStartDateColumn();
+                     } else {
+                         console.log('Error fetching product details:', response.data);
                      }
+                 },
+                 error: function(xhr, status, error) {
+                     $spinner.remove();
+                     console.log('AJAX Error:', error);
+                     console.log('Status:', status);
+                     console.log('Response:', xhr.responseText);
                  }
              });
-        },
+         },
         
         calculateTotals: function() {
             var self = this;
