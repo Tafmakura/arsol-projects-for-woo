@@ -36,7 +36,7 @@ class Request {
 
         // Get current values
         $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
-        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
+        $current_status = (!is_wp_error($current_status) && !empty($current_status)) ? $current_status[0] : 'pending';
         $budget_data = get_post_meta($post->ID, '_request_budget', true);
         $budget_amount = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
         $budget_currency_code = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();

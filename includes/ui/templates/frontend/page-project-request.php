@@ -33,7 +33,7 @@ if (!$request || $request->post_type !== 'arsol-pfw-request') {
 
 // Get request status
 $status_terms = wp_get_post_terms($request_id, 'arsol-request-status', array('fields' => 'names'));
-$status = !empty($status_terms) ? $status_terms[0] : '';
+$status = (!is_wp_error($status_terms) && !empty($status_terms)) ? $status_terms[0] : '';
 
 // Set type for template loading
 $_GET['type'] = 'request';

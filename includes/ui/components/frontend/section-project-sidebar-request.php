@@ -49,7 +49,7 @@ do_action('arsol_pfw_sidebar_fields_end', 'request', $sidebar_data);
 <?php
 // Get status for action buttons and metadata
 $status_terms = wp_get_post_terms($request_id, 'arsol-request-status', ['fields' => 'slugs']);
-$current_status = !empty($status_terms) ? $status_terms[0] : '';
+$current_status = (!is_wp_error($status_terms) && !empty($status_terms)) ? $status_terms[0] : '';
 
 // Get request metadata
 $request_budget = get_post_meta($request_id, '_request_budget', true);

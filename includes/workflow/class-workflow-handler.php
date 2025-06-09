@@ -82,7 +82,7 @@ class Workflow_Handler {
 
         // Server-side validation of the request status
         $current_status = wp_get_object_terms($request_id, 'arsol-request-status', array('fields' => 'slugs'));
-        if (empty($current_status) || $current_status[0] !== 'under-review') {
+        if (is_wp_error($current_status) || empty($current_status) || $current_status[0] !== 'under-review') {
             wp_die(__('This request cannot be converted. The status must be "Under Review".', 'arsol-pfw'));
         }
 

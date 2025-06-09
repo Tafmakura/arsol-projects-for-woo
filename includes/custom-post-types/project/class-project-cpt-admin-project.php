@@ -35,7 +35,7 @@ class Project {
 
         // Get current values
         $current_status_terms = wp_get_object_terms($post->ID, 'arsol-project-status', array('fields' => 'slugs'));
-        $current_status = !empty($current_status_terms) ? $current_status_terms[0] : 'not-started';
+        $current_status = (!is_wp_error($current_status_terms) && !empty($current_status_terms)) ? $current_status_terms[0] : 'not-started';
 
         $due_date = get_post_meta($post->ID, '_project_due_date', true);
         $project_lead = get_post_meta($post->ID, '_project_lead', true);
@@ -230,7 +230,7 @@ class Project {
             
             // Get the status before this save
             $current_status_terms = wp_get_object_terms($post_id, 'arsol-project-status', array('fields' => 'slugs'));
-            $old_status = !empty($current_status_terms) ? $current_status_terms[0] : 'not-started';
+            $old_status = (!is_wp_error($current_status_terms) && !empty($current_status_terms)) ? $current_status_terms[0] : 'not-started';
 
             // Set start date on the first transition to 'in-progress'
             if ($new_status === 'in-progress' && $old_status !== 'in-progress') {
