@@ -132,6 +132,13 @@
         width: 100px;
     }
     
+    /* Keep recurring fees amount column consistent */
+    #arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) {
+        width: 100px !important; /* Slightly smaller on medium screens */
+        max-width: 100px !important;
+        min-width: 100px !important;
+    }
+    
     #arsol_proposal_invoice_metabox #product-line-items th:nth-child(4),
     #arsol_proposal_invoice_metabox #product-line-items td:nth-child(4),
     #arsol_proposal_invoice_metabox #product-line-items th:nth-child(5),
@@ -156,6 +163,18 @@
     #arsol_proposal_invoice_metabox .fee-name-column,
     #arsol_proposal_invoice_metabox .shipping-description-column {
         min-width: 150px; /* Smaller minimum on mobile */
+    }
+    
+    /* Recurring fees fee name column - smaller minimum on mobile */
+    #arsol_proposal_invoice_metabox table .recurring-fee-item .fee-name-column {
+        min-width: 120px !important; /* Even smaller minimum for more stretch */
+    }
+    
+    /* Recurring fees amount column - mobile size */
+    #arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) {
+        width: 80px !important; /* Mobile size */
+        max-width: 80px !important;
+        min-width: 80px !important;
     }
     
     /* Reduce all fixed columns further on mobile */
@@ -283,19 +302,26 @@
     text-align: right;
 }
 
-/* Recurring fees section - specific column widths */
-#arsol_proposal_invoice_metabox .recurring-fee-item .fee-name-column {
-    width: auto; /* Auto-stretch to fill remaining space */
-    min-width: 200px;
+/* Recurring fees section - specific column widths with higher specificity */
+#arsol_proposal_invoice_metabox table .recurring-fee-item .fee-name-column {
+    width: auto !important; /* Auto-stretch to fill remaining space */
+    min-width: 150px !important; /* Reduced minimum for more stretch */
 }
 
-#arsol_proposal_invoice_metabox .recurring-fee-item .fee-name-column input {
-    width: 100%;
+#arsol_proposal_invoice_metabox table .recurring-fee-item .fee-name-column input {
+    width: 100% !important;
 }
 
-/* Amount column in recurring fees (3rd column) - match other amount inputs */
-#arsol_proposal_invoice_metabox .recurring-fee-item td:nth-child(3) {
-    width: 120px; /* Same as other amount columns */
+/* Amount column in recurring fees (3rd column) - force consistent width */
+#arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) {
+    width: 120px !important; /* Force same as other amount columns */
+    max-width: 120px !important;
+    min-width: 120px !important;
+}
+
+#arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) input {
+    width: 100% !important;
+    text-align: right !important;
 }
 
 /* All fee amount inputs styling */
