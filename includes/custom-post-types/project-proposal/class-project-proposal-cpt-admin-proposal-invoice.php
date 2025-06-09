@@ -234,9 +234,6 @@ class Proposal_Invoice {
     }
     
     private function render_js_templates() {
-        // Start output buffering to prevent any unexpected output
-        ob_start();
-        
         // Prepare tax classes for dropdowns
         $tax_classes = \WC_Tax::get_tax_classes();
         $tax_class_options = array('no-tax' => __('No Tax', 'arsol-pfw'));
@@ -259,9 +256,6 @@ class Proposal_Invoice {
                 $shipping_methods_formatted[$method_id] = $method->get_method_title();
             }
         }
-        
-        // Clean any unexpected output from preparation
-        ob_end_clean();
         ?>
         <script type="text/html" id="tmpl-arsol-product-line-item">
             <tr class="line-item product-item" data-id="{{ data.id }}">
