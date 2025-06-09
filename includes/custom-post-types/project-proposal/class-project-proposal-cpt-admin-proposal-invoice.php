@@ -95,6 +95,7 @@ class Proposal_Invoice {
                     <thead>
                         <tr>
                             <th class="product-column"><?php _e('Product', 'arsol-pfw'); ?></th>
+                            <th class="details-column"><?php _e('Details', 'arsol-pfw'); ?></th>
                             <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th><?php _e('Qty', 'arsol-pfw'); ?></th>
                             <th><?php _e('Price', 'arsol-pfw'); ?></th>
@@ -131,6 +132,7 @@ class Proposal_Invoice {
                     <thead>
                         <tr>
                             <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
+                            <th class="details-column"><?php _e('Details', 'arsol-pfw'); ?></th>
                             <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
@@ -164,6 +166,7 @@ class Proposal_Invoice {
                      <thead>
                         <tr>
                             <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
+                            <th class="details-column"><?php _e('Details', 'arsol-pfw'); ?></th>
                             <th><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
                             <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
@@ -199,6 +202,7 @@ class Proposal_Invoice {
                      <thead>
                         <tr>
                             <th class="shipping-description-column"><?php _e('Description', 'arsol-pfw'); ?></th>
+                            <th class="details-column"><?php _e('Details', 'arsol-pfw'); ?></th>
                             <th class="shipping-class-column"><?php _e('Shipping Class', 'arsol-pfw'); ?></th>
                             <th class="shipping-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
@@ -289,6 +293,9 @@ class Proposal_Invoice {
                     </select>
                     <div class="product-sub-text">{{{ data.sub_text }}}</div>
                 </td>
+                <td class="details-column">
+                    <input type="text" class="details-input" name="line_items[products][{{ data.id }}][details]" value="{{ data.details || '' }}" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
+                </td>
                 <td class="start-date-column">
                     <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
                 </td>
@@ -304,6 +311,9 @@ class Proposal_Invoice {
             <tr class="line-item fee-item" data-id="{{ data.id }}">
                 <td class="fee-name-column">
                     <input type="text" class="fee-name-input" name="line_items[one_time_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Setup Fee', 'arsol-pfw'); ?>">
+                </td>
+                <td class="details-column">
+                    <input type="text" class="details-input" name="line_items[one_time_fees][{{ data.id }}][details]" value="{{ data.details || '' }}" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
                 </td>
                 <td>
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
@@ -324,6 +334,9 @@ class Proposal_Invoice {
              <tr class="line-item recurring-fee-item" data-id="{{ data.id }}">
                 <td class="fee-name-column">
                     <input type="text" class="fee-name-input" name="line_items[recurring_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>">
+                </td>
+                <td class="details-column">
+                    <input type="text" class="details-input" name="line_items[recurring_fees][{{ data.id }}][details]" value="{{ data.details || '' }}" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
                 </td>
                 <td class="start-date-column">
                     <input type="date" class="start-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
@@ -373,6 +386,9 @@ class Proposal_Invoice {
             <tr class="line-item shipping-fee-item" data-id="{{ data.id }}">
                 <td class="shipping-description-column">
                     <input type="text" class="shipping-description-input" name="line_items[shipping_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Express Shipping', 'arsol-pfw'); ?>">
+                </td>
+                <td class="details-column">
+                    <input type="text" class="details-input" name="line_items[shipping_fees][{{ data.id }}][details]" value="{{ data.details || '' }}" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
                 </td>
                 <td class="shipping-class-column">
                     <select class="shipping-class-select" name="line_items[shipping_fees][{{ data.id }}][shipping_class_id]">
@@ -429,6 +445,9 @@ class Proposal_Invoice {
                     $sanitized_line_items[$group_key] = array_map( function( $item ) {
                         if (isset($item['sub_text'])) {
                             $item['sub_text'] = wp_kses_post($item['sub_text']);
+                        }
+                        if (isset($item['details'])) {
+                            $item['details'] = sanitize_text_field($item['details']);
                         }
                         return array_map( 'sanitize_text_field', $item );
                     }, (array) $group_value );

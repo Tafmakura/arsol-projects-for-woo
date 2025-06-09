@@ -55,6 +55,7 @@ class Proposal_Budget {
                     <thead>
                         <tr>
                             <th class="budget-description-column"><?php _e('Description', 'arsol-pfw'); ?></th>
+                            <th class="details-column"><?php _e('Details', 'arsol-pfw'); ?></th>
                             <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th class="amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
@@ -66,6 +67,9 @@ class Proposal_Budget {
                         <tr class="line-item budget-item">
                             <td class="budget-description-column">
                                 <strong><?php _e('One-Time Budget', 'arsol-pfw'); ?></strong>
+                            </td>
+                            <td class="details-column">
+                                <input type="text" class="details-input" name="proposal_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
                             </td>
                             <td class="start-date-column">
                                 <span class="not-applicable">—</span>
@@ -85,6 +89,9 @@ class Proposal_Budget {
                         <tr class="line-item budget-item recurring-budget-row">
                             <td class="budget-description-column">
                                 <strong><?php _e('Recurring Budget', 'arsol-pfw'); ?></strong>
+                            </td>
+                            <td class="details-column">
+                                <input type="text" class="details-input" name="proposal_recurring_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_recurring_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
                             </td>
                             <td class="start-date-column">
                                 <input type="date" class="start-date-input" name="proposal_recurring_start_date" value="<?php echo esc_attr($recurring_start_date); ?>">
@@ -241,9 +248,17 @@ class Proposal_Budget {
             update_post_meta($post_id, '_proposal_budget', array('amount' => $budget_amount, 'currency' => get_woocommerce_currency()));
         }
 
+        if (isset($_POST['proposal_budget_details'])) {
+            update_post_meta($post_id, '_proposal_budget_details', sanitize_text_field($_POST['proposal_budget_details']));
+        }
+
         if (isset($_POST['proposal_recurring_budget'])) {
             $recurring_budget_amount = sanitize_text_field($_POST['proposal_recurring_budget']);
             update_post_meta($post_id, '_proposal_recurring_budget', array('amount' => $recurring_budget_amount, 'currency' => get_woocommerce_currency()));
+        }
+
+        if (isset($_POST['proposal_recurring_budget_details'])) {
+            update_post_meta($post_id, '_proposal_recurring_budget_details', sanitize_text_field($_POST['proposal_recurring_budget_details']));
         }
 
         if (isset($_POST['proposal_billing_interval'])) {
