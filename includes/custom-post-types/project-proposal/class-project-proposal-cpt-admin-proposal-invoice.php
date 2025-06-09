@@ -88,42 +88,16 @@ class Proposal_Invoice {
                 <div class="section-totals">
                     <table align="right">
                         <tr>
-                            <td><strong><?php _e('Products Subtotal:', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="product-subtotal-display"><?php echo wc_price(0); ?></td>
                         </tr>
                         <tr>
-                            <td><strong><?php _e('Products Avg. Recurring/mo:', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Avg. Recurring Total/mo:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="product-avg-monthly-display"><?php echo wc_price(0); ?></td>
                         </tr>
                     </table>
                 </div>
                 <button type="button" class="button add-line-item" data-type="product"><?php _e('+ Add Product', 'arsol-pfw'); ?></button>
-            </div>
-            <hr>
-            <!-- One-Time Fees Section -->
-            <div class="line-items-container">
-                <h3><?php _e('One-Time Fees', 'arsol-pfw'); ?></h3>
-                <table class="widefat" id="onetime-fee-line-items">
-                     <thead>
-                        <tr>
-                            <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
-                            <th><?php _e('Amount', 'arsol-pfw'); ?></th>
-                            <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
-                            <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                            <th class="actions-column"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="onetime-fee-lines-body"></tbody>
-                </table>
-                 <div class="section-totals">
-                    <table align="right">
-                        <tr>
-                            <td><strong><?php _e('One-Time Fees Subtotal:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></td>
-                        </tr>
-                    </table>
-                </div>
-                <button type="button" class="button add-line-item" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
             </div>
             <hr>
             <!-- Recurring Fees Section -->
@@ -145,16 +119,46 @@ class Proposal_Invoice {
                 <div class="section-totals">
                     <table align="right">
                         <tr>
-                            <td><strong><?php _e('Recurring Fees Subtotal:', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="recurring-fee-subtotal-display"><?php echo wc_price(0); ?></td>
                         </tr>
                         <tr>
-                            <td><strong><?php _e('Recurring Fees Avg. Recurring/mo:', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Avg. Recurring Total/mo:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></td>
                         </tr>
                     </table>
                 </div>
                 <button type="button" class="button add-line-item" data-type="recurring-fee"><?php _e('+ Add Recurring Fee', 'arsol-pfw'); ?></button>
+            </div>
+            <hr>
+            <!-- One-Time Fees Section -->
+            <div class="line-items-container">
+                <h3><?php _e('One-Time Fees', 'arsol-pfw'); ?></h3>
+                <table class="widefat" id="onetime-fee-line-items">
+                     <thead>
+                        <tr>
+                            <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
+                            <th><?php _e('Amount', 'arsol-pfw'); ?></th>
+                            <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
+                            <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="actions-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="onetime-fee-lines-body"></tbody>
+                </table>
+                 <div class="section-totals">
+                    <table align="right">
+                        <tr>
+                            <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></td>
+                        </tr>
+                    </table>
+                </div>
+                <button type="button" class="button add-line-item" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
+            </div>
+            <hr>
+            <!-- Recurring Fees Section -->
+            <div class="line-items-container" style="display:none;">
             </div>
             <hr>
             <!-- Shipping Section -->
@@ -174,7 +178,7 @@ class Proposal_Invoice {
                  <div class="section-totals">
                     <table align="right">
                         <tr>
-                            <td><strong><?php _e('Shipping Subtotal:', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="shipping-subtotal-display"><?php echo wc_price(0); ?></td>
                         </tr>
                     </table>
