@@ -148,20 +148,20 @@ class Setup {
             }
         }
 
-        $old_statuses_to_remove = array(
-            'approved',
-            'rejected',
-            'cancelled'
-        );
+        // $old_statuses_to_remove = array(
+        //     'approved',
+        //     'rejected',
+        //     'cancelled'
+        // );
 
-        foreach ($old_statuses_to_remove as $slug) {
-            if (term_exists($slug, 'arsol-request-status')) {
-                $term = get_term_by('slug', $slug, 'arsol-request-status');
-                if ($term) {
-                    wp_delete_term($term->term_id, 'arsol-request-status');
-                }
-            }
-        }
+        // foreach ($old_statuses_to_remove as $slug) {
+        //     if (term_exists($slug, 'arsol-request-status')) {
+        //         $term = get_term_by('slug', $slug, 'arsol-request-status');
+        //         if ($term) {
+        //             wp_delete_term($term->term_id, 'arsol-request-status');
+        //         }
+        //     }
+        // }
     }
 
     /**
