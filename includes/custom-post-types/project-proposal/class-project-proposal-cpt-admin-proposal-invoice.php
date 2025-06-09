@@ -326,6 +326,19 @@ class Proposal_Invoice {
         $regular_price_val = is_numeric($regular_price_val) ? (float) $regular_price_val : 0;
         $sale_price_val = is_numeric($sale_price_val) ? (float) $sale_price_val : '';
 
+        // --- START DEBUGGING ---
+        $debug_html = 'Class: ' . get_class($product);
+        $debug_html .= '<br>Type: ' . $product->get_type();
+        $debug_html .= '<br>Price: ' . $product->get_price();
+        $debug_html .= '<br>Regular Price: ' . $product->get_regular_price();
+        $debug_html .= '<br>Sale Price: ' . $product->get_sale_price();
+        if ($is_subscription) {
+            $debug_html .= '<br>Sign-up Fee Meta: ' . $product->get_meta('_subscription_sign_up_fee');
+            $debug_html .= '<br>Price Meta: ' . $product->get_meta('_subscription_price');
+        }
+        $debug_html .= '<hr>get_price_html(): [' . $product->get_price_html() . ']';
+        // --- END DEBUGGING ---
+
         $data = array(
             'regular_price' => wc_format_decimal($regular_price_val, wc_get_price_decimals()),
             'sale_price' => $sale_price_val !== '' ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
@@ -334,7 +347,7 @@ class Proposal_Invoice {
             'sub_text' => $sub_text,
             'billing_interval' => $billing_interval,
             'billing_period'   => $billing_period,
-            'price_html' => $product->get_price_html()
+            'price_html' => $debug_html
         );
 
         wp_send_json_success($data);
