@@ -339,6 +339,7 @@ class Proposal_Invoice {
     }
     
     public function ajax_calculate_average_monthly_total() {
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-subscriptions.php';
         check_ajax_referer('arsol-proposal-invoice-nonce', 'nonce');
 
         $recurring_items = isset($_POST['recurring_items']) ? $_POST['recurring_items'] : array();
