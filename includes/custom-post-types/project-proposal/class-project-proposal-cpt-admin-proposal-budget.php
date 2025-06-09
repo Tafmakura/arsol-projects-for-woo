@@ -132,6 +132,28 @@ class Proposal_Budget {
                     value="<?php echo esc_attr($recurring_start_date); ?>">
             </div>
         </div>
+        <hr>
+        <!-- Notes Section -->
+        <div class="line-items-container">
+            <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
+            <?php
+            $notes_content = get_post_meta($post->ID, '_arsol_proposal_notes', true);
+            wp_editor(
+                $notes_content,
+                'arsol_proposal_notes_budget', // Use a unique ID to avoid conflicts
+                array(
+                    'textarea_name' => 'arsol_proposal_notes', // Keep the same name for saving
+                    'textarea_rows' => 8,
+                    'media_buttons' => false,
+                    'tinymce' => array(
+                        'toolbar1' => 'bold,italic,underline,bullist,numlist,link,unlink',
+                        'toolbar2' => ''
+                    ),
+                )
+            );
+            ?>
+             <p class="description"><?php _e('These notes will be displayed on the frontend proposal view.', 'arsol-pfw'); ?></p>
+        </div>
          <script>
             jQuery(document).ready(function($) {
                 // Also, a small fix for the recurring budget fields visibility within the budget estimates section
