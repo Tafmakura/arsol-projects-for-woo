@@ -22,25 +22,9 @@
     width: 60%;
 }
 
-#arsol_proposal_invoice_metabox .shipping-method-column {
-    display: flex;
-    align-items: center;
-}
-
-#arsol_proposal_invoice_metabox .shipping-method-column .shipping-method-select-ui {
-    flex-shrink: 0; /* Prevent the select from shrinking */
-    margin-right: 5px;
-}
-
-#arsol_proposal_invoice_metabox .shipping-method-column .shipping-method-input {
-    flex-grow: 1; /* Allow the input to take up remaining space */
-    width: auto; /* Override default widths */
-}
-
 #arsol_proposal_invoice_metabox .taxable-column {
     width: 80px;
     text-align: center;
-    margin-top: 5px;
 }
 
 #arsol_proposal_invoice_metabox .actions-column {
@@ -79,17 +63,9 @@
     margin-top: 5px;
 }
 
-#arsol_proposal_invoice_metabox .billing-cycle-column {
-    display: flex;
-}
-
 #arsol_proposal_invoice_metabox .billing-cycle-column select {
-    flex: 1; /* Allow both selects to share space equally */
+    width: 120px;
     margin-right: 5px;
-}
-
-#arsol_proposal_invoice_metabox .billing-cycle-column select:last-child {
-    margin-right: 0;
 }
 
 .line-items-totals::after {
