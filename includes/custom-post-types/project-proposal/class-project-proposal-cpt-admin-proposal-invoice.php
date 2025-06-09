@@ -203,6 +203,28 @@ class Proposal_Invoice {
                  <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
                  <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
             </div>
+            <hr>
+            <!-- Notes Section -->
+            <div class="line-items-container">
+                <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
+                <?php
+                $notes_content = get_post_meta($post->ID, '_arsol_proposal_notes', true);
+                wp_editor(
+                    $notes_content,
+                    'arsol_proposal_notes',
+                    array(
+                        'textarea_name' => 'arsol_proposal_notes',
+                        'textarea_rows' => 8,
+                        'media_buttons' => false,
+                        'tinymce' => array(
+                            'toolbar1' => 'bold,italic,underline,bullist,numlist,link,unlink',
+                            'toolbar2' => ''
+                        ),
+                    )
+                );
+                ?>
+                 <p class="description"><?php _e('These notes will be displayed on the frontend proposal view.', 'arsol-pfw'); ?></p>
+            </div>
         </div>
         <?php
         $this->render_js_templates();
@@ -318,6 +340,11 @@ class Proposal_Invoice {
         }
         if (!current_user_can('edit_post', $post_id)) {
             return;
+        }
+        
+        // Save Notes
+        if (isset($_POST['arsol_proposal_notes'])) {
+            update_post_meta($post_id, '_arsol_proposal_notes', wp_kses_post($_POST['arsol_proposal_notes']));
         }
         
         $cost_proposal_type = get_post_meta($post_id, '_cost_proposal_type', true);

@@ -58,3 +58,20 @@ include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-pro
 
 // Reset post data
 wp_reset_postdata();
+
+?>
+<section class="arsol-project-section">
+    <h2><?php _e('Notes', 'arsol-pfw'); ?></h2>
+    <div class="arsol-project-section-content">
+        <?php
+        $notes = get_post_meta($proposal_id, '_arsol_proposal_notes', true);
+        if (!empty($notes)) :
+            echo wpautop(wp_kses_post($notes));
+        endif;
+        ?>
+    </div>
+</section>
+
+<?php
+// Action hook for adding custom content after the proposal details
+do_action('arsol_after_project_proposal_details', $proposal_id);
