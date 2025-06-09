@@ -58,7 +58,8 @@ class Proposal_Invoice {
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
                     'currency_symbol' => get_woocommerce_currency_symbol(),
-                    'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array()
+                    'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array(),
+                    'saved_average_monthly_total' => get_post_meta($post->ID, '_arsol_proposal_average_monthly_total', true)
                 )
             );
         }
@@ -344,7 +345,11 @@ class Proposal_Invoice {
         $total_monthly_cost = 0;
 
         foreach ($recurring_items as $item) {
-            $total_monthly_cost += Woocommerce_Subscriptions::get_monthly_cost($item['price'], $item['interval'], $item['period']) * $item['quantity'];
+            $price = isset($item['price']) ? (float) $item['price'] : 0;
+            $interval = isset($item['interval']) ? (int) $item['interval'] : 1;
+            $period = isset($item['period']) ? sanitize_text_field($item['period']) : 'month';
+            $quantity = isset($item['quantity']) ? (int) $item['quantity'] : 1;
+            $total_monthly_cost += Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
         }
         
         wp_send_json_success(array(
