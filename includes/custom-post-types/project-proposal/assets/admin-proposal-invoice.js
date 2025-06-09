@@ -165,6 +165,10 @@
                 this.initSelect2($newRow);
                 if(data.product_id) {
                      this.fetchProductDetails($newRow, data.product_id);
+                } else {
+                    // This is a new, empty row. Ensure subscription columns are hidden.
+                    $newRow.find('.start-date-column').hide();
+                    $newRow.find('.billing-cycle-column').hide();
                 }
             }
         },

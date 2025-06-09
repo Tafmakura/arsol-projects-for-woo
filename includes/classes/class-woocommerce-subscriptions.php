@@ -59,7 +59,7 @@ class Woocommerce_Subscriptions
         ?>
         <select class="billing_cycle_interval" name="line_items[<?php echo esc_attr($type); ?>][{{ data.id }}][billing_cycle_interval]" style="width: 100px;">
             <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
-                <option value="{{ value }}" <# if (data.billing_cycle_interval == value) { #>selected="selected"<# } #>>{{ value }}</option>
+                <option value="{{ value }}" <# if (data.billing_cycle_interval == value) { #>selected="selected"<# } #>>{{ label }}</option>
             <# }); #>
         </select>
         <select class="billing_cycle_period" name="line_items[<?php echo esc_attr($type); ?>][{{ data.id }}][billing_cycle_period]" style="width: 150px;">
