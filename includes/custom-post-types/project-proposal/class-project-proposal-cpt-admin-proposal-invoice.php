@@ -32,8 +32,8 @@ class Proposal_Invoice {
         global $post;
 
         if (('post.php' === $hook || 'post-new.php' === $hook) && isset($post->post_type) && 'arsol-pfw-proposal' === $post->post_type) {
-            $plugin_dir = ARSOL_PROJECTS_PLUGIN_DIR;
-            $plugin_url = ARSOL_PROJECTS_PLUGIN_URL;
+            $plugin_dir = \ARSOL_PROJECTS_PLUGIN_DIR;
+            $plugin_url = \ARSOL_PROJECTS_PLUGIN_URL;
 
             wp_enqueue_style(
                 'arsol-proposal-invoice',
@@ -56,7 +56,8 @@ class Proposal_Invoice {
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
                     'currency_symbol' => get_woocommerce_currency_symbol(),
-                    'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array()
+                    'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array(),
+                    'average_monthly_total' => get_post_meta($post->ID, '_arsol_proposal_average_monthly_total', true)
                 )
             );
         }
@@ -151,10 +152,15 @@ class Proposal_Invoice {
                             <td style="vertical-align: top;"><strong><?php _e('Recurring Totals:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="recurring-totals-display" style="vertical-align: top;"><?php echo wc_price(0); ?></td>
                         </tr>
+                        <tr>
+                            <td><strong><?php _e('Average Monthly Total:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="average-monthly-total-display"><?php echo wc_price(0); ?></td>
+                        </tr>
                     </tbody>
                 </table>
                  <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
                  <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
+                 <input type="hidden" name="line_items_average_monthly_total" id="line_items_average_monthly_total">
             </div>
         </div>
         <?php
@@ -307,6 +313,10 @@ class Proposal_Invoice {
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
         $recurring_totals = json_decode($recurring_totals_json, true);
         update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $recurring_totals);
+        
+        if (isset($_POST['line_items_average_monthly_total'])) {
+            update_post_meta($post_id, '_arsol_proposal_average_monthly_total', sanitize_text_field($_POST['line_items_average_monthly_total']));
+        }
     }
 
     public function ajax_search_products() {
