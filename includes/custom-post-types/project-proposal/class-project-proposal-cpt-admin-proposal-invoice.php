@@ -289,65 +289,30 @@ class Proposal_Invoice {
         if (!$product_id) {
             wp_send_json_error('Missing product ID');
         }
-    
+
         $product = wc_get_product($product_id);
-        if (!$product) {
-            wp_send_json_error('Invalid product');
+
+        // This is a minimal test.
+        if ( ! $product ) {
+            // If we can't even get a product object.
+            $debug_html = 'ERROR: wc_get_product() failed for ID ' . $product_id;
+        } else {
+            // If we successfully get a product object.
+            $debug_html = 'SUCCESS! Class: ' . get_class($product) . '<br>Type: ' . $product->get_type();
         }
-        
-        $is_subscription = $product->is_type(array('subscription', 'subscription_variation'));
-        $sub_text = '';
-        $sign_up_fee = 0;
-        $regular_price_val = 0;
-        $sale_price_val = '';
-        $billing_interval = null;
-        $billing_period = null;
-        $debug_html = 'Class: ' . get_class($product) . '<br>Type: ' . $product->get_type(); // Basic debug info first
-    
-        try {
-            if ($is_subscription && class_exists('WC_Product_Subscription')) { // Checking for the correct class
-                // Logic for Subscription Products
-                $regular_price_val = $product->get_regular_price();
-                $active_price = $product->get_price();
-                if (is_numeric($active_price) && is_numeric($regular_price_val) && $active_price < $regular_price_val) {
-                    $sale_price_val = $active_price;
-                }
-                
-                $sign_up_fee = (float) $product->get_meta('_subscription_sign_up_fee');
-                $sub_text = $product->get_price_string();
-                $billing_interval = $product->get_meta('_subscription_period_interval');
-                $billing_period = $product->get_meta('_subscription_period');
-    
-            } else {
-                // Logic for Simple/Other Products
-                $regular_price_val = $product->get_regular_price();
-                $sale_price_val = $product->get_sale_price();
-            }
-            
-            // Append more debug info
-            $debug_html .= '<br>Price: ' . $product->get_price();
-            $debug_html .= '<br>Regular Price: ' . $product->get_regular_price();
-            $debug_html .= '<hr>get_price_html(): [' . $product->get_price_html() . ']';
-    
-        } catch (Throwable $e) {
-            $debug_html = 'Caught exception: ' . $e->getMessage();
-        }
-        
-        // Ensure we have numeric values before formatting
-        $regular_price_val = is_numeric($regular_price_val) ? (float) $regular_price_val : 0;
-        $sale_price_val = is_numeric($sale_price_val) ? (float) $sale_price_val : '';
-    
+
+        // Send back ONLY the debug info. Other fields will be blank.
         $data = array(
-            'regular_price' => wc_format_decimal($regular_price_val, wc_get_price_decimals()),
-            'sale_price' => $sale_price_val !== '' ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
-            'is_subscription' => $is_subscription,
-            'sign_up_fee' => wc_format_decimal($sign_up_fee, wc_get_price_decimals()),
-            'sub_text' => $sub_text,
-            'billing_interval' => $billing_interval,
-            'billing_period'   => $billing_period,
-            'price_html' => $debug_html
+            'regular_price' => '',
+            'sale_price' => '',
+            'is_subscription' => $product ? $product->is_type(array('subscription', 'subscription_variation')) : false,
+            'sign_up_fee' => '',
+            'sub_text' => '',
+            'billing_interval' => '',
+            'billing_period'   => '',
+            'price_html' => $debug_html // This is the only important field for this test.
         );
-    
+
         wp_send_json_success($data);
     }
 }
