@@ -79,6 +79,7 @@ class Proposal_Invoice {
                             <th class="actions-column"></th>
                             <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th><?php _e('Debug ID', 'arsol-pfw'); ?></th>
+                            <th><?php _e('Debug Price HTML', 'arsol-pfw'); ?></th>
                         </tr>
                     </thead>
                     <tbody id="product-lines-body"></tbody>
@@ -165,6 +166,7 @@ class Proposal_Invoice {
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
                 <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="debug-id-display">{{ data.product_id || '' }}</td>
+                <td class="debug-price-html-display"></td>
             </tr>
         </script>
 

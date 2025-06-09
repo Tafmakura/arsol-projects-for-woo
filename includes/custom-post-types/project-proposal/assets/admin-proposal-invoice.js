@@ -104,6 +104,10 @@
         productChanged: function(e) {
             var $row = $(e.currentTarget).closest('.line-item');
             var productId = $(e.currentTarget).val();
+            // Immediately display the ID for debugging.
+            $row.find('.debug-id-display').text(productId);
+            // Clear previous debug price html
+            $row.find('.debug-price-html-display').html('');
             this.fetchProductDetails($row, productId);
         },
 
@@ -127,7 +131,8 @@
                          $row.find('.price-input').val(data.regular_price);
                          $row.find('.sale-price-input').val(data.sale_price);
                          $row.find('.product-sub-text').html(data.sub_text);
-                         $row.find('.debug-id-display').html(data.price_html);
+                         // Display price_html in its own debug column
+                         $row.find('.debug-price-html-display').html(data.price_html);
                          
                          $row.data('is-subscription', data.is_subscription);
                          $row.data('sign-up-fee', data.sign_up_fee || 0);
