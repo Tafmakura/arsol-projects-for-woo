@@ -8,6 +8,8 @@ class Proposal {
     public function __construct() {
         // Add meta boxes for single proposal admin screen
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
+        // Reorder meta boxes
+        add_action('do_meta_boxes', array($this, 'reorder_proposal_meta_boxes'));
         // Save proposal data
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
         // Action to set review status when a proposal is published
@@ -183,6 +185,45 @@ class Proposal {
             });
         </script>
         <?php
+    }
+
+    public function reorder_proposal_meta_boxes($post_type) {
+        if ($post_type !== 'arsol-pfw-proposal') {
+            return;
+        }
+
+        global $wp_meta_boxes;
+
+        $page_meta_boxes = $wp_meta_boxes['arsol-pfw-proposal']['normal']['default'];
+        
+        $new_meta_boxes = array();
+        $our_boxes = array(
+            'arsol_budget_estimates_metabox' => null,
+            'arsol_proposal_invoice_metabox' => null,
+        );
+
+        // Find our boxes and remove them from the main array to re-insert later
+        foreach ($page_meta_boxes as $id => $box) {
+            if (array_key_exists($id, $our_boxes)) {
+                $our_boxes[$id] = $box;
+                unset($page_meta_boxes[$id]);
+            }
+        }
+        
+        // Rebuild the meta box array in the desired order
+        foreach ($page_meta_boxes as $id => $box) {
+            $new_meta_boxes[$id] = $box;
+            // Insert our metaboxes after the excerpt box
+            if ($id === 'postexcerpt') {
+                foreach ($our_boxes as $our_id => $our_box) {
+                    if ($our_box) {
+                         $new_meta_boxes[$our_id] = $our_box;
+                    }
+                }
+            }
+        }
+
+        $wp_meta_boxes['arsol-pfw-proposal']['normal']['default'] = $new_meta_boxes;
     }
 
     /**
