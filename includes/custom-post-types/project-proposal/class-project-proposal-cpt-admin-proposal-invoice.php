@@ -243,6 +243,19 @@ class Proposal_Invoice {
                 $tax_class_options[ sanitize_title( $class ) ] = $class;
             }
         }
+
+        // Prepare subscription form options once (cached for performance)
+        $form_options = \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_form_options();
+        $intervals = $form_options['intervals'];
+        $periods = $form_options['periods'];
+
+        // Prepare shipping methods once
+        $shipping_methods_formatted = array();
+        if (function_exists('WC') && WC()->shipping && WC()->shipping->get_shipping_methods()) {
+            foreach (WC()->shipping->get_shipping_methods() as $method_id => $method) {
+                $shipping_methods_formatted[$method_id] = $method->get_method_title();
+            }
+        }
         ?>
         <script type="text/html" id="tmpl-arsol-product-line-item">
             <tr class="line-item product-item" data-id="{{ data.id }}">
@@ -299,11 +312,6 @@ class Proposal_Invoice {
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
                 <td class="billing-cycle-column">
-                    <?php
-                        $form_options = \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_form_options();
-                        $intervals = $form_options['intervals'];
-                        $periods = $form_options['periods'];
-                    ?>
                     <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="billing-interval">
                         <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
                             <option value="{{ value }}" <# if (data.interval == value) { #>selected="selected"<# } #>>{{ label }}</option>
@@ -328,20 +336,11 @@ class Proposal_Invoice {
         </script>
 
         <script type="text/html" id="tmpl-arsol-shipping-fee-line-item">
-            <?php
-            $shipping_methods_formatted = array();
-            if (function_exists('WC') && WC()->shipping && WC()->shipping->get_shipping_methods()) {
-                foreach (WC()->shipping->get_shipping_methods() as $method_id => $method) {
-                    $shipping_methods_formatted[$method_id] = $method->get_method_title();
-                }
-            }
-            $shipping_methods_json = json_encode($shipping_methods_formatted);
-            ?>
             <tr class="line-item shipping-fee-item" data-id="{{ data.id }}">
                 <td class="shipping-method-column">
                     <select class="shipping-method-select-ui">
                          <option value=""><?php _e('Select a method...', 'arsol-pfw'); ?></option>
-                         <# _.each(<?php echo json_encode($shipping_methods_json); ?>, function(name, id) { #>
+                         <# _.each(<?php echo json_encode($shipping_methods_formatted); ?>, function(name, id) { #>
                             <option value="{{ id }}" data-name="{{ name }}">{{ name }}</option>
                          <# }); #>
                          <option value="custom"><?php _e('Custom Description', 'arsol-pfw'); ?></option>
@@ -425,7 +424,8 @@ class Proposal_Invoice {
 
         $product_types = apply_filters('arsol_proposal_product_types', array('simple', 'variable'));
 
-        if (class_exists('WC_Subscriptions')) {
+        // Use centralized subscription checking for consistency and performance
+        if (\Arsol_Projects_For_Woo\Woocommerce_Subscriptions::is_plugin_active()) {
             $product_types = array_merge($product_types, array('subscription', 'subscription_variation'));
         }
 

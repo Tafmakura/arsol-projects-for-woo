@@ -27,6 +27,11 @@ class Woocommerce_Subscriptions {
     private static $instance = null;
 
     /**
+     * @var array Cached form options to avoid repeated expensive calls
+     */
+    private static $cached_form_options = null;
+
+    /**
      * Meta key used for storing project data on orders/subscriptions
      */
     const PROJECT_META_KEY = '_wc_other/arsol-projects-for-woo/arsol-project';
@@ -184,19 +189,26 @@ class Woocommerce_Subscriptions {
     }
 
     /**
-     * Get WooCommerce Subscriptions form options
+     * Get WooCommerce Subscriptions form options (cached for performance)
      *
      * @return array
      */
     public static function get_form_options() {
+        // Return cached version if available
+        if (self::$cached_form_options !== null) {
+            return self::$cached_form_options;
+        }
+
         if (!self::is_plugin_active()) {
-            return array(
+            self::$cached_form_options = array(
                 'intervals' => array(1 => 1),
                 'periods' => array('month' => 'month')
             );
+            return self::$cached_form_options;
         }
 
-        return array(
+        // Cache the expensive function calls
+        self::$cached_form_options = array(
             'intervals' => function_exists('wcs_get_subscription_period_interval_strings') 
                 ? wcs_get_subscription_period_interval_strings() 
                 : array(1 => 1),
@@ -204,6 +216,15 @@ class Woocommerce_Subscriptions {
                 ? wcs_get_subscription_period_strings() 
                 : array('month' => 'month')
         );
+
+        return self::$cached_form_options;
+    }
+
+    /**
+     * Clear the cached form options (useful for testing or if options change)
+     */
+    public static function clear_form_options_cache() {
+        self::$cached_form_options = null;
     }
 
     // =====================================================
