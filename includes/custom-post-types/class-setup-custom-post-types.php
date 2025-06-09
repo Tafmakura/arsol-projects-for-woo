@@ -2,72 +2,64 @@
 
 namespace Arsol_Projects_For_Woo\Custom_Post_Types;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
+if (!defined('ABSPATH')) exit;
 
-class Setup {
+class Setup_Custom_Post_Types {
     public function __construct() {
-        $this->require_files();
-        $this->instantiate_classes();
-        
-        // Add manual menu registration as backup
-        add_action('admin_menu', array($this, 'ensure_submenus'), 20);
+        add_action('init', array($this, 'register_custom_post_types'));
+        add_action('init', array($this, 'register_taxonomies'));
+        add_action('init', array($this, 'load_cpt_and_taxonomy_classes'));
     }
 
-    private function require_files() {
-        // Custom Post Types
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-project.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-projects.php';
-        
-        // Project Request CPT
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-request.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-requests.php';
-        
-        // Project Proposal CPT
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposals.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal-invoice.php';
+    public function register_custom_post_types() {
+        // Register Project CPT
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt.php';
+        Project\Project_CPT::register();
+
+        // Register Project Proposal CPT
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt.php';
+        ProjectProposal\Project_Proposal_CPT::register();
     }
 
-    private function instantiate_classes() {
-        // Project CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Projects();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Project();
+    public function register_taxonomies() {
+        // Register Project Status Taxonomy
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-project-status-taxonomy.php';
+        \Arsol_Projects_For_Woo\Taxonomies\Project_Status_Taxonomy::register();
         
-        // Project Request CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Request();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Requests();
-        
-        // Project Proposal CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposals();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Invoice();
+        // Register Review Status Taxonomy
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-review-status-taxonomy.php';
+        \Arsol_Projects_For_Woo\Taxonomies\Review_Status_Taxonomy::register();
     }
 
-    /**
-     * Ensure submenus are properly registered
-     */
-    public function ensure_submenus() {
-        // Check if parent menu exists
-        global $menu, $submenu;
-        
-        $parent_slug = 'edit.php?post_type=arsol-project';
-        
-        // Debug logging
-        if (function_exists('error_log')) {
-            $parent_exists = isset($submenu[$parent_slug]);
-            error_log('ARSOL DEBUG: Parent menu exists: ' . ($parent_exists ? 'YES' : 'NO'));
+    public function load_cpt_and_taxonomy_classes() {
+        // Admin-specific hooks for Project Proposal CPT
+        if (is_admin()) {
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal.php';
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal-budget.php';
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal-invoice.php';
+
+            new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
+            new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Budget();
+            new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Invoice();
+        }
+
+        // Admin-specific hooks for Project CPT
+        if (is_admin()) {
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-projects.php';
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-project.php';
             
-            if ($parent_exists) {
-                error_log('ARSOL DEBUG: Submenus under parent: ' . count($submenu[$parent_slug]));
-            }
+            new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Projects();
+            new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Project();
+        }
+
+        // Frontend-specific hooks for Project Proposal CPT
+        if (!is_admin()) {
+            // ...
+        }
+
+        // Frontend-specific hooks for Project CPT
+        if (!is_admin()) {
+            // ...
         }
     }
 }
