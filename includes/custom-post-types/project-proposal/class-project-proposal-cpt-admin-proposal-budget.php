@@ -22,7 +22,7 @@ class Proposal_Budget {
             array($this, 'render_budget_estimates_meta_box'),
             'arsol-pfw-proposal',
             'normal',
-            'core'
+            'high'
         );
     }
 
