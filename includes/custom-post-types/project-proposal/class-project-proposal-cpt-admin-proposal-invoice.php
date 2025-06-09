@@ -332,6 +332,7 @@ class Proposal_Invoice {
             'sub_text' => $sub_text,
             'billing_interval' => $billing_interval,
             'billing_period'   => $billing_period,
+            'price_html' => $product->get_price_html()
         );
 
         wp_send_json_success($data);

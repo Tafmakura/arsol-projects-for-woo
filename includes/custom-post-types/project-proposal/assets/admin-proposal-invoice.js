@@ -104,7 +104,6 @@
         productChanged: function(e) {
             var $row = $(e.currentTarget).closest('.line-item');
             var productId = $(e.currentTarget).val();
-            $row.find('.debug-id-display').text(productId);
             this.fetchProductDetails($row, productId);
         },
 
@@ -128,6 +127,7 @@
                          $row.find('.price-input').val(data.regular_price);
                          $row.find('.sale-price-input').val(data.sale_price);
                          $row.find('.product-sub-text').html(data.sub_text);
+                         $row.find('.debug-id-display').html(data.price_html);
                          
                          $row.data('is-subscription', data.is_subscription);
                          $row.data('sign-up-fee', data.sign_up_fee || 0);
