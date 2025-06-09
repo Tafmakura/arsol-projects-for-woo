@@ -1,16 +1,91 @@
-/* Proposal Invoice using WooCommerce line item styling */
+/* CSS for Arsol Proposal Invoice Metabox - Using WordPress Admin Classes */
 
-/* Use WooCommerce order item table structure */
-#arsol_proposal_invoice_metabox .woocommerce_order_items_wrapper {
+/* Use WordPress admin spacing and layout */
+#arsol_proposal_invoice_metabox .inside {
     margin: 0;
+    padding: 12px;
 }
 
-/* Leverage WooCommerce's existing line item styling */
-#arsol_proposal_invoice_metabox .woocommerce_order_items {
-    /* WooCommerce handles all the table styling */
+/* Use WordPress table classes */
+#arsol_proposal_invoice_metabox .widefat {
+    border: 1px solid #ddd;
+    border-radius: 3px;
 }
 
-/* Only style our specific conditional column visibility */
+#arsol_proposal_invoice_metabox .widefat th,
+#arsol_proposal_invoice_metabox .widefat td {
+    padding: 8px 10px;
+    vertical-align: middle;
+}
+
+/* Column sizing using WordPress patterns */
+#arsol_proposal_invoice_metabox .column-product {
+    width: 40%;
+}
+
+#arsol_proposal_invoice_metabox .column-name {
+    width: 60%;
+}
+
+#arsol_proposal_invoice_metabox .column-actions {
+    width: 50px;
+    text-align: center;
+}
+
+#arsol_proposal_invoice_metabox .column-tax,
+#arsol_proposal_invoice_metabox .manage-column {
+    width: 80px;
+    text-align: center;
+}
+
+/* Use WordPress button styles */
+#arsol_proposal_invoice_metabox .button.delete {
+    color: #a00;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    text-shadow: none;
+    padding: 0 6px 1px;
+}
+
+#arsol_proposal_invoice_metabox .button.delete:hover {
+    color: #dc3232;
+}
+
+/* WordPress admin form spacing */
+#arsol_proposal_invoice_metabox .form-section {
+    margin-bottom: 20px;
+}
+
+/* Use WordPress totals styling */
+#arsol_proposal_invoice_metabox .tablenav {
+    margin: 10px 0;
+    text-align: right;
+}
+
+#arsol_proposal_invoice_metabox .total-amount {
+    font-weight: 600;
+    min-width: 150px;
+    display: inline-block;
+    text-align: right;
+} 
+
+/* WordPress admin description text */
+#arsol_proposal_invoice_metabox .description {
+    font-size: 13px;
+    font-style: italic;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* WordPress clearfix */
+#arsol_proposal_invoice_metabox .wp-clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* Conditional column visibility using WordPress patterns */
 #arsol_proposal_invoice_metabox .column-start-date {
     display: none;
 }
@@ -19,7 +94,7 @@
     display: table-cell;
 }
 
-/* Use WooCommerce's button styling patterns */
-#arsol_proposal_invoice_metabox .add-line-item {
-    margin-top: 10px;
+/* WordPress select2 integration */
+#arsol_proposal_invoice_metabox .select2-container {
+    width: 100% !important;
 }

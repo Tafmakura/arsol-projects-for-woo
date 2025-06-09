@@ -87,165 +87,169 @@ class Proposal_Invoice {
     public function render_invoice_meta_box($post) {
         wp_nonce_field('arsol_proposal_invoice_save', 'arsol_proposal_invoice_nonce');
         ?>
-        <div id="proposal_invoice_builder">
+        <div id="proposal_invoice_builder" class="inside">
             <!-- Products Section -->
-            <div class="woocommerce_order_items_wrapper">
-                <h3><?php _e('Products & Services', 'arsol-pfw'); ?></h3>
-                <table class="woocommerce_order_items" id="product-line-items">
+            <div class="form-section">
+                <h3 class="hndle"><?php _e('Products & Services', 'arsol-pfw'); ?></h3>
+                <table class="wp-list-table widefat fixed striped" id="product-line-items">
                     <thead>
                         <tr>
-                            <th class="item"><?php _e('Product', 'arsol-pfw'); ?></th>
-                            <th class="column-start-date"><?php _e('Start Date', 'arsol-pfw'); ?></th>
-                            <th class="quantity"><?php _e('Qty', 'arsol-pfw'); ?></th>
-                            <th class="item_cost"><?php _e('Price', 'arsol-pfw'); ?></th>
-                            <th class="item_cost"><?php _e('Sale Price', 'arsol-pfw'); ?></th>
-                            <th class="line_cost"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                            <th class="wc-order-edit-line-item"></th>
+                            <th class="manage-column column-product"><?php _e('Product', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-start-date"><?php _e('Start Date', 'arsol-pfw'); ?></th>
+                            <th class="manage-column"><?php _e('Qty', 'arsol-pfw'); ?></th>
+                            <th class="manage-column"><?php _e('Price', 'arsol-pfw'); ?></th>
+                            <th class="manage-column"><?php _e('Sale Price', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-right"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-actions"></th>
                         </tr>
                     </thead>
-                    <tbody id="order_line_items"></tbody>
+                    <tbody id="product-lines-body"></tbody>
                 </table>
-                
-                <div class="wc-order-totals-items">
-                    <div class="wc-order-data-row wc-order-totals-items">
-                        <table class="wc-order-totals">
+                <div class="tablenav bottom">
+                    <div class="alignright">
+                        <table class="totals-table">
                             <tr>
-                                <td class="label"><?php _e('Total:', 'arsol-pfw'); ?></td>
-                                <td class="total" id="product-subtotal-display"><?php echo wc_price(0); ?></td>
+                                <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
+                                <td class="total-amount" id="product-subtotal-display"><?php echo wc_price(0); ?></td>
                             </tr>
                             <tr>
-                                <td class="label"><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></td>
-                                <td class="total" id="product-avg-monthly-display"><?php echo wc_price(0); ?></td>
+                                <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
+                                <td class="total-amount" id="product-avg-monthly-display"><?php echo wc_price(0); ?></td>
                             </tr>
                         </table>
                     </div>
                 </div>
-                
-                <div class="wc-order-add-item wc-order-data-row">
-                    <button type="button" class="button add-line-item" data-type="product">
-                        <?php _e('Add Product', 'arsol-pfw'); ?>
+                <p class="submit">
+                    <button type="button" class="button button-secondary add-line-item" data-type="product">
+                        <span class="dashicons dashicons-plus"></span> <?php _e('Add Product', 'arsol-pfw'); ?>
                     </button>
-                </div>
+                </p>
             </div>
 
             <!-- Recurring Fees Section -->
-            <div class="woocommerce_order_items_wrapper">
-                <h3><?php _e('Recurring Fees', 'arsol-pfw'); ?></h3>
-                <table class="woocommerce_order_items" id="recurring-fee-line-items">
+            <div class="form-section">
+                <h3 class="hndle"><?php _e('Recurring Fees', 'arsol-pfw'); ?></h3>
+                <table class="wp-list-table widefat fixed striped" id="recurring-fee-line-items">
                     <thead>
                         <tr>
-                            <th class="item"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
-                            <th class="column-start-date"><?php _e('Start Date', 'arsol-pfw'); ?></th>
-                            <th class="item_cost"><?php _e('Amount', 'arsol-pfw'); ?></th>
-                            <th class="item_cost"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
-                            <th class="tax_class"><?php _e('Tax', 'arsol-pfw'); ?></th>
-                            <th class="line_cost"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                            <th class="wc-order-edit-line-item"></th>
+                            <th class="manage-column column-name"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-start-date"><?php _e('Start Date', 'arsol-pfw'); ?></th>
+                            <th class="manage-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
+                            <th class="manage-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-tax"><?php _e('Tax', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-right"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-actions"></th>
                         </tr>
                     </thead>
-                    <tbody id="order_fee_line_items"></tbody>
+                    <tbody id="recurring-fee-lines-body"></tbody>
                 </table>
-                
-                <div class="wc-order-totals-items">
-                    <table class="wc-order-totals">
-                        <tr>
-                            <td class="label"><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></td>
-                            <td class="total" id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></td>
-                        </tr>
-                    </table>
+                <div class="tablenav bottom">
+                    <div class="alignright">
+                        <table class="totals-table">
+                            <tr>
+                                <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
+                                <td class="total-amount" id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                
-                <div class="wc-order-add-item wc-order-data-row">
-                    <button type="button" class="button add-line-item" data-type="recurring-fee">
-                        <?php _e('Add Recurring Fee', 'arsol-pfw'); ?>
+                <p class="submit">
+                    <button type="button" class="button button-secondary add-line-item" data-type="recurring-fee">
+                        <span class="dashicons dashicons-plus"></span> <?php _e('Add Recurring Fee', 'arsol-pfw'); ?>
                     </button>
-                </div>
+                </p>
             </div>
 
             <!-- One-Time Fees Section -->
-            <div class="woocommerce_order_items_wrapper">
-                <h3><?php _e('One-Time Fees', 'arsol-pfw'); ?></h3>
-                <table class="woocommerce_order_items" id="onetime-fee-line-items">
+            <div class="form-section">
+                <h3 class="hndle"><?php _e('One-Time Fees', 'arsol-pfw'); ?></h3>
+                <table class="wp-list-table widefat fixed striped" id="onetime-fee-line-items">
                      <thead>
                         <tr>
-                            <th class="item"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
-                            <th class="item_cost"><?php _e('Amount', 'arsol-pfw'); ?></th>
-                            <th class="tax_class"><?php _e('Tax', 'arsol-pfw'); ?></th>
-                            <th class="line_cost"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                            <th class="wc-order-edit-line-item"></th>
+                            <th class="manage-column column-name"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
+                            <th class="manage-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-tax"><?php _e('Tax', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-right"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-actions"></th>
                         </tr>
                     </thead>
-                    <tbody id="order_fee_line_items"></tbody>
+                    <tbody id="onetime-fee-lines-body"></tbody>
                 </table>
-                
-                <div class="wc-order-totals-items">
-                    <table class="wc-order-totals">
-                        <tr>
-                            <td class="label"><?php _e('Total:', 'arsol-pfw'); ?></td>
-                            <td class="total" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></td>
-                        </tr>
-                    </table>
+                <div class="tablenav bottom">
+                    <div class="alignright">
+                        <table class="totals-table">
+                            <tr>
+                                <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
+                                <td class="total-amount" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                
-                <div class="wc-order-add-item wc-order-data-row">
-                    <button type="button" class="button add-line-item" data-type="onetime-fee">
-                        <?php _e('Add Fee', 'arsol-pfw'); ?>
+                <p class="submit">
+                    <button type="button" class="button button-secondary add-line-item" data-type="onetime-fee">
+                        <span class="dashicons dashicons-plus"></span> <?php _e('Add Fee', 'arsol-pfw'); ?>
                     </button>
-                </div>
+                </p>
             </div>
 
             <!-- Shipping Section -->
-            <div class="woocommerce_order_items_wrapper">
-                <h3><?php _e('Shipping', 'arsol-pfw'); ?></h3>
-                <table class="woocommerce_order_items" id="shipping-lines-table">
+            <div class="form-section">
+                <h3 class="hndle"><?php _e('Shipping', 'arsol-pfw'); ?></h3>
+                <table class="wp-list-table widefat fixed striped" id="shipping-lines-table">
                      <thead>
                         <tr>
-                            <th class="item"><?php _e('Shipping Method/Description', 'arsol-pfw'); ?></th>
-                            <th class="item_cost"><?php _e('Cost', 'arsol-pfw'); ?></th>
-                            <th class="tax_class"><?php _e('Tax', 'arsol-pfw'); ?></th>
-                            <th class="line_cost"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                            <th class="wc-order-edit-line-item"></th>
+                            <th class="manage-column column-name"><?php _e('Shipping Method/Description', 'arsol-pfw'); ?></th>
+                            <th class="manage-column"><?php _e('Cost', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-tax"><?php _e('Tax', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-right"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="manage-column column-actions"></th>
                         </tr>
                     </thead>
-                    <tbody id="order_shipping_line_items"></tbody>
+                    <tbody id="shipping-lines-body"></tbody>
                 </table>
-                
-                <div class="wc-order-totals-items">
-                    <table class="wc-order-totals">
-                        <tr>
-                            <td class="label"><?php _e('Total:', 'arsol-pfw'); ?></td>
-                            <td class="total" id="shipping-subtotal-display"><?php echo wc_price(0); ?></td>
-                        </tr>
-                    </table>
+                <div class="tablenav bottom">
+                    <div class="alignright">
+                        <table class="totals-table">
+                            <tr>
+                                <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
+                                <td class="total-amount" id="shipping-subtotal-display"><?php echo wc_price(0); ?></td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                
-                <div class="wc-order-add-item wc-order-data-row">
-                    <button type="button" class="button add-line-item" data-type="shipping-fee">
-                        <?php _e('Add Shipping Fee', 'arsol-pfw'); ?>
+                <p class="submit">
+                    <button type="button" class="button button-secondary add-line-item" data-type="shipping-fee">
+                        <span class="dashicons dashicons-plus"></span> <?php _e('Add Shipping Fee', 'arsol-pfw'); ?>
                     </button>
-                </div>
+                </p>
             </div>
 
-            <!-- Grand Totals Section -->
-            <div class="wc-order-totals-items">
-                <h3><?php _e('Totals', 'arsol-pfw'); ?></h3>
-                <table class="wc-order-totals">
-                    <tr>
-                        <td class="label"><?php _e('One-Time Total:', 'arsol-pfw'); ?></td>
-                        <td class="total" id="one-time-total-display"><?php echo wc_price(0); ?></td>
-                    </tr>
-                    <tr>
-                        <td class="label"><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></td>
-                        <td class="total" id="average-monthly-total-display"><?php echo wc_price(0); ?></td>
-                    </tr>
-                </table>
+            <!-- Totals Section -->
+            <div class="form-section wp-clearfix">
+                <h3 class="hndle"><?php _e('Grand Totals', 'arsol-pfw'); ?></h3>
+                <div class="tablenav">
+                    <div class="alignright">
+                        <table class="totals-table">
+                            <tbody>
+                                <tr>
+                                    <td><strong><?php _e('One-Time Total:', 'arsol-pfw'); ?></strong></td>
+                                    <td class="total-amount" id="one-time-total-display"><?php echo wc_price(0); ?></td>
+                                </tr>
+                                <tr>
+                                    <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
+                                    <td class="total-amount" id="average-monthly-total-display"><?php echo wc_price(0); ?></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
                 <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
             </div>
 
             <!-- Notes Section -->
-            <div class="wc-order-data-row">
-                <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
+            <div class="form-section">
+                <h3 class="hndle"><?php _e('Notes', 'arsol-pfw'); ?></h3>
                 <?php
                 $notes_content = get_post_meta($post->ID, '_arsol_proposal_notes', true);
                 wp_editor(
@@ -281,9 +285,9 @@ class Proposal_Invoice {
         }
         ?>
         <script type="text/html" id="tmpl-arsol-product-line-item">
-            <tr class="item" data-order_item_id="{{ data.id }}" <# if (data.product_id && data.is_subscription) { #>data-is-subscription="true"<# } #>>
-                <td class="thumb div" data-sort-value="{{ data.product_name || '' }}">
-                    <select class="wc-product-search" name="line_items[products][{{ data.id }}][product_id]" style="width:100%;">
+            <tr class="line-item product-item" data-id="{{ data.id }}" <# if (data.product_id && data.is_subscription) { #>data-is-subscription="true"<# } #>>
+                <td class="column-product">
+                    <select class="product-select" name="line_items[products][{{ data.id }}][product_id]" style="width:100%;">
                         <# if (data.product_id && data.product_name) { #>
                             <option value="{{ data.product_id }}" selected="selected">{{ data.product_name }}</option>
                         <# } else { #>
@@ -291,53 +295,49 @@ class Proposal_Invoice {
                         <# } #>
                     </select>
                     <# if (data.sub_text) { #>
-                        <div class="wc-order-item-variation">{{{ data.sub_text }}}</div>
+                        <div class="description">{{{ data.sub_text }}}</div>
                     <# } #>
                 </td>
                 <td class="column-start-date">
-                    <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
+                    <input type="date" class="start-date-input regular-text" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
                 </td>
-                <td class="quantity" width="1%">
-                    <input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1" size="4">
-                </td>
-                <td class="item_cost" width="1%">
-                    <input type="text" class="wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}" size="6">
-                </td>
-                <td class="item_cost" width="1%">
-                    <input type="text" class="wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}" size="6">
-                </td>
-                <td class="line_cost" width="1%">
-                    <div class="view">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</div>
-                </td>
-                <td class="wc-order-edit-line-item" width="1%">
-                    <div class="wc-order-edit-line-item-actions">
-                        <a class="delete-order-item" href="#" data-tip="<?php _e('Remove item', 'woocommerce'); ?>"></a>
+                <td><input type="number" class="quantity-input small-text" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
+                <td><input type="text" class="price-input wc_input_price regular-text" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
+                <td><input type="text" class="sale-price-input wc_input_price regular-text" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
+                <td class="column-right">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="column-actions">
+                    <div class="row-actions">
+                        <span class="delete">
+                            <a href="#" class="remove-line-item button delete" title="<?php _e('Remove', 'arsol-pfw'); ?>">
+                                <span class="dashicons dashicons-trash"></span>
+                            </a>
+                        </span>
                     </div>
                 </td>
             </tr>
         </script>
 
         <script type="text/html" id="tmpl-arsol-onetime-fee-line-item">
-            <tr class="fee" data-order_item_id="{{ data.id }}">
-                <td class="thumb div">
-                    <input type="text" class="fee-name-input" name="line_items[one_time_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php _e('Fee name', 'arsol-pfw'); ?>">
+            <tr class="line-item fee-item" data-id="{{ data.id }}">
+                <td class="column-name">
+                    <input type="text" class="fee-name-input regular-text" name="line_items[one_time_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php _e('Fee name', 'arsol-pfw'); ?>">
                 </td>
-                <td class="item_cost" width="1%">
-                    <input type="text" class="wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}" size="6">
-                </td>
-                <td class="tax_class" width="1%">
-                    <select name="line_items[one_time_fees][{{ data.id }}][tax_class]">
+                <td><input type="text" class="fee-amount-input wc_input_price regular-text" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}"></td>
+                <td class="column-tax">
+                    <select class="tax-class-select" name="line_items[one_time_fees][{{ data.id }}][tax_class]">
                         <?php foreach($tax_class_options as $value => $label): ?>
                             <option value="<?php echo esc_attr($value); ?>"<# if (data.tax_class === '<?php echo esc_js($value); ?>') { #> selected<# } #>><?php echo esc_html($label); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </td>
-                <td class="line_cost" width="1%">
-                    <div class="view">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</div>
-                </td>
-                <td class="wc-order-edit-line-item" width="1%">
-                    <div class="wc-order-edit-line-item-actions">
-                        <a class="delete-order-item" href="#" data-tip="<?php _e('Remove item', 'woocommerce'); ?>"></a>
+                <td class="column-right">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="column-actions">
+                    <div class="row-actions">
+                        <span class="delete">
+                            <a href="#" class="remove-line-item button delete" title="<?php _e('Remove', 'arsol-pfw'); ?>">
+                                <span class="dashicons dashicons-trash"></span>
+                            </a>
+                        </span>
                     </div>
                 </td>
             </tr>
