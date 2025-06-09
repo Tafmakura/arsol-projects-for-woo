@@ -17,22 +17,38 @@
             this.setInitialAverageTotal();
         },
 
-        getCycleKey: function(interval, period) {
-            return period + '_' + interval;
-        },
+        getDailyCost: function(price, interval, period) {
+            price = parseFloat(price) || 0;
+            interval = parseInt(interval) || 1;
+            var days_in_period = 0;
 
-        getCycleLabel: function(interval, period) {
-            var periodLabel = period;
-            interval = parseInt(interval);
-
-            if (interval > 1) {
-                periodLabel += 's';
-                return '/ ' + interval + ' ' + periodLabel;
+            switch (period) {
+                case 'day':
+                    days_in_period = 1;
+                    break;
+                case 'week':
+                    days_in_period = 7;
+                    break;
+                case 'month':
+                    days_in_period = 30.417; // Average days in a month (365 / 12)
+                    break;
+                case 'year':
+                    days_in_period = 365;
+                    break;
             }
-            return '/ ' + periodLabel;
+
+            if (days_in_period === 0 || interval === 0) {
+                return 0;
+            }
+            
+            var total_days_in_cycle = days_in_period * interval;
+            return price / total_days_in_cycle;
         },
 
         setInitialAverageTotal: function() {
+            // This function is now obsolete with client-side calculations, 
+            // but we'll keep it here in case it's needed later.
+            // It's called on init but does nothing if the localized var isn't there.
             var initialTotal = arsol_proposal_invoice_vars.average_monthly_total_formatted;
             if (initialTotal) {
                 $('#average-monthly-total-display').html(initialTotal);
@@ -221,33 +237,20 @@
         
         calculateTotals: function() {
             var self = this;
-            if (self.calculating) return;
 
             var grandOneTimeTotal = 0;
-            var grandRecurringTotals = {};
+            var grandTotalDailyCost = 0;
+            
             var currencySymbol = arsol_proposal_invoice_vars.currency_symbol;
 
             var formatPrice = function(price) {
                 var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
             };
-            
-            var formatRecurringTotals = function(totals) {
-                var html = [];
-                if (Object.keys(totals).length > 0) {
-                     $.each(totals, function(key, data) {
-                         var label = self.getCycleLabel(data.interval, data.period);
-                         html.push(formatPrice(data.total) + ' ' + label);
-                     });
-                     return html.join('<br>');
-                } else {
-                    return formatPrice(0);
-                }
-            };
 
             // --- Products ---
             var productsOneTimeSubtotal = 0;
-            var productsRecurringSubtotals = {};
+            var productsDailyCost = 0;
             $('#product-lines-body .line-item').each(function() {
                 var $row = $(this);
                 
@@ -266,32 +269,25 @@
 
                 if (isSubscription) {
                     var signUpFee = parseFloat($row.data('sign-up-fee')) || 0;
-                    productsOneTimeSubtotal += signUpFee * quantity; // Sign-up fees are one-time
+                    productsOneTimeSubtotal += signUpFee * quantity;
 
                     var interval = parseInt($row.data('billing-interval')) || 1;
                     var period = $row.data('billing-period');
                     
-                    var subtotalDisplay = formatPrice(itemTotal);
-
-                    if (interval && period) {
-                        subtotalDisplay += ' ' + self.getCycleLabel(interval, period);
-                        self.updateRecurringTotals(productsRecurringSubtotals, interval, period, itemTotal);
-                        self.updateRecurringTotals(grandRecurringTotals, interval, period, itemTotal);
+                    if (period) {
+                        productsDailyCost += self.getDailyCost(itemTotal, interval, period);
                     }
-                    
-                    if (signUpFee > 0) {
-                        subtotalDisplay += ' (+ ' + formatPrice(signUpFee) + ' sign-up)';
-                    }
-                    $row.find('.subtotal-display').html(subtotalDisplay);
 
                 } else {
                     productsOneTimeSubtotal += itemTotal;
                     $row.find('.subtotal-display').html(formatPrice(itemTotal));
                 }
             });
+            var productsMonthlyTotal = productsDailyCost * 30.417;
             $('#product-subtotal-display').html(formatPrice(productsOneTimeSubtotal));
-            $('#product-avg-monthly-display').html(formatRecurringTotals(productsRecurringSubtotals));
+            $('#product-avg-monthly-display').html(formatPrice(productsMonthlyTotal) + ' /mo');
             grandOneTimeTotal += productsOneTimeSubtotal;
+            grandTotalDailyCost += productsDailyCost;
 
             // --- One-Time Fees ---
             var oneTimeFeesSubtotal = 0;
@@ -304,22 +300,20 @@
             grandOneTimeTotal += oneTimeFeesSubtotal;
             
             // --- Recurring Fees ---
+            var recurringFeesDailyCost = 0;
             $('#recurring-fee-lines-body .line-item').each(function() {
                 var amount = parseFloat($(this).find('.fee-amount-input').val()) || 0;
                 var interval = parseInt($(this).find('.billing-interval').val()) || 1;
                 var period = $(this).find('.billing-period').val();
                
                 if (interval && period) {
-                     self.updateRecurringTotals(grandRecurringTotals, interval, period, amount);
-                     
-                     var subtotalText = formatPrice(amount) + ' ' + self.getCycleLabel(interval, period);
-                     $(this).find('.subtotal-display').html(subtotalText);
-
-                } else {
-                     $(this).find('.subtotal-display').html(formatPrice(amount));
+                    recurringFeesDailyCost += self.getDailyCost(amount, interval, period);
                 }
             });
-            $('#recurring-fee-avg-monthly-display').html(formatRecurringTotals(grandRecurringTotals));
+            var recurringFeesMonthlyTotal = recurringFeesDailyCost * 30.417;
+            $('#recurring-fee-avg-monthly-display').html(formatPrice(recurringFeesMonthlyTotal) + ' /mo');
+            grandTotalDailyCost += recurringFeesDailyCost;
+
 
             // --- Shipping ---
             var shippingSubtotal = 0;
@@ -332,13 +326,14 @@
             grandOneTimeTotal += shippingSubtotal;
 
             // --- Display Grand Totals ---
+            var grandAnnualTotal = grandTotalDailyCost * 365;
             $('#one-time-total-display').html(formatPrice(grandOneTimeTotal));
-            $('#recurring-totals-display').html(formatRecurringTotals(grandRecurringTotals));
-            $('#average-monthly-total-display').html(formatRecurringTotals(grandRecurringTotals));
+            $('#average-monthly-total-display').html(formatPrice(grandAnnualTotal) + ' /yr');
 
-            // Update hidden inputs for saving
+            // Update hidden inputs for saving - note we no longer save grouped recurring totals.
+            // The individual line items with their intervals/periods are the source of truth.
             $('#line_items_one_time_total').val(grandOneTimeTotal.toFixed(2));
-            $('#line_items_recurring_totals').val(JSON.stringify(grandRecurringTotals));
+            $('#line_items_recurring_totals').val(''); // Clear this as it's no longer used
         }
     };
 
