@@ -105,19 +105,25 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="product-lines-body"></tbody>
                 </table>
-                <div class="section-totals">
-                    <table align="right">
-                        <tr>
-                            <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="product-subtotal-display"><?php echo wc_price(0); ?></td>
-                        </tr>
-                        <tr>
-                            <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="product-avg-monthly-display"><?php echo wc_price(0); ?></td>
-                        </tr>
-                    </table>
+                <div class="section-footer">
+                    <div class="section-footer-left">
+                        <button type="button" class="button add-line-item" data-type="product"><?php _e('+ Add Product', 'arsol-pfw'); ?></button>
+                    </div>
+                    <div class="section-footer-right">
+                        <div class="section-totals">
+                            <table>
+                                <tr>
+                                    <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
+                                    <td class="total-amount" id="product-subtotal-display"><?php echo wc_price(0); ?></td>
+                                </tr>
+                                <tr>
+                                    <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
+                                    <td class="total-amount" id="product-avg-monthly-display"><?php echo wc_price(0); ?></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <button type="button" class="button add-line-item" data-type="product"><?php _e('+ Add Product', 'arsol-pfw'); ?></button>
             </div>
             <hr>
             <!-- Recurring Fees Section -->
@@ -137,15 +143,21 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="recurring-fee-lines-body"></tbody>
                 </table>
-                <div class="section-totals">
-                    <table align="right">
-                        <tr>
-                            <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></td>
-                        </tr>
-                    </table>
+                <div class="section-footer">
+                    <div class="section-footer-left">
+                        <button type="button" class="button add-line-item" data-type="recurring-fee"><?php _e('+ Add Recurring Fee', 'arsol-pfw'); ?></button>
+                    </div>
+                    <div class="section-footer-right">
+                        <div class="section-totals">
+                            <table>
+                                <tr>
+                                    <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
+                                    <td class="total-amount" id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <button type="button" class="button add-line-item" data-type="recurring-fee"><?php _e('+ Add Recurring Fee', 'arsol-pfw'); ?></button>
             </div>
             <hr>
             <!-- One-Time Fees Section -->
