@@ -10,9 +10,6 @@ class Proposal {
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
         // Reorder meta boxes
         add_action('do_meta_boxes', array($this, 'reorder_proposal_meta_boxes'));
-        // Add styles to hide metaboxes initially
-        add_action('admin_head-post.php', array($this, 'hide_metaboxes_initially'));
-        add_action('admin_head-post-new.php', array($this, 'hide_metaboxes_initially'));
         // Save proposal data
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
         // Action to set review status when a proposal is published
@@ -190,18 +187,6 @@ class Proposal {
         <?php
     }
 
-    public function hide_metaboxes_initially() {
-        global $post;
-        if (isset($post->post_type) && $post->post_type === 'arsol-pfw-proposal') {
-            echo '<style>
-                #arsol_budget_estimates_metabox,
-                #arsol_proposal_invoice_metabox {
-                    display: none;
-                }
-            </style>';
-        }
-    }
-
     public function reorder_proposal_meta_boxes($post_type) {
         if ($post_type !== 'arsol-pfw-proposal') {
             return;
@@ -209,36 +194,60 @@ class Proposal {
 
         global $wp_meta_boxes;
 
+        // Check if the metabox context exists to avoid errors
+        if (!isset($wp_meta_boxes['arsol-pfw-proposal']['normal']['default'])) {
+            return;
+        }
+
         $page_meta_boxes = $wp_meta_boxes['arsol-pfw-proposal']['normal']['default'];
         
-        $new_meta_boxes = array();
-        $our_boxes = array(
+        // The boxes we want to move
+        $our_boxes_to_move = array(
             'arsol_budget_estimates_metabox' => null,
             'arsol_proposal_invoice_metabox' => null,
         );
 
-        // Find our boxes and remove them from the main array to re-insert later
-        foreach ($page_meta_boxes as $id => $box) {
-            if (array_key_exists($id, $our_boxes)) {
-                $our_boxes[$id] = $box;
+        // Extract our boxes and remove them from the main list.
+        foreach ($our_boxes_to_move as $id => &$box_data) {
+            if (isset($page_meta_boxes[$id])) {
+                $box_data = $page_meta_boxes[$id];
                 unset($page_meta_boxes[$id]);
             }
         }
-        
-        // Rebuild the meta box array in the desired order
+        unset($box_data); // break reference
+
+        // Filter out any of our boxes that weren't actually found
+        $our_boxes_to_move = array_filter($our_boxes_to_move);
+
+        // If we didn't find any of our boxes to move, just put the original boxes back and do nothing.
+        if (empty($our_boxes_to_move)) {
+            $wp_meta_boxes['arsol-pfw-proposal']['normal']['default'] = $page_meta_boxes;
+            return;
+        }
+
+        $new_order = array();
+        $inserted = false;
+
+        // Rebuild the array, inserting our boxes after 'postexcerpt'
         foreach ($page_meta_boxes as $id => $box) {
-            $new_meta_boxes[$id] = $box;
-            // Insert our metaboxes after the excerpt box
-            if ($id === 'postexcerpt') {
-                foreach ($our_boxes as $our_id => $our_box) {
-                    if ($our_box) {
-                         $new_meta_boxes[$our_id] = $our_box;
-                    }
+            $new_order[$id] = $box;
+            if ('postexcerpt' === $id) {
+                foreach($our_boxes_to_move as $our_id => $our_box) {
+                    $new_order[$our_id] = $our_box;
                 }
+                $inserted = true;
             }
         }
 
-        $wp_meta_boxes['arsol-pfw-proposal']['normal']['default'] = $new_meta_boxes;
+        // If 'postexcerpt' was not found, add our boxes to the end so they don't disappear.
+        if (!$inserted) {
+            foreach($our_boxes_to_move as $our_id => $our_box) {
+                $new_order[$our_id] = $our_box;
+            }
+        }
+
+        // Replace the original array with our newly ordered one.
+        $wp_meta_boxes['arsol-pfw-proposal']['normal']['default'] = $new_order;
     }
 
     /**
