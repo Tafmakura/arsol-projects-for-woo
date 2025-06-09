@@ -6,6 +6,7 @@
 
 #arsol_proposal_invoice_metabox table {
     width: 100%;
+    table-layout: fixed; /* Enable fixed table layout for better column control */
 }
 
 #arsol_proposal_invoice_metabox table th,
@@ -13,18 +14,40 @@
     vertical-align: middle;
 }
 
+/* Auto-stretching first columns - Products section */
 #arsol_proposal_invoice_metabox .product-column {
-    width: 40%;
+    width: auto; /* Auto-stretch to fill remaining space */
+    min-width: 200px;
 }
 
-#arsol_proposal_invoice_metabox .fee-name-column,
-#arsol_proposal_invoice_metabox .shipping-method-column {
-    width: 60%;
+#arsol_proposal_invoice_metabox .product-column select,
+#arsol_proposal_invoice_metabox .product-column input {
+    width: 100% !important;
 }
 
+/* Auto-stretching first columns - Fee sections */
+#arsol_proposal_invoice_metabox .fee-name-column {
+    width: auto; /* Auto-stretch to fill remaining space */
+    min-width: 200px;
+}
+
+#arsol_proposal_invoice_metabox .fee-name-column input {
+    width: 100%;
+}
+
+/* Fixed widths for common columns across all sections */
 #arsol_proposal_invoice_metabox .taxable-column {
-    width: 80px;
+    width: 120px;
     text-align: center;
+}
+
+#arsol_proposal_invoice_metabox .taxable-column select {
+    width: 100%;
+}
+
+#arsol_proposal_invoice_metabox .subtotal-column {
+    width: 100px;
+    text-align: right;
 }
 
 #arsol_proposal_invoice_metabox .actions-column {
@@ -65,10 +88,6 @@
 
 #arsol_proposal_invoice_metabox .totals-section {
     overflow: auto; /* Clearfix */
-}
-
-#arsol_proposal_invoice_metabox .subtotal-column {
-    text-align: right;
 }
 
 #arsol_proposal_invoice_metabox .billing-cycle-column select {
