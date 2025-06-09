@@ -163,15 +163,21 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="onetime-fee-lines-body"></tbody>
                 </table>
-                 <div class="section-totals">
-                    <table align="right">
-                        <tr>
-                            <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></td>
-                        </tr>
-                    </table>
+                <div class="section-footer">
+                    <div class="section-footer-left">
+                        <button type="button" class="button add-line-item" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
+                    </div>
+                    <div class="section-footer-right">
+                        <div class="section-totals">
+                            <table>
+                                <tr>
+                                    <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
+                                    <td class="total-amount" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <button type="button" class="button add-line-item" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
             </div>
             <hr>
             <!-- Recurring Fees Section -->
@@ -194,15 +200,21 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="shipping-lines-body"></tbody>
                 </table>
-                 <div class="section-totals">
-                    <table align="right">
-                        <tr>
-                            <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="shipping-subtotal-display"><?php echo wc_price(0); ?></td>
-                        </tr>
-                    </table>
+                <div class="section-footer">
+                    <div class="section-footer-left">
+                        <button type="button" class="button add-line-item" data-type="shipping-fee"><?php _e('+ Add Shipping Fee', 'arsol-pfw'); ?></button>
+                    </div>
+                    <div class="section-footer-right">
+                        <div class="section-totals">
+                            <table>
+                                <tr>
+                                    <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
+                                    <td class="total-amount" id="shipping-subtotal-display"><?php echo wc_price(0); ?></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <button type="button" class="button add-line-item" data-type="shipping-fee"><?php _e('+ Add Shipping Fee', 'arsol-pfw'); ?></button>
             </div>
             <hr>
             <!-- Totals Section -->
