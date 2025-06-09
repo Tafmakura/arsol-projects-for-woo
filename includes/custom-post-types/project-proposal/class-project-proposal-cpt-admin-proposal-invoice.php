@@ -257,8 +257,8 @@ class Proposal_Invoice {
                     </select>
                     <div class="product-sub-text">{{{ data.sub_text }}}</div>
                 </td>
-                <td class="start-date-column">
-                    <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
+                <td class="start-date-column" style="display:none;">
+                    <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
                 </td>
                 <td class="billing-cycle-column" style="display: none;">
                     <?php do_action('arsol_proposal_invoice_line_item_billing_cycle'); ?>
