@@ -283,6 +283,27 @@
     text-align: right;
 }
 
+/* Recurring fees section - specific column widths */
+#arsol_proposal_invoice_metabox .recurring-fee-item .fee-name-column {
+    width: auto; /* Auto-stretch to fill remaining space */
+    min-width: 200px;
+}
+
+#arsol_proposal_invoice_metabox .recurring-fee-item .fee-name-column input {
+    width: 100%;
+}
+
+/* Amount column in recurring fees (3rd column) - match other amount inputs */
+#arsol_proposal_invoice_metabox .recurring-fee-item td:nth-child(3) {
+    width: 120px; /* Same as other amount columns */
+}
+
+/* All fee amount inputs styling */
+#arsol_proposal_invoice_metabox .fee-amount-input {
+    width: 100%;
+    text-align: right;
+}
+
 /* Responsive design for shipping columns */
 @media screen and (max-width: 1200px) {
     #arsol_proposal_invoice_metabox .shipping-description-column {
