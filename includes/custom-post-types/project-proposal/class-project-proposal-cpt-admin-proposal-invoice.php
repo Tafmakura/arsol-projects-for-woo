@@ -85,6 +85,18 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="product-lines-body"></tbody>
                 </table>
+                <div class="section-totals">
+                    <table align="right">
+                        <tr>
+                            <td><strong><?php _e('Products Subtotal:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="product-subtotal-display"><?php echo wc_price(0); ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong><?php _e('Products Avg. Recurring/mo:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="product-avg-monthly-display"><?php echo wc_price(0); ?></td>
+                        </tr>
+                    </table>
+                </div>
                 <button type="button" class="button add-line-item" data-type="product"><?php _e('+ Add Product', 'arsol-pfw'); ?></button>
             </div>
             <hr>
@@ -103,6 +115,14 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="onetime-fee-lines-body"></tbody>
                 </table>
+                 <div class="section-totals">
+                    <table align="right">
+                        <tr>
+                            <td><strong><?php _e('One-Time Fees Subtotal:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></td>
+                        </tr>
+                    </table>
+                </div>
                 <button type="button" class="button add-line-item" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
             </div>
             <hr>
@@ -122,6 +142,18 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="recurring-fee-lines-body"></tbody>
                 </table>
+                <div class="section-totals">
+                    <table align="right">
+                        <tr>
+                            <td><strong><?php _e('Recurring Fees Subtotal:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="recurring-fee-subtotal-display"><?php echo wc_price(0); ?></td>
+                        </tr>
+                        <tr>
+                            <td><strong><?php _e('Recurring Fees Avg. Recurring/mo:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></td>
+                        </tr>
+                    </table>
+                </div>
                 <button type="button" class="button add-line-item" data-type="recurring-fee"><?php _e('+ Add Recurring Fee', 'arsol-pfw'); ?></button>
             </div>
             <hr>
@@ -139,6 +171,14 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="shipping-lines-body"></tbody>
                 </table>
+                 <div class="section-totals">
+                    <table align="right">
+                        <tr>
+                            <td><strong><?php _e('Shipping Subtotal:', 'arsol-pfw'); ?></strong></td>
+                            <td class="total-amount" id="shipping-subtotal-display"><?php echo wc_price(0); ?></td>
+                        </tr>
+                    </table>
+                </div>
                 <button type="button" class="button add-line-item" data-type="shipping-fee"><?php _e('+ Add Shipping Fee', 'arsol-pfw'); ?></button>
             </div>
             <hr>
@@ -340,22 +380,45 @@ class Proposal_Invoice {
     
     public function ajax_calculate_average_monthly_total() {
         check_ajax_referer('arsol-proposal-invoice-nonce', 'nonce');
-
-        $recurring_items = isset($_POST['recurring_items']) ? $_POST['recurring_items'] : array();
-        $total_monthly_cost = 0;
-
-        foreach ($recurring_items as $item) {
-            $price = isset($item['price']) ? (float) $item['price'] : 0;
-            $interval = isset($item['interval']) ? (int) $item['interval'] : 1;
-            $period = isset($item['period']) ? sanitize_text_field($item['period']) : 'month';
-            $quantity = isset($item['quantity']) ? (int) $item['quantity'] : 1;
-            $total_monthly_cost += \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
+    
+        $item_groups = isset($_POST['item_groups']) ? $_POST['item_groups'] : array();
+        $response_data = array(
+            'groups' => array(),
+            'total_raw' => 0,
+            'total_formatted' => wc_price(0)
+        );
+        $grand_total_monthly_cost = 0;
+    
+        if (!empty($item_groups)) {
+            foreach ($item_groups as $group_key => $items) {
+                if (empty($items)) {
+                    // Ensure the group exists in the response even if empty
+                    $response_data['groups'][$group_key] = array(
+                        'raw' => 0,
+                        'formatted' => wc_price(0)
+                    );
+                    continue;
+                }
+                $group_total_monthly_cost = 0;
+                foreach ($items as $item) {
+                    $price = isset($item['price']) ? (float) $item['price'] : 0;
+                    $interval = isset($item['interval']) ? (int) $item['interval'] : 1;
+                    $period = isset($item['period']) ? sanitize_text_field($item['period']) : 'month';
+                    $quantity = isset($item['quantity']) ? (int) $item['quantity'] : 1;
+                    $group_total_monthly_cost += \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
+                }
+                $response_data['groups'][$group_key] = array(
+                    'raw' => $group_total_monthly_cost,
+                    'formatted' => wc_price($group_total_monthly_cost)
+                );
+                $grand_total_monthly_cost += $group_total_monthly_cost;
+            }
         }
         
-        wp_send_json_success(array(
-            'raw' => $total_monthly_cost,
-            'formatted' => wc_price($total_monthly_cost)
-        ));
+        $response_data['total_raw'] = $grand_total_monthly_cost;
+        $response_data['total_formatted'] = wc_price($grand_total_monthly_cost);
+        
+        wp_send_json_success($response_data);
     }
 
     public function ajax_search_products() {
