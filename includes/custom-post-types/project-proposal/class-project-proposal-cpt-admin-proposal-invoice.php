@@ -263,13 +263,24 @@ class Proposal_Invoice {
     }
 
     public function save_invoice_meta_box($post_id) {
+        // Check if our nonce is set and valid.
         if (!isset($_POST['arsol_proposal_invoice_nonce']) || !wp_verify_nonce($_POST['arsol_proposal_invoice_nonce'], 'arsol_proposal_invoice_save')) {
             return;
         }
+
+        // Don't save on autosave.
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
+
+        // Check the user's permissions.
         if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+        
+        // **Only save line items if this is the selected cost proposal type.**
+        $cost_proposal_type = get_post_meta($post_id, '_cost_proposal_type', true);
+        if ($cost_proposal_type !== 'invoice_line_items') {
             return;
         }
 

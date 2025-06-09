@@ -230,15 +230,14 @@ class Proposal {
         }
         
         // It's safe for us to save the data now.
-        if (isset($_POST['cost_proposal_type'])) {
-            update_post_meta($post_id, '_cost_proposal_type', sanitize_text_field($_POST['cost_proposal_type']));
-        }
+        $cost_proposal_type = isset($_POST['cost_proposal_type']) ? sanitize_text_field($_POST['cost_proposal_type']) : 'none';
+        update_post_meta($post_id, '_cost_proposal_type', $cost_proposal_type);
 
         // Get currency
         $currency = get_woocommerce_currency();
 
-        // Only save budget data if 'budget_estimates' is selected
-        if (isset($_POST['cost_proposal_type']) && $_POST['cost_proposal_type'] === 'budget_estimates') {
+        // Conditionally save/delete budget data
+        if ($cost_proposal_type === 'budget_estimates') {
             // Sanitize and save the budget amount
             if (isset($_POST['proposal_budget'])) {
                 $budget_amount = wc_format_decimal(sanitize_text_field($_POST['proposal_budget']));
@@ -279,12 +278,19 @@ class Proposal {
                 delete_post_meta($post_id, '_proposal_recurring_start_date');
             }
         } else {
-            // If not budget estimates, delete all the meta to keep things clean
+            // If not budget estimates, delete all budget meta to keep things clean
             delete_post_meta($post_id, '_proposal_budget');
             delete_post_meta($post_id, '_proposal_recurring_budget');
             delete_post_meta($post_id, '_proposal_billing_interval');
             delete_post_meta($post_id, '_proposal_billing_period');
             delete_post_meta($post_id, '_proposal_recurring_start_date');
+        }
+
+        // Conditionally delete invoice data if it's not the selected type
+        if ($cost_proposal_type !== 'invoice_line_items') {
+             delete_post_meta($post_id, '_arsol_proposal_line_items');
+             delete_post_meta($post_id, '_arsol_proposal_one_time_total');
+             delete_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped');
         }
 
         // Save start date
