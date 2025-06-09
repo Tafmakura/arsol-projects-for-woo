@@ -63,7 +63,11 @@
     margin-top: 5px;
 }
 
-#arsol_proposal_invoice_metabox .subtotal-display {
+#arsol_proposal_invoice_metabox .totals-section {
+    overflow: auto; /* Clearfix */
+}
+
+#arsol_proposal_invoice_metabox .subtotal-column {
     text-align: right;
 }
 
@@ -76,4 +80,8 @@
     content: "";
     clear: both;
     display: table;
+}
+
+#arsol_proposal_invoice_metabox .line-item-row.new-item {
+    /* ... existing code ... */
 }
