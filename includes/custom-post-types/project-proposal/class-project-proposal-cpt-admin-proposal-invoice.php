@@ -289,7 +289,7 @@ class Proposal_Invoice {
         if (!$product_id) {
             wp_send_json_error('Missing product ID');
         }
-
+    
         $product = wc_get_product($product_id);
         if (!$product) {
             wp_send_json_error('Invalid product');
@@ -302,43 +302,41 @@ class Proposal_Invoice {
         $sale_price_val = '';
         $billing_interval = null;
         $billing_period = null;
-
-        if ($is_subscription && class_exists('WC_Subscriptions_Product')) {
-            // Logic for Subscription Products
-            $regular_price_val = $product->get_regular_price();
-            $active_price = $product->get_price();
-            if (is_numeric($active_price) && is_numeric($regular_price_val) && $active_price < $regular_price_val) {
-                $sale_price_val = $active_price;
+        $debug_html = 'Class: ' . get_class($product) . '<br>Type: ' . $product->get_type(); // Basic debug info first
+    
+        try {
+            if ($is_subscription && class_exists('WC_Product_Subscription')) { // Checking for the correct class
+                // Logic for Subscription Products
+                $regular_price_val = $product->get_regular_price();
+                $active_price = $product->get_price();
+                if (is_numeric($active_price) && is_numeric($regular_price_val) && $active_price < $regular_price_val) {
+                    $sale_price_val = $active_price;
+                }
+                
+                $sign_up_fee = (float) $product->get_meta('_subscription_sign_up_fee');
+                $sub_text = $product->get_price_string();
+                $billing_interval = $product->get_meta('_subscription_period_interval');
+                $billing_period = $product->get_meta('_subscription_period');
+    
+            } else {
+                // Logic for Simple/Other Products
+                $regular_price_val = $product->get_regular_price();
+                $sale_price_val = $product->get_sale_price();
             }
             
-            $sign_up_fee = (float) $product->get_meta('_subscription_sign_up_fee');
-            $sub_text = $product->get_price_string();
-            $billing_interval = $product->get_meta('_subscription_period_interval');
-            $billing_period = $product->get_meta('_subscription_period');
-
-        } else {
-            // Logic for Simple/Other Products
-            $regular_price_val = $product->get_regular_price();
-            $sale_price_val = $product->get_sale_price();
+            // Append more debug info
+            $debug_html .= '<br>Price: ' . $product->get_price();
+            $debug_html .= '<br>Regular Price: ' . $product->get_regular_price();
+            $debug_html .= '<hr>get_price_html(): [' . $product->get_price_html() . ']';
+    
+        } catch (Throwable $e) {
+            $debug_html = 'Caught exception: ' . $e->getMessage();
         }
         
         // Ensure we have numeric values before formatting
         $regular_price_val = is_numeric($regular_price_val) ? (float) $regular_price_val : 0;
         $sale_price_val = is_numeric($sale_price_val) ? (float) $sale_price_val : '';
-
-        // --- START DEBUGGING ---
-        $debug_html = 'Class: ' . get_class($product);
-        $debug_html .= '<br>Type: ' . $product->get_type();
-        $debug_html .= '<br>Price: ' . $product->get_price();
-        $debug_html .= '<br>Regular Price: ' . $product->get_regular_price();
-        $debug_html .= '<br>Sale Price: ' . $product->get_sale_price();
-        if ($is_subscription) {
-            $debug_html .= '<br>Sign-up Fee Meta: ' . $product->get_meta('_subscription_sign_up_fee');
-            $debug_html .= '<br>Price Meta: ' . $product->get_meta('_subscription_price');
-        }
-        $debug_html .= '<hr>get_price_html(): [' . $product->get_price_html() . ']';
-        // --- END DEBUGGING ---
-
+    
         $data = array(
             'regular_price' => wc_format_decimal($regular_price_val, wc_get_price_decimals()),
             'sale_price' => $sale_price_val !== '' ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
@@ -349,7 +347,7 @@ class Proposal_Invoice {
             'billing_period'   => $billing_period,
             'price_html' => $debug_html
         );
-
+    
         wp_send_json_success($data);
     }
 }
