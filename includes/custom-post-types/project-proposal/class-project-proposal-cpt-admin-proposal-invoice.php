@@ -1,7 +1,7 @@
 <?php
 namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin;
 
-use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
+use Arsol_Projects_For_Woo\Includes\Classes\Woocommerce_Subscriptions;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -314,7 +314,7 @@ class Proposal_Invoice {
                         $interval = \WC_Subscriptions_Product::get_interval($product);
                         $period = \WC_Subscriptions_Product::get_period($product);
                         $quantity = isset($item['quantity']) ? $item['quantity'] : 1;
-                        $total_monthly_cost += Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
+                        $total_monthly_cost += \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
                     }
                 }
             }
@@ -323,7 +323,7 @@ class Proposal_Invoice {
         // Recurring fees
         if (!empty($sanitized_line_items['recurring_fees'])) {
             foreach ($sanitized_line_items['recurring_fees'] as $item) {
-                $total_monthly_cost += Woocommerce_Subscriptions::get_monthly_cost($item['amount'], $item['interval'], $item['period']);
+                $total_monthly_cost += \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_monthly_cost($item['amount'], $item['interval'], $item['period']);
             }
         }
         
@@ -349,7 +349,7 @@ class Proposal_Invoice {
             $interval = isset($item['interval']) ? (int) $item['interval'] : 1;
             $period = isset($item['period']) ? sanitize_text_field($item['period']) : 'month';
             $quantity = isset($item['quantity']) ? (int) $item['quantity'] : 1;
-            $total_monthly_cost += Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
+            $total_monthly_cost += \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
         }
         
         wp_send_json_success(array(
