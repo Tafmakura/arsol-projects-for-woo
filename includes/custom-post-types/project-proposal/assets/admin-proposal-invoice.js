@@ -344,6 +344,10 @@
                     
                     if (period) {
                         productsDailyCost += self.getDailyCost(itemTotal, interval, period);
+                        // Display subscription subtotal with billing period
+                        var periodDisplay = period === 'month' ? 'mo' : (period === 'year' ? 'yr' : (period === 'week' ? 'wk' : (period === 'day' ? 'day' : period.charAt(0))));
+                        var intervalText = interval > 1 ? interval : '';
+                        $row.find('.subtotal-display').html(formatPrice(itemTotal) + ' /' + intervalText + periodDisplay);
                     }
                 } else {
                     productsOneTimeSubtotal += itemTotal;
@@ -376,8 +380,14 @@
                 var interval = parseInt($row.find('.billing-interval').val()) || 1;
                 var period = $row.find('.billing-period').val();
                
-                if (interval && period) {
+                if (interval && period && amount > 0) {
                     recurringFeesDailyCost += self.getDailyCost(amount, interval, period);
+                    // Display recurring fee subtotal with billing period
+                    var periodDisplay = period === 'month' ? 'mo' : (period === 'year' ? 'yr' : (period === 'week' ? 'wk' : (period === 'day' ? 'day' : period.charAt(0))));
+                    var intervalText = interval > 1 ? interval : '';
+                    $row.find('.subtotal-display').html(formatPrice(amount) + ' /' + intervalText + periodDisplay);
+                } else {
+                    $row.find('.subtotal-display').html(formatPrice(amount));
                 }
             });
             var recurringFeesMonthlyTotal = recurringFeesDailyCost * arsol_proposal_invoice_vars.calculation_constants.days_in_month;

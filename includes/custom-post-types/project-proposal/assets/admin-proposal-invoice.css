@@ -420,13 +420,9 @@
     white-space: nowrap;
 }
 
-.section-totals .total-amount span {
-    margin-left: 8px;
-}
-
 /* Grand totals styling */
 .line-items-totals {
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 .totals-table {
@@ -435,11 +431,7 @@
 
 .totals-table .total-amount {
     text-align: right;
-    padding: 12px 0;
+    padding: 3px 0;
     font-size: 14px;
     white-space: nowrap;
-}
-
-.totals-table .total-amount span {
-    margin-left: 12px;
 }
