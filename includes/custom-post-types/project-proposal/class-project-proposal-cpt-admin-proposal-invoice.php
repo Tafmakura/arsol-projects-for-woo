@@ -1,7 +1,7 @@
 <?php
 namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin;
 
-use Arsol_Projects_For_Woo\Includes\Classes\Woocommerce_Subscriptions;
+use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -51,7 +51,9 @@ class Proposal_Invoice {
                 true
             );
             
-            $saved_symbol = get_post_meta($post->ID, '_arsol_proposal_currency_symbol', true);
+            // Get currency symbol based on ISO code for historical accuracy
+            $saved_code = get_post_meta($post->ID, '_arsol_proposal_currency', true);
+            $currency_symbol = $saved_code ? get_woocommerce_currency_symbol($saved_code) : get_woocommerce_currency_symbol();
 
              wp_localize_script(
                 'arsol-proposal-invoice',
@@ -59,7 +61,7 @@ class Proposal_Invoice {
                 array(
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
-                    'currency_symbol' => $saved_symbol ?: get_woocommerce_currency_symbol(),
+                    'currency_symbol' => $currency_symbol,
                     'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array(),
                     'calculation_constants' => Woocommerce_Subscriptions::get_calculation_constants()
                 )
@@ -345,7 +347,11 @@ class Proposal_Invoice {
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
         $recurring_totals = json_decode($recurring_totals_json, true);
         update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $recurring_totals);
-        update_post_meta($post_id, '_arsol_proposal_currency_symbol', get_woocommerce_currency_symbol());
+        
+        // Save currency ISO code as the primary source of truth
+        $currency_code = get_woocommerce_currency();
+        update_post_meta($post_id, '_arsol_proposal_currency', $currency_code);
+        update_post_meta($post_id, '_arsol_proposal_currency_symbol', get_woocommerce_currency_symbol($currency_code));
     }
 
     public function ajax_search_products() {
