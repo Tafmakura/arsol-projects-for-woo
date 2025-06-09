@@ -408,3 +408,38 @@
 #arsol_proposal_invoice_metabox .section-footer .add-line-item {
     margin: 0;
 }
+
+/* Section totals styling */
+.section-totals table {
+    width: 100%;
+}
+
+.section-totals .total-amount {
+    text-align: right;
+    padding: 8px 0;
+    white-space: nowrap;
+}
+
+.section-totals .total-amount span {
+    margin-left: 8px;
+}
+
+/* Grand totals styling */
+.line-items-totals {
+    margin-top: 20px;
+}
+
+.totals-table {
+    border-collapse: collapse;
+}
+
+.totals-table .total-amount {
+    text-align: right;
+    padding: 12px 0;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.totals-table .total-amount span {
+    margin-left: 12px;
+}

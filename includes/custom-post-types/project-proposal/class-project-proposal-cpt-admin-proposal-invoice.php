@@ -113,12 +113,10 @@ class Proposal_Invoice {
                         <div class="section-totals">
                             <table>
                                 <tr>
-                                    <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
-                                    <td class="total-amount" id="product-subtotal-display"><?php echo wc_price(0); ?></td>
+                                    <td class="total-amount"><strong><?php _e('Total:', 'arsol-pfw'); ?></strong> <span id="product-subtotal-display"><?php echo wc_price(0); ?></span></td>
                                 </tr>
                                 <tr>
-                                    <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
-                                    <td class="total-amount" id="product-avg-monthly-display"><?php echo wc_price(0); ?></td>
+                                    <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="product-avg-monthly-display"><?php echo wc_price(0); ?></span></td>
                                 </tr>
                             </table>
                         </div>
@@ -151,8 +149,7 @@ class Proposal_Invoice {
                         <div class="section-totals">
                             <table>
                                 <tr>
-                                    <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
-                                    <td class="total-amount" id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></td>
+                                    <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></span></td>
                                 </tr>
                             </table>
                         </div>
@@ -183,8 +180,7 @@ class Proposal_Invoice {
                         <div class="section-totals">
                             <table>
                                 <tr>
-                                    <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
-                                    <td class="total-amount" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></td>
+                                    <td class="total-amount"><strong><?php _e('Total:', 'arsol-pfw'); ?></strong> <span id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></span></td>
                                 </tr>
                             </table>
                         </div>
@@ -220,8 +216,7 @@ class Proposal_Invoice {
                         <div class="section-totals">
                             <table>
                                 <tr>
-                                    <td><strong><?php _e('Total:', 'arsol-pfw'); ?></strong></td>
-                                    <td class="total-amount" id="shipping-subtotal-display"><?php echo wc_price(0); ?></td>
+                                    <td class="total-amount"><strong><?php _e('Total:', 'arsol-pfw'); ?></strong> <span id="shipping-subtotal-display"><?php echo wc_price(0); ?></span></td>
                                 </tr>
                             </table>
                         </div>
@@ -234,12 +229,10 @@ class Proposal_Invoice {
                 <table align="right" class="totals-table">
                     <tbody>
                         <tr>
-                            <td><strong><?php _e('One-Time Total:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="one-time-total-display"><?php echo wc_price(0); ?></td>
+                            <td class="total-amount"><strong><?php _e('One-Time Total:', 'arsol-pfw'); ?></strong> <span id="one-time-total-display"><?php echo wc_price(0); ?></span></td>
                         </tr>
                         <tr>
-                            <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
-                            <td class="total-amount" id="average-monthly-total-display"><?php echo wc_price(0); ?></td>
+                            <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="average-monthly-total-display"><?php echo wc_price(0); ?></span></td>
                         </tr>
                     </tbody>
                 </table>
