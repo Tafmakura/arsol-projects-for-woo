@@ -153,3 +153,53 @@
 #arsol_proposal_invoice_metabox .line-item-row.new-item {
     /* ... existing code ... */
 }
+
+/* Shipping section - WooCommerce patterns */
+#arsol_proposal_invoice_metabox .shipping-description-column {
+    width: 35%;
+}
+
+#arsol_proposal_invoice_metabox .shipping-description-column input {
+    width: 100%;
+}
+
+#arsol_proposal_invoice_metabox .shipping-class-column {
+    width: 20%;
+}
+
+#arsol_proposal_invoice_metabox .shipping-class-column select {
+    width: 100%;
+}
+
+#arsol_proposal_invoice_metabox .shipping-amount-column {
+    width: 15%;
+}
+
+#arsol_proposal_invoice_metabox .shipping-amount-column input {
+    width: 100%;
+    text-align: right;
+}
+
+/* Responsive design for shipping columns */
+@media screen and (max-width: 1200px) {
+    #arsol_proposal_invoice_metabox .shipping-description-column {
+        width: 30%;
+    }
+    
+    #arsol_proposal_invoice_metabox .shipping-class-column {
+        width: 25%;
+    }
+    
+    #arsol_proposal_invoice_metabox .shipping-amount-column {
+        width: 20%;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    #arsol_proposal_invoice_metabox .shipping-description-column,
+    #arsol_proposal_invoice_metabox .shipping-class-column,
+    #arsol_proposal_invoice_metabox .shipping-amount-column {
+        width: auto;
+        min-width: 120px;
+    }
+}

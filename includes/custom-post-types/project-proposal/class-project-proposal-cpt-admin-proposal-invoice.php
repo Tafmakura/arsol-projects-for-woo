@@ -184,8 +184,9 @@ class Proposal_Invoice {
                 <table class="widefat" id="shipping-lines-table">
                      <thead>
                         <tr>
-                            <th class="shipping-method-column"><?php _e('Shipping Method/Description', 'arsol-pfw'); ?></th>
-                            <th><?php _e('Cost', 'arsol-pfw'); ?></th>
+                            <th class="shipping-description-column"><?php _e('Description', 'arsol-pfw'); ?></th>
+                            <th class="shipping-class-column"><?php _e('Shipping Class', 'arsol-pfw'); ?></th>
+                            <th class="shipping-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
                             <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
@@ -343,26 +344,28 @@ class Proposal_Invoice {
 
         <script type="text/html" id="tmpl-arsol-shipping-fee-line-item">
             <?php
-            $shipping_methods_formatted = array();
-            if (function_exists('WC') && WC()->shipping && WC()->shipping->get_shipping_methods()) {
-                foreach (WC()->shipping->get_shipping_methods() as $method_id => $method) {
-                    $shipping_methods_formatted[$method_id] = $method->get_method_title();
+            // Get WooCommerce shipping classes
+            $shipping_classes = array();
+            if (function_exists('WC') && WC()->shipping) {
+                $wc_shipping_classes = WC()->shipping->get_shipping_classes();
+                foreach ($wc_shipping_classes as $shipping_class) {
+                    $shipping_classes[$shipping_class->term_id] = $shipping_class->name;
                 }
             }
-            $shipping_methods_json = json_encode($shipping_methods_formatted);
             ?>
             <tr class="line-item shipping-fee-item" data-id="{{ data.id }}">
-                <td class="shipping-method-column">
-                    <select class="shipping-method-select-ui">
-                         <option value=""><?php _e('Select a method...', 'arsol-pfw'); ?></option>
-                         <# _.each(<?php echo json_encode($shipping_methods_json); ?>, function(name, id) { #>
-                            <option value="{{ id }}" data-name="{{ name }}">{{ name }}</option>
-                         <# }); #>
-                         <option value="custom"><?php _e('Custom Description', 'arsol-pfw'); ?></option>
-                    </select>
-                    <input type="text" class="shipping-method-input" name="line_items[shipping_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. FedEx Ground', 'arsol-pfw'); ?>">
+                <td class="shipping-description-column">
+                    <input type="text" class="shipping-description-input" name="line_items[shipping_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Express Shipping', 'arsol-pfw'); ?>">
                 </td>
-                <td>
+                <td class="shipping-class-column">
+                    <select class="shipping-class-select" name="line_items[shipping_fees][{{ data.id }}][shipping_class_id]">
+                        <option value=""><?php _e('None', 'arsol-pfw'); ?></option>
+                        <# _.each(<?php echo json_encode($shipping_classes); ?>, function(name, id) { #>
+                            <option value="{{ id }}" <# if (data.shipping_class_id == id) { #>selected="selected"<# } #>>{{ name }}</option>
+                        <# }); #>
+                    </select>
+                </td>
+                <td class="shipping-amount-column">
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
                 <td class="taxable-column">
