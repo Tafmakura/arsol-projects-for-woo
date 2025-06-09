@@ -6,19 +6,8 @@ if (!defined('ABSPATH')) exit;
 
 class Setup {
     public function __construct() {
-        add_action('init', array($this, 'register_custom_post_types'));
         add_action('init', array($this, 'register_taxonomies'));
         add_action('init', array($this, 'load_cpt_and_taxonomy_classes'));
-    }
-
-    public function register_custom_post_types() {
-        // Register Project CPT
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt.php';
-        Project\Project_CPT::register();
-
-        // Register Project Proposal CPT
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt.php';
-        ProjectProposal\Project_Proposal_CPT::register();
     }
 
     public function register_taxonomies() {
@@ -34,10 +23,12 @@ class Setup {
     public function load_cpt_and_taxonomy_classes() {
         // Admin-specific hooks for Project Proposal CPT
         if (is_admin()) {
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-setup.php';
             require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal.php';
             require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal-budget.php';
             require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal-invoice.php';
-
+            
+            new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
             new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
             new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Budget();
             new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Invoice();
@@ -45,9 +36,11 @@ class Setup {
 
         // Admin-specific hooks for Project CPT
         if (is_admin()) {
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-setup.php';
             require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-projects.php';
             require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-project.php';
             
+            new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Setup();
             new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Projects();
             new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Project();
         }
