@@ -129,6 +129,7 @@ class Proposal {
                 <?php echo $author_dropdown; ?>
             </p>
 
+            <!--
             <p>
                 <label for="proposal_budget" style="display:block;margin-bottom:5px;"><?php echo sprintf(__('Proposed Budget (%s):', 'arsol-pfw'), $currency_code); ?></label>
                 <input type="text"
@@ -192,6 +193,7 @@ class Proposal {
                            class="widefat">
                 </p>
             </div>
+            -->
 
             <?php if (!empty($invoice_product_id) && get_post_meta($post->ID, '_invoice_created', true) !== 'yes') : ?>
                 <p>
@@ -276,67 +278,74 @@ class Proposal {
      * Save proposal details
      */
     public function save_proposal_details($post_id) {
-        // Check if our nonce is set
+        // Check if our nonce is set.
         if (!isset($_POST['proposal_details_meta_box_nonce'])) {
             return;
         }
 
-        // Verify that the nonce is valid
+        // Verify that the nonce is valid.
         if (!wp_verify_nonce($_POST['proposal_details_meta_box_nonce'], 'proposal_details_meta_box')) {
             return;
         }
 
-        // If this is an autosave, our form has not been submitted, so we don't want to do anything
+        // If this is an autosave, our form has not been submitted, so we don't want to do anything.
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
 
-        // Check the user's permissions
-        if (!current_user_can('edit_post', $post_id)) {
-            return;
+        // Check the user's permissions.
+        if (isset($_POST['post_type']) && 'arsol-pfw-proposal' == $_POST['post_type']) {
+            if (!current_user_can('edit_post', $post_id)) {
+                return;
+            }
         }
+        
+        // It's safe for us to save the data now.
 
-        // Determine the currency for this proposal
-        $budget_data = get_post_meta($post_id, '_proposal_budget', true);
-        $recurring_budget_data = get_post_meta($post_id, '_proposal_recurring_budget', true);
-        $currency = !empty($budget_data['currency']) 
-            ? $budget_data['currency'] 
-            : (!empty($recurring_budget_data['currency']) ? $recurring_budget_data['currency'] : get_woocommerce_currency());
+        // Get currency
+        $currency = get_woocommerce_currency();
 
-        // Save budget
+        /*
+        // Sanitize and save the budget amount
         if (isset($_POST['proposal_budget'])) {
-            $amount = preg_replace('/[^\d.]/', '', sanitize_text_field($_POST['proposal_budget']));
-            if (empty($amount)) {
-                delete_post_meta($post_id, '_proposal_budget');
-            } else {
-                update_post_meta($post_id, '_proposal_budget', array('amount' => $amount, 'currency' => $currency));
-            }
+            $budget_amount = wc_format_decimal(sanitize_text_field($_POST['proposal_budget']));
+            $budget_data = array(
+                'amount' => $budget_amount,
+                'currency' => $currency
+            );
+            update_post_meta($post_id, '_proposal_budget', $budget_data);
         }
 
+        // Sanitize and save the recurring budget amount
         if (isset($_POST['proposal_recurring_budget'])) {
-            $amount = preg_replace('/[^\d.]/', '', sanitize_text_field($_POST['proposal_recurring_budget']));
-            if (empty($amount)) {
-                delete_post_meta($post_id, '_proposal_recurring_budget');
-            } else {
-                update_post_meta($post_id, '_proposal_recurring_budget', array('amount' => $amount, 'currency' => $currency));
+            $recurring_budget_amount = wc_format_decimal(sanitize_text_field($_POST['proposal_recurring_budget']));
+            $recurring_budget_data = array(
+                'amount' => $recurring_budget_amount,
+                'currency' => $currency
+            );
+            update_post_meta($post_id, '_proposal_recurring_budget', $recurring_budget_data);
+        } else {
+            delete_post_meta($post_id, '_proposal_recurring_budget');
+        }
+
+        // Save billing cycle if recurring budget is set
+        if (!empty($_POST['proposal_recurring_budget']) && $_POST['proposal_recurring_budget'] > 0) {
+            if (isset($_POST['proposal_billing_interval'])) {
+                update_post_meta($post_id, '_proposal_billing_interval', sanitize_text_field($_POST['proposal_billing_interval']));
             }
+            if (isset($_POST['proposal_billing_period'])) {
+                update_post_meta($post_id, '_proposal_billing_period', sanitize_text_field($_POST['proposal_billing_period']));
+            }
+            if (isset($_POST['proposal_recurring_start_date'])) {
+                update_post_meta($post_id, '_proposal_recurring_start_date', sanitize_text_field($_POST['proposal_recurring_start_date']));
+            }
+        } else {
+            // If there's no recurring budget, delete the meta
+            delete_post_meta($post_id, '_proposal_billing_interval');
+            delete_post_meta($post_id, '_proposal_billing_period');
+            delete_post_meta($post_id, '_proposal_recurring_start_date');
         }
-
-        if (isset($_POST['proposal_billing_interval'])) {
-            update_post_meta($post_id, '_proposal_billing_interval', sanitize_text_field($_POST['proposal_billing_interval']));
-        }
-
-        if (isset($_POST['proposal_billing_period'])) {
-            update_post_meta($post_id, '_proposal_billing_period', sanitize_text_field($_POST['proposal_billing_period']));
-        }
-
-        if (isset($_POST['proposal_recurring_start_date'])) {
-            update_post_meta($post_id, '_proposal_recurring_start_date', sanitize_text_field($_POST['proposal_recurring_start_date']));
-        }
-
-        // Save checkbox states
-        update_post_meta($post_id, '_create_invoice_checked', isset($_POST['create_invoice']));
-        update_post_meta($post_id, '_create_recurring_invoice_checked', isset($_POST['create_recurring_invoice']));
+        */
 
         // Save start date
         if (isset($_POST['proposal_start_date'])) {
