@@ -94,21 +94,21 @@ class Proposal_Budget {
                             </td>
                             <td class="billing-cycle-column">
                                 <select name="proposal_billing_interval" class="billing-interval">
-                                    <?php
+                            <?php
                                     $intervals = array('1' => __('every', 'arsol-pfw'), '2' => __('every 2nd', 'arsol-pfw'), '3' => __('every 3rd', 'arsol-pfw'), '4' => __('every 4th', 'arsol-pfw'), '5' => __('every 5th', 'arsol-pfw'), '6' => __('every 6th', 'arsol-pfw'));
-                                    foreach ($intervals as $value => $label) {
-                                        echo '<option value="' . esc_attr($value) . '"' . selected($billing_interval, $value, false) . '>' . esc_html($label) . '</option>';
-                                    }
-                                    ?>
-                                </select>
+                            foreach ($intervals as $value => $label) {
+                                echo '<option value="' . esc_attr($value) . '"' . selected($billing_interval, $value, false) . '>' . esc_html($label) . '</option>';
+                            }
+                            ?>
+                        </select>
                                 <select name="proposal_billing_period" class="billing-period">
-                                    <?php
+                            <?php
                                     $periods = array('day' => __('day', 'arsol-pfw'), 'week' => __('week', 'arsol-pfw'), 'month' => __('month', 'arsol-pfw'), 'year' => __('year', 'arsol-pfw'));
-                                    foreach ($periods as $value => $label) {
-                                        echo '<option value="' . esc_attr($value) . '"' . selected($billing_period, $value, false) . '>' . esc_html($label) . '</option>';
-                                    }
-                                    ?>
-                                </select>
+                            foreach ($periods as $value => $label) {
+                                echo '<option value="' . esc_attr($value) . '"' . selected($billing_period, $value, false) . '>' . esc_html($label) . '</option>';
+                            }
+                            ?>
+                        </select>
                             </td>
                             <td class="subtotal-column">
                                 <span class="recurring-budget-total-display"><?php echo $recurring_budget_amount ? wc_price($recurring_budget_amount) : wc_price(0); ?></span> <span class="billing-period-display">/<?php echo $billing_period === 'month' ? 'mo' : ($billing_period === 'year' ? 'yr' : ($billing_period === 'week' ? 'wk' : ($billing_period === 'day' ? 'day' : $billing_period))); ?></span>
@@ -133,33 +133,33 @@ class Proposal_Budget {
                             </table>
                         </div>
                     </div>
-                </div>
-            </div>
-            <hr>
-            <!-- Notes Section -->
-            <div class="line-items-container">
-                <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
-                <?php
-                $notes_content = get_post_meta($post->ID, '_arsol_proposal_notes', true);
-                wp_editor(
-                    $notes_content,
-                    'arsol_proposal_notes_budget',
-                    array(
-                        'textarea_name' => 'arsol_proposal_notes',
-                        'textarea_rows' => 8,
-                        'media_buttons' => false,
-                        'tinymce' => array(
-                            'toolbar1' => 'bold,italic,underline,bullist,numlist,link,unlink',
-                            'toolbar2' => ''
-                        ),
-                    )
-                );
-                ?>
-                <p class="description"><?php _e('These notes will be displayed on the frontend proposal view.', 'arsol-pfw'); ?></p>
             </div>
         </div>
+        <hr>
+        <!-- Notes Section -->
+        <div class="line-items-container">
+            <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
+            <?php
+            $notes_content = get_post_meta($post->ID, '_arsol_proposal_notes', true);
+            wp_editor(
+                $notes_content,
+                    'arsol_proposal_notes_budget',
+                array(
+                        'textarea_name' => 'arsol_proposal_notes',
+                    'textarea_rows' => 8,
+                    'media_buttons' => false,
+                    'tinymce' => array(
+                        'toolbar1' => 'bold,italic,underline,bullist,numlist,link,unlink',
+                        'toolbar2' => ''
+                    ),
+                )
+            );
+            ?>
+             <p class="description"><?php _e('These notes will be displayed on the frontend proposal view.', 'arsol-pfw'); ?></p>
+        </div>
+        </div>
         
-        <script>
+         <script>
             jQuery(document).ready(function($) {
                 var currencySymbol = '<?php echo get_woocommerce_currency_symbol(); ?>';
                 
@@ -188,12 +188,7 @@ class Proposal_Budget {
                     $('#budget-recurring-total-display').html(formatPrice(recurringAmount));
                     $('#budget-recurring-period').text(billingText);
                     
-                    // Show/hide start date based on recurring amount
-                    if (recurringAmount > 0) {
-                        $('.recurring-budget-row .start-date-input').show();
-                    } else {
-                        $('.recurring-budget-row .start-date-input').hide();
-                    }
+                    // Start date is always visible for budgets
                 }
                 
                 // Bind events
