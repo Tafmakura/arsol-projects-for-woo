@@ -207,14 +207,29 @@ class Woocommerce_Subscriptions {
             return self::$cached_form_options;
         }
 
-        // Cache the expensive function calls
+        // Cache the expensive function calls with error suppression to prevent output issues
+        $intervals = array(1 => 1);
+        $periods = array('month' => 'month');
+        
+        // Suppress any potential output from WCS functions
+        ob_start();
+        try {
+            if (function_exists('wcs_get_subscription_period_interval_strings')) {
+                $intervals = wcs_get_subscription_period_interval_strings();
+            }
+            if (function_exists('wcs_get_subscription_period_strings')) {
+                $periods = wcs_get_subscription_period_strings();
+            }
+        } catch (Exception $e) {
+            // Log error but don't break functionality
+            error_log('Arsol Projects: WCS form options error - ' . $e->getMessage());
+        }
+        // Clean any unexpected output
+        ob_end_clean();
+
         self::$cached_form_options = array(
-            'intervals' => function_exists('wcs_get_subscription_period_interval_strings') 
-                ? wcs_get_subscription_period_interval_strings() 
-                : array(1 => 1),
-            'periods' => function_exists('wcs_get_subscription_period_strings') 
-                ? wcs_get_subscription_period_strings() 
-                : array('month' => 'month')
+            'intervals' => $intervals,
+            'periods' => $periods
         );
 
         return self::$cached_form_options;
