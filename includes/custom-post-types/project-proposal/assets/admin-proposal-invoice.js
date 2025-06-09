@@ -85,11 +85,11 @@
         bindEvents: function() {
             var builder = $('#proposal_invoice_builder');
             builder.on('click', '.add-line-item', this.addLineItem.bind(this));
-            builder.on('click', '.remove-line-item', this.removeLineItem.bind(this));
-            builder.on('change', '.product-select', this.productChanged.bind(this));
+            builder.on('click', '.delete-order-item', this.removeLineItem.bind(this));
+            builder.on('change', '.wc-product-search', this.productChanged.bind(this));
             builder.on('change', '.shipping-method-select-ui', this.shippingMethodChanged.bind(this));
             // Debounce the calculation to prevent firing on every single key press
-            builder.on('input change', '.quantity-input, .sale-price-input, .price-input, .fee-amount-input, .billing-interval, .billing-period', _.debounce(this.calculateTotals.bind(this), 300));
+            builder.on('input change', '.quantity-input, .wc_input_price, .billing-interval, .billing-period', _.debounce(this.calculateTotals.bind(this), 300));
         },
         
         loadExistingItems: function() {
@@ -119,16 +119,16 @@
 
             if (type === 'product') {
                 template = this.product_template;
-                container = '#product-lines-body';
+                container = '#order_line_items';
             } else if (type === 'onetime-fee') {
                 template = this.onetime_fee_template;
-                container = '#onetime-fee-lines-body';
+                container = '#order_fee_line_items';
             } else if (type === 'recurring-fee') {
                 template = this.recurring_fee_template;
-                container = '#recurring-fee-lines-body';
+                container = '#order_fee_line_items';
             } else if (type === 'shipping-fee') {
                 template = this.shipping_fee_template;
-                container = '#shipping-lines-body';
+                container = '#order_shipping_line_items';
             } else {
                 return;
             }
@@ -171,7 +171,7 @@
         },
 
         initSelect2: function($row) {
-            $row.find('.product-select').select2({
+            $row.find('.wc-product-search').select2({
                 ajax: {
                     url: arsol_proposal_invoice_vars.ajax_url,
                     dataType: 'json',
@@ -199,7 +199,7 @@
 
         removeLineItem: function(e) {
             e.preventDefault();
-            $(e.currentTarget).closest('.line-item').remove();
+            $(e.currentTarget).closest('tr').remove();
             this.calculateTotals();
             this.toggleStartDateColumn();
         },
@@ -208,7 +208,7 @@
             var hasSubscriptions = false;
             
             // Check if any product rows have subscription products
-            $('#product-lines-body .line-item').each(function() {
+            $('#order_line_items tr').each(function() {
                 if ($(this).data('is-subscription')) {
                     hasSubscriptions = true;
                     return false; // Break the loop
@@ -225,7 +225,7 @@
         },
         
         productChanged: function(e) {
-            var $row = $(e.currentTarget).closest('.line-item');
+            var $row = $(e.currentTarget).closest('tr');
             var productId = $(e.currentTarget).val();
             this.fetchProductDetails($row, productId);
         },
@@ -239,7 +239,7 @@
 
              // Add WordPress admin spinner
              var $spinner = $('<span class="spinner is-active"></span>');
-             $row.find('.product-select').after($spinner);
+             $row.find('.wc-product-search').after($spinner);
 
              $.ajax({
                  url: arsol_proposal_invoice_vars.ajax_url,
@@ -262,8 +262,7 @@
                          }
                          
                          // Update form fields
-                         $row.find('.price-input').val(data.regular_price || '');
-                         $row.find('.sale-price-input').val(data.sale_price || '');
+                         $row.find('.wc_input_price').val(data.regular_price || '');
                          
                          // Show/hide start date input for this row
                          if (data.is_subscription) {
@@ -308,7 +307,7 @@
             // --- Products ---
             var productsOneTimeSubtotal = 0;
             var productsDailyCost = 0;
-            $('#product-lines-body .line-item').each(function() {
+            $('#order_line_items tr').each(function() {
                 var $row = $(this);
                 
                 var quantityVal = $row.find('.quantity-input').val();
@@ -326,8 +325,8 @@
                     }
                 }
 
-                var salePrice = parseFloat($row.find('.sale-price-input').val());
-                var regularPrice = parseFloat($row.find('.price-input').val()) || 0;
+                var salePrice = parseFloat($row.find('.wc_input_price').val());
+                var regularPrice = parseFloat($row.find('.wc_input_price').val()) || 0;
                 var unitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : regularPrice;
                 var itemTotal = unitPrice * quantity;
 
@@ -355,7 +354,7 @@
 
             // --- One-Time Fees ---
             var oneTimeFeesSubtotal = 0;
-            $('#onetime-fee-lines-body .line-item').each(function() {
+            $('#order_fee_line_items tr').each(function() {
                 var amount = parseFloat($(this).find('.fee-amount-input').val()) || 0;
                 oneTimeFeesSubtotal += amount;
                 $(this).find('.subtotal-display').html(formatPrice(amount));
@@ -365,7 +364,7 @@
             
             // --- Recurring Fees ---
             var recurringFeesDailyCost = 0;
-            $('#recurring-fee-lines-body .line-item').each(function() {
+            $('#order_fee_line_items tr').each(function() {
                 var amount = parseFloat($(this).find('.fee-amount-input').val()) || 0;
                 var interval = parseInt($(this).find('.billing-interval').val()) || 1;
                 var period = $(this).find('.billing-period').val();
@@ -381,7 +380,7 @@
 
             // --- Shipping ---
             var shippingSubtotal = 0;
-            $('#shipping-lines-body .line-item').each(function() {
+            $('#order_shipping_line_items tr').each(function() {
                 var amount = parseFloat($(this).find('.fee-amount-input').val()) || 0;
                 shippingSubtotal += amount;
                 $(this).find('.subtotal-display').html(formatPrice(amount));
