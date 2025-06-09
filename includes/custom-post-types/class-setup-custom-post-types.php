@@ -6,18 +6,7 @@ if (!defined('ABSPATH')) exit;
 
 class Setup {
     public function __construct() {
-        add_action('init', array($this, 'register_taxonomies'));
         add_action('init', array($this, 'load_cpt_and_taxonomy_classes'));
-    }
-
-    public function register_taxonomies() {
-        // Register Project Status Taxonomy
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-project-status-taxonomy.php';
-        \Arsol_Projects_For_Woo\Taxonomies\Project_Status_Taxonomy::register();
-        
-        // Register Review Status Taxonomy
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-review-status-taxonomy.php';
-        \Arsol_Projects_For_Woo\Taxonomies\Review_Status_Taxonomy::register();
     }
 
     public function load_cpt_and_taxonomy_classes() {
