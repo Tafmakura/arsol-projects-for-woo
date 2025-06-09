@@ -16,7 +16,6 @@ class Proposal_Invoice {
         // AJAX Handlers
         add_action('wp_ajax_arsol_proposal_invoice_ajax_search_products', array($this, 'ajax_search_products'));
         add_action('wp_ajax_arsol_proposal_invoice_ajax_get_product_details', array($this, 'ajax_get_product_details'));
-        add_action('wp_ajax_arsol_calculate_average_monthly_total', array($this, 'ajax_calculate_average_monthly_total'));
     }
 
     public function add_invoice_meta_box() {
@@ -51,13 +50,16 @@ class Proposal_Invoice {
                 filemtime($plugin_dir . 'includes/custom-post-types/project-proposal/assets/admin-proposal-invoice.js'),
                 true
             );
+            
+            $saved_symbol = get_post_meta($post->ID, '_arsol_proposal_currency_symbol', true);
+
              wp_localize_script(
                 'arsol-proposal-invoice',
                 'arsol_proposal_invoice_vars',
                 array(
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
-                    'currency_symbol' => get_woocommerce_currency_symbol(),
+                    'currency_symbol' => $saved_symbol ?: get_woocommerce_currency_symbol(),
                     'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array(),
                     'saved_average_monthly_total' => get_post_meta($post->ID, '_arsol_proposal_average_monthly_total', true)
                 )
@@ -92,7 +94,7 @@ class Proposal_Invoice {
                             <td class="total-amount" id="product-subtotal-display"><?php echo wc_price(0); ?></td>
                         </tr>
                         <tr>
-                            <td><strong><?php _e('Avg. Recurring Total/mo:', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="product-avg-monthly-display"><?php echo wc_price(0); ?></td>
                         </tr>
                     </table>
@@ -119,7 +121,7 @@ class Proposal_Invoice {
                 <div class="section-totals">
                     <table align="right">
                         <tr>
-                            <td><strong><?php _e('Avg. Recurring Total/mo:', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></td>
                         </tr>
                     </table>
@@ -195,7 +197,7 @@ class Proposal_Invoice {
                             <td class="total-amount" id="recurring-totals-display" style="vertical-align: top;"><?php echo wc_price(0); ?></td>
                         </tr>
                         <tr>
-                            <td><strong><?php _e('Average Monthly Total:', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="average-monthly-total-display"><?php echo wc_price(0); ?></td>
                         </tr>
                     </tbody>
@@ -341,84 +343,13 @@ class Proposal_Invoice {
             }
         }
         
-        // --- Calculate and save the average monthly total ---
-        $total_monthly_cost = 0;
-
-        // Recurring products
-        if (!empty($sanitized_line_items['products'])) {
-            foreach ($sanitized_line_items['products'] as $item) {
-                if (isset($item['product_id'])) {
-                    $product = wc_get_product($item['product_id']);
-                    if ($product && $product->is_type(array('subscription', 'subscription_variation'))) {
-                        $price = !empty($item['sale_price']) ? $item['sale_price'] : $item['price'];
-                        $interval = \WC_Subscriptions_Product::get_interval($product);
-                        $period = \WC_Subscriptions_Product::get_period($product);
-                        $quantity = isset($item['quantity']) ? $item['quantity'] : 1;
-                        $total_monthly_cost += \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
-                    }
-                }
-            }
-        }
-        
-        // Recurring fees
-        if (!empty($sanitized_line_items['recurring_fees'])) {
-            foreach ($sanitized_line_items['recurring_fees'] as $item) {
-                $total_monthly_cost += \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_monthly_cost($item['amount'], $item['interval'], $item['period']);
-            }
-        }
-        
-        update_post_meta($post_id, '_arsol_proposal_average_monthly_total', $total_monthly_cost);
-        // --- End calculation ---
-
         update_post_meta($post_id, '_arsol_proposal_line_items', $sanitized_line_items);
         update_post_meta($post_id, '_arsol_proposal_one_time_total', sanitize_text_field($_POST['line_items_one_time_total']));
         
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
         $recurring_totals = json_decode($recurring_totals_json, true);
         update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $recurring_totals);
-    }
-    
-    public function ajax_calculate_average_monthly_total() {
-        check_ajax_referer('arsol-proposal-invoice-nonce', 'nonce');
-    
-        $item_groups = isset($_POST['item_groups']) ? $_POST['item_groups'] : array();
-        $response_data = array(
-            'groups' => array(),
-            'total_raw' => 0,
-            'total_formatted' => wc_price(0)
-        );
-        $grand_total_monthly_cost = 0;
-    
-        if (!empty($item_groups)) {
-            foreach ($item_groups as $group_key => $items) {
-                if (empty($items)) {
-                    // Ensure the group exists in the response even if empty
-                    $response_data['groups'][$group_key] = array(
-                        'raw' => 0,
-                        'formatted' => wc_price(0)
-                    );
-                    continue;
-                }
-                $group_total_monthly_cost = 0;
-                foreach ($items as $item) {
-                    $price = isset($item['price']) ? (float) $item['price'] : 0;
-                    $interval = isset($item['interval']) ? (int) $item['interval'] : 1;
-                    $period = isset($item['period']) ? sanitize_text_field($item['period']) : 'month';
-                    $quantity = isset($item['quantity']) ? (int) $item['quantity'] : 1;
-                    $group_total_monthly_cost += \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_monthly_cost($price, $interval, $period) * $quantity;
-                }
-                $response_data['groups'][$group_key] = array(
-                    'raw' => $group_total_monthly_cost,
-                    'formatted' => wc_price($group_total_monthly_cost)
-                );
-                $grand_total_monthly_cost += $group_total_monthly_cost;
-            }
-        }
-        
-        $response_data['total_raw'] = $grand_total_monthly_cost;
-        $response_data['total_formatted'] = wc_price($grand_total_monthly_cost);
-        
-        wp_send_json_success($response_data);
+        update_post_meta($post_id, '_arsol_proposal_currency_symbol', get_woocommerce_currency_symbol());
     }
 
     public function ajax_search_products() {
