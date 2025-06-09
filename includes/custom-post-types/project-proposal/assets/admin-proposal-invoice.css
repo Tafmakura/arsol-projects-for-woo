@@ -117,6 +117,23 @@
     #arsol_proposal_invoice_metabox .billing-cycle-column select {
         width: 100px;
     }
+    
+    /* Reduce fixed column widths on medium screens */
+    #arsol_proposal_invoice_metabox .shipping-class-column {
+        width: 130px;
+    }
+    
+    #arsol_proposal_invoice_metabox .shipping-amount-column,
+    #arsol_proposal_invoice_metabox .taxable-column {
+        width: 100px;
+    }
+    
+    #arsol_proposal_invoice_metabox #product-line-items th:nth-child(4),
+    #arsol_proposal_invoice_metabox #product-line-items td:nth-child(4),
+    #arsol_proposal_invoice_metabox #product-line-items th:nth-child(5),
+    #arsol_proposal_invoice_metabox #product-line-items td:nth-child(5) {
+        width: 90px; /* Smaller price columns */
+    }
 }
 
 @media screen and (max-width: 900px) {
@@ -127,6 +144,28 @@
     #arsol_proposal_invoice_metabox .billing-cycle-column select {
         width: 90px;
         margin-bottom: 2px;
+    }
+    
+    /* Allow first columns to maintain minimum widths on small screens */
+    #arsol_proposal_invoice_metabox .product-column,
+    #arsol_proposal_invoice_metabox .fee-name-column,
+    #arsol_proposal_invoice_metabox .shipping-description-column {
+        min-width: 150px; /* Smaller minimum on mobile */
+    }
+    
+    /* Reduce all fixed columns further on mobile */
+    #arsol_proposal_invoice_metabox .shipping-class-column,
+    #arsol_proposal_invoice_metabox .shipping-amount-column,
+    #arsol_proposal_invoice_metabox .taxable-column {
+        width: 80px;
+    }
+    
+    #arsol_proposal_invoice_metabox .subtotal-column {
+        width: 70px;
+    }
+    
+    #arsol_proposal_invoice_metabox .actions-column {
+        width: 40px;
     }
 }
 
@@ -173,9 +212,10 @@
     /* ... existing code ... */
 }
 
-/* Shipping section - WooCommerce patterns */
+/* Shipping section - WooCommerce patterns with auto-stretch */
 #arsol_proposal_invoice_metabox .shipping-description-column {
-    width: 35%;
+    width: auto; /* Auto-stretch to fill remaining space */
+    min-width: 200px;
 }
 
 #arsol_proposal_invoice_metabox .shipping-description-column input {
@@ -183,7 +223,7 @@
 }
 
 #arsol_proposal_invoice_metabox .shipping-class-column {
-    width: 20%;
+    width: 150px; /* Fixed width */
 }
 
 #arsol_proposal_invoice_metabox .shipping-class-column select {
@@ -191,10 +231,49 @@
 }
 
 #arsol_proposal_invoice_metabox .shipping-amount-column {
-    width: 15%;
+    width: 120px; /* Fixed width */
 }
 
 #arsol_proposal_invoice_metabox .shipping-amount-column input {
+    width: 100%;
+    text-align: right;
+}
+
+/* Additional fixed widths for product section columns */
+#arsol_proposal_invoice_metabox .start-date-column {
+    width: 130px;
+}
+
+#arsol_proposal_invoice_metabox .start-date-column input {
+    width: 100%;
+}
+
+/* Quantity, Price columns in products */
+#arsol_proposal_invoice_metabox #product-line-items th:nth-child(3),
+#arsol_proposal_invoice_metabox #product-line-items td:nth-child(3) {
+    width: 80px; /* Quantity */
+}
+
+#arsol_proposal_invoice_metabox #product-line-items th:nth-child(4),
+#arsol_proposal_invoice_metabox #product-line-items td:nth-child(4),
+#arsol_proposal_invoice_metabox #product-line-items th:nth-child(5),
+#arsol_proposal_invoice_metabox #product-line-items td:nth-child(5) {
+    width: 100px; /* Price columns */
+}
+
+#arsol_proposal_invoice_metabox #product-line-items input[type="number"],
+#arsol_proposal_invoice_metabox #product-line-items input.wc_input_price {
+    width: 100%;
+    text-align: right;
+}
+
+/* Amount columns in fee sections */
+#arsol_proposal_invoice_metabox #onetime-fee-line-items th:nth-child(2),
+#arsol_proposal_invoice_metabox #onetime-fee-line-items td:nth-child(2) {
+    width: 120px; /* Amount */
+}
+
+#arsol_proposal_invoice_metabox .fee-amount-input {
     width: 100%;
     text-align: right;
 }
