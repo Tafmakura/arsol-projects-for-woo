@@ -80,10 +80,10 @@ class Proposal_Invoice {
                     <thead>
                         <tr>
                             <th class="product-column"><?php _e('Product', 'arsol-pfw'); ?></th>
+                            <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th><?php _e('Qty', 'arsol-pfw'); ?></th>
                             <th><?php _e('Price', 'arsol-pfw'); ?></th>
                             <th><?php _e('Sale Price', 'arsol-pfw'); ?></th>
-                            <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
                         </tr>
@@ -112,10 +112,10 @@ class Proposal_Invoice {
                     <thead>
                         <tr>
                             <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
+                            <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
-                            <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
-                            <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
+                            <th class="taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
                             <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
                         </tr>
@@ -141,7 +141,7 @@ class Proposal_Invoice {
                         <tr>
                             <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
                             <th><?php _e('Amount', 'arsol-pfw'); ?></th>
-                            <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
+                            <th class="taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
                             <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
                         </tr>
@@ -171,7 +171,7 @@ class Proposal_Invoice {
                         <tr>
                             <th class="shipping-method-column"><?php _e('Shipping Method/Description', 'arsol-pfw'); ?></th>
                             <th><?php _e('Cost', 'arsol-pfw'); ?></th>
-                            <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
+                            <th class="taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
                             <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
                         </tr>
@@ -236,7 +236,8 @@ class Proposal_Invoice {
     private function render_js_templates() {
         // Prepare tax classes for dropdowns
         $tax_classes = \WC_Tax::get_tax_classes();
-        $tax_class_options = array('' => __('Standard', 'arsol-pfw')); // Add standard rate
+        $tax_class_options = array('no-tax' => __('No Tax', 'arsol-pfw'));
+        $tax_class_options[''] = __('Standard', 'arsol-pfw'); // Add standard rate
         if ( ! empty( $tax_classes ) ) {
             foreach ( $tax_classes as $class ) {
                 $tax_class_options[ sanitize_title( $class ) ] = $class;
@@ -255,12 +256,12 @@ class Proposal_Invoice {
                     </select>
                     <div class="product-sub-text">{{{ data.sub_text }}}</div>
                 </td>
-                <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
-                <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
-                <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
                 <td class="start-date-column">
                     <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
                 </td>
+                <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
+                <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
+                <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
                 <td class="subtotal-display subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
@@ -291,6 +292,9 @@ class Proposal_Invoice {
                 <td class="fee-name-column">
                     <input type="text" class="fee-name-input" name="line_items[recurring_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>">
                 </td>
+                <td class="start-date-column">
+                    <input type="date" class="start-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
+                </td>
                 <td>
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
@@ -309,9 +313,6 @@ class Proposal_Invoice {
                             <option value="{{ value }}" <# if (data.period == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
-                </td>
-                <td class="start-date-column">
-                    <input type="date" class="start-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
                 </td>
                 <td class="taxable-column">
                     <select name="line_items[recurring_fees][{{ data.id }}][tax_class]">
