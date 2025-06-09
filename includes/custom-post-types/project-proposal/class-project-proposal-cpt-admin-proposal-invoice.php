@@ -292,16 +292,17 @@ class Proposal_Invoice {
 
         $product = wc_get_product($product_id);
 
-        // This is a minimal test.
         if ( ! $product ) {
-            // If we can't even get a product object.
             $debug_html = 'ERROR: wc_get_product() failed for ID ' . $product_id;
         } else {
-            // If we successfully get a product object.
             $debug_html = 'SUCCESS! Class: ' . get_class($product) . '<br>Type: ' . $product->get_type();
+            
+            // TEST 1: Get regular price
+            $regular_price_val = $product->get_regular_price();
+            $debug_html .= '<br>Regular Price Test: ' . $regular_price_val;
         }
 
-        // Send back ONLY the debug info. Other fields will be blank.
+        // Send back ONLY the debug info.
         $data = array(
             'regular_price' => '',
             'sale_price' => '',
@@ -310,7 +311,7 @@ class Proposal_Invoice {
             'sub_text' => '',
             'billing_interval' => '',
             'billing_period'   => '',
-            'price_html' => $debug_html // This is the only important field for this test.
+            'price_html' => $debug_html
         );
 
         wp_send_json_success($data);
