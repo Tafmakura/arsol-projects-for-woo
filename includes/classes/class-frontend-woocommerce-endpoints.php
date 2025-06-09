@@ -63,12 +63,21 @@ class Frontend_Endpoints {
      * @return void
      */
     public function register_endpoints() {
-        // Register the endpoints with WooCommerce
+        $account_page_id = wc_get_page_id('myaccount');
+        if ($account_page_id) {
+            $account_page_slug = get_post_field('post_name', $account_page_id);
+            add_rewrite_rule(
+                '^' . $account_page_slug . '/projects/page/([0-9]+)/?$',
+                'index.php?pagename=' . $account_page_slug . '&projects=1&paged=$matches[1]',
+                'top'
+            );
+        }
+
         add_rewrite_endpoint('projects', EP_PAGES);
         add_rewrite_endpoint('project-overview', EP_PAGES);
         add_rewrite_endpoint('project-orders', EP_PAGES);
         
-        // Only register the subscriptions endpoint if WooCommerce Subscriptions is active
+        // Only register subscription endpoint if WooCommerce Subscriptions is active
         if (Woocommerce_Subscriptions::is_plugin_active()) {
             add_rewrite_endpoint('project-subscriptions', EP_PAGES);
         }
@@ -77,6 +86,11 @@ class Frontend_Endpoints {
         add_rewrite_endpoint('project-request', EP_PAGES);
         add_rewrite_endpoint('project-view-proposal', EP_PAGES);
         add_rewrite_endpoint('project-view-request', EP_PAGES);
+
+        // Debug logging
+        if (function_exists('error_log')) {
+            error_log('ARSOL DEBUG: Registering endpoints');
+        }
     }
     
     /**
@@ -113,6 +127,11 @@ class Frontend_Endpoints {
         $query_vars['project-request'] = 'project-request';
         $query_vars['project-view-proposal'] = 'project-view-proposal';
         $query_vars['project-view-request'] = 'project-view-request';
+        
+        // Debug logging
+        if (function_exists('error_log')) {
+            error_log('ARSOL DEBUG: Registered query vars: ' . print_r($query_vars, true));
+        }
         
         return $query_vars;
     }

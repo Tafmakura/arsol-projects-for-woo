@@ -18,6 +18,11 @@ class Setup {
     }
 
     public function register_post_type() {
+        // Debug logging
+        if (function_exists('error_log')) {
+            error_log('ARSOL DEBUG: Registering arsol-pfw-proposal post type');
+        }
+
         $labels = array(
             'name'               => __('Project Proposals', 'arsol-pfw'),
             'singular_name'      => __('Project Proposal', 'arsol-pfw'),
@@ -59,7 +64,16 @@ class Setup {
             'show_in_rest'      => false,
         );
 
-        register_post_type('arsol-pfw-proposal', $args);
+        $result = register_post_type('arsol-pfw-proposal', $args);
+        
+        // Debug the result
+        if (function_exists('error_log')) {
+            if (is_wp_error($result)) {
+                error_log('ARSOL DEBUG: Failed to register arsol-pfw-proposal: ' . $result->get_error_message());
+            } else {
+                error_log('ARSOL DEBUG: Successfully registered arsol-pfw-proposal post type');
+            }
+        }
     }
 
     /**

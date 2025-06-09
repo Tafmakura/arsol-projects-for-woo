@@ -129,7 +129,8 @@ class Frontend_Template_Overrides {
         if (file_exists($template_path)) {
             include $template_path;
         } else {
-            // Display fallback content without logging to prevent headers already sent
+            // Log error or display fallback content
+            error_log("Arsol Projects: Template file not found: " . $template_path);
             echo '<p>' . esc_html__('Template not found.', 'arsol-pfw') . '</p>';
         }
     }

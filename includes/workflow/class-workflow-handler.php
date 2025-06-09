@@ -212,129 +212,100 @@ class Workflow_Handler {
     }
 
     public function customer_cancel_request() {
-        ob_start();
-        
         if (!isset($_GET['request_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_cancel_request_nonce')) {
-            ob_end_clean();
             wp_die(__('Invalid request or nonce.', 'arsol-pfw'));
         }
 
         $request_id = intval($_GET['request_id']);
-
-        if (!self::user_can_view_post(get_current_user_id(), $request_id)) {
-            ob_end_clean();
+        if (self::user_can_view_post(get_current_user_id(), $request_id)) {
+            wp_delete_post($request_id, true); // Delete the request
+            $this->safe_redirect(wc_get_account_endpoint_url('projects')); // Redirect to projects page
+        } else {
             wp_die(__('You do not have permission to cancel this request.', 'arsol-pfw'));
         }
-
-        wp_delete_post($request_id, true);
-        
-        ob_end_clean();
-        $this->safe_redirect(wc_get_account_endpoint_url('projects'));
     }
 
     public function customer_approve_proposal() {
-        ob_start();
-        
         if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_approve_proposal_nonce')) {
-            ob_end_clean();
             wp_die(__('Invalid proposal or nonce.', 'arsol-pfw'));
         }
 
         $proposal_id = intval($_GET['proposal_id']);
-
-        if (!self::user_can_view_post(get_current_user_id(), $proposal_id)) {
-            ob_end_clean();
+        if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
+            // Set the proposal status to 'approved' before conversion
+            wp_set_object_terms($proposal_id, 'approved', 'arsol-review-status');
+            
+            // Re-use the conversion logic
+            $this->convert_proposal_to_project($proposal_id);
+        } else {
             wp_die(__('You do not have permission to approve this proposal.', 'arsol-pfw'));
         }
-
-        $this->convert_proposal_to_project($proposal_id);
-        
-        ob_end_clean();
-        $this->safe_redirect(wc_get_account_endpoint_url('projects'));
     }
 
     public function customer_reject_proposal() {
-        ob_start();
-        
         if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_reject_proposal_nonce')) {
-            ob_end_clean();
             wp_die(__('Invalid proposal or nonce.', 'arsol-pfw'));
         }
 
         $proposal_id = intval($_GET['proposal_id']);
-
-        if (!self::user_can_view_post(get_current_user_id(), $proposal_id)) {
-            ob_end_clean();
+        if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
+            wp_set_object_terms($proposal_id, 'rejected', 'arsol-review-status');
+            $this->safe_redirect(wp_get_referer());
+        } else {
             wp_die(__('You do not have permission to reject this proposal.', 'arsol-pfw'));
         }
-
-        wp_delete_post($proposal_id, true);
-        
-        ob_end_clean();
-        $this->safe_redirect(wc_get_account_endpoint_url('projects'));
     }
 
     public function handle_create_request() {
-        ob_start();
-        
-        if (!wp_verify_nonce($_POST['_wpnonce'], 'arsol_create_request_nonce')) {
-            ob_end_clean();
+        if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_create_request')) {
             wp_die(__('Invalid nonce.', 'arsol-pfw'));
-        }
-
-        $user_id = get_current_user_id();
-        $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
-
-        if (!$admin_users->can_user_request_projects($user_id)) {
-            ob_end_clean();
-            wp_die(__('You do not have permission to create project requests.', 'arsol-pfw'));
         }
 
         $post_data = array(
             'post_title'   => sanitize_text_field($_POST['request_title']),
-            'post_content' => sanitize_textarea_field($_POST['request_description']),
+            'post_content' => wp_kses_post($_POST['request_description']),
             'post_status'  => 'publish',
             'post_type'    => 'arsol-pfw-request',
-            'post_author'  => $user_id,
+            'post_author'  => get_current_user_id(),
         );
-
         $post_id = wp_insert_post($post_data);
-
-        if (!is_wp_error($post_id)) {
-            $this->update_request_meta($post_id, $_POST);
-            wp_set_object_terms($post_id, 'under-review', 'arsol-request-status');
+        
+        if (is_wp_error($post_id)) {
+            $this->safe_redirect(wc_get_account_endpoint_url('project-create-request'));
         }
 
-        ob_end_clean();
-        $this->safe_redirect(wc_get_account_endpoint_url('projects') . '?tab=requests');
+        wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
+        $this->update_request_meta($post_id, $_POST);
+
+        
+        $this->safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
     }
 
     public function handle_edit_request() {
-        ob_start();
-        
-        if (!wp_verify_nonce($_POST['_wpnonce'], 'arsol_edit_request_nonce')) {
-            ob_end_clean();
+        // Fixed namespace issues for WooCommerce functions
+        if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_edit_request')) {
             wp_die(__('Invalid nonce.', 'arsol-pfw'));
         }
 
-        $request_id = intval($_POST['request_id']);
+        $post_id = intval($_POST['request_id']);
 
-        if (!self::user_can_view_post(get_current_user_id(), $request_id)) {
-            ob_end_clean();
+        // Verify user has permission to edit
+        if (!self::user_can_view_post(get_current_user_id(), $post_id)) {
             wp_die(__('You do not have permission to edit this request.', 'arsol-pfw'));
         }
 
         $post_data = array(
-            'ID'           => $request_id,
+            'ID'           => $post_id,
             'post_title'   => sanitize_text_field($_POST['request_title']),
-            'post_content' => sanitize_textarea_field($_POST['request_description']),
+            'post_content' => wp_kses_post($_POST['request_description']),
         );
+        $result = wp_update_post($post_data);
 
-        wp_update_post($post_data);
-        $this->update_request_meta($request_id, $_POST);
 
-        ob_end_clean();
-        $this->safe_redirect(wc_get_account_endpoint_url('projects') . '?tab=requests');
+
+        $this->update_request_meta($post_id, $_POST);
+        
+        $this->safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
     }
 
     private function update_request_meta($post_id, $data) {
