@@ -83,13 +83,21 @@
         },
 
         bindEvents: function() {
-            var builder = $('#proposal_invoice_builder');
-            builder.on('click', '.add-line-item', this.addLineItem.bind(this));
-            builder.on('click', '.remove-line-item', this.removeLineItem.bind(this));
-            builder.on('change', '.product-select', this.productChanged.bind(this));
-            builder.on('change', '.shipping-method-select-ui', this.shippingMethodChanged.bind(this));
-            // Debounce the calculation to prevent firing on every single key press
-            builder.on('input change', '.quantity-input, .sale-price-input, .price-input, .fee-amount-input, .billing-interval, .billing-period', _.debounce(this.calculateTotals.bind(this), 300));
+            var $builder = $('#proposal_invoice_builder');
+            
+            // Use event delegation for better performance with dynamic content
+            $builder
+                .on('click', '.add-line-item', this.addLineItem.bind(this))
+                .on('click', '.remove-line-item', this.removeLineItem.bind(this))
+                .on('change', '.product-select', this.productChanged.bind(this))
+                .on('change', '.shipping-method-select-ui', this.shippingMethodChanged.bind(this));
+            
+            // Use jQuery's one() method for input events with debouncing (WordPress pattern)
+            var debouncedCalculate = _.debounce(this.calculateTotals.bind(this), 300);
+            $builder.on('input change', '.quantity-input, .sale-price-input, .price-input, .fee-amount-input, .billing-interval, .billing-period', debouncedCalculate);
+            
+            // Add WordPress-style custom event triggers for extensibility
+            $(document).trigger('arsol:invoice-events-bound', [$builder]);
         },
         
         loadExistingItems: function() {
@@ -205,22 +213,18 @@
         },
 
         toggleStartDateColumn: function() {
-            var hasSubscriptions = false;
-            
-            // Check if any product rows have subscription products
-            $('#product-lines-body .line-item').each(function() {
-                if ($(this).data('is-subscription')) {
-                    hasSubscriptions = true;
-                    return false; // Break the loop
-                }
+            // Use jQuery's :data() selector for more efficient checking
+            var $subscriptionRows = $('#product-lines-body .line-item').filter(function() {
+                return $(this).data('is-subscription') === true;
             });
             
-            // Show/hide the entire start date column (header and cells)
-            if (hasSubscriptions) {
-                $('#product-line-items .start-date-column').show();
-            } else {
-                $('#product-line-items .start-date-column').hide();
-            }
+            var hasSubscriptions = $subscriptionRows.length > 0;
+            
+            // Use jQuery's toggle() method for cleaner show/hide logic
+            $('#product-line-items .start-date-column').toggle(hasSubscriptions);
+            
+            // Trigger a custom event for extensibility (WordPress pattern)
+            $(document).trigger('arsol:start-date-column-toggled', [hasSubscriptions]);
         },
         
         productChanged: function(e) {
@@ -232,49 +236,82 @@
         fetchProductDetails: function($row, productId) {
              var self = this;
              if (!productId) {
+                 // Clear all data when no product selected
+                 $row.data('is-subscription', false)
+                    .data('sign-up-fee', 0)
+                    .data('billing-interval', '')
+                    .data('billing-period', '');
+                 $row.find('.start-date-input').hide().val('');
                  self.toggleStartDateColumn();
                  return;
              }
 
+             // Use WordPress AJAX patterns with proper loading state
+             $row.addClass('arsol-loading');
+             
+             var ajaxData = {
+                 action: 'arsol_proposal_invoice_ajax_get_product_details',
+                 nonce: arsol_proposal_invoice_vars.nonce,
+                 product_id: productId
+             };
+
              $.ajax({
                  url: arsol_proposal_invoice_vars.ajax_url,
                  type: 'POST',
-                 data: {
-                     action: 'arsol_proposal_invoice_ajax_get_product_details',
-                     nonce: arsol_proposal_invoice_vars.nonce,
-                     product_id: productId,
+                 data: ajaxData,
+                 beforeSend: function() {
+                     // Disable form controls during loading
+                     $row.find('input, select').prop('disabled', true);
                  },
                  success: function(response) {
-                     if (response.success) {
+                     if (response.success && response.data) {
                          var data = response.data;
-                         $row.find('.price-input').val(data.regular_price);
-                         $row.find('.sale-price-input').val(data.sale_price);
                          
-                         $row.data('is-subscription', data.is_subscription);
-                         $row.data('sign-up-fee', data.sign_up_fee || 0);
-                         $row.data('billing-interval', data.billing_interval);
-                         $row.data('billing-period', data.billing_period);
+                         // Use jQuery's efficient chaining for form updates
+                         $row.find('.price-input').val(data.regular_price || '')
+                             .end()
+                             .find('.sale-price-input').val(data.sale_price || '');
                          
-                         if (data.is_subscription) {
-                             $row.find('.start-date-input').show();
-                         } else {
-                             $row.find('.start-date-input').hide().val('');
-                         }
+                         // Store data using jQuery data() method efficiently
+                         $row.data({
+                             'is-subscription': !!data.is_subscription,
+                             'sign-up-fee': parseFloat(data.sign_up_fee) || 0,
+                             'billing-interval': data.billing_interval || '',
+                             'billing-period': data.billing_period || ''
+                         });
+                         
+                         // Use jQuery's toggle() for cleaner conditional display
+                         $row.find('.start-date-input').toggle(!!data.is_subscription).val(data.is_subscription ? $row.find('.start-date-input').val() : '');
                          
                          self.calculateTotals();
                          self.toggleStartDateColumn();
+                     } else {
+                         // Handle error state
+                         console.warn('Failed to fetch product details:', response);
                      }
+                 },
+                 error: function(xhr, status, error) {
+                     console.error('AJAX error fetching product details:', error);
+                 },
+                 complete: function() {
+                     // Re-enable form controls and remove loading state
+                     $row.removeClass('arsol-loading')
+                         .find('input, select').prop('disabled', false);
                  }
              });
         },
         
         calculateTotals: function() {
             var self = this;
-
             var grandOneTimeTotal = 0;
             var grandTotalDailyCost = 0;
-            
             var currencySymbol = arsol_proposal_invoice_vars.currency_symbol;
+
+            // Cache frequently used jQuery objects (WordPress performance pattern)
+            var $productRows = $('#product-lines-body .line-item');
+            var $oneTimeRows = $('#onetime-fee-lines-body .line-item');
+            var $recurringRows = $('#recurring-fee-lines-body .line-item');
+            var $shippingRows = $('#shipping-lines-body .line-item');
 
             var formatPrice = function(price) {
                 var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -284,27 +321,18 @@
             // --- Products ---
             var productsOneTimeSubtotal = 0;
             var productsDailyCost = 0;
-            $('#product-lines-body .line-item').each(function() {
+            
+            $productRows.each(function() {
                 var $row = $(this);
-                
-                var quantityVal = $row.find('.quantity-input').val();
-                var quantity = !isNaN(parseFloat(quantityVal)) ? parseFloat(quantityVal) : 0;
-                if (quantity < 0) {
-                    quantity = 0;
-                }
-                
-                var isSubscription = $row.data('is-subscription');
+                var quantity = Math.max(0, parseFloat($row.find('.quantity-input').val()) || 0);
+                var isSubscription = !!$row.data('is-subscription');
 
-                if (isSubscription) {
-                    var $startDateInput = $row.find('.start-date-input');
-                    if (!$startDateInput.is(':visible')) {
-                        $startDateInput.show();
-                    }
-                }
+                // Show/hide start date input for individual rows
+                $row.find('.start-date-input').toggle(isSubscription);
 
-                var salePrice = parseFloat($row.find('.sale-price-input').val());
+                var salePrice = parseFloat($row.find('.sale-price-input').val()) || 0;
                 var regularPrice = parseFloat($row.find('.price-input').val()) || 0;
-                var unitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : regularPrice;
+                var unitPrice = salePrice > 0 ? salePrice : regularPrice;
                 var itemTotal = unitPrice * quantity;
 
                 if (isSubscription) {
@@ -317,12 +345,12 @@
                     if (period) {
                         productsDailyCost += self.getDailyCost(itemTotal, interval, period);
                     }
-
                 } else {
                     productsOneTimeSubtotal += itemTotal;
                     $row.find('.subtotal-display').html(formatPrice(itemTotal));
                 }
             });
+
             var productsMonthlyTotal = productsDailyCost * arsol_proposal_invoice_vars.calculation_constants.days_in_month;
             $('#product-subtotal-display').html(formatPrice(productsOneTimeSubtotal));
             $('#product-avg-monthly-display').html(formatPrice(productsMonthlyTotal) + ' /mo');
@@ -331,20 +359,22 @@
 
             // --- One-Time Fees ---
             var oneTimeFeesSubtotal = 0;
-            $('#onetime-fee-lines-body .line-item').each(function() {
-                var amount = parseFloat($(this).find('.fee-amount-input').val()) || 0;
+            $oneTimeRows.each(function() {
+                var $row = $(this);
+                var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
                 oneTimeFeesSubtotal += amount;
-                $(this).find('.subtotal-display').html(formatPrice(amount));
+                $row.find('.subtotal-display').html(formatPrice(amount));
             });
             $('#onetime-fee-subtotal-display').html(formatPrice(oneTimeFeesSubtotal));
             grandOneTimeTotal += oneTimeFeesSubtotal;
             
             // --- Recurring Fees ---
             var recurringFeesDailyCost = 0;
-            $('#recurring-fee-lines-body .line-item').each(function() {
-                var amount = parseFloat($(this).find('.fee-amount-input').val()) || 0;
-                var interval = parseInt($(this).find('.billing-interval').val()) || 1;
-                var period = $(this).find('.billing-period').val();
+            $recurringRows.each(function() {
+                var $row = $(this);
+                var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
+                var interval = parseInt($row.find('.billing-interval').val()) || 1;
+                var period = $row.find('.billing-period').val();
                
                 if (interval && period) {
                     recurringFeesDailyCost += self.getDailyCost(amount, interval, period);
@@ -354,13 +384,13 @@
             $('#recurring-fee-avg-monthly-display').html(formatPrice(recurringFeesMonthlyTotal) + ' /mo');
             grandTotalDailyCost += recurringFeesDailyCost;
 
-
             // --- Shipping ---
             var shippingSubtotal = 0;
-            $('#shipping-lines-body .line-item').each(function() {
-                var amount = parseFloat($(this).find('.fee-amount-input').val()) || 0;
+            $shippingRows.each(function() {
+                var $row = $(this);
+                var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
                 shippingSubtotal += amount;
-                $(this).find('.subtotal-display').html(formatPrice(amount));
+                $row.find('.subtotal-display').html(formatPrice(amount));
             });
             $('#shipping-subtotal-display').html(formatPrice(shippingSubtotal));
             grandOneTimeTotal += shippingSubtotal;
@@ -370,18 +400,30 @@
             $('#one-time-total-display').html(formatPrice(grandOneTimeTotal));
             $('#average-monthly-total-display').html(formatPrice(grandAnnualTotal) + ' /yr');
 
-            // Update hidden inputs for saving - note we no longer save grouped recurring totals.
-            // The individual line items with their intervals/periods are the source of truth.
+            // Update hidden inputs (WordPress form pattern)
             $('#line_items_one_time_total').val(grandOneTimeTotal.toFixed(2));
-            $('#line_items_recurring_totals').val(''); // Clear this as it's no longer used
+            $('#line_items_recurring_totals').val('');
             
-            // Ensure column visibility is correct after calculations
+            // Ensure column visibility and trigger custom event
             this.toggleStartDateColumn();
+            $(document).trigger('arsol:totals-calculated', [grandOneTimeTotal, grandTotalDailyCost]);
         }
     };
 
-    $(function() {
+    // Use WordPress standard document ready pattern with extensibility
+    $(document).ready(function($) {
+        // Initialize the invoice builder
         ArsolProposalInvoice.init();
+        
+        // Trigger WordPress-style initialization event for extensibility
+        $(document).trigger('arsol:invoice-builder-ready', [ArsolProposalInvoice]);
+        
+        // Add WordPress admin-style accessibility improvements
+        $('.add-line-item').attr('aria-label', function() {
+            return 'Add ' + $(this).data('type').replace('-', ' ') + ' line item';
+        });
+        
+        $('.remove-line-item').attr('aria-label', 'Remove line item');
     });
 
 })(jQuery);

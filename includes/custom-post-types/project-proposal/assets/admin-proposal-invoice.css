@@ -82,6 +82,39 @@
     display: table;
 }
 
+/* Loading state for product rows */
+#arsol_proposal_invoice_metabox .line-item.arsol-loading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+#arsol_proposal_invoice_metabox .line-item.arsol-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+    animation: arsol-spin 1s linear infinite;
+}
+
+@keyframes arsol-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* WordPress admin button styling consistency */
+#arsol_proposal_invoice_metabox .add-line-item:hover {
+    background-color: #f0f0f1;
+    border-color: #0a4b78;
+    color: #0a4b78;
+}
+
 #arsol_proposal_invoice_metabox .line-item-row.new-item {
     /* ... existing code ... */
 }
