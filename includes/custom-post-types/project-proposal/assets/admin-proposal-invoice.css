@@ -76,6 +76,41 @@
     margin-right: 5px;
 }
 
+/* Billing cycle - side by side layout */
+#arsol_proposal_invoice_metabox .billing-cycle-column {
+    white-space: nowrap;
+    min-width: 250px;
+}
+
+#arsol_proposal_invoice_metabox .billing-cycle-column select {
+    display: inline-block;
+    width: 110px;
+    margin-right: 5px;
+    vertical-align: top;
+}
+
+#arsol_proposal_invoice_metabox .billing-cycle-column select:last-child {
+    margin-right: 0;
+}
+
+/* Responsive design for smaller screens */
+@media screen and (max-width: 1200px) {
+    #arsol_proposal_invoice_metabox .billing-cycle-column select {
+        width: 100px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    #arsol_proposal_invoice_metabox .billing-cycle-column {
+        white-space: normal;
+    }
+    
+    #arsol_proposal_invoice_metabox .billing-cycle-column select {
+        width: 90px;
+        margin-bottom: 2px;
+    }
+}
+
 .line-items-totals::after {
     content: "";
     clear: both;
