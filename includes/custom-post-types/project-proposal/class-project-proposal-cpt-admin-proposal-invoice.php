@@ -1,7 +1,7 @@
 <?php
 namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin;
 
-use Arsol\Projects\For_Woo\Classes\Woocommerce_Subscriptions;
+use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -63,7 +63,7 @@ class Proposal_Invoice {
                     'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
                     'currency_symbol' => $currency_symbol,
                     'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array(),
-                    'calculation_constants' => class_exists('Arsol\Projects\For_Woo\Classes\Woocommerce_Subscriptions') ? Woocommerce_Subscriptions::get_calculation_constants() : array()
+                    'calculation_constants' => class_exists('Arsol_Projects_For_Woo\Woocommerce_Subscriptions') ? Woocommerce_Subscriptions::get_calculation_constants() : array()
                 )
             );
         }

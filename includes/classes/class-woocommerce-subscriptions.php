@@ -1,6 +1,5 @@
 <?php
-
-namespace Arsol\Projects\For_Woo\Classes;
+namespace Arsol_Projects_For_Woo;
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly

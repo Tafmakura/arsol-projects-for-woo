@@ -71,7 +71,7 @@ class Setup {
         new Shortcodes();
         new Woocommerce();
         if (class_exists('WC_Subscriptions')) {
-            new Classes\Woocommerce_Subscriptions();
+            new Woocommerce_Subscriptions();
         }
         new Assets();
         new Woocommerce\Frontend_Endpoints();
