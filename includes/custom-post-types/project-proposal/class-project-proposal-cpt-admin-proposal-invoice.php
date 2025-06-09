@@ -68,7 +68,7 @@ class Proposal_Invoice {
         <div id="proposal_invoice_builder">
             <!-- Products Section -->
             <div class="line-items-container">
-                <h3><?php _e('Products & Subscriptions', 'arsol-pfw'); ?></h3>
+                <h3><?php _e('Products & Services', 'arsol-pfw'); ?></h3>
                 <table class="widefat" id="product-line-items">
                     <thead>
                         <tr>

@@ -8,6 +8,9 @@ class Proposal {
     public function __construct() {
         // Add meta boxes for single proposal admin screen
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
+        // Add styles to hide metaboxes initially
+        add_action('admin_head-post.php', array($this, 'hide_metaboxes_initially'));
+        add_action('admin_head-post-new.php', array($this, 'hide_metaboxes_initially'));
         // Save proposal data
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
         // Action to set review status when a proposal is published
@@ -183,6 +186,21 @@ class Proposal {
             });
         </script>
         <?php
+    }
+
+    /**
+     * Adds inline styles to the admin head to hide conditional metaboxes by default.
+     */
+    public function hide_metaboxes_initially() {
+        global $post;
+        if (isset($post->post_type) && $post->post_type === 'arsol-pfw-proposal') {
+            echo '<style>
+                #arsol_budget_estimates_metabox,
+                #arsol_proposal_invoice_metabox {
+                    display: none;
+                }
+            </style>';
+        }
     }
 
     /**
