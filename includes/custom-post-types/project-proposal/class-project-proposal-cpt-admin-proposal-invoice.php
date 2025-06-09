@@ -24,7 +24,7 @@ class Proposal_Invoice {
             array($this, 'render_invoice_meta_box'),
             'arsol-pfw-proposal',
             'normal',
-            'high'
+            'default'
         );
     }
 
