@@ -39,7 +39,9 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-subscriptions.php';
+        if (class_exists('WC_Subscriptions')) {
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-subscriptions.php';
+        }
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-endpoints.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-checkout.php';
@@ -68,7 +70,9 @@ class Setup {
         new Custom_Post_Types\Setup();
         new Shortcodes();
         new Woocommerce();
-        new Woocommerce_Subscriptions();
+        if (class_exists('WC_Subscriptions')) {
+            new Classes\Woocommerce_Subscriptions();
+        }
         new Assets();
         new Woocommerce\Frontend_Endpoints();
         new Frontend_Woocommerce_Checkout();

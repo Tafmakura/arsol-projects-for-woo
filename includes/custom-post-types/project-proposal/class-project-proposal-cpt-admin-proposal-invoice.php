@@ -1,7 +1,7 @@
 <?php
 namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin;
 
-use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
+use Arsol\Projects\For_Woo\Classes\Woocommerce_Subscriptions;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -63,7 +63,7 @@ class Proposal_Invoice {
                     'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
                     'currency_symbol' => $currency_symbol,
                     'line_items' => get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array(),
-                    'calculation_constants' => Woocommerce_Subscriptions::get_calculation_constants()
+                    'calculation_constants' => class_exists('Arsol\Projects\For_Woo\Classes\Woocommerce_Subscriptions') ? Woocommerce_Subscriptions::get_calculation_constants() : array()
                 )
             );
         }
@@ -81,6 +81,7 @@ class Proposal_Invoice {
                         <tr>
                             <th class="product-column"><?php _e('Product', 'arsol-pfw'); ?></th>
                             <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
+                            <th class="billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
                             <th><?php _e('Qty', 'arsol-pfw'); ?></th>
                             <th><?php _e('Price', 'arsol-pfw'); ?></th>
                             <th><?php _e('Sale Price', 'arsol-pfw'); ?></th>
@@ -259,6 +260,9 @@ class Proposal_Invoice {
                 <td class="start-date-column">
                     <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
                 </td>
+                <td class="billing-cycle-column" style="display: none;">
+                    <?php do_action('arsol_proposal_invoice_line_item_billing_cycle'); ?>
+                </td>
                 <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
                 <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
                 <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
@@ -299,20 +303,7 @@ class Proposal_Invoice {
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
                 <td class="billing-cycle-column">
-                    <?php
-                        $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(1=>1);
-                        $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array('month' => 'month');
-                    ?>
-                    <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="billing-interval">
-                        <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
-                            <option value="{{ value }}" <# if (data.interval == value) { #>selected="selected"<# } #>>{{ label }}</option>
-                        <# }); #>
-                    </select>
-                    <select name="line_items[recurring_fees][{{ data.id }}][period]" class="billing-period">
-                         <# _.each(<?php echo json_encode($periods); ?>, function(label, value) { #>
-                            <option value="{{ value }}" <# if (data.period == value) { #>selected="selected"<# } #>>{{ label }}</option>
-                        <# }); #>
-                    </select>
+                    <?php do_action('arsol_proposal_invoice_recurring_fee_billing_cycle'); ?>
                 </td>
                 <td class="taxable-column">
                     <select name="line_items[recurring_fees][{{ data.id }}][tax_class]">
@@ -423,10 +414,6 @@ class Proposal_Invoice {
         }
 
         $product_types = apply_filters('arsol_proposal_product_types', array('simple', 'variable'));
-
-        if (class_exists('WC_Subscriptions')) {
-            $product_types = array_merge($product_types, array('subscription', 'subscription_variation'));
-        }
 
         $query = new \WC_Product_Query( array(
             'limit' => 20,
