@@ -300,8 +300,9 @@ class Proposal_Invoice {
                 </td>
                 <td class="billing-cycle-column">
                     <?php
-                        $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(1=>1);
-                        $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array('month' => 'month');
+                        $form_options = \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_form_options();
+                        $intervals = $form_options['intervals'];
+                        $periods = $form_options['periods'];
                     ?>
                     <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="billing-interval">
                         <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
@@ -460,43 +461,20 @@ class Proposal_Invoice {
             wp_send_json_error('Invalid product');
         }
         
-        $is_subscription = $product->is_type(array('subscription', 'subscription_variation'));
-        $sign_up_fee = 0;
-        $regular_price_val = 0;
-        $sale_price_val = '';
-        $billing_interval = null;
-        $billing_period = null;
-
-        if ($is_subscription && class_exists('WC_Product_Subscription')) {
-            // Logic for Subscription Products
-            $regular_price_val = $product->get_regular_price();
-            $active_price = $product->get_price();
-            if (is_numeric($active_price) && is_numeric($regular_price_val) && $active_price < $regular_price_val) {
-                $sale_price_val = $active_price;
-            }
-            
-            $sign_up_fee = (float) $product->get_meta('_subscription_sign_up_fee');
-            $billing_interval = $product->get_meta('_subscription_period_interval');
-            $billing_period = $product->get_meta('_subscription_period');
-
+        // Use centralized subscription handling
+        if (\Arsol_Projects_For_Woo\Woocommerce_Subscriptions::is_subscription_product($product)) {
+            $data = \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_subscription_product_details($product);
         } else {
-            // Logic for Simple/Other Products
-            $regular_price_val = $product->get_regular_price();
-            $sale_price_val = $product->get_sale_price();
+            // Handle non-subscription products
+            $data = array(
+                'regular_price' => wc_format_decimal($product->get_regular_price() ?: 0, wc_get_price_decimals()),
+                'sale_price' => $product->get_sale_price() ? wc_format_decimal($product->get_sale_price(), wc_get_price_decimals()) : '',
+                'is_subscription' => false,
+                'sign_up_fee' => 0,
+                'billing_interval' => null,
+                'billing_period' => null,
+            );
         }
-        
-        // Ensure we have numeric values before formatting
-        $regular_price_val = is_numeric($regular_price_val) ? (float) $regular_price_val : 0;
-        $sale_price_val = is_numeric($sale_price_val) ? (float) $sale_price_val : '';
-
-        $data = array(
-            'regular_price' => wc_format_decimal($regular_price_val, wc_get_price_decimals()),
-            'sale_price' => $sale_price_val !== '' ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
-            'is_subscription' => $is_subscription,
-            'sign_up_fee' => wc_format_decimal($sign_up_fee, wc_get_price_decimals()),
-            'billing_interval' => $billing_interval,
-            'billing_period'   => $billing_period
-        );
 
         wp_send_json_success($data);
     }

@@ -13,6 +13,7 @@ namespace Arsol_Projects_For_Woo;
 
 use Arsol_Projects_For_Woo\Woo\AdminOrders;
 use Arsol_Projects_For_Woo\Woocommerce;
+use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,7 +36,7 @@ class Shortcodes {
 		add_shortcode('arsol_project_orders', array($this, 'project_orders_shortcode'));
 		
 		// Only register subscription shortcode if WooCommerce Subscriptions is active
-		if (class_exists('WC_Subscriptions')) {
+		if (Woocommerce_Subscriptions::is_plugin_active()) {
 			add_shortcode('arsol_project_subscriptions', array($this, 'project_subscriptions_shortcode'));
 		}
 		
@@ -208,12 +209,13 @@ class Shortcodes {
 			return '<p>' . __('You do not have permission to view subscriptions for this project.', 'arsol-pfw') . '</p>';
 		}
 
-		ob_start();
-		// Check if WooCommerce Subscriptions is active
-		if (!class_exists('WC_Subscriptions')) {
+		// Use centralized subscription handling
+		if (!Woocommerce_Subscriptions::ensure_plugin_active()) {
 			return '<p>' . __('WooCommerce Subscriptions plugin is required to display subscription information.', 'arsol-pfw') . '</p>';
 		}
 
+		ob_start();
+		
 		// Get current user
 		$current_user_id = get_current_user_id();
 		
@@ -221,8 +223,8 @@ class Shortcodes {
 		$current_page = max(1, (int) $atts['paged']);
 		$per_page = max(1, (int) $atts['per_page']);
 
-		// Get project subscriptions using the admin orders class
-		$project_subscriptions = Woocommerce::get_project_subscriptions(
+		// Get project subscriptions using the centralized class
+		$project_subscriptions = Woocommerce_Subscriptions::get_project_subscriptions(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 

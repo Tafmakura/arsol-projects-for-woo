@@ -10,6 +10,8 @@
 
 namespace Arsol_Projects_For_Woo\Admin;
 
+use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -493,7 +495,7 @@ class Settings_General {
         $field_name = $args['field'];
         $product_type = isset($args['product_type']) ? $args['product_type'] : 'any';
 
-        if ($product_type === 'subscription' && !class_exists('WC_Subscriptions')) {
+        if ($product_type === 'subscription' && !Woocommerce_Subscriptions::is_plugin_active()) {
             echo '<p class="description">' . esc_html__('WooCommerce Subscriptions plugin is not active.', 'arsol-pfw') . '</p>';
             return;
         }

@@ -10,6 +10,8 @@
 
 namespace Arsol_Projects_For_Woo;
 
+use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -49,7 +51,7 @@ class Frontend_Template_Overrides {
         $map = self::$template_map;
         
         // Only include subscription-related templates if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
+        if (Woocommerce_Subscriptions::is_plugin_active()) {
             $map['project_subscriptions'] = 'project_subscriptions_shortcode';
         }
         
@@ -233,7 +235,7 @@ class Frontend_Template_Overrides {
             'raw_settings' => $advanced_settings,
             'active_overrides' => self::get_active_overrides(),
             'invalid_shortcodes' => [],
-            'woocommerce_subscriptions_active' => class_exists('WC_Subscriptions')
+            'woocommerce_subscriptions_active' => Woocommerce_Subscriptions::is_plugin_active()
         ];
 
         // Check for invalid shortcodes

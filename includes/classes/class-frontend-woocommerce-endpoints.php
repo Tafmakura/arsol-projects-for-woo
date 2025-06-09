@@ -12,6 +12,7 @@ namespace Arsol_Projects_For_Woo\Woocommerce;
 
 use Arsol_Projects_For_Woo\Frontend_Template_Overrides;
 use Arsol_Projects_For_Woo\Woocommerce;
+use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -43,7 +44,7 @@ class Frontend_Endpoints {
         add_action('woocommerce_account_project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
         
         // Only register subscription endpoint if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
+        if (Woocommerce_Subscriptions::is_plugin_active()) {
             add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
         }
         
@@ -77,7 +78,7 @@ class Frontend_Endpoints {
         add_rewrite_endpoint('project-orders', EP_PAGES);
         
         // Only register subscription endpoint if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
+        if (Woocommerce_Subscriptions::is_plugin_active()) {
             add_rewrite_endpoint('project-subscriptions', EP_PAGES);
         }
         
@@ -118,7 +119,7 @@ class Frontend_Endpoints {
         $query_vars['project-orders'] = 'project-orders';
         
         // Only add subscription query var if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
+        if (Woocommerce_Subscriptions::is_plugin_active()) {
             $query_vars['project-subscriptions'] = 'project-subscriptions';
         }
         
@@ -221,9 +222,8 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_subscriptions_endpoint_content() {
-        // Check if WooCommerce Subscriptions is active
-        if (!class_exists('WC_Subscriptions')) {
-            wc_add_notice(__('WooCommerce Subscriptions plugin is required for this feature.', 'arsol-pfw'), 'error');
+        // Use centralized subscription handling
+        if (!Woocommerce_Subscriptions::ensure_plugin_active()) {
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
         }

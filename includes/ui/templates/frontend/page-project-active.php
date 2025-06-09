@@ -26,7 +26,7 @@ $tabs = array(
 );
 
 // Only add subscriptions tab if WooCommerce Subscriptions is active
-if (class_exists('WC_Subscriptions')) {
+if (\Arsol_Projects_For_Woo\Woocommerce_Subscriptions::is_plugin_active()) {
     $tabs['subscriptions'] = array('label' => __('Subscriptions', 'woocommerce-subscriptions'), 'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id));
 }
 ?>
@@ -34,7 +34,7 @@ if (class_exists('WC_Subscriptions')) {
     <p>
         <?php 
         // Create intro text based on available features
-        if (class_exists('WC_Subscriptions')) {
+        if (\Arsol_Projects_For_Woo\Woocommerce_Subscriptions::is_plugin_active()) {
             // Full intro with subscriptions
             echo sprintf(
                 esc_html__('This is your %s project dashboard. The %s tab shows project details, the %s tab displays your project %s, and the %s tab displays all your project %s.', 'arsol-pfw'),
@@ -82,7 +82,7 @@ switch ($tab) {
         break;
     case 'subscriptions':
         // Only render subscriptions if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
+        if (\Arsol_Projects_For_Woo\Woocommerce_Subscriptions::is_plugin_active()) {
             \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
                 'project_subscriptions',
                 ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-listing-subscriptions.php',

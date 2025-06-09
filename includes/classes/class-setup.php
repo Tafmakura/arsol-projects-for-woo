@@ -68,7 +68,12 @@ class Setup {
         new Custom_Post_Types\Setup();
         new Shortcodes();
         new Woocommerce();
-        new Woocommerce_Subscriptions();
+        
+        // Initialize WooCommerce Subscriptions integration (singleton)
+        if (class_exists('WC_Subscriptions')) {
+            Woocommerce_Subscriptions::get_instance();
+        }
+        
         new Assets();
         new Woocommerce\Frontend_Endpoints();
         new Frontend_Woocommerce_Checkout();

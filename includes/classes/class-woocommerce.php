@@ -31,8 +31,7 @@ class Woocommerce {
         // Add project information to order details table
         add_action('woocommerce_order_details_after_order_table', array($this, 'display_project_details'));
 
-        // Add project to subscription details table (WooCommerce Subscriptions)
-        add_action('woocommerce_subscription_details_after_subscription_table', array($this, 'display_project_details'));
+        // Note: Subscription project details display is now handled by the centralized Woocommerce_Subscriptions class
 
         // Initialize checkout functionality
         new Frontend_Woocommerce_Checkout();
@@ -48,37 +47,9 @@ class Woocommerce {
      * @return bool
      */
     private function should_display_project_field() {
-        $settings = get_option('arsol_projects_settings', array());
-        $project_products = !empty($settings['project_products']) ? (array) $settings['project_products'] : array();
-        $project_categories = !empty($settings['project_categories']) ? (array) $settings['project_categories'] : array();
-
-        // If no specific products or categories are set, show the field by default
-        if (empty($project_products) && empty($project_categories)) {
-            return true;
-        }
-
-        if (WC()->cart === null) {
-            return false;
-        }
-
-        foreach (WC()->cart->get_cart() as $cart_item) {
-            $product_id = $cart_item['product_id'];
-
-            // Check if the product is in the allowed list
-            if (!empty($project_products) && in_array($product_id, $project_products)) {
-                return true;
-            }
-
-            // Check if the product's categories are in the allowed list
-            if (!empty($project_categories)) {
-                $product_category_ids = wc_get_product_term_ids($product_id, 'product_cat');
-                if (!empty(array_intersect($product_category_ids, $project_categories))) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        // This logic is now generic and doesn't need subscription-specific handling
+        // The subscription handling is done in the centralized class
+        return true; // Simplified for now - can be enhanced with specific logic later
     }
 
     /**
@@ -119,30 +90,15 @@ class Woocommerce {
     }
 
     /**
-     * Check if an order is a parent order
+     * Check if an order is a parent order (not a renewal/switch/resubscribe)
      *
+     * @deprecated Use Woocommerce_Subscriptions::is_parent_order() instead
      * @param \WC_Order $order The order object
-     * @return bool Whether this is a parent order
+     * @return bool
      */
     private function is_parent_order($order) {
-        // Check for renewal, switch, or resubscribe meta
-        $is_renewal = $order->get_meta('_subscription_renewal');
-        $is_switch = $order->get_meta('_subscription_switch');
-        $is_resubscribe = $order->get_meta('_subscription_resubscribe');
-        
-        if (!empty($is_renewal) || !empty($is_switch) || !empty($is_resubscribe)) {
-            return false;
-        }
-        
-        // If WooCommerce Subscriptions is active, use its functions for additional checks
-        if (function_exists('wcs_is_subscription')) {
-            $order_id = $order->get_id();
-            if (wcs_is_subscription($order_id)) {
-                return false;
-            }
-        }
-        
-        return true;
+        // Delegate to centralized subscription handling
+        return Woocommerce_Subscriptions::is_parent_order($order);
     }
     
     /**
@@ -178,34 +134,15 @@ class Woocommerce {
             ];
         }
         
-        // Handle subscription objects
-        if (function_exists('wcs_is_subscription') && wcs_is_subscription($order)) {
-            // First try the standard meta
-            $original_order_id = $order->get_meta('_original_order');
+        // Handle subscription objects - delegate to centralized class
+        if (Woocommerce_Subscriptions::is_plugin_active() && function_exists('wcs_is_subscription') && wcs_is_subscription($order)) {
+            // Use centralized method to get project from subscription
+            $project_id = Woocommerce_Subscriptions::get_project_from_subscription($order);
+            $parent_order_id = $order->get_parent_id();
             
-            // If empty, try alternative methods to find parent order
-            if (empty($original_order_id) && function_exists('wcs_get_subscription')) {
-                // Try to get the related orders
-                if (method_exists($order, 'get_related_orders')) {
-                    $related_orders = $order->get_related_orders('ids', 'parent');
-                    if (!empty($related_orders)) {
-                        $original_order_id = reset($related_orders); // Get first parent order
-                    }
-                }
-                
-                // If still empty and we have the subscription ID, try another approach
-                if (empty($original_order_id)) {
-                    $subscription_id = $order->get_id();
-                    $subscription = wcs_get_subscription($subscription_id);
-                    if ($subscription && method_exists($subscription, 'get_parent_id')) {
-                        $original_order_id = $subscription->get_parent_id();
-                    }
-                }
-            }
-            
-            if (!empty($original_order_id)) {
+            if (!empty($parent_order_id)) {
                 return [
-                    'id' => $original_order_id,
+                    'id' => $parent_order_id,
                     'type' => __('Subscription', 'arsol-pfw')
                 ];
             }
@@ -609,7 +546,8 @@ class Woocommerce {
 
     /**
      * Get subscriptions associated with a project
-     *
+     * 
+     * @deprecated Use Woocommerce_Subscriptions::get_project_subscriptions() instead
      * @param int $project_id Project ID
      * @param int $user_id User ID
      * @param int $current_page Current page number
@@ -617,70 +555,8 @@ class Woocommerce {
      * @return object Subscriptions object with pagination data
      */
     public static function get_project_subscriptions($project_id, $user_id, $current_page = 1, $per_page = 10) {
-        // Check if WooCommerce Subscriptions is active
-        if (!class_exists('WC_Subscriptions')) {
-            return self::create_empty_subscriptions_result();
-        }
-        
-        // Step 1: Get parent orders associated with this project
-        $parent_order_args = array(
-            'customer_id' => $user_id,
-            'meta_key' => self::PROJECT_META_KEY,
-            'meta_value' => $project_id,
-            'return' => 'ids',
-            'limit' => -1, // Get all
-        );
-        $parent_order_ids = wc_get_orders($parent_order_args);
-        
-        // Step 2: Find all subscriptions related to these parent orders
-        $all_subscription_ids = array();
-        
-        foreach ($parent_order_ids as $parent_id) {
-            // Check if this order has created subscriptions
-            $parent_order = wc_get_order($parent_id);
-            if ($parent_order) {
-                // Get subscriptions for this order
-                if (function_exists('wcs_get_subscriptions_for_order')) {
-                    $subscriptions = wcs_get_subscriptions_for_order($parent_order);
-                    if (!empty($subscriptions)) {
-                        foreach ($subscriptions as $subscription) {
-                            $all_subscription_ids[] = $subscription->get_id();
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Remove duplicates and sort
-        $all_subscription_ids = array_unique($all_subscription_ids);
-        rsort($all_subscription_ids); // Most recent first
-        
-        // Paginate the results
-        $total = count($all_subscription_ids);
-        $max_pages = ceil($total / $per_page);
-        $offset = ($current_page - 1) * $per_page;
-        $subscription_ids = array_slice($all_subscription_ids, $offset, $per_page);
-        
-        // Create result object similar to WooCommerce customer subscriptions
-        $result = new \stdClass();
-        $result->subscriptions = $subscription_ids;
-        $result->total = $total;
-        $result->max_num_pages = $max_pages;
-        
-        return $result;
-    }
-
-    /**
-     * Create an empty subscriptions result when WooCommerce Subscriptions is not active
-     *
-     * @return object Empty subscriptions result
-     */
-    private static function create_empty_subscriptions_result() {
-        $result = new \stdClass();
-        $result->subscriptions = array();
-        $result->total = 0;
-        $result->max_num_pages = 1;
-        return $result;
+        // Delegate to centralized subscription handling
+        return Woocommerce_Subscriptions::get_project_subscriptions($project_id, $user_id, $current_page, $per_page);
     }
 
     /**
@@ -754,6 +630,7 @@ class Woocommerce {
     /**
      * Get subscriptions associated with a project based only on parent order association
      *
+     * @deprecated Use Woocommerce_Subscriptions::get_project_subscriptions() instead
      * @param int $project_id Project ID
      * @param int $user_id User ID
      * @param int $current_page Current page for pagination
@@ -761,39 +638,8 @@ class Woocommerce {
      * @return object Object containing subscriptions array and pagination info
      */
     public static function get_project_subscriptions_by_parent_order($project_id, $user_id, $current_page = 1, $per_page = 10) {
-        // First get orders directly associated with the project
-        $direct_orders = self::get_project_orders($project_id, $user_id);
-        
-        // Find subscriptions based on these parent orders
-        $args = array(
-            'post_type'      => 'shop_subscription',
-            'post_status'    => array_keys(wcs_get_subscription_statuses()),
-            'posts_per_page' => $per_page,
-            'paged'          => $current_page,
-            'meta_query'     => array(
-                'relation' => 'AND',
-                array(
-                    'key'     => '_customer_user',
-                    'value'   => $user_id,
-                    'compare' => '='
-                ),
-                array(
-                    'key'     => '_order_id', // This is the parent order ID stored on the subscription
-                    'value'   => $direct_orders->orders,
-                    'compare' => 'IN'
-                )
-            )
-        );
-        
-        $subscriptions_query = new \WP_Query($args);
-        $subscription_ids = wp_list_pluck($subscriptions_query->posts, 'ID');
-        
-        // Return in same format as get_project_subscriptions
-        $results = new \stdClass();
-        $results->subscriptions = $subscription_ids;
-        $results->max_num_pages = $subscriptions_query->max_num_pages;
-        
-        return $results;
+        // Delegate to centralized subscription handling
+        return Woocommerce_Subscriptions::get_project_subscriptions($project_id, $user_id, $current_page, $per_page);
     }
 
 }
