@@ -109,6 +109,7 @@
                 $.each(items.shipping_fees, function(id, itemData) { self.renderRow('shipping-fee', itemData); });
             }
             this.calculateTotals();
+            this.toggleStartDateColumn();
         },
 
         renderRow: function(type, data) {
@@ -193,12 +194,33 @@
         addLineItem: function(e) {
             e.preventDefault();
             this.renderRow($(e.currentTarget).data('type'), {});
+            this.toggleStartDateColumn();
         },
 
         removeLineItem: function(e) {
             e.preventDefault();
             $(e.currentTarget).closest('.line-item').remove();
             this.calculateTotals();
+            this.toggleStartDateColumn();
+        },
+
+        toggleStartDateColumn: function() {
+            var hasSubscriptions = false;
+            
+            // Check if any product rows have subscription products
+            $('#product-lines-body .line-item').each(function() {
+                if ($(this).data('is-subscription')) {
+                    hasSubscriptions = true;
+                    return false; // Break the loop
+                }
+            });
+            
+            // Show/hide the entire start date column (header and cells)
+            if (hasSubscriptions) {
+                $('#product-line-items .start-date-column').show();
+            } else {
+                $('#product-line-items .start-date-column').hide();
+            }
         },
         
         productChanged: function(e) {
@@ -209,7 +231,10 @@
 
         fetchProductDetails: function($row, productId) {
              var self = this;
-             if (!productId) return;
+             if (!productId) {
+                 self.toggleStartDateColumn();
+                 return;
+             }
 
              $.ajax({
                  url: arsol_proposal_invoice_vars.ajax_url,
@@ -237,6 +262,7 @@
                          }
                          
                          self.calculateTotals();
+                         self.toggleStartDateColumn();
                      }
                  }
              });
@@ -348,6 +374,9 @@
             // The individual line items with their intervals/periods are the source of truth.
             $('#line_items_one_time_total').val(grandOneTimeTotal.toFixed(2));
             $('#line_items_recurring_totals').val(''); // Clear this as it's no longer used
+            
+            // Ensure column visibility is correct after calculations
+            this.toggleStartDateColumn();
         }
     };
 
