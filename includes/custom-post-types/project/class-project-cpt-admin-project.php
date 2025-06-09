@@ -162,11 +162,13 @@ class Project {
         <p>
             <label for="project_status"><?php _e('Project Status:', 'arsol-pfw'); ?></label>
             <select name="project_status" id="project_status" style="width:100%">
-                <?php foreach ($statuses as $status) : ?>
-                    <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
-                        <?php echo esc_html($status->name); ?>
-                    </option>
-                <?php endforeach; ?>
+                <?php if (!is_wp_error($statuses) && !empty($statuses)) : ?>
+                    <?php foreach ($statuses as $status) : ?>
+                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
+                            <?php echo esc_html($status->name); ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </select>
         </p>
 
