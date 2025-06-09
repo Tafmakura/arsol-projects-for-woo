@@ -294,14 +294,12 @@
             grandOneTimeTotal += oneTimeFeesSubtotal;
             
             // --- Recurring Fees ---
-            var recurringFeesSubtotals = {};
             $('#recurring-fee-lines-body .line-item').each(function() {
                 var amount = parseFloat($(this).find('.fee-amount-input').val()) || 0;
                 var interval = parseInt($(this).find('.billing-interval').val()) || 1;
                 var period = $(this).find('.billing-period').val();
                
                 if (interval && period) {
-                     self.updateRecurringTotals(recurringFeesSubtotals, interval, period, amount);
                      self.updateRecurringTotals(grandRecurringTotals, interval, period, amount);
                      
                      var subtotalText = formatPrice(amount) + ' ' + self.getCycleLabel(interval, period);
@@ -317,16 +315,6 @@
                      $(this).find('.subtotal-display').html(formatPrice(amount));
                 }
             });
-             var recurringFeeHtml = [];
-             if (Object.keys(recurringFeesSubtotals).length > 0) {
-                  $.each(recurringFeesSubtotals, function(key, data) {
-                      var label = self.getCycleLabel(data.interval, data.period);
-                      recurringFeeHtml.push(formatPrice(data.total) + ' ' + label);
-                  });
-                  $('#recurring-fee-subtotal-display').html(recurringFeeHtml.join('<br>'));
-             } else {
-                 $('#recurring-fee-subtotal-display').html(formatPrice(0));
-             }
 
             // --- Shipping ---
             var shippingSubtotal = 0;
