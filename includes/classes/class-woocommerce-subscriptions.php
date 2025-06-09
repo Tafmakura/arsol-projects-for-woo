@@ -15,9 +15,6 @@ class Woocommerce_Subscriptions {
      * @return int The number of days in the period.
      */
     private static function get_days_in_period($period) {
-        if (!class_exists('WC_Subscriptions')) {
-            return 0;
-        }
         switch (strtolower($period)) {
             case 'day':
                 return 1;
@@ -54,9 +51,6 @@ class Woocommerce_Subscriptions {
      * @return float The calculated daily cost.
      */
     public static function get_daily_cost($price, $interval, $period) {
-        if (!class_exists('WC_Subscriptions')) {
-            return 0;
-        }
         $price = (float) $price;
         $interval = (int) $interval;
         
@@ -86,9 +80,6 @@ class Woocommerce_Subscriptions {
      * @return float The calculated average monthly cost.
      */
     public static function get_monthly_cost($price, $interval, $period) {
-        if (!class_exists('WC_Subscriptions')) {
-            return 0;
-        }
         $constants = self::get_calculation_constants();
         $daily_cost = self::get_daily_cost($price, $interval, $period);
         return $daily_cost * $constants['days_in_month'];
@@ -103,9 +94,6 @@ class Woocommerce_Subscriptions {
      * @return float The calculated annual cost.
      */
     public static function get_annual_cost($price, $interval, $period) {
-        if (!class_exists('WC_Subscriptions')) {
-            return 0;
-        }
         $constants = self::get_calculation_constants();
         $daily_cost = self::get_daily_cost($price, $interval, $period);
         return $daily_cost * $constants['days_in_year'];

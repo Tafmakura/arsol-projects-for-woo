@@ -422,11 +422,7 @@ class Proposal_Invoice {
             wp_send_json_error('Missing search term');
         }
 
-        $product_types = apply_filters('arsol_proposal_product_types', array('simple', 'variable'));
-
-        if (class_exists('WC_Subscriptions')) {
-            $product_types = array_merge($product_types, array('subscription', 'subscription_variation'));
-        }
+        $product_types = apply_filters('arsol_proposal_product_types', array('simple', 'variable', 'subscription', 'variation'));
 
         $query = new \WC_Product_Query( array(
             'limit' => 20,
