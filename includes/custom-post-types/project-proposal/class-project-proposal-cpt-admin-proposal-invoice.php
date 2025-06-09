@@ -232,9 +232,25 @@ class Proposal_Invoice {
         </script>
 
         <script type="text/html" id="tmpl-arsol-shipping-fee-line-item">
+            <?php
+            $shipping_methods_formatted = array();
+            if (function_exists('WC') && WC()->shipping && WC()->shipping->get_shipping_methods()) {
+                foreach (WC()->shipping->get_shipping_methods() as $method_id => $method) {
+                    $shipping_methods_formatted[$method_id] = $method->get_method_title();
+                }
+            }
+            $shipping_methods_json = json_encode($shipping_methods_formatted);
+            ?>
             <tr class="line-item shipping-fee-item" data-id="{{ data.id }}">
                 <td class="shipping-method-column">
-                    <input type="text" class="shipping-method-input" name="line_items[shipping_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. FedEx Ground', 'arsol-pfw'); ?>">
+                    <select class="shipping-method-select-ui" style="width: 100%; margin-bottom: 5px;">
+                         <option value=""><?php _e('Select a method...', 'arsol-pfw'); ?></option>
+                         <# _.each(<?php echo $shipping_methods_json; ?>, function(name, id) { #>
+                            <option value="{{ id }}" data-name="{{ name }}">{{ name }}</option>
+                         <# }); #>
+                         <option value="custom"><?php _e('Custom Description', 'arsol-pfw'); ?></option>
+                    </select>
+                    <input type="text" class="shipping-method-input" name="line_items[shipping_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. FedEx Ground', 'arsol-pfw'); ?>" style="width: 100%;">
                 </td>
                 <td>
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">

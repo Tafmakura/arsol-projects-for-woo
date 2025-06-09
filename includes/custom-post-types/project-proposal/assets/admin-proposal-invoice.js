@@ -39,11 +39,28 @@
             }
         },
 
+        shippingMethodChanged: function(e) {
+            var $select = $(e.currentTarget);
+            var $row = $select.closest('.line-item');
+            var $input = $row.find('.shipping-method-input');
+            var selectedVal = $select.val();
+
+            if (selectedVal === 'custom') {
+                $input.val('').show().focus();
+            } else if (selectedVal === '') {
+                $input.val('').show();
+            } else {
+                var methodName = $select.find('option:selected').data('name');
+                $input.val(methodName).hide();
+            }
+        },
+
         bindEvents: function() {
             var builder = $('#proposal_invoice_builder');
             builder.on('click', '.add-line-item', this.addLineItem.bind(this));
             builder.on('click', '.remove-line-item', this.removeLineItem.bind(this));
             builder.on('change', '.product-select', this.productChanged.bind(this));
+            builder.on('change', '.shipping-method-select-ui', this.shippingMethodChanged.bind(this));
             builder.on('input change', '.quantity-input, .sale-price-input, .price-input, .fee-amount-input, .billing-interval, .billing-period', this.calculateTotals.bind(this));
         },
         
@@ -93,6 +110,33 @@
             
             var $newRow = $(template(data));
             $(container).append($newRow);
+
+            if (type === 'shipping-fee') {
+                var $select = $newRow.find('.shipping-method-select-ui');
+                var $input = $newRow.find('.shipping-method-input');
+                var initialName = data.name || '';
+                var matchFound = false;
+
+                if (initialName) {
+                    $select.find('option').each(function() {
+                        if ($(this).data('name') === initialName) {
+                            $(this).prop('selected', true);
+                            matchFound = true;
+                            return false; // break loop
+                        }
+                    });
+                }
+
+                if (matchFound) {
+                    $input.hide();
+                } else {
+                    if (initialName) {
+                        $select.val('custom');
+                    }
+                    $input.show();
+                }
+            }
+
             if (type === 'product') {
                 this.initSelect2($newRow);
                 if(data.product_id) {
