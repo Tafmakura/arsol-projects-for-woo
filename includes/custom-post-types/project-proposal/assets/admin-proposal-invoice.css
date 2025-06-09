@@ -63,6 +63,11 @@
     margin-top: 5px;
 }
 
+#arsol_proposal_invoice_metabox .billing-cycle-column select {
+    width: 120px;
+    margin-right: 5px;
+}
+
 .line-items-totals::after {
     content: "";
     clear: both;
