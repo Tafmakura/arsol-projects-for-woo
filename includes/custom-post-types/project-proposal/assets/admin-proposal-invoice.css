@@ -95,15 +95,15 @@
     margin-right: 5px;
 }
 
-/* Billing cycle - side by side layout */
+/* Billing cycle - side by side layout with optimized spacing */
 #arsol_proposal_invoice_metabox .billing-cycle-column {
     white-space: nowrap;
-    min-width: 250px;
+    width: 200px; /* Reduced from 250px to eliminate gap */
 }
 
 #arsol_proposal_invoice_metabox .billing-cycle-column select {
     display: inline-block;
-    width: 110px;
+    width: 95px; /* Reduced from 110px for better fit */
     margin-right: 5px;
     vertical-align: top;
 }
@@ -114,8 +114,12 @@
 
 /* Responsive design for smaller screens */
 @media screen and (max-width: 1200px) {
+    #arsol_proposal_invoice_metabox .billing-cycle-column {
+        width: 180px; /* Proportionally reduced */
+    }
+    
     #arsol_proposal_invoice_metabox .billing-cycle-column select {
-        width: 100px;
+        width: 85px; /* Slightly smaller for medium screens */
     }
     
     /* Reduce fixed column widths on medium screens */
@@ -139,10 +143,11 @@
 @media screen and (max-width: 900px) {
     #arsol_proposal_invoice_metabox .billing-cycle-column {
         white-space: normal;
+        width: 160px; /* Further reduced for mobile */
     }
     
     #arsol_proposal_invoice_metabox .billing-cycle-column select {
-        width: 90px;
+        width: 75px; /* Smaller selects for mobile */
         margin-bottom: 2px;
     }
     
