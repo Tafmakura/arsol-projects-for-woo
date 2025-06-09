@@ -14,6 +14,7 @@
             this.line_item_id = 0;
             this.bindEvents();
             this.loadExistingItems();
+            this.setInitialAverageTotal();
         },
 
         getCycleKey: function(interval, period) {
@@ -29,6 +30,13 @@
                 return '/ ' + interval + ' ' + periodLabel;
             }
             return '/ ' + periodLabel;
+        },
+
+        setInitialAverageTotal: function() {
+            var initialTotal = arsol_proposal_invoice_vars.average_monthly_total_formatted;
+            if (initialTotal) {
+                $('#average-monthly-total-display').html(initialTotal);
+            }
         },
 
         updateRecurringTotals: function(recurringTotals, interval, period, amount) {
@@ -317,7 +325,15 @@
                 success: function(response) {
                     if (response.success) {
                         $('#average-monthly-total-display').html(response.data.formatted);
+                    } else {
+                        $('#average-monthly-total-display').html('<span class="error" style="color:red;">Error</span>');
+                        console.error("AJAX error (success:false):", response.data.message);
                     }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $('#average-monthly-total-display').html('<span class="error" style="color:red;">Error</span>');
+                    console.error("Fatal AJAX error:", textStatus, errorThrown);
+                    console.error("Response:", jqXHR.responseText);
                 },
                 complete: function() {
                     self.calculating = false; // Reset the flag
