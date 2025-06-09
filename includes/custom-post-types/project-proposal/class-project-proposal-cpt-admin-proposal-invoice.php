@@ -83,6 +83,7 @@ class Proposal_Invoice {
                             <th><?php _e('Qty', 'arsol-pfw'); ?></th>
                             <th><?php _e('Price', 'arsol-pfw'); ?></th>
                             <th><?php _e('Sale Price', 'arsol-pfw'); ?></th>
+                            <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
                         </tr>
@@ -113,6 +114,7 @@ class Proposal_Invoice {
                             <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
                             <th><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
+                            <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
                             <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
@@ -169,6 +171,7 @@ class Proposal_Invoice {
                         <tr>
                             <th class="shipping-method-column"><?php _e('Shipping Method/Description', 'arsol-pfw'); ?></th>
                             <th><?php _e('Cost', 'arsol-pfw'); ?></th>
+                            <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
                             <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                             <th class="actions-column"></th>
                         </tr>
@@ -231,6 +234,14 @@ class Proposal_Invoice {
     }
     
     private function render_js_templates() {
+        // Prepare tax classes for dropdowns
+        $tax_classes = \WC_Tax::get_tax_classes();
+        $tax_class_options = array('' => __('Standard', 'arsol-pfw')); // Add standard rate
+        if ( ! empty( $tax_classes ) ) {
+            foreach ( $tax_classes as $class ) {
+                $tax_class_options[ sanitize_title( $class ) ] = $class;
+            }
+        }
         ?>
         <script type="text/html" id="tmpl-arsol-product-line-item">
             <tr class="line-item product-item" data-id="{{ data.id }}">
@@ -247,6 +258,9 @@ class Proposal_Invoice {
                 <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
                 <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
                 <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
+                <td class="start-date-column">
+                    <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
+                </td>
                 <td class="subtotal-display subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
@@ -261,7 +275,11 @@ class Proposal_Invoice {
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
                 <td class="taxable-column">
-                    <input type="checkbox" name="line_items[one_time_fees][{{ data.id }}][taxable]" <# if (data.taxable) { #>checked="checked"<# } #>>
+                    <select name="line_items[one_time_fees][{{ data.id }}][tax_class]">
+                        <# _.each(<?php echo json_encode($tax_class_options); ?>, function(label, value) { #>
+                            <option value="{{ value }}" <# if (data.tax_class == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                        <# }); #>
+                    </select>
                 </td>
                 <td class="subtotal-display subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
@@ -292,8 +310,15 @@ class Proposal_Invoice {
                         <# }); #>
                     </select>
                 </td>
+                <td class="start-date-column">
+                    <input type="date" class="start-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
+                </td>
                 <td class="taxable-column">
-                    <input type="checkbox" name="line_items[recurring_fees][{{ data.id }}][taxable]" <# if (data.taxable) { #>checked="checked"<# } #>>
+                    <select name="line_items[recurring_fees][{{ data.id }}][tax_class]">
+                        <# _.each(<?php echo json_encode($tax_class_options); ?>, function(label, value) { #>
+                            <option value="{{ value }}" <# if (data.tax_class == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                        <# }); #>
+                    </select>
                 </td>
                 <td class="subtotal-display subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
@@ -314,7 +339,7 @@ class Proposal_Invoice {
                 <td class="shipping-method-column">
                     <select class="shipping-method-select-ui">
                          <option value=""><?php _e('Select a method...', 'arsol-pfw'); ?></option>
-                         <# _.each(<?php echo $shipping_methods_json; ?>, function(name, id) { #>
+                         <# _.each(<?php echo json_encode($shipping_methods_json); ?>, function(name, id) { #>
                             <option value="{{ id }}" data-name="{{ name }}">{{ name }}</option>
                          <# }); #>
                          <option value="custom"><?php _e('Custom Description', 'arsol-pfw'); ?></option>
@@ -323,6 +348,13 @@ class Proposal_Invoice {
                 </td>
                 <td>
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
+                </td>
+                <td class="taxable-column">
+                    <select name="line_items[shipping_fees][{{ data.id }}][tax_class]">
+                        <# _.each(<?php echo json_encode($tax_class_options); ?>, function(label, value) { #>
+                            <option value="{{ value }}" <# if (data.tax_class == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                        <# }); #>
+                    </select>
                 </td>
                 <td class="subtotal-display subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>

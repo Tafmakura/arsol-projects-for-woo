@@ -230,6 +230,12 @@
                          $row.data('billing-interval', data.billing_interval);
                          $row.data('billing-period', data.billing_period);
                          
+                         if (data.is_subscription) {
+                             $row.find('.start-date-input').show();
+                         } else {
+                             $row.find('.start-date-input').hide().val('');
+                         }
+                         
                          self.calculateTotals();
                      }
                  }
@@ -262,6 +268,13 @@
                 }
                 
                 var isSubscription = $row.data('is-subscription');
+
+                if (isSubscription) {
+                    var $startDateInput = $row.find('.start-date-input');
+                    if (!$startDateInput.is(':visible')) {
+                        $startDateInput.show();
+                    }
+                }
 
                 var salePrice = parseFloat($row.find('.sale-price-input').val());
                 var regularPrice = parseFloat($row.find('.price-input').val()) || 0;
