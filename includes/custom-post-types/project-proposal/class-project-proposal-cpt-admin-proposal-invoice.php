@@ -243,14 +243,14 @@ class Proposal_Invoice {
             ?>
             <tr class="line-item shipping-fee-item" data-id="{{ data.id }}">
                 <td class="shipping-method-column">
-                    <select class="shipping-method-select-ui" style="width: 100%; margin-bottom: 5px;">
+                    <select class="shipping-method-select-ui">
                          <option value=""><?php _e('Select a method...', 'arsol-pfw'); ?></option>
                          <# _.each(<?php echo $shipping_methods_json; ?>, function(name, id) { #>
                             <option value="{{ id }}" data-name="{{ name }}">{{ name }}</option>
                          <# }); #>
                          <option value="custom"><?php _e('Custom Description', 'arsol-pfw'); ?></option>
                     </select>
-                    <input type="text" class="shipping-method-input" name="line_items[shipping_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. FedEx Ground', 'arsol-pfw'); ?>" style="width: 100%;">
+                    <input type="text" class="shipping-method-input" name="line_items[shipping_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. FedEx Ground', 'arsol-pfw'); ?>">
                 </td>
                 <td>
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
