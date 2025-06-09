@@ -175,6 +175,7 @@
         
         calculateTotals: function() {
             console.log('Arsol Proposal Invoice: Calculating totals...');
+            var self = this;
             var oneTimeTotal = 0;
             var recurringTotals = {}; // Use an object to group by billing cycle
             var currencySymbol = arsol_proposal_invoice_vars.currency_symbol;
@@ -204,8 +205,8 @@
                     var subtotalDisplay = formatPrice(quantity * recurringAmount);
 
                     if (interval && period) {
-                        subtotalDisplay += ' ' + this.getCycleLabel(interval, period);
-                        this.updateRecurringTotals(recurringTotals, interval, period, quantity * recurringAmount);
+                        subtotalDisplay += ' ' + self.getCycleLabel(interval, period);
+                        self.updateRecurringTotals(recurringTotals, interval, period, quantity * recurringAmount);
                     }
                     
                     if (signUpFee > 0) {
@@ -234,10 +235,10 @@
                 var period = $row.find('.billing-period').val();
                
                 if (interval && period) {
-                     this.updateRecurringTotals(recurringTotals, interval, period, amount);
+                     self.updateRecurringTotals(recurringTotals, interval, period, amount);
                      
                      // Use the helper to show the full cycle in the subtotal
-                     var subtotalText = formatPrice(amount) + ' ' + this.getCycleLabel(interval, period);
+                     var subtotalText = formatPrice(amount) + ' ' + self.getCycleLabel(interval, period);
                      $row.find('.subtotal-display').html(subtotalText);
                 } else {
                     // Fallback for when cycle isn't fully defined
@@ -254,7 +255,7 @@
 
             if (Object.keys(recurringTotals).length > 0) {
                  $.each(recurringTotals, function(key, data) {
-                     var label = this.getCycleLabel(data.interval, data.period);
+                     var label = self.getCycleLabel(data.interval, data.period);
                      recurringHtml.push(formatPrice(data.total) + ' ' + label);
                  });
                  $recurringDisplay.html(recurringHtml.join('<br>'));
