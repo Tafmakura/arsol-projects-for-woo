@@ -232,8 +232,13 @@
                          
                          if (data.is_subscription) {
                              $row.find('.start-date-input').show();
+                             var $billingCol = $row.find('.billing-cycle-column');
+                             $billingCol.show();
+                             $billingCol.find('.billing_cycle_interval').val(data.billing_interval);
+                             $billingCol.find('.billing_cycle_period').val(data.billing_period);
                          } else {
                              $row.find('.start-date-input').hide().val('');
+                             $row.find('.billing-cycle-column').hide();
                          }
                          
                          self.calculateTotals();
