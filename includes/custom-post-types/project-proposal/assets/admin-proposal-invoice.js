@@ -285,7 +285,7 @@
             });
             var productsMonthlyTotal = productsDailyCost * 30.417;
             $('#product-subtotal-display').html(formatPrice(productsOneTimeSubtotal));
-            $('#product-avg-monthly-display').html(formatPrice(productsMonthlyTotal) + ' /mo');
+            $('#product-avg-monthly-display').html(formatPrice(productsMonthlyTotal));
             grandOneTimeTotal += productsOneTimeSubtotal;
             grandTotalDailyCost += productsDailyCost;
 
@@ -311,7 +311,7 @@
                 }
             });
             var recurringFeesMonthlyTotal = recurringFeesDailyCost * 30.417;
-            $('#recurring-fee-avg-monthly-display').html(formatPrice(recurringFeesMonthlyTotal) + ' /mo');
+            $('#recurring-fee-avg-monthly-display').html(formatPrice(recurringFeesMonthlyTotal));
             grandTotalDailyCost += recurringFeesDailyCost;
 
 
@@ -328,7 +328,7 @@
             // --- Display Grand Totals ---
             var grandAnnualTotal = grandTotalDailyCost * 365;
             $('#one-time-total-display').html(formatPrice(grandOneTimeTotal));
-            $('#average-monthly-total-display').html(formatPrice(grandAnnualTotal) + ' /yr');
+            $('#average-monthly-total-display').html(formatPrice(grandAnnualTotal));
 
             // Update hidden inputs for saving - note we no longer save grouped recurring totals.
             // The individual line items with their intervals/periods are the source of truth.

@@ -94,7 +94,7 @@ class Proposal_Invoice {
                             <td class="total-amount" id="product-subtotal-display"><?php echo wc_price(0); ?></td>
                         </tr>
                         <tr>
-                            <td><strong><?php _e('Average Recurring Total (/mo):', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="product-avg-monthly-display"><?php echo wc_price(0); ?></td>
                         </tr>
                     </table>
@@ -121,7 +121,7 @@ class Proposal_Invoice {
                 <div class="section-totals">
                     <table align="right">
                         <tr>
-                            <td><strong><?php _e('Average Recurring Total (/mo):', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></td>
                         </tr>
                     </table>
@@ -193,7 +193,7 @@ class Proposal_Invoice {
                             <td class="total-amount" id="one-time-total-display"><?php echo wc_price(0); ?></td>
                         </tr>
                         <tr>
-                            <td><strong><?php _e('Average Recurring Total (/yr):', 'arsol-pfw'); ?></strong></td>
+                            <td><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong></td>
                             <td class="total-amount" id="average-monthly-total-display"><?php echo wc_price(0); ?></td>
                         </tr>
                     </tbody>
