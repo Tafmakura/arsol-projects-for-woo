@@ -18,23 +18,17 @@ class Setup {
     }
 
     public function register_post_type() {
-        // Debug logging
-        if (function_exists('error_log')) {
-            error_log('ARSOL DEBUG: Registering arsol-project post type (PARENT)');
-        }
-
         $labels = array(
-            'name'               => __('Arsol Projects', 'arsol-pfw'),
+            'name'               => __('Projects', 'arsol-pfw'),
             'singular_name'      => __('Project', 'arsol-pfw'),
             'add_new'           => __('Add New', 'arsol-pfw'),
             'add_new_item'      => __('Add New Project', 'arsol-pfw'),
             'edit_item'         => __('Edit Project', 'arsol-pfw'),
             'new_item'          => __('New Project', 'arsol-pfw'),
-            'view_item'         => __('View Project', 'arsol-pfw'),
             'search_items'      => __('Search Projects', 'arsol-pfw'),
             'not_found'         => __('No projects found', 'arsol-pfw'),
             'not_found_in_trash'=> __('No projects found in trash', 'arsol-pfw'),
-            'menu_name'         => __('Arsol Projects for Woo', 'arsol-pfw'),
+            'menu_name'         => __('Projects', 'arsol-pfw'),
             'all_items'         => __('All Projects', 'arsol-pfw'),
         );
 
@@ -48,33 +42,24 @@ class Setup {
 
         $args = array(
             'labels'              => $labels,
-            'public'              => true,
-            'publicly_queryable'  => true,
+            'public'              => false,
+            'publicly_queryable'  => false,
             'show_ui'            => true,
-            'show_in_menu'       => true,
-            'show_in_nav_menus'  => true,
+            'show_in_menu'       => false,
+            'show_in_nav_menus'  => false,
             'show_in_admin_bar'  => true,
-            'menu_position'      => 5,
-            'menu_icon'          => 'dashicons-clipboard',
+            'menu_position'      => null,
+            'menu_icon'          => 'dashicons-portfolio',
             'capability_type'    => array('arsol_project', 'arsol_projects'),
             'map_meta_cap'       => true,
             'hierarchical'       => false,
             'supports'           => $supports,
             'has_archive'        => false,
-            'rewrite'           => array('slug' => 'project', 'with_front' => false),
+            'rewrite'           => false,
             'show_in_rest'      => false,
         );
 
-        $result = register_post_type('arsol-project', $args);
-        
-        // Debug the result
-        if (function_exists('error_log')) {
-            if (is_wp_error($result)) {
-                error_log('ARSOL DEBUG: Failed to register arsol-project: ' . $result->get_error_message());
-            } else {
-                error_log('ARSOL DEBUG: Successfully registered arsol-project post type (PARENT)');
-            }
-        }
+        register_post_type('arsol-project', $args);
     }
 
     /**

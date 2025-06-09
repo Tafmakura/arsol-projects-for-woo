@@ -17,11 +17,6 @@ class Setup {
     }
 
     public function register_post_type() {
-        // Debug logging
-        if (function_exists('error_log')) {
-            error_log('ARSOL DEBUG: Registering arsol-pfw-request post type');
-        }
-
         $labels = array(
             'name'               => __('Project Requests', 'arsol-pfw'),
             'singular_name'      => __('Project Request', 'arsol-pfw'),
@@ -53,7 +48,7 @@ class Setup {
             'show_in_nav_menus'  => false,
             'show_in_admin_bar'  => true,
             'menu_position'      => null,
-            'menu_icon'          => 'dashicons-format-chat',
+            'menu_icon'          => 'dashicons-portfolio',
             'capability_type'    => array('arsol_project_request', 'arsol_project_requests'),
             'map_meta_cap'       => true,
             'hierarchical'       => false,
@@ -63,16 +58,7 @@ class Setup {
             'show_in_rest'      => false,
         );
 
-        $result = register_post_type('arsol-pfw-request', $args);
-        
-        // Debug the result
-        if (function_exists('error_log')) {
-            if (is_wp_error($result)) {
-                error_log('ARSOL DEBUG: Failed to register arsol-pfw-request: ' . $result->get_error_message());
-            } else {
-                error_log('ARSOL DEBUG: Successfully registered arsol-pfw-request post type');
-            }
-        }
+        register_post_type('arsol-pfw-request', $args);
     }
 
     /**
