@@ -294,16 +294,25 @@
         updateStartDateColumnVisibility: function() {
             // Check if any product rows have visible start date inputs
             var hasVisibleStartDates = false;
+            var visibleCount = 0;
             $('#product-lines-body .start-date-input:visible').each(function() {
                 hasVisibleStartDates = true;
-                return false; // break loop
+                visibleCount++;
+            });
+
+            console.log('Start date visibility check:', {
+                hasVisibleStartDates: hasVisibleStartDates,
+                visibleCount: visibleCount,
+                totalStartDateInputs: $('#product-lines-body .start-date-input').length
             });
 
             // Show/hide the start date column header and all start date cells based on visibility
             if (hasVisibleStartDates) {
                 $('.start-date-column').addClass('show');
+                console.log('Added show class to start-date-column');
             } else {
                 $('.start-date-column').removeClass('show');
+                console.log('Removed show class from start-date-column');
             }
         },
         
@@ -413,6 +422,9 @@
             // The individual line items with their intervals/periods are the source of truth.
             $('#line_items_one_time_total').val(grandOneTimeTotal.toFixed(2));
             $('#line_items_recurring_totals').val(''); // Clear this as it's no longer used
+            
+            // Update start date column visibility after all calculations
+            this.updateStartDateColumnVisibility();
         }
     };
 
