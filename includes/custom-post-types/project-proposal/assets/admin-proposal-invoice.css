@@ -477,3 +477,27 @@
 .recurring-budget-row .start-date-input:not([value]):not([placeholder]) {
     opacity: 0.5;
 }
+
+/* Details column styling - stretchable for budget */
+.details-column {
+    width: auto !important;
+    min-width: 150px;
+}
+
+.details-column input {
+    width: 100%;
+    min-width: 150px;
+}
+
+/* Ensure proper column layout with details column */
+.widefat th.details-column,
+.widefat td.details-column {
+    width: auto;
+    min-width: 150px;
+}
+
+/* Adjust other columns to be more compact when details column is present */
+.widefat th.budget-description-column,
+.widefat td.budget-description-column {
+    min-width: 150px;
+}
