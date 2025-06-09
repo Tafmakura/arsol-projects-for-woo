@@ -250,7 +250,13 @@
             var productsRecurringSubtotals = {};
             $('#product-lines-body .line-item').each(function() {
                 var $row = $(this);
-                var quantity = parseFloat($row.find('.quantity-input').val()) || 1;
+                
+                var quantityVal = $row.find('.quantity-input').val();
+                var quantity = !isNaN(parseFloat(quantityVal)) ? parseFloat(quantityVal) : 0;
+                if (quantity < 0) {
+                    quantity = 0;
+                }
+                
                 var isSubscription = $row.data('is-subscription');
 
                 var salePrice = parseFloat($row.find('.sale-price-input').val());
