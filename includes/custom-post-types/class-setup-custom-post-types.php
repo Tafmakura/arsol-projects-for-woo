@@ -4,7 +4,7 @@ namespace Arsol_Projects_For_Woo\Custom_Post_Types;
 
 if (!defined('ABSPATH')) exit;
 
-class Setup_Custom_Post_Types {
+class Setup {
     public function __construct() {
         add_action('init', array($this, 'register_custom_post_types'));
         add_action('init', array($this, 'register_taxonomies'));
