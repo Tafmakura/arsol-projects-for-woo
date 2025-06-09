@@ -13,6 +13,31 @@
             this.loadExistingItems();
         },
 
+        getCycleKey: function(interval, period) {
+            return period + '_' + interval;
+        },
+
+        getCycleLabel: function(interval, period) {
+            var periodLabel = period;
+            interval = parseInt(interval);
+
+            if (interval > 1) {
+                periodLabel += 's';
+                return '/ ' + interval + ' ' + periodLabel;
+            }
+            return '/ ' + periodLabel;
+        },
+
+        updateRecurringTotals: function(recurringTotals, interval, period, amount) {
+            if (interval && period && amount > 0) {
+                var cycleKey = this.getCycleKey(interval, period);
+                if (!recurringTotals[cycleKey]) {
+                    recurringTotals[cycleKey] = { total: 0, interval: interval, period: period };
+                }
+                recurringTotals[cycleKey].total += amount;
+            }
+        },
+
         bindEvents: function() {
             var builder = $('#proposal_invoice_builder');
             builder.on('click', '.add-line-item', this.addLineItem.bind(this));
@@ -159,23 +184,6 @@
                 return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
             };
             
-            // Helper to build a unique key for each billing cycle
-            var getCycleKey = function(interval, period) {
-                return period + '_' + interval;
-            };
-
-            // Helper to create a human-readable label for each billing cycle
-            var getCycleLabel = function(interval, period) {
-                var periodLabel = period;
-                interval = parseInt(interval);
-
-                if (interval > 1) {
-                    periodLabel += 's';
-                    return '/ ' + interval + ' ' + periodLabel;
-                }
-                return '/ ' + periodLabel;
-            };
-
             $('#product-lines-body .line-item').each(function() {
                 var $row = $(this);
                 var quantity = parseFloat($row.find('.quantity-input').val()) || 1;
@@ -196,12 +204,8 @@
                     var subtotalDisplay = formatPrice(quantity * recurringAmount);
 
                     if (interval && period) {
-                        subtotalDisplay += ' ' + getCycleLabel(interval, period);
-                        var cycleKey = getCycleKey(interval, period);
-                        if (!recurringTotals[cycleKey]) {
-                            recurringTotals[cycleKey] = { total: 0, interval: interval, period: period };
-                        }
-                        recurringTotals[cycleKey].total += quantity * recurringAmount;
+                        subtotalDisplay += ' ' + this.getCycleLabel(interval, period);
+                        this.updateRecurringTotals(recurringTotals, interval, period, quantity * recurringAmount);
                     }
                     
                     if (signUpFee > 0) {
@@ -230,14 +234,10 @@
                 var period = $row.find('.billing-period').val();
                
                 if (interval && period) {
-                     var cycleKey = getCycleKey(interval, period);
-                     if (!recurringTotals[cycleKey]) {
-                        recurringTotals[cycleKey] = { total: 0, interval: interval, period: period };
-                     }
-                     recurringTotals[cycleKey].total += amount;
+                     this.updateRecurringTotals(recurringTotals, interval, period, amount);
                      
                      // Use the helper to show the full cycle in the subtotal
-                     var subtotalText = formatPrice(amount) + ' ' + getCycleLabel(interval, period);
+                     var subtotalText = formatPrice(amount) + ' ' + this.getCycleLabel(interval, period);
                      $row.find('.subtotal-display').html(subtotalText);
                 } else {
                     // Fallback for when cycle isn't fully defined
@@ -254,7 +254,7 @@
 
             if (Object.keys(recurringTotals).length > 0) {
                  $.each(recurringTotals, function(key, data) {
-                     var label = getCycleLabel(data.interval, data.period);
+                     var label = this.getCycleLabel(data.interval, data.period);
                      recurringHtml.push(formatPrice(data.total) + ' ' + label);
                  });
                  $recurringDisplay.html(recurringHtml.join('<br>'));
