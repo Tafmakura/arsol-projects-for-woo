@@ -16,8 +16,8 @@ class Woocommerce_Subscriptions
     public function __construct()
     {
         add_filter('arsol_proposal_product_types', array($this, 'add_subscription_product_types'));
-        add_action('arsol_proposal_invoice_line_item_billing_cycle', array($this, 'render_billing_cycle_ui'));
-        add_action('arsol_proposal_invoice_recurring_fee_billing_cycle', array($this, 'render_billing_cycle_ui'));
+        add_action('arsol_proposal_invoice_line_item_billing_cycle', array($this, 'render_product_billing_cycle_ui'));
+        add_action('arsol_proposal_invoice_recurring_fee_billing_cycle', array($this, 'render_fee_billing_cycle_ui'));
     }
 
     /**
@@ -32,24 +32,37 @@ class Woocommerce_Subscriptions
     }
 
     /**
+     * Render the billing cycle UI for Products
+     */
+    public function render_product_billing_cycle_ui()
+    {
+        $this->render_billing_cycle_ui('products');
+    }
+
+    /**
+     * Render the billing cycle UI for Recurring Fees
+     */
+    public function render_fee_billing_cycle_ui()
+    {
+        $this->render_billing_cycle_ui('recurring_fees');
+    }
+
+    /**
      * Render the billing cycle UI
      *
-     * @param array $data The item data.
+     * @param string $type The item type (e.g., 'products', 'recurring_fees').
      */
-    public function render_billing_cycle_ui($data = array())
+    public function render_billing_cycle_ui($type)
     {
         $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array_fill_keys(range(1, 12), null);
         $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array();
-        
-        $selected_interval = isset($data['billing_cycle_interval']) ? $data['billing_cycle_interval'] : '';
-        $selected_period = isset($data['billing_cycle_period']) ? $data['billing_cycle_period'] : '';
         ?>
-        <select class="billing_cycle_interval" name="line_item[<#= data.id #>][billing_cycle_interval]" style="width: 100px;">
+        <select class="billing_cycle_interval" name="line_items[<?php echo esc_attr($type); ?>][{{ data.id }}][billing_cycle_interval]" style="width: 100px;">
             <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
                 <option value="{{ value }}" <# if (data.billing_cycle_interval == value) { #>selected="selected"<# } #>>{{ value }}</option>
             <# }); #>
         </select>
-        <select class="billing_cycle_period" name="line_item[<#= data.id #>][billing_cycle_period]" style="width: 150px;">
+        <select class="billing_cycle_period" name="line_items[<?php echo esc_attr($type); ?>][{{ data.id }}][billing_cycle_period]" style="width: 150px;">
             <# _.each(<?php echo json_encode($periods); ?>, function(label, value) { #>
                 <option value="{{ value }}" <# if (data.billing_cycle_period == value) { #>selected="selected"<# } #>>{{ label }}</option>
             <# }); #>
