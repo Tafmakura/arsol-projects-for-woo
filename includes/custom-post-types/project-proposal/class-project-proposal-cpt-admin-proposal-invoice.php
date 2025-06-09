@@ -297,9 +297,12 @@ class Proposal_Invoice {
         } else {
             $debug_html = 'SUCCESS! Class: ' . get_class($product) . '<br>Type: ' . $product->get_type();
             
-            // TEST 1: Get regular price
             $regular_price_val = $product->get_regular_price();
             $debug_html .= '<br>Regular Price Test: ' . $regular_price_val;
+
+            // TEST 2: Get price string
+            $sub_text = $product->get_price_string();
+            $debug_html .= '<br>Price String Test: [' . $sub_text . ']';
         }
 
         // Send back ONLY the debug info.
