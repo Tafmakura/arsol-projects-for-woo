@@ -177,6 +177,17 @@
         min-width: 80px !important;
     }
     
+    /* Section footer responsive - stack on mobile */
+    #arsol_proposal_invoice_metabox .section-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    #arsol_proposal_invoice_metabox .section-footer-right {
+        text-align: center; /* Center totals on mobile */
+    }
+    
     /* Reduce all fixed columns further on mobile */
     #arsol_proposal_invoice_metabox .shipping-class-column,
     #arsol_proposal_invoice_metabox .shipping-amount-column,
@@ -396,29 +407,4 @@
 /* Ensure buttons are properly styled */
 #arsol_proposal_invoice_metabox .section-footer .add-line-item {
     margin: 0;
-}
-
-/* Recurring fees amount column - mobile size */
-#arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) {
-    width: 80px !important; /* Mobile size */
-    max-width: 80px !important;
-    min-width: 80px !important;
-}
-
-/* Section footer responsive - stack on mobile */
-#arsol_proposal_invoice_metabox .section-footer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-}
-
-#arsol_proposal_invoice_metabox .section-footer-right {
-    text-align: center; /* Center totals on mobile */
-}
-
-/* Reduce all fixed columns further on mobile */
-#arsol_proposal_invoice_metabox .shipping-class-column,
-#arsol_proposal_invoice_metabox .shipping-amount-column,
-#arsol_proposal_invoice_metabox .taxable-column {
-    width: 80px;
 }
