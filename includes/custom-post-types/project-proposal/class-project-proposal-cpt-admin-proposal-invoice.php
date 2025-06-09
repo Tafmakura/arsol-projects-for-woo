@@ -76,8 +76,8 @@ class Proposal_Invoice {
                             <th><?php _e('Qty', 'arsol-pfw'); ?></th>
                             <th><?php _e('Price', 'arsol-pfw'); ?></th>
                             <th><?php _e('Sale Price', 'arsol-pfw'); ?></th>
-                            <th class="actions-column"></th>
                             <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="actions-column"></th>
                         </tr>
                     </thead>
                     <tbody id="product-lines-body"></tbody>
@@ -94,8 +94,8 @@ class Proposal_Invoice {
                             <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
                             <th><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
-                            <th class="actions-column"></th>
                             <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="actions-column"></th>
                         </tr>
                     </thead>
                     <tbody id="onetime-fee-lines-body"></tbody>
@@ -113,8 +113,8 @@ class Proposal_Invoice {
                             <th><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
                             <th class="taxable-column"><?php _e('Taxable', 'arsol-pfw'); ?></th>
-                            <th class="actions-column"></th>
                             <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="actions-column"></th>
                         </tr>
                     </thead>
                     <tbody id="recurring-fee-lines-body"></tbody>
@@ -130,8 +130,8 @@ class Proposal_Invoice {
                         <tr>
                             <th class="shipping-method-column"><?php _e('Shipping Method/Description', 'arsol-pfw'); ?></th>
                             <th><?php _e('Cost', 'arsol-pfw'); ?></th>
-                            <th class="actions-column"></th>
                             <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="actions-column"></th>
                         </tr>
                     </thead>
                     <tbody id="shipping-lines-body"></tbody>
@@ -178,8 +178,8 @@ class Proposal_Invoice {
                 <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
                 <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
                 <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
-                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
                 <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
 
@@ -194,8 +194,8 @@ class Proposal_Invoice {
                 <td class="taxable-column">
                     <input type="checkbox" name="line_items[one_time_fees][{{ data.id }}][taxable]" <# if (data.taxable) { #>checked="checked"<# } #>>
                 </td>
-                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
                 <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
 
@@ -226,8 +226,8 @@ class Proposal_Invoice {
                 <td class="taxable-column">
                     <input type="checkbox" name="line_items[recurring_fees][{{ data.id }}][taxable]" <# if (data.taxable) { #>checked="checked"<# } #>>
                 </td>
-                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
                 <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
 
@@ -255,8 +255,8 @@ class Proposal_Invoice {
                 <td>
                     <input type="text" class="fee-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
-                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
                 <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
         <?php

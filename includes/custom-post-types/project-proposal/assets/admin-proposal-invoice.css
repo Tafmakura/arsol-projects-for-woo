@@ -63,6 +63,10 @@
     margin-top: 5px;
 }
 
+#arsol_proposal_invoice_metabox .subtotal-display {
+    text-align: right;
+}
+
 #arsol_proposal_invoice_metabox .billing-cycle-column select {
     width: 120px;
     margin-right: 5px;
