@@ -17,7 +17,8 @@
     width: 40%;
 }
 
-#arsol_proposal_invoice_metabox .fee-name-column {
+#arsol_proposal_invoice_metabox .fee-name-column,
+#arsol_proposal_invoice_metabox .shipping-method-column {
     width: 60%;
 }
 

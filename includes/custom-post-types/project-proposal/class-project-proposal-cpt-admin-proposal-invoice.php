@@ -122,6 +122,23 @@ class Proposal_Invoice {
                 <button type="button" class="button add-line-item" data-type="recurring-fee"><?php _e('+ Add Recurring Fee', 'arsol-pfw'); ?></button>
             </div>
             <hr>
+            <!-- Shipping Section -->
+            <div class="line-items-container">
+                <h3><?php _e('Shipping', 'arsol-pfw'); ?></h3>
+                <table class="widefat" id="shipping-lines-table">
+                     <thead>
+                        <tr>
+                            <th class="shipping-method-column"><?php _e('Shipping Method/Description', 'arsol-pfw'); ?></th>
+                            <th><?php _e('Cost', 'arsol-pfw'); ?></th>
+                            <th class="actions-column"></th>
+                            <th><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="shipping-lines-body"></tbody>
+                </table>
+                <button type="button" class="button add-line-item" data-type="shipping-fee"><?php _e('+ Add Shipping Fee', 'arsol-pfw'); ?></button>
+            </div>
+            <hr>
             <!-- Totals Section -->
             <div class="line-items-totals">
                 <table align="right" class="totals-table">
@@ -213,6 +230,19 @@ class Proposal_Invoice {
                 <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
             </tr>
         </script>
+
+        <script type="text/html" id="tmpl-arsol-shipping-fee-line-item">
+            <tr class="line-item shipping-fee-item" data-id="{{ data.id }}">
+                <td class="shipping-method-column">
+                    <input type="text" class="shipping-method-input" name="line_items[shipping_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. FedEx Ground', 'arsol-pfw'); ?>">
+                </td>
+                <td>
+                    <input type="text" class="fee-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
+                </td>
+                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
+                <td class="subtotal-display">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+            </tr>
+        </script>
         <?php
     }
 
@@ -246,7 +276,10 @@ class Proposal_Invoice {
 
         update_post_meta($post_id, '_arsol_proposal_line_items', $sanitized_line_items);
         update_post_meta($post_id, '_arsol_proposal_one_time_total', sanitize_text_field($_POST['line_items_one_time_total']));
-        update_post_meta($post_id, '_arsol_proposal_recurring_total', sanitize_text_field($_POST['line_items_recurring_total']));
+        
+        $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
+        $recurring_totals = json_decode($recurring_totals_json, true);
+        update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $recurring_totals);
     }
 
     public function ajax_search_products() {

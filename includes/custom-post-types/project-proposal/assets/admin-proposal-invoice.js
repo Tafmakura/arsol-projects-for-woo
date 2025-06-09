@@ -8,6 +8,7 @@
             this.product_template = wp.template('arsol-product-line-item');
             this.onetime_fee_template = wp.template('arsol-onetime-fee-line-item');
             this.recurring_fee_template = wp.template('arsol-recurring-fee-line-item');
+            this.shipping_fee_template = wp.template('arsol-shipping-fee-line-item');
             this.line_item_id = 0;
             this.bindEvents();
             this.loadExistingItems();
@@ -60,6 +61,9 @@
             if (items && items.recurring_fees) {
                 $.each(items.recurring_fees, function(id, itemData) { self.renderRow('recurring-fee', itemData); });
             }
+            if (items && items.shipping_fees) {
+                $.each(items.shipping_fees, function(id, itemData) { self.renderRow('shipping-fee', itemData); });
+            }
             console.log('Arsol Proposal Invoice: Finished loading items.');
             this.calculateTotals();
         },
@@ -79,6 +83,9 @@
             } else if (type === 'recurring-fee') {
                 template = this.recurring_fee_template;
                 container = '#recurring-fee-lines-body';
+            } else if (type === 'shipping-fee') {
+                template = this.shipping_fee_template;
+                container = '#shipping-lines-body';
             } else {
                 console.error('Arsol Proposal Invoice: Unknown row type for rendering:', type);
                 return;
@@ -151,7 +158,6 @@
                          var data = response.data;
                          $row.find('.price-input').val(data.regular_price);
                          $row.find('.sale-price-input').val(data.sale_price);
-                         $row.find('.product-sub-text').html(data.sub_text);
                          
                          $row.data('is-subscription', data.is_subscription);
                          $row.data('sign-up-fee', data.sign_up_fee || 0);
@@ -175,29 +181,29 @@
         
         calculateTotals: function() {
             console.log('Arsol Proposal Invoice: Calculating totals...');
-            var self = this;
+            var self = this; // Preserve the context of the ArsolProposalInvoice object
             var oneTimeTotal = 0;
             var recurringTotals = {}; // Use an object to group by billing cycle
             var currencySymbol = arsol_proposal_invoice_vars.currency_symbol;
-            
+
             var formatPrice = function(price) {
                 var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                 return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
             };
-            
+
             $('#product-lines-body .line-item').each(function() {
                 var $row = $(this);
                 var quantity = parseFloat($row.find('.quantity-input').val()) || 1;
                 var isSubscription = $row.data('is-subscription');
-                
+
                 var salePrice = parseFloat($row.find('.sale-price-input').val());
                 var regularPrice = parseFloat($row.find('.price-input').val()) || 0;
                 var unitPrice = !isNaN(salePrice) && salePrice > 0 ? salePrice : regularPrice;
-                
+
                 if (isSubscription) {
                     var signUpFee = parseFloat($row.data('sign-up-fee')) || 0;
                     oneTimeTotal += quantity * signUpFee;
-                    
+
                     var recurringAmount = unitPrice;
                     var interval = $row.data('billing-interval');
                     var period = $row.data('billing-period');
@@ -220,7 +226,7 @@
                     $row.find('.subtotal-display').html(formatPrice(oneTimeSubtotal));
                 }
             });
-            
+
             $('#onetime-fee-lines-body .line-item').each(function() {
                 var $row = $(this);
                 var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
@@ -246,6 +252,13 @@
                 }
             });
             
+            $('#shipping-lines-body .line-item').each(function() {
+                var $row = $(this);
+                var amount = parseFloat($row.find('.fee-amount-input').val()) || 0;
+                oneTimeTotal += amount;
+                $row.find('.subtotal-display').html(formatPrice(amount));
+            });
+
             $('#one-time-total-display').html(formatPrice(oneTimeTotal));
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
             
@@ -262,7 +275,7 @@
             } else {
                 $recurringDisplay.html(formatPrice(0));
             }
-            
+
             $('#line_items_recurring_totals').val(JSON.stringify(recurringTotals));
         }
     };
@@ -271,4 +284,4 @@
         ArsolProposalInvoice.init();
     });
 
-})(jQuery);
+})(jQuery); 
