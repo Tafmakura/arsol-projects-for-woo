@@ -37,17 +37,17 @@ class Proposal_Invoice {
             $plugin_url = \ARSOL_PROJECTS_PLUGIN_URL;
 
             wp_enqueue_style(
-                'arsol-proposal-invoice',
-                $plugin_url . 'includes/custom-post-types/project-proposal/assets/admin-proposal-invoice.css',
+                'arsol-proposal-invoice-admin',
+                $plugin_url . 'includes/custom-post-types/project-proposal/assets/admin-proposal.css',
                 array(),
-                filemtime($plugin_dir . 'includes/custom-post-types/project-proposal/assets/admin-proposal-invoice.css')
+                filemtime($plugin_dir . 'includes/custom-post-types/project-proposal/assets/admin-proposal.css')
             );
 
             wp_enqueue_script(
-                'arsol-proposal-invoice',
-                $plugin_url . 'includes/custom-post-types/project-proposal/assets/admin-proposal-invoice.js',
-                array('jquery', 'select2', 'wp-util'),
-                filemtime($plugin_dir . 'includes/custom-post-types/project-proposal/assets/admin-proposal-invoice.js'),
+                'arsol-proposal-invoice-admin',
+                $plugin_url . 'includes/custom-post-types/project-proposal/assets/admin-proposal.js',
+                array('jquery', 'wp-util', 'underscore', 'select2'),
+                filemtime($plugin_dir . 'includes/custom-post-types/project-proposal/assets/admin-proposal.js'),
                 true
             );
             
@@ -71,7 +71,7 @@ class Proposal_Invoice {
             }
 
              wp_localize_script(
-                'arsol-proposal-invoice',
+                'arsol-proposal-invoice-admin',
                 'arsol_proposal_invoice_vars',
                 array(
                     'ajax_url' => admin_url('admin-ajax.php'),

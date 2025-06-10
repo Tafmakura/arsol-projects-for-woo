@@ -1,4 +1,24 @@
+/* === ARSOL PROPOSAL ADMIN CSS === */
+/* Combined styles for Budget and Invoice sections */
+
 /* === CONSOLIDATED PROPOSAL/INVOICE CSS SYSTEM === */
+
+/* === BASE CONTAINER STYLING === */
+#arsol_proposal_invoice_metabox .line-items-container {
+    margin-bottom: 20px;
+}
+
+#arsol_proposal_invoice_metabox table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#arsol_proposal_invoice_metabox table th,
+#arsol_proposal_invoice_metabox table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
 
 /* === CONSOLIDATED TOTALS SYSTEM === */
 .arsol-totals-container,
@@ -258,7 +278,7 @@
     min-width: 150px;
     display: inline-block;
     text-align: right;
-} 
+}
 
 #arsol_proposal_invoice_metabox .product-sub-text {
     font-size: 0.9em;
@@ -466,8 +486,4 @@
     background-color: #f0f0f1;
     border-color: #0a4b78;
     color: #0a4b78;
-}
-
-#arsol_proposal_invoice_metabox .line-item-row.new-item {
-    /* ... existing code ... */
-}
+} 

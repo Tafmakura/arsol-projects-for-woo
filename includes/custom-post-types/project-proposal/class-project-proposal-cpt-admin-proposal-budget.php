@@ -218,10 +218,10 @@ class Proposal_Budget {
         if ($hook !== 'post.php' && $hook !== 'post-new.php') return;
         if (!$post || get_post_type($post) !== 'arsol-pfw-proposal') return;
 
-        // Enqueue the same CSS as the invoice for consistent styling
+        // Enqueue the consolidated CSS for consistent styling
         wp_enqueue_style(
             'arsol-proposal-budget-admin',
-            plugins_url('assets/admin-proposal-invoice.css', __FILE__),
+            plugins_url('assets/admin-proposal.css', __FILE__),
             array(),
             '1.0.0'
         );
