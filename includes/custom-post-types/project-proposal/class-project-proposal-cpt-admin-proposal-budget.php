@@ -57,7 +57,7 @@ class Proposal_Budget {
                             <th class="arsol-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="arsol-billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
-                            <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,7 +115,7 @@ class Proposal_Budget {
                             ?>
                         </select>
                             </td>
-                            <td class="subtotal-column">
+                            <td class="arsol-subtotal-column">
                                 <span class="js-total-display recurring-budget-total-display"><?php echo $recurring_budget_amount ? wc_price($recurring_budget_amount) : wc_price(0); ?></span> <span class="arsol-billing-period billing-period-display">/<?php echo $billing_period === 'month' ? 'mo' : ($billing_period === 'year' ? 'yr' : ($billing_period === 'week' ? 'wk' : ($billing_period === 'day' ? 'day' : $billing_period))); ?></span>
                             </td>
                         </tr>
