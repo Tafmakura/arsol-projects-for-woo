@@ -450,7 +450,11 @@
 }
 
 /* === CLEARFIX AND ANIMATIONS === */
-/* Removed conflicting clearfix - we now use flexbox for totals */
+.line-items-totals::after {
+    content: "";
+    clear: both;
+    display: table;
+}
 
 @keyframes arsol-spin {
     0% { transform: rotate(0deg); }
