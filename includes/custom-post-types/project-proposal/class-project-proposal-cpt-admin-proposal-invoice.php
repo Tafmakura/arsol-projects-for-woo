@@ -94,13 +94,13 @@ class Proposal_Invoice {
                 <table class="widefat" id="product-line-items">
                     <thead>
                         <tr>
-                            <th class="product-column"><?php _e('Product', 'arsol-pfw'); ?></th>
-                            <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
-                            <th><?php _e('Qty', 'arsol-pfw'); ?></th>
-                            <th><?php _e('Price', 'arsol-pfw'); ?></th>
-                            <th><?php _e('Sale Price', 'arsol-pfw'); ?></th>
-                            <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                            <th class="actions-column"></th>
+                                                    <th class="arsol-description-column"><?php _e('Product', 'arsol-pfw'); ?></th>
+                        <th class="arsol-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
+                        <th class="arsol-quantity-column"><?php _e('Qty', 'arsol-pfw'); ?></th>
+                        <th class="arsol-price-column"><?php _e('Price', 'arsol-pfw'); ?></th>
+                        <th class="arsol-sale-price-column"><?php _e('Sale Price', 'arsol-pfw'); ?></th>
+                        <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                        <th class="arsol-actions-column"></th>
                         </tr>
                     </thead>
                     <tbody id="product-lines-body"></tbody>
@@ -130,13 +130,13 @@ class Proposal_Invoice {
                 <table class="widefat" id="recurring-fee-line-items">
                     <thead>
                         <tr>
-                            <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
-                            <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
-                            <th><?php _e('Amount', 'arsol-pfw'); ?></th>
-                            <th class="billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
-                            <th class="taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
-                            <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                            <th class="actions-column"></th>
+                                                    <th class="arsol-description-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
+                        <th class="arsol-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
+                        <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
+                        <th class="arsol-billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
+                        <th class="arsol-taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
+                        <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                        <th class="arsol-actions-column"></th>
                         </tr>
                     </thead>
                     <tbody id="recurring-fee-lines-body"></tbody>
@@ -163,11 +163,11 @@ class Proposal_Invoice {
                 <table class="widefat" id="onetime-fee-line-items">
                      <thead>
                         <tr>
-                            <th class="fee-name-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
-                            <th><?php _e('Amount', 'arsol-pfw'); ?></th>
-                            <th class="taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
-                            <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                            <th class="actions-column"></th>
+                                                    <th class="arsol-description-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
+                        <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
+                        <th class="arsol-taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
+                        <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                        <th class="arsol-actions-column"></th>
                         </tr>
                     </thead>
                     <tbody id="onetime-fee-lines-body"></tbody>
@@ -194,12 +194,12 @@ class Proposal_Invoice {
                 <table class="widefat" id="shipping-lines-table">
                      <thead>
                         <tr>
-                            <th class="shipping-description-column"><?php _e('Description', 'arsol-pfw'); ?></th>
-                            <th class="shipping-class-column"><?php _e('Shipping Class', 'arsol-pfw'); ?></th>
-                            <th class="shipping-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
-                            <th class="taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
-                            <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                            <th class="actions-column"></th>
+                                                    <th class="arsol-description-column"><?php _e('Description', 'arsol-pfw'); ?></th>
+                        <th class="arsol-shipping-class-column"><?php _e('Shipping Class', 'arsol-pfw'); ?></th>
+                        <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
+                        <th class="arsol-taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
+                        <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                        <th class="arsol-actions-column"></th>
                         </tr>
                     </thead>
                     <tbody id="shipping-lines-body"></tbody>
@@ -285,9 +285,9 @@ class Proposal_Invoice {
         }
         ?>
         <script type="text/html" id="tmpl-arsol-product-line-item">
-            <tr class="line-item product-item" data-id="{{ data.id }}">
-                <td class="product-column">
-                    <select class="product-select" name="line_items[products][{{ data.id }}][product_id]" style="width:100%;">
+            <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}">
+                <td class="arsol-description-column">
+                    <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]" style="width:100%;">
                         <# if (data.product_id && data.product_name) { #>
                             <option value="{{ data.product_id }}" selected="selected">{{ data.product_name }}</option>
                         <# } else { #>
@@ -296,73 +296,73 @@ class Proposal_Invoice {
                     </select>
                     <div class="product-sub-text">{{{ data.sub_text }}}</div>
                 </td>
-                <td class="start-date-column">
-                    <input type="date" class="start-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
+                <td class="arsol-date-column">
+                    <input type="date" class="arsol-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
                 </td>
-                <td><input type="number" class="quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
-                <td><input type="text" class="price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
-                <td><input type="text" class="sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
-                <td class="subtotal-display subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
-                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
+                <td class="arsol-quantity-column"><input type="number" class="arsol-quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
+                <td class="arsol-price-column"><input type="text" class="arsol-price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
+                <td class="arsol-sale-price-column"><input type="text" class="arsol-sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
+                <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
 
         <script type="text/html" id="tmpl-arsol-onetime-fee-line-item">
-            <tr class="line-item fee-item" data-id="{{ data.id }}">
-                <td class="fee-name-column">
-                    <input type="text" class="fee-name-input" name="line_items[one_time_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Setup Fee', 'arsol-pfw'); ?>">
+            <tr class="arsol-line-item arsol-fee-item" data-id="{{ data.id }}">
+                <td class="arsol-description-column">
+                    <input type="text" class="arsol-description-input" name="line_items[one_time_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Setup Fee', 'arsol-pfw'); ?>">
                 </td>
-                <td>
-                    <input type="text" class="fee-amount-input wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
+                <td class="arsol-amount-column">
+                    <input type="text" class="arsol-amount-input wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
-                <td class="taxable-column">
+                <td class="arsol-taxable-column">
                     <select name="line_items[one_time_fees][{{ data.id }}][tax_class]">
                         <# _.each(<?php echo json_encode($tax_class_options); ?>, function(label, value) { #>
                             <option value="{{ value }}" <# if (data.tax_class == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
                 </td>
-                <td class="subtotal-display subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
-                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
+                <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
 
         <script type="text/html" id="tmpl-arsol-recurring-fee-line-item">
-             <tr class="line-item recurring-fee-item" data-id="{{ data.id }}">
-                <td class="fee-name-column">
-                    <input type="text" class="fee-name-input" name="line_items[recurring_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>">
+             <tr class="arsol-line-item arsol-recurring-fee-item" data-id="{{ data.id }}">
+                <td class="arsol-description-column">
+                    <input type="text" class="arsol-description-input" name="line_items[recurring_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>">
                 </td>
-                <td class="start-date-column">
-                    <input type="date" class="start-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
+                <td class="arsol-date-column">
+                    <input type="date" class="arsol-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
                 </td>
-                <td>
-                    <input type="text" class="fee-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
+                <td class="arsol-amount-column">
+                    <input type="text" class="arsol-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
-                <td class="billing-cycle-column">
+                <td class="arsol-billing-cycle-column">
                     <?php
                         $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(1=>1);
                         $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array('month' => 'month');
                     ?>
-                    <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="billing-interval">
+                    <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="arsol-billing-select">
                         <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
                             <option value="{{ value }}" <# if (data.interval == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
-                    <select name="line_items[recurring_fees][{{ data.id }}][period]" class="billing-period">
+                    <select name="line_items[recurring_fees][{{ data.id }}][period]" class="arsol-billing-select">
                          <# _.each(<?php echo json_encode($periods); ?>, function(label, value) { #>
                             <option value="{{ value }}" <# if (data.period == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
                 </td>
-                <td class="taxable-column">
+                <td class="arsol-taxable-column">
                     <select name="line_items[recurring_fees][{{ data.id }}][tax_class]">
                         <# _.each(<?php echo json_encode($tax_class_options); ?>, function(label, value) { #>
                             <option value="{{ value }}" <# if (data.tax_class == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
                 </td>
-                <td class="subtotal-display subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
-                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
+                <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
 
@@ -377,30 +377,30 @@ class Proposal_Invoice {
                 }
             }
             ?>
-            <tr class="line-item shipping-fee-item" data-id="{{ data.id }}">
-                <td class="shipping-description-column">
-                    <input type="text" class="shipping-description-input" name="line_items[shipping_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Express Shipping', 'arsol-pfw'); ?>">
+            <tr class="arsol-line-item arsol-shipping-fee-item" data-id="{{ data.id }}">
+                <td class="arsol-description-column">
+                    <input type="text" class="arsol-description-input" name="line_items[shipping_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Express Shipping', 'arsol-pfw'); ?>">
                 </td>
-                <td class="shipping-class-column">
-                    <select class="shipping-class-select" name="line_items[shipping_fees][{{ data.id }}][shipping_class_id]">
+                <td class="arsol-shipping-class-column">
+                    <select class="arsol-select-full" name="line_items[shipping_fees][{{ data.id }}][shipping_class_id]">
                         <option value=""><?php _e('None', 'arsol-pfw'); ?></option>
                         <# _.each(<?php echo json_encode($shipping_classes); ?>, function(name, id) { #>
                             <option value="{{ id }}" <# if (data.shipping_class_id == id) { #>selected="selected"<# } #>>{{ name }}</option>
                         <# }); #>
                     </select>
                 </td>
-                <td class="shipping-amount-column">
-                    <input type="text" class="fee-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
+                <td class="arsol-amount-column">
+                    <input type="text" class="arsol-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
-                <td class="taxable-column">
+                <td class="arsol-taxable-column">
                     <select name="line_items[shipping_fees][{{ data.id }}][tax_class]">
                         <# _.each(<?php echo json_encode($tax_class_options); ?>, function(label, value) { #>
                             <option value="{{ value }}" <# if (data.tax_class == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
                 </td>
-                <td class="subtotal-display subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
-                <td class="actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
+                <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
+                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
         <?php
