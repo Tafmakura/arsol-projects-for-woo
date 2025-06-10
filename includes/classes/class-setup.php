@@ -24,6 +24,22 @@ class Setup {
             add_action('admin_notices', array($this, 'woocommerce_notice'));
             return;
         }
+        
+        // Check if we need to flush rewrite rules
+        if (get_option('arsol_projects_flush_rewrite_rules')) {
+            flush_rewrite_rules();
+            delete_option('arsol_projects_flush_rewrite_rules');
+        }
+        
+        // Handle manual rewrite flush
+        if (isset($_GET['arsol_flush_rewrite_rules']) && current_user_can('manage_options')) {
+            flush_rewrite_rules();
+            wp_redirect(admin_url('admin.php?page=arsol-projects-settings&flushed=1'));
+            exit;
+        }
+        
+        // Add debug admin notice to help troubleshoot
+        add_action('admin_notices', array($this, 'debug_status_notice'));
     }
 
     public function load_textdomain() {
@@ -87,6 +103,55 @@ class Setup {
     public function woocommerce_notice() {
         echo '<div class="error"><p>';
         echo esc_html__('Arsol Projects for WooCommerce requires WooCommerce to be installed and active.', 'arsol-pfw');
+        echo '</p></div>';
+    }
+
+    /**
+     * Debug status notice to help troubleshoot setup issues
+     */
+    public function debug_status_notice() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        
+        $post_types = get_post_types();
+        $arsol_project_exists = in_array('arsol-project', $post_types);
+        $arsol_request_exists = in_array('arsol-pfw-request', $post_types);
+        $arsol_proposal_exists = in_array('arsol-pfw-proposal', $post_types);
+        
+        $query_vars = get_option('rewrite_rules');
+        $projects_endpoint = false;
+        if ($query_vars) {
+            foreach ($query_vars as $rule => $rewrite) {
+                if (strpos($rule, 'projects') !== false) {
+                    $projects_endpoint = true;
+                    break;
+                }
+            }
+        }
+        
+        $notice_class = 'notice-info';
+        $all_working = $arsol_project_exists && $arsol_request_exists && $arsol_proposal_exists && $projects_endpoint;
+        if (!$all_working) {
+            $notice_class = 'notice-warning';
+        }
+        
+        echo '<div class="notice ' . $notice_class . '"><p>';
+        echo '<strong>Arsol Projects Debug Status:</strong><br>';
+        echo 'Project CPT: ' . ($arsol_project_exists ? '✓ Registered' : '✗ Missing') . '<br>';
+        echo 'Request CPT: ' . ($arsol_request_exists ? '✓ Registered' : '✗ Missing') . '<br>';
+        echo 'Proposal CPT: ' . ($arsol_proposal_exists ? '✓ Registered' : '✗ Missing') . '<br>';
+        echo 'Projects Endpoint: ' . ($projects_endpoint ? '✓ Found' : '✗ Missing') . '<br>';
+        echo 'WooCommerce: ' . (class_exists('WooCommerce') ? '✓ Active' : '✗ Inactive') . '<br>';
+        
+        if (isset($_GET['flushed'])) {
+            echo '<strong style="color: green;">✓ Rewrite rules flushed successfully!</strong><br>';
+        }
+        
+        if (!$all_working) {
+            echo '<br><a href="' . admin_url('admin.php?arsol_flush_rewrite_rules=1') . '" class="button button-secondary">Flush Rewrite Rules</a>';
+        }
+        
         echo '</p></div>';
     }
 
