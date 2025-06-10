@@ -288,9 +288,8 @@
             this.calculating = true;
 
             var oneTimeTotal = 0;
-            var recurringTotals = {};
-            var productRecurringTotals = {};  // Separate tracking for products
-            var feeRecurringTotals = {};      // Separate tracking for fees
+            var productRecurringTotals = {};
+            var feeRecurringTotals = {};
             var productSubtotal = 0;
             var onetimeFeeSubtotal = 0;
             var recurringFeeSubtotal = 0;
@@ -322,7 +321,6 @@
                         if (intervalMatch) {
                             var interval = intervalMatch[1] ? parseInt(intervalMatch[1]) : 1;
                             var period = intervalMatch[2];
-                            ArsolProposalInvoice.updateRecurringTotals(recurringTotals, interval, period, subtotal);
                             ArsolProposalInvoice.updateRecurringTotals(productRecurringTotals, interval, period, subtotal);
                         }
                     }
@@ -353,7 +351,6 @@
                 
                 $(this).find('.arsol-subtotal-column').html(ArsolProposalInvoice.formatPrice(amount) + ' ' + billingText);
                 
-                ArsolProposalInvoice.updateRecurringTotals(recurringTotals, interval, period, amount);
                 ArsolProposalInvoice.updateRecurringTotals(feeRecurringTotals, interval, period, amount);
                 recurringFeeSubtotal += amount;
             });
@@ -371,7 +368,7 @@
             $('#onetime-fee-subtotal-display').html(ArsolProposalInvoice.formatPrice(onetimeFeeSubtotal));
             $('#shipping-subtotal-display').html(ArsolProposalInvoice.formatPrice(shippingSubtotal));
 
-            // Calculate separate averages for products and fees
+            // Calculate separate recurring totals for each section
             var productDailyCost = 0;
             var feeDailyCost = 0;
             var hasProductRecurring = false;
@@ -390,30 +387,45 @@
             });
 
             var constants = arsol_proposal_invoice_vars.calculation_constants;
-            var productAverageMonthlyTotal = productDailyCost * constants.days_in_month;
-            var feeAverageMonthlyTotal = feeDailyCost * constants.days_in_month;
-            var totalAverageMonthlyTotal = (productDailyCost + feeDailyCost) * constants.days_in_month;
+            var productMonthlyTotal = productDailyCost * constants.days_in_month;
+            var feeMonthlyTotal = feeDailyCost * constants.days_in_month;
+            var totalMonthlyRecurring = productMonthlyTotal + feeMonthlyTotal;
 
-            // Update separate recurring displays
+            // Update section-specific recurring displays
             if (hasProductRecurring) {
-                $('#product-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(productAverageMonthlyTotal) + ' /mo');
+                $('#product-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(productMonthlyTotal) + ' /mo');
             } else {
                 $('#product-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(0));
             }
 
             if (hasFeeRecurring) {
-                $('#recurring-fee-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(feeAverageMonthlyTotal) + ' /mo');
+                $('#recurring-fee-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(feeMonthlyTotal) + ' /mo');
             } else {
                 $('#recurring-fee-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(0));
             }
 
-            // Update main totals (combined)
+            // Update main totals with combined recurring amounts
             $('#one-time-total-display').html(ArsolProposalInvoice.formatPrice(oneTimeTotal));
-            $('#average-monthly-total-display').html(ArsolProposalInvoice.formatPrice(totalAverageMonthlyTotal) + ((hasProductRecurring || hasFeeRecurring) ? ' /yr' : ''));
+            $('#average-monthly-total-display').html(ArsolProposalInvoice.formatPrice(totalMonthlyRecurring) + ((hasProductRecurring || hasFeeRecurring) ? ' /mo' : ''));
+
+            // Combine all recurring totals for form submission
+            var allRecurringTotals = {};
+            $.each(productRecurringTotals, function(key, data) {
+                if (!allRecurringTotals[key]) {
+                    allRecurringTotals[key] = { total: 0, interval: data.interval, period: data.period };
+                }
+                allRecurringTotals[key].total += data.total;
+            });
+            $.each(feeRecurringTotals, function(key, data) {
+                if (!allRecurringTotals[key]) {
+                    allRecurringTotals[key] = { total: 0, interval: data.interval, period: data.period };
+                }
+                allRecurringTotals[key].total += data.total;
+            });
 
             // Update hidden inputs for form submission
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
-            $('#line_items_recurring_totals').val(JSON.stringify(recurringTotals));
+            $('#line_items_recurring_totals').val(JSON.stringify(allRecurringTotals));
 
             this.calculating = false;
         },
