@@ -33,9 +33,6 @@ class Woocommerce {
 
         // Add project to subscription details table (WooCommerce Subscriptions)
         add_action('woocommerce_subscription_details_after_subscription_table', array($this, 'display_project_details'));
-
-        // Initialize checkout functionality
-        new Frontend_Woocommerce_Checkout();
     }
 
     public function init() {
