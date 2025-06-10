@@ -115,7 +115,7 @@ class Proposal_Budget {
                             ?>
                         </select>
                             </td>
-                            <td class="arsol-subtotal-column">
+                            <td class="subtotal-column">
                                 <span class="js-total-display recurring-budget-total-display"><?php echo $recurring_budget_amount ? wc_price($recurring_budget_amount) : wc_price(0); ?></span> <span class="arsol-billing-period billing-period-display">/<?php echo $billing_period === 'month' ? 'mo' : ($billing_period === 'year' ? 'yr' : ($billing_period === 'week' ? 'wk' : ($billing_period === 'day' ? 'day' : $billing_period))); ?></span>
                             </td>
                         </tr>
