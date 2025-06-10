@@ -172,18 +172,19 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="onetime-fee-lines-body"></tbody>
                 </table>
-                <div class="section-footer">
-                    <div class="section-footer-left">
+                <div class="arsol-totals-container">
+                    <div class="arsol-totals-left">
                         <button type="button" class="button add-line-item" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
                     </div>
-                    <div class="section-footer-right">
-                        <div class="section-totals">
-                            <table>
-                                <tr>
-                                    <td class="total-amount"><strong><?php _e('Total:', 'arsol-pfw'); ?></strong> <span id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></span></td>
-                                </tr>
-                            </table>
-                        </div>
+                    <div class="arsol-totals-right">
+                        <table class="arsol-totals-table">
+                            <tr class="arsol-total-row">
+                                <td class="arsol-total-label"><?php _e('Total:', 'arsol-pfw'); ?></td>
+                                <td class="arsol-total-amount">
+                                    <span class="js-total-display" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></span>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -208,36 +209,49 @@ class Proposal_Invoice {
                     </thead>
                     <tbody id="shipping-lines-body"></tbody>
                 </table>
-                <div class="section-footer">
-                    <div class="section-footer-left">
+                <div class="arsol-totals-container">
+                    <div class="arsol-totals-left">
                         <button type="button" class="button add-line-item" data-type="shipping-fee"><?php _e('+ Add Shipping Fee', 'arsol-pfw'); ?></button>
                     </div>
-                    <div class="section-footer-right">
-                        <div class="section-totals">
-                            <table>
-                                <tr>
-                                    <td class="total-amount"><strong><?php _e('Total:', 'arsol-pfw'); ?></strong> <span id="shipping-subtotal-display"><?php echo wc_price(0); ?></span></td>
-                                </tr>
-                            </table>
-                        </div>
+                    <div class="arsol-totals-right">
+                        <table class="arsol-totals-table">
+                            <tr class="arsol-total-row">
+                                <td class="arsol-total-label"><?php _e('Total:', 'arsol-pfw'); ?></td>
+                                <td class="arsol-total-amount">
+                                    <span class="js-total-display" id="shipping-subtotal-display"><?php echo wc_price(0); ?></span>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                 </div>
             </div>
             <hr>
             <!-- Totals Section -->
-            <div class="line-items-totals">
-                <table align="right" class="totals-table">
-                    <tbody>
-                        <tr>
-                            <td class="total-amount"><strong><?php _e('One-Time Total:', 'arsol-pfw'); ?></strong> <span id="one-time-total-display"><?php echo wc_price(0); ?></span></td>
+            <div class="arsol-totals-container arsol-invoice-totals">
+                <div class="arsol-totals-left">
+                    <!-- Empty space for consistency -->
+                </div>
+                <div class="arsol-totals-right">
+                    <table class="arsol-totals-table">
+                        <tr class="arsol-total-row">
+                            <td class="arsol-total-label"><?php _e('One-Time Total:', 'arsol-pfw'); ?></td>
+                            <td class="arsol-total-amount">
+                                <span class="js-total-display" id="one-time-total-display"><?php echo wc_price(0); ?></span>
+                            </td>
                         </tr>
-                        <tr>
-                            <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="average-monthly-total-display"><?php echo wc_price(0); ?></span></td>
+                        <tr class="arsol-total-row">
+                            <td class="arsol-total-label"><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></td>
+                            <td class="arsol-total-amount">
+                                <span class="js-total-display" id="average-monthly-total-display"><?php echo wc_price(0); ?></span>
+                            </td>
                         </tr>
-                    </tbody>
-                </table>
-                 <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
-                 <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
+                    </table>
+                    <!-- Hidden inputs for form submission -->
+                    <div class="arsol-hidden-inputs">
+                        <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
+                        <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
+                    </div>
+                </div>
             </div>
             <hr>
             <!-- Notes Section -->

@@ -1,60 +1,244 @@
-/* CSS for Arsol Proposal Invoice Metabox */
+/* === CONSOLIDATED PROPOSAL/INVOICE CSS SYSTEM === */
 
-#arsol_proposal_invoice_metabox .line-items-container {
-    margin-bottom: 20px;
+/* === CONSOLIDATED TOTALS SYSTEM === */
+.arsol-totals-container,
+#arsol_proposal_invoice_metabox .section-footer,
+.line-items-totals {
+    margin: 15px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
 }
 
-#arsol_proposal_invoice_metabox table {
-    width: 100%;
-    table-layout: fixed; /* Enable fixed table layout for better column control */
+.arsol-totals-left,
+#arsol_proposal_invoice_metabox .section-footer-left {
+    flex: 0 0 auto;
 }
 
-#arsol_proposal_invoice_metabox table th,
-#arsol_proposal_invoice_metabox table td {
-    vertical-align: middle;
-}
-
-/* Auto-stretching first columns - Products section */
-#arsol_proposal_invoice_metabox .product-column {
-    width: auto; /* Auto-stretch to fill remaining space */
-    min-width: 200px;
-}
-
-#arsol_proposal_invoice_metabox .product-column select,
-#arsol_proposal_invoice_metabox .product-column input {
-    width: 100% !important;
-}
-
-/* Auto-stretching first columns - Fee sections */
-#arsol_proposal_invoice_metabox .fee-name-column {
-    width: auto; /* Auto-stretch to fill remaining space */
-    min-width: 200px;
-}
-
-#arsol_proposal_invoice_metabox .fee-name-column input {
-    width: 100%;
-}
-
-/* Fixed widths for common columns across all sections */
-#arsol_proposal_invoice_metabox .taxable-column {
-    width: 120px;
-    text-align: center;
-}
-
-#arsol_proposal_invoice_metabox .taxable-column select {
-    width: 100%;
-}
-
-#arsol_proposal_invoice_metabox .subtotal-column {
-    width: 100px;
+.arsol-totals-right,
+#arsol_proposal_invoice_metabox .section-footer-right {
+    flex: 0 0 auto;
     text-align: right;
 }
 
+.arsol-totals-table,
+#arsol_proposal_invoice_metabox .section-footer .section-totals table,
+.totals-table {
+    margin: 0;
+    width: auto;
+    border-collapse: collapse;
+}
+
+.arsol-total-row td,
+#arsol_proposal_invoice_metabox .section-footer .section-totals table td,
+.totals-table .total-amount {
+    padding: 5px 10px;
+    vertical-align: middle;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.arsol-total-label,
+#arsol_proposal_invoice_metabox .section-footer .section-totals table td:first-child {
+    font-weight: bold;
+    padding-right: 15px;
+    text-align: right;
+}
+
+.arsol-total-amount,
+.section-totals .total-amount {
+    text-align: right;
+}
+
+/* === CONSOLIDATED COLUMN SYSTEM === */
+.arsol-description-column,
+#arsol_proposal_invoice_metabox .product-column,
+#arsol_proposal_invoice_metabox .fee-name-column,
+#arsol_proposal_invoice_metabox .shipping-description-column,
+#arsol_proposal_invoice_metabox table .recurring-fee-item .fee-name-column,
+#budget-line-items .budget-description-details-column {
+    width: auto !important;
+    min-width: 200px !important;
+}
+
+.arsol-amount-column,
+#arsol_proposal_invoice_metabox .shipping-amount-column,
+#budget-line-items .amount-column,
+#arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3),
+#arsol_proposal_invoice_metabox #onetime-fee-line-items th:nth-child(2),
+#arsol_proposal_invoice_metabox #onetime-fee-line-items td:nth-child(2) {
+    width: 120px !important;
+    max-width: 120px !important;
+    min-width: 120px !important;
+}
+
+.arsol-subtotal-column,
+#arsol_proposal_invoice_metabox .subtotal-column,
+#budget-line-items .subtotal-column {
+    width: 120px !important;
+    max-width: 120px !important;
+    min-width: 120px !important;
+    text-align: right;
+}
+
+.arsol-date-column,
+#arsol_proposal_invoice_metabox .start-date-column,
+#budget-line-items .start-date-column {
+    width: 130px !important;
+    max-width: 130px !important;
+    min-width: 130px !important;
+}
+
+.arsol-billing-cycle-column,
+#arsol_proposal_invoice_metabox .billing-cycle-column,
+#budget-line-items .billing-cycle-column {
+    width: 180px !important;
+    max-width: 180px !important;
+    min-width: 180px !important;
+    white-space: nowrap;
+}
+
+.arsol-shipping-class-column,
+#arsol_proposal_invoice_metabox .shipping-class-column {
+    width: 150px;
+}
+
+.arsol-taxable-column,
+#arsol_proposal_invoice_metabox .taxable-column {
+    width: 120px;
+}
+
+.arsol-actions-column,
 #arsol_proposal_invoice_metabox .actions-column {
     width: 50px;
     text-align: center;
 }
 
+/* === CONSOLIDATED INPUT SYSTEM === */
+.arsol-amount-input,
+#arsol_proposal_invoice_metabox .fee-amount-input,
+#arsol_proposal_invoice_metabox .shipping-amount-column input,
+#arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) input,
+#budget-line-items .amount-column input,
+#arsol_proposal_invoice_metabox #product-line-items input[type="number"],
+#arsol_proposal_invoice_metabox #product-line-items input.wc_input_price {
+    width: 100%;
+    text-align: right;
+}
+
+.arsol-description-input,
+#arsol_proposal_invoice_metabox .product-column select,
+#arsol_proposal_invoice_metabox .fee-name-column input,
+#arsol_proposal_invoice_metabox .shipping-description-column input,
+#arsol_proposal_invoice_metabox table .recurring-fee-item .fee-name-column input,
+#budget-line-items .description-details-container .details-input {
+    width: 100% !important;
+    flex: 1;
+    min-width: 150px !important;
+}
+
+.arsol-date-input,
+#arsol_proposal_invoice_metabox .start-date-column input {
+    width: 100%;
+}
+
+.arsol-billing-select,
+#arsol_proposal_invoice_metabox .billing-cycle-column select {
+    display: inline-block;
+    width: 85px;
+    margin-right: 5px;
+    vertical-align: top;
+}
+
+.arsol-billing-select:last-child,
+#arsol_proposal_invoice_metabox .billing-cycle-column select:last-child {
+    margin-right: 0;
+}
+
+.arsol-select-full,
+#arsol_proposal_invoice_metabox .taxable-column select,
+#arsol_proposal_invoice_metabox .shipping-class-column select {
+    width: 100%;
+}
+
+/* === LAYOUT HELPERS === */
+.arsol-flex-container,
+#budget-line-items .description-details-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.arsol-flex-fixed,
+#budget-line-items .description-details-container .budget-description {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.arsol-flex-stretch,
+#budget-line-items .description-details-container .details-input {
+    flex: 1;
+}
+
+.arsol-not-applicable,
+#budget-line-items .not-applicable {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+}
+
+/* === SECONDARY CLASSES === */
+.arsol-budget-description {
+    font-weight: 600;
+}
+
+.arsol-billing-period,
+#budget-line-items .billing-period-display {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.arsol-line-item,
+#budget-line-items .budget-item td {
+    vertical-align: middle;
+    padding: 12px 8px;
+}
+
+.arsol-budget-item strong,
+#budget-line-items .budget-item strong {
+    font-weight: 600;
+}
+
+.arsol-hidden-inputs {
+    display: none;
+}
+
+/* === STATE CLASSES === */
+.arsol-loading,
+#arsol_proposal_invoice_metabox .line-item.arsol-loading {
+    opacity: 0.6;
+    pointer-events: none;
+    position: relative;
+}
+
+.arsol-loading::after,
+#arsol_proposal_invoice_metabox .line-item.arsol-loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #0073aa;
+    border-radius: 50%;
+    animation: arsol-spin 1s linear infinite;
+}
+
+/* === LEGACY SUPPORT === */
 #arsol_proposal_invoice_metabox .remove-line-item {
     color: #a00;
     text-decoration: none;
@@ -68,17 +252,13 @@
     margin-top: 10px;
 }
 
-#arsol_proposal_invoice_metabox .line-items-totals {
-    text-align: right;
-}
-
 #arsol_proposal_invoice_metabox .grand-total-amount {
     font-size: 1.2em;
     font-weight: bold;
     min-width: 150px;
     display: inline-block;
     text-align: right;
-} 
+}
 
 #arsol_proposal_invoice_metabox .product-sub-text {
     font-size: 0.9em;
@@ -86,149 +266,194 @@
     margin-top: 5px;
 }
 
-#arsol_proposal_invoice_metabox .totals-section {
-    overflow: auto; /* Clearfix */
+#arsol_proposal_invoice_metabox .section-footer .add-line-item {
+    margin: 0;
 }
 
-#arsol_proposal_invoice_metabox .billing-cycle-column select {
-    width: 120px;
-    margin-right: 5px;
+.section-totals table {
+    width: 100%;
 }
 
-/* Billing cycle - side by side layout with optimized spacing */
-#arsol_proposal_invoice_metabox .billing-cycle-column {
-    white-space: nowrap;
-    width: 200px; /* Reduced from 250px to eliminate gap */
-}
-
-#arsol_proposal_invoice_metabox .billing-cycle-column select {
+/* Budget total displays - ensure right alignment */
+#budget-line-items .budget-total-display,
+#budget-line-items .recurring-budget-total-display {
     display: inline-block;
-    width: 100px; /* Reduced from 110px for better fit */
-    margin-right: 5px;
-    vertical-align: top;
+    text-align: right;
 }
 
-#arsol_proposal_invoice_metabox .billing-cycle-column select:last-child {
-    margin-right: 0;
+/* Recurring budget specific - for JavaScript targeting */
+.recurring-budget-row .start-date-input,
+.recurring-budget-row .arsol-date-input {
+    transition: opacity 0.3s ease;
 }
 
-/* Responsive design for smaller screens */
+.recurring-budget-row .start-date-input:not([value]):not([placeholder]),
+.recurring-budget-row .arsol-date-input:not([value]):not([placeholder]) {
+    opacity: 0.5;
+}
+
+/* Legacy details column styling - keeping for backward compatibility */
+.details-column {
+    width: auto !important;
+    min-width: 150px;
+}
+
+.details-column input {
+    width: 100%;
+    min-width: 150px;
+}
+
+.widefat th.details-column,
+.widefat td.details-column {
+    width: auto;
+    min-width: 150px;
+}
+
+.widefat th.budget-description-column,
+.widefat td.budget-description-column {
+    min-width: 150px;
+}
+
+/* === RESPONSIVE SYSTEM === */
 @media screen and (max-width: 1200px) {
-    #arsol_proposal_invoice_metabox .billing-cycle-column {
-        width: 180px; /* Proportionally reduced */
+    .arsol-billing-cycle-column,
+    #arsol_proposal_invoice_metabox .billing-cycle-column,
+    #budget-line-items .billing-cycle-column {
+        width: 160px !important;
     }
     
+    .arsol-billing-select,
     #arsol_proposal_invoice_metabox .billing-cycle-column select {
-        width: 85px; /* Slightly smaller for medium screens */
+        width: 75px;
     }
     
-    /* Reduce fixed column widths on medium screens */
+    .arsol-amount-column,
+    .arsol-subtotal-column,
+    #arsol_proposal_invoice_metabox .shipping-amount-column,
+    #arsol_proposal_invoice_metabox .subtotal-column,
+    #arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3),
+    #budget-line-items .amount-column,
+    #budget-line-items .subtotal-column {
+        width: 100px !important;
+        max-width: 100px !important;
+        min-width: 100px !important;
+    }
+    
+    .arsol-shipping-class-column,
     #arsol_proposal_invoice_metabox .shipping-class-column {
         width: 130px;
     }
     
-    #arsol_proposal_invoice_metabox .shipping-amount-column,
+    .arsol-taxable-column,
     #arsol_proposal_invoice_metabox .taxable-column {
         width: 100px;
-    }
-    
-    /* Keep recurring fees amount column consistent */
-    #arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) {
-        width: 100px !important; /* Slightly smaller on medium screens */
-        max-width: 100px !important;
-        min-width: 100px !important;
     }
     
     #arsol_proposal_invoice_metabox #product-line-items th:nth-child(4),
     #arsol_proposal_invoice_metabox #product-line-items td:nth-child(4),
     #arsol_proposal_invoice_metabox #product-line-items th:nth-child(5),
     #arsol_proposal_invoice_metabox #product-line-items td:nth-child(5) {
-        width: 90px; /* Smaller price columns */
+        width: 90px;
     }
 }
 
 @media screen and (max-width: 900px) {
-    #arsol_proposal_invoice_metabox .billing-cycle-column {
-        white-space: normal;
-        width: 160px; /* Further reduced for mobile */
-    }
-    
-    #arsol_proposal_invoice_metabox .billing-cycle-column select {
-        width: 75px; /* Smaller selects for mobile */
-        margin-bottom: 2px;
-    }
-    
-    /* Allow first columns to maintain minimum widths on small screens */
-    #arsol_proposal_invoice_metabox .product-column,
-    #arsol_proposal_invoice_metabox .fee-name-column,
-    #arsol_proposal_invoice_metabox .shipping-description-column {
-        min-width: 150px; /* Smaller minimum on mobile */
-    }
-    
-    /* Recurring fees fee name column - smaller minimum on mobile */
-    #arsol_proposal_invoice_metabox table .recurring-fee-item .fee-name-column {
-        min-width: 120px !important; /* Even smaller minimum for more stretch */
-    }
-    
-    /* Recurring fees amount column - mobile size */
-    #arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) {
-        width: 100px !important; /* Slightly larger for mobile readability */
-        max-width: 100px !important;
-        min-width: 100px !important;
-    }
-    
-    /* Section footer responsive - stack on mobile */
+    .arsol-totals-container,
     #arsol_proposal_invoice_metabox .section-footer {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
     }
     
+    .arsol-totals-right,
     #arsol_proposal_invoice_metabox .section-footer-right {
-        text-align: center; /* Center totals on mobile */
+        text-align: center;
     }
     
-    /* Reduce all fixed columns further on mobile */
-    #arsol_proposal_invoice_metabox .shipping-class-column,
+    .arsol-flex-container,
+    #budget-line-items .description-details-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .arsol-flex-fixed,
+    #budget-line-items .description-details-container .budget-description {
+        white-space: normal;
+    }
+    
+    .arsol-description-column,
+    #arsol_proposal_invoice_metabox .product-column,
+    #arsol_proposal_invoice_metabox .fee-name-column,
+    #arsol_proposal_invoice_metabox .shipping-description-column,
+    #arsol_proposal_invoice_metabox table .recurring-fee-item .fee-name-column {
+        min-width: 150px;
+    }
+    
+    .arsol-amount-column,
+    .arsol-subtotal-column,
     #arsol_proposal_invoice_metabox .shipping-amount-column,
+    #arsol_proposal_invoice_metabox .subtotal-column,
+    #arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3),
+    #budget-line-items .amount-column,
+    #budget-line-items .subtotal-column {
+        width: 80px !important;
+        max-width: 80px !important;
+        min-width: 80px !important;
+    }
+    
+    .arsol-date-column,
+    #arsol_proposal_invoice_metabox .start-date-column,
+    #budget-line-items .start-date-column {
+        width: 100px !important;
+        max-width: 100px !important;
+        min-width: 100px !important;
+    }
+    
+    .arsol-billing-cycle-column,
+    #arsol_proposal_invoice_metabox .billing-cycle-column,
+    #budget-line-items .billing-cycle-column {
+        width: 140px !important;
+        white-space: normal;
+    }
+    
+    .arsol-billing-select,
+    #arsol_proposal_invoice_metabox .billing-cycle-column select {
+        width: 65px;
+        margin-bottom: 2px;
+    }
+    
+    .arsol-shipping-class-column,
+    .arsol-taxable-column,
+    #arsol_proposal_invoice_metabox .shipping-class-column,
     #arsol_proposal_invoice_metabox .taxable-column {
         width: 80px;
     }
     
-    #arsol_proposal_invoice_metabox .subtotal-column {
-        width: 70px;
-    }
-    
+    .arsol-actions-column,
     #arsol_proposal_invoice_metabox .actions-column {
         width: 40px;
     }
 }
 
+/* === PRODUCT SECTION SPECIFIC === */
+#arsol_proposal_invoice_metabox #product-line-items th:nth-child(3),
+#arsol_proposal_invoice_metabox #product-line-items td:nth-child(3) {
+    width: 80px; /* Quantity */
+}
+
+#arsol_proposal_invoice_metabox #product-line-items th:nth-child(4),
+#arsol_proposal_invoice_metabox #product-line-items td:nth-child(4),
+#arsol_proposal_invoice_metabox #product-line-items th:nth-child(5),
+#arsol_proposal_invoice_metabox #product-line-items td:nth-child(5) {
+    width: 100px; /* Price columns */
+}
+
+/* === CLEARFIX AND ANIMATIONS === */
 .line-items-totals::after {
     content: "";
     clear: both;
     display: table;
-}
-
-/* Loading state for product rows */
-#arsol_proposal_invoice_metabox .line-item.arsol-loading {
-    opacity: 0.6;
-    pointer-events: none;
-    position: relative;
-}
-
-#arsol_proposal_invoice_metabox .line-item.arsol-loading::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    margin: -10px 0 0 -10px;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #0073aa;
-    border-radius: 50%;
-    animation: arsol-spin 1s linear infinite;
 }
 
 @keyframes arsol-spin {
@@ -245,307 +470,4 @@
 
 #arsol_proposal_invoice_metabox .line-item-row.new-item {
     /* ... existing code ... */
-}
-
-/* Shipping section - WooCommerce patterns with auto-stretch */
-#arsol_proposal_invoice_metabox .shipping-description-column {
-    width: auto; /* Auto-stretch to fill remaining space */
-    min-width: 200px;
-}
-
-#arsol_proposal_invoice_metabox .shipping-description-column input {
-    width: 100%;
-}
-
-#arsol_proposal_invoice_metabox .shipping-class-column {
-    width: 150px; /* Fixed width */
-}
-
-#arsol_proposal_invoice_metabox .shipping-class-column select {
-    width: 100%;
-}
-
-#arsol_proposal_invoice_metabox .shipping-amount-column {
-    width: 120px; /* Fixed width */
-}
-
-#arsol_proposal_invoice_metabox .shipping-amount-column input {
-    width: 100%;
-    text-align: right;
-}
-
-/* Additional fixed widths for product section columns */
-#arsol_proposal_invoice_metabox .start-date-column {
-    width: 130px;
-}
-
-#arsol_proposal_invoice_metabox .start-date-column input {
-    width: 100%;
-}
-
-/* Quantity, Price columns in products */
-#arsol_proposal_invoice_metabox #product-line-items th:nth-child(3),
-#arsol_proposal_invoice_metabox #product-line-items td:nth-child(3) {
-    width: 80px; /* Quantity */
-}
-
-#arsol_proposal_invoice_metabox #product-line-items th:nth-child(4),
-#arsol_proposal_invoice_metabox #product-line-items td:nth-child(4),
-#arsol_proposal_invoice_metabox #product-line-items th:nth-child(5),
-#arsol_proposal_invoice_metabox #product-line-items td:nth-child(5) {
-    width: 100px; /* Price columns */
-}
-
-#arsol_proposal_invoice_metabox #product-line-items input[type="number"],
-#arsol_proposal_invoice_metabox #product-line-items input.wc_input_price {
-    width: 100%;
-    text-align: right;
-}
-
-/* Amount columns in fee sections */
-#arsol_proposal_invoice_metabox #onetime-fee-line-items th:nth-child(2),
-#arsol_proposal_invoice_metabox #onetime-fee-line-items td:nth-child(2) {
-    width: 120px; /* Amount */
-}
-
-#arsol_proposal_invoice_metabox .fee-amount-input {
-    width: 100%;
-    text-align: right;
-}
-
-/* Recurring fees section - specific column widths with higher specificity */
-#arsol_proposal_invoice_metabox table .recurring-fee-item .fee-name-column {
-    width: auto !important; /* Auto-stretch to fill remaining space */
-    min-width: 150px !important; /* Reduced minimum for more stretch */
-}
-
-#arsol_proposal_invoice_metabox table .recurring-fee-item .fee-name-column input {
-    width: 100% !important;
-}
-
-/* Amount column in recurring fees (3rd column) - fixed width like other sections */
-#arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) {
-    width: 120px !important; /* Fixed width same as other amount columns */
-    max-width: 120px !important;
-    min-width: 120px !important;
-}
-
-#arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) input {
-    width: 100% !important;
-    text-align: right !important;
-}
-
-/* All fee amount inputs styling */
-#arsol_proposal_invoice_metabox .fee-amount-input {
-    width: 100%;
-    text-align: right;
-}
-
-/* Responsive design for shipping columns */
-@media screen and (max-width: 1200px) {
-    #arsol_proposal_invoice_metabox .shipping-description-column {
-        width: 30%;
-    }
-    
-    #arsol_proposal_invoice_metabox .shipping-class-column {
-        width: 25%;
-    }
-    
-    #arsol_proposal_invoice_metabox .shipping-amount-column {
-        width: 20%;
-    }
-}
-
-@media screen and (max-width: 900px) {
-    #arsol_proposal_invoice_metabox .shipping-description-column,
-    #arsol_proposal_invoice_metabox .shipping-class-column,
-    #arsol_proposal_invoice_metabox .shipping-amount-column {
-        width: auto;
-        min-width: 120px;
-    }
-}
-
-/* Section footer flex layout - button left, totals right */
-#arsol_proposal_invoice_metabox .section-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-top: 15px;
-    gap: 20px;
-}
-
-#arsol_proposal_invoice_metabox .section-footer-left {
-    flex: 0 0 auto; /* Don't grow, don't shrink */
-}
-
-#arsol_proposal_invoice_metabox .section-footer-right {
-    flex: 0 0 auto; /* Don't grow, don't shrink */
-    text-align: right;
-}
-
-#arsol_proposal_invoice_metabox .section-footer .section-totals {
-    margin: 0; /* Remove any existing margins */
-}
-
-#arsol_proposal_invoice_metabox .section-footer .section-totals table {
-    margin: 0;
-    width: auto;
-    border-collapse: collapse;
-}
-
-#arsol_proposal_invoice_metabox .section-footer .section-totals table td {
-    padding: 5px 10px;
-    vertical-align: middle;
-    text-align: right;
-}
-
-#arsol_proposal_invoice_metabox .section-footer .section-totals table td:first-child {
-    text-align: right;
-    padding-right: 15px;
-}
-
-/* Ensure buttons are properly styled */
-#arsol_proposal_invoice_metabox .section-footer .add-line-item {
-    margin: 0;
-}
-
-/* Section totals styling */
-.section-totals table {
-    width: 100%;
-}
-
-.section-totals .total-amount {
-    text-align: right;
-    padding: 8px 0;
-    white-space: nowrap;
-}
-
-/* Grand totals styling */
-.line-items-totals {
-    margin: 20px 0;
-}
-
-.totals-table {
-    border-collapse: collapse;
-}
-
-.totals-table .total-amount {
-    text-align: right;
-    padding: 3px 0;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-
-/* Budget-specific styling */
-#budget-line-items .budget-description-details-column {
-    width: auto !important; /* Auto-stretch to fill remaining space like shipping */
-    min-width: 300px !important;
-}
-
-#budget-line-items .description-details-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-#budget-line-items .description-details-container .budget-description {
-    flex: 0 0 auto;
-    white-space: nowrap;
-    font-weight: 600;
-}
-
-#budget-line-items .description-details-container .details-input {
-    flex: 1;
-    min-width: 150px;
-}
-
-#budget-line-items .start-date-column {
-    width: 130px !important; /* Fixed width like other sections */
-    max-width: 130px !important;
-    min-width: 130px !important;
-}
-
-#budget-line-items .amount-column {
-    width: 120px !important; /* Fixed width like other sections */
-    max-width: 120px !important;
-    min-width: 120px !important;
-}
-
-#budget-line-items .amount-column input {
-    width: 100%;
-}
-
-#budget-line-items .billing-cycle-column {
-    width: 180px !important; /* Fixed width for billing cycle selects */
-    max-width: 180px !important;
-    min-width: 180px !important;
-}
-
-#budget-line-items .subtotal-column {
-    width: 120px !important; /* Fixed width like other sections */
-    max-width: 120px !important;
-    min-width: 120px !important;
-}
-
-#budget-line-items .not-applicable {
-    color: #666;
-    font-style: italic;
-    text-align: center;
-}
-
-#budget-line-items .budget-item td {
-    vertical-align: middle;
-    padding: 12px 8px;
-}
-
-#budget-line-items .budget-item strong {
-    font-weight: 600;
-}
-
-/* Hide start date input when recurring amount is zero */
-.recurring-budget-row .start-date-input {
-    transition: opacity 0.3s ease;
-}
-
-.recurring-budget-row .start-date-input:not([value]):not([placeholder]) {
-    opacity: 0.5;
-}
-
-/* Legacy details column styling - keeping for backward compatibility */
-.details-column {
-    width: auto !important;
-    min-width: 150px;
-}
-
-.details-column input {
-    width: 100%;
-    min-width: 150px;
-}
-
-/* Ensure proper column layout with details column */
-.widefat th.details-column,
-.widefat td.details-column {
-    width: auto;
-    min-width: 150px;
-}
-
-/* Adjust other columns to be more compact when details column is present */
-.widefat th.budget-description-column,
-.widefat td.budget-description-column {
-    min-width: 150px;
-}
-
-/* Responsive adjustments for the combined column */
-@media screen and (max-width: 900px) {
-    #budget-line-items .description-details-container {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-    }
-    
-    #budget-line-items .description-details-container .budget-description {
-        flex: none;
-        white-space: normal;
-    }
 }
