@@ -172,9 +172,9 @@
     
     /* Recurring fees amount column - mobile size */
     #arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) {
-        width: 80px !important; /* Mobile size */
-        max-width: 80px !important;
-        min-width: 80px !important;
+        width: 100px !important; /* Slightly larger for mobile readability */
+        max-width: 100px !important;
+        min-width: 100px !important;
     }
     
     /* Section footer responsive - stack on mobile */
@@ -323,9 +323,9 @@
     width: 100% !important;
 }
 
-/* Amount column in recurring fees (3rd column) - force consistent width */
+/* Amount column in recurring fees (3rd column) - fixed width like other sections */
 #arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3) {
-    width: 120px !important; /* Force same as other amount columns */
+    width: 120px !important; /* Fixed width same as other amount columns */
     max-width: 120px !important;
     min-width: 120px !important;
 }

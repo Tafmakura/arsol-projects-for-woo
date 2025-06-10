@@ -21,7 +21,7 @@ class Proposal_Invoice {
     public function add_invoice_meta_box() {
         add_meta_box(
             'arsol_proposal_invoice_metabox',
-            __('Proposal Line Items', 'arsol-pfw'),
+            __('Invoice Line Items', 'arsol-pfw'),
             array($this, 'render_invoice_meta_box'),
             'arsol-pfw-proposal',
             'normal',
