@@ -50,7 +50,6 @@ class Proposal_Budget {
         <div id="proposal_budget_builder">
             <!-- Budget Estimates Section -->
             <div class="line-items-container">
-                <h3><?php _e('Budget Estimates', 'arsol-pfw'); ?></h3>
                 <table class="widefat" id="budget-line-items">
                     <thead>
                         <tr>
