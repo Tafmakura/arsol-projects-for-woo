@@ -13,13 +13,6 @@
     border-collapse: collapse;
 }
 
-#arsol_proposal_invoice_metabox table th,
-#arsol_proposal_invoice_metabox table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
 /* === CONSOLIDATED TOTALS SYSTEM === */
 .arsol-totals-container,
 #arsol_proposal_invoice_metabox .section-footer,
@@ -82,9 +75,13 @@
     min-width: 200px !important;
 }
 
+/* Amount and Subtotal Columns - 120px width */
 .arsol-amount-column,
+.arsol-subtotal-column,
 #arsol_proposal_invoice_metabox .shipping-amount-column,
+#arsol_proposal_invoice_metabox .subtotal-column,
 #budget-line-items .amount-column,
+#budget-line-items .subtotal-column,
 #arsol_proposal_invoice_metabox table .recurring-fee-item td:nth-child(3),
 #arsol_proposal_invoice_metabox #onetime-fee-line-items th:nth-child(2),
 #arsol_proposal_invoice_metabox #onetime-fee-line-items td:nth-child(2) {
@@ -93,15 +90,30 @@
     min-width: 120px !important;
 }
 
+/* Right-align amount and subtotal columns (data and headers) */
+.arsol-amount-column,
 .arsol-subtotal-column,
+.arsol-amount-column th,
+.arsol-subtotal-column th,
+#arsol_proposal_invoice_metabox .shipping-amount-column,
 #arsol_proposal_invoice_metabox .subtotal-column,
-#budget-line-items .subtotal-column {
-    width: 120px !important;
-    max-width: 120px !important;
-    min-width: 120px !important;
+#arsol_proposal_invoice_metabox .shipping-amount-column th,
+#arsol_proposal_invoice_metabox .subtotal-column th,
+#budget-line-items .amount-column,
+#budget-line-items .subtotal-column,
+#budget-line-items .amount-column th,
+#budget-line-items .subtotal-column th,
+#arsol_proposal_invoice_metabox table th.shipping-amount-column,
+#arsol_proposal_invoice_metabox table th.subtotal-column,
+#budget-line-items table th.amount-column,
+#budget-line-items table th.subtotal-column,
+.widefat th.shipping-amount-column,
+.widefat th.amount-column,
+.widefat th.subtotal-column {
     text-align: right;
 }
 
+/* Date Column - 130px width */
 .arsol-date-column,
 #arsol_proposal_invoice_metabox .start-date-column,
 #budget-line-items .start-date-column {
@@ -110,6 +122,7 @@
     min-width: 130px !important;
 }
 
+/* Billing Cycle Column - 180px width */
 .arsol-billing-cycle-column,
 #arsol_proposal_invoice_metabox .billing-cycle-column,
 #budget-line-items .billing-cycle-column {
@@ -119,6 +132,7 @@
     white-space: nowrap;
 }
 
+/* Other Fixed Width Columns */
 .arsol-shipping-class-column,
 #arsol_proposal_invoice_metabox .shipping-class-column {
     width: 150px;
