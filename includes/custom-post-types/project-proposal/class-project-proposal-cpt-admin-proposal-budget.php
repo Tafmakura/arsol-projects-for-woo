@@ -54,8 +54,7 @@ class Proposal_Budget {
                 <table class="widefat" id="budget-line-items">
                     <thead>
                         <tr>
-                            <th class="budget-description-column"><?php _e('Description', 'arsol-pfw'); ?></th>
-                            <th class="details-column"><?php _e('Details', 'arsol-pfw'); ?></th>
+                            <th class="budget-description-details-column"><?php _e('Description', 'arsol-pfw'); ?></th>
                             <th class="start-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th class="amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
