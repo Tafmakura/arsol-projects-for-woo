@@ -144,6 +144,7 @@ class Proposal_Budget {
         <!-- Notes Section -->
         <div class="line-items-container">
             <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
+            <p class="description"><?php _e('These notes will be displayed to the customer on the project proposal.', 'arsol-pfw'); ?></p>
             <?php
             $notes_content = get_post_meta($post->ID, '_arsol_proposal_notes', true);
             wp_editor(
@@ -160,7 +161,6 @@ class Proposal_Budget {
                 )
             );
             ?>
-             <p class="description"><?php _e('These notes will be displayed on the frontend proposal view.', 'arsol-pfw'); ?></p>
         </div>
         </div>
         
