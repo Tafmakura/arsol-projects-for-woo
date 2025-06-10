@@ -57,7 +57,7 @@ class Proposal_Budget {
                             <th class="arsol-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                             <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
                             <th class="arsol-billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
-                            <th class="subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
+                            <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
