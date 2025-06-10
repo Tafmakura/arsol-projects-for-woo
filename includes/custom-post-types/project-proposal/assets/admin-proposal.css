@@ -4,18 +4,18 @@
 /* === CONSOLIDATED PROPOSAL/INVOICE CSS SYSTEM === */
 
 /* === BASE CONTAINER STYLING === */
-#arsol_proposal_invoice_metabox .line-items-container {
+.line-items-container {
     margin-bottom: 20px;
 }
 
-#arsol_proposal_invoice_metabox table {
+.arsol-proposal-table {
     width: 100%;
     border-collapse: collapse;
 }
 
 /* === CONSOLIDATED TOTALS SYSTEM === */
 .arsol-totals-container,
-#arsol_proposal_invoice_metabox .section-footer,
+.section-footer,
 .line-items-totals {
     margin: 15px 0;
     display: flex;
@@ -25,18 +25,18 @@
 }
 
 .arsol-totals-left,
-#arsol_proposal_invoice_metabox .section-footer-left {
+.section-footer-left {
     flex: 0 0 auto;
 }
 
 .arsol-totals-right,
-#arsol_proposal_invoice_metabox .section-footer-right {
+.section-footer-right {
     flex: 0 0 auto;
     text-align: right;
 }
 
 .arsol-totals-table,
-#arsol_proposal_invoice_metabox .section-footer .section-totals table,
+.section-totals table,
 .totals-table {
     margin: 0;
     width: auto;
@@ -44,7 +44,7 @@
 }
 
 .arsol-total-row td,
-#arsol_proposal_invoice_metabox .section-footer .section-totals table td,
+.section-totals table td,
 .totals-table .total-amount {
     padding: 5px 10px;
     vertical-align: middle;
@@ -53,7 +53,7 @@
 }
 
 .arsol-total-label,
-#arsol_proposal_invoice_metabox .section-footer .section-totals table td:first-child {
+.section-totals table td:first-child {
     font-weight: bold;
     padding-right: 15px;
     text-align: right;
@@ -219,15 +219,13 @@
 }
 
 /* === STATE CLASSES === */
-.arsol-loading,
-#arsol_proposal_invoice_metabox .line-item.arsol-loading {
+.arsol-loading {
     opacity: 0.6;
     pointer-events: none;
     position: relative;
 }
 
-.arsol-loading::after,
-#arsol_proposal_invoice_metabox .line-item.arsol-loading::after {
+.arsol-loading::after {
     content: "";
     position: absolute;
     top: 50%;
@@ -241,8 +239,8 @@
     animation: arsol-spin 1s linear infinite;
 }
 
-/* === LEGACY SUPPORT === */
-#arsol_proposal_invoice_metabox .remove-line-item {
+/* === SHARED UI ELEMENTS === */
+.remove-line-item {
     color: #a00;
     text-decoration: none;
     font-weight: bold;
@@ -251,11 +249,11 @@
     height: auto !important;
 }
 
-#arsol_proposal_invoice_metabox .add-line-item {
+.add-line-item {
     margin-top: 10px;
 }
 
-#arsol_proposal_invoice_metabox .grand-total-amount {
+.grand-total-amount {
     font-size: 1.2em;
     font-weight: bold;
     min-width: 150px;
@@ -263,14 +261,19 @@
     text-align: right;
 }
 
-#arsol_proposal_invoice_metabox .product-sub-text {
+.product-sub-text {
     font-size: 0.9em;
     color: #666;
     margin-top: 5px;
 }
 
-#arsol_proposal_invoice_metabox .section-footer .add-line-item {
+.section-footer .add-line-item {
     margin: 0;
+}
+
+.add-line-item:hover {
+    background-color: #0073aa;
+    color: white;
 }
 
 .section-totals table {
@@ -352,25 +355,33 @@
 
 @media screen and (max-width: 900px) {
     .arsol-totals-container,
-    #arsol_proposal_invoice_metabox .section-footer {
+    .section-footer {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
     }
     
     .arsol-totals-right,
-    #arsol_proposal_invoice_metabox .section-footer-right {
+    .section-footer-right {
         text-align: center;
     }
     
-    .arsol-flex-container,
+    .arsol-flex-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .arsol-flex-fixed {
+        white-space: normal;
+    }
+    
     #budget-line-items .description-details-container {
         flex-direction: column;
         align-items: stretch;
         gap: 8px;
     }
     
-    .arsol-flex-fixed,
     #budget-line-items .description-details-container .budget-description {
         white-space: normal;
     }
@@ -437,12 +448,7 @@
     100% { transform: rotate(360deg); }
 }
 
-/* WordPress admin button styling consistency */
-#arsol_proposal_invoice_metabox .add-line-item:hover {
-    background-color: #f0f0f1;
-    border-color: #0a4b78;
-    color: #0a4b78;
-}
+/* WordPress admin button styling consistency - removed duplicate hover style since it's handled by general .add-line-item:hover */
 
 /* === BUDGET SECTION COMPATIBILITY === */
 #budget-line-items .description-details-container {
