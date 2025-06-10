@@ -18,6 +18,10 @@ class Setup {
     }
 
     public function register_post_type() {
+        // Debug logging
+        if (function_exists('error_log')) {
+            error_log('ARSOL DEBUG: Registering arsol-project post type (PARENT)');
+        }
 
         $labels = array(
             'name'               => __('Arsol Projects', 'arsol-pfw'),
@@ -61,7 +65,16 @@ class Setup {
             'show_in_rest'      => false,
         );
 
-        register_post_type('arsol-project', $args);
+        $result = register_post_type('arsol-project', $args);
+        
+        // Debug the result
+        if (function_exists('error_log')) {
+            if (is_wp_error($result)) {
+                error_log('ARSOL DEBUG: Failed to register arsol-project: ' . $result->get_error_message());
+            } else {
+                error_log('ARSOL DEBUG: Successfully registered arsol-project post type (PARENT)');
+            }
+        }
     }
 
     /**
@@ -101,7 +114,7 @@ class Setup {
             $user_id = get_current_user_id();
             
             // Check if user can view the project
-            if (!\Arsol_Projects_For_Woo\Woocommerce\Frontend_Endpoints::user_can_view_project($user_id, $project_id)) {
+            if (!\Arsol_Projects_For_Woo\Woocommerce\Endpoints::user_can_view_project($user_id, $project_id)) {
                 // Simple redirect to projects list
                 wp_redirect(wc_get_account_endpoint_url('projects'));
                 exit;
