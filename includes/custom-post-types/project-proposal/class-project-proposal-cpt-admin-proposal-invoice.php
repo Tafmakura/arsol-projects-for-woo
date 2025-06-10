@@ -183,8 +183,8 @@ class Proposal_Invoice {
                                 <td class="arsol-total-amount">
                                     <span class="js-total-display" id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></span>
                                 </td>
-                            </tr>
-                        </table>
+                                </tr>
+                            </table>
                     </div>
                 </div>
             </div>
@@ -220,8 +220,8 @@ class Proposal_Invoice {
                                 <td class="arsol-total-amount">
                                     <span class="js-total-display" id="shipping-subtotal-display"><?php echo wc_price(0); ?></span>
                                 </td>
-                            </tr>
-                        </table>
+                                </tr>
+                            </table>
                     </div>
                 </div>
             </div>
@@ -245,11 +245,11 @@ class Proposal_Invoice {
                                 <span class="js-total-display" id="average-monthly-total-display"><?php echo wc_price(0); ?></span>
                             </td>
                         </tr>
-                    </table>
+                </table>
                     <!-- Hidden inputs for form submission -->
                     <div class="arsol-hidden-inputs">
-                        <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
-                        <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
+                 <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
+                 <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
                     </div>
                 </div>
             </div>

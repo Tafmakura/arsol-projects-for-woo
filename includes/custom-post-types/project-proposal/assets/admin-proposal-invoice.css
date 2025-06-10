@@ -258,7 +258,7 @@
     min-width: 150px;
     display: inline-block;
     text-align: right;
-}
+} 
 
 #arsol_proposal_invoice_metabox .product-sub-text {
     font-size: 0.9em;
@@ -450,11 +450,7 @@
 }
 
 /* === CLEARFIX AND ANIMATIONS === */
-.line-items-totals::after {
-    content: "";
-    clear: both;
-    display: table;
-}
+/* Removed conflicting clearfix - we now use flexbox for totals */
 
 @keyframes arsol-spin {
     0% { transform: rotate(0deg); }

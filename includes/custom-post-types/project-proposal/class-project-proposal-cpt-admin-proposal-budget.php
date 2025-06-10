@@ -133,17 +133,17 @@ class Proposal_Budget {
                                 <td class="arsol-total-amount">
                                     <span class="js-total-display" id="budget-onetime-total-display"><?php echo wc_price($budget_amount ? $budget_amount : 0); ?></span>
                                 </td>
-                            </tr>
+                                </tr>
                             <tr class="arsol-total-row">
                                 <td class="arsol-total-label"><?php _e('Recurring Total:', 'arsol-pfw'); ?></td>
                                 <td class="arsol-total-amount">
                                     <span class="js-total-display" id="budget-recurring-total-display"><?php echo $recurring_budget_amount ? wc_price($recurring_budget_amount) : wc_price(0); ?></span> 
                                     <span class="arsol-billing-period" id="budget-recurring-period">/<?php echo $billing_period === 'month' ? 'mo' : ($billing_period === 'year' ? 'yr' : ($billing_period === 'week' ? 'wk' : ($billing_period === 'day' ? 'day' : $billing_period))); ?></span>
                                 </td>
-                            </tr>
-                        </table>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
         <hr>
