@@ -72,8 +72,6 @@
 
 .arsol-amount-column {
     width: 120px !important;
-    max-width: 120px !important;
-    min-width: 120px !important;
 }
 
 .arsol-amount-column th,
@@ -83,9 +81,7 @@
 
 .arsol-subtotal-column {
     width: 120px !important;
-    max-width: 120px !important;
-    min-width: 120px !important;
-    text-align: right;
+    text-align: right !important;
 }
 
 .arsol-subtotal-column th {
@@ -95,46 +91,32 @@
 
 .arsol-date-column {
     width: 130px !important;
-    max-width: 130px !important;
-    min-width: 130px !important;
 }
 
 .arsol-billing-cycle-column {
     width: 180px !important;
-    max-width: 180px !important;
-    min-width: 180px !important;
     white-space: nowrap;
 }
 
 .arsol-quantity-column {
     width: 80px !important;
-    max-width: 80px !important;
-    min-width: 80px !important;
 }
 
 .arsol-price-column,
 .arsol-sale-price-column {
     width: 100px !important;
-    max-width: 100px !important;
-    min-width: 100px !important;
 }
 
 .arsol-shipping-class-column {
     width: 150px !important;
-    max-width: 150px !important;
-    min-width: 150px !important;
 }
 
 .arsol-taxable-column {
     width: 120px !important;
-    max-width: 120px !important;
-    min-width: 120px !important;
 }
 
 .arsol-actions-column {
     width: 50px !important;
-    max-width: 50px !important;
-    min-width: 50px !important;
     text-align: center;
 }
 
@@ -333,8 +315,6 @@
     .arsol-amount-column,
     .arsol-subtotal-column {
         width: 100px !important;
-        max-width: 100px !important;
-        min-width: 100px !important;
     }
     
     .arsol-shipping-class-column {
@@ -393,14 +373,10 @@
     .arsol-amount-column,
     .arsol-subtotal-column {
         width: 80px !important;
-        max-width: 80px !important;
-        min-width: 80px !important;
     }
     
     .arsol-date-column {
         width: 100px !important;
-        max-width: 100px !important;
-        min-width: 100px !important;
     }
     
     .arsol-billing-cycle-column {
