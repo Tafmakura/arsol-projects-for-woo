@@ -107,7 +107,7 @@
     width: 100px !important;
 }
 
-.arsol-shipping-method-column {
+.arsol-shipping-class-column {
     width: 150px !important;
 }
 
@@ -317,7 +317,7 @@
         width: 100px !important;
     }
     
-    .arsol-shipping-method-column {
+    .arsol-shipping-class-column {
         width: 130px;
     }
     
@@ -389,7 +389,7 @@
         margin-bottom: 2px;
     }
     
-    .arsol-shipping-method-column,
+    .arsol-shipping-class-column,
     .arsol-taxable-column {
         width: 80px;
     }

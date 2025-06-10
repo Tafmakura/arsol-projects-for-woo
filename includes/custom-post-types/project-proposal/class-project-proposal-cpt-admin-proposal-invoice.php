@@ -195,7 +195,7 @@ class Proposal_Invoice {
                      <thead>
                         <tr>
                                                     <th class="arsol-description-column"><?php _e('Description', 'arsol-pfw'); ?></th>
-                        <th class="arsol-shipping-method-column"><?php _e('Shipping Method', 'arsol-pfw'); ?></th>
+                        <th class="arsol-shipping-class-column"><?php _e('Shipping Class', 'arsol-pfw'); ?></th>
                         <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
                         <th class="arsol-taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
                         <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
@@ -368,43 +368,12 @@ class Proposal_Invoice {
 
         <script type="text/html" id="tmpl-arsol-shipping-fee-line-item">
             <?php
-            // Get WooCommerce shipping methods
-            $shipping_methods = array();
-            if (function_exists('WC')) {
-                // Get all shipping zones
-                $data_store = WC_Data_Store::load('shipping-zone');
-                $raw_zones = $data_store->get_zones();
-                
-                foreach ($raw_zones as $raw_zone) {
-                    $zone = new WC_Shipping_Zone($raw_zone);
-                    $zone_shipping_methods = $zone->get_shipping_methods();
-                    
-                    foreach ($zone_shipping_methods as $method) {
-                        if ($method->is_enabled()) {
-                            $method_id = $method->get_rate_id();
-                            $method_title = $method->get_title() ? $method->get_title() : $method->get_method_title();
-                            $zone_name = $zone->get_zone_name();
-                            
-                            // Include zone name if not "Locations not covered by your other zones"
-                            $display_title = $zone_name && $zone_name !== 'Locations not covered by your other zones' 
-                                ? $method_title . ' (' . $zone_name . ')'
-                                : $method_title;
-                                
-                            $shipping_methods[$method_id] = $display_title;
-                        }
-                    }
-                }
-                
-                // Also check zone 0 (default zone)
-                $zone_0 = new WC_Shipping_Zone(0);
-                $zone_0_methods = $zone_0->get_shipping_methods();
-                
-                foreach ($zone_0_methods as $method) {
-                    if ($method->is_enabled()) {
-                        $method_id = $method->get_rate_id();
-                        $method_title = $method->get_title() ? $method->get_title() : $method->get_method_title();
-                        $shipping_methods[$method_id] = $method_title;
-                    }
+            // Get WooCommerce shipping classes
+            $shipping_classes = array();
+            if (function_exists('WC') && WC()->shipping) {
+                $wc_shipping_classes = WC()->shipping->get_shipping_classes();
+                foreach ($wc_shipping_classes as $shipping_class) {
+                    $shipping_classes[$shipping_class->term_id] = $shipping_class->name;
                 }
             }
             ?>
@@ -412,11 +381,11 @@ class Proposal_Invoice {
                 <td class="arsol-description-column">
                     <input type="text" class="arsol-description-input" name="line_items[shipping_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Express Shipping', 'arsol-pfw'); ?>">
                 </td>
-                <td class="arsol-shipping-method-column">
-                    <select class="arsol-select-full" name="line_items[shipping_fees][{{ data.id }}][shipping_method_id]">
+                <td class="arsol-shipping-class-column">
+                    <select class="arsol-select-full" name="line_items[shipping_fees][{{ data.id }}][shipping_class_id]">
                         <option value=""><?php _e('None', 'arsol-pfw'); ?></option>
-                        <# _.each(<?php echo json_encode($shipping_methods); ?>, function(name, id) { #>
-                            <option value="{{ id }}" <# if (data.shipping_method_id == id) { #>selected="selected"<# } #>>{{ name }}</option>
+                        <# _.each(<?php echo json_encode($shipping_classes); ?>, function(name, id) { #>
+                            <option value="{{ id }}" <# if (data.shipping_class_id == id) { #>selected="selected"<# } #>>{{ name }}</option>
                         <# }); #>
                     </select>
                 </td>
