@@ -64,11 +64,11 @@ class Proposal_Budget {
                     <tbody>
                         <!-- One-Time Budget Row -->
                         <tr class="line-item budget-item">
-                            <td class="budget-description-column">
-                                <strong><?php _e('One-Time Budget', 'arsol-pfw'); ?></strong>
-                            </td>
-                            <td class="details-column">
-                                <input type="text" class="details-input" name="proposal_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
+                            <td class="budget-description-details-column">
+                                <div class="description-details-container">
+                                    <strong class="budget-description"><?php _e('One-Time Budget', 'arsol-pfw'); ?></strong>
+                                    <input type="text" class="details-input" name="proposal_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
+                                </div>
                             </td>
                             <td class="start-date-column">
                                 <span class="not-applicable">—</span>
@@ -86,11 +86,11 @@ class Proposal_Budget {
                         
                         <!-- Recurring Budget Row -->
                         <tr class="line-item budget-item recurring-budget-row">
-                            <td class="budget-description-column">
-                                <strong><?php _e('Recurring Budget', 'arsol-pfw'); ?></strong>
-                            </td>
-                            <td class="details-column">
-                                <input type="text" class="details-input" name="proposal_recurring_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_recurring_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
+                            <td class="budget-description-details-column">
+                                <div class="description-details-container">
+                                    <strong class="budget-description"><?php _e('Recurring Budget', 'arsol-pfw'); ?></strong>
+                                    <input type="text" class="details-input" name="proposal_recurring_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_recurring_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
+                                </div>
                             </td>
                             <td class="start-date-column">
                                 <input type="date" class="start-date-input" name="proposal_recurring_start_date" value="<?php echo esc_attr($recurring_start_date); ?>">

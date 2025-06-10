@@ -103,7 +103,7 @@
 
 #arsol_proposal_invoice_metabox .billing-cycle-column select {
     display: inline-block;
-    width: 95px; /* Reduced from 110px for better fit */
+    width: 100px; /* Reduced from 110px for better fit */
     margin-right: 5px;
     vertical-align: top;
 }
@@ -441,9 +441,26 @@
 }
 
 /* Budget-specific styling */
-#budget-line-items .budget-description-column {
+#budget-line-items .budget-description-details-column {
     width: auto;
-    min-width: 200px;
+    min-width: 300px;
+}
+
+#budget-line-items .description-details-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#budget-line-items .description-details-container .budget-description {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+#budget-line-items .description-details-container .details-input {
+    flex: 1;
+    min-width: 150px;
 }
 
 #budget-line-items .amount-column {
@@ -478,7 +495,7 @@
     opacity: 0.5;
 }
 
-/* Details column styling - stretchable for budget */
+/* Legacy details column styling - keeping for backward compatibility */
 .details-column {
     width: auto !important;
     min-width: 150px;
@@ -500,4 +517,18 @@
 .widefat th.budget-description-column,
 .widefat td.budget-description-column {
     min-width: 150px;
+}
+
+/* Responsive adjustments for the combined column */
+@media screen and (max-width: 900px) {
+    #budget-line-items .description-details-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    #budget-line-items .description-details-container .budget-description {
+        flex: none;
+        white-space: normal;
+    }
 }
