@@ -188,10 +188,6 @@ class Proposal_Invoice {
                 </div>
             </div>
             <hr>
-            <!-- Recurring Fees Section -->
-            <div class="line-items-container" style="display:none;">
-            </div>
-            <hr>
             <!-- Shipping Section -->
             <div class="line-items-container">
                 <h3><?php _e('Shipping', 'arsol-pfw'); ?></h3>
