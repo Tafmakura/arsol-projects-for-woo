@@ -86,10 +86,7 @@ class Frontend_Endpoints {
         add_rewrite_endpoint('project-view-proposal', EP_PAGES);
         add_rewrite_endpoint('project-view-request', EP_PAGES);
 
-        // Debug logging
-        if (function_exists('error_log')) {
-            error_log('ARSOL DEBUG: Registering endpoints');
-        }
+        // Debug logging removed to prevent output before headers
     }
     
     /**
@@ -127,10 +124,7 @@ class Frontend_Endpoints {
         $query_vars['project-view-proposal'] = 'project-view-proposal';
         $query_vars['project-view-request'] = 'project-view-request';
         
-        // Debug logging
-        if (function_exists('error_log')) {
-            error_log('ARSOL DEBUG: Registered query vars: ' . print_r($query_vars, true));
-        }
+        // Debug logging removed to prevent output before headers
         
         return $query_vars;
     }

@@ -3,6 +3,7 @@
  * Single Project Proposal Template
  *
  * This template displays a single project proposal with its details and actions.
+ * Note: Proposal validation is handled by the endpoint handler before this template is loaded.
  *
  * @package Arsol_Projects_For_Woo
  * @version 1.0.0
@@ -12,24 +13,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get the proposal ID from query vars
+// The proposal ID and validation are handled by the endpoint handler
+// Get the proposal ID from query vars (already validated by endpoint handler)
 global $wp;
 $proposal_id = absint($wp->query_vars['project-view-proposal']);
 
-// Validate proposal ID
-if (!$proposal_id) {
-    wc_add_notice(__('Invalid proposal ID.', 'arsol-pfw'), 'error');
-    wp_safe_redirect(wc_get_account_endpoint_url('projects'));
-    exit;
-}
-
-// Get and validate proposal
+// Get the validated proposal (we know it exists since we passed endpoint validation)
 $proposal = get_post($proposal_id);
-if (!$proposal || $proposal->post_type !== 'arsol-pfw-proposal') {
-    wc_add_notice(__('Proposal not found.', 'arsol-pfw'), 'error');
-    wp_safe_redirect(wc_get_account_endpoint_url('projects'));
-    exit;
-}
 
 // Get proposal status
 $post_status = get_post_status($proposal->ID);
