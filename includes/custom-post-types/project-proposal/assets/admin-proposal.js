@@ -289,6 +289,8 @@
 
             var oneTimeTotal = 0;
             var recurringTotals = {};
+            var productRecurringTotals = {};  // Separate tracking for products
+            var feeRecurringTotals = {};      // Separate tracking for fees
             var productSubtotal = 0;
             var onetimeFeeSubtotal = 0;
             var recurringFeeSubtotal = 0;
@@ -321,6 +323,7 @@
                             var interval = intervalMatch[1] ? parseInt(intervalMatch[1]) : 1;
                             var period = intervalMatch[2];
                             ArsolProposalInvoice.updateRecurringTotals(recurringTotals, interval, period, subtotal);
+                            ArsolProposalInvoice.updateRecurringTotals(productRecurringTotals, interval, period, subtotal);
                         }
                     }
                 } else {
@@ -351,6 +354,7 @@
                 $(this).find('.arsol-subtotal-column').html(ArsolProposalInvoice.formatPrice(amount) + ' ' + billingText);
                 
                 ArsolProposalInvoice.updateRecurringTotals(recurringTotals, interval, period, amount);
+                ArsolProposalInvoice.updateRecurringTotals(feeRecurringTotals, interval, period, amount);
                 recurringFeeSubtotal += amount;
             });
 
@@ -367,31 +371,45 @@
             $('#onetime-fee-subtotal-display').html(ArsolProposalInvoice.formatPrice(onetimeFeeSubtotal));
             $('#shipping-subtotal-display').html(ArsolProposalInvoice.formatPrice(shippingSubtotal));
 
-            // Calculate average monthly total
-            var totalDailyCost = 0;
-            var hasRecurring = false;
+            // Calculate separate averages for products and fees
+            var productDailyCost = 0;
+            var feeDailyCost = 0;
+            var hasProductRecurring = false;
+            var hasFeeRecurring = false;
 
-            $.each(recurringTotals, function(key, data) {
-                hasRecurring = true;
+            $.each(productRecurringTotals, function(key, data) {
+                hasProductRecurring = true;
                 var dailyCost = ArsolProposalInvoice.getDailyCost(data.total, data.interval, data.period);
-                totalDailyCost += dailyCost;
+                productDailyCost += dailyCost;
+            });
+
+            $.each(feeRecurringTotals, function(key, data) {
+                hasFeeRecurring = true;
+                var dailyCost = ArsolProposalInvoice.getDailyCost(data.total, data.interval, data.period);
+                feeDailyCost += dailyCost;
             });
 
             var constants = arsol_proposal_invoice_vars.calculation_constants;
-            var averageMonthlyTotal = totalDailyCost * constants.days_in_month;
+            var productAverageMonthlyTotal = productDailyCost * constants.days_in_month;
+            var feeAverageMonthlyTotal = feeDailyCost * constants.days_in_month;
+            var totalAverageMonthlyTotal = (productDailyCost + feeDailyCost) * constants.days_in_month;
 
-            // Update recurring fee average display
-            if (hasRecurring) {
-                $('#recurring-fee-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(averageMonthlyTotal) + ' /mo');
-                $('#product-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(averageMonthlyTotal) + ' /mo');
+            // Update separate recurring displays
+            if (hasProductRecurring) {
+                $('#product-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(productAverageMonthlyTotal) + ' /mo');
             } else {
-                $('#recurring-fee-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(0));
                 $('#product-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(0));
             }
 
-            // Update main totals
+            if (hasFeeRecurring) {
+                $('#recurring-fee-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(feeAverageMonthlyTotal) + ' /mo');
+            } else {
+                $('#recurring-fee-avg-monthly-display').html(ArsolProposalInvoice.formatPrice(0));
+            }
+
+            // Update main totals (combined)
             $('#one-time-total-display').html(ArsolProposalInvoice.formatPrice(oneTimeTotal));
-            $('#average-monthly-total-display').html(ArsolProposalInvoice.formatPrice(averageMonthlyTotal) + (hasRecurring ? ' /yr' : ''));
+            $('#average-monthly-total-display').html(ArsolProposalInvoice.formatPrice(totalAverageMonthlyTotal) + ((hasProductRecurring || hasFeeRecurring) ? ' /yr' : ''));
 
             // Update hidden inputs for form submission
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
