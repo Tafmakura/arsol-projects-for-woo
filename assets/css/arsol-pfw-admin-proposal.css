@@ -467,7 +467,155 @@
 }
 
 #budget-line-items .not-applicable {
-    color: #666;
     font-style: italic;
-    text-align: center;
+    color: #666;
+}
+
+/* === CUSTOMER REQUEST DETAILS METABOX === */
+.arsol-customer-request-details {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.arsol-request-title {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.arsol-request-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.arsol-request-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.arsol-request-detail-item:last-child {
+    border-bottom: none;
+}
+
+.arsol-request-detail-label {
+    font-weight: 600;
+    color: #333;
+    flex: 0 0 auto;
+    margin-right: 10px;
+}
+
+.arsol-request-detail-value {
+    color: #666;
+    text-align: right;
+    flex: 1;
+}
+
+.arsol-request-description {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+}
+
+.arsol-request-description h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.arsol-request-description-content {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 12px;
+    border-radius: 4px;
+    line-height: 1.5;
+    color: #555;
+}
+
+.arsol-request-attachments {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+}
+
+.arsol-request-attachments h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.arsol-request-attachments-list {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px 12px;
+}
+
+.arsol-attachment-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.arsol-attachment-item:last-child {
+    border-bottom: none !important;
+}
+
+.arsol-attachment-icon {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+.arsol-attachment-info {
+    flex: 1;
+}
+
+.arsol-attachment-link {
+    text-decoration: none;
+    color: #0073aa;
+    font-weight: 500;
+}
+
+.arsol-attachment-link:hover {
+    color: #005177;
+    text-decoration: underline;
+}
+
+.arsol-attachment-size {
+    display: block;
+    color: #666;
+    margin-top: 2px;
+    font-size: 12px;
+}
+
+/* === RESPONSIVE DESIGN FOR REQUEST DETAILS === */
+@media screen and (max-width: 768px) {
+    .arsol-request-details-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .arsol-request-detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .arsol-request-detail-value {
+        text-align: left;
+    }
+    
+    .arsol-customer-request-details {
+        padding: 12px;
+    }
 } 
