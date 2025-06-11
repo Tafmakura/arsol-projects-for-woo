@@ -37,7 +37,7 @@ $all_statuses = get_terms(array(
 ));
 ?>
 
-<div id="arsol-pfw-request-data" class="postbox ">
+<div id="arsol-pfw-project-data" class="postbox ">
     <div id="request_metabox" class="panel-wrap woocommerce">
         <div id="order_data" class="panel woocommerce">
             <h2>
