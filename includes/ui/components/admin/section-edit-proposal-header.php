@@ -131,7 +131,41 @@ if ($original_request_id ||
                     </p>
                 </div>
 
-                <div class="order_double_data_column">
+                <div class="order_data_column">
+                
+                    <?php if ($has_request_data): ?>
+                        <h3><?php _e('Original Request', 'arsol-pfw'); ?></h3>
+                        
+                        <?php
+                        // Hook for customer request details
+                        do_action('arsol_proposal_header_content', $post);
+                        ?>
+                    <?php endif; ?>
+
+                    <h3><?php _e('Actions', 'arsol-pfw'); ?></h3>
+                    
+                    <p class="form-field form-field-wide">
+                        <?php
+                        $is_disabled = $post->post_status !== 'publish';
+                        $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
+                        $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
+                        $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project?', 'arsol-pfw'));
+                        $tooltip_text = $is_disabled
+                            ? __('The proposal must be published before it can be converted.', 'arsol-pfw')
+                            : __('Converts this proposal into a new project.', 'arsol-pfw');
+                        ?>
+                        <span title="<?php echo esc_attr($tooltip_text); ?>">
+                            <input type="button" 
+                                class="button button-primary arsol-confirm-conversion" 
+                                value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
+                                data-url="<?php echo esc_url($convert_url); ?>" 
+                                data-message="<?php echo $confirm_message; ?>"
+                                <?php disabled($is_disabled, true); ?> />
+                        </span>
+                    </p>
+
+                </div>
+                <div class="order_data_column">
                 
                     <?php if ($has_request_data): ?>
                         <h3><?php _e('Original Request', 'arsol-pfw'); ?></h3>
