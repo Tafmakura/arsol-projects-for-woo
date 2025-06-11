@@ -150,7 +150,7 @@ if ($original_request_id ||
                    
                         <?php
                         // Hook for customer request details
-                        do_action('arsol_proposal_original_request_content', $post);
+                        do_action('arsol_proposal_request_content', $post);
                         ?>
                     <?php endif; ?>
 
