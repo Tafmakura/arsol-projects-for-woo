@@ -53,7 +53,7 @@ if ($original_request_id ||
                     <h3><?php _e('General', 'arsol-pfw'); ?></h3>
 
                     <p class="form-field form-field-wide wc-customer-user">
-                        <label for="proposal_customer">
+                        <label for="post_author_override">
                             <?php _e('Customer:', 'arsol-pfw'); ?>
                             <?php if ($customer): ?>
                                 <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-proposal&author=' . $customer_id); ?>">
@@ -64,12 +64,17 @@ if ($original_request_id ||
                                 </a>
                             <?php endif; ?>
                         </label>
-                        <?php if ($customer): ?>
-                            <span class="customer-info">
-                                <?php echo esc_html($customer->display_name); ?> 
-                                (#<?php echo $customer_id; ?> – <?php echo esc_html($customer->user_email); ?>)
-                            </span>
-                        <?php endif; ?>
+                        <?php
+                        // Get author dropdown
+                        $author_dropdown = wp_dropdown_users(array(
+                            'name' => 'post_author_override',
+                            'selected' => $post->post_author,
+                            'include_selected' => true,
+                            'echo' => false,
+                            'class' => 'wc-customer-search'
+                        ));
+                        echo $author_dropdown;
+                        ?>
                     </p>
 
                     <p class="form-field form-field-wide">
@@ -80,8 +85,12 @@ if ($original_request_id ||
                     </p>
 
                     <p class="form-field form-field-wide">
-                        <label><?php _e('Cost proposal type:', 'arsol-pfw'); ?></label>
-                        <span><?php echo $cost_proposal_type ? ucfirst(str_replace('_', ' ', $cost_proposal_type)) : __('None', 'arsol-pfw'); ?></span>
+                        <label for="cost_proposal_type"><?php _e('Cost proposal type:', 'arsol-pfw'); ?></label>
+                        <select id="cost_proposal_type" name="cost_proposal_type" class="wc-enhanced-select">
+                            <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
+                            <option value="budget_estimates" <?php selected($cost_proposal_type, 'budget_estimates'); ?>><?php _e('Budget Estimates', 'arsol-pfw'); ?></option>
+                            <option value="invoice_line_items" <?php selected($cost_proposal_type, 'invoice_line_items'); ?>><?php _e('Invoice Line Items', 'arsol-pfw'); ?></option>
+                        </select>
                     </p>
 
                     <?php if ($start_date): ?>

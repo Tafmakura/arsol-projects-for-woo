@@ -75,29 +75,6 @@ class Proposal {
         ?>
         <div class="proposal-details">
             <p>
-                <label for="proposal_id" style="display:block;margin-bottom:5px;"><?php _e('Proposal ID:', 'arsol-pfw'); ?></label>
-                <input type="text" 
-                       id="proposal_id" 
-                       value="<?php echo esc_attr($post->ID); ?>"
-                       disabled
-                       class="widefat">
-            </p>
-
-            <p>
-                <label for="post_author_override" style="display:block;margin-bottom:5px;"><?php _e('Customer:', 'arsol-pfw'); ?></label>
-                <?php echo $author_dropdown; ?>
-            </p>
-
-            <p>
-                <label for="cost_proposal_type" style="display:block;margin-bottom:5px;"><?php _e('Cost Proposal:', 'arsol-pfw'); ?></label>
-                <select id="cost_proposal_type" name="cost_proposal_type" class="widefat">
-                    <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
-                    <option value="budget_estimates" <?php selected($cost_proposal_type, 'budget_estimates'); ?>><?php _e('Budget Estimates', 'arsol-pfw'); ?></option>
-                    <option value="invoice_line_items" <?php selected($cost_proposal_type, 'invoice_line_items'); ?>><?php _e('Invoice Line Items', 'arsol-pfw'); ?></option>
-                </select>
-            </p>
-
-            <p>
                 <label for="proposal_start_date" style="display:block;margin-bottom:5px;"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="proposal_start_date" 
