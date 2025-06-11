@@ -218,7 +218,7 @@ class Setup {
                         'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
                         'currency_symbol' => $currency_symbol,
                         'line_items' => $line_items,
-                        'calculation_constants' => \Arsol_Projects_For_Woo\Integrations\Woocommerce_Subscriptions::get_calculation_constants()
+                        'calculation_constants' => \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_calculation_constants()
                     )
                 );
             }
