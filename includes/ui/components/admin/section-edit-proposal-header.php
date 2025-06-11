@@ -22,6 +22,13 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
 ?>
 
 <div class="arsol-proposal-header-container" style="margin: 20px 0;">
+
+    <div class="arsol-proposal-header-container-inner">
+
+            <h1><?php echo get_the_title($post->ID); ?></h1>
+    </div>
+
+
     <?php
     /**
      * Hook: arsol_proposal_header_before
