@@ -134,11 +134,11 @@ if ($original_request_id ||
                 <div class="order_data_column">
 
                     
-                    <h3><?php _e('Project Details', 'arsol-pfw'); ?></h3>
+                    <h3><?php _e('Project Proposal Details', 'arsol-pfw'); ?></h3>
                     
                     <?php
                     // Hook for customer request details
-                    do_action('arsol_proposal_header_content', $post);
+                    do_action('arsol_proposal_details_content', $post);
                     ?>
     
 
@@ -150,7 +150,7 @@ if ($original_request_id ||
                    
                         <?php
                         // Hook for customer request details
-                        do_action('arsol_proposal_header_content', $post);
+                        do_action('arsol_proposal_original_request_content', $post);
                         ?>
                     <?php endif; ?>
 
