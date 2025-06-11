@@ -188,6 +188,7 @@ class Workflow_Handler {
             '_proposal_recurring_start_date' => '_project_recurring_start_date',
             '_proposal_start_date'       => '_proposal_start_date', // Keep for display
             '_proposal_delivery_date'    => '_project_due_date', // Correctly map to due date
+            '_proposal_expiration_date'  => '_proposal_expiration_date', // Keep for display
         );
 
         foreach ($meta_to_copy as $proposal_key => $project_key) {

@@ -55,10 +55,11 @@ $current_status = !empty($status_terms) ? $status_terms[0] : '';
 $proposal_budget = get_post_meta($proposal_id, '_proposal_budget', true);
 $start_date = get_post_meta($proposal_id, '_proposal_start_date', true);
 $delivery_date = get_post_meta($proposal_id, '_proposal_delivery_date', true);
+$expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true);
 $timeline = get_post_meta($proposal_id, '_proposal_timeline', true);
 ?>
 
-<?php if ($proposal_budget || $start_date || $delivery_date || $timeline) : ?>
+<?php if ($proposal_budget || $start_date || $delivery_date || $expiration_date || $timeline) : ?>
 <div class="arsol-pfw-project-meta">
     <?php if (!empty($proposal_budget)) : ?>
         <p><strong><?php _e('Proposed Budget:', 'arsol-pfw'); ?></strong> <?php echo wc_price($proposal_budget); ?></p>
@@ -70,6 +71,10 @@ $timeline = get_post_meta($proposal_id, '_proposal_timeline', true);
     
     <?php if ($delivery_date) : ?>
         <p><strong><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($delivery_date))); ?></p>
+    <?php endif; ?>
+    
+    <?php if ($expiration_date) : ?>
+        <p><strong><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($expiration_date))); ?></p>
     <?php endif; ?>
     
     <?php if ($timeline) : ?>

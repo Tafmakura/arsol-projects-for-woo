@@ -53,6 +53,7 @@ class Proposal {
 
         $start_date = get_post_meta($post->ID, '_proposal_start_date', true);
         $delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
+        $expiration_date = get_post_meta($post->ID, '_proposal_expiration_date', true);
 
         // Get original request data
         $original_budget = get_post_meta($post->ID, '_original_request_budget', true);
@@ -137,6 +138,15 @@ class Proposal {
                        id="proposal_delivery_date" 
                        name="proposal_delivery_date" 
                        value="<?php echo esc_attr($delivery_date); ?>"
+                       class="widefat">
+            </p>
+
+            <p>
+                <label for="proposal_expiration_date" style="display:block;margin-bottom:5px;"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+                <input type="date" 
+                       id="proposal_expiration_date" 
+                       name="proposal_expiration_date" 
+                       value="<?php echo esc_attr($expiration_date); ?>"
                        class="widefat">
             </p>
         </div>
@@ -301,6 +311,11 @@ class Proposal {
         // Save delivery date
         if (isset($_POST['proposal_delivery_date'])) {
             update_post_meta($post_id, '_proposal_delivery_date', sanitize_text_field($_POST['proposal_delivery_date']));
+        }
+
+        // Save expiration date
+        if (isset($_POST['proposal_expiration_date'])) {
+            update_post_meta($post_id, '_proposal_expiration_date', sanitize_text_field($_POST['proposal_expiration_date']));
         }
     }
 }

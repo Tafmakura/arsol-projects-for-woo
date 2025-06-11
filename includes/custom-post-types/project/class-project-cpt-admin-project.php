@@ -49,6 +49,7 @@ class Project {
         // Get the original proposed dates
         $proposed_start_date = get_post_meta($post->ID, '_proposal_start_date', true);
         $proposed_delivery_date = get_post_meta($post->ID, '_proposal_delivery_date', true);
+        $proposed_expiration_date = get_post_meta($post->ID, '_proposal_expiration_date', true);
         
         // Get statuses, excluding 'not-started' if the current status is not 'not-started'
         $statuses_args = array(
@@ -139,6 +140,13 @@ class Project {
                 <label><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
                 <span class="arsol-pfw-budget-amount">
                      <?php echo !empty($proposed_delivery_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($proposed_delivery_date))) : '<b>N/A</b>'; ?>
+                </span>
+            </p>
+
+            <p class="arsol-pfw-budget-display">
+                <label><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+                <span class="arsol-pfw-budget-amount">
+                     <?php echo !empty($proposed_expiration_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($proposed_expiration_date))) : '<b>N/A</b>'; ?>
                 </span>
         </p>
 
