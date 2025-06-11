@@ -100,11 +100,20 @@ class Workflow_Handler {
             wp_die($new_proposal_id->get_error_message());
         }
 
+        // Store the original request creation date and basic info
+        $request_post = get_post($request_id);
+        if ($request_post) {
+            update_post_meta($new_proposal_id, '_original_request_date', $request_post->post_date);
+            update_post_meta($new_proposal_id, '_original_request_title', $request_post->post_title);
+            update_post_meta($new_proposal_id, '_original_request_content', $request_post->post_content);
+        }
+
         // Copy relevant meta data from request to proposal, renaming keys as needed
         $meta_to_copy = array(
             '_request_budget'         => '_proposal_budget',
             '_request_start_date'     => '_proposal_start_date',
             '_request_delivery_date'  => '_proposal_delivery_date',
+            '_request_attachments'    => '_proposal_attachments',
         );
 
         foreach ($meta_to_copy as $request_key => $proposal_key) {

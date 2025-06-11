@@ -8,6 +8,7 @@ class Proposal {
     public function __construct() {
         // Add meta boxes for single proposal admin screen
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
+        add_action('add_meta_boxes', array($this, 'add_customer_request_details_meta_box'));
         // Add styles to hide metaboxes initially
         add_action('admin_head-post.php', array($this, 'hide_metaboxes_initially'));
         add_action('admin_head-post-new.php', array($this, 'hide_metaboxes_initially'));
@@ -15,6 +16,9 @@ class Proposal {
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
         // Action to set review status when a proposal is published
         add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
+
+        // Setup confirm conversion script
+        add_action('admin_footer', array($this, 'output_confirm_conversion_script'));
     }
 
     public function set_proposal_review_status($new_status, $old_status, $post) {
@@ -36,6 +40,38 @@ class Proposal {
             'side',
             'default'
         );
+    }
+
+    /**
+     * Add customer request details meta box (only for proposals converted from requests)
+     */
+    public function add_customer_request_details_meta_box() {
+        global $post;
+        
+        // Only add if this proposal has original request data
+        if ($post && $this->has_original_request_data($post->ID)) {
+            add_meta_box(
+                'arsol_customer_request_details',
+                __('Customer Request Details', 'arsol-pfw'),
+                array($this, 'render_customer_request_details_meta_box'),
+                'arsol-pfw-proposal',
+                'normal',
+                'high' // High priority to appear at top
+            );
+        }
+    }
+
+    /**
+     * Check if proposal has original request data
+     */
+    private function has_original_request_data($post_id) {
+        $original_budget = get_post_meta($post_id, '_original_request_budget', true);
+        $original_start_date = get_post_meta($post_id, '_original_request_start_date', true);
+        $original_delivery_date = get_post_meta($post_id, '_original_request_delivery_date', true);
+        $original_request_date = get_post_meta($post_id, '_original_request_date', true);
+        $original_request_attachments = get_post_meta($post_id, '_original_request_attachments', true);
+        
+        return !empty($original_budget) || !empty($original_start_date) || !empty($original_delivery_date) || !empty($original_request_date) || !empty($original_request_attachments);
     }
 
     /**
@@ -79,35 +115,6 @@ class Proposal {
                        disabled
                        class="widefat">
             </p>
-
-            <?php if ($original_budget || $original_start_date || $original_delivery_date) : ?>
-            <div class="arsol-pfw-original-request-details">
-                <h4><?php _e('Original Request Details', 'arsol-pfw'); ?></h4>
-                <?php if (!empty($original_budget) && is_array($original_budget)) : ?>
-                <p>
-                    <label><?php _e('Budget:', 'arsol-pfw'); ?></label>
-                    <strong><?php echo wc_price($original_budget['amount'], array('currency' => $original_budget['currency'])); ?></strong>
-                </p>
-                <?php elseif (!empty($original_budget)) : // Backwards compatibility ?>
-                <p>
-                    <label><?php _e('Budget:', 'arsol-pfw'); ?></label>
-                    <strong><?php echo wc_price($original_budget); ?></strong>
-                </p>
-                <?php endif; ?>
-                <?php if ($original_start_date) : ?>
-                <p>
-                    <label><?php _e('Start Date:', 'arsol-pfw'); ?></label>
-                    <strong><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_start_date))); ?></strong>
-                </p>
-                <?php endif; ?>
-                <?php if ($original_delivery_date) : ?>
-                <p>
-                    <label><?php _e('Delivery Date:', 'arsol-pfw'); ?></label>
-                    <strong><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_delivery_date))); ?></strong>
-                </p>
-                <?php endif; ?>
-            </div>
-            <?php endif; ?>
 
             <p>
                 <label for="post_author_override" style="display:block;margin-bottom:5px;"><?php _e('Customer:', 'arsol-pfw'); ?></label>
@@ -195,6 +202,183 @@ class Proposal {
                 });
             });
         </script>
+        <?php
+    }
+
+    /**
+     * Render customer request details meta box
+     */
+    public function render_customer_request_details_meta_box($post) {
+        // Get original request data
+        $original_budget = get_post_meta($post->ID, '_original_request_budget', true);
+        $original_start_date = get_post_meta($post->ID, '_original_request_start_date', true);
+        $original_delivery_date = get_post_meta($post->ID, '_original_request_delivery_date', true);
+        $original_request_date = get_post_meta($post->ID, '_original_request_date', true);
+        $original_request_title = get_post_meta($post->ID, '_original_request_title', true);
+        $original_request_content = get_post_meta($post->ID, '_original_request_content', true);
+        $original_request_attachments = get_post_meta($post->ID, '_original_request_attachments', true);
+        
+        ?>
+        <div class="arsol-customer-request-details">
+            <style>
+                .arsol-customer-request-details {
+                    background: #f9f9f9;
+                    border: 1px solid #ddd;
+                    padding: 15px;
+                    border-radius: 4px;
+                }
+                .arsol-request-details-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                    gap: 15px;
+                    margin-bottom: 15px;
+                }
+                .arsol-request-detail-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 8px 0;
+                    border-bottom: 1px solid #eee;
+                }
+                .arsol-request-detail-item:last-child {
+                    border-bottom: none;
+                }
+                .arsol-request-detail-label {
+                    font-weight: 600;
+                    color: #333;
+                    flex: 0 0 auto;
+                    margin-right: 10px;
+                }
+                .arsol-request-detail-value {
+                    color: #666;
+                    text-align: right;
+                    flex: 1;
+                }
+                .arsol-request-description {
+                    margin-top: 15px;
+                    padding-top: 15px;
+                    border-top: 1px solid #ddd;
+                }
+                .arsol-request-description h4 {
+                    margin: 0 0 10px 0;
+                    color: #333;
+                }
+                .arsol-request-description-content {
+                    background: white;
+                    border: 1px solid #ddd;
+                    padding: 12px;
+                    border-radius: 4px;
+                    line-height: 1.5;
+                    color: #555;
+                }
+                .arsol-request-attachments {
+                    margin-top: 15px;
+                    padding-top: 15px;
+                    border-top: 1px solid #ddd;
+                }
+                .arsol-request-attachments h4 {
+                    margin: 0 0 10px 0;
+                    color: #333;
+                }
+                .arsol-request-attachments-list {
+                    background: white;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    padding: 8px 12px;
+                }
+                .arsol-attachment-item:last-child {
+                    border-bottom: none !important;
+                }
+            </style>
+
+            <?php if ($original_request_title) : ?>
+                <h3 style="margin: 0 0 15px 0; color: #333;">
+                    <?php echo esc_html($original_request_title); ?>
+                </h3>
+            <?php endif; ?>
+
+            <div class="arsol-request-details-grid">
+                <?php if ($original_request_date) : ?>
+                <div class="arsol-request-detail-item">
+                    <span class="arsol-request-detail-label"><?php _e('Request Date:', 'arsol-pfw'); ?></span>
+                    <span class="arsol-request-detail-value">
+                        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_date))); ?>
+                    </span>
+                </div>
+                <?php endif; ?>
+
+                <?php if (!empty($original_budget)) : ?>
+                <div class="arsol-request-detail-item">
+                    <span class="arsol-request-detail-label"><?php _e('Budget:', 'arsol-pfw'); ?></span>
+                    <span class="arsol-request-detail-value">
+                        <?php if (is_array($original_budget)) : ?>
+                            <?php echo wc_price($original_budget['amount'], array('currency' => $original_budget['currency'])); ?>
+                        <?php else : ?>
+                            <?php echo wc_price($original_budget); ?>
+                        <?php endif; ?>
+                    </span>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($original_start_date) : ?>
+                <div class="arsol-request-detail-item">
+                    <span class="arsol-request-detail-label"><?php _e('Start Date:', 'arsol-pfw'); ?></span>
+                    <span class="arsol-request-detail-value">
+                        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_start_date))); ?>
+                    </span>
+                </div>
+                <?php endif; ?>
+
+                <?php if ($original_delivery_date) : ?>
+                <div class="arsol-request-detail-item">
+                    <span class="arsol-request-detail-label"><?php _e('Delivery Date:', 'arsol-pfw'); ?></span>
+                    <span class="arsol-request-detail-value">
+                        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_delivery_date))); ?>
+                    </span>
+                </div>
+                <?php endif; ?>
+            </div>
+
+            <?php if ($original_request_content) : ?>
+            <div class="arsol-request-description">
+                <h4><?php _e('Original Request Description:', 'arsol-pfw'); ?></h4>
+                <div class="arsol-request-description-content">
+                    <?php echo wp_kses_post(wpautop($original_request_content)); ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if ($original_request_attachments && is_array($original_request_attachments)) : ?>
+            <div class="arsol-request-attachments">
+                <h4><?php _e('Original Request Attachments:', 'arsol-pfw'); ?></h4>
+                <div class="arsol-request-attachments-list">
+                    <?php foreach ($original_request_attachments as $attachment_id) : ?>
+                        <?php 
+                        $file = get_post($attachment_id);
+                        if ($file) :
+                            $file_url = wp_get_attachment_url($attachment_id);
+                            $file_name = basename(get_attached_file($attachment_id));
+                            $file_size = size_format(filesize(get_attached_file($attachment_id)));
+                        ?>
+                        <div class="arsol-attachment-item" style="display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                            <span class="arsol-attachment-icon" style="margin-right: 10px;">
+                                📎
+                            </span>
+                            <div class="arsol-attachment-info" style="flex: 1;">
+                                <a href="<?php echo esc_url($file_url); ?>" target="_blank" style="text-decoration: none; color: #0073aa;">
+                                    <?php echo esc_html($file_name); ?>
+                                </a>
+                                <small style="display: block; color: #666; margin-top: 2px;">
+                                    <?php echo esc_html($file_size); ?>
+                                </small>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+        </div>
         <?php
     }
 
@@ -317,5 +501,30 @@ class Proposal {
         if (isset($_POST['proposal_expiration_date'])) {
             update_post_meta($post_id, '_proposal_expiration_date', sanitize_text_field($_POST['proposal_expiration_date']));
         }
+    }
+
+    /**
+     * Output confirm conversion script
+     */
+    public function output_confirm_conversion_script() {
+        global $post;
+        if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
+            return;
+        }
+        ?>
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('.arsol-confirm-conversion').on('click', function(e) {
+                e.preventDefault();
+                var message = $(this).data('message');
+                var url = $(this).data('url');
+                
+                if (confirm(message)) {
+                    window.location.href = url;
+                }
+            });
+        });
+        </script>
+        <?php
     }
 }
