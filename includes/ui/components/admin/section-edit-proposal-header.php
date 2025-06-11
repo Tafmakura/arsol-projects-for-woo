@@ -19,6 +19,16 @@ global $post;
 if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
     return;
 }
+
+// Debug output - will be visible in the admin
+echo '<!-- ARSOL DEBUG: Header template loaded for post ID: ' . $post->ID . ' -->';
+echo '<div style="background: #ccffcc; padding: 5px; margin: 10px 0; font-size: 12px;">DEBUG: Header container loaded for proposal #' . $post->ID . '</div>';
+
+// Test message - very obvious
+echo '<div style="background: #ff0000; color: white; padding: 20px; margin: 20px 0; font-size: 16px; font-weight: bold; text-align: center;">
+    🚨 HEADER CONTAINER IS WORKING! 🚨<br/>
+    If you see this, the header system is loaded correctly!
+</div>';
 ?>
 
 <div class="arsol-proposal-header-container" style="margin: 20px 0;">
