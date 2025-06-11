@@ -52,6 +52,25 @@ if ($original_request_id ||
                 <div class="order_data_column">
                     <h3><?php _e('General', 'arsol-pfw'); ?></h3>
 
+                    <div class="form-field-row">
+                        <p class="form-field form-field-half">
+                            <label for="proposal_start_date"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
+                            <input type="date" 
+                                   id="proposal_start_date" 
+                                   name="proposal_start_date" 
+                                   value="<?php echo esc_attr($start_date); ?>"
+                                   class="wc-enhanced-select">
+                        </p>
+                        <p class="form-field form-field-half">
+                            <label for="proposal_delivery_date"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
+                            <input type="date" 
+                                   id="proposal_delivery_date" 
+                                   name="proposal_delivery_date" 
+                                   value="<?php echo esc_attr($delivery_date); ?>"
+                                   class="wc-enhanced-select">
+                        </p>
+                    </div>
+
                     <p class="form-field form-field-wide wc-customer-user">
                         <label for="post_author_override">
                             <?php _e('Customer:', 'arsol-pfw'); ?>
@@ -101,20 +120,6 @@ if ($original_request_id ||
                             <option value="invoice_line_items" <?php selected($cost_proposal_type, 'invoice_line_items'); ?>><?php _e('Invoice Line Items', 'arsol-pfw'); ?></option>
                         </select>
                     </p>
-
-                    <?php if ($start_date): ?>
-                    <p class="form-field form-field-wide">
-                        <label><?php _e('Proposed start date:', 'arsol-pfw'); ?></label>
-                        <span><?php echo date_i18n(get_option('date_format'), strtotime($start_date)); ?></span>
-                    </p>
-                    <?php endif; ?>
-
-                    <?php if ($delivery_date): ?>
-                    <p class="form-field form-field-wide">
-                        <label><?php _e('Proposed delivery date:', 'arsol-pfw'); ?></label>
-                        <span><?php echo date_i18n(get_option('date_format'), strtotime($delivery_date)); ?></span>
-                    </p>
-                    <?php endif; ?>
 
                     <?php if ($expiration_date): ?>
                     <p class="form-field form-field-wide">

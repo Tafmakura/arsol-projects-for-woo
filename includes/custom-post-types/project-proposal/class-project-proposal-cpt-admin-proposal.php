@@ -75,24 +75,6 @@ class Proposal {
         ?>
         <div class="proposal-details">
             <p>
-                <label for="proposal_start_date" style="display:block;margin-bottom:5px;"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
-                <input type="date" 
-                       id="proposal_start_date" 
-                       name="proposal_start_date" 
-                       value="<?php echo esc_attr($start_date); ?>"
-                       class="widefat">
-            </p>
-
-            <p>
-                <label for="proposal_delivery_date" style="display:block;margin-bottom:5px;"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
-                <input type="date" 
-                       id="proposal_delivery_date" 
-                       name="proposal_delivery_date" 
-                       value="<?php echo esc_attr($delivery_date); ?>"
-                       class="widefat">
-            </p>
-
-            <p>
                 <label for="proposal_expiration_date" style="display:block;margin-bottom:5px;"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="proposal_expiration_date" 

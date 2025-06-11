@@ -793,4 +793,38 @@
     #proposal_data .order_data_column {
         margin-bottom: 15px;
     }
+}
+
+/* Form field row for side-by-side fields */
+.form-field-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 1em;
+}
+
+.form-field-half {
+    flex: 1;
+    margin-bottom: 0 !important;
+}
+
+.form-field-half label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.form-field-half input {
+    width: 100%;
+}
+
+/* Responsive: stack on smaller screens */
+@media (max-width: 782px) {
+    .form-field-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-field-half {
+        margin-bottom: 1em !important;
+    }
 } 
