@@ -217,8 +217,13 @@
                         
                         if (data.is_subscription) {
                             $row.find('.arsol-date-input').show();
+                            // Store subscription billing data on the row for calculations
+                            $row.data('billing-interval', data.billing_interval || 1);
+                            $row.data('billing-period', data.billing_period || 'month');
+                            $row.data('is-subscription', true);
                         } else {
                             $row.find('.arsol-date-input').hide();
+                            $row.removeData('billing-interval billing-period is-subscription');
                         }
                         
                         ArsolProposalInvoice.toggleStartDateColumn();
@@ -253,6 +258,7 @@
                 $row.find('.arsol-price-input, .arsol-sale-price-input').val('');
                 $row.find('.product-sub-text').html('');
                 $row.find('.arsol-date-input').hide();
+                $row.removeData('billing-interval billing-period is-subscription');
                 this.toggleStartDateColumn();
                 this.calculateTotals();
             }
@@ -308,24 +314,21 @@
                 $(this).find('.arsol-subtotal-column').html(ArsolProposalInvoice.formatPrice(subtotal));
                 
                 var $startDateInput = $(this).find('.arsol-date-input');
-                if ($startDateInput.is(':visible')) {
+                if ($startDateInput.is(':visible') && $(this).data('is-subscription')) {
                     // This is a subscription product
-                    var $productSelect = $(this).find('.arsol-description-input');
-                    var $selectedOption = $productSelect.find('option:selected');
-                    var subText = $selectedOption.data('subscription-text') || '';
+                    var interval = parseInt($(this).data('billing-interval')) || 1;
+                    var period = $(this).data('billing-period') || 'month';
                     
-                    if (subText) {
-                        $(this).find('.arsol-subtotal-column').html(ArsolProposalInvoice.formatPrice(subtotal) + ' ' + subText);
-                        
-                        // Extract interval and period from subscription text for calculations
-                        var intervalMatch = subText.match(/\/(\d+)?(\w+)/);
-                        if (intervalMatch) {
-                            var interval = intervalMatch[1] ? parseInt(intervalMatch[1]) : 1;
-                            var period = intervalMatch[2];
-                            ArsolProposalInvoice.updateRecurringTotals(recurringTotals, interval, period, subtotal);
-                            ArsolProposalInvoice.updateRecurringTotals(productRecurringTotals, interval, period, subtotal);
-                        }
-                    }
+                    // Create billing text for display
+                    var periodText = period === 'month' ? 'mo' : (period === 'year' ? 'yr' : (period === 'week' ? 'wk' : (period === 'day' ? 'day' : period)));
+                    var intervalText = interval > 1 ? interval : '';
+                    var billingText = '/' + intervalText + periodText;
+                    
+                    $(this).find('.arsol-subtotal-column').html(ArsolProposalInvoice.formatPrice(subtotal) + ' ' + billingText);
+                    
+                    // Add to recurring totals
+                    ArsolProposalInvoice.updateRecurringTotals(recurringTotals, interval, period, subtotal);
+                    ArsolProposalInvoice.updateRecurringTotals(productRecurringTotals, interval, period, subtotal);
                 } else {
                     // This is a one-time product
                     oneTimeTotal += subtotal;
