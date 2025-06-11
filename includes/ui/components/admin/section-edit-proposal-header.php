@@ -104,18 +104,17 @@ if ($original_request_id ||
             <?php endif; ?>
         </div>
 
-        <?php if ($has_request_data): ?>
-        <div class="order_data_column">
-            <h3><?php _e('Original Request', 'arsol-pfw'); ?></h3>
-            
-            <?php
-            // Hook for customer request details
-            do_action('arsol_proposal_header_content', $post);
-            ?>
-        </div>
-        <?php endif; ?>
+        <div class="order_double_data_column">
+        
+            <?php if ($has_request_data): ?>
+                <h3><?php _e('Original Request', 'arsol-pfw'); ?></h3>
+                
+                <?php
+                // Hook for customer request details
+                do_action('arsol_proposal_header_content', $post);
+                ?>
+            <?php endif; ?>
 
-        <div class="order_data_column">
             <h3><?php _e('Actions', 'arsol-pfw'); ?></h3>
             
             <p class="form-field form-field-wide">
@@ -137,6 +136,7 @@ if ($original_request_id ||
                            <?php disabled($is_disabled, true); ?> />
                 </span>
             </p>
+            
         </div>
     </div>
 

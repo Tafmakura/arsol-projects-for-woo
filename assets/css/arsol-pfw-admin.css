@@ -60,6 +60,12 @@ body.post-type-arsol-pfw-proposal .select2-container {
     width: 15%;
 }
 
+.order_double_data_column {
+    flex: 2;
+    min-width: 500px;
+    margin-bottom: 0;
+}
+
 /* Project details table styling */
 .projects-row th {
     text-align: left;
