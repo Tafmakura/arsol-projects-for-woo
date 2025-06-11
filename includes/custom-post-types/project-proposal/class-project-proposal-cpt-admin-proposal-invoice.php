@@ -281,6 +281,7 @@ class Proposal_Invoice {
                     <input type="text" class="arsol-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
                 </td>
                 <td class="arsol-billing-cycle-column">
+                    <div class="arsol-billing-period" id="arsol-billing-period-{{ data.id }}">
                     <?php
                         $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(1=>1);
                         $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array('month' => 'month');
@@ -295,6 +296,7 @@ class Proposal_Invoice {
                             <option value="{{ value }}" <# if (data.period == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
+                    </div>
                 </td>
                 <td class="arsol-taxable-column">
                     <select name="line_items[recurring_fees][{{ data.id }}][tax_class]">
