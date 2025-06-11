@@ -21,7 +21,7 @@ class Setup {
         add_action('edit_form_after_title', array($this, 'render_proposal_header_container'));
         
         // Hook customer request details into the proposal header
-        add_action('arsol_proposal_original_request_content', array($this, 'render_customer_request_details_section'), 10);
+        add_action('arsol_proposal_request_content', array($this, 'render_customer_request_details_section'), 10);
         
         // Save header fields including secondary status
         add_action('save_post', array($this, 'save_proposal_header_fields'));
