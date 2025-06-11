@@ -68,8 +68,8 @@
 
         shippingMethodChanged: function(e) {
             var $select = $(e.currentTarget);
-            var $row = $select.closest('.line-item');
-            var $input = $row.find('.shipping-method-input');
+            var $row = $select.closest('.arsol-line-item');
+            var $input = $row.find('.arsol-description-input');
             var selectedVal = $select.val();
 
             if (selectedVal === 'custom') {
@@ -90,7 +90,7 @@
                 .on('click', '.add-line-item', this.addLineItem.bind(this))
                 .on('click', '.remove-line-item', this.removeLineItem.bind(this))
                 .on('change', '.arsol-description-input', this.productChanged.bind(this))
-                .on('change', '.shipping-method-select-ui', this.shippingMethodChanged.bind(this));
+                .on('change', '.arsol-select-full', this.shippingMethodChanged.bind(this));
             
             // Use jQuery's one() method for input events with debouncing (WordPress pattern)
             var debouncedCalculate = _.debounce(this.calculateTotals.bind(this), 300);
@@ -145,8 +145,8 @@
             $(container).append($newRow);
 
             if (type === 'shipping-fee') {
-                var $select = $newRow.find('.shipping-method-select-ui');
-                var $input = $newRow.find('.shipping-method-input');
+                var $select = $newRow.find('.arsol-select-full');
+                var $input = $newRow.find('.arsol-description-input');
                 var initialName = data.name || '';
                 var matchFound = false;
 
