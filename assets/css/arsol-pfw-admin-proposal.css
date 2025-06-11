@@ -618,4 +618,20 @@
     .arsol-customer-request-details {
         padding: 12px;
     }
+}
+
+/* === CUSTOMER REQUEST DETAILS AFTER TITLE POSITIONING === */
+/* Ensure the postbox after title has proper spacing */
+.post-type-arsol-pfw-proposal .wrap .postbox {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* Customer request details inside postbox after title */
+.postbox .inside .arsol-customer-request-details {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 0;
 } 
