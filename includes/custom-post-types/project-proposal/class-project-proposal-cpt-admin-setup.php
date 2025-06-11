@@ -237,27 +237,15 @@ class Setup {
     public function render_proposal_header_container() {
         global $post;
         
-        // Debug output
-        error_log('ARSOL DEBUG: render_proposal_header_container called for post type: ' . ($post ? $post->post_type : 'no post'));
-        
         // Only show for proposals on the edit screen
         if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
-            error_log('ARSOL DEBUG: Skipping header - not a proposal post type');
             return;
         }
         
-        // Calculate and debug the template path
-        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header.php';
-        error_log('ARSOL DEBUG: Template path: ' . $template_path);
-        error_log('ARSOL DEBUG: Template exists: ' . (file_exists($template_path) ? 'YES' : 'NO'));
-        
         // Include the header container template
+        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header.php';
         if (file_exists($template_path)) {
             include $template_path;
-            error_log('ARSOL DEBUG: Header template included successfully');
-        } else {
-            error_log('ARSOL DEBUG: Header template file not found!');
-            echo '<div style="background: #ffcccc; padding: 10px; margin: 20px 0;">Header template not found: ' . esc_html($template_path) . '</div>';
         }
     }
     
@@ -265,25 +253,10 @@ class Setup {
      * Render Customer Request Details section (hooked into proposal header)
      */
     public function render_customer_request_details_section($post) {
-        error_log('ARSOL DEBUG: render_customer_request_details_section called for post ID: ' . $post->ID);
-        
-        // Temporary: Always show something for testing
-        echo '<div class="postbox" style="margin: 20px 0; width: 100%;">
-                <div class="postbox-header">
-                    <h2 class="hndle ui-sortable-handle">' . __('Customer Request Details (TEST)', 'arsol-pfw') . '</h2>
-                </div>
-                <div class="inside" style="padding: 12px;">
-                    <p style="color: green; font-weight: bold;">DEBUG: Customer request details section is working! Post ID: ' . $post->ID . '</p>
-                </div>
-              </div>';
-        
         // Only show if this proposal has original request data
         if (!$this->has_original_request_data($post->ID)) {
-            error_log('ARSOL DEBUG: No original request data found for post ID: ' . $post->ID);
             return;
         }
-        
-        error_log('ARSOL DEBUG: Original request data found, rendering details');
 
         // Get original request data
         $original_budget = get_post_meta($post->ID, '_original_request_budget', true);
