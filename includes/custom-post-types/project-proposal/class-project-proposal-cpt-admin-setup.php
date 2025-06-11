@@ -15,6 +15,7 @@ class Setup {
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_proposals'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_wc_admin_styles'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_proposal_assets'));
     }
 
     public function register_post_type() {
@@ -157,6 +158,70 @@ class Setup {
         if ($typenow === 'arsol-pfw-proposal' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-pfw-proposal')) {
             // WooCommerce admin styles
             wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
+        }
+    }
+
+    /**
+     * Enqueue proposal-specific assets
+     */
+    public function enqueue_proposal_assets($hook) {
+        global $post, $typenow;
+        
+        // Only load on proposal edit screens
+        if (('post.php' === $hook || 'post-new.php' === $hook) && 
+            ((isset($post->post_type) && 'arsol-pfw-proposal' === $post->post_type) || 
+             (isset($_GET['post_type']) && 'arsol-pfw-proposal' === $_GET['post_type']))) {
+            
+            // Enqueue proposal admin CSS
+            wp_enqueue_style(
+                'arsol-proposal-admin',
+                ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin-proposal.css',
+                array(),
+                filemtime(ARSOL_PROJECTS_PLUGIN_DIR . 'assets/css/arsol-pfw-admin-proposal.css')
+            );
+
+            // Enqueue proposal admin JS
+            wp_enqueue_script(
+                'arsol-proposal-admin',
+                ARSOL_PROJECTS_PLUGIN_URL . 'assets/js/arsol-pfw-admin-proposal.js',
+                array('jquery', 'wp-util', 'underscore', 'select2'),
+                filemtime(ARSOL_PROJECTS_PLUGIN_DIR . 'assets/js/arsol-pfw-admin-proposal.js'),
+                true
+            );
+            
+            // Only localize script data if we're on an actual proposal edit page with a post
+            if ($hook === 'post.php' && isset($post->post_type) && 'arsol-pfw-proposal' === $post->post_type) {
+                // Get currency symbol based on ISO code for historical accuracy
+                $saved_code = get_post_meta($post->ID, '_arsol_proposal_currency', true);
+                $currency_symbol = $saved_code ? get_woocommerce_currency_symbol($saved_code) : get_woocommerce_currency_symbol();
+
+                // Get line items and populate product names from IDs
+                $line_items = get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array();
+                
+                // Populate product names for existing products
+                if (!empty($line_items['products'])) {
+                    foreach ($line_items['products'] as $key => $product_item) {
+                        if (!empty($product_item['product_id']) && empty($product_item['product_name'])) {
+                            $product = wc_get_product($product_item['product_id']);
+                            if ($product) {
+                                $line_items['products'][$key]['product_name'] = $product->get_formatted_name();
+                            }
+                        }
+                    }
+                }
+
+                wp_localize_script(
+                    'arsol-proposal-admin',
+                    'arsol_proposal_invoice_vars',
+                    array(
+                        'ajax_url' => admin_url('admin-ajax.php'),
+                        'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
+                        'currency_symbol' => $currency_symbol,
+                        'line_items' => $line_items,
+                        'calculation_constants' => \Arsol_Projects_For_Woo\Integrations\Woocommerce_Subscriptions::get_calculation_constants()
+                    )
+                );
+            }
         }
     }
 } 

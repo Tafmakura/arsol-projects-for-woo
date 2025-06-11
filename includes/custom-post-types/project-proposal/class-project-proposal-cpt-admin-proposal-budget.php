@@ -8,7 +8,6 @@ class Proposal_Budget {
     public function __construct() {
         add_action('add_meta_boxes', array($this, 'add_budget_estimates_meta_box'));
         add_action('save_post', array($this, 'save_budget_meta_box'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
     }
 
     public function add_budget_estimates_meta_box() {
@@ -211,20 +210,6 @@ class Proposal_Budget {
             });
         </script>
         <?php
-    }
-
-    public function enqueue_scripts($hook) {
-        global $post;
-        if ($hook !== 'post.php' && $hook !== 'post-new.php') return;
-        if (!$post || get_post_type($post) !== 'arsol-pfw-proposal') return;
-
-        // Enqueue the consolidated CSS for consistent styling
-        wp_enqueue_style(
-            'arsol-proposal-budget-admin',
-            plugins_url('assets/admin-proposal.css', __FILE__),
-            array(),
-            '1.0.0'
-        );
     }
 
     public function save_budget_meta_box($post_id) {

@@ -10,10 +10,7 @@ if (!defined('ABSPATH')) {
 class Proposal_Invoice {
     public function __construct() {
         add_action('add_meta_boxes', array($this, 'add_invoice_meta_box'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-        add_action('save_post_arsol-pfw-proposal', array($this, 'save_invoice_meta_box'));
-        
-        // AJAX Handlers
+        add_action('save_post', array($this, 'save_invoice_meta_box'));
         add_action('wp_ajax_arsol_proposal_invoice_ajax_search_products', array($this, 'ajax_search_products'));
         add_action('wp_ajax_arsol_proposal_invoice_ajax_get_product_details', array($this, 'ajax_get_product_details'));
     }
@@ -27,61 +24,6 @@ class Proposal_Invoice {
             'normal',
             'high'
         );
-    }
-
-    public function enqueue_scripts($hook) {
-        global $post;
-
-        if (('post.php' === $hook || 'post-new.php' === $hook) && isset($post->post_type) && 'arsol-pfw-proposal' === $post->post_type) {
-            $plugin_dir = \ARSOL_PROJECTS_PLUGIN_DIR;
-            $plugin_url = \ARSOL_PROJECTS_PLUGIN_URL;
-
-            wp_enqueue_style(
-                'arsol-proposal-invoice-admin',
-                $plugin_url . 'includes/custom-post-types/project-proposal/assets/admin-proposal.css',
-                array(),
-                filemtime($plugin_dir . 'includes/custom-post-types/project-proposal/assets/admin-proposal.css')
-            );
-
-            wp_enqueue_script(
-                'arsol-proposal-invoice-admin',
-                $plugin_url . 'includes/custom-post-types/project-proposal/assets/admin-proposal.js',
-                array('jquery', 'wp-util', 'underscore', 'select2'),
-                filemtime($plugin_dir . 'includes/custom-post-types/project-proposal/assets/admin-proposal.js'),
-                true
-            );
-            
-            // Get currency symbol based on ISO code for historical accuracy
-            $saved_code = get_post_meta($post->ID, '_arsol_proposal_currency', true);
-            $currency_symbol = $saved_code ? get_woocommerce_currency_symbol($saved_code) : get_woocommerce_currency_symbol();
-
-            // Get line items and populate product names from IDs
-            $line_items = get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array();
-            
-            // Populate product names for existing products
-            if (!empty($line_items['products'])) {
-                foreach ($line_items['products'] as $key => $product_item) {
-                    if (!empty($product_item['product_id']) && empty($product_item['product_name'])) {
-                        $product = wc_get_product($product_item['product_id']);
-                        if ($product) {
-                            $line_items['products'][$key]['product_name'] = $product->get_formatted_name();
-                        }
-                    }
-                }
-            }
-
-             wp_localize_script(
-                'arsol-proposal-invoice-admin',
-                'arsol_proposal_invoice_vars',
-                array(
-                    'ajax_url' => admin_url('admin-ajax.php'),
-                    'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
-                    'currency_symbol' => $currency_symbol,
-                    'line_items' => $line_items,
-                    'calculation_constants' => Woocommerce_Subscriptions::get_calculation_constants()
-                )
-            );
-        }
     }
 
     public function render_invoice_meta_box($post) {
