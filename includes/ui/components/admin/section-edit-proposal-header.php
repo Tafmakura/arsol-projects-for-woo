@@ -65,38 +65,33 @@ if ($original_request_id ||
                             <?php endif; ?>
                         </label>
                                         <?php
-                // Get author dropdown
-                $author_dropdown = wp_dropdown_users(array(
-                    'name' => 'post_author_override',
-                    'selected' => $post->post_author,
-                    'include_selected' => true,
-                    'echo' => false,
-                    'class' => 'wc-customer-search'
-                ));
-                echo $author_dropdown;
-                ?>
-            </p>
+                        // Get author dropdown
+                        $author_dropdown = wp_dropdown_users(array(
+                            'name' => 'post_author_override',
+                            'selected' => $post->post_author,
+                            'include_selected' => true,
+                            'echo' => false,
+                            'class' => 'wc-customer-search'
+                        ));
+                        echo $author_dropdown;
+                        ?>
+                    </p>
 
-            <p class="form-field form-field-wide">
-                <label for="proposal_secondary_status"><?php _e('Secondary status:', 'arsol-pfw'); ?></label>
-                <?php
-                $secondary_status = get_post_meta($proposal_id, '_proposal_secondary_status', true);
-                if (empty($secondary_status)) {
-                    $secondary_status = 'processing'; // Default value
-                }
-                ?>
-                <select id="proposal_secondary_status" name="proposal_secondary_status" class="wc-enhanced-select">
-                    <option value="ready_for_review" <?php selected($secondary_status, 'ready_for_review'); ?>><?php _e('Ready for review', 'arsol-pfw'); ?></option>
-                    <option value="processing" <?php selected($secondary_status, 'processing'); ?>><?php _e('Processing', 'arsol-pfw'); ?></option>
-                </select>
-            </p>
+                    <p class="form-field form-field-wide">
+                        <label for="proposal_secondary_status"><?php _e('Status:', 'arsol-pfw'); ?></label>
+                        <?php
+                        $secondary_status = get_post_meta($proposal_id, '_proposal_secondary_status', true);
+                        if (empty($secondary_status)) {
+                            $secondary_status = 'processing'; // Default value
+                        }
+                        ?>
+                        <select id="proposal_secondary_status" name="proposal_secondary_status" class="wc-enhanced-select">
+                            <option value="ready_for_review" <?php selected($secondary_status, 'ready_for_review'); ?>><?php _e('Ready for review', 'arsol-pfw'); ?></option>
+                            <option value="processing" <?php selected($secondary_status, 'processing'); ?>><?php _e('Processing', 'arsol-pfw'); ?></option>
+                        </select>
+                    </p>
 
-            <p class="form-field form-field-wide">
-                <label><?php _e('Proposal status:', 'arsol-pfw'); ?></label>
-                <span class="proposal-status status-<?php echo esc_attr($proposal_status); ?>">
-                    <?php echo ucfirst(str_replace('_', ' ', $proposal_status)); ?>
-                </span>
-            </p>
+                
 
                     <p class="form-field form-field-wide">
                         <label for="cost_proposal_type"><?php _e('Cost proposal type:', 'arsol-pfw'); ?></label>
