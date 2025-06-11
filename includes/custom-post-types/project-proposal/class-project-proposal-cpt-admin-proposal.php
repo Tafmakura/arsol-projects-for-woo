@@ -8,10 +8,6 @@ class Proposal {
     public function __construct() {
         // Add meta boxes for single proposal admin screen
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
-        add_action('edit_form_after_title', array($this, 'render_proposal_header_container'));
-        
-        // Hook customer request details into the proposal header
-        add_action('arsol_proposal_header_content', array($this, 'render_customer_request_details_section'), 10);
         
         // Add styles to hide metaboxes initially
         add_action('admin_head', array($this, 'hide_metaboxes_initially'));
@@ -320,64 +316,5 @@ class Proposal {
         });
         </script>
         <?php
-    }
-
-    /**
-     * Render the proposal header container
-     */
-    public function render_proposal_header_container() {
-        global $post;
-        
-        // Only show for proposals on the edit screen
-        if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
-            return;
-        }
-        
-        // Include the header container template
-        include plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'ui/components/admin/section-edit-proposal-header.php';
-    }
-    
-    /**
-     * Render Customer Request Details section (hooked into proposal header)
-     */
-    public function render_customer_request_details_section($post) {
-        // Only show if this proposal has original request data
-        if (!$this->has_original_request_data($post->ID)) {
-            return;
-        }
-
-        // Get original request data
-        $original_budget = get_post_meta($post->ID, '_original_request_budget', true);
-        $original_start_date = get_post_meta($post->ID, '_original_request_start_date', true);
-        $original_delivery_date = get_post_meta($post->ID, '_original_request_delivery_date', true);
-        $original_request_date = get_post_meta($post->ID, '_original_request_date', true);
-        $original_request_title = get_post_meta($post->ID, '_original_request_title', true);
-        $original_request_content = get_post_meta($post->ID, '_original_request_content', true);
-        $original_request_attachments = get_post_meta($post->ID, '_original_request_attachments', true);
-        
-        echo '<div class="postbox" style="margin: 20px 0; width: 100%;">
-                <div class="postbox-header">
-                    <h2 class="hndle ui-sortable-handle">' . __('Customer Request Details', 'arsol-pfw') . '</h2>
-                </div>
-                <div class="inside" style="padding: 12px;">';
-        
-        // Include the template file
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-metabox-request-details.php';
-        
-        echo '    </div>
-              </div>';
-    }
-
-    /**
-     * Check if proposal has original request data
-     */
-    private function has_original_request_data($post_id) {
-        $original_budget = get_post_meta($post_id, '_original_request_budget', true);
-        $original_start_date = get_post_meta($post_id, '_original_request_start_date', true);
-        $original_delivery_date = get_post_meta($post_id, '_original_request_delivery_date', true);
-        $original_request_date = get_post_meta($post_id, '_original_request_date', true);
-        $original_request_attachments = get_post_meta($post_id, '_original_request_attachments', true);
-        
-        return !empty($original_budget) || !empty($original_start_date) || !empty($original_delivery_date) || !empty($original_request_date) || !empty($original_request_attachments);
     }
 }
