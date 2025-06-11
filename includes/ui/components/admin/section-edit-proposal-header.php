@@ -59,7 +59,7 @@ if ($original_request_id ||
                                    id="proposal_start_date" 
                                    name="proposal_start_date" 
                                    value="<?php echo esc_attr($start_date); ?>"
-                                   class="wc-enhanced-select">
+                                   class="widefat">
                         </p>
                         <p class="form-field form-field-half">
                             <label for="proposal_delivery_date"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
@@ -67,7 +67,7 @@ if ($original_request_id ||
                                    id="proposal_delivery_date" 
                                    name="proposal_delivery_date" 
                                    value="<?php echo esc_attr($delivery_date); ?>"
-                                   class="wc-enhanced-select">
+                                   class="widefat">
                         </p>
                     </div>
 
