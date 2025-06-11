@@ -400,6 +400,7 @@
             // Combined totals for grand total
             var totalDailyCost = productDailyCost + recurringFeeDailyCost;
             var averageMonthlyTotal = totalDailyCost * constants.days_in_month;
+            var averageYearlyTotal = totalDailyCost * constants.days_in_year;
             var hasRecurring = hasProductRecurring || hasRecurringFees;
 
             // Update section recurring displays
@@ -417,7 +418,7 @@
 
             // Update main totals
             $('#one-time-total-display').html(ArsolProposalInvoice.formatPrice(oneTimeTotal));
-            $('#average-monthly-total-display').html(ArsolProposalInvoice.formatPrice(averageMonthlyTotal) + (hasRecurring ? ' /mo' : ''));
+            $('#average-monthly-total-display').html(ArsolProposalInvoice.formatPrice(averageYearlyTotal) + (hasRecurring ? ' /yr' : ''));
 
             // Update hidden inputs for form submission
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
