@@ -15,6 +15,13 @@ class Setup {
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('template_redirect', array($this, 'handle_project_template_redirect'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_wc_admin_styles'));
+        
+        // Add header container after title
+        add_action('edit_form_after_title', array($this, 'render_project_header_container'));
+        
+        // Hook project details into header
+        add_action('arsol_project_details_content', array($this, 'render_project_details_content'));
+        add_action('arsol_project_proposal_content', array($this, 'render_project_proposal_content'));
     }
 
     public function register_post_type() {
@@ -183,6 +190,50 @@ class Setup {
         if ($typenow === 'arsol-project' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-project')) {
             // WooCommerce admin styles
             wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
+            // Proposal admin styles (reuse for consistent styling)
+            wp_enqueue_style('arsol-pfw-admin-proposal', ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin-proposal.css', array(), '1.0.0');
+        }
+    }
+
+    /**
+     * Render project header container
+     */
+    public function render_project_header_container() {
+        global $post;
+        
+        if (!$post || $post->post_type !== 'arsol-project') {
+            return;
+        }
+        
+        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header.php';
+        if (file_exists($template_path)) {
+            include $template_path;
+        }
+    }
+
+    /**
+     * Render project details content (placeholder for future use)
+     */
+    public function render_project_details_content($post) {
+        if (!$post || $post->post_type !== 'arsol-project') {
+            return;
+        }
+        
+        // Placeholder for project-specific details
+        echo '<p>' . __('Project details will be displayed here.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render project proposal content (original proposal details)
+     */
+    public function render_project_proposal_content($post) {
+        if (!$post || $post->post_type !== 'arsol-project') {
+            return;
+        }
+        
+        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-metabox-request-details.php';
+        if (file_exists($template_path)) {
+            include $template_path;
         }
     }
 }

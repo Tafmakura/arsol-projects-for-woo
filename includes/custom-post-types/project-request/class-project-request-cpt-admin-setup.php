@@ -14,6 +14,12 @@ class Setup {
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_requests'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_wc_admin_styles'));
+        
+        // Add header container after title
+        add_action('edit_form_after_title', array($this, 'render_request_header_container'));
+        
+        // Hook request details into header
+        add_action('arsol_request_details_content', array($this, 'render_request_details_content'));
     }
 
     public function register_post_type() {
@@ -172,6 +178,38 @@ class Setup {
         if ($typenow === 'arsol-pfw-request' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-pfw-request')) {
             // WooCommerce admin styles
             wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
+            // Proposal admin styles (reuse for consistent styling)
+            wp_enqueue_style('arsol-pfw-admin-proposal', ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin-proposal.css', array(), '1.0.0');
+        }
+    }
+
+    /**
+     * Render request header container
+     */
+    public function render_request_header_container() {
+        global $post;
+        
+        if (!$post || $post->post_type !== 'arsol-pfw-request') {
+            return;
+        }
+        
+        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-request-header.php';
+        if (file_exists($template_path)) {
+            include $template_path;
+        }
+    }
+
+    /**
+     * Render request details content
+     */
+    public function render_request_details_content($post) {
+        if (!$post || $post->post_type !== 'arsol-pfw-request') {
+            return;
+        }
+        
+        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-request-metabox-request-details.php';
+        if (file_exists($template_path)) {
+            include $template_path;
         }
     }
 } 

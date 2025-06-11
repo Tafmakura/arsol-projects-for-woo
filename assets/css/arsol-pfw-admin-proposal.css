@@ -667,8 +667,6 @@
     margin-bottom: 15px;
 }
 
-
-
 .form-field input,
 .form-field select {
     width: 100%;
@@ -686,4 +684,35 @@
         flex: none;
         width: 100%;
     }
+}
+
+/* === REQUEST DETAIL VALUES === */
+.arsol-request-detail-value {
+    color: #666;
+    font-weight: normal;
+}
+
+.form-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.arsol-request-details-content .form-field {
+    margin-bottom: 12px;
+}
+
+.arsol-request-details-content .form-field label {
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
+.arsol-original-request-details .form-field {
+    margin-bottom: 12px;
+}
+
+.arsol-original-request-details .form-field label {
+    font-size: 13px;
+    margin-bottom: 3px;
 }
