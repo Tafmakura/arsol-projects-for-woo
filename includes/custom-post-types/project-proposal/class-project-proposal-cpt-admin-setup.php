@@ -247,7 +247,7 @@ class Setup {
         }
         
         // Calculate and debug the template path
-        $template_path = plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'ui/components/admin/section-edit-proposal-header.php';
+        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header.php';
         error_log('ARSOL DEBUG: Template path: ' . $template_path);
         error_log('ARSOL DEBUG: Template exists: ' . (file_exists($template_path) ? 'YES' : 'NO'));
         
