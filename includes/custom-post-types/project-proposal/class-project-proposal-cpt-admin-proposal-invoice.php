@@ -58,7 +58,7 @@ class Proposal_Invoice {
                                     <td class="total-amount"><strong><?php _e('Total:', 'arsol-pfw'); ?></strong> <span id="product-subtotal-display"><?php echo wc_price(0); ?></span></td>
                                 </tr>
                                 <tr>
-                                    <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="product-avg-monthly-display"><?php echo wc_price(0); ?></span> <span class="arsol-billing-period billing-period-display">/mo</span></td>
+                                    <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="product-avg-monthly-display"><?php echo wc_price(0); ?></span></td>
                                 </tr>
                             </table>
                         </div>
@@ -91,7 +91,7 @@ class Proposal_Invoice {
                         <div class="section-totals">
                             <table>
                                 <tr>
-                                    <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></span> <span class="arsol-billing-period billing-period-display">/mo</span></td>
+                                    <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></span></td>
                                 </tr>
                             </table>
                         </div>
@@ -179,7 +179,7 @@ class Proposal_Invoice {
                             <tr class="arsol-total-row">
                                 <td class="arsol-total-label"><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></td>
                                 <td class="arsol-total-amount">
-                                    <span id="average-monthly-total-display"><?php echo wc_price(0); ?></span> <span class="arsol-billing-period billing-period-display">/yr</span>
+                                    <span id="average-monthly-total-display"><?php echo wc_price(0); ?></span>
                                 </td>
                             </tr>
                         </tbody>

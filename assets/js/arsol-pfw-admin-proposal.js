@@ -276,15 +276,10 @@
 
             var hasRecurringFees = $('#recurring-fee-lines-body tr.arsol-line-item').length > 0;
 
-            console.log('toggleStartDateColumn: hasSubscriptions =', hasSubscriptions, 'hasRecurringFees =', hasRecurringFees);
-            console.log('Date column elements found:', $('.arsol-date-column').length);
-
             if (hasSubscriptions || hasRecurringFees) {
-                $('body').removeClass('arsol-hide-date-column');
-                console.log('Showing date column');
+                $('.arsol-date-column').show();
             } else {
-                $('body').addClass('arsol-hide-date-column');
-                console.log('Hiding date column');
+                $('.arsol-date-column').hide();
             }
         },
 
