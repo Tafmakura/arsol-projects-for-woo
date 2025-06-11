@@ -22,6 +22,9 @@ class Setup {
         
         // Hook customer request details into the proposal header
         add_action('arsol_proposal_header_content', array($this, 'render_customer_request_details_section'), 10);
+        
+        // Save header fields including secondary status
+        add_action('save_post', array($this, 'save_proposal_header_fields'));
     }
 
     public function register_post_type() {
@@ -328,5 +331,34 @@ class Setup {
         $original_request_attachments = get_post_meta($post_id, '_original_request_attachments', true);
         
         return !empty($original_budget) || !empty($original_start_date) || !empty($original_delivery_date) || !empty($original_request_date) || !empty($original_request_attachments);
+    }
+
+    /**
+     * Save proposal header fields including secondary status
+     */
+    public function save_proposal_header_fields($post_id) {
+        // Skip autosaves and revisions
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+        
+        // Check if this is the right post type
+        if (get_post_type($post_id) !== 'arsol-pfw-proposal') {
+            return;
+        }
+        
+        // Check user permissions
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+        
+        // Save secondary status
+        if (isset($_POST['proposal_secondary_status'])) {
+            $secondary_status = sanitize_text_field($_POST['proposal_secondary_status']);
+            // Validate the value is one of the allowed options
+            if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
+                update_post_meta($post_id, '_proposal_secondary_status', $secondary_status);
+            }
+        }
     }
 } 

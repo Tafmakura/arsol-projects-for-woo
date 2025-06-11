@@ -194,6 +194,15 @@ class Proposal {
         $cost_proposal_type = isset($_POST['cost_proposal_type']) ? sanitize_text_field($_POST['cost_proposal_type']) : 'none';
         update_post_meta($post_id, '_cost_proposal_type', $cost_proposal_type);
 
+        // Save secondary status
+        if (isset($_POST['proposal_secondary_status'])) {
+            $secondary_status = sanitize_text_field($_POST['proposal_secondary_status']);
+            // Validate the value is one of the allowed options
+            if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
+                update_post_meta($post_id, '_proposal_secondary_status', $secondary_status);
+            }
+        }
+
         // Get currency
         $currency = get_woocommerce_currency();
 
