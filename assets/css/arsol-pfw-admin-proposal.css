@@ -667,11 +667,7 @@
     margin-bottom: 15px;
 }
 
-.form-field label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 5px;
-}
+
 
 .form-field input,
 .form-field select {
