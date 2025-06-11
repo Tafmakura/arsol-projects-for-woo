@@ -8,7 +8,11 @@ class Proposal {
     public function __construct() {
         // Add meta boxes for single proposal admin screen
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
-        add_action('edit_form_after_title', array($this, 'render_customer_request_details_after_title'));
+        add_action('edit_form_after_title', array($this, 'render_proposal_header_container'));
+        
+        // Hook customer request details into the proposal header
+        add_action('arsol_proposal_header_content', array($this, 'render_customer_request_details_section'), 10);
+        
         // Add styles to hide metaboxes initially
         add_action('admin_head', array($this, 'hide_metaboxes_initially'));
         // Save proposal data
@@ -319,16 +323,24 @@ class Proposal {
     }
 
     /**
-     * Render customer request details after title (for proposals converted from requests)
+     * Render the proposal header container
      */
-    public function render_customer_request_details_after_title($post) {
+    public function render_proposal_header_container() {
         global $post;
         
-        // Only show on proposal edit pages
+        // Only show for proposals on the edit screen
         if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
             return;
         }
-
+        
+        // Include the header container template
+        include plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'ui/components/admin/section-edit-proposal-header.php';
+    }
+    
+    /**
+     * Render Customer Request Details section (hooked into proposal header)
+     */
+    public function render_customer_request_details_section($post) {
         // Only show if this proposal has original request data
         if (!$this->has_original_request_data($post->ID)) {
             return;

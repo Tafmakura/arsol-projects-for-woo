@@ -634,4 +634,18 @@
     padding: 15px;
     border-radius: 4px;
     margin: 0;
+}
+
+/* === PROPOSAL HEADER CONTAINER STYLES === */
+.arsol-proposal-header-container {
+    margin: 20px 0 !important;
+}
+
+.arsol-proposal-header-container .postbox {
+    margin: 0 0 20px 0 !important;
+    width: 100% !important;
+}
+
+.arsol-proposal-header-container .postbox:last-child {
+    margin-bottom: 0 !important;
 } 
