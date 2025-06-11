@@ -267,17 +267,54 @@ class Setup {
         $original_request_content = get_post_meta($post->ID, '_original_request_content', true);
         $original_request_attachments = get_post_meta($post->ID, '_original_request_attachments', true);
         
-        echo '<div class="postbox" style="margin: 20px 0; width: 100%;">
-                <div class="postbox-header">
-                    <h2 class="hndle ui-sortable-handle">' . __('Customer Request Details', 'arsol-pfw') . '</h2>
-                </div>
-                <div class="inside" style="padding: 12px;">';
-        
-        // Include the template file
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-metabox-request-details.php';
-        
-        echo '    </div>
-              </div>';
+        // Display in WooCommerce order column format
+        if ($original_request_title) {
+            echo '<p class="form-field form-field-wide">';
+            echo '<label><strong>' . __('Original title:', 'arsol-pfw') . '</strong></label>';
+            echo '<span>' . esc_html($original_request_title) . '</span>';
+            echo '</p>';
+        }
+
+        if ($original_budget) {
+            echo '<p class="form-field form-field-wide">';
+            echo '<label><strong>' . __('Requested budget:', 'arsol-pfw') . '</strong></label>';
+            if (is_array($original_budget)) {
+                $amount = isset($original_budget['amount']) ? $original_budget['amount'] : '';
+                $currency = isset($original_budget['currency']) ? $original_budget['currency'] : get_woocommerce_currency();
+                echo '<span>' . wc_price($amount, array('currency' => $currency)) . '</span>';
+            } else {
+                echo '<span>' . esc_html($original_budget) . '</span>';
+            }
+            echo '</p>';
+        }
+
+        if ($original_start_date) {
+            echo '<p class="form-field form-field-wide">';
+            echo '<label><strong>' . __('Requested start date:', 'arsol-pfw') . '</strong></label>';
+            echo '<span>' . date_i18n(get_option('date_format'), strtotime($original_start_date)) . '</span>';
+            echo '</p>';
+        }
+
+        if ($original_delivery_date) {
+            echo '<p class="form-field form-field-wide">';
+            echo '<label><strong>' . __('Requested delivery date:', 'arsol-pfw') . '</strong></label>';
+            echo '<span>' . date_i18n(get_option('date_format'), strtotime($original_delivery_date)) . '</span>';
+            echo '</p>';
+        }
+
+        if ($original_request_date) {
+            echo '<p class="form-field form-field-wide">';
+            echo '<label><strong>' . __('Request submitted:', 'arsol-pfw') . '</strong></label>';
+            echo '<span>' . date_i18n(get_option('date_format'), strtotime($original_request_date)) . '</span>';
+            echo '</p>';
+        }
+
+        if ($original_request_attachments && is_array($original_request_attachments) && !empty($original_request_attachments)) {
+            echo '<p class="form-field form-field-wide">';
+            echo '<label><strong>' . __('Attachments:', 'arsol-pfw') . '</strong></label>';
+            echo '<span>' . count($original_request_attachments) . ' ' . __('file(s)', 'arsol-pfw') . '</span>';
+            echo '</p>';
+        }
     }
 
     /**

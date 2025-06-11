@@ -648,4 +648,149 @@
 
 .arsol-proposal-header-container .postbox:last-child {
     margin-bottom: 0 !important;
+}
+
+/* === WOOCOMMERCE-INSPIRED PROPOSAL DATA PANEL === */
+#proposal_data.panel {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    margin: 20px 0;
+    padding: 0;
+    position: relative;
+}
+
+#proposal_data h2 {
+    background: #fcfcfc;
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+#proposal_data .order_data_column_container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 12px;
+    gap: 20px;
+}
+
+#proposal_data .order_data_column {
+    flex: 1;
+    min-width: 250px;
+    margin-bottom: 0;
+}
+
+#proposal_data .order_data_column h3 {
+    margin: 0 0 12px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+#proposal_data .form-field {
+    margin: 0 0 12px 0;
+    padding: 0;
+}
+
+#proposal_data .form-field label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+#proposal_data .form-field label a {
+    font-weight: normal;
+    margin-left: 8px;
+    font-size: 12px;
+    text-decoration: none;
+}
+
+#proposal_data .form-field span {
+    display: block;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+#proposal_data .customer-info {
+    background: #f9f9f9;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+#proposal_data .proposal-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+#proposal_data .proposal-status.status-publish {
+    background: #c6e1c6;
+    color: #5b841b;
+}
+
+#proposal_data .proposal-status.status-draft {
+    background: #e6e6e6;
+    color: #666;
+}
+
+#proposal_data .proposal-status.status-pending {
+    background: #fff2cc;
+    color: #996633;
+}
+
+#proposal_data .expiration-date {
+    font-weight: 600;
+}
+
+#proposal_data .button {
+    margin-top: 8px;
+}
+
+#proposal_data .clear {
+    clear: both;
+}
+
+/* === RESPONSIVE DESIGN FOR PROPOSAL DATA PANEL === */
+@media screen and (max-width: 1200px) {
+    #proposal_data .order_data_column_container {
+        flex-direction: column;
+    }
+    
+    #proposal_data .order_data_column {
+        min-width: auto;
+        margin-bottom: 20px;
+    }
+    
+    #proposal_data .order_data_column:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #proposal_data {
+        margin: 10px 0;
+    }
+    
+    #proposal_data .order_data_column_container {
+        padding: 8px;
+        gap: 15px;
+    }
+    
+    #proposal_data .order_data_column {
+        margin-bottom: 15px;
+    }
 } 
