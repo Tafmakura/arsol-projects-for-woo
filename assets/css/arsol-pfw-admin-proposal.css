@@ -649,3 +649,45 @@
 .arsol-proposal-header-container .postbox:last-child {
     margin-bottom: 0 !important;
 }
+
+/* === WOOCOMMERCE-INSPIRED FORM FIELD LAYOUT === */
+.form-field-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 0;
+}
+
+.form-field-half {
+    flex: 1;
+    margin-bottom: 15px !important;
+}
+
+.form-field-wide {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.form-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.form-field input,
+.form-field select {
+    width: 100%;
+    max-width: none;
+}
+
+/* Responsive adjustments for form fields */
+@media screen and (max-width: 768px) {
+    .form-field-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .form-field-half {
+        flex: none;
+        width: 100%;
+    }
+}
