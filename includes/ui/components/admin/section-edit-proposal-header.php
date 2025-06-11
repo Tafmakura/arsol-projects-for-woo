@@ -41,8 +41,8 @@ if ($original_request_id ||
 }
 ?>
 
-<div id="proposal_data" class="panel-wrap woocommerce">
-    <div id="proposal_data" class="panel woocommerce">
+<div id="proposal_metabox" class="panel-wrap woocommerce">
+    <div id="order_data" class="panel woocommerce">
     <h2>
         <?php printf(__('Proposal #%d details', 'arsol-pfw'), $proposal_id); ?>
     </h2>
