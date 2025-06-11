@@ -121,12 +121,14 @@ if ($original_request_id ||
                         </select>
                     </p>
 
-                    <?php if ($expiration_date): ?>
-                    <p class="form-field form-field-wide">
-                        <label><?php _e('Proposal expiration date:', 'arsol-pfw'); ?></label>
-                        <span class="expiration-date"><?php echo date_i18n(get_option('date_format'), strtotime($expiration_date)); ?></span>
+                    <p class="form-field form-field-half">
+                        <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+                        <input type="date" 
+                               id="proposal_expiration_date" 
+                               name="proposal_expiration_date" 
+                               value="<?php echo esc_attr($expiration_date); ?>"
+                               class="widefat">
                     </p>
-                    <?php endif; ?>
                 </div>
 
                 <div class="order_double_data_column">

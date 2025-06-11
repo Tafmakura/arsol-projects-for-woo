@@ -74,14 +74,6 @@ class Proposal {
 
         ?>
         <div class="proposal-details">
-            <p>
-                <label for="proposal_expiration_date" style="display:block;margin-bottom:5px;"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
-                <input type="date" 
-                       id="proposal_expiration_date" 
-                       name="proposal_expiration_date" 
-                       value="<?php echo esc_attr($expiration_date); ?>"
-                       class="widefat">
-            </p>
         </div>
         <div class="major-actions">
             <div class="arsol-pfw-admin-project-actions">
