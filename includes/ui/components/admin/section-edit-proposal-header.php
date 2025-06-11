@@ -41,105 +41,108 @@ if ($original_request_id ||
 }
 ?>
 
-<div id="proposal_metabox" class="panel-wrap woocommerce">
-    <div id="order_data" class="panel woocommerce">
-    <h2>
-        <?php printf(__('Proposal #%d details', 'arsol-pfw'), $proposal_id); ?>
-    </h2>
+<div id="arsol-pfw-project-data" class="postbox ">
+    <div id="proposal_metabox" class="panel-wrap woocommerce">
+        <div id="order_data" class="panel woocommerce">
+        <h2>
+            <?php printf(__('Proposal #%d details', 'arsol-pfw'), $proposal_id); ?>
+        </h2>
 
-    <div class="order_data_column_container">
-        <div class="order_data_column">
-            <h3><?php _e('General', 'arsol-pfw'); ?></h3>
+        <div class="order_data_column_container">
+            <div class="order_data_column">
+                <h3><?php _e('General', 'arsol-pfw'); ?></h3>
 
-            <p class="form-field form-field-wide wc-customer-user">
-                <label for="proposal_customer">
-                    <?php _e('Customer:', 'arsol-pfw'); ?>
+                <p class="form-field form-field-wide wc-customer-user">
+                    <label for="proposal_customer">
+                        <?php _e('Customer:', 'arsol-pfw'); ?>
+                        <?php if ($customer): ?>
+                            <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-proposal&author=' . $customer_id); ?>">
+                                <?php _e('View other proposals →', 'arsol-pfw'); ?>
+                            </a>
+                            <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
+                                <?php _e('Profile →', 'arsol-pfw'); ?>
+                            </a>
+                        <?php endif; ?>
+                    </label>
                     <?php if ($customer): ?>
-                        <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-proposal&author=' . $customer_id); ?>">
-                            <?php _e('View other proposals →', 'arsol-pfw'); ?>
-                        </a>
-                        <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
-                            <?php _e('Profile →', 'arsol-pfw'); ?>
-                        </a>
+                        <span class="customer-info">
+                            <?php echo esc_html($customer->display_name); ?> 
+                            (#<?php echo $customer_id; ?> – <?php echo esc_html($customer->user_email); ?>)
+                        </span>
                     <?php endif; ?>
-                </label>
-                <?php if ($customer): ?>
-                    <span class="customer-info">
-                        <?php echo esc_html($customer->display_name); ?> 
-                        (#<?php echo $customer_id; ?> – <?php echo esc_html($customer->user_email); ?>)
+                </p>
+
+                <p class="form-field form-field-wide">
+                    <label><?php _e('Proposal status:', 'arsol-pfw'); ?></label>
+                    <span class="proposal-status status-<?php echo esc_attr($proposal_status); ?>">
+                        <?php echo ucfirst(str_replace('_', ' ', $proposal_status)); ?>
                     </span>
+                </p>
+
+                <p class="form-field form-field-wide">
+                    <label><?php _e('Cost proposal type:', 'arsol-pfw'); ?></label>
+                    <span><?php echo $cost_proposal_type ? ucfirst(str_replace('_', ' ', $cost_proposal_type)) : __('None', 'arsol-pfw'); ?></span>
+                </p>
+
+                <?php if ($start_date): ?>
+                <p class="form-field form-field-wide">
+                    <label><?php _e('Proposed start date:', 'arsol-pfw'); ?></label>
+                    <span><?php echo date_i18n(get_option('date_format'), strtotime($start_date)); ?></span>
+                </p>
                 <?php endif; ?>
-            </p>
 
-            <p class="form-field form-field-wide">
-                <label><?php _e('Proposal status:', 'arsol-pfw'); ?></label>
-                <span class="proposal-status status-<?php echo esc_attr($proposal_status); ?>">
-                    <?php echo ucfirst(str_replace('_', ' ', $proposal_status)); ?>
-                </span>
-            </p>
+                <?php if ($delivery_date): ?>
+                <p class="form-field form-field-wide">
+                    <label><?php _e('Proposed delivery date:', 'arsol-pfw'); ?></label>
+                    <span><?php echo date_i18n(get_option('date_format'), strtotime($delivery_date)); ?></span>
+                </p>
+                <?php endif; ?>
 
-            <p class="form-field form-field-wide">
-                <label><?php _e('Cost proposal type:', 'arsol-pfw'); ?></label>
-                <span><?php echo $cost_proposal_type ? ucfirst(str_replace('_', ' ', $cost_proposal_type)) : __('None', 'arsol-pfw'); ?></span>
-            </p>
+                <?php if ($expiration_date): ?>
+                <p class="form-field form-field-wide">
+                    <label><?php _e('Proposal expiration date:', 'arsol-pfw'); ?></label>
+                    <span class="expiration-date"><?php echo date_i18n(get_option('date_format'), strtotime($expiration_date)); ?></span>
+                </p>
+                <?php endif; ?>
+            </div>
 
-            <?php if ($start_date): ?>
-            <p class="form-field form-field-wide">
-                <label><?php _e('Proposed start date:', 'arsol-pfw'); ?></label>
-                <span><?php echo date_i18n(get_option('date_format'), strtotime($start_date)); ?></span>
-            </p>
-            <?php endif; ?>
-
-            <?php if ($delivery_date): ?>
-            <p class="form-field form-field-wide">
-                <label><?php _e('Proposed delivery date:', 'arsol-pfw'); ?></label>
-                <span><?php echo date_i18n(get_option('date_format'), strtotime($delivery_date)); ?></span>
-            </p>
-            <?php endif; ?>
-
-            <?php if ($expiration_date): ?>
-            <p class="form-field form-field-wide">
-                <label><?php _e('Proposal expiration date:', 'arsol-pfw'); ?></label>
-                <span class="expiration-date"><?php echo date_i18n(get_option('date_format'), strtotime($expiration_date)); ?></span>
-            </p>
-            <?php endif; ?>
-        </div>
-
-        <div class="order_double_data_column">
-        
-            <?php if ($has_request_data): ?>
-                <h3><?php _e('Original Request', 'arsol-pfw'); ?></h3>
-                
-                <?php
-                // Hook for customer request details
-                do_action('arsol_proposal_header_content', $post);
-                ?>
-            <?php endif; ?>
-
-            <h3><?php _e('Actions', 'arsol-pfw'); ?></h3>
+            <div class="order_double_data_column">
             
-            <p class="form-field form-field-wide">
-                <?php
-                $is_disabled = $post->post_status !== 'publish';
-                $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
-                $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
-                $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project?', 'arsol-pfw'));
-                $tooltip_text = $is_disabled
-                    ? __('The proposal must be published before it can be converted.', 'arsol-pfw')
-                    : __('Converts this proposal into a new project.', 'arsol-pfw');
-                ?>
-                <span title="<?php echo esc_attr($tooltip_text); ?>">
-                    <input type="button" 
-                           class="button button-primary arsol-confirm-conversion" 
-                           value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
-                           data-url="<?php echo esc_url($convert_url); ?>" 
-                           data-message="<?php echo $confirm_message; ?>"
-                           <?php disabled($is_disabled, true); ?> />
-                </span>
-            </p>
+                <?php if ($has_request_data): ?>
+                    <h3><?php _e('Original Request', 'arsol-pfw'); ?></h3>
+                    
+                    <?php
+                    // Hook for customer request details
+                    do_action('arsol_proposal_header_content', $post);
+                    ?>
+                <?php endif; ?>
 
+                <h3><?php _e('Actions', 'arsol-pfw'); ?></h3>
+                
+                <p class="form-field form-field-wide">
+                    <?php
+                    $is_disabled = $post->post_status !== 'publish';
+                    $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
+                    $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
+                    $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project?', 'arsol-pfw'));
+                    $tooltip_text = $is_disabled
+                        ? __('The proposal must be published before it can be converted.', 'arsol-pfw')
+                        : __('Converts this proposal into a new project.', 'arsol-pfw');
+                    ?>
+                    <span title="<?php echo esc_attr($tooltip_text); ?>">
+                        <input type="button" 
+                            class="button button-primary arsol-confirm-conversion" 
+                            value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
+                            data-url="<?php echo esc_url($convert_url); ?>" 
+                            data-message="<?php echo $confirm_message; ?>"
+                            <?php disabled($is_disabled, true); ?> />
+                    </span>
+                </p>
+
+            </div>
         </div>
-    </div>
 
-    <div class="clear"></div>
+        <div class="clear"></div>
+    </div>
 </div>
+
