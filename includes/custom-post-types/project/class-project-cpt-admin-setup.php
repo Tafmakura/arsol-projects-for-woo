@@ -191,13 +191,17 @@ class Setup {
     }
 
     /**
-     * Enqueue WooCommerce admin styles for arsol-project post type
+     * Enqueue WooCommerce admin styles and scripts for arsol-project post type
      */
     public function enqueue_wc_admin_styles($hook) {
         global $typenow;
         if ($typenow === 'arsol-project' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-project')) {
             // WooCommerce admin styles
             wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
+            
+            // WooCommerce admin scripts for enhanced selects
+            wp_enqueue_script('wc-enhanced-select');
+            wp_enqueue_script('select2');
         }
     }
 
