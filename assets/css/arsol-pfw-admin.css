@@ -876,3 +876,27 @@ body.post-type-arsol-pfw-proposal .select2-container {
     font-size: 13px;
     margin-bottom: 3px;
 }
+
+/* === HEADER GRID LAYOUT SYSTEM === */
+.arsol-header-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+}
+
+.arsol-header-grid.has-col-2 {
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.arsol-col-2-3-container {
+    display: flex;
+    gap: 20px;
+}
+
+.arsol-col-2-3-container > div {
+    flex: 1;
+}
+
+.arsol-full-width {
+    grid-column: 1 / -1;
+}

@@ -35,6 +35,9 @@ $all_statuses = get_terms(array(
     'taxonomy' => 'arsol-request-status',
     'hide_empty' => false,
 ));
+
+// Requests always show both columns
+$container_class = 'arsol-header-grid';
 ?>
 
 <div id="arsol-pfw-project-data" class="postbox ">
@@ -46,14 +49,12 @@ $all_statuses = get_terms(array(
             <p class="order_number">
                 <?php _e('Title:', 'arsol-pfw'); ?> <?php echo esc_html($post->post_title); ?>
             </p>
-    
 
-
-            <div class="order_data_column_container">
+            <div class="order_data_column_container <?php echo esc_attr($container_class); ?>">
                 <div class="order_data_column">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
-                        <?php
+                    <?php
                     // Load the general settings template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-request-header-column-1.php';
                     if (file_exists($template_path)) {
@@ -73,7 +74,6 @@ $all_statuses = get_terms(array(
                     }
                     ?>
                 </div>
-
             </div>
 
             <div class="clear"></div>
