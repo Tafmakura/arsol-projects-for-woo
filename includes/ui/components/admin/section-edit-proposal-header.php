@@ -80,7 +80,7 @@ if ($has_request_data) {
                     ?>
                 </div>
                 <div class="project_data_column">
-                    <h3><?php _e('Review Status & Actions', 'arsol-pfw'); ?></h3>
+                    <h3><?php _e('Project Proposal Summary', 'arsol-pfw'); ?></h3>
                     <?php
                     // Load the review status & actions template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header-column-3.php';
@@ -91,7 +91,7 @@ if ($has_request_data) {
                 </div>
                 <?php else: ?>
                 <div class="project_data_column">
-                    <h3><?php _e('Review Status & Actions', 'arsol-pfw'); ?></h3>
+                    <h3><?php _e('Project Proposal Summary', 'arsol-pfw'); ?></h3>
                         <?php
                     // Load the review status & actions template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header-column-3.php';
