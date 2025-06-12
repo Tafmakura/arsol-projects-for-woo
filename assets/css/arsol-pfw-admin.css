@@ -892,4 +892,8 @@ body.post-type-arsol-pfw-proposal .select2-container {
     grid-column: 1 / -1;
 }
 
+.arsol-pfw-project .form-field-row p {
+    margin: 0;
+}
+
 
