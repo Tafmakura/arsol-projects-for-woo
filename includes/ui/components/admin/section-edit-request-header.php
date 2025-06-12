@@ -41,17 +41,13 @@ $all_statuses = get_terms(array(
     <div id="request_metabox" class="panel-wrap woocommerce">
         <div id="order_data" class="panel woocommerce">
             <h2>
-                <?php printf(__('Request #%d details', 'arsol-pfw'), $request_id); ?>
+                <?php printf(__('Project Request #%d details', 'arsol-pfw'), $request_id); ?>
             </h2>
-            
-            <!-- Display-only title section -->
-            <div class="order_data_column_container">
-                <div class="order_data_column" style="width: 100%;">
-                    <p class="order-number">
-                        <span"><?php echo esc_html($post->post_title); ?></span>
-                    </p>
-                </div>
-            </div>
+            <p class="order_number">
+                <span"><?php echo esc_html($post->post_title); ?></span>
+            </p>
+    
+
 
             <div class="order_data_column_container">
                 <div class="order_data_column">
