@@ -34,16 +34,4 @@ $project_subscriptions = get_post_meta($project_id, '_project_subscriptions', tr
         </a><br>
     <?php endforeach; ?>
 </p>
-<?php endif; ?>
-
-<p class="form-field form-field-wide">
-    <label><strong><?php _e('Actions:', 'arsol-pfw'); ?></strong></label>
-    <a href="<?php echo admin_url('edit.php?post_type=shop_order&project_id=' . $project_id); ?>" class="button">
-        <?php _e('View Orders', 'arsol-pfw'); ?>
-    </a>
-    <?php if (class_exists('WC_Subscriptions')): ?>
-    <a href="<?php echo admin_url('edit.php?post_type=shop_subscription&project_id=' . $project_id); ?>" class="button">
-        <?php _e('View Subscriptions', 'arsol-pfw'); ?>
-    </a>
-    <?php endif; ?>
-</p> 
+<?php endif; ?> 
