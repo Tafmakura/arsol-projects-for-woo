@@ -63,7 +63,7 @@ $container_class = 'arsol-header-grid';
                     ?>
                 </div>
 
-                <div class="order_data_column extended_column">
+                <div class="order_data_column">
                     <h3><?php _e('Request Details', 'arsol-pfw'); ?></h3>
                     
                     <?php

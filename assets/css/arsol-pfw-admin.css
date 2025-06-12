@@ -2,13 +2,6 @@
  * Arsol Projects for WooCommerce - Admin Styles
  */
 
-
-
-
- .order_data_column.extended_column {
-    width: 64% !important;
- }
-
 /* General Admin Styles */
 body.post-type-arsol-pfw-proposal .select2-container {
     width: 100% !important;
@@ -165,7 +158,9 @@ body.post-type-arsol-pfw-proposal .select2-container {
 
 .arsol-money-input {
     text-align: right;
-}/* === ARSOL PROPOSAL ADMIN CSS === */
+}
+
+/* === ARSOL PROPOSAL ADMIN CSS === */
 /* Combined styles for Budget and Invoice sections */
 
 /* === CONSOLIDATED PROPOSAL/INVOICE CSS SYSTEM === */
@@ -900,3 +895,5 @@ body.post-type-arsol-pfw-proposal .select2-container {
 .arsol-full-width {
     grid-column: 1 / -1;
 }
+
+
