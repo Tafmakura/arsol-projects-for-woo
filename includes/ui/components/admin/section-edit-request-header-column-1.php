@@ -24,16 +24,7 @@ $all_statuses = get_terms(array(
 ));
 ?>
 
-<div class="form-field-row">
-    <p class="form-field form-field-half">
-        <label for="request_start_date"><?php _e('Required Start Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="request_start_date" name="request_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
-    </p>
-    <p class="form-field form-field-half">
-        <label for="request_delivery_date"><?php _e('Required Delivery Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
-    </p>
-</div>
+
 
 <p class="form-field form-field-wide wc-customer-user">
     <label for="post_author_override">
@@ -70,10 +61,4 @@ $all_statuses = get_terms(array(
     </select>
 </p>
 
-<p class="form-field form-field-wide">
-    <label for="request_budget"><?php 
-    $currency = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
-    echo sprintf(__('Budget (%s):', 'arsol-pfw'), $currency); 
-    ?></label>
-    <input type="text" id="request_budget" name="request_budget" value="<?php echo esc_attr(!empty($budget_data['amount']) ? $budget_data['amount'] : ''); ?>" class="widefat arsol-money-input" inputmode="decimal">
-</p> 
+ 

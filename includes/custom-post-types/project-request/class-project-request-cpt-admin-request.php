@@ -37,81 +37,7 @@ class Request {
         // Get current values
         $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
         $current_status = !empty($current_status) ? $current_status[0] : 'pending';
-        $budget_data = get_post_meta($post->ID, '_request_budget', true);
-        $budget_amount = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
-        $budget_currency_code = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
-        $start_date = get_post_meta($post->ID, '_request_start_date', true);
-        $delivery_date = get_post_meta($post->ID, '_request_delivery_date', true);
-        
-        // Get statuses
-        $statuses = get_terms(array(
-            'taxonomy' => 'arsol-request-status',
-            'hide_empty' => false,
-        ));
-
-        // Get author dropdown
-        $author_dropdown = wp_dropdown_users(array(
-            'name' => 'post_author_override',
-            'selected' => $post->post_author,
-            'include_selected' => true,
-            'echo' => false,
-            'class' => 'widefat'
-        ));
         ?>
-        <div class="request-details">
-            <p>
-                <label for="request_id" class="arsol-pfw-meta-label"><?php _e('Request ID:', 'arsol-pfw'); ?></label>
-                <input type="text" 
-                       id="request_id" 
-                       value="<?php echo esc_attr($post->ID); ?>"
-                       disabled
-                       class="widefat">
-            </p>
-
-            <p>
-                <label for="post_author_override" class="arsol-pfw-meta-label"><?php _e('Customer:', 'arsol-pfw'); ?></label>
-                <?php echo $author_dropdown; ?>
-            </p>
-
-            <p>
-                <label for="request_status" class="arsol-pfw-meta-label"><?php _e('Request Status:', 'arsol-pfw'); ?></label>
-                <select name="request_status" id="request_status" class="widefat">
-                    <?php foreach ($statuses as $status) : ?>
-                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_status, $status->slug); ?>>
-                            <?php echo esc_html($status->name); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </p>
-
-            <p>
-                <label for="request_budget" class="arsol-pfw-meta-label"><?php echo sprintf(__('Budget (%s):', 'arsol-pfw'), $budget_currency_code); ?></label>
-                <input type="text"
-                       id="request_budget" 
-                       name="request_budget" 
-                       value="<?php echo esc_attr($budget_amount); ?>"
-                       class="widefat arsol-money-input"
-                       inputmode="decimal">
-            </p>
-
-            <p>
-                <label for="request_start_date" class="arsol-pfw-meta-label"><?php _e('Required Start Date:', 'arsol-pfw'); ?></label>
-                <input type="date" 
-                       id="request_start_date" 
-                       name="request_start_date" 
-                       value="<?php echo esc_attr($start_date); ?>"
-                       class="widefat">
-            </p>
-
-            <p>
-                <label for="request_delivery_date" class="arsol-pfw-meta-label"><?php _e('Required Delivery Date:', 'arsol-pfw'); ?></label>
-                <input type="date" 
-                       id="request_delivery_date" 
-                       name="request_delivery_date" 
-                       value="<?php echo esc_attr($delivery_date); ?>"
-                       class="widefat">
-            </p>
-        </div>
         <div class="major-actions">
             <div class="arsol-pfw-admin-project-actions">
                 <?php
@@ -161,36 +87,6 @@ class Request {
             return;
         }
 
-        // Save request status
-        if (isset($_POST['request_status'])) {
-            wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status', false);
-        }
-
-        // Save budget
-        if (isset($_POST['request_budget'])) {
-            $amount = preg_replace('/[^\d.]/', '', sanitize_text_field($_POST['request_budget']));
-            $budget_data = get_post_meta($post_id, '_request_budget', true);
-            $currency = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
-
-            if (empty($amount)) {
-                delete_post_meta($post_id, '_request_budget');
-            } else {
-                $new_budget_data = array(
-                    'amount'   => $amount,
-                    'currency' => $currency
-                );
-                update_post_meta($post_id, '_request_budget', $new_budget_data);
-            }
-        }
-
-        // Save start date
-        if (isset($_POST['request_start_date'])) {
-            update_post_meta($post_id, '_request_start_date', sanitize_text_field($_POST['request_start_date']));
-        }
-
-        // Save delivery date
-        if (isset($_POST['request_delivery_date'])) {
-            update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($_POST['request_delivery_date']));
-        }
+        // No fields to save - metabox now only contains action button
     }
 }

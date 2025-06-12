@@ -12,7 +12,34 @@ if (!$post || $post->post_type !== 'arsol-pfw-request') {
 $request_id = $post->ID;
 $request_content = get_post_field('post_content', $request_id);
 $attachments = get_attached_media('', $request_id);
+$budget_data = get_post_meta($request_id, '_request_budget', true);
+$start_date = get_post_meta($request_id, '_request_start_date', true);
+$delivery_date = get_post_meta($request_id, '_request_delivery_date', true);
 ?>
+
+<?php if (!empty($budget_data['amount'])): ?>
+<p class="form-field form-field-wide">
+    <label><?php _e('Requested Budget:', 'arsol-pfw'); ?></label>
+    <span><?php 
+    $currency = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
+    echo get_woocommerce_currency_symbol($currency) . number_format((float)$budget_data['amount'], 2);
+    ?></span>
+</p>
+<?php endif; ?>
+
+<?php if (!empty($start_date)): ?>
+<p class="form-field form-field-wide">
+    <label><?php _e('Requested Start Date:', 'arsol-pfw'); ?></label>
+    <span><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($start_date))); ?></span>
+</p>
+<?php endif; ?>
+
+<?php if (!empty($delivery_date)): ?>
+<p class="form-field form-field-wide">
+    <label><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></label>
+    <span><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($delivery_date))); ?></span>
+</p>
+<?php endif; ?>
 
 <?php if (!empty($request_content)): ?>
 <p class="form-field form-field-wide">
