@@ -44,7 +44,7 @@ $all_statuses = get_terms(array(
                 <?php printf(__('Project Request #%d details', 'arsol-pfw'), $request_id); ?>
             </h2>
             <p class="order_number">
-                <span"><?php echo esc_html($post->post_title); ?></span>
+                <strong><?php _e('Title:', 'arsol-pfw'); ?></strong> <?php echo esc_html($post->post_title); ?>
             </p>
     
 
