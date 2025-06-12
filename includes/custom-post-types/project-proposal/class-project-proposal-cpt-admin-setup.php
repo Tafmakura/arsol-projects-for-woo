@@ -184,9 +184,9 @@ class Setup {
             // Enqueue proposal admin CSS
             wp_enqueue_style(
                 'arsol-proposal-admin',
-                ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin-proposal.css',
+                ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin.css',
                 array(),
-                filemtime(ARSOL_PROJECTS_PLUGIN_DIR . 'assets/css/arsol-pfw-admin-proposal.css')
+                filemtime(ARSOL_PROJECTS_PLUGIN_DIR . 'assets/css/arsol-pfw-admin.css')
             );
 
             // Enqueue proposal admin JS

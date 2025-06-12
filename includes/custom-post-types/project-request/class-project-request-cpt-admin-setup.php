@@ -178,8 +178,8 @@ class Setup {
         if ($typenow === 'arsol-pfw-request' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-pfw-request')) {
             // WooCommerce admin styles
             wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
-            // Proposal admin styles (reuse for consistent styling)
-            wp_enqueue_style('arsol-pfw-admin-proposal', ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin-proposal.css', array(), '1.0.0');
+            // Admin styles (consolidated)
+            wp_enqueue_style('arsol-pfw-admin', ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin.css', array(), '1.0.0');
         }
     }
 
