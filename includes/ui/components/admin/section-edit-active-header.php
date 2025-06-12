@@ -48,7 +48,6 @@ if ($original_proposal_id ||
 ?>
 
 <div id="arsol-pfw-project-data" class="postbox ">
-    <?php wp_nonce_field("project_header", "project_header_nonce"); ?>
     <div id="proposal_metabox" class="panel-wrap woocommerce">
         <div id="order_data" class="panel woocommerce">
             <h2>

@@ -212,18 +212,15 @@ class Setup {
     }
 
     /**
-     * Render project details content
+     * Render project details content (placeholder for future use)
      */
     public function render_project_details_content($post) {
         if (!$post || $post->post_type !== 'arsol-project') {
             return;
         }
         
-        
-        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . "includes/ui/components/admin/section-edit-active-metabox-project-details.php";
-        if (file_exists($template_path)) {
-            include $template_path;
-        }
+        // Placeholder for project-specific details
+        echo '<p>' . __('Project details will be displayed here.', 'arsol-pfw') . '</p>';
     }
 
     /**
