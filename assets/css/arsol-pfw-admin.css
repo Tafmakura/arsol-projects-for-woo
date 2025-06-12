@@ -789,10 +789,6 @@ body.post-type-arsol-pfw-proposal .select2-container {
     margin-top: 20px;
 }
 
-.arsol-pfw-project.postbox {
-    margin-bottom: 20px;
-}
-
 /* Customer request details inside postbox after title */
 .postbox .inside .arsol-customer-request-details {
     background: #f9f9f9;
