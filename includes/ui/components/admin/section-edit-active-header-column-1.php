@@ -59,22 +59,7 @@ $all_statuses = get_terms(array(
     ?>
 </p>
 
-<p class="form-field form-field-wide">
-    <label for="project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
-    <?php
-    $lead_dropdown = wp_dropdown_users(array(
-        'name' => 'project_lead',
-        'selected' => $project_lead,
-        'include_selected' => true,
-        'echo' => false,
-        'class' => 'wc-enhanced-select',
-        'show_option_none' => __('Select Project Lead', 'arsol-pfw'),
-        'option_none_value' => '',
-        'capability' => 'edit_posts'
-    ));
-    echo $lead_dropdown;
-    ?>
-</p>
+
 
 <p class="form-field form-field-wide">
     <label for="project_status"><?php _e('Project Status:', 'arsol-pfw'); ?></label>
