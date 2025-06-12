@@ -131,6 +131,4 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
     </p>
     <?php endif; ?>
 
-<?php else: ?>
-    <?php _e('This project was created directly without an initial customer request or proposal.', 'arsol-pfw'); ?>
 <?php endif; ?> 
