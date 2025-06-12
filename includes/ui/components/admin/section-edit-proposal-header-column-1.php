@@ -19,14 +19,17 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
 $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
 ?>
 
-<p class="form-field form-field-wide">
-    <label for="proposal_start_date"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
-    <input type="date" id="proposal_start_date" name="proposal_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
-</p>
-<p class="form-field form-field-wide">
-    <label for="proposal_delivery_date"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
-    <input type="date" id="proposal_delivery_date" name="proposal_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
-</p>
+<div class="form-field-row">
+    <p class="form-field form-field-half">
+        <label for="proposal_start_date"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="proposal_start_date" name="proposal_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
+    </p>
+    <p class="form-field form-field-half">
+        <label for="proposal_delivery_date"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="proposal_delivery_date" name="proposal_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
+    </p>
+</div>
+
 <p class="form-field form-field-wide wc-customer-user">
     <label for="post_author_override">
         <?php _e('Customer:', 'arsol-pfw'); ?>
@@ -50,6 +53,7 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
     echo $author_dropdown;
     ?>
 </p>
+
 <p class="form-field form-field-wide">
     <label for="cost_proposal_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
     <select id="cost_proposal_type" name="cost_proposal_type" class="wc-enhanced-select">
@@ -58,7 +62,10 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
         <option value="invoice_line_items" <?php selected($cost_proposal_type, 'invoice_line_items'); ?>><?php _e('Invoice Line Items', 'arsol-pfw'); ?></option>
     </select>
 </p>
-<p class="form-field form-field-wide">
-    <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
-    <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
-</p> 
+
+<div class="form-field-row">
+    <p class="form-field form-field-half">
+        <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
+    </p>
+</div> 
