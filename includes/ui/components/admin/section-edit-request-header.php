@@ -68,18 +68,7 @@ $all_statuses = get_terms(array(
                     }
                     ?>
                 </div>
-
-                <div class="order_data_column">
-                    <h3><?php _e('Status & Workflow', 'arsol-pfw'); ?></h3>
-                    
-                    <?php
-                    // Load the status & workflow template
-                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-request-header-column-3.php';
-                    if (file_exists($template_path)) {
-                        include $template_path;
-                    }
-                    ?>
-                </div>
+                
             </div>
 
             <div class="clear"></div>
