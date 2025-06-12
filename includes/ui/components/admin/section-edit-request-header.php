@@ -47,9 +47,8 @@ $all_statuses = get_terms(array(
             <!-- Display-only title section -->
             <div class="order_data_column_container">
                 <div class="order_data_column" style="width: 100%;">
-                    <p class="form-field form-field-wide">
-                        <label><?php _e('Request Title:', 'arsol-pfw'); ?></label>
-                        <span style="font-weight: bold; font-size: 14px;"><?php echo esc_html($post->post_title); ?></span>
+                    <p class="order-number">
+                        <span"><?php echo esc_html($post->post_title); ?></span>
                     </p>
                 </div>
             </div>
