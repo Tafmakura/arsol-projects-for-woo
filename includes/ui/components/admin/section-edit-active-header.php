@@ -58,7 +58,7 @@ if ($original_proposal_id || get_post_meta($project_id, '_project_budget', true)
     }
 }
 
-// Determine layout classes
+// Determine layout classes - only add has-col-2 if there's actually original data
 $container_class = 'arsol-header-grid';
 if ($has_proposal_data) {
     $container_class .= ' has-col-2';
@@ -98,7 +98,7 @@ if ($has_proposal_data) {
                     ?>
                 </div>
                 <div class="project_data_column column_3">
-                    <h3><?php _e('Status & Actions', 'arsol-pfw'); ?></h3>
+                    <h3><?php _e('Project Details', 'arsol-pfw'); ?></h3>
                     <?php
                     // Load the status & actions template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-3.php';
@@ -109,7 +109,7 @@ if ($has_proposal_data) {
                 </div>
                 <?php else: ?>
                 <div class="project_data_column column_3">
-                    <h3><?php _e('Status & Actions', 'arsol-pfw'); ?></h3>
+                    <h3><?php _e('Project Details', 'arsol-pfw'); ?></h3>
                     <?php 
                     // Load the status & actions template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-3.php';
