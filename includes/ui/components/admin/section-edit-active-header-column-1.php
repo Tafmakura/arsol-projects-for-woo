@@ -52,6 +52,20 @@ $all_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
+        <label for="project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
+        <select id="project_lead" name="project_lead" class="wc-enhanced-select">
+            <option value=""><?php _e('— Select —', 'arsol-pfw'); ?></option>
+            <?php foreach (get_users(array('role__in' => array('administrator', 'shop_manager'))) as $user) : ?>
+                <option value="<?php echo esc_attr($user->ID); ?>" <?php selected($project_lead, $user->ID); ?>>
+                    <?php echo esc_html($user->display_name); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </p>
+</div>
+
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
         <label for="project_status"><?php _e('Project Status:', 'arsol-pfw'); ?></label>
         <select id="project_status" name="project_status" class="wc-enhanced-select">
             <?php foreach ($all_statuses as $status) : ?>
