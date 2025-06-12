@@ -782,7 +782,7 @@ body.post-type-arsol-pfw-proposal .select2-container {
 
 /* === CUSTOMER REQUEST DETAILS AFTER TITLE POSITIONING === */
 /* Ensure the postbox after title has proper spacing */
-.postbox {
+#arsol-pfw-project-data.postbox {
     margin-top: 20px;
     margin-bottom: 20px;
 }
