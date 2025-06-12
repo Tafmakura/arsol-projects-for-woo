@@ -40,12 +40,14 @@ $all_statuses = get_terms(array(
     </label>
     <?php
     $author_dropdown = wp_dropdown_users(array(
-        'name' => 'post_author_override',
+        'name' => '', // Remove name to make it non-saveable
         'selected' => $post->post_author,
         'include_selected' => true,
         'echo' => false,
         'class' => 'wc-customer-search'
     ));
+    // Add disabled attribute to make it non-editable
+    $author_dropdown = str_replace('<select', '<select disabled', $author_dropdown);
     echo $author_dropdown;
     ?>
 </p>

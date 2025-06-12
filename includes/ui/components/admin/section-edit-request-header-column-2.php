@@ -22,28 +22,8 @@ $submission_date = get_the_date('', $post);
 ?>
 
 <p class="form-field form-field-wide">
-    <label><?php _e('Request ID:', 'arsol-pfw'); ?></label>
-    <span><?php echo esc_html($request_id); ?></span>
-</p>
-
-<p class="form-field form-field-wide">
-    <label><?php _e('Customer:', 'arsol-pfw'); ?></label>
-    <span><?php echo $customer ? esc_html($customer->display_name . ' (' . $customer->user_email . ')') : __('N/A', 'arsol-pfw'); ?></span>
-</p>
-
-<p class="form-field form-field-wide">
     <label><?php _e('Submission Date:', 'arsol-pfw'); ?></label>
     <span><?php echo $submission_date ? esc_html($submission_date) : __('N/A', 'arsol-pfw'); ?></span>
-</p>
-
-<p class="form-field form-field-wide">
-    <label><?php _e('Request Status:', 'arsol-pfw'); ?></label>
-    <span><?php echo $request_status ? esc_html($request_status) : __('N/A', 'arsol-pfw'); ?></span>
-</p>
-
-<p class="form-field form-field-wide">
-    <label><?php _e('Request Title:', 'arsol-pfw'); ?></label>
-    <span><?php echo $post->post_title ? esc_html($post->post_title) : __('N/A', 'arsol-pfw'); ?></span>
 </p>
 
 <p class="form-field form-field-wide">
@@ -76,11 +56,13 @@ $submission_date = get_the_date('', $post);
 <p class="form-field form-field-wide">
     <label><?php _e('Attachments:', 'arsol-pfw'); ?></label>
     <?php if (!empty($attachments)): ?>
-        <?php foreach ($attachments as $attachment): ?>
-            <a href="<?php echo wp_get_attachment_url($attachment->ID); ?>" target="_blank">
-                <?php echo esc_html($attachment->post_title); ?>
-            </a><br>
-        <?php endforeach; ?>
+        <span>
+            <?php foreach ($attachments as $attachment): ?>
+                <a href="<?php echo esc_url(wp_get_attachment_url($attachment->ID)); ?>" target="_blank">
+                    <?php echo esc_html($attachment->post_title); ?>
+                </a><br>
+            <?php endforeach; ?>
+        </span>
     <?php else: ?>
         <span><?php echo __('N/A', 'arsol-pfw'); ?></span>
     <?php endif; ?>
