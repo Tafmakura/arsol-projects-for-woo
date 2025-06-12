@@ -24,43 +24,43 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
 
     <?php if (!empty($original_request_title)): ?>
     <p class="form-field form-field-wide">
-        <label><?php _e('Original Request Title:', 'arsol-pfw'); ?></label>
-        <div><?php echo esc_html($original_request_title); ?></div>
+        <strong><?php _e('Original Request Title:', 'arsol-pfw'); ?></strong>
+        <?php echo esc_html($original_request_title); ?>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_id)): ?>
     <p class="form-field form-field-wide">
-        <label><?php _e('Request ID:', 'arsol-pfw'); ?></label>
-        <div><?php echo esc_html($original_request_id); ?></div>
+        <strong><?php _e('Request ID:', 'arsol-pfw'); ?></strong>
+        <?php echo esc_html($original_request_id); ?>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_budget)): ?>
     <p class="form-field form-field-wide">
-        <label><?php _e('Original Budget:', 'arsol-pfw'); ?></label>
-        <div><?php echo wc_price($original_request_budget['amount']); ?></div>
+        <strong><?php _e('Original Budget:', 'arsol-pfw'); ?></strong>
+        <?php echo wc_price($original_request_budget['amount']); ?>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_start_date)): ?>
     <p class="form-field form-field-wide">
-        <label><?php _e('Requested Start Date:', 'arsol-pfw'); ?></label>
-        <div><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_start_date))); ?></div>
+        <strong><?php _e('Requested Start Date:', 'arsol-pfw'); ?></strong>
+        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_start_date))); ?>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_delivery_date)): ?>
     <p class="form-field form-field-wide">
-        <label><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></label>
-        <div><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_delivery_date))); ?></div>
+        <strong><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></strong>
+        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_delivery_date))); ?>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_content)): ?>
     <p class="form-field form-field-wide">
-        <label><?php _e('Original Description:', 'arsol-pfw'); ?></label>
-        <div><?php echo wp_kses_post(wp_trim_words($original_request_content, 30)); ?></div>
+        <strong><?php _e('Original Description:', 'arsol-pfw'); ?></strong>
+        <?php echo wp_kses_post(wp_trim_words($original_request_content, 30)); ?>
     </p>
     <?php endif; ?>
 
