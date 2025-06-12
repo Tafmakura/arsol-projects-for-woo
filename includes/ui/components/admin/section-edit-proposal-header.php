@@ -69,7 +69,7 @@ if ($has_request_data) {
 
                 <?php if ($has_request_data): ?>
                 <div class="project_data_column">
-                    <h3><?php _e('Original Request Details', 'arsol-pfw'); ?></h3>
+                    <h3><?php _e('Project Request Details', 'arsol-pfw'); ?></h3>
                     
                     <?php
                     // Load the original request details template
