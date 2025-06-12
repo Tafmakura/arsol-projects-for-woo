@@ -24,42 +24,33 @@ $all_statuses = get_terms(array(
 ));
 ?>
 
-<div class="form-field-row">
-    <p class="form-field form-field-wide wc-customer-user">
-        <label for="post_author_override">
-            <?php _e('Customer:', 'arsol-pfw'); ?>
-            <?php if ($customer): ?>
-                <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-request&author=' . $customer_id); ?>">
-                    <?php _e('View other requests →', 'arsol-pfw'); ?>
-                </a>
-                <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
-                    <?php _e('Profile →', 'arsol-pfw'); ?>
-                </a>
-            <?php endif; ?>
-        </label>
-        <?php
-        $author_dropdown = wp_dropdown_users(array(
-            'name' => 'post_author_override',
-            'selected' => $post->post_author,
-            'include_selected' => true,
-            'echo' => false,
-            'class' => 'wc-customer-search'
-        ));
-        echo $author_dropdown;
-        ?>
-    </p>
-</div>
 
-<div class="form-field-row">
-    <p class="form-field form-field-wide">
-        <label for="request_type"><?php _e('Request Type:', 'arsol-pfw'); ?></label>
-        <select id="request_type" name="request_type" class="wc-enhanced-select">
-            <option value="none" <?php selected($request_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
-            <option value="project" <?php selected($request_type, 'project'); ?>><?php _e('Project', 'arsol-pfw'); ?></option>
-            <option value="service" <?php selected($request_type, 'service'); ?>><?php _e('Service', 'arsol-pfw'); ?></option>
-        </select>
-    </p>
-</div>
+
+<p class="form-field form-field-wide wc-customer-user">
+    <label for="post_author_override">
+        <?php _e('Customer:', 'arsol-pfw'); ?>
+        <?php if ($customer): ?>
+            <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-request&author=' . $customer_id); ?>">
+                <?php _e('View other requests →', 'arsol-pfw'); ?>
+            </a>
+            <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
+                <?php _e('Profile →', 'arsol-pfw'); ?>
+            </a>
+        <?php endif; ?>
+    </label>
+    <?php
+    $author_dropdown = wp_dropdown_users(array(
+        'name' => '', // Remove name to make it non-saveable
+        'selected' => $post->post_author,
+        'include_selected' => true,
+        'echo' => false,
+        'class' => 'wc-customer-search'
+    ));
+    // Add disabled attribute to make it non-editable
+    $author_dropdown = str_replace('<select', '<select disabled', $author_dropdown);
+    echo $author_dropdown;
+    ?>
+</p>
 
 <p class="form-field form-field-wide">
     <label for="request_status"><?php _e('Status:', 'arsol-pfw'); ?></label>

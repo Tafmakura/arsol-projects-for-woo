@@ -30,46 +30,40 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
     </p>
 </div>
 
-<div class="form-field-row">
-    <p class="form-field form-field-wide wc-customer-user">
-        <label for="post_author_override">
-            <?php _e('Customer:', 'arsol-pfw'); ?>
-            <?php if ($customer): ?>
-                <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-proposal&author=' . $customer_id); ?>">
-                    <?php _e('View other proposals →', 'arsol-pfw'); ?>
-                </a>
-                <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
-                    <?php _e('Profile →', 'arsol-pfw'); ?>
-                </a>
-            <?php endif; ?>
-        </label>
-        <?php
-        $author_dropdown = wp_dropdown_users(array(
-            'name' => 'post_author_override',
-            'selected' => $post->post_author,
-            'include_selected' => true,
-            'echo' => false,
-            'class' => 'wc-customer-search'
-        ));
-        echo $author_dropdown;
-        ?>
-    </p>
-</div>
+<p class="form-field form-field-wide wc-customer-user">
+    <label for="post_author_override">
+        <?php _e('Customer:', 'arsol-pfw'); ?>
+        <?php if ($customer): ?>
+            <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-proposal&author=' . $customer_id); ?>">
+                <?php _e('View other proposals →', 'arsol-pfw'); ?>
+            </a>
+            <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
+                <?php _e('Profile →', 'arsol-pfw'); ?>
+            </a>
+        <?php endif; ?>
+    </label>
+    <?php
+    $author_dropdown = wp_dropdown_users(array(
+        'name' => 'post_author_override',
+        'selected' => $post->post_author,
+        'include_selected' => true,
+        'echo' => false,
+        'class' => 'wc-customer-search'
+    ));
+    echo $author_dropdown;
+    ?>
+</p>
 
-<div class="form-field-row">
-    <p class="form-field form-field-wide">
-        <label for="cost_proposal_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
-        <select id="cost_proposal_type" name="cost_proposal_type" class="wc-enhanced-select">
-            <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
-            <option value="budget_estimates" <?php selected($cost_proposal_type, 'budget_estimates'); ?>><?php _e('Budget Estimates', 'arsol-pfw'); ?></option>
-            <option value="invoice_line_items" <?php selected($cost_proposal_type, 'invoice_line_items'); ?>><?php _e('Invoice Line Items', 'arsol-pfw'); ?></option>
-        </select>
-    </p>
-</div>
+<p class="form-field form-field-wide">
+    <label for="cost_proposal_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
+    <select id="cost_proposal_type" name="cost_proposal_type" class="wc-enhanced-select">
+        <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
+        <option value="budget_estimates" <?php selected($cost_proposal_type, 'budget_estimates'); ?>><?php _e('Budget Estimates', 'arsol-pfw'); ?></option>
+        <option value="invoice_line_items" <?php selected($cost_proposal_type, 'invoice_line_items'); ?>><?php _e('Invoice Line Items', 'arsol-pfw'); ?></option>
+    </select>
+</p>
 
-<div class="form-field-row">
-    <p class="form-field form-field-half">
-        <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
-    </p>
-</div> 
+<p class="form-field form-field-half">
+    <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+    <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
+</p> 
