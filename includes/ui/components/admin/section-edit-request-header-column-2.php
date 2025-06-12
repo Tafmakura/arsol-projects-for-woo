@@ -22,14 +22,11 @@ $submission_date = get_the_time('l j F \a\t g:ia', $post);
 ?>
 
 <div class="form-field-row">
-    <p class="form-field form-field-wide">
+    <p class="form-field form-field-half">
         <label><strong><?php _e('Submission Date:', 'arsol-pfw'); ?></strong></label>
         <?php echo $submission_date ? esc_html($submission_date) : __('N/A', 'arsol-pfw'); ?>
     </p>
-</div>
-
-<div class="form-field-row">
-    <p class="form-field form-field-wide">
+    <p class="form-field form-field-half">
         <label><strong><?php _e('Requested Budget:', 'arsol-pfw'); ?></strong></label>
         <?php 
         if (!empty($budget_data['amount'])) {
