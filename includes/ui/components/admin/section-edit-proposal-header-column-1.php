@@ -30,11 +30,6 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
     </p>
 </div>
 
-<p class="form-field form-field-half">
-    <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
-    <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
-</p>
-
 <p class="form-field form-field-wide wc-customer-user">
     <label for="post_author_override">
         <?php _e('Customer:', 'arsol-pfw'); ?>
@@ -66,4 +61,9 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
         <option value="budget_estimates" <?php selected($cost_proposal_type, 'budget_estimates'); ?>><?php _e('Budget Estimates', 'arsol-pfw'); ?></option>
         <option value="invoice_line_items" <?php selected($cost_proposal_type, 'invoice_line_items'); ?>><?php _e('Invoice Line Items', 'arsol-pfw'); ?></option>
     </select>
+</p>
+
+<p class="form-field form-field-half">
+    <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+    <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
 </p> 
