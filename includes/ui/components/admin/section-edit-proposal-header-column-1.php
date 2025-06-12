@@ -63,9 +63,7 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
     </select>
 </p>
 
-<div class="form-field-row">
-    <p class="form-field form-field-half">
-        <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
-    </p>
-</div> 
+<p class="form-field form-field-half">
+    <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+    <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
+</p> 
