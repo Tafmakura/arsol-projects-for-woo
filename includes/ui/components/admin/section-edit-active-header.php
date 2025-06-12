@@ -38,12 +38,24 @@ $all_statuses = get_terms(array(
 
 // Check if has original proposal data
 $has_proposal_data = false;
+$column_2_title = __('Status & Actions', 'arsol-pfw');
 $original_proposal_id = get_post_meta($project_id, '_original_proposal_id', true);
-if ($original_proposal_id || 
-    get_post_meta($project_id, '_original_proposal_budget', true) ||
-    get_post_meta($project_id, '_original_proposal_start_date', true) ||
-    get_post_meta($project_id, '_original_proposal_delivery_date', true)) {
+
+// Check for proposal data first (priority)
+if ($original_proposal_id || get_post_meta($project_id, '_project_budget', true)) {
     $has_proposal_data = true;
+    $column_2_title = __('Proposal Details', 'arsol-pfw');
+} else {
+    // Check for original request data as fallback
+    $original_request_id = get_post_meta($project_id, '_original_request_id', true);
+    $original_request_budget = get_post_meta($project_id, '_original_request_budget', true);
+    $original_request_start_date = get_post_meta($project_id, '_original_request_start_date', true);
+    $original_request_delivery_date = get_post_meta($project_id, '_original_request_delivery_date', true);
+    
+    if ($original_request_id || $original_request_budget || $original_request_start_date || $original_request_delivery_date) {
+        $has_proposal_data = true;
+        $column_2_title = __('Original Request Details', 'arsol-pfw');
+    }
 }
 
 // Determine layout classes
@@ -75,7 +87,7 @@ if ($has_proposal_data) {
 
                 <?php if ($has_proposal_data): ?>
                 <div class="project_data_column column_2">
-                    <h3><?php _e('Proposal Details', 'arsol-pfw'); ?></h3>
+                    <h3><?php echo esc_html($column_2_title); ?></h3>
                     
                     <?php
                     // Load the project details template
