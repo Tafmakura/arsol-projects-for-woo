@@ -16,7 +16,7 @@ $request_status = !empty($request_status_terms) ? $request_status_terms[0] : 'pe
 
 <p class="form-field form-field-wide">
     <label><?php _e('Request Status:', 'arsol-pfw'); ?></label>
-    <span><?php echo esc_html(ucfirst(str_replace('-', ' ', $request_status))); ?></span>
+    <div><?php echo esc_html(ucfirst(str_replace('-', ' ', $request_status))); ?></div>
 </p>
 
 <p class="form-field form-field-wide">

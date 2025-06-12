@@ -25,42 +25,42 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
     <?php if (!empty($original_request_title)): ?>
     <p class="form-field form-field-wide">
         <label><?php _e('Original Title:', 'arsol-pfw'); ?></label>
-        <span><?php echo esc_html($original_request_title); ?></span>
+        <div><?php echo esc_html($original_request_title); ?></div>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_id)): ?>
     <p class="form-field form-field-wide">
         <label><?php _e('Request ID:', 'arsol-pfw'); ?></label>
-        <span><?php echo esc_html($original_request_id); ?></span>
+        <div><?php echo esc_html($original_request_id); ?></div>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_budget)): ?>
     <p class="form-field form-field-wide">
         <label><?php _e('Original Budget:', 'arsol-pfw'); ?></label>
-        <span><?php echo wc_price($original_request_budget['amount']); ?></span>
+        <div><?php echo wc_price($original_request_budget['amount']); ?></div>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_start_date)): ?>
     <p class="form-field form-field-wide">
         <label><?php _e('Requested Start Date:', 'arsol-pfw'); ?></label>
-        <span><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_start_date))); ?></span>
+        <div><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_start_date))); ?></div>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_delivery_date)): ?>
     <p class="form-field form-field-wide">
         <label><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></label>
-        <span><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_delivery_date))); ?></span>
+        <div><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_delivery_date))); ?></div>
     </p>
     <?php endif; ?>
 
     <?php if (!empty($original_request_content)): ?>
     <p class="form-field form-field-wide">
         <label><?php _e('Original Description:', 'arsol-pfw'); ?></label>
-        <span><?php echo wp_kses_post(wp_trim_words($original_request_content, 30)); ?></span>
+        <div><?php echo wp_kses_post(wp_trim_words($original_request_content, 30)); ?></div>
     </p>
     <?php endif; ?>
 
