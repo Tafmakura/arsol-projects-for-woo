@@ -181,14 +181,6 @@ class Setup {
             ((isset($post->post_type) && 'arsol-pfw-proposal' === $post->post_type) || 
              (isset($_GET['post_type']) && 'arsol-pfw-proposal' === $_GET['post_type']))) {
             
-            // Enqueue proposal admin CSS
-            wp_enqueue_style(
-                'arsol-proposal-admin',
-                ARSOL_PROJECTS_PLUGIN_URL . 'assets/css/arsol-pfw-admin.css',
-                array(),
-                filemtime(ARSOL_PROJECTS_PLUGIN_DIR . 'assets/css/arsol-pfw-admin.css')
-            );
-
             // Enqueue proposal admin JS
             wp_enqueue_script(
                 'arsol-proposal-admin',
