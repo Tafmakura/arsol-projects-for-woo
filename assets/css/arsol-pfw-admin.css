@@ -813,27 +813,16 @@ body.post-type-arsol-pfw-proposal .select2-container {
 }
 
 /* === WOOCOMMERCE-INSPIRED FORM FIELD LAYOUT === */
-.form-field-row {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 15px;
-    width: 100%;
+.form-field {
+    margin-bottom: 12px;
 }
-
-.form-field-half {
-    flex: 0 0 calc(50% - 7.5px);
-    margin-bottom: 0 !important;
+.form-field label {
+    display: block;
+    margin-bottom: 3px;
 }
-
 .form-field-wide {
     width: 100%;
-    margin-bottom: 15px;
-}
-
-.form-field input,
-.form-field select {
-    width: 100%;
-    max-width: none;
+    margin-bottom: 12px;
 }
 
 /* Responsive adjustments for form fields */
