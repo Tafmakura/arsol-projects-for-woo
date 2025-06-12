@@ -50,109 +50,40 @@ if ($original_request_id ||
 
             <div class="order_data_column_container">
                 <div class="order_data_column">
-                    <h3><?php _e('General', 'arsol-pfw'); ?></h3>
+                    <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
-                    <div class="form-field-row">
-                        <p class="form-field form-field-half">
-                            <label for="proposal_start_date"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
-                            <input type="date" 
-                                   id="proposal_start_date" 
-                                   name="proposal_start_date" 
-                                   value="<?php echo esc_attr($start_date); ?>"
-                                   class="widefat">
-                        </p>
-                        <p class="form-field form-field-half">
-                            <label for="proposal_delivery_date"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
-                            <input type="date" 
-                                   id="proposal_delivery_date" 
-                                   name="proposal_delivery_date" 
-                                   value="<?php echo esc_attr($delivery_date); ?>"
-                                   class="widefat">
-                        </p>
-                    </div>
-
-                    <p class="form-field form-field-wide wc-customer-user">
-                        <label for="post_author_override">
-                            <?php _e('Customer:', 'arsol-pfw'); ?>
-                            <?php if ($customer): ?>
-                                <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-proposal&author=' . $customer_id); ?>">
-                                    <?php _e('View other proposals →', 'arsol-pfw'); ?>
-                                </a>
-                                <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
-                                    <?php _e('Profile →', 'arsol-pfw'); ?>
-                                </a>
-                            <?php endif; ?>
-                        </label>
-                                        <?php
-                        // Get author dropdown
-                        $author_dropdown = wp_dropdown_users(array(
-                            'name' => 'post_author_override',
-                            'selected' => $post->post_author,
-                            'include_selected' => true,
-                            'echo' => false,
-                            'class' => 'wc-customer-search'
-                        ));
-                        echo $author_dropdown;
-                        ?>
-                    </p>
-
-                    <p class="form-field form-field-wide">
-                        <label for="proposal_secondary_status"><?php _e('Status:', 'arsol-pfw'); ?></label>
-                        <?php
-                        $secondary_status = get_post_meta($proposal_id, '_proposal_secondary_status', true);
-                        if (empty($secondary_status)) {
-                            $secondary_status = 'processing'; // Default value
-                        }
-                        ?>
-                        <select id="proposal_secondary_status" name="proposal_secondary_status" class="wc-enhanced-select">
-                            <option value="ready_for_review" <?php selected($secondary_status, 'ready_for_review'); ?>><?php _e('Ready for review', 'arsol-pfw'); ?></option>
-                            <option value="processing" <?php selected($secondary_status, 'processing'); ?>><?php _e('Processing', 'arsol-pfw'); ?></option>
-                        </select>
-                    </p>
-
-                
-
-                    <p class="form-field form-field-wide">
-                        <label for="cost_proposal_type"><?php _e('Cost proposal type:', 'arsol-pfw'); ?></label>
-                        <select id="cost_proposal_type" name="cost_proposal_type" class="wc-enhanced-select">
-                            <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
-                            <option value="budget_estimates" <?php selected($cost_proposal_type, 'budget_estimates'); ?>><?php _e('Budget Estimates', 'arsol-pfw'); ?></option>
-                            <option value="invoice_line_items" <?php selected($cost_proposal_type, 'invoice_line_items'); ?>><?php _e('Invoice Line Items', 'arsol-pfw'); ?></option>
-                        </select>
-                    </p>
-
-                    <p class="form-field form-field-half">
-                        <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
-                        <input type="date" 
-                               id="proposal_expiration_date" 
-                               name="proposal_expiration_date" 
-                               value="<?php echo esc_attr($expiration_date); ?>"
-                               class="widefat">
-                    </p>
+                    <?php
+                    // Load the general settings template
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header-column-1.php';
+                    if (file_exists($template_path)) {
+                        include $template_path;
+                    }
+                    ?>
                 </div>
 
                 <div class="order_data_column">
-
-                    
-                    <h3><?php _e('Project Proposal Details', 'arsol-pfw'); ?></h3>
+                    <h3><?php _e('Original Request Details', 'arsol-pfw'); ?></h3>
                     
                     <?php
-                    // Hook for customer request details
-                    do_action('arsol_proposal_details_content', $post);
+                    // Load the original request details template
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header-column-2.php';
+                    if (file_exists($template_path)) {
+                        include $template_path;
+                    }
                     ?>
     
 
                 </div>
                 <div class="order_data_column">
                         
-                    <h3><?php _e('Project Request Details', 'arsol-pfw'); ?></h3>
-                    <?php if ($has_request_data): ?>
-                   
-                        <?php
-                        // Hook for customer request details
-                        do_action('arsol_proposal_request_content', $post);
-                        ?>
-                    <?php endif; ?>
+                    <h3><?php _e('Review Status & Actions', 'arsol-pfw'); ?></h3>
+                    <?php 
+                    // Load the review status & actions template
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header-column-3.php';
+                    if (file_exists($template_path)) {
+                        include $template_path;
+                    }
+                    ?>
 
                 </div>
             </div>

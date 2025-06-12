@@ -55,102 +55,41 @@ if ($original_proposal_id ||
             </h2>
 
             <div class="order_data_column_container">
-                <div class="order_data_column">
-                    <h3><?php _e('General', 'arsol-pfw'); ?></h3>
+                <div class="order_data_column column_1">
+                    <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
-                    <div class="form-field-row">
-                        <p class="form-field form-field-half">
-                            <label for="project_start_date"><?php _e('Start Date:', 'arsol-pfw'); ?></label>
-                            <input type="date" 
-                                   id="project_start_date" 
-                                   name="project_start_date" 
-                                   value="<?php echo esc_attr($start_date); ?>"
-                                   class="widefat">
-                        </p>
-                        <p class="form-field form-field-half">
-                            <label for="project_due_date"><?php _e('Due Date:', 'arsol-pfw'); ?></label>
-                            <input type="date" 
-                                   id="project_due_date" 
-                                   name="project_due_date" 
-                                   value="<?php echo esc_attr($due_date); ?>"
-                                   class="widefat">
-                        </p>
-                    </div>
-
-                    <p class="form-field form-field-wide wc-customer-user">
-                        <label for="post_author_override">
-                            <?php _e('Customer:', 'arsol-pfw'); ?>
-                            <?php if ($customer): ?>
-                                <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-project&author=' . $customer_id); ?>">
-                                    <?php _e('View other projects →', 'arsol-pfw'); ?>
-                                </a>
-                                <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
-                                    <?php _e('Profile →', 'arsol-pfw'); ?>
-                                </a>
-                            <?php endif; ?>
-                        </label>
-                        <?php
-                        // Get author dropdown
-                        $author_dropdown = wp_dropdown_users(array(
-                            'name' => 'post_author_override',
-                            'selected' => $post->post_author,
-                            'include_selected' => true,
-                            'echo' => false,
-                            'class' => 'wc-customer-search'
-                        ));
-                        echo $author_dropdown;
-                        ?>
-                    </p>
-
-                    <p class="form-field form-field-wide">
-                        <label for="project_status"><?php _e('Project Status:', 'arsol-pfw'); ?></label>
-                        <select id="project_status" name="project_status" class="wc-enhanced-select">
-                            <?php foreach ($all_statuses as $status) : ?>
-                                <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($project_status, $status->slug); ?>>
-                                    <?php echo esc_html($status->name); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </p>
-
-                    <p class="form-field form-field-wide">
-                        <label for="project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
-                        <?php
-                        // Get project lead dropdown (all users)
-                        $lead_dropdown = wp_dropdown_users(array(
-                            'name' => 'project_lead',
-                            'selected' => $project_lead,
-                            'include_selected' => true,
-                            'echo' => false,
-                            'class' => 'wc-enhanced-select',
-                            'show_option_none' => __('Select Project Lead', 'arsol-pfw'),
-                            'option_none_value' => ''
-                        ));
-                        echo $lead_dropdown;
-                        ?>
-                    </p>
+                    <?php
+                    // Load the general settings template
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-1.php';
+                    if (file_exists($template_path)) {
+                        include $template_path;
+                    }
+                    ?>
                 </div>
 
-                <div class="order_data_column">
+                <div class="order_data_column column_2">
                     
                     <h3><?php _e('Project Details', 'arsol-pfw'); ?></h3>
                     
                     <?php
-                    // Hook for project details content
-                    do_action('arsol_project_details_content', $post);
+                    // Load the project details template
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-2.php';
+                    if (file_exists($template_path)) {
+                        include $template_path;
+                    }
                     ?>
 
                 </div>
-                <div class="order_data_column">
+                <div class="order_data_column column_3">
                         
-                    <h3><?php _e('Project Proposal Details', 'arsol-pfw'); ?></h3>
-                    <?php if ($has_proposal_data): ?>
-                    
-                        <?php
-                        // Hook for proposal details
-                        do_action('arsol_project_proposal_content', $post);
-                        ?>
-                    <?php endif; ?>
+                    <h3><?php _e('Status & Actions', 'arsol-pfw'); ?></h3>
+                    <?php 
+                    // Load the status & actions template
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-3.php';
+                    if (file_exists($template_path)) {
+                        include $template_path;
+                    }
+                    ?>
 
                 </div>
             </div>
