@@ -57,7 +57,7 @@ $all_statuses = get_terms(array(
                     ?>
                 </div>
 
-                <div class="order_data_column">
+                <div class="order_data_column extended_column">
                     <h3><?php _e('Request Details', 'arsol-pfw'); ?></h3>
                     
                     <?php
@@ -68,7 +68,7 @@ $all_statuses = get_terms(array(
                     }
                     ?>
                 </div>
-                
+
             </div>
 
             <div class="clear"></div>
