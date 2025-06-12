@@ -852,13 +852,6 @@ body.post-type-arsol-pfw-proposal .select2-container {
     font-weight: normal;
 }
 
-.form-field label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: #333;
-}
-
 .arsol-request-details-content .form-field {
     margin-bottom: 12px;
 }
