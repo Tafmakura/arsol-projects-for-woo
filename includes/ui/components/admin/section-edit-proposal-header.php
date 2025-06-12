@@ -54,8 +54,8 @@ if ($has_request_data) {
                 <?php printf(__('Proposal #%d details', 'arsol-pfw'), $proposal_id); ?>
             </h2>
 
-            <div class="order_data_column_container <?php echo esc_attr($container_class); ?>">
-                <div class="order_data_column">
+            <div class="project_data_column_container <?php echo esc_attr($container_class); ?>">
+                <div class="project_data_column">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
                     <?php
@@ -69,7 +69,7 @@ if ($has_request_data) {
 
                 <?php if ($has_request_data): ?>
                 <div class="arsol-col-2-3-container">
-                    <div class="order_data_column">
+                    <div class="project_data_column">
                         <h3><?php _e('Original Request Details', 'arsol-pfw'); ?></h3>
                         
                         <?php
@@ -80,7 +80,7 @@ if ($has_request_data) {
                         }
                         ?>
                     </div>
-                    <div class="order_data_column">
+                    <div class="project_data_column">
                         <h3><?php _e('Review Status & Actions', 'arsol-pfw'); ?></h3>
                         <?php
                         // Load the review status & actions template
@@ -92,7 +92,7 @@ if ($has_request_data) {
                     </div>
                 </div>
                 <?php else: ?>
-                <div class="order_data_column">
+                <div class="project_data_column">
                     <h3><?php _e('Review Status & Actions', 'arsol-pfw'); ?></h3>
                     <?php
                     // Load the review status & actions template

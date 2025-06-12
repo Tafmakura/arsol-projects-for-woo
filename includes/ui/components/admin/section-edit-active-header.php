@@ -60,8 +60,8 @@ if ($has_proposal_data) {
                 <?php printf(__('Project #%d details', 'arsol-pfw'), $project_id); ?>
             </h2>
 
-            <div class="order_data_column_container <?php echo esc_attr($container_class); ?>">
-                <div class="order_data_column column_1">
+            <div class="project_data_column_container <?php echo esc_attr($container_class); ?>">
+                <div class="project_data_column column_1">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
                     <?php
@@ -75,7 +75,7 @@ if ($has_proposal_data) {
 
                 <?php if ($has_proposal_data): ?>
                 <div class="arsol-col-2-3-container">
-                    <div class="order_data_column column_2">
+                    <div class="project_data_column column_2">
                         <h3><?php _e('Proposal Details', 'arsol-pfw'); ?></h3>
                         
                         <?php
@@ -86,7 +86,7 @@ if ($has_proposal_data) {
                         }
                         ?>
                     </div>
-                    <div class="order_data_column column_3">
+                    <div class="project_data_column column_3">
                         <h3><?php _e('Status & Actions', 'arsol-pfw'); ?></h3>
                         <?php 
                         // Load the status & actions template
@@ -98,7 +98,7 @@ if ($has_proposal_data) {
                     </div>
                 </div>
                 <?php else: ?>
-                <div class="order_data_column column_3">
+                <div class="project_data_column column_3">
                     <h3><?php _e('Status & Actions', 'arsol-pfw'); ?></h3>
                     <?php 
                     // Load the status & actions template
