@@ -24,16 +24,7 @@ $all_statuses = get_terms(array(
 ));
 ?>
 
-<div class="form-field-row">
-    <p class="form-field form-field-half">
-        <label for="project_start_date"><?php _e('Start Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="project_start_date" name="project_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
-    </p>
-    <p class="form-field form-field-half">
-        <label for="project_due_date"><?php _e('Due Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="project_due_date" name="project_due_date" value="<?php echo esc_attr($due_date); ?>" class="widefat">
-    </p>
-</div>
+
 
 <p class="form-field form-field-wide wc-customer-user">
     <label for="post_author_override">
