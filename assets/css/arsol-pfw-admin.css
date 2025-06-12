@@ -816,12 +816,13 @@ body.post-type-arsol-pfw-proposal .select2-container {
 .form-field-row {
     display: flex;
     gap: 15px;
-    margin-bottom: 0;
+    margin-bottom: 15px;
+    width: 100%;
 }
 
 .form-field-half {
-    flex: 1;
-    margin-bottom: 15px !important;
+    flex: 0 0 calc(50% - 7.5px);
+    margin-bottom: 0 !important;
 }
 
 .form-field-wide {
@@ -839,7 +840,7 @@ body.post-type-arsol-pfw-proposal .select2-container {
 @media screen and (max-width: 768px) {
     .form-field-row {
         flex-direction: column;
-        gap: 0;
+        gap: 15px;
     }
     
     .form-field-half {
