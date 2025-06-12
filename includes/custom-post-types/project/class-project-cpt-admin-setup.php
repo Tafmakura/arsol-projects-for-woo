@@ -231,7 +231,7 @@ class Setup {
             return;
         }
         
-        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-metabox-request-details.php';
+        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-2.php';
         if (file_exists($template_path)) {
             include $template_path;
         }
