@@ -70,7 +70,7 @@ $all_statuses = get_terms(array(
         'class' => 'wc-enhanced-select',
         'show_option_none' => __('Select Project Lead', 'arsol-pfw'),
         'option_none_value' => '',
-        'capability' => array('edit_posts')
+        'capability' => 'edit_posts'
     ));
     echo $lead_dropdown;
     ?>

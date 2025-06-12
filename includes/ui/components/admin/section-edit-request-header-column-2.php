@@ -56,11 +56,11 @@ $submission_date = get_the_time('l j F \a\t g:ia', $post);
 <p class="form-field form-field-wide">
     <label><strong><?php _e('Attachments:', 'arsol-pfw'); ?></strong></label>
     <?php if (!empty($attachments)): ?>
-        <?php foreach ($attachments as $attachment): ?>
+            <?php foreach ($attachments as $attachment): ?>
             <a href="<?php echo esc_url(wp_get_attachment_url($attachment->ID)); ?>" target="_blank">
-                        <?php echo esc_html($attachment->post_title); ?>
+                            <?php echo esc_html($attachment->post_title); ?>
             </a><br>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
     <?php else: ?>
         <?php echo __('N/A', 'arsol-pfw'); ?>
     <?php endif; ?>

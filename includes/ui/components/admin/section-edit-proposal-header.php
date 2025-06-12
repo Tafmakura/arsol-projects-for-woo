@@ -58,7 +58,7 @@ if ($has_request_data) {
                 <div class="project_data_column">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
-                    <?php
+                                        <?php
                     // Load the general settings template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header-column-1.php';
                     if (file_exists($template_path)) {
@@ -92,7 +92,7 @@ if ($has_request_data) {
                 <?php else: ?>
                 <div class="project_data_column">
                     <h3><?php _e('Review Status & Actions', 'arsol-pfw'); ?></h3>
-                    <?php
+                        <?php
                     // Load the review status & actions template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header-column-3.php';
                     if (file_exists($template_path)) {

@@ -64,7 +64,7 @@ if ($original_proposal_id) {
     $original_request_delivery_date = get_post_meta($project_id, '_original_request_delivery_date', true);
     
     if ($original_request_id || $original_request_title || $original_request_content || $original_request_budget || $original_request_start_date || $original_request_delivery_date) {
-        $has_proposal_data = true;
+    $has_proposal_data = true;
         $column_2_title = __('Original Request Details', 'arsol-pfw');
     }
 }
@@ -87,7 +87,7 @@ if ($has_proposal_data) {
                 <div class="project_data_column column_1">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
-                    <?php
+                        <?php
                     // Load the general settings template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-1.php';
                     if (file_exists($template_path)) {

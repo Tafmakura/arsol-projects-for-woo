@@ -25,7 +25,7 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
     <?php if (!empty($original_request_title)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Original Request Title:', 'arsol-pfw'); ?></strong></label>
-        <?php echo esc_html($original_request_title); ?>
+            <?php echo esc_html($original_request_title); ?>
     </p>
     <?php endif; ?>
 
@@ -34,21 +34,21 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
         <label><strong><?php _e('Request ID:', 'arsol-pfw'); ?></strong></label>
         <?php echo esc_html($original_request_id); ?>
     </p>
-    <?php endif; ?>
+        <?php endif; ?>
 
     <?php if (!empty($original_request_budget)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Original Budget:', 'arsol-pfw'); ?></strong></label>
         <?php echo wc_price($original_request_budget['amount']); ?>
     </p>
-    <?php endif; ?>
+        <?php endif; ?>
 
     <?php if (!empty($original_request_start_date)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Requested Start Date:', 'arsol-pfw'); ?></strong></label>
         <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_start_date))); ?>
     </p>
-    <?php endif; ?>
+        <?php endif; ?>
 
     <?php if (!empty($original_request_delivery_date)): ?>
     <p class="form-field form-field-wide">
