@@ -16,6 +16,7 @@ class Setup {
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('admin_enqueue_scripts', array($this, 'enqueue_wc_admin_styles'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_proposal_assets'));
+        add_action('add_meta_boxes', array($this, 'remove_publish_metabox'));
         
         // Setup proposal header container
         add_action('edit_form_after_title', array($this, 'render_proposal_header_container'));
@@ -157,6 +158,13 @@ class Setup {
                 wp_insert_term($name, 'arsol-review-status', array('slug' => $slug));
             }
         }
+    }
+
+    /**
+     * Remove the publish metabox
+     */
+    public function remove_publish_metabox() {
+        remove_meta_box('submitdiv', 'arsol-pfw-proposal', 'side');
     }
 
     /**
