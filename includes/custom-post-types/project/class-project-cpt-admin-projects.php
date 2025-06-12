@@ -58,11 +58,15 @@ class Projects {
 
             // Project Lead filter (manual select for Select2)
             $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
-            $users = get_users(array('role__in' => array('administrator', 'shop_manager')));
+            $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
+            $all_users = get_users(array('fields' => array('ID', 'display_name')));
+
             echo '<select name="project_lead" class="arsol-pfw-admin-select2" data-placeholder="' . esc_attr__('Filter by project lead', 'arsol-pfw') . '" data-allow_clear="true">';
             echo '<option value="">' . __('Filter by project lead', 'arsol-pfw') . '</option>';
-            foreach ($users as $user) {
-                echo '<option value="' . esc_attr($user->ID) . '"' . selected($current_lead, $user->ID, false) . '>' . esc_html($user->display_name) . '</option>';
+            foreach ($all_users as $user) {
+                if ($admin_users_helper->can_user_create_projects($user->ID)) {
+                    echo '<option value="' . esc_attr($user->ID) . '"' . selected($current_lead, $user->ID, false) . '>' . esc_html($user->display_name) . '</option>';
+                }
             }
             echo '</select>';
 
