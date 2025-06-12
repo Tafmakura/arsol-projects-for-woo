@@ -59,7 +59,7 @@ $submission_date = get_the_date('', $post);
         <span>
             <?php foreach ($attachments as $attachment): ?>
                 <a href="<?php echo esc_url(wp_get_attachment_url($attachment->ID)); ?>" target="_blank">
-                    <?php echo esc_html($attachment->post_title); ?>
+                            <?php echo esc_html($attachment->post_title); ?>
                 </a><br>
             <?php endforeach; ?>
         </span>

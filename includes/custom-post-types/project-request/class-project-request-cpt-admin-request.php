@@ -19,7 +19,7 @@ class Request {
         ob_start();
         add_meta_box(
             'request_details',
-            __('Request Details', 'arsol-pfw'),
+            __('Project Actions', 'arsol-pfw'),
             array($this, 'render_request_details_meta_box'),
             'arsol-pfw-request',
             'side',
@@ -40,6 +40,7 @@ class Request {
         ?>
         <div class="major-actions">
             <div class="arsol-pfw-admin-project-actions">
+                <input type="submit" class="button button-primary" value="<?php _e('Save Changes', 'arsol-pfw'); ?>" style="margin-right: 8px;">
                 <?php
                 $is_disabled = $current_status !== 'under-review';
                 $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
@@ -87,6 +88,9 @@ class Request {
             return;
         }
 
-        // No fields to save - metabox now only contains action button
+        // Save request status from column 1
+        if (isset($_POST['request_status'])) {
+            wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status', false);
+        }
     }
 }

@@ -43,12 +43,22 @@ $all_statuses = get_terms(array(
             <h2>
                 <?php printf(__('Request #%d details', 'arsol-pfw'), $request_id); ?>
             </h2>
+            
+            <!-- Display-only title section -->
+            <div class="order_data_column_container">
+                <div class="order_data_column" style="width: 100%;">
+                    <p class="form-field form-field-wide">
+                        <label><?php _e('Request Title:', 'arsol-pfw'); ?></label>
+                        <span style="font-weight: bold; font-size: 14px;"><?php echo esc_html($post->post_title); ?></span>
+                    </p>
+                </div>
+            </div>
 
             <div class="order_data_column_container">
                 <div class="order_data_column">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
-                    <?php
+                        <?php
                     // Load the general settings template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-request-header-column-1.php';
                     if (file_exists($template_path)) {

@@ -44,7 +44,7 @@ class Setup {
         );
 
         // Get base supports array
-        $supports = array('title');
+        $supports = array();
         
         // Add comments support if enabled
         if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-pfw-request')) {

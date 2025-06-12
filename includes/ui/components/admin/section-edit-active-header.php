@@ -58,7 +58,7 @@ if ($original_proposal_id ||
                 <div class="order_data_column column_1">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
-                    <?php
+                        <?php
                     // Load the general settings template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-1.php';
                     if (file_exists($template_path)) {
