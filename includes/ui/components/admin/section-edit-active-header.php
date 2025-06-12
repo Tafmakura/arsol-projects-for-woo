@@ -53,7 +53,7 @@ if ($has_proposal_data) {
 }
 ?>
 
-<div id="arsol-pfw-project-data" class="postbox ">
+<div id="arsol-pfw-project-active-data" class="arsol-pfw-project postbox ">
     <div id="proposal_metabox" class="panel-wrap woocommerce">
         <div id="order_data" class="panel woocommerce">
             <h2>
@@ -71,7 +71,7 @@ if ($has_proposal_data) {
                         include $template_path;
                     }
                     ?>
-                </div>
+                    </div>
 
                 <?php if ($has_proposal_data): ?>
                 <div class="arsol-col-2-3-container">
@@ -88,14 +88,14 @@ if ($has_proposal_data) {
                     </div>
                     <div class="project_data_column column_3">
                         <h3><?php _e('Status & Actions', 'arsol-pfw'); ?></h3>
-                        <?php 
+                        <?php
                         // Load the status & actions template
                         $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-3.php';
                         if (file_exists($template_path)) {
                             include $template_path;
                         }
                         ?>
-                    </div>
+                </div>
                 </div>
                 <?php else: ?>
                 <div class="project_data_column column_3">

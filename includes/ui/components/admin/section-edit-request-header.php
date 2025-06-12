@@ -40,7 +40,7 @@ $all_statuses = get_terms(array(
 $container_class = 'arsol-header-grid';
 ?>
 
-<div id="arsol-pfw-project-data" class="postbox ">
+<div id="arsol-pfw-project-request-data" class="arsol-pfw-project postbox ">
     <div id="request_metabox" class="panel-wrap woocommerce">
         <div id="order_data" class="panel woocommerce">
             <h2>
