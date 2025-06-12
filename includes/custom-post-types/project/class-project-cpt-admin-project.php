@@ -18,7 +18,7 @@ class Project {
     public function add_project_details_meta_box() {
         add_meta_box(
             'project_details_meta_box',
-            __('Project Details', 'arsol-pfw'),
+            __('Project Actions', 'arsol-pfw'),
             array($this, 'render_project_details_meta_box'),
             'arsol-project',
             'side',
@@ -204,6 +204,10 @@ class Project {
                     </span>
                 </p>
             <?php endif; ?>
+            
+            <div class="major-actions" style="margin-top: 20px;">
+                <input type="submit" class="button button-primary" value="<?php echo ($post->post_status === 'publish') ? __('Update', 'arsol-pfw') : __('Publish', 'arsol-pfw'); ?>" style="width: 100%;">
+            </div>
         </div>
         <?php
     }

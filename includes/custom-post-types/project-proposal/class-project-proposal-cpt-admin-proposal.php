@@ -33,7 +33,7 @@ class Proposal {
     public function add_proposal_details_meta_box() {
         add_meta_box(
             'proposal_details_meta_box',
-            __('Proposal Details', 'arsol-pfw'),
+            __('Project Actions', 'arsol-pfw'),
             array($this, 'render_proposal_details_meta_box'),
             'arsol-pfw-proposal',
             'side',
@@ -76,7 +76,8 @@ class Proposal {
         <div class="proposal-details">
         </div>
         <div class="major-actions">
-            <div class="arsol-pfw-admin-project-actions">
+            <div class="arsol-pfw-admin-project-actions" style="display: flex; justify-content: space-between; align-items: center;">
+                <input type="submit" class="button button-primary" value="<?php echo ($post->post_status === 'publish') ? __('Update', 'arsol-pfw') : __('Publish', 'arsol-pfw'); ?>">
             <?php
             $is_disabled = $post->post_status !== 'publish';
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
