@@ -21,47 +21,56 @@ $customer = get_userdata($post->post_author);
 $submission_date = get_the_time('l j F \a\t g:ia', $post);
 ?>
 
-<p class="form-field form-field-wide">
-    <label><strong><?php _e('Submission Date:', 'arsol-pfw'); ?></strong></label>
-    <?php echo $submission_date ? esc_html($submission_date) : __('N/A', 'arsol-pfw'); ?>
-</p>
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
+        <label><strong><?php _e('Submission Date:', 'arsol-pfw'); ?></strong></label>
+        <?php echo $submission_date ? esc_html($submission_date) : __('N/A', 'arsol-pfw'); ?>
+    </p>
+</div>
 
-<p class="form-field form-field-wide">
-    <label><strong><?php _e('Requested Budget:', 'arsol-pfw'); ?></strong></label>
-    <?php 
-    if (!empty($budget_data['amount'])) {
-        $currency = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
-        echo get_woocommerce_currency_symbol($currency) . number_format((float)$budget_data['amount'], 2);
-    } else {
-        echo __('N/A', 'arsol-pfw');
-    }
-    ?>
-</p>
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
+        <label><strong><?php _e('Requested Budget:', 'arsol-pfw'); ?></strong></label>
+        <?php 
+        if (!empty($budget_data['amount'])) {
+            $currency = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
+            echo get_woocommerce_currency_symbol($currency) . number_format((float)$budget_data['amount'], 2);
+        } else {
+            echo __('N/A', 'arsol-pfw');
+        }
+        ?>
+    </p>
+</div>
 
-<p class="form-field form-field-wide">
-    <label><strong><?php _e('Requested Start Date:', 'arsol-pfw'); ?></strong></label>
-    <?php echo $start_date ? esc_html(date_i18n(get_option('date_format'), strtotime($start_date))) : __('N/A', 'arsol-pfw'); ?>
-</p>
+<div class="form-field-row">
+    <p class="form-field form-field-half">
+        <label><strong><?php _e('Requested Start Date:', 'arsol-pfw'); ?></strong></label>
+        <?php echo $start_date ? esc_html(date_i18n(get_option('date_format'), strtotime($start_date))) : __('N/A', 'arsol-pfw'); ?>
+    </p>
+    <p class="form-field form-field-half">
+        <label><strong><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></strong></label>
+        <?php echo $delivery_date ? esc_html(date_i18n(get_option('date_format'), strtotime($delivery_date))) : __('N/A', 'arsol-pfw'); ?>
+    </p>
+</div>
 
-<p class="form-field form-field-wide">
-    <label><strong><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></strong></label>
-    <?php echo $delivery_date ? esc_html(date_i18n(get_option('date_format'), strtotime($delivery_date))) : __('N/A', 'arsol-pfw'); ?>
-</p>
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
+        <label><strong><?php _e('Project Description:', 'arsol-pfw'); ?></strong></label>
+        <?php echo $request_content ? wp_kses_post(wp_trim_words($request_content, 50)) : __('N/A', 'arsol-pfw'); ?>
+    </p>
+</div>
 
-<p class="form-field form-field-wide">
-    <label><strong><?php _e('Project Description:', 'arsol-pfw'); ?></strong></label>
-    <?php echo $request_content ? wp_kses_post(wp_trim_words($request_content, 50)) : __('N/A', 'arsol-pfw'); ?>
-</p>
-
-<p class="form-field form-field-wide">
-    <label><strong><?php _e('Attachments:', 'arsol-pfw'); ?></strong></label>
-    <?php if (!empty($attachments)): ?>
-            <?php foreach ($attachments as $attachment): ?>
-            <a href="<?php echo esc_url(wp_get_attachment_url($attachment->ID)); ?>" target="_blank">
-                            <?php echo esc_html($attachment->post_title); ?>
-            </a><br>
-            <?php endforeach; ?>
-    <?php else: ?>
-        <?php echo __('N/A', 'arsol-pfw'); ?>
-    <?php endif; ?>
-</p> 
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
+        <label><strong><?php _e('Attachments:', 'arsol-pfw'); ?></strong></label>
+        <?php if (!empty($attachments)): ?>
+                <?php foreach ($attachments as $attachment): ?>
+                <a href="<?php echo esc_url(wp_get_attachment_url($attachment->ID)); ?>" target="_blank">
+                                <?php echo esc_html($attachment->post_title); ?>
+                </a><br>
+                <?php endforeach; ?>
+        <?php else: ?>
+            <?php echo __('N/A', 'arsol-pfw'); ?>
+        <?php endif; ?>
+    </p>
+</div> 
