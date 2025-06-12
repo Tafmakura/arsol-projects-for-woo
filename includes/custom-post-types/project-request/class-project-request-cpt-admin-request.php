@@ -38,12 +38,9 @@ class Request {
         $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
         $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         ?>
-        <div class="arsol-actions-description" style="margin-bottom: 15px; padding: 10px; background: #f9f9f9; border-left: 4px solid #0073aa;">
-            <p style="margin: 0; font-size: 13px; line-height: 1.4;">
-                <strong><?php _e('Convert to Proposal:', 'arsol-pfw'); ?></strong><br>
-                <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request status must be set to "Under Review" before conversion is allowed. This action cannot be undone.', 'arsol-pfw'); ?>
-            </p>
-        </div>
+        <p style="margin-bottom: 15px;">
+            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request status must be set to "Under Review" before conversion is allowed. This action cannot be undone.', 'arsol-pfw'); ?>
+        </p>
         <div class="major-actions">
             <div class="arsol-pfw-admin-project-actions" style="display: flex; justify-content: space-between; align-items: center;">
                 <input type="submit" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
