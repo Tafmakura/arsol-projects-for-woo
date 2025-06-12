@@ -883,6 +883,11 @@ body.post-type-arsol-pfw-proposal .select2-container {
     grid-template-columns: 1fr 1fr 1fr;
 }
 
+/* Make labels in header container display as block */
+.project_data_column_container label {
+    display: block;
+}
+
 .arsol-full-width {
     grid-column: 1 / -1;
 }
