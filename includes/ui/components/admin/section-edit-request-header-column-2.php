@@ -18,7 +18,7 @@ $delivery_date = get_post_meta($request_id, '_request_delivery_date', true);
 $request_status_terms = wp_get_object_terms($request_id, 'arsol-request-status', array('fields' => 'names'));
 $request_status = !empty($request_status_terms) ? $request_status_terms[0] : '';
 $customer = get_userdata($post->post_author);
-$submission_date = get_the_date('', $post);
+$submission_date = get_the_time('l j F \a\t g:ia', $post);
 ?>
 
 <p class="form-field form-field-wide">
