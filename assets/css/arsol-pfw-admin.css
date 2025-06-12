@@ -786,6 +786,9 @@ body.post-type-arsol-pfw-proposal .select2-container {
 /* Ensure the postbox after title has proper spacing */
 #arsol-pfw-project-data.postbox {
     margin-top: 20px;
+}
+
+.arsol-pfw-project.postbox {
     margin-bottom: 20px;
 }
 
