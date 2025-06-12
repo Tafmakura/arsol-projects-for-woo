@@ -89,7 +89,7 @@ class Workflow_Handler {
         $proposal_args = array(
             'post_title'   => $request_post->post_title,
             'post_content' => $request_post->post_content,
-            'post_status'  => 'draft',
+            'post_status'  => 'publish',
             'post_type'    => 'arsol-pfw-proposal',
             'post_author'  => $request_post->post_author,
         );
