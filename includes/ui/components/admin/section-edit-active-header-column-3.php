@@ -12,20 +12,7 @@ if (!$post || $post->post_type !== 'arsol-project') {
 $project_id = $post->ID;
 $project_orders = get_post_meta($project_id, '_project_orders', true);
 $project_subscriptions = get_post_meta($project_id, '_project_subscriptions', true);
-$start_date = get_post_meta($project_id, '_project_start_date', true);
-$due_date = get_post_meta($project_id, '_project_due_date', true);
 ?>
-
-<div class="form-field-row">
-    <p class="form-field form-field-half">
-        <label for="project_start_date"><strong><?php _e('Start Date:', 'arsol-pfw'); ?></strong></label>
-        <input type="date" id="project_start_date" name="project_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
-    </p>
-    <p class="form-field form-field-half">
-        <label for="project_due_date"><strong><?php _e('Due Date:', 'arsol-pfw'); ?></strong></label>
-        <input type="date" id="project_due_date" name="project_due_date" value="<?php echo esc_attr($due_date); ?>" class="widefat">
-    </p>
-</div>
 
 <?php if (!empty($project_orders) && is_array($project_orders)): ?>
 <p class="form-field form-field-wide">
