@@ -97,30 +97,6 @@ class Proposal {
             </span>
             </div>
         </div>
-        <script>
-            jQuery(document).ready(function($) {
-                function toggleCostProposalSections() {
-                    var selectedType = $('#cost_proposal_type').val();
-                    
-                    $('#arsol_budget_estimates_metabox').hide();
-                    $('#arsol_proposal_invoice_metabox').hide();
-
-                    if (selectedType === 'budget_estimates') {
-                        $('#arsol_budget_estimates_metabox').show();
-                    } else if (selectedType === 'invoice_line_items') {
-                        $('#arsol_proposal_invoice_metabox').show();
-                    }
-                }
-
-                // Initial toggle on page load
-                toggleCostProposalSections();
-
-                // Toggle when dropdown changes
-                $('#cost_proposal_type').on('change', function() {
-                    toggleCostProposalSections();
-                });
-            });
-        </script>
         <?php
     }
 
@@ -258,24 +234,7 @@ class Proposal {
      * Output confirm conversion script
      */
     public function output_confirm_conversion_script() {
-        global $post;
-        if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
-            return;
-        }
-        ?>
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            $('.arsol-confirm-conversion').on('click', function(e) {
-                e.preventDefault();
-                var message = $(this).data('message');
-                var url = $(this).data('url');
-                
-                if (confirm(message)) {
-                    window.location.href = url;
-                }
-            });
-        });
-        </script>
-        <?php
+        // Removed duplicate script - functionality handled by global admin.js
+        // This was causing double-triggering of conversion confirmations
     }
 }

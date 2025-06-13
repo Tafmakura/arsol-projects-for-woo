@@ -139,6 +139,7 @@ class Workflow_Handler {
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
         ob_start();
 
+        // Get proposal ID first if not provided
         if (empty($proposal_id)) {
             if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce')) {
                 wp_die(__('Invalid proposal or nonce.', 'arsol-pfw'));
@@ -146,22 +147,43 @@ class Workflow_Handler {
             $proposal_id = intval($_GET['proposal_id']);
         }
 
+        // Foundational check: Prevent double-triggering by checking if conversion is already in progress
+        $conversion_lock_key = 'arsol_converting_proposal_' . $proposal_id;
+        if (get_transient($conversion_lock_key)) {
+            $error_message = __('Conversion already in progress. Please wait.', 'arsol-pfw');
+            if ($is_internal_call) {
+                if (function_exists('wc_add_notice')) {
+                    wc_add_notice($error_message, 'error');
+                }
+                $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
+                return;
+            } else {
+                wp_die($error_message);
+            }
+        }
+
+        // Set conversion lock (expires in 30 seconds)
+        set_transient($conversion_lock_key, true, 30);
+
         $can_convert = self::user_can_view_post(get_current_user_id(), $proposal_id);
         if (!$is_internal_call) {
             $can_convert = current_user_can('publish_posts');
         }
 
         if (!$can_convert) {
+            delete_transient($conversion_lock_key);
             wp_die(__('You do not have sufficient permissions to perform this action.', 'arsol-pfw'));
         }
 
         $proposal_post = get_post($proposal_id);
 
         if (!$proposal_post || $proposal_post->post_type !== 'arsol-pfw-proposal') {
+            delete_transient($conversion_lock_key);
             wp_die(__('Invalid proposal.', 'arsol-pfw'));
         }
 
         if ($proposal_post->post_status !== 'publish') {
+            delete_transient($conversion_lock_key);
             wp_die(__('Only published proposals can be converted to projects.', 'arsol-pfw'));
         }
 
@@ -176,6 +198,7 @@ class Workflow_Handler {
         $new_project_id = wp_insert_post($project_args);
 
         if (is_wp_error($new_project_id)) {
+            delete_transient($conversion_lock_key);
             if ($is_internal_call) {
                 $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
             } else {
@@ -207,11 +230,12 @@ class Workflow_Handler {
         // Store original proposal ID for reference
         update_post_meta($new_project_id, '_original_proposal_id', $proposal_id);
 
-        // Capture any order creation errors
+        // Capture any order creation errors and created order IDs for rollback
         $order_creation_errors = array();
+        $created_order_ids = array();
         
-        // Hook into order creation to capture errors
-        add_action('arsol_proposal_converted_to_project', function($project_id, $proposal_id) use (&$order_creation_errors) {
+        // Hook into order creation to capture errors and order IDs
+        add_action('arsol_proposal_converted_to_project', function($project_id, $proposal_id) use (&$order_creation_errors, &$created_order_ids) {
             // Check for order creation errors after the billers run
             $order_error = get_post_meta($project_id, '_project_order_creation_error', true);
             $subscription_error = get_post_meta($project_id, '_project_subscription_creation_error', true);
@@ -222,6 +246,18 @@ class Workflow_Handler {
             if (!empty($subscription_error)) {
                 $order_creation_errors[] = $subscription_error;
             }
+            
+            // Collect created order IDs for potential rollback
+            $order_note = get_post_meta($project_id, '_project_order_creation_note', true);
+            $subscription_note = get_post_meta($project_id, '_project_subscription_creation_note', true);
+            
+            // Extract order IDs from success notes
+            if (!empty($order_note) && preg_match('/#(\d+)/', $order_note, $matches)) {
+                $created_order_ids[] = intval($matches[1]);
+            }
+            if (!empty($subscription_note) && preg_match('/#(\d+)/', $subscription_note, $matches)) {
+                $created_order_ids[] = intval($matches[1]);
+            }
         }, 20, 2); // Run after the billers (priority 10)
 
         // Trigger action for order creation
@@ -229,8 +265,31 @@ class Workflow_Handler {
 
         // Check if there were any order creation errors
         if (!empty($order_creation_errors)) {
-            // Order creation failed - rollback the project creation
+            // Order creation failed - rollback everything
+            
+            // Delete any created orders first
+            foreach ($created_order_ids as $order_id) {
+                $order = wc_get_order($order_id);
+                if ($order) {
+                    // Force delete the order (bypass trash)
+                    wp_delete_post($order_id, true);
+                    
+                    // Log the rollback for debugging
+                    if (function_exists('wc_get_logger')) {
+                        $logger = wc_get_logger();
+                        $logger->info(
+                            sprintf('Rolled back order #%d due to conversion failure', $order_id),
+                            array('source' => 'arsol-pfw-conversion')
+                        );
+                    }
+                }
+            }
+            
+            // Delete the project
             wp_delete_post($new_project_id, true);
+            
+            // Clear the conversion lock
+            delete_transient($conversion_lock_key);
             
             $error_message = sprintf(
                 __('Failed to create orders from proposal. Errors: %s', 'arsol-pfw'),
@@ -253,6 +312,9 @@ class Workflow_Handler {
         // If we get here, both project and orders were created successfully
         // Now it's safe to delete the original proposal
         wp_delete_post($proposal_id, true);
+
+        // Clear the conversion lock
+        delete_transient($conversion_lock_key);
 
         // Clean the output buffer and redirect
         ob_end_clean();

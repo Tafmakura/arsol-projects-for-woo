@@ -69,50 +69,94 @@ class Woocommerce_Subscriptions_Biller {
     }
     
     /**
-     * Create subscription order from proposal recurring items
+     * Validate billing interval (simple safety net)
+     * 
+     * @param mixed $interval The billing interval to validate
+     * @return int Valid billing interval (1-6)
+     */
+    private function validate_billing_interval($interval) {
+        $interval = intval($interval);
+        return ($interval >= 1 && $interval <= 6) ? $interval : 1;
+    }
+    
+    /**
+     * Validate billing period (simple safety net)
+     * 
+     * @param string $period The billing period to validate
+     * @return string Valid billing period (day, week, month, or year)
+     */
+    private function validate_billing_period($period) {
+        $valid_periods = array('day', 'week', 'month', 'year');
+        return in_array($period, $valid_periods) ? $period : 'month';
+    }
+    
+    /**
+     * Create subscription from proposal
      * 
      * @param int $proposal_id The proposal ID
      * @return int|WP_Error Subscription ID on success, WP_Error on failure
      */
     public function create_subscription_from_proposal($proposal_id) {
-        // Check if WooCommerce Subscriptions is active
-        if (!class_exists('WC_Subscriptions')) {
-            return new \WP_Error('subscriptions_not_active', __('WooCommerce Subscriptions is not active', 'arsol-pfw'));
-        }
-        
-        // Get proposal data
-        $proposal = get_post($proposal_id);
-        if (!$proposal) {
-            return new \WP_Error('invalid_proposal', __('Invalid proposal ID', 'arsol-pfw'));
-        }
-        
-        // Get line items
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
-        if (empty($line_items)) {
-            return new \WP_Error('no_line_items', __('No line items found in proposal', 'arsol-pfw'));
-        }
-        
-        // Check if there are any recurring items
-        if (!$this->has_recurring_items($line_items)) {
-            return new \WP_Error('no_recurring_items', __('No recurring items found in proposal', 'arsol-pfw'));
-        }
-        
         try {
-            // Create subscription order
+            // Check if WooCommerce Subscriptions is active
+            if (!class_exists('WC_Subscriptions') || !function_exists('wcs_create_subscription')) {
+                throw new \Exception(__('WooCommerce Subscriptions is not active or not properly loaded', 'arsol-pfw'));
+            }
+            
+            // Get proposal data
+            $proposal = get_post($proposal_id);
+            if (!$proposal) {
+                throw new \Exception(__('Proposal not found', 'arsol-pfw'));
+            }
+            
+            // Get proposal line items
+            $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
+            if (empty($line_items)) {
+                throw new \Exception(__('No line items found in proposal', 'arsol-pfw'));
+            }
+            
+            // Check if proposal has recurring items
+            if (!$this->has_recurring_items($line_items)) {
+                throw new \Exception(__('Proposal contains no recurring items', 'arsol-pfw'));
+            }
+            
+            // Get customer ID from proposal
+            $customer_id = get_post_meta($proposal_id, '_arsol_customer_id', true);
+            if (empty($customer_id)) {
+                throw new \Exception(__('No customer associated with proposal', 'arsol-pfw'));
+            }
+            
+            // Create subscription
             $subscription = wcs_create_subscription(array(
-                'customer_id' => $proposal->post_author,
-                'status' => 'pending'
+                'order_id' => 0,
+                'status' => 'pending',
+                'billing_period' => 'month',
+                'billing_interval' => 1,
+                'customer_id' => $customer_id
             ));
             
             if (is_wp_error($subscription)) {
-                return $subscription;
+                throw new \Exception($subscription->get_error_message());
             }
             
-            $has_subscription_products = false;
+            // Set billing and shipping addresses from proposal
+            $billing_address = get_post_meta($proposal_id, '_arsol_billing_address', true);
+            $shipping_address = get_post_meta($proposal_id, '_arsol_shipping_address', true);
+            
+            if (!empty($billing_address) && is_array($billing_address)) {
+                $subscription->set_address($billing_address, 'billing');
+            }
+            
+            if (!empty($shipping_address) && is_array($shipping_address)) {
+                $subscription->set_address($shipping_address, 'shipping');
+            }
+            
+            // Track billing schedule
             $primary_billing_interval = 1;
             $primary_billing_period = 'month';
+            $has_subscription_products = false;
             
-            // Add subscription products to subscription
+            // Add subscription products
             if (!empty($line_items['products'])) {
                 foreach ($line_items['products'] as $item) {
                     if (!empty($item['product_id'])) {
@@ -131,8 +175,10 @@ class Woocommerce_Subscriptions_Biller {
                             
                             // Set subscription billing schedule from first subscription product
                             if (!$has_subscription_products) {
-                                $primary_billing_interval = $product->get_meta('_subscription_period_interval') ?: 1;
-                                $primary_billing_period = $product->get_meta('_subscription_period') ?: 'month';
+                                $raw_interval = $product->get_meta('_subscription_period_interval') ?: 1;
+                                $primary_billing_interval = $this->validate_billing_interval($raw_interval);
+                                $raw_period = $product->get_meta('_subscription_period') ?: 'month';
+                                $primary_billing_period = $this->validate_billing_period($raw_period);
                                 $has_subscription_products = true;
                             }
                             
@@ -161,8 +207,10 @@ class Woocommerce_Subscriptions_Biller {
                         
                         // Use recurring fee billing cycle if no subscription products
                         if (!$has_subscription_products) {
-                            $primary_billing_interval = isset($fee['interval']) ? intval($fee['interval']) : 1;
-                            $primary_billing_period = isset($fee['period']) ? $fee['period'] : 'month';
+                            $raw_interval = isset($fee['interval']) ? $fee['interval'] : 1;
+                            $primary_billing_interval = $this->validate_billing_interval($raw_interval);
+                            $raw_period = isset($fee['period']) ? $fee['period'] : 'month';
+                            $primary_billing_period = $this->validate_billing_period($raw_period);
                         }
                         
                         // Handle start date for recurring fees
@@ -176,9 +224,19 @@ class Woocommerce_Subscriptions_Biller {
                 }
             }
             
-            // Set billing schedule
+            // Set billing schedule with validated period
             $subscription->set_billing_period($primary_billing_period);
             $subscription->set_billing_interval($primary_billing_interval);
+            
+            // Log billing schedule for debugging
+            if (function_exists('wc_get_logger')) {
+                $logger = wc_get_logger();
+                $logger->info(
+                    sprintf('Creating subscription from proposal #%d with billing: %d %s', 
+                        $proposal_id, $primary_billing_interval, $primary_billing_period),
+                    array('source' => 'arsol-pfw-subscriptions')
+                );
+            }
             
             // Calculate totals
             $subscription->calculate_totals();
@@ -242,9 +300,11 @@ class Woocommerce_Subscriptions_Biller {
                 if (!empty($item['product_id'])) {
                     $product = wc_get_product($item['product_id']);
                     if ($product && $product->is_type(array('subscription', 'subscription_variation'))) {
+                        $raw_interval = $product->get_meta('_subscription_period_interval') ?: 1;
+                        $raw_period = $product->get_meta('_subscription_period') ?: 'month';
                         return array(
-                            'interval' => $product->get_meta('_subscription_period_interval') ?: 1,
-                            'period' => $product->get_meta('_subscription_period') ?: 'month'
+                            'interval' => $this->validate_billing_interval($raw_interval),
+                            'period' => $this->validate_billing_period($raw_period)
                         );
                     }
                 }
@@ -255,9 +315,11 @@ class Woocommerce_Subscriptions_Biller {
         if (!empty($line_items['recurring_fees'])) {
             $first_fee = reset($line_items['recurring_fees']);
             if (!empty($first_fee)) {
+                $raw_interval = isset($first_fee['interval']) ? $first_fee['interval'] : 1;
+                $raw_period = isset($first_fee['period']) ? $first_fee['period'] : 'month';
                 return array(
-                    'interval' => isset($first_fee['interval']) ? intval($first_fee['interval']) : 1,
-                    'period' => isset($first_fee['period']) ? $first_fee['period'] : 'month'
+                    'interval' => $this->validate_billing_interval($raw_interval),
+                    'period' => $this->validate_billing_period($raw_period)
                 );
             }
         }
