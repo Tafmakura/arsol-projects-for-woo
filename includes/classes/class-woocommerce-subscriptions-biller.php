@@ -122,8 +122,31 @@ class Woocommerce_Subscriptions_Biller {
             
             // Get customer ID from proposal
             $customer_id = get_post_meta($proposal_id, '_arsol_customer_id', true);
+            
+            // If no customer ID in meta, use the proposal author
             if (empty($customer_id)) {
-                throw new \Exception(__('No customer associated with proposal', 'arsol-pfw'));
+                $proposal_post = get_post($proposal_id);
+                if ($proposal_post && $proposal_post->post_author) {
+                    $customer_id = $proposal_post->post_author;
+                } else {
+                    throw new \Exception(__('No customer associated with proposal', 'arsol-pfw'));
+                }
+            }
+            
+            // Validate that the customer exists and is a valid WooCommerce customer
+            $customer = new \WC_Customer($customer_id);
+            if (!$customer || !$customer->get_id()) {
+                throw new \Exception(__('Invalid customer associated with proposal', 'arsol-pfw'));
+            }
+            
+            // Log customer assignment for debugging
+            if (function_exists('wc_get_logger')) {
+                $logger = wc_get_logger();
+                $logger->info(
+                    sprintf('Creating subscription from proposal #%d for customer #%d (%s)', 
+                        $proposal_id, $customer_id, $customer->get_billing_email()),
+                    array('source' => 'arsol-pfw-subscriptions')
+                );
             }
             
             // Create subscription
@@ -139,16 +162,46 @@ class Woocommerce_Subscriptions_Biller {
                 throw new \Exception($subscription->get_error_message());
             }
             
-            // Set billing and shipping addresses from proposal
+            // Set billing and shipping addresses from proposal or customer
             $billing_address = get_post_meta($proposal_id, '_arsol_billing_address', true);
             $shipping_address = get_post_meta($proposal_id, '_arsol_shipping_address', true);
             
             if (!empty($billing_address) && is_array($billing_address)) {
                 $subscription->set_address($billing_address, 'billing');
+            } else {
+                // Fall back to customer's billing address
+                $customer_billing = array(
+                    'first_name' => $customer->get_billing_first_name(),
+                    'last_name'  => $customer->get_billing_last_name(),
+                    'company'    => $customer->get_billing_company(),
+                    'address_1'  => $customer->get_billing_address_1(),
+                    'address_2'  => $customer->get_billing_address_2(),
+                    'city'       => $customer->get_billing_city(),
+                    'state'      => $customer->get_billing_state(),
+                    'postcode'   => $customer->get_billing_postcode(),
+                    'country'    => $customer->get_billing_country(),
+                    'email'      => $customer->get_billing_email(),
+                    'phone'      => $customer->get_billing_phone(),
+                );
+                $subscription->set_address($customer_billing, 'billing');
             }
             
             if (!empty($shipping_address) && is_array($shipping_address)) {
                 $subscription->set_address($shipping_address, 'shipping');
+            } else {
+                // Fall back to customer's shipping address
+                $customer_shipping = array(
+                    'first_name' => $customer->get_shipping_first_name(),
+                    'last_name'  => $customer->get_shipping_last_name(),
+                    'company'    => $customer->get_shipping_company(),
+                    'address_1'  => $customer->get_shipping_address_1(),
+                    'address_2'  => $customer->get_shipping_address_2(),
+                    'city'       => $customer->get_shipping_city(),
+                    'state'      => $customer->get_shipping_state(),
+                    'postcode'   => $customer->get_shipping_postcode(),
+                    'country'    => $customer->get_shipping_country(),
+                );
+                $subscription->set_address($customer_shipping, 'shipping');
             }
             
             // Track billing schedule
