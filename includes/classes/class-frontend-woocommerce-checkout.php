@@ -26,9 +26,9 @@ class Frontend_Woocommerce_Checkout {
         $project_products = !empty($settings['project_products']) ? (array) $settings['project_products'] : array();
         $project_categories = !empty($settings['project_categories']) ? (array) $settings['project_categories'] : array();
 
-        // If no specific products or categories are set, show the field by default
+        // If no specific products or categories are configured, don't show the field
         if (empty($project_products) && empty($project_categories)) {
-            return true;
+            return false;
         }
 
         if (WC()->cart === null) {
@@ -77,10 +77,40 @@ class Frontend_Woocommerce_Checkout {
         return get_posts($args);
     }
 
+    /**
+     * Check if there's a pre-assigned project from proposal orders
+     * 
+     * @return int|false Project ID if pre-assigned, false otherwise
+     */
+    private function get_pre_assigned_project() {
+        // Check if there's a project ID stored in session (from proposal conversion)
+        if (WC()->session) {
+            $session_project = WC()->session->get('arsol_pre_assigned_project');
+            if (!empty($session_project)) {
+                return intval($session_project);
+            }
+        }
+        
+        // Check if any cart items have project metadata (for future use)
+        if (WC()->cart) {
+            foreach (WC()->cart->get_cart() as $cart_item) {
+                if (!empty($cart_item['arsol_project_id'])) {
+                    return intval($cart_item['arsol_project_id']);
+                }
+            }
+        }
+        
+        return false;
+    }
+
     public function register_project_checkout_field() {
         // Use new Blocks-compatible registration if available
         if (class_exists('Automattic\\WooCommerce\\Blocks\\Package')) {
-            if ($this->should_display_project_field()) {
+            // Check if there's a pre-assigned project from cart/session
+            $pre_assigned_project = $this->get_pre_assigned_project();
+            
+            // Show field if: pre-assigned project exists OR regular field should be displayed
+            if ($pre_assigned_project || $this->should_display_project_field()) {
                 try {
                     $settings = get_option('arsol_projects_settings', array());
                     $is_required = !empty($settings['require_project_selection']);
@@ -90,40 +120,66 @@ class Frontend_Woocommerce_Checkout {
                     $checkout_fields_controller = \Automattic\WooCommerce\Blocks\Package::container()->get(
                         \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
                     );
-
-                    $current_user_id = get_current_user_id();
-                    $projects = $this->get_projects($current_user_id);
-
-                    $options = array(
-                        array(
-                            'value' => '',
-                            'label' => __('Select a project…', 'arsol-pfw'),
-                        ),
-                    );
-
-                    foreach ($projects as $project) {
-                        // Only show projects that the user can view
-                        if (Woocommerce::user_can_view_project($current_user_id, $project->ID)) {
-                            $options[] = array(
-                                'value' => (string) $project->ID,
-                                'label' => esc_html($project->post_title),
-                            );
-                        }
-                    }
                     
-                    $checkout_fields_controller->register_checkout_field(
-                        array(
-                            'id' => $field_id,
-                            'type' => 'select',
-                            'label' => __('Project', 'arsol-pfw'),
-                            'location' => 'order',
-                            'options' => $options,
-                            'required' => $is_required,
-                            'attributes' => array(),
-                            'experimental_attributes' => array(),
-                            'default' => '',
-                        )
-                    );
+                    if ($pre_assigned_project) {
+                        // Show read-only project information instead of selector
+                        $project = get_post($pre_assigned_project);
+                        if ($project) {
+                            $checkout_fields_controller->register_checkout_field(
+                                array(
+                                    'id' => $field_id,
+                                    'type' => 'text',
+                                    'label' => __('Project', 'arsol-pfw'),
+                                    'location' => 'order',
+                                    'required' => false,
+                                    'attributes' => array(
+                                        'readonly' => true,
+                                        'disabled' => true,
+                                    ),
+                                    'default' => esc_html($project->post_title),
+                                    'experimental_attributes' => array(),
+                                )
+                            );
+                            
+                            // Store the project ID in session for saving later
+                            WC()->session->set('arsol_pre_assigned_project', $pre_assigned_project);
+                        }
+                    } else {
+                        // Show normal project selector
+                        $current_user_id = get_current_user_id();
+                        $projects = $this->get_projects($current_user_id);
+
+                        $options = array(
+                            array(
+                                'value' => '',
+                                'label' => __('Select a project…', 'arsol-pfw'),
+                            ),
+                        );
+
+                        foreach ($projects as $project) {
+                            // Only show projects that the user can view
+                            if (Woocommerce::user_can_view_project($current_user_id, $project->ID)) {
+                                $options[] = array(
+                                    'value' => (string) $project->ID,
+                                    'label' => esc_html($project->post_title),
+                                );
+                            }
+                        }
+                        
+                        $checkout_fields_controller->register_checkout_field(
+                            array(
+                                'id' => $field_id,
+                                'type' => 'select',
+                                'label' => __('Project', 'arsol-pfw'),
+                                'location' => 'order',
+                                'options' => $options,
+                                'required' => $is_required,
+                                'attributes' => array(),
+                                'experimental_attributes' => array(),
+                                'default' => '',
+                            )
+                        );
+                    }
                 } catch (\Exception $e) {
                     // Log error or handle gracefully
                 }
@@ -138,10 +194,33 @@ class Frontend_Woocommerce_Checkout {
      * Display the project field for classic checkout
      */
     public function display_classic_project_field($checkout) {
-        if (!$this->should_display_project_field()) {
+        // Check for pre-assigned project first
+        $pre_assigned_project = $this->get_pre_assigned_project();
+        
+        // Show field if: pre-assigned project exists OR regular field should be displayed
+        if (!$pre_assigned_project && !$this->should_display_project_field()) {
+            return;
+        }
+        
+        if ($pre_assigned_project) {
+            // Show read-only project information
+            $project = get_post($pre_assigned_project);
+            if ($project) {
+                echo '<div id="arsol-project-checkout-field">';
+                echo '<p class="form-row form-row-wide">';
+                echo '<label for="arsol_project_readonly"><strong>' . esc_html__('Project', 'arsol-pfw') . '</strong></label>';
+                echo '<input type="text" id="arsol_project_readonly" value="' . esc_attr($project->post_title) . '" readonly disabled style="background-color: #f9f9f9; color: #666;" />';
+                echo '<input type="hidden" name="arsol_project_id" value="' . esc_attr($pre_assigned_project) . '" />';
+                echo '</p>';
+                echo '</div>';
+                
+                // Store in session for saving
+                WC()->session->set('arsol_pre_assigned_project', $pre_assigned_project);
+            }
             return;
         }
 
+        // Show normal project selector
         $settings = get_option('arsol_projects_settings', array());
         $is_required = !empty($settings['require_project_selection']);
 
@@ -179,13 +258,26 @@ class Frontend_Woocommerce_Checkout {
     public function save_project_from_checkout($order_id, $data) {
         $project_id = '';
         
-        // For classic checkout
-        if (isset($_POST['arsol_project_id'])) {
-            $project_id = sanitize_text_field($_POST['arsol_project_id']);
+        // First check for pre-assigned project from session (proposal orders)
+        if (WC()->session) {
+            $pre_assigned = WC()->session->get('arsol_pre_assigned_project');
+            if (!empty($pre_assigned)) {
+                $project_id = sanitize_text_field($pre_assigned);
+                // Clear the session after use
+                WC()->session->__unset('arsol_pre_assigned_project');
+            }
         }
-        // For block checkout
-        elseif (isset($data['arsol-projects-for-woo/arsol-project'])) {
-            $project_id = sanitize_text_field($data['arsol-projects-for-woo/arsol-project']);
+        
+        // If no pre-assigned project, check for user selection
+        if (empty($project_id)) {
+            // For classic checkout
+            if (isset($_POST['arsol_project_id'])) {
+                $project_id = sanitize_text_field($_POST['arsol_project_id']);
+            }
+            // For block checkout
+            elseif (isset($data['arsol-projects-for-woo/arsol-project'])) {
+                $project_id = sanitize_text_field($data['arsol-projects-for-woo/arsol-project']);
+            }
         }
         
         if (!empty($project_id)) {

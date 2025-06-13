@@ -206,6 +206,9 @@ class Workflow_Handler {
             }
         }
 
+        // Trigger action for order creation before deleting the proposal
+        do_action('arsol_proposal_converted_to_project', $new_project_id, $proposal_id);
+
         // Delete the original proposal
         wp_delete_post($proposal_id, true);
 

@@ -98,42 +98,6 @@ class Settings_General {
             )
         );
 
-        // Proposal Invoice Settings Section
-        add_settings_section(
-            'arsol_projects_proposal_invoice_settings',
-            '',
-            array($this, 'render_proposal_invoice_settings_section'),
-            'arsol_projects_settings'
-        );
-
-        add_settings_field(
-            'proposal_invoice_product',
-            __('Project Invoice', 'arsol-pfw'),
-            array($this, 'render_single_product_select_field'),
-            'arsol_projects_settings',
-            'arsol_projects_proposal_invoice_settings',
-            array(
-                'field' => 'proposal_invoice_product',
-                'description' => __('Select a product to be used for single project invoices.', 'arsol-pfw'),
-                'class' => 'arsol-pfw-proposal-invoice-product',
-                'product_type' => 'simple'
-            )
-        );
-
-        add_settings_field(
-            'proposal_recurring_invoice_product',
-            __('Recurring Project Invoice', 'arsol-pfw'),
-            array($this, 'render_single_product_select_field'),
-            'arsol_projects_settings',
-            'arsol_projects_proposal_invoice_settings',
-            array(
-                'field' => 'proposal_recurring_invoice_product',
-                'description' => __('Select a subscription product to be used for recurring project invoices.', 'arsol-pfw'),
-                'class' => 'arsol-pfw-proposal-recurring-invoice-product',
-                'product_type' => 'subscription'
-            )
-        );
-
         // User Permissions Section
         add_settings_section(
             'arsol_projects_user_permissions',
@@ -252,13 +216,6 @@ class Settings_General {
      */
     public function render_product_settings_section() {
         echo '<p>' . esc_html__('Configure which products or categories should show the project selector during checkout.', 'arsol-pfw') . '</p>';
-    }
-
-    /**
-     * Render proposal invoice settings section description
-     */
-    public function render_proposal_invoice_settings_section() {
-        echo '<p>' . esc_html__('Configure which products should be added to the project invoice when a proposal is accepted by the customer.', 'arsol-pfw') . '</p>';
     }
 
     /**
