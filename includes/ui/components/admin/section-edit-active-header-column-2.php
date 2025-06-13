@@ -80,12 +80,7 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
     </p>
     <?php endif; ?>
 
-    <?php if (!empty($proposed_expiration_date)): ?>
-    <p class="form-field form-field-wide">
-        <label><strong><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></strong></label>
-        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($proposed_expiration_date))); ?>
-    </p>
-    <?php endif; ?>
+    <?php /* Proposal Expiration Date removed from project post type display */ ?>
 
 <?php elseif ($has_original_data): ?>
 
