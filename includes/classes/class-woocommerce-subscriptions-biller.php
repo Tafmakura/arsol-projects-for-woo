@@ -28,8 +28,26 @@ class Woocommerce_Subscriptions_Biller {
      * @param int $proposal_id The original proposal ID
      */
     public function handle_subscription_creation($project_id, $proposal_id) {
+        // Enhanced logging for debugging
+        if (function_exists('wc_get_logger')) {
+            $logger = wc_get_logger();
+            $logger->info(
+                sprintf('Starting subscription creation handler for project #%d from proposal #%d', 
+                    $project_id, $proposal_id),
+                array('source' => 'arsol-pfw-subscription-creation')
+            );
+        }
+        
         // Check if this proposal should create orders
         $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
+        
+        if (function_exists('wc_get_logger')) {
+            $logger = wc_get_logger();
+            $logger->info(
+                sprintf('Proposal #%d cost type: %s', $proposal_id, $cost_proposal_type),
+                array('source' => 'arsol-pfw-subscription-creation')
+            );
+        }
         
         if ($cost_proposal_type === 'invoice_line_items') {
             // Create subscription from recurring items
@@ -48,11 +66,37 @@ class Woocommerce_Subscriptions_Biller {
                         $subscription->get_order_number()
                     );
                     update_post_meta($project_id, '_project_subscription_creation_note', $success_note);
+                    
+                    if (function_exists('wc_get_logger')) {
+                        $logger = wc_get_logger();
+                        $logger->info(
+                            sprintf('Successfully created subscription #%d from proposal #%d', 
+                                $subscription_result, $proposal_id),
+                            array('source' => 'arsol-pfw-subscription-creation')
+                        );
+                    }
+                } else {
+                    if (function_exists('wc_get_logger')) {
+                        $logger = wc_get_logger();
+                        $logger->error(
+                            sprintf('Failed to retrieve subscription #%d after creation', $subscription_result),
+                            array('source' => 'arsol-pfw-subscription-creation')
+                        );
+                    }
                 }
             } else {
                 // Only log error if there were actually recurring items to process
                 $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
                 $has_recurring = $this->has_recurring_items($line_items);
+                
+                if (function_exists('wc_get_logger')) {
+                    $logger = wc_get_logger();
+                    $logger->info(
+                        sprintf('Proposal #%d has recurring items: %s', 
+                            $proposal_id, $has_recurring ? 'yes' : 'no'),
+                        array('source' => 'arsol-pfw-subscription-creation')
+                    );
+                }
                 
                 if ($has_recurring) {
                     error_log('Arsol Projects: Failed to create subscription from proposal ' . $proposal_id . ': ' . $subscription_result->get_error_message());
@@ -63,7 +107,34 @@ class Woocommerce_Subscriptions_Biller {
                         $subscription_result->get_error_message()
                     );
                     update_post_meta($project_id, '_project_subscription_creation_error', $error_note);
+                    
+                    if (function_exists('wc_get_logger')) {
+                        $logger = wc_get_logger();
+                        $logger->error(
+                            sprintf('Failed to create subscription from proposal #%d: %s', 
+                                $proposal_id, $subscription_result->get_error_message()),
+                            array('source' => 'arsol-pfw-subscription-creation')
+                        );
+                    }
+                } else {
+                    if (function_exists('wc_get_logger')) {
+                        $logger = wc_get_logger();
+                        $logger->info(
+                            sprintf('No recurring items in proposal #%d, skipping subscription creation', 
+                                $proposal_id),
+                            array('source' => 'arsol-pfw-subscription-creation')
+                        );
+                    }
                 }
+            }
+        } else {
+            if (function_exists('wc_get_logger')) {
+                $logger = wc_get_logger();
+                $logger->info(
+                    sprintf('Proposal #%d is not invoice_line_items type, skipping subscription creation', 
+                        $proposal_id),
+                    array('source' => 'arsol-pfw-subscription-creation')
+                );
             }
         }
     }

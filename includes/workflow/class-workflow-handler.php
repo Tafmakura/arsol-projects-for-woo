@@ -263,6 +263,54 @@ class Workflow_Handler {
         // Trigger action for order creation
         do_action('arsol_proposal_converted_to_project', $new_project_id, $proposal_id);
 
+        // Add debugging to check what happened during order creation
+        if (function_exists('wc_get_logger')) {
+            $logger = wc_get_logger();
+            
+            // Check what meta was set on the project
+            $order_note = get_post_meta($new_project_id, '_project_order_creation_note', true);
+            $order_error = get_post_meta($new_project_id, '_project_order_creation_error', true);
+            $subscription_note = get_post_meta($new_project_id, '_project_subscription_creation_note', true);
+            $subscription_error = get_post_meta($new_project_id, '_project_subscription_creation_error', true);
+            
+            $logger->info(
+                sprintf('Conversion results for project #%d from proposal #%d:', $new_project_id, $proposal_id),
+                array('source' => 'arsol-pfw-conversion')
+            );
+            
+            if (!empty($order_note)) {
+                $logger->info('Order creation note: ' . $order_note, array('source' => 'arsol-pfw-conversion'));
+            }
+            if (!empty($order_error)) {
+                $logger->error('Order creation error: ' . $order_error, array('source' => 'arsol-pfw-conversion'));
+            }
+            if (!empty($subscription_note)) {
+                $logger->info('Subscription creation note: ' . $subscription_note, array('source' => 'arsol-pfw-conversion'));
+            }
+            if (!empty($subscription_error)) {
+                $logger->error('Subscription creation error: ' . $subscription_error, array('source' => 'arsol-pfw-conversion'));
+            }
+            
+            // Check proposal data
+            $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
+            $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
+            
+            $logger->info(
+                sprintf('Proposal #%d details - Type: %s, Line items: %s', 
+                    $proposal_id, 
+                    $cost_proposal_type, 
+                    !empty($line_items) ? 'present' : 'missing'),
+                array('source' => 'arsol-pfw-conversion')
+            );
+            
+            if (!empty($line_items)) {
+                $logger->info(
+                    sprintf('Line items structure: %s', wp_json_encode(array_keys($line_items))),
+                    array('source' => 'arsol-pfw-conversion')
+                );
+            }
+        }
+
         // Check if there were any order creation errors
         if (!empty($order_creation_errors)) {
             // Order creation failed - rollback everything
@@ -452,5 +500,52 @@ class Workflow_Handler {
             wp_safe_redirect($url);
             exit;
         }
+    }
+
+    /**
+     * Debug function to test proposal conversion
+     * Call this function manually to test conversion logic
+     * 
+     * @param int $proposal_id The proposal ID to test
+     * @return array Debug information
+     */
+    public static function debug_proposal_conversion($proposal_id) {
+        $debug_info = array();
+        
+        // Check proposal exists
+        $proposal = get_post($proposal_id);
+        $debug_info['proposal_exists'] = !empty($proposal);
+        $debug_info['proposal_type'] = $proposal ? $proposal->post_type : 'N/A';
+        $debug_info['proposal_status'] = $proposal ? $proposal->post_status : 'N/A';
+        $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
+        
+        // Check cost proposal type
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
+        $debug_info['cost_proposal_type'] = $cost_proposal_type;
+        $debug_info['should_create_orders'] = ($cost_proposal_type === 'invoice_line_items');
+        
+        // Check line items
+        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
+        $debug_info['has_line_items'] = !empty($line_items);
+        $debug_info['line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
+        
+        if (!empty($line_items)) {
+            $debug_info['products_count'] = !empty($line_items['products']) ? count($line_items['products']) : 0;
+            $debug_info['one_time_fees_count'] = !empty($line_items['one_time_fees']) ? count($line_items['one_time_fees']) : 0;
+            $debug_info['recurring_fees_count'] = !empty($line_items['recurring_fees']) ? count($line_items['recurring_fees']) : 0;
+            $debug_info['shipping_fees_count'] = !empty($line_items['shipping_fees']) ? count($line_items['shipping_fees']) : 0;
+        }
+        
+        // Check if customer exists
+        if ($proposal) {
+            $customer = new \WC_Customer($proposal->post_author);
+            $debug_info['customer_exists'] = $customer && $customer->get_id();
+            $debug_info['customer_email'] = $customer ? $customer->get_billing_email() : 'N/A';
+        }
+        
+        // Check WooCommerce Subscriptions
+        $debug_info['wc_subscriptions_active'] = class_exists('WC_Subscriptions') && function_exists('wcs_create_subscription');
+        
+        return $debug_info;
     }
 }
