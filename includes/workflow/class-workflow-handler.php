@@ -273,41 +273,35 @@ class Workflow_Handler {
             $subscription_note = get_post_meta($new_project_id, '_project_subscription_creation_note', true);
             $subscription_error = get_post_meta($new_project_id, '_project_subscription_creation_error', true);
             
-            $logger->info(
-                sprintf('Conversion results for project #%d from proposal #%d:', $new_project_id, $proposal_id),
-                array('source' => 'arsol-pfw-conversion')
-            );
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
+                sprintf('Conversion results for project #%d from proposal #%d:', $new_project_id, $proposal_id));
             
             if (!empty($order_note)) {
-                $logger->info('Order creation note: ' . $order_note, array('source' => 'arsol-pfw-conversion'));
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 'Order creation note: ' . $order_note);
             }
             if (!empty($order_error)) {
-                $logger->error('Order creation error: ' . $order_error, array('source' => 'arsol-pfw-conversion'));
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error', 'Order creation error: ' . $order_error);
             }
             if (!empty($subscription_note)) {
-                $logger->info('Subscription creation note: ' . $subscription_note, array('source' => 'arsol-pfw-conversion'));
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 'Subscription creation note: ' . $subscription_note);
             }
             if (!empty($subscription_error)) {
-                $logger->error('Subscription creation error: ' . $subscription_error, array('source' => 'arsol-pfw-conversion'));
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error', 'Subscription creation error: ' . $subscription_error);
             }
             
             // Check proposal data
             $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
             $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
             
-            $logger->info(
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
                 sprintf('Proposal #%d details - Type: %s, Line items: %s', 
                     $proposal_id, 
                     $cost_proposal_type, 
-                    !empty($line_items) ? 'present' : 'missing'),
-                array('source' => 'arsol-pfw-conversion')
-            );
+                    !empty($line_items) ? 'present' : 'missing'));
             
             if (!empty($line_items)) {
-                $logger->info(
-                    sprintf('Line items structure: %s', wp_json_encode(array_keys($line_items))),
-                    array('source' => 'arsol-pfw-conversion')
-                );
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
+                    sprintf('Line items structure: %s', wp_json_encode(array_keys($line_items))));
             }
         }
 
@@ -323,13 +317,8 @@ class Workflow_Handler {
                     wp_delete_post($order_id, true);
                     
                     // Log the rollback for debugging
-                    if (function_exists('wc_get_logger')) {
-                        $logger = wc_get_logger();
-                        $logger->info(
-                            sprintf('Rolled back order #%d due to conversion failure', $order_id),
-                            array('source' => 'arsol-pfw-conversion')
-                        );
-                    }
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
+                        sprintf('Rolled back order #%d due to conversion failure', $order_id));
                 }
             }
             

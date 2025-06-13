@@ -67,10 +67,16 @@ class Woocommerce_Biller {
                         $order->get_order_number()
                     );
                     update_post_meta($project_id, '_project_order_creation_note', $project_note);
+                    
+                    Woocommerce_Logs::log_order_creation('info', 
+                        sprintf('Successfully created and linked order #%d to project #%d', 
+                            $order->get_id(), $project_id));
                 }
             } else {
                 // Log error for debugging
-                error_log('Arsol Projects: Failed to create order from proposal ' . $proposal_id . ': ' . $order_result->get_error_message());
+                Woocommerce_Logs::log_order_creation('error', 
+                    sprintf('Failed to create order from proposal #%d: %s', 
+                        $proposal_id, $order_result->get_error_message()));
                 
                 // Add error note to project
                 $error_note = sprintf(
@@ -93,71 +99,41 @@ class Woocommerce_Biller {
      */
     public function create_order_from_proposal($proposal_id) {
         // Enhanced logging for debugging
-        if (function_exists('wc_get_logger')) {
-            $logger = wc_get_logger();
-            $logger->info(
-                sprintf('Starting order creation from proposal #%d', $proposal_id),
-                array('source' => 'arsol-pfw-order-creation')
-            );
-        }
+        Woocommerce_Logs::log_order_creation('info', 
+            sprintf('Starting order creation from proposal #%d', $proposal_id));
         
         // Get proposal data
         $proposal = get_post($proposal_id);
         if (!$proposal) {
             $error = new \WP_Error('invalid_proposal', __('Invalid proposal ID', 'arsol-pfw'));
-            if (function_exists('wc_get_logger')) {
-                $logger = wc_get_logger();
-                $logger->error(
-                    sprintf('Proposal #%d not found', $proposal_id),
-                    array('source' => 'arsol-pfw-order-creation')
-                );
-            }
+            Woocommerce_Logs::log_order_creation('error', 
+                sprintf('Proposal #%d not found', $proposal_id));
             return $error;
         }
         
         // Log proposal details
-        if (function_exists('wc_get_logger')) {
-            $logger = wc_get_logger();
-            $logger->info(
-                sprintf('Found proposal #%d: "%s" by author #%d', 
-                    $proposal_id, $proposal->post_title, $proposal->post_author),
-                array('source' => 'arsol-pfw-order-creation')
-            );
-        }
+        Woocommerce_Logs::log_order_creation('info', 
+            sprintf('Found proposal #%d: "%s" by author #%d', 
+                $proposal_id, $proposal->post_title, $proposal->post_author));
         
         // Get line items
         $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
         if (empty($line_items)) {
             $error = new \WP_Error('no_line_items', __('No line items found in proposal', 'arsol-pfw'));
-            if (function_exists('wc_get_logger')) {
-                $logger = wc_get_logger();
-                $logger->error(
-                    sprintf('No line items found in proposal #%d', $proposal_id),
-                    array('source' => 'arsol-pfw-order-creation')
-                );
-            }
+            Woocommerce_Logs::log_order_creation('error', 
+                sprintf('No line items found in proposal #%d', $proposal_id));
             return $error;
         }
         
         // Log line items structure
-        if (function_exists('wc_get_logger')) {
-            $logger = wc_get_logger();
-            $logger->info(
-                sprintf('Line items structure for proposal #%d: %s', 
-                    $proposal_id, wp_json_encode($line_items)),
-                array('source' => 'arsol-pfw-order-creation')
-            );
-        }
+        Woocommerce_Logs::log_order_creation('debug', 
+            sprintf('Line items structure for proposal #%d: %s', 
+                $proposal_id, wp_json_encode($line_items)));
         
         // Create the order
         try {
-            if (function_exists('wc_get_logger')) {
-                $logger = wc_get_logger();
-                $logger->info(
-                    sprintf('Creating WooCommerce order for customer #%d', $proposal->post_author),
-                    array('source' => 'arsol-pfw-order-creation')
-                );
-            }
+            Woocommerce_Logs::log_order_creation('info', 
+                sprintf('Creating WooCommerce order for customer #%d', $proposal->post_author));
             
             $order = wc_create_order(array(
                 'customer_id' => $proposal->post_author,
@@ -165,36 +141,21 @@ class Woocommerce_Biller {
             ));
             
             if (is_wp_error($order)) {
-                if (function_exists('wc_get_logger')) {
-                    $logger = wc_get_logger();
-                    $logger->error(
-                        sprintf('Failed to create WooCommerce order: %s', $order->get_error_message()),
-                        array('source' => 'arsol-pfw-order-creation')
-                    );
-                }
+                Woocommerce_Logs::log_order_creation('error', 
+                    sprintf('Failed to create WooCommerce order: %s', $order->get_error_message()));
                 return $order;
             }
             
-            if (function_exists('wc_get_logger')) {
-                $logger = wc_get_logger();
-                $logger->info(
-                    sprintf('Created WooCommerce order #%d', $order->get_id()),
-                    array('source' => 'arsol-pfw-order-creation')
-                );
-            }
+            Woocommerce_Logs::log_order_creation('info', 
+                sprintf('Created WooCommerce order #%d', $order->get_id()));
             
             $items_added = 0;
             
             // Add products to order (only non-subscription products)
             if (!empty($line_items['products'])) {
-                if (function_exists('wc_get_logger')) {
-                    $logger = wc_get_logger();
-                    $logger->info(
-                        sprintf('Processing %d products from proposal #%d', 
-                            count($line_items['products']), $proposal_id),
-                        array('source' => 'arsol-pfw-order-creation')
-                    );
-                }
+                Woocommerce_Logs::log_order_creation('info', 
+                    sprintf('Processing %d products from proposal #%d', 
+                        count($line_items['products']), $proposal_id));
                 
                 foreach ($line_items['products'] as $item) {
                     if (!empty($item['product_id'])) {
@@ -212,24 +173,14 @@ class Woocommerce_Biller {
                             
                             $items_added++;
                             
-                            if (function_exists('wc_get_logger')) {
-                                $logger = wc_get_logger();
-                                $logger->info(
-                                    sprintf('Added product #%d (%s) x%d at %s to order #%d', 
-                                        $product->get_id(), $product->get_name(), $quantity, 
-                                        wc_price($price), $order->get_id()),
-                                    array('source' => 'arsol-pfw-order-creation')
-                                );
-                            }
+                            Woocommerce_Logs::log_order_creation('info', 
+                                sprintf('Added product #%d (%s) x%d at %s to order #%d', 
+                                    $product->get_id(), $product->get_name(), $quantity, 
+                                    wc_price($price), $order->get_id()));
                         } else {
-                            if (function_exists('wc_get_logger')) {
-                                $logger = wc_get_logger();
-                                $logger->info(
-                                    sprintf('Skipped product #%d (subscription or invalid)', 
-                                        $item['product_id']),
-                                    array('source' => 'arsol-pfw-order-creation')
-                                );
-                            }
+                            Woocommerce_Logs::log_order_creation('info', 
+                                sprintf('Skipped product #%d (subscription or invalid)', 
+                                    $item['product_id']));
                         }
                     }
                 }
@@ -237,14 +188,9 @@ class Woocommerce_Biller {
             
             // Add fees (only one-time fees)
             if (!empty($line_items['one_time_fees'])) {
-                if (function_exists('wc_get_logger')) {
-                    $logger = wc_get_logger();
-                    $logger->info(
-                        sprintf('Processing %d one-time fees from proposal #%d', 
-                            count($line_items['one_time_fees']), $proposal_id),
-                        array('source' => 'arsol-pfw-order-creation')
-                    );
-                }
+                Woocommerce_Logs::log_order_creation('info', 
+                    sprintf('Processing %d one-time fees from proposal #%d', 
+                        count($line_items['one_time_fees']), $proposal_id));
                 
                 foreach ($line_items['one_time_fees'] as $fee) {
                     if (!empty($fee['name']) && !empty($fee['amount'])) {
@@ -257,28 +203,18 @@ class Woocommerce_Biller {
                         
                         $items_added++;
                         
-                        if (function_exists('wc_get_logger')) {
-                            $logger = wc_get_logger();
-                            $logger->info(
-                                sprintf('Added fee "%s" (%s) to order #%d', 
-                                    $fee['name'], wc_price($fee['amount']), $order->get_id()),
-                                array('source' => 'arsol-pfw-order-creation')
-                            );
-                        }
+                        Woocommerce_Logs::log_order_creation('info', 
+                            sprintf('Added fee "%s" (%s) to order #%d', 
+                                $fee['name'], wc_price($fee['amount']), $order->get_id()));
                     }
                 }
             }
             
             // Add shipping fees
             if (!empty($line_items['shipping_fees'])) {
-                if (function_exists('wc_get_logger')) {
-                    $logger = wc_get_logger();
-                    $logger->info(
-                        sprintf('Processing %d shipping fees from proposal #%d', 
-                            count($line_items['shipping_fees']), $proposal_id),
-                        array('source' => 'arsol-pfw-order-creation')
-                    );
-                }
+                Woocommerce_Logs::log_order_creation('info', 
+                    sprintf('Processing %d shipping fees from proposal #%d', 
+                        count($line_items['shipping_fees']), $proposal_id));
                 
                 foreach ($line_items['shipping_fees'] as $shipping) {
                     if (!empty($shipping['description']) && !empty($shipping['amount'])) {
@@ -290,41 +226,26 @@ class Woocommerce_Biller {
                         
                         $items_added++;
                         
-                        if (function_exists('wc_get_logger')) {
-                            $logger = wc_get_logger();
-                            $logger->info(
-                                sprintf('Added shipping "%s" (%s) to order #%d', 
-                                    $shipping['description'], wc_price($shipping['amount']), $order->get_id()),
-                                array('source' => 'arsol-pfw-order-creation')
-                            );
-                        }
+                        Woocommerce_Logs::log_order_creation('info', 
+                            sprintf('Added shipping "%s" (%s) to order #%d', 
+                                $shipping['description'], wc_price($shipping['amount']), $order->get_id()));
                     }
                 }
             }
             
             // Check if any items were added
             if ($items_added === 0) {
-                if (function_exists('wc_get_logger')) {
-                    $logger = wc_get_logger();
-                    $logger->warning(
-                        sprintf('No items added to order #%d from proposal #%d', 
-                            $order->get_id(), $proposal_id),
-                        array('source' => 'arsol-pfw-order-creation')
-                    );
-                }
+                Woocommerce_Logs::log_order_creation('warning', 
+                    sprintf('No items added to order #%d from proposal #%d', 
+                        $order->get_id(), $proposal_id));
             }
             
             // Calculate totals
             $order->calculate_totals();
             
-            if (function_exists('wc_get_logger')) {
-                $logger = wc_get_logger();
-                $logger->info(
-                    sprintf('Order #%d total calculated: %s (%d items)', 
-                        $order->get_id(), wc_price($order->get_total()), $items_added),
-                    array('source' => 'arsol-pfw-order-creation')
-                );
-            }
+            Woocommerce_Logs::log_order_creation('info', 
+                sprintf('Order #%d total calculated: %s (%d items)', 
+                    $order->get_id(), wc_price($order->get_total()), $items_added));
             
             // Add order note
             $order->add_order_note(
@@ -335,27 +256,17 @@ class Woocommerce_Biller {
             $order->update_meta_data('_arsol_proposal_id', $proposal_id);
             $order->save();
             
-            if (function_exists('wc_get_logger')) {
-                $logger = wc_get_logger();
-                $logger->info(
-                    sprintf('Successfully created and saved order #%d from proposal #%d', 
-                        $order->get_id(), $proposal_id),
-                    array('source' => 'arsol-pfw-order-creation')
-                );
-            }
+            Woocommerce_Logs::log_order_creation('info', 
+                sprintf('Successfully created and saved order #%d from proposal #%d', 
+                    $order->get_id(), $proposal_id));
             
             return $order->get_id();
             
         } catch (\Exception $e) {
             $error = new \WP_Error('order_creation_failed', $e->getMessage());
-            if (function_exists('wc_get_logger')) {
-                $logger = wc_get_logger();
-                $logger->error(
-                    sprintf('Exception during order creation from proposal #%d: %s', 
-                        $proposal_id, $e->getMessage()),
-                    array('source' => 'arsol-pfw-order-creation')
-                );
-            }
+            Woocommerce_Logs::log_order_creation('error', 
+                sprintf('Exception during order creation from proposal #%d: %s', 
+                    $proposal_id, $e->getMessage()));
             return $error;
         }
     }
