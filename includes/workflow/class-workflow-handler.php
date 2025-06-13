@@ -136,7 +136,7 @@ class Workflow_Handler {
         $this->safe_redirect(admin_url('post.php?post=' . $new_proposal_id . '&action=edit'));
     }
 
-    public function convert_proposal_to_project($proposal_id = 0) {
+    public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
         ob_start();
 
         if (empty($proposal_id)) {
@@ -145,8 +145,6 @@ class Workflow_Handler {
             }
             $proposal_id = intval($_GET['proposal_id']);
         }
-
-        $is_internal_call = did_action('admin_post_arsol_approve_proposal') > 0;
 
         $can_convert = self::user_can_view_post(get_current_user_id(), $proposal_id);
         if (!$is_internal_call) {
@@ -206,10 +204,54 @@ class Workflow_Handler {
             }
         }
 
-        // Trigger action for order creation before deleting the proposal
+        // Store original proposal ID for reference
+        update_post_meta($new_project_id, '_original_proposal_id', $proposal_id);
+
+        // Capture any order creation errors
+        $order_creation_errors = array();
+        
+        // Hook into order creation to capture errors
+        add_action('arsol_proposal_converted_to_project', function($project_id, $proposal_id) use (&$order_creation_errors) {
+            // Check for order creation errors after the billers run
+            $order_error = get_post_meta($project_id, '_project_order_creation_error', true);
+            $subscription_error = get_post_meta($project_id, '_project_subscription_creation_error', true);
+            
+            if (!empty($order_error)) {
+                $order_creation_errors[] = $order_error;
+            }
+            if (!empty($subscription_error)) {
+                $order_creation_errors[] = $subscription_error;
+            }
+        }, 20, 2); // Run after the billers (priority 10)
+
+        // Trigger action for order creation
         do_action('arsol_proposal_converted_to_project', $new_project_id, $proposal_id);
 
-        // Delete the original proposal
+        // Check if there were any order creation errors
+        if (!empty($order_creation_errors)) {
+            // Order creation failed - rollback the project creation
+            wp_delete_post($new_project_id, true);
+            
+            $error_message = sprintf(
+                __('Failed to create orders from proposal. Errors: %s', 'arsol-pfw'),
+                implode('; ', $order_creation_errors)
+            );
+            
+            if ($is_internal_call) {
+                // For internal calls, add error notice and redirect back
+                if (function_exists('wc_add_notice')) {
+                    wc_add_notice($error_message, 'error');
+                }
+                $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
+                return;
+            } else {
+                // For admin calls, show error and stop
+                wp_die($error_message);
+            }
+        }
+
+        // If we get here, both project and orders were created successfully
+        // Now it's safe to delete the original proposal
         wp_delete_post($proposal_id, true);
 
         // Clean the output buffer and redirect
@@ -248,7 +290,7 @@ class Workflow_Handler {
             wp_set_object_terms($proposal_id, 'approved', 'arsol-review-status');
             
             // Re-use the conversion logic
-            $this->convert_proposal_to_project($proposal_id);
+            $this->convert_proposal_to_project($proposal_id, true);
         } else {
             wp_die(__('You do not have permission to approve this proposal.', 'arsol-pfw'));
         }

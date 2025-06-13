@@ -18,6 +18,7 @@ class Frontend_Woocommerce_Checkout {
 
     /**
      * Check if the project field should be displayed based on cart contents
+     * This only applies to regular orders, not pre-assigned orders from proposals
      *
      * @return bool
      */
@@ -35,24 +36,99 @@ class Frontend_Woocommerce_Checkout {
             return false;
         }
 
-        foreach (WC()->cart->get_cart() as $cart_item) {
+        // Check if cart has project items and handle mixed cart behavior
+        return $this->handle_mixed_cart_behavior($project_products, $project_categories);
+    }
+
+    /**
+     * Handle mixed cart behavior based on settings
+     *
+     * @param array $project_products
+     * @param array $project_categories
+     * @return bool Whether to show project field
+     */
+    private function handle_mixed_cart_behavior($project_products, $project_categories) {
+        $settings = get_option('arsol_projects_settings', array());
+        $mixed_cart_behavior = isset($settings['mixed_cart_behavior']) ? $settings['mixed_cart_behavior'] : 'add_all';
+        
+        $project_items = array();
+        $non_project_items = array();
+        
+        // Categorize cart items
+        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
             $product_id = $cart_item['product_id'];
+            $is_project_item = false;
 
             // Check if the product is in the allowed list
             if (!empty($project_products) && in_array($product_id, $project_products)) {
-                return true;
+                $is_project_item = true;
             }
 
             // Check if the product's categories are in the allowed list
-            if (!empty($project_categories)) {
+            if (!$is_project_item && !empty($project_categories)) {
                 $product_category_ids = wc_get_product_term_ids($product_id, 'product_cat');
                 if (!empty(array_intersect($product_category_ids, $project_categories))) {
-                    return true;
+                    $is_project_item = true;
                 }
+            }
+
+            if ($is_project_item) {
+                $project_items[$cart_item_key] = $cart_item;
+            } else {
+                $non_project_items[$cart_item_key] = $cart_item;
             }
         }
 
-        return false;
+        // If no project items, don't show field
+        if (empty($project_items)) {
+            return false;
+        }
+
+        // If only project items, show field
+        if (empty($non_project_items)) {
+            return true;
+        }
+
+        // Mixed cart - handle based on setting
+        switch ($mixed_cart_behavior) {
+            case 'add_all':
+                // Add all items to project (current behavior)
+                return true;
+
+            case 'purge_non_project':
+                // Remove non-project items from cart
+                $this->remove_non_project_items($non_project_items);
+                return true;
+
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Remove non-project items from cart
+     *
+     * @param array $non_project_items
+     */
+    private function remove_non_project_items($non_project_items) {
+        foreach ($non_project_items as $cart_item_key => $cart_item) {
+            WC()->cart->remove_cart_item($cart_item_key);
+        }
+        
+        // Add notice to inform user
+        if (!empty($non_project_items)) {
+            $removed_count = count($non_project_items);
+            $message = sprintf(
+                _n(
+                    '%d non-project item was removed from your cart.',
+                    '%d non-project items were removed from your cart.',
+                    $removed_count,
+                    'arsol-pfw'
+                ),
+                $removed_count
+            );
+            wc_add_notice($message, 'notice');
+        }
     }
 
     /**

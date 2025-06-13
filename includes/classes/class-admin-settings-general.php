@@ -98,6 +98,23 @@ class Settings_General {
             )
         );
 
+        add_settings_field(
+            'mixed_cart_behavior',
+            __('Mixed Cart Behavior', 'arsol-pfw'),
+            array($this, 'render_select_field'),
+            'arsol_projects_settings',
+            'arsol_projects_product_settings',
+            array(
+                'field' => 'mixed_cart_behavior',
+                'description' => __('How to handle carts containing both project and non-project items.', 'arsol-pfw'),
+                'options' => array(
+                    'add_all' => __('Add all items to project', 'arsol-pfw'),
+                    'purge_non_project' => __('Remove non-project items from cart', 'arsol-pfw')
+                ),
+                'class' => 'arsol-pfw-mixed-cart-behavior'
+            )
+        );
+
         // User Permissions Section
         add_settings_section(
             'arsol_projects_user_permissions',
@@ -342,21 +359,23 @@ class Settings_General {
      */
     public function render_select_field($args) {
         $settings = get_option('arsol_projects_settings', array());
-        $value = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'none';
+        $field_name = isset($args['field']) ? $args['field'] : 'user_project_permissions';
+        $default_value = ($field_name === 'mixed_cart_behavior') ? 'add_all' : 'none';
+        $value = isset($settings[$field_name]) ? $settings[$field_name] : $default_value;
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-        <select id="user_project_permissions"
-                name="arsol_projects_settings[user_project_permissions]">
+        <select id="<?php echo esc_attr($field_name); ?>"
+                name="arsol_projects_settings[<?php echo esc_attr($field_name); ?>]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
                     <?php echo esc_html($label); ?>
                 </option>
             <?php endforeach; ?>
         </select>
-        <p class="description">
-            <?php echo esc_html($args['description']); ?>
-        </p>
+        <?php if (!empty($args['description'])): ?>
+            <p class="description"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
         </div>
         <?php
     }
