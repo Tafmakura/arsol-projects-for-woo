@@ -121,15 +121,6 @@ class Settings_Advanced {
                 );
             }
         }
-
-        // Add log management fields
-        add_settings_field(
-            'log_management',
-            __('Log Management', 'arsol-pfw'),
-            array($this, 'render_log_management'),
-            'arsol_projects_advanced_settings',
-            'arsol_projects_debugging_section'
-        );
     }
 
     public function render_template_overrides_description() {
@@ -138,7 +129,7 @@ class Settings_Advanced {
     }
 
     public function render_debugging_description() {
-        echo '<p>' . esc_html__('Enable debug logging for different components to help troubleshoot issues. Logs are stored in WooCommerce > Status > Logs.', 'arsol-pfw') . '</p>';
+        echo '<p>' . esc_html__('Enable debug logging for different components to help troubleshoot issues. Logs can be found', 'arsol-pfw') . ' <a href="' . esc_url(admin_url('admin.php?page=wc-status&tab=logs')) . '" target="_blank">' . esc_html__('here', 'arsol-pfw') . '</a>.</p>';
         echo '<p><strong>' . esc_html__('Note:', 'arsol-pfw') . '</strong> ' . esc_html__('Only enable logging when needed as it can generate large log files over time.', 'arsol-pfw') . '</p>';
     }
 
@@ -154,72 +145,6 @@ class Settings_Advanced {
             <?php echo esc_html__('Enable logging for this component', 'arsol-pfw'); ?>
         </label>
         <?php
-    }
-
-    public function render_log_management() {
-        if (!class_exists('Arsol_Projects_For_Woo\Woocommerce_Logs')) {
-            echo '<p>' . esc_html__('Logging class not available.', 'arsol-pfw') . '</p>';
-            return;
-        }
-
-        $log_files = Woocommerce_Logs::get_log_files();
-        
-        echo '<div class="arsol-log-management">';
-        
-        if (empty($log_files)) {
-            echo '<p>' . esc_html__('No log files found.', 'arsol-pfw') . '</p>';
-        } else {
-            echo '<h4>' . esc_html__('Available Log Files:', 'arsol-pfw') . '</h4>';
-            echo '<table class="widefat">';
-            echo '<thead><tr>';
-            echo '<th>' . esc_html__('Component', 'arsol-pfw') . '</th>';
-            echo '<th>' . esc_html__('File Size', 'arsol-pfw') . '</th>';
-            echo '<th>' . esc_html__('Last Modified', 'arsol-pfw') . '</th>';
-            echo '<th>' . esc_html__('Actions', 'arsol-pfw') . '</th>';
-            echo '</tr></thead><tbody>';
-            
-            foreach ($log_files as $key => $log_file) {
-                echo '<tr>';
-                echo '<td>' . esc_html($log_file['name']) . '</td>';
-                echo '<td>' . esc_html(size_format($log_file['size'])) . '</td>';
-                echo '<td>' . esc_html(date_i18n(get_option('date_format') . ' ' . get_option('time_format'), $log_file['modified'])) . '</td>';
-                echo '<td>';
-                echo '<a href="' . esc_url(admin_url('admin.php?page=wc-status&tab=logs&log_file=' . $log_file['source'])) . '" class="button button-small">' . esc_html__('View', 'arsol-pfw') . '</a>';
-                echo '</td>';
-                echo '</tr>';
-            }
-            
-            echo '</tbody></table>';
-        }
-        
-        echo '<p style="margin-top: 15px;">';
-        echo '<button type="button" class="button" onclick="if(confirm(\'' . esc_js(__('Are you sure you want to clear all plugin logs?', 'arsol-pfw')) . '\')) { window.location.href = \'' . esc_url(wp_nonce_url(admin_url('admin-post.php?action=arsol_clear_logs'), 'arsol_clear_logs')) . '\'; }">';
-        echo esc_html__('Clear All Logs', 'arsol-pfw');
-        echo '</button>';
-        echo '</p>';
-        
-        echo '</div>';
-        
-        // Add handler for clearing logs
-        add_action('admin_post_arsol_clear_logs', array($this, 'handle_clear_logs'));
-    }
-
-    public function handle_clear_logs() {
-        if (!wp_verify_nonce($_GET['_wpnonce'], 'arsol_clear_logs')) {
-            wp_die(__('Security check failed.', 'arsol-pfw'));
-        }
-        
-        if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have permission to perform this action.', 'arsol-pfw'));
-        }
-        
-        if (class_exists('Arsol_Projects_For_Woo\Woocommerce_Logs')) {
-            Woocommerce_Logs::clear_logs();
-            wp_redirect(add_query_arg(array('page' => 'arsol-projects-advanced', 'logs_cleared' => '1'), admin_url('admin.php')));
-        } else {
-            wp_redirect(add_query_arg(array('page' => 'arsol-projects-advanced', 'error' => '1'), admin_url('admin.php')));
-        }
-        exit;
     }
 
     public function render_text_field($args) {
