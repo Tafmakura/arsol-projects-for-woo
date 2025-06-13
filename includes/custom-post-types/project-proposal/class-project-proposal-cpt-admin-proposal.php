@@ -97,6 +97,30 @@ class Proposal {
             </span>
             </div>
         </div>
+        <script>
+            jQuery(document).ready(function($) {
+                function toggleCostProposalSections() {
+                    var selectedType = $('#cost_proposal_type').val();
+                    
+                    $('#arsol_budget_estimates_metabox').hide();
+                    $('#arsol_proposal_invoice_metabox').hide();
+
+                    if (selectedType === 'budget_estimates') {
+                        $('#arsol_budget_estimates_metabox').show();
+                    } else if (selectedType === 'invoice_line_items') {
+                        $('#arsol_proposal_invoice_metabox').show();
+                    }
+                }
+
+                // Initial toggle on page load
+                toggleCostProposalSections();
+
+                // Toggle when dropdown changes
+                $('#cost_proposal_type').on('change', function() {
+                    toggleCostProposalSections();
+                });
+            });
+        </script>
         <?php
     }
 
