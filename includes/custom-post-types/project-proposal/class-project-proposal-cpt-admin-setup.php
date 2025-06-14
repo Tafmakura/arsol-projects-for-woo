@@ -99,7 +99,6 @@ class Setup {
 
     /**
      * Modify the author dropdown to include only WooCommerce customers
-     * Note: This is now handled by our custom customer dropdown in UI components
      */
     public function modify_author_dropdown($query_args, $r) {
         if (!is_admin()) {
@@ -108,9 +107,7 @@ class Setup {
 
         $screen = get_current_screen();
         if ($screen && $screen->post_type === 'arsol-pfw-proposal') {
-            // We're now using custom customer dropdowns with proper first + last name formatting
-            // in the UI components, so we don't need to modify the default WP dropdown
-            // Still filter to customers/subscribers for consistency if WP dropdown is used elsewhere
+            // Get all users who can make purchases
             $query_args['role__in'] = array('customer', 'subscriber');
             $query_args['orderby'] = 'display_name';
             $query_args['order'] = 'ASC';

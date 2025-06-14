@@ -44,12 +44,14 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
             <?php endif; ?>
         </label>
         <?php
-        // Use our WooCommerce Helper for proper customer display formatting
-        echo \Arsol_Projects_For_Woo\Woocommerce_Helper::generate_customer_dropdown(
-            'post_author_override',
-            $post->post_author,
-            array('class' => 'wc-customer-search')
-        );
+        $author_dropdown = wp_dropdown_users(array(
+            'name' => 'post_author_override',
+            'selected' => $post->post_author,
+            'include_selected' => true,
+            'echo' => false,
+            'class' => 'wc-customer-search'
+        ));
+        echo $author_dropdown;
         ?>
     </p>
 </div>

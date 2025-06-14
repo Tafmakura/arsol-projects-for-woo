@@ -64,11 +64,13 @@ class Proposal {
         $original_delivery_date = get_post_meta($post->ID, '_original_request_delivery_date', true);
 
         // Get author dropdown
-        $author_dropdown = \Arsol_Projects_For_Woo\Woocommerce_Helper::generate_customer_dropdown(
-            'post_author_override',
-            $post->post_author,
-            array('class' => 'widefat')
-        );
+        $author_dropdown = wp_dropdown_users(array(
+            'name' => 'post_author_override',
+            'selected' => $post->post_author,
+            'include_selected' => true,
+            'echo' => false,
+            'class' => 'widefat'
+        ));
 
         ?>
         <div class="proposal-details">
