@@ -74,6 +74,10 @@ class Woocommerce_Biller_Helper {
                 count($one_time_fees), $order->get_id()));
         
         foreach ($one_time_fees as $fee) {
+            // Debug: Log each fee being processed
+            Woocommerce_Logs::log($log_source, 'debug', 
+                sprintf('Processing individual one-time fee: %s', wp_json_encode($fee)));
+            
             if (!empty($fee['amount']) && floatval($fee['amount']) > 0) {
                 $fee_name = !empty($fee['name']) 
                     ? $fee['name'] 
@@ -87,12 +91,7 @@ class Woocommerce_Biller_Helper {
                     sprintf('Adding fee to order #%d: Name="%s", Amount=%s, Tax Class=%s, Taxable=%s', 
                         $order->get_id(), $fee_name, $fee_amount, $tax_class, $is_taxable ? 'yes' : 'no'));
                 
-                $order->add_fee(array(
-                    'name' => $fee_name,
-                    'amount' => $fee_amount,
-                    'taxable' => $is_taxable,
-                    'tax_class' => $tax_class
-                ));
+                $order->add_fee($fee_name, $fee_amount, $is_taxable, $tax_class);
                 
                 $fees_added++;
                 
@@ -143,6 +142,10 @@ class Woocommerce_Biller_Helper {
                 count($shipping_fees), $order->get_id()));
         
         foreach ($shipping_fees as $shipping) {
+            // Debug: Log each shipping fee being processed
+            Woocommerce_Logs::log($log_source, 'debug', 
+                sprintf('Processing individual shipping fee: %s', wp_json_encode($shipping)));
+            
             if (!empty($shipping['amount']) && floatval($shipping['amount']) > 0) {
                 $shipping_title = !empty($shipping['description']) 
                     ? $shipping['description'] 
@@ -151,12 +154,7 @@ class Woocommerce_Biller_Helper {
                 $shipping_amount = floatval($shipping['amount']);
                 
                 // Add shipping as fee instead of shipping item to avoid HPOS compatibility issues
-                $order->add_fee(array(
-                    'name' => $shipping_title . ' (Shipping)',
-                    'amount' => $shipping_amount,
-                    'taxable' => false,
-                    'tax_class' => ''
-                ));
+                $order->add_fee($shipping_title . ' (Shipping)', $shipping_amount, false, '');
                 
                 $shipping_added++;
                 
@@ -207,6 +205,10 @@ class Woocommerce_Biller_Helper {
                 count($recurring_fees), $subscription->get_id()));
         
         foreach ($recurring_fees as $fee) {
+            // Debug: Log each fee being processed
+            Woocommerce_Logs::log($log_source, 'debug', 
+                sprintf('Processing individual recurring fee: %s', wp_json_encode($fee)));
+            
             if (!empty($fee['amount']) && floatval($fee['amount']) > 0) {
                 $fee_name = !empty($fee['name']) 
                     ? $fee['name'] 
@@ -216,12 +218,11 @@ class Woocommerce_Biller_Helper {
                 $tax_class = !empty($fee['tax_class']) ? $fee['tax_class'] : '';
                 $is_taxable = !empty($fee['tax_class']) && $fee['tax_class'] !== 'no-tax';
                 
-                $subscription->add_fee(array(
-                    'name' => $fee_name,
-                    'amount' => $fee_amount,
-                    'taxable' => $is_taxable,
-                    'tax_class' => $tax_class
-                ));
+                Woocommerce_Logs::log($log_source, 'debug', 
+                    sprintf('Adding recurring fee to subscription #%d: Name="%s", Amount=%s, Tax Class=%s, Taxable=%s', 
+                        $subscription->get_id(), $fee_name, $fee_amount, $tax_class, $is_taxable ? 'yes' : 'no'));
+                
+                $subscription->add_fee($fee_name, $fee_amount, $is_taxable, $tax_class);
                 
                 $fees_added++;
                 
