@@ -38,14 +38,13 @@ $all_statuses = get_terms(array(
             <?php endif; ?>
         </label>
         <?php
-        $author_dropdown = wp_dropdown_users(array(
-            'name' => 'post_author_override',
-            'selected' => $post->post_author,
-            'include_selected' => true,
-            'echo' => false,
-            'class' => 'wc-customer-search'
-        ));
-        echo $author_dropdown;
+        // Use our WooCommerce Helper for proper customer display formatting with search placeholder
+        echo \Arsol_Projects_For_Woo\Woocommerce_Helper::generate_customer_dropdown(
+            'post_author_override',
+            $post->post_author,
+            array('class' => 'wc-customer-search'),
+            __('Search for customer...', 'arsol-pfw')
+        );
         ?>
     </p>
 </div>

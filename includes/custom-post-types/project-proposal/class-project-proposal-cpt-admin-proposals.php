@@ -102,7 +102,12 @@ class Proposals {
 
             // Customer filter
             $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
-            echo \Arsol_Projects_For_Woo\Woocommerce_Helper::generate_customer_dropdown('customer', $current_customer);
+            echo \Arsol_Projects_For_Woo\Woocommerce_Helper::generate_customer_dropdown(
+                'customer', 
+                $current_customer, 
+                array(), 
+                __('Filter by customer', 'arsol-pfw')
+            );
 
             // Related Request filter
             $current_request = isset($_GET['related_request']) ? $_GET['related_request'] : '';

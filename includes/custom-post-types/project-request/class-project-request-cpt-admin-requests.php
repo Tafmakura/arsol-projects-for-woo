@@ -91,7 +91,12 @@ class Requests {
 
             // Customer filter
             $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
-            echo \Arsol_Projects_For_Woo\Woocommerce_Helper::generate_customer_dropdown('customer', $current_customer);
+            echo \Arsol_Projects_For_Woo\Woocommerce_Helper::generate_customer_dropdown(
+                'customer', 
+                $current_customer, 
+                array(), 
+                __('Filter by customer', 'arsol-pfw')
+            );
 
             // Enqueue WooCommerce select2
             wp_enqueue_script('select2');
