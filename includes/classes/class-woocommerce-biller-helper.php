@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
 /**
  * WooCommerce Biller Helper Class
  * 
- * Consolidates common biller methods for consistency between order and subscription creation
+ * Helper methods for WooCommerce order and subscription creation
+ * Following WordPress coding standards and WooCommerce best practices
  */
 class Woocommerce_Biller_Helper {
     
@@ -25,7 +26,7 @@ class Woocommerce_Biller_Helper {
             return new \WP_Error('invalid_proposal', __('Invalid proposal ID', 'arsol-pfw'));
         }
         
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
+        $line_items = get_post_meta($proposal_id, 'line_items', true);
         if (empty($line_items)) {
             return new \WP_Error('no_line_items', __('No line items found in proposal', 'arsol-pfw'));
         }
@@ -55,417 +56,358 @@ class Woocommerce_Biller_Helper {
     }
     
     /**
-     * Add one-time fees to order
+     * Add fees to order using WooCommerce native add_fee method
      * 
      * @param WC_Order $order The order object
-     * @param array $one_time_fees Array of one-time fees
-     * @param string $log_source Log source for debugging
+     * @param array $fees Array of fees
+     * @param string $fee_type Type of fee for logging
+     * @param string $log_source Log source
      * @return int Number of fees added
      */
-    public static function add_one_time_fees($order, $one_time_fees, $log_source = 'order_creation') {
-        $fees_added = 0;
-        
-        if (empty($one_time_fees) || !is_array($one_time_fees)) {
-            return $fees_added;
+    public static function add_fees_to_order($order, $fees, $fee_type = 'fee', $log_source = 'order_creation') {
+        if (empty($fees) || !is_array($fees)) {
+            return 0;
         }
         
-        Woocommerce_Logs::log($log_source, 'info', 
-            sprintf('Processing %d one-time fees for order #%d', 
-                count($one_time_fees), $order->get_id()));
+        $added_count = 0;
         
-        foreach ($one_time_fees as $fee) {
-            // Debug: Log each fee being processed
-            Woocommerce_Logs::log($log_source, 'debug', 
-                sprintf('Processing individual one-time fee: %s', wp_json_encode($fee)));
-            
-            if (!empty($fee['amount']) && floatval($fee['amount']) > 0) {
-                $fee_name = !empty($fee['name']) 
-                    ? $fee['name'] 
-                    : __('Additional Fee', 'arsol-pfw');
+        foreach ($fees as $fee_id => $fee_data) {
+            try {
+                // Validate fee data
+                if (!self::validate_fee_data($fee_data)) {
+                    Woocommerce_Logs::log($log_source, 'warning', 
+                        sprintf('Invalid fee data for ID %s: %s', $fee_id, wp_json_encode($fee_data)));
+                    continue;
+                }
                 
-                $fee_amount = floatval($fee['amount']);
-                $tax_class = !empty($fee['tax_class']) ? $fee['tax_class'] : '';
-                $is_taxable = !empty($fee['tax_class']) && $fee['tax_class'] !== 'no-tax';
+                // Prepare fee details
+                $fee_name = self::get_fee_name($fee_data, $fee_type);
+                $fee_amount = floatval($fee_data['amount']);
+                list($is_taxable, $tax_class) = self::determine_tax_settings($fee_data);
                 
-                Woocommerce_Logs::log($log_source, 'debug', 
-                    sprintf('Adding fee to order #%d: Name="%s", Amount=%s, Tax Class=%s, Taxable=%s', 
-                        $order->get_id(), $fee_name, $fee_amount, $tax_class, $is_taxable ? 'yes' : 'no'));
-                
+                // Add fee using WooCommerce native method
                 $order->add_fee($fee_name, $fee_amount, $is_taxable, $tax_class);
-                
-                $fees_added++;
+                $added_count++;
                 
                 Woocommerce_Logs::log($log_source, 'info', 
-                    sprintf('Added fee "%s" (%s) to order #%d', 
-                        $fee_name, wc_price($fee_amount), $order->get_id()));
-            } else {
-                Woocommerce_Logs::log($log_source, 'warning', 
-                    sprintf('Skipped fee with invalid amount: %s', 
-                        wp_json_encode($fee)));
+                    sprintf('Added %s fee: %s = $%.2f (taxable: %s)', 
+                        $fee_type, $fee_name, $fee_amount, $is_taxable ? 'yes' : 'no'));
+                
+            } catch (Exception $e) {
+                Woocommerce_Logs::log($log_source, 'error', 
+                    sprintf('Failed to add fee %s: %s', $fee_id, $e->getMessage()));
+                throw new \Exception(sprintf('Failed to add fee %s: %s', $fee_id, $e->getMessage()));
             }
         }
         
-        // Save order after adding fees (HPOS compatibility)
-        if ($fees_added > 0) {
-            $save_result = $order->save();
-            if ($save_result) {
-                Woocommerce_Logs::log($log_source, 'debug', 
-                    sprintf('Successfully saved order #%d after adding %d fees', 
-                        $order->get_id(), $fees_added));
-            } else {
-                Woocommerce_Logs::log($log_source, 'warning', 
-                    sprintf('Failed to save order #%d after adding fees', 
-                        $order->get_id()));
-            }
-        }
-        
-        return $fees_added;
+        return $added_count;
     }
     
     /**
-     * Add shipping fees to order
+     * Add products to order
      * 
      * @param WC_Order $order The order object
-     * @param array $shipping_fees Array of shipping fees
-     * @param string $log_source Log source for debugging
-     * @return int Number of shipping fees added
+     * @param array $products Array of products
+     * @param string $log_source Log source
+     * @return int Number of products added
      */
-    public static function add_shipping_fees($order, $shipping_fees, $log_source = 'order_creation') {
-        $shipping_added = 0;
-        
-        if (empty($shipping_fees) || !is_array($shipping_fees)) {
-            return $shipping_added;
+    public static function add_products_to_order($order, $products, $log_source = 'order_creation') {
+        if (empty($products) || !is_array($products)) {
+            return 0;
         }
         
-        Woocommerce_Logs::log($log_source, 'info', 
-            sprintf('Processing %d shipping fees for order #%d', 
-                count($shipping_fees), $order->get_id()));
+        $added_count = 0;
         
-        foreach ($shipping_fees as $shipping) {
-            // Debug: Log each shipping fee being processed
-            Woocommerce_Logs::log($log_source, 'debug', 
-                sprintf('Processing individual shipping fee: %s', wp_json_encode($shipping)));
-            
-            if (!empty($shipping['amount']) && floatval($shipping['amount']) > 0) {
-                $shipping_title = !empty($shipping['description']) 
-                    ? $shipping['description'] 
-                    : __('Shipping Fee', 'arsol-pfw');
+        foreach ($products as $product_id => $product_data) {
+            try {
+                if (empty($product_data['product_id'])) {
+                    continue;
+                }
                 
-                $shipping_amount = floatval($shipping['amount']);
+                $product = wc_get_product($product_data['product_id']);
+                if (!$product) {
+                    Woocommerce_Logs::log($log_source, 'warning', 
+                        sprintf('Product #%d not found', $product_data['product_id']));
+                    continue;
+                }
                 
-                // Add shipping as fee instead of shipping item to avoid HPOS compatibility issues
-                $order->add_fee($shipping_title . ' (Shipping)', $shipping_amount, false, '');
+                $quantity = isset($product_data['quantity']) ? intval($product_data['quantity']) : 1;
+                $price = isset($product_data['price']) ? floatval($product_data['price']) : $product->get_price();
+                $sale_price = isset($product_data['sale_price']) ? floatval($product_data['sale_price']) : $price;
                 
-                $shipping_added++;
+                $order->add_product($product, $quantity, array(
+                    'subtotal' => $price * $quantity,
+                    'total' => $sale_price * $quantity
+                ));
+                
+                $added_count++;
                 
                 Woocommerce_Logs::log($log_source, 'info', 
-                    sprintf('Added shipping "%s" (%s) as fee to order #%d', 
-                        $shipping_title, wc_price($shipping_amount), $order->get_id()));
-            } else {
-                Woocommerce_Logs::log($log_source, 'warning', 
-                    sprintf('Skipped shipping fee with invalid amount: %s', 
-                        wp_json_encode($shipping)));
+                    sprintf('Added product #%d (%s) x%d to order', 
+                        $product_data['product_id'], $product->get_name(), $quantity));
+                
+            } catch (Exception $e) {
+                Woocommerce_Logs::log($log_source, 'error', 
+                    sprintf('Failed to add product %s: %s', $product_id, $e->getMessage()));
+                throw new \Exception(sprintf('Failed to add product %s: %s', $product_id, $e->getMessage()));
             }
         }
         
-        // Save order after adding shipping (HPOS compatibility)
-        if ($shipping_added > 0) {
-            $save_result = $order->save();
-            if ($save_result) {
-                Woocommerce_Logs::log($log_source, 'debug', 
-                    sprintf('Successfully saved order #%d after adding %d shipping fees', 
-                        $order->get_id(), $shipping_added));
-            } else {
-                Woocommerce_Logs::log($log_source, 'warning', 
-                    sprintf('Failed to save order #%d after adding shipping fees', 
-                        $order->get_id()));
-            }
-        }
-        
-        return $shipping_added;
+        return $added_count;
     }
     
     /**
-     * Add recurring fees to subscription
+     * Create parent order with one-time items
      * 
-     * @param WC_Subscription $subscription The subscription object
-     * @param array $recurring_fees Array of recurring fees
-     * @param string $log_source Log source for debugging
-     * @return int Number of recurring fees added
+     * @param array $line_items Line items from proposal
+     * @param int $customer_id Customer ID
+     * @param string $log_source Log source
+     * @return WC_Order Created order
      */
-    public static function add_recurring_fees($subscription, $recurring_fees, $log_source = 'subscription_creation') {
-        $fees_added = 0;
-        
-        if (empty($recurring_fees) || !is_array($recurring_fees)) {
-            return $fees_added;
-        }
-        
-        Woocommerce_Logs::log($log_source, 'info', 
-            sprintf('Processing %d recurring fees for subscription #%d', 
-                count($recurring_fees), $subscription->get_id()));
-        
-        foreach ($recurring_fees as $fee) {
-            // Debug: Log each fee being processed
-            Woocommerce_Logs::log($log_source, 'debug', 
-                sprintf('Processing individual recurring fee: %s', wp_json_encode($fee)));
-            
-            if (!empty($fee['amount']) && floatval($fee['amount']) > 0) {
-                $fee_name = !empty($fee['name']) 
-                    ? $fee['name'] 
-                    : __('Recurring Fee', 'arsol-pfw');
-                
-                $fee_amount = floatval($fee['amount']);
-                $tax_class = !empty($fee['tax_class']) ? $fee['tax_class'] : '';
-                $is_taxable = !empty($fee['tax_class']) && $fee['tax_class'] !== 'no-tax';
-                
-                Woocommerce_Logs::log($log_source, 'debug', 
-                    sprintf('Adding recurring fee to subscription #%d: Name="%s", Amount=%s, Tax Class=%s, Taxable=%s', 
-                        $subscription->get_id(), $fee_name, $fee_amount, $tax_class, $is_taxable ? 'yes' : 'no'));
-                
-                $subscription->add_fee($fee_name, $fee_amount, $is_taxable, $tax_class);
-                
-                $fees_added++;
-                
-                Woocommerce_Logs::log($log_source, 'info', 
-                    sprintf('Added recurring fee "%s" (%s) to subscription #%d', 
-                        $fee_name, wc_price($fee_amount), $subscription->get_id()));
-            } else {
-                Woocommerce_Logs::log($log_source, 'warning', 
-                    sprintf('Skipped recurring fee with invalid amount: %s', 
-                        wp_json_encode($fee)));
-            }
-        }
-        
-        // Save subscription after adding fees (HPOS compatibility)
-        if ($fees_added > 0) {
-            $save_result = $subscription->save();
-            if ($save_result) {
-                Woocommerce_Logs::log($log_source, 'debug', 
-                    sprintf('Successfully saved subscription #%d after adding %d recurring fees', 
-                        $subscription->get_id(), $fees_added));
-            } else {
-                Woocommerce_Logs::log($log_source, 'warning', 
-                    sprintf('Failed to save subscription #%d after adding recurring fees', 
-                        $subscription->get_id()));
-            }
-        }
-        
-        return $fees_added;
-    }
-    
-    /**
-     * Create and properly link parent order for subscription
-     * 
-     * @param WC_Subscription $subscription The subscription object
-     * @param array $line_items The original proposal line items
-     * @param int $proposal_id The proposal ID
-     * @return int|WP_Error Parent order ID on success, WP_Error on failure
-     */
-    public static function create_linked_parent_order($subscription, $line_items, $proposal_id) {
+    public static function create_parent_order($line_items, $customer_id, $log_source = 'order_creation') {
         try {
-            // Check if subscription already has a parent order
-            $existing_parent_id = $subscription->get_parent_id();
-            if ($existing_parent_id && $existing_parent_id > 0) {
-                Woocommerce_Logs::log_subscription_creation('info', 
-                    sprintf('Subscription #%d already has parent order #%d', 
-                        $subscription->get_id(), $existing_parent_id));
-                return $existing_parent_id;
+            // Create order using modern HPOS approach
+            $order = new \WC_Order();
+            $order->set_customer_id($customer_id);
+            $order->set_created_via('proposal_conversion');
+            
+            Woocommerce_Logs::log($log_source, 'info', 
+                sprintf('Creating parent order for customer #%d', $customer_id));
+            
+            // Add products
+            if (!empty($line_items['products'])) {
+                self::add_products_to_order($order, $line_items['products'], $log_source);
             }
             
-            // Create parent order manually with all items
-            $parent_order = wc_create_order(array(
-                'customer_id' => $subscription->get_customer_id(),
+            // Add one-time fees
+            if (!empty($line_items['one_time_fees'])) {
+                self::add_fees_to_order($order, $line_items['one_time_fees'], 'one_time', $log_source);
+            }
+            
+            // Add shipping fees
+            if (!empty($line_items['shipping_fees'])) {
+                self::add_fees_to_order($order, $line_items['shipping_fees'], 'shipping', $log_source);
+            }
+            
+            // Calculate totals and save
+            $order->calculate_totals();
+            $order->set_status('pending');
+            $order->save();
+            
+            Woocommerce_Logs::log($log_source, 'success', 
+                sprintf('Created parent order #%d with total $%.2f', 
+                    $order->get_id(), $order->get_total()));
+            
+            return $order;
+            
+        } catch (Exception $e) {
+            // Rollback on failure
+            if (isset($order) && $order->get_id()) {
+                wp_delete_post($order->get_id(), true);
+                Woocommerce_Logs::log($log_source, 'info', 
+                    sprintf('Rolled back order #%d due to error', $order->get_id()));
+            }
+            throw new \Exception('Failed to create parent order: ' . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Create subscription with recurring items
+     * 
+     * @param array $line_items Line items from proposal
+     * @param int $customer_id Customer ID
+     * @param int $parent_order_id Parent order ID
+     * @param string $log_source Log source
+     * @return WC_Subscription Created subscription
+     */
+    public static function create_subscription($line_items, $customer_id, $parent_order_id = null, $log_source = 'subscription_creation') {
+        try {
+            // Check if WooCommerce Subscriptions is active
+            if (!class_exists('WC_Subscriptions') || !function_exists('wcs_create_subscription')) {
+                throw new \Exception('WooCommerce Subscriptions is not active');
+            }
+            
+            // Get billing schedule from recurring fees
+            $billing_schedule = self::get_billing_schedule($line_items['recurring_fees']);
+            
+            Woocommerce_Logs::log($log_source, 'info', 
+                sprintf('Creating subscription for customer #%d with billing: every %d %s(s)', 
+                    $customer_id, $billing_schedule['interval'], $billing_schedule['period']));
+            
+            $subscription = wcs_create_subscription(array(
+                'order_id' => $parent_order_id,
+                'customer_id' => $customer_id,
+                'billing_period' => $billing_schedule['period'],
+                'billing_interval' => $billing_schedule['interval'],
                 'status' => 'pending'
             ));
             
-            if (is_wp_error($parent_order)) {
-                throw new \Exception($parent_order->get_error_message());
+            if (is_wp_error($subscription)) {
+                throw new \Exception($subscription->get_error_message());
             }
             
-            Woocommerce_Logs::log_subscription_creation('info', 
-                sprintf('Created parent order #%d for subscription #%d', 
-                    $parent_order->get_id(), $subscription->get_id()));
-            
-            // Copy billing and shipping addresses from subscription
-            $parent_order->set_address($subscription->get_address('billing'), 'billing');
-            $parent_order->set_address($subscription->get_address('shipping'), 'shipping');
-            
-            // Add subscription products to parent order
-            foreach ($subscription->get_items() as $item) {
-                $parent_order->add_item($item);
+            // Add recurring fees
+            if (!empty($line_items['recurring_fees'])) {
+                self::add_fees_to_order($subscription, $line_items['recurring_fees'], 'recurring', $log_source);
             }
             
-            // Add subscription fees to parent order
-            foreach ($subscription->get_fees() as $fee) {
-                $parent_order->add_item($fee);
-            }
-            
-            // Add subscription shipping to parent order
-            foreach ($subscription->get_shipping_methods() as $shipping) {
-                $parent_order->add_item($shipping);
-            }
-            
-            // Save parent order after adding subscription items (HPOS compatibility)
-            $save_result = $parent_order->save();
-            if ($save_result) {
-                Woocommerce_Logs::log_subscription_creation('debug', 
-                    sprintf('Successfully saved parent order #%d after adding subscription items', 
-                        $parent_order->get_id()));
-            } else {
-                Woocommerce_Logs::log_subscription_creation('warning', 
-                    sprintf('Failed to save parent order #%d after adding subscription items', 
-                        $parent_order->get_id()));
-            }
-            
-            // Debug: Log line items structure for fee processing
-            Woocommerce_Logs::log_subscription_creation('debug', 
-                sprintf('Line items for parent order #%d: %s', 
-                    $parent_order->get_id(), wp_json_encode($line_items)));
-            
-            // Debug: Check specific fee arrays
-            $one_time_fees_count = !empty($line_items['one_time_fees']) ? count($line_items['one_time_fees']) : 0;
-            $shipping_fees_count = !empty($line_items['shipping_fees']) ? count($line_items['shipping_fees']) : 0;
-            
-            Woocommerce_Logs::log_subscription_creation('debug', 
-                sprintf('Fee counts for parent order #%d - One-time: %d, Shipping: %d', 
-                    $parent_order->get_id(), $one_time_fees_count, $shipping_fees_count));
-            
-            // Add one-time fees from proposal to parent order
-            if (!empty($line_items['one_time_fees'])) {
-                Woocommerce_Logs::log_subscription_creation('debug', 
-                    sprintf('Processing one-time fees for parent order #%d', $parent_order->get_id()));
-                self::add_one_time_fees($parent_order, $line_items['one_time_fees'], 'subscription_creation');
-            } else {
-                Woocommerce_Logs::log_subscription_creation('debug', 
-                    sprintf('No one-time fees found for parent order #%d', $parent_order->get_id()));
-            }
-            
-            // Add shipping fees from proposal to parent order
-            if (!empty($line_items['shipping_fees'])) {
-                Woocommerce_Logs::log_subscription_creation('debug', 
-                    sprintf('Processing shipping fees for parent order #%d', $parent_order->get_id()));
-                self::add_shipping_fees($parent_order, $line_items['shipping_fees'], 'subscription_creation');
-            } else {
-                Woocommerce_Logs::log_subscription_creation('debug', 
-                    sprintf('No shipping fees found for parent order #%d', $parent_order->get_id()));
-            }
-            
-            // Calculate totals
-            $parent_order->calculate_totals();
-            
-            // Link the parent order to the subscription
-            $subscription->set_parent_id($parent_order->get_id());
+            // Calculate totals and save
+            $subscription->calculate_totals();
+            $subscription->set_status('active');
             $subscription->save();
             
-            // Add order notes
-            $parent_order->add_order_note(
-                sprintf(__('Parent order for subscription #%d created from proposal #%d', 'arsol-pfw'), 
-                    $subscription->get_id(), $proposal_id)
-            );
+            Woocommerce_Logs::log($log_source, 'success', 
+                sprintf('Created subscription #%d with recurring total $%.2f', 
+                    $subscription->get_id(), $subscription->get_total()));
             
-            $subscription->add_order_note(
-                sprintf(__('Parent order #%d created', 'arsol-pfw'), $parent_order->get_id())
-            );
+            return $subscription;
             
-            // Link to proposal
-            $parent_order->update_meta_data('_arsol_proposal_id', $proposal_id);
-            $parent_order->save();
-            
-            Woocommerce_Logs::log_subscription_creation('info', 
-                sprintf('Created and linked parent order #%d for subscription #%d with all fees', 
-                    $parent_order->get_id(), $subscription->get_id()));
-            
-            // Log order breakdown
-            Woocommerce_Logs::log_subscription_creation('debug', 
-                sprintf('Parent order #%d breakdown - Subtotal: %s, Total: %s, Fee Total: %s, Shipping Total: %s', 
-                    $parent_order->get_id(), 
-                    wc_price($parent_order->get_subtotal()), 
-                    wc_price($parent_order->get_total()),
-                    wc_price($parent_order->get_total_fees()),
-                    wc_price($parent_order->get_shipping_total())));
-            
-            return $parent_order->get_id();
-            
-        } catch (\Exception $e) {
-            return new \WP_Error('parent_order_creation_failed', $e->getMessage());
+        } catch (Exception $e) {
+            // Rollback on failure
+            if (isset($subscription) && $subscription->get_id()) {
+                wp_delete_post($subscription->get_id(), true);
+                Woocommerce_Logs::log($log_source, 'info', 
+                    sprintf('Rolled back subscription #%d due to error', $subscription->get_id()));
+            }
+            throw new \Exception('Failed to create subscription: ' . $e->getMessage());
         }
+    }
+    
+    /**
+     * Validate fee data
+     * 
+     * @param array $fee_data Fee data
+     * @return bool Valid status
+     */
+    public static function validate_fee_data($fee_data) {
+        if (!is_array($fee_data)) {
+            return false;
+        }
+        
+        // Amount is required and must be numeric and positive
+        if (!isset($fee_data['amount']) || !is_numeric($fee_data['amount']) || floatval($fee_data['amount']) <= 0) {
+            return false;
+        }
+        
+        // Name or description is required
+        if (empty($fee_data['name']) && empty($fee_data['description'])) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Get fee name from fee data
+     * 
+     * @param array $fee_data Fee data
+     * @param string $fee_type Fee type
+     * @return string Fee name
+     */
+    public static function get_fee_name($fee_data, $fee_type) {
+        if (!empty($fee_data['name'])) {
+            $name = sanitize_text_field($fee_data['name']);
+        } elseif (!empty($fee_data['description'])) {
+            $name = sanitize_text_field($fee_data['description']);
+        } else {
+            $name = ucfirst($fee_type) . ' Fee';
+        }
+        
+        // Add suffix for shipping fees
+        if ($fee_type === 'shipping') {
+            $name .= ' (Shipping)';
+        }
+        
+        return $name;
+    }
+    
+    /**
+     * Determine tax settings from fee data
+     * 
+     * @param array $fee_data Fee data
+     * @return array [is_taxable, tax_class]
+     */
+    public static function determine_tax_settings($fee_data) {
+        $tax_class = isset($fee_data['tax_class']) ? strtolower($fee_data['tax_class']) : '';
+        
+        // No tax if tax_class is empty, 'no-tax', or 'none'
+        if (empty($tax_class) || $tax_class === 'no-tax' || $tax_class === 'none') {
+            return array(false, '');
+        }
+        
+        // Convert 'standard' to empty string (WooCommerce standard)
+        if ($tax_class === 'standard') {
+            $tax_class = '';
+        }
+        
+        return array(true, $tax_class);
+    }
+    
+    /**
+     * Get billing schedule from recurring fees
+     * 
+     * @param array $recurring_fees Recurring fees
+     * @return array Billing schedule
+     */
+    public static function get_billing_schedule($recurring_fees) {
+        // Default schedule
+        $schedule = array(
+            'interval' => 1,
+            'period' => 'month'
+        );
+        
+        if (!empty($recurring_fees) && is_array($recurring_fees)) {
+            foreach ($recurring_fees as $fee) {
+                if (!empty($fee['interval']) && !empty($fee['period'])) {
+                    $interval = intval($fee['interval']);
+                    $period = sanitize_text_field($fee['period']);
+                    
+                    // Validate interval and period
+                    if (self::validate_billing_interval($interval) && self::validate_billing_period($period)) {
+                        $schedule['interval'] = $interval;
+                        $schedule['period'] = $period;
+                        break; // Use first valid schedule found
+                    }
+                }
+            }
+        }
+        
+        return $schedule;
     }
     
     /**
      * Check if line items contain recurring items
      * 
-     * @param array $line_items The line items array
-     * @return bool True if has recurring items, false otherwise
+     * @param array $line_items Line items array
+     * @return bool True if has recurring items
      */
     public static function has_recurring_items($line_items) {
         if (empty($line_items) || !is_array($line_items)) {
             return false;
         }
         
-        // Check for subscription products
-        if (!empty($line_items['products'])) {
-            foreach ($line_items['products'] as $item) {
-                if (!empty($item['product_id'])) {
-                    $product = wc_get_product($item['product_id']);
-                    if ($product && $product->is_type(array('subscription', 'subscription_variation'))) {
-                        return true;
-                    }
-                }
-            }
-        }
-        
-        // Check for recurring fees
-        if (!empty($line_items['recurring_fees'])) {
-            foreach ($line_items['recurring_fees'] as $fee) {
-                if (!empty($fee['amount']) && floatval($fee['amount']) > 0) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Log order breakdown for debugging
-     * 
-     * @param WC_Order $order The order object
-     * @param string $log_source Log source
-     * @param int $items_added Number of items added
-     */
-    public static function log_order_breakdown($order, $log_source, $items_added = 0) {
-        Woocommerce_Logs::log($log_source, 'debug', 
-            sprintf('Order #%d breakdown - Subtotal: %s, Total: %s, Fee Total: %s, Shipping Total: %s', 
-                $order->get_id(), 
-                wc_price($order->get_subtotal()), 
-                wc_price($order->get_total()),
-                wc_price($order->get_total_fees()),
-                wc_price($order->get_shipping_total())));
-        
-        Woocommerce_Logs::log($log_source, 'info', 
-            sprintf('Order #%d total calculated: %s (%d items)', 
-                $order->get_id(), wc_price($order->get_total()), $items_added));
+        return !empty($line_items['recurring_fees']);
     }
     
     /**
      * Validate billing interval
      * 
-     * @param mixed $interval The billing interval to validate
-     * @return int Valid billing interval (1-6)
+     * @param int $interval Billing interval
+     * @return bool Valid interval
      */
     public static function validate_billing_interval($interval) {
-        $interval = intval($interval);
-        return ($interval >= 1 && $interval <= 6) ? $interval : 1;
+        $valid_intervals = array(1, 2, 3, 4, 5, 6);
+        return in_array(intval($interval), $valid_intervals);
     }
     
     /**
      * Validate billing period
      * 
-     * @param string $period The billing period to validate
-     * @return string Valid billing period (day, week, month, or year)
+     * @param string $period Billing period
+     * @return bool Valid period
      */
     public static function validate_billing_period($period) {
         $valid_periods = array('day', 'week', 'month', 'year');
-        return in_array($period, $valid_periods) ? $period : 'month';
+        return in_array($period, $valid_periods);
     }
 }
