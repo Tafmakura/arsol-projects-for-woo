@@ -102,28 +102,22 @@ class Woocommerce_Biller {
         Woocommerce_Logs::log_order_creation('info', 
             sprintf('Starting order creation from proposal #%d', $proposal_id));
         
-        // Get proposal data
-        $proposal = get_post($proposal_id);
-        if (!$proposal) {
-            $error = new \WP_Error('invalid_proposal', __('Invalid proposal ID', 'arsol-pfw'));
+        // Get proposal data using helper
+        $proposal_data = Woocommerce_Biller_Helper::get_proposal_data($proposal_id);
+        if (is_wp_error($proposal_data)) {
             Woocommerce_Logs::log_order_creation('error', 
-                sprintf('Proposal #%d not found', $proposal_id));
-            return $error;
+                sprintf('Failed to get proposal data: %s', $proposal_data->get_error_message()));
+            return $proposal_data;
         }
+        
+        $proposal = $proposal_data['proposal'];
+        $line_items = $proposal_data['line_items'];
+        $customer_id = $proposal_data['customer_id'];
         
         // Log proposal details
         Woocommerce_Logs::log_order_creation('info', 
-            sprintf('Found proposal #%d: "%s" by author #%d', 
-                $proposal_id, $proposal->post_title, $proposal->post_author));
-        
-        // Get line items
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
-        if (empty($line_items)) {
-            $error = new \WP_Error('no_line_items', __('No line items found in proposal', 'arsol-pfw'));
-            Woocommerce_Logs::log_order_creation('error', 
-                sprintf('No line items found in proposal #%d', $proposal_id));
-            return $error;
-        }
+            sprintf('Found proposal #%d: "%s" by customer #%d', 
+                $proposal_id, $proposal->post_title, $customer_id));
         
         // Log line items structure
         Woocommerce_Logs::log_order_creation('debug', 
@@ -133,10 +127,10 @@ class Woocommerce_Biller {
         // Create the order
         try {
             Woocommerce_Logs::log_order_creation('info', 
-                sprintf('Creating WooCommerce order for customer #%d', $proposal->post_author));
+                sprintf('Creating WooCommerce order for customer #%d', $customer_id));
             
             $order = wc_create_order(array(
-                'customer_id' => $proposal->post_author,
+                'customer_id' => $customer_id,
                 'status' => 'pending'
             ));
             
@@ -186,74 +180,16 @@ class Woocommerce_Biller {
                 }
             }
             
-            // Add fees (only one-time fees)
+            // Add one-time fees using helper
             if (!empty($line_items['one_time_fees'])) {
-                Woocommerce_Logs::log_order_creation('info', 
-                    sprintf('Processing %d one-time fees from proposal #%d', 
-                        count($line_items['one_time_fees']), $proposal_id));
-                
-                foreach ($line_items['one_time_fees'] as $fee) {
-                    // Check if fee has an amount (name can be empty)
-                    if (!empty($fee['amount']) && floatval($fee['amount']) > 0) {
-                        $fee_name = !empty($fee['name']) 
-                            ? $fee['name'] 
-                            : __('Additional Fee', 'arsol-pfw');
-                        
-                        Woocommerce_Logs::log_order_creation('debug', 
-                            sprintf('Adding fee to order #%d: Name="%s", Amount=%s, Tax Class=%s', 
-                                $order->get_id(), $fee_name, $fee['amount'], 
-                                isset($fee['tax_class']) ? $fee['tax_class'] : 'none'));
-                            
-                        $order->add_fee(array(
-                            'name' => $fee_name,
-                            'amount' => floatval($fee['amount']),
-                            'taxable' => !empty($fee['tax_class']) && $fee['tax_class'] !== 'no-tax',
-                            'tax_class' => !empty($fee['tax_class']) ? $fee['tax_class'] : ''
-                        ));
-                        
-                        $items_added++;
-                        
-                        Woocommerce_Logs::log_order_creation('info', 
-                            sprintf('Added fee "%s" (%s) to order #%d', 
-                                $fee_name, wc_price($fee['amount']), $order->get_id()));
-                    } else {
-                        Woocommerce_Logs::log_order_creation('warning', 
-                            sprintf('Skipped fee with invalid amount: %s', 
-                                wp_json_encode($fee)));
-                    }
-                }
+                $fees_added = Woocommerce_Biller_Helper::add_one_time_fees($order, $line_items['one_time_fees'], 'order_creation');
+                $items_added += $fees_added;
             }
             
-            // Add shipping fees
+            // Add shipping fees using helper
             if (!empty($line_items['shipping_fees'])) {
-                Woocommerce_Logs::log_order_creation('info', 
-                    sprintf('Processing %d shipping fees from proposal #%d', 
-                        count($line_items['shipping_fees']), $proposal_id));
-                
-                foreach ($line_items['shipping_fees'] as $shipping) {
-                    // Check if shipping has an amount (description can be empty)
-                    if (!empty($shipping['amount']) && floatval($shipping['amount']) > 0) {
-                        $shipping_title = !empty($shipping['description']) 
-                            ? $shipping['description'] 
-                            : __('Shipping Fee', 'arsol-pfw');
-                            
-                        $order->add_shipping(array(
-                            'method_title' => $shipping_title,
-                            'method_id' => 'arsol_proposal_shipping',
-                            'total' => floatval($shipping['amount'])
-                        ));
-                        
-                        $items_added++;
-                        
-                        Woocommerce_Logs::log_order_creation('info', 
-                            sprintf('Added shipping "%s" (%s) to order #%d', 
-                                $shipping_title, wc_price($shipping['amount']), $order->get_id()));
-                    } else {
-                        Woocommerce_Logs::log_order_creation('warning', 
-                            sprintf('Skipped shipping fee with invalid amount: %s', 
-                                wp_json_encode($shipping)));
-                    }
-                }
+                $shipping_added = Woocommerce_Biller_Helper::add_shipping_fees($order, $line_items['shipping_fees'], 'order_creation');
+                $items_added += $shipping_added;
             }
             
             // Check if any items were added
@@ -266,18 +202,8 @@ class Woocommerce_Biller {
             // Calculate totals
             $order->calculate_totals();
             
-            // Log detailed order breakdown for debugging
-            Woocommerce_Logs::log_order_creation('debug', 
-                sprintf('Order #%d breakdown - Subtotal: %s, Total: %s, Fee Total: %s, Shipping Total: %s', 
-                    $order->get_id(), 
-                    wc_price($order->get_subtotal()), 
-                    wc_price($order->get_total()),
-                    wc_price($order->get_total_fees()),
-                    wc_price($order->get_shipping_total())));
-            
-            Woocommerce_Logs::log_order_creation('info', 
-                sprintf('Order #%d total calculated: %s (%d items)', 
-                    $order->get_id(), wc_price($order->get_total()), $items_added));
+            // Log order breakdown using helper
+            Woocommerce_Biller_Helper::log_order_breakdown($order, 'order_creation', $items_added);
             
             // Add order note
             $order->add_order_note(

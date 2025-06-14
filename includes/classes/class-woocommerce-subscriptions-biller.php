@@ -98,28 +98,6 @@ class Woocommerce_Subscriptions_Biller {
     }
     
     /**
-     * Validate billing interval (simple safety net)
-     * 
-     * @param mixed $interval The billing interval to validate
-     * @return int Valid billing interval (1-6)
-     */
-    private function validate_billing_interval($interval) {
-        $interval = intval($interval);
-        return ($interval >= 1 && $interval <= 6) ? $interval : 1;
-    }
-    
-    /**
-     * Validate billing period (simple safety net)
-     * 
-     * @param string $period The billing period to validate
-     * @return string Valid billing period (day, week, month, or year)
-     */
-    private function validate_billing_period($period) {
-        $valid_periods = array('day', 'week', 'month', 'year');
-        return in_array($period, $valid_periods) ? $period : 'month';
-    }
-    
-    /**
      * Create subscription from proposal
      * 
      * @param int $proposal_id The proposal ID
@@ -258,9 +236,9 @@ class Woocommerce_Subscriptions_Biller {
                             // Set subscription billing schedule from first subscription product
                             if (!$has_subscription_products) {
                                 $raw_interval = $product->get_meta('_subscription_period_interval') ?: 1;
-                                $primary_billing_interval = $this->validate_billing_interval($raw_interval);
+                                $primary_billing_interval = Woocommerce_Biller_Helper::validate_billing_interval($raw_interval);
                                 $raw_period = $product->get_meta('_subscription_period') ?: 'month';
-                                $primary_billing_period = $this->validate_billing_period($raw_period);
+                                $primary_billing_period = Woocommerce_Biller_Helper::validate_billing_period($raw_period);
                                 $has_subscription_products = true;
                             }
                             
@@ -276,28 +254,22 @@ class Woocommerce_Subscriptions_Biller {
                 }
             }
             
-            // Add recurring fees as subscription fees
+            // Add recurring fees using helper class
             if (!empty($line_items['recurring_fees'])) {
-                foreach ($line_items['recurring_fees'] as $fee) {
-                    if (!empty($fee['name']) && !empty($fee['amount'])) {
-                        $subscription->add_fee(array(
-                            'name' => $fee['name'],
-                            'amount' => floatval($fee['amount']),
-                            'taxable' => !empty($fee['tax_class']) && $fee['tax_class'] !== 'no-tax',
-                            'tax_class' => !empty($fee['tax_class']) ? $fee['tax_class'] : ''
-                        ));
-                        
-                        // Use recurring fee billing cycle if no subscription products
-                        if (!$has_subscription_products) {
-                            $raw_interval = isset($fee['interval']) ? $fee['interval'] : 1;
-                            $primary_billing_interval = $this->validate_billing_interval($raw_interval);
-                            $raw_period = isset($fee['period']) ? $fee['period'] : 'month';
-                            $primary_billing_period = $this->validate_billing_period($raw_period);
-                        }
+                $fees_added = Woocommerce_Biller_Helper::add_recurring_fees($subscription, $line_items['recurring_fees'], 'subscription_creation');
+                
+                // Use recurring fee billing cycle if no subscription products
+                if (!$has_subscription_products && $fees_added > 0) {
+                    $first_fee = reset($line_items['recurring_fees']);
+                    if (!empty($first_fee)) {
+                        $raw_interval = isset($first_fee['interval']) ? $first_fee['interval'] : 1;
+                        $primary_billing_interval = Woocommerce_Biller_Helper::validate_billing_interval($raw_interval);
+                        $raw_period = isset($first_fee['period']) ? $first_fee['period'] : 'month';
+                        $primary_billing_period = Woocommerce_Biller_Helper::validate_billing_period($raw_period);
                         
                         // Handle start date for recurring fees
-                        if (!empty($fee['start_date'])) {
-                            $start_date = strtotime($fee['start_date']);
+                        if (!empty($first_fee['start_date'])) {
+                            $start_date = strtotime($first_fee['start_date']);
                             if ($start_date) {
                                 $subscription->update_dates(array('start' => date('Y-m-d H:i:s', $start_date)));
                             }
@@ -336,16 +308,16 @@ class Woocommerce_Subscriptions_Biller {
                 sprintf('Successfully created subscription #%d from proposal #%d', 
                     $subscription->get_id(), $proposal_id));
             
-            // Create pending parent order using WooCommerce Subscriptions built-in functionality
-            $parent_order_result = $this->create_pending_parent_order($subscription);
+            // Create pending parent order using helper class for proper linking and fee inclusion
+            $parent_order_result = Woocommerce_Biller_Helper::create_linked_parent_order($subscription, $line_items, $proposal_id);
             
             if (!is_wp_error($parent_order_result)) {
                 Woocommerce_Logs::log_subscription_creation('info', 
-                    sprintf('Successfully created pending parent order #%d for subscription #%d', 
+                    sprintf('Successfully created and linked parent order #%d for subscription #%d with all fees', 
                         $parent_order_result, $subscription->get_id()));
             } else {
                 Woocommerce_Logs::log_subscription_creation('warning', 
-                    sprintf('Failed to create pending parent order for subscription #%d: %s', 
+                    sprintf('Failed to create parent order for subscription #%d: %s', 
                         $subscription->get_id(), $parent_order_result->get_error_message()));
             }
             
@@ -357,156 +329,13 @@ class Woocommerce_Subscriptions_Biller {
     }
     
     /**
-     * Create pending parent order for subscription using WooCommerce Subscriptions built-in functionality
-     * This is the same function that powers the "Create pending parent order" button in admin
-     * 
-     * @param WC_Subscription $subscription The subscription object
-     * @return int|WP_Error Parent order ID on success, WP_Error on failure
-     */
-    private function create_pending_parent_order($subscription) {
-        try {
-            // Ensure we have a valid subscription
-            if (!$subscription || !is_a($subscription, 'WC_Subscription')) {
-                throw new \Exception(__('Invalid subscription object', 'arsol-pfw'));
-            }
-            
-            // Check if subscription already has a parent order
-            $existing_parent_id = $subscription->get_parent_id();
-            if ($existing_parent_id && $existing_parent_id > 0) {
-                Woocommerce_Logs::log_subscription_creation('info', 
-                    sprintf('Subscription #%d already has parent order #%d', 
-                        $subscription->get_id(), $existing_parent_id));
-                return $existing_parent_id;
-            }
-            
-            // Use WooCommerce Subscriptions built-in function to create parent order
-            // This is the same function used by the admin "Create pending parent order" action
-            if (function_exists('wcs_create_order_from_subscription')) {
-                $parent_order = wcs_create_order_from_subscription($subscription, 'parent');
-                
-                if (is_wp_error($parent_order)) {
-                    throw new \Exception($parent_order->get_error_message());
-                }
-                
-                if (!$parent_order || !is_a($parent_order, 'WC_Order')) {
-                    throw new \Exception(__('Failed to create parent order - invalid order object returned', 'arsol-pfw'));
-                }
-                
-                // Set order status to pending
-                $parent_order->set_status('pending');
-                $parent_order->save();
-                
-                Woocommerce_Logs::log_subscription_creation('info', 
-                    sprintf('Created pending parent order #%d for subscription #%d using wcs_create_order_from_subscription', 
-                        $parent_order->get_id(), $subscription->get_id()));
-                
-                return $parent_order->get_id();
-                
-            } else {
-                // Fallback: Manual parent order creation if the function doesn't exist
-                Woocommerce_Logs::log_subscription_creation('warning', 
-                    'wcs_create_order_from_subscription function not available, using manual creation');
-                
-                return $this->create_parent_order_manually($subscription);
-            }
-            
-        } catch (\Exception $e) {
-            return new \WP_Error('parent_order_creation_failed', $e->getMessage());
-        }
-    }
-    
-    /**
-     * Manually create parent order for subscription (fallback method)
-     * 
-     * @param WC_Subscription $subscription The subscription object
-     * @return int|WP_Error Parent order ID on success, WP_Error on failure
-     */
-    private function create_parent_order_manually($subscription) {
-        try {
-            // Create a new order with the same customer and details as subscription
-            $parent_order = wc_create_order(array(
-                'customer_id' => $subscription->get_customer_id(),
-                'status' => 'pending'
-            ));
-            
-            if (is_wp_error($parent_order)) {
-                throw new \Exception($parent_order->get_error_message());
-            }
-            
-            // Copy billing and shipping addresses from subscription
-            $parent_order->set_address($subscription->get_address('billing'), 'billing');
-            $parent_order->set_address($subscription->get_address('shipping'), 'shipping');
-            
-            // Copy line items from subscription to parent order
-            foreach ($subscription->get_items() as $item) {
-                $parent_order->add_item($item);
-            }
-            
-            // Copy fees from subscription to parent order
-            foreach ($subscription->get_fees() as $fee) {
-                $parent_order->add_item($fee);
-            }
-            
-            // Copy shipping from subscription to parent order
-            foreach ($subscription->get_shipping_methods() as $shipping) {
-                $parent_order->add_item($shipping);
-            }
-            
-            // Copy taxes from subscription to parent order
-            foreach ($subscription->get_taxes() as $tax) {
-                $parent_order->add_item($tax);
-            }
-            
-            // Calculate totals
-            $parent_order->calculate_totals();
-            
-            // Link the parent order to the subscription
-            $subscription->set_parent_id($parent_order->get_id());
-            $subscription->save();
-            
-            // Add order note
-            $parent_order->add_order_note(
-                sprintf(__('Parent order created for subscription #%d', 'arsol-pfw'), $subscription->get_id())
-            );
-            
-            $parent_order->save();
-            
-            Woocommerce_Logs::log_subscription_creation('info', 
-                sprintf('Manually created parent order #%d for subscription #%d', 
-                    $parent_order->get_id(), $subscription->get_id()));
-            
-            return $parent_order->get_id();
-            
-        } catch (\Exception $e) {
-            return new \WP_Error('manual_parent_order_creation_failed', $e->getMessage());
-        }
-    }
-    
-    /**
      * Check if line items contain recurring items
      * 
      * @param array $line_items The line items array
      * @return bool True if has recurring items, false otherwise
      */
     private function has_recurring_items($line_items) {
-        // Check for subscription products
-        if (!empty($line_items['products'])) {
-            foreach ($line_items['products'] as $item) {
-                if (!empty($item['product_id'])) {
-                    $product = wc_get_product($item['product_id']);
-                    if ($product && $product->is_type(array('subscription', 'subscription_variation'))) {
-                        return true;
-                    }
-                }
-            }
-        }
-        
-        // Check for recurring fees
-        if (!empty($line_items['recurring_fees'])) {
-            return true;
-        }
-        
-        return false;
+        return Woocommerce_Biller_Helper::has_recurring_items($line_items);
     }
     
     /**
@@ -528,8 +357,8 @@ class Woocommerce_Subscriptions_Biller {
                         $raw_interval = $product->get_meta('_subscription_period_interval') ?: 1;
                         $raw_period = $product->get_meta('_subscription_period') ?: 'month';
                         return array(
-                            'interval' => $this->validate_billing_interval($raw_interval),
-                            'period' => $this->validate_billing_period($raw_period)
+                            'interval' => Woocommerce_Biller_Helper::validate_billing_interval($raw_interval),
+                            'period' => Woocommerce_Biller_Helper::validate_billing_period($raw_period)
                         );
                     }
                 }
@@ -543,8 +372,8 @@ class Woocommerce_Subscriptions_Biller {
                 $raw_interval = isset($first_fee['interval']) ? $first_fee['interval'] : 1;
                 $raw_period = isset($first_fee['period']) ? $first_fee['period'] : 'month';
                 return array(
-                    'interval' => $this->validate_billing_interval($raw_interval),
-                    'period' => $this->validate_billing_period($raw_period)
+                    'interval' => Woocommerce_Biller_Helper::validate_billing_interval($raw_interval),
+                    'period' => Woocommerce_Biller_Helper::validate_billing_period($raw_period)
                 );
             }
         }
