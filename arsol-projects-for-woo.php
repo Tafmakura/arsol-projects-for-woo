@@ -49,6 +49,10 @@ use Arsol_Projects_For_Woo\Workflow\Workflow_Handler;
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
+// Include the helper classes
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-helper.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-helper.php';
+
 // Include the admin settings class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
 

@@ -56,18 +56,12 @@ $all_statuses = get_terms(array(
         <select id="project_lead" name="project_lead" class="wc-enhanced-select">
             <option value=""><?php _e('— Select —', 'arsol-pfw'); ?></option>
             <?php
-            // Use the Admin\Users helper to build the list of valid project leads
-            $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
-
-            // Fetch all users who can create projects according to plugin permissions
-            $potential_leads = get_users(array('fields' => array('ID', 'display_name')));
-
-            foreach ($potential_leads as $user) {
-                if ($admin_users_helper->can_user_create_projects($user->ID)) {
-                    echo '<option value="' . esc_attr($user->ID) . '"' . selected($project_lead, $user->ID, false) . '>';
-                    echo esc_html($user->display_name);
-                    echo '</option>';
-                }
+            // Use the Helper class to generate project lead options
+            $project_leads = \Arsol_Projects_For_Woo\Helper::get_project_leads();
+            foreach ($project_leads as $user) {
+                echo '<option value="' . esc_attr($user->ID) . '"' . selected($project_lead, $user->ID, false) . '>';
+                echo esc_html($user->display_name);
+                echo '</option>';
             }
             ?>
         </select>
