@@ -346,7 +346,7 @@ class Woocommerce_Biller_Helper {
             $parent_order->save();
             
             Woocommerce_Logs::log_subscription_creation('info', 
-                sprintf('Successfully linked parent order #%d to subscription #%d with all fees', 
+                sprintf('Created and linked parent order #%d for subscription #%d with all fees', 
                     $parent_order->get_id(), $subscription->get_id()));
             
             // Log order breakdown
