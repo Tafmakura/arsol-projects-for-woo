@@ -51,45 +51,11 @@ class Woocommerce_Helper {
                 'ID' => $user->ID,
                 'user_login' => $user->user_login,
                 'user_email' => $user->user_email,
-                'display_name' => self::format_customer_display_name($user->ID)
+                'display_name' => Helper::format_user_display_name($user->ID, true)
             );
         }
         
         return $customers;
-    }
-    
-    /**
-     * Format customer display name for dropdowns
-     * Format: "First Last (#ID - email@example.com)"
-     * 
-     * @param int $user_id User ID
-     * @return string Formatted customer display name
-     */
-    public static function format_customer_display_name($user_id) {
-        $first_name = get_user_meta($user_id, 'first_name', true);
-        $last_name = get_user_meta($user_id, 'last_name', true);
-        $user = get_userdata($user_id);
-        
-        if (!$user) {
-            return '';
-        }
-        
-        // Create display name from first + last name
-        $display_name = '';
-        if (!empty($first_name) || !empty($last_name)) {
-            $display_name = trim($first_name . ' ' . $last_name);
-        } else {
-            $display_name = $user->user_login;
-        }
-        
-        // Add user ID and email in the specified format: "Name (#ID - email)"
-        if (!empty($user->user_email)) {
-            $display_name .= ' (#' . $user->ID . ' - ' . $user->user_email . ')';
-        } else {
-            $display_name .= ' (#' . $user->ID . ')';
-        }
-        
-        return $display_name;
     }
     
     /**
