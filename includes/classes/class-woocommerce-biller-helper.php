@@ -26,8 +26,7 @@ class Woocommerce_Biller_Helper {
             return new \WP_Error('invalid_proposal', __('Invalid proposal ID', 'arsol-pfw'));
         }
         
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
-        
+        $line_items = get_post_meta($proposal_id, 'line_items', true);
         if (empty($line_items)) {
             return new \WP_Error('no_line_items', __('No line items found in proposal', 'arsol-pfw'));
         }

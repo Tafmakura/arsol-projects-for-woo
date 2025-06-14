@@ -845,7 +845,11 @@ class Woocommerce {
         }
         
         // Check if we have line items
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
+        $line_items = get_post_meta($proposal_id, 'line_items', true);
+        if (empty($line_items)) {
+            // Try alternative meta key
+            $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
+        }
         
         if (empty($line_items)) {
             update_post_meta($project_id, '_project_order_creation_error', 
