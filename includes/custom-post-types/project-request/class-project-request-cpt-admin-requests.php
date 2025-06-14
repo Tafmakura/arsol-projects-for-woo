@@ -91,7 +91,26 @@ class Requests {
 
             // Customer filter
             $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
-            echo \Arsol_Projects_For_Woo\Woocommerce_Helper::generate_customer_dropdown('customer', $current_customer);
+            $customers = get_users(array(
+                'orderby' => 'display_name',
+                'order' => 'ASC',
+                'fields' => array('ID', 'user_login', 'user_email')
+            ));
+            echo '<select name="customer" id="filter-by-customer" class="wc-customer-search select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by customer', 'arsol-pfw') . '" data-allow_clear="true">';
+            echo '<option value="">' . __('Filter by customer', 'arsol-pfw') . '</option>';
+            foreach ($customers as $customer) {
+                $label = esc_html($customer->user_login);
+                if (!empty($customer->user_email)) {
+                    $label .= ' (' . esc_html($customer->user_email) . ')';
+                }
+                printf(
+                    '<option value="%s" %s>%s</option>',
+                    esc_attr($customer->ID),
+                    selected($current_customer, $customer->ID, false),
+                    $label
+                );
+            }
+            echo '</select>';
 
             // Enqueue WooCommerce select2
             wp_enqueue_script('select2');
