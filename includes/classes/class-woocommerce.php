@@ -33,9 +33,6 @@ class Woocommerce {
 
         // Add project to subscription details table (WooCommerce Subscriptions)
         add_action('woocommerce_subscription_details_after_subscription_table', array($this, 'display_project_details'));
-        
-        // Hook into proposal conversion to create orders/subscriptions
-        add_action('arsol_proposal_converted_to_project', array($this, 'handle_proposal_billing'), 10, 2);
     }
 
     public function init() {
@@ -825,118 +822,6 @@ class Woocommerce {
      */
     public static function get_order($order_id) {
         return wc_get_order($order_id);
-    }
-
-    /**
-     * Handle proposal billing when a proposal is converted to a project
-     *
-     * @param int $project_id Project ID  
-     * @param int $proposal_id Proposal ID
-     */
-    public function handle_proposal_billing($project_id, $proposal_id) {
-        // Check if we should create orders for this proposal
-        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
-        
-        if ($cost_proposal_type !== 'invoice_line_items') {
-            Woocommerce_Logs::log_conversion('info', 
-                sprintf('Skipping order creation for proposal #%d - cost type is %s, not invoice_line_items', 
-                    $proposal_id, $cost_proposal_type));
-            return;
-        }
-        
-        // Check if we have line items
-        $line_items = get_post_meta($proposal_id, 'line_items', true);
-        if (empty($line_items)) {
-            // Try alternative meta key
-            $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
-        }
-        
-        if (empty($line_items)) {
-            update_post_meta($project_id, '_project_order_creation_error', 
-                'No line items found in proposal');
-            Woocommerce_Logs::log_conversion('error', 
-                sprintf('No line items found for proposal #%d', $proposal_id));
-            return;
-        }
-        
-        Woocommerce_Logs::log_conversion('info', 
-            sprintf('Starting billing process for proposal #%d -> project #%d', $proposal_id, $project_id));
-        
-        // Determine what to create based on line items
-        $has_one_time_items = !empty($line_items['products']) || 
-                             !empty($line_items['one_time_fees']) || 
-                             !empty($line_items['shipping_fees']);
-        $has_recurring_items = !empty($line_items['recurring_fees']);
-        
-        try {
-            if ($has_one_time_items && $has_recurring_items) {
-                // Create order + subscription
-                $result = Woocommerce_Biller::create_order_with_subscription($proposal_id);
-                
-                if (is_wp_error($result)) {
-                    update_post_meta($project_id, '_project_order_creation_error', $result->get_error_message());
-                    Woocommerce_Logs::log_conversion('error', 
-                        sprintf('Order+Subscription creation failed for proposal #%d: %s', 
-                            $proposal_id, $result->get_error_message()));
-                } else {
-                    update_post_meta($project_id, '_project_order_creation_note', 
-                        sprintf('Order #%d created with total $%.2f', $result['order_id'], $result['order_total']));
-                    update_post_meta($project_id, '_project_subscription_creation_note', 
-                        sprintf('Subscription #%d created with total $%.2f', $result['subscription_id'], $result['subscription_total']));
-                    
-                    Woocommerce_Logs::log_conversion('success', 
-                        sprintf('Order #%d and Subscription #%d created for proposal #%d', 
-                            $result['order_id'], $result['subscription_id'], $proposal_id));
-                }
-                
-            } elseif ($has_recurring_items) {
-                // Create subscription only
-                $result = Woocommerce_Subscriptions_Biller::create_subscription($proposal_id);
-                
-                if (is_wp_error($result)) {
-                    update_post_meta($project_id, '_project_subscription_creation_error', $result->get_error_message());
-                    Woocommerce_Logs::log_conversion('error', 
-                        sprintf('Subscription creation failed for proposal #%d: %s', 
-                            $proposal_id, $result->get_error_message()));
-                } else {
-                    update_post_meta($project_id, '_project_subscription_creation_note', 
-                        sprintf('Subscription #%d created with total $%.2f', $result['subscription_id'], $result['subscription_total']));
-                    
-                    Woocommerce_Logs::log_conversion('success', 
-                        sprintf('Subscription #%d created for proposal #%d', 
-                            $result['subscription_id'], $proposal_id));
-                }
-                
-            } elseif ($has_one_time_items) {
-                // Create order only
-                $result = Woocommerce_Biller::create_order($proposal_id);
-                
-                if (is_wp_error($result)) {
-                    update_post_meta($project_id, '_project_order_creation_error', $result->get_error_message());
-                    Woocommerce_Logs::log_conversion('error', 
-                        sprintf('Order creation failed for proposal #%d: %s', 
-                            $proposal_id, $result->get_error_message()));
-                } else {
-                    update_post_meta($project_id, '_project_order_creation_note', 
-                        sprintf('Order #%d created with total $%.2f', $result['order_id'], $result['order_total']));
-                    
-                    Woocommerce_Logs::log_conversion('success', 
-                        sprintf('Order #%d created for proposal #%d', 
-                            $result['order_id'], $proposal_id));
-                }
-                
-            } else {
-                update_post_meta($project_id, '_project_order_creation_error', 
-                    'No billable items found in proposal');
-                Woocommerce_Logs::log_conversion('warning', 
-                    sprintf('No billable items found for proposal #%d', $proposal_id));
-            }
-            
-        } catch (Exception $e) {
-            $error_message = sprintf('Billing process failed for proposal #%d: %s', $proposal_id, $e->getMessage());
-            update_post_meta($project_id, '_project_order_creation_error', $error_message);
-            Woocommerce_Logs::log_conversion('error', $error_message);
-        }
     }
 
 }

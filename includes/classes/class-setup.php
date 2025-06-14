@@ -74,8 +74,8 @@ class Setup {
         new Shortcodes();
         new Woocommerce();
         new Woocommerce_Subscriptions();
-        // Note: Woocommerce_Biller_Helper, Woocommerce_Biller, and Woocommerce_Subscriptions_Biller 
-        // are static utility classes - they don't need to be instantiated
+        new Woocommerce_Biller();
+        new Woocommerce_Subscriptions_Biller();
         new Assets();
         new Woocommerce\Frontend_Endpoints();
         new Frontend_Woocommerce_Checkout();
