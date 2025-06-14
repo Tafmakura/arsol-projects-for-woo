@@ -332,10 +332,153 @@ class Woocommerce_Subscriptions_Biller {
             $subscription->update_meta_data('_arsol_proposal_id', $proposal_id);
             $subscription->save();
             
+            Woocommerce_Logs::log_subscription_creation('info', 
+                sprintf('Successfully created subscription #%d from proposal #%d', 
+                    $subscription->get_id(), $proposal_id));
+            
+            // Create pending parent order using WooCommerce Subscriptions built-in functionality
+            $parent_order_result = $this->create_pending_parent_order($subscription);
+            
+            if (!is_wp_error($parent_order_result)) {
+                Woocommerce_Logs::log_subscription_creation('info', 
+                    sprintf('Successfully created pending parent order #%d for subscription #%d', 
+                        $parent_order_result, $subscription->get_id()));
+            } else {
+                Woocommerce_Logs::log_subscription_creation('warning', 
+                    sprintf('Failed to create pending parent order for subscription #%d: %s', 
+                        $subscription->get_id(), $parent_order_result->get_error_message()));
+            }
+            
             return $subscription->get_id();
             
         } catch (\Exception $e) {
             return new \WP_Error('subscription_creation_failed', $e->getMessage());
+        }
+    }
+    
+    /**
+     * Create pending parent order for subscription using WooCommerce Subscriptions built-in functionality
+     * This is the same function that powers the "Create pending parent order" button in admin
+     * 
+     * @param WC_Subscription $subscription The subscription object
+     * @return int|WP_Error Parent order ID on success, WP_Error on failure
+     */
+    private function create_pending_parent_order($subscription) {
+        try {
+            // Ensure we have a valid subscription
+            if (!$subscription || !is_a($subscription, 'WC_Subscription')) {
+                throw new \Exception(__('Invalid subscription object', 'arsol-pfw'));
+            }
+            
+            // Check if subscription already has a parent order
+            $existing_parent_id = $subscription->get_parent_id();
+            if ($existing_parent_id && $existing_parent_id > 0) {
+                Woocommerce_Logs::log_subscription_creation('info', 
+                    sprintf('Subscription #%d already has parent order #%d', 
+                        $subscription->get_id(), $existing_parent_id));
+                return $existing_parent_id;
+            }
+            
+            // Use WooCommerce Subscriptions built-in function to create parent order
+            // This is the same function used by the admin "Create pending parent order" action
+            if (function_exists('wcs_create_order_from_subscription')) {
+                $parent_order = wcs_create_order_from_subscription($subscription, 'parent');
+                
+                if (is_wp_error($parent_order)) {
+                    throw new \Exception($parent_order->get_error_message());
+                }
+                
+                if (!$parent_order || !is_a($parent_order, 'WC_Order')) {
+                    throw new \Exception(__('Failed to create parent order - invalid order object returned', 'arsol-pfw'));
+                }
+                
+                // Set order status to pending
+                $parent_order->set_status('pending');
+                $parent_order->save();
+                
+                Woocommerce_Logs::log_subscription_creation('info', 
+                    sprintf('Created pending parent order #%d for subscription #%d using wcs_create_order_from_subscription', 
+                        $parent_order->get_id(), $subscription->get_id()));
+                
+                return $parent_order->get_id();
+                
+            } else {
+                // Fallback: Manual parent order creation if the function doesn't exist
+                Woocommerce_Logs::log_subscription_creation('warning', 
+                    'wcs_create_order_from_subscription function not available, using manual creation');
+                
+                return $this->create_parent_order_manually($subscription);
+            }
+            
+        } catch (\Exception $e) {
+            return new \WP_Error('parent_order_creation_failed', $e->getMessage());
+        }
+    }
+    
+    /**
+     * Manually create parent order for subscription (fallback method)
+     * 
+     * @param WC_Subscription $subscription The subscription object
+     * @return int|WP_Error Parent order ID on success, WP_Error on failure
+     */
+    private function create_parent_order_manually($subscription) {
+        try {
+            // Create a new order with the same customer and details as subscription
+            $parent_order = wc_create_order(array(
+                'customer_id' => $subscription->get_customer_id(),
+                'status' => 'pending'
+            ));
+            
+            if (is_wp_error($parent_order)) {
+                throw new \Exception($parent_order->get_error_message());
+            }
+            
+            // Copy billing and shipping addresses from subscription
+            $parent_order->set_address($subscription->get_address('billing'), 'billing');
+            $parent_order->set_address($subscription->get_address('shipping'), 'shipping');
+            
+            // Copy line items from subscription to parent order
+            foreach ($subscription->get_items() as $item) {
+                $parent_order->add_item($item);
+            }
+            
+            // Copy fees from subscription to parent order
+            foreach ($subscription->get_fees() as $fee) {
+                $parent_order->add_item($fee);
+            }
+            
+            // Copy shipping from subscription to parent order
+            foreach ($subscription->get_shipping_methods() as $shipping) {
+                $parent_order->add_item($shipping);
+            }
+            
+            // Copy taxes from subscription to parent order
+            foreach ($subscription->get_taxes() as $tax) {
+                $parent_order->add_item($tax);
+            }
+            
+            // Calculate totals
+            $parent_order->calculate_totals();
+            
+            // Link the parent order to the subscription
+            $subscription->set_parent_id($parent_order->get_id());
+            $subscription->save();
+            
+            // Add order note
+            $parent_order->add_order_note(
+                sprintf(__('Parent order created for subscription #%d', 'arsol-pfw'), $subscription->get_id())
+            );
+            
+            $parent_order->save();
+            
+            Woocommerce_Logs::log_subscription_creation('info', 
+                sprintf('Manually created parent order #%d for subscription #%d', 
+                    $parent_order->get_id(), $subscription->get_id()));
+            
+            return $parent_order->get_id();
+            
+        } catch (\Exception $e) {
+            return new \WP_Error('manual_parent_order_creation_failed', $e->getMessage());
         }
     }
     

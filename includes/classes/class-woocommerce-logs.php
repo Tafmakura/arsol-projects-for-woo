@@ -249,4 +249,119 @@ class Woocommerce_Logs {
         
         return $debug_info;
     }
+    
+    /**
+     * Debug function to test proposal conversion with detailed logging
+     * 
+     * @param int $proposal_id The proposal ID to test
+     * @return array Debug information
+     */
+    public static function debug_proposal_conversion_detailed($proposal_id) {
+        $debug_info = array();
+        
+        self::log_conversion('info', sprintf('=== DETAILED DEBUG ANALYSIS FOR PROPOSAL #%d ===', $proposal_id));
+        
+        // Check proposal exists
+        $proposal = get_post($proposal_id);
+        $debug_info['proposal_exists'] = !empty($proposal);
+        $debug_info['proposal_type'] = $proposal ? $proposal->post_type : 'N/A';
+        $debug_info['proposal_status'] = $proposal ? $proposal->post_status : 'N/A';
+        $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
+        
+        self::log_conversion('info', sprintf('Proposal exists: %s, Type: %s, Status: %s, Author: %s', 
+            $debug_info['proposal_exists'] ? 'YES' : 'NO',
+            $debug_info['proposal_type'],
+            $debug_info['proposal_status'],
+            $debug_info['proposal_author']));
+        
+        // Check cost proposal type
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
+        $debug_info['cost_proposal_type'] = $cost_proposal_type;
+        $debug_info['should_create_orders'] = ($cost_proposal_type === 'invoice_line_items');
+        
+        self::log_conversion('info', sprintf('Cost proposal type: %s, Should create orders: %s', 
+            $cost_proposal_type, $debug_info['should_create_orders'] ? 'YES' : 'NO'));
+        
+        // Check line items in detail
+        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
+        $debug_info['has_line_items'] = !empty($line_items);
+        
+        if (!empty($line_items)) {
+            $debug_info['line_items_structure'] = array_keys($line_items);
+            
+            // Analyze each section
+            foreach (['products', 'one_time_fees', 'recurring_fees', 'shipping_fees'] as $section) {
+                if (!empty($line_items[$section])) {
+                    $debug_info[$section . '_count'] = count($line_items[$section]);
+                    $debug_info[$section . '_details'] = array();
+                    
+                    foreach ($line_items[$section] as $key => $item) {
+                        $item_debug = array('key' => $key);
+                        
+                        if ($section === 'products') {
+                            $item_debug['product_id'] = $item['product_id'] ?? 'missing';
+                            $item_debug['quantity'] = $item['quantity'] ?? 'missing';
+                            $item_debug['price'] = $item['price'] ?? 'missing';
+                            $item_debug['sale_price'] = $item['sale_price'] ?? 'empty';
+                            
+                            if (!empty($item['product_id'])) {
+                                $product = wc_get_product($item['product_id']);
+                                $item_debug['product_exists'] = !empty($product);
+                                $item_debug['product_type'] = $product ? $product->get_type() : 'N/A';
+                                $item_debug['is_subscription'] = $product ? $product->is_type(array('subscription', 'subscription_variation')) : false;
+                            }
+                        } elseif ($section === 'one_time_fees') {
+                            $item_debug['name'] = $item['name'] ?? 'empty';
+                            $item_debug['amount'] = $item['amount'] ?? 'missing';
+                            $item_debug['tax_class'] = $item['tax_class'] ?? 'missing';
+                            $item_debug['amount_valid'] = (!empty($item['amount']) && floatval($item['amount']) > 0);
+                        } elseif ($section === 'recurring_fees') {
+                            $item_debug['name'] = $item['name'] ?? 'empty';
+                            $item_debug['amount'] = $item['amount'] ?? 'missing';
+                            $item_debug['interval'] = $item['interval'] ?? 'missing';
+                            $item_debug['period'] = $item['period'] ?? 'missing';
+                            $item_debug['amount_valid'] = (!empty($item['amount']) && floatval($item['amount']) > 0);
+                        } elseif ($section === 'shipping_fees') {
+                            $item_debug['description'] = $item['description'] ?? 'empty';
+                            $item_debug['amount'] = $item['amount'] ?? 'missing';
+                            $item_debug['amount_valid'] = (!empty($item['amount']) && floatval($item['amount']) > 0);
+                        }
+                        
+                        $debug_info[$section . '_details'][] = $item_debug;
+                    }
+                    
+                    self::log_conversion('info', sprintf('%s (%d items): %s', 
+                        ucwords(str_replace('_', ' ', $section)), 
+                        $debug_info[$section . '_count'],
+                        wp_json_encode($debug_info[$section . '_details'])));
+                } else {
+                    $debug_info[$section . '_count'] = 0;
+                    self::log_conversion('info', sprintf('%s: NONE', ucwords(str_replace('_', ' ', $section))));
+                }
+            }
+        } else {
+            self::log_conversion('error', 'NO LINE ITEMS FOUND');
+        }
+        
+        // Check if customer exists
+        if ($proposal) {
+            $customer = new \WC_Customer($proposal->post_author);
+            $debug_info['customer_exists'] = $customer && $customer->get_id();
+            $debug_info['customer_email'] = $customer ? $customer->get_billing_email() : 'N/A';
+            
+            self::log_conversion('info', sprintf('Customer #%d exists: %s, Email: %s', 
+                $proposal->post_author, 
+                $debug_info['customer_exists'] ? 'YES' : 'NO',
+                $debug_info['customer_email']));
+        }
+        
+        // Check WooCommerce Subscriptions
+        $debug_info['wc_subscriptions_active'] = class_exists('WC_Subscriptions') && function_exists('wcs_create_subscription');
+        self::log_conversion('info', sprintf('WooCommerce Subscriptions active: %s', 
+            $debug_info['wc_subscriptions_active'] ? 'YES' : 'NO'));
+        
+        self::log_conversion('info', '=== END DETAILED DEBUG ANALYSIS ===');
+        
+        return $debug_info;
+    }
 } 

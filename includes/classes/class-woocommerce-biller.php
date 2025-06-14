@@ -193,9 +193,19 @@ class Woocommerce_Biller {
                         count($line_items['one_time_fees']), $proposal_id));
                 
                 foreach ($line_items['one_time_fees'] as $fee) {
-                    if (!empty($fee['name']) && !empty($fee['amount'])) {
+                    // Check if fee has an amount (name can be empty)
+                    if (!empty($fee['amount']) && floatval($fee['amount']) > 0) {
+                        $fee_name = !empty($fee['name']) 
+                            ? $fee['name'] 
+                            : __('Additional Fee', 'arsol-pfw');
+                        
+                        Woocommerce_Logs::log_order_creation('debug', 
+                            sprintf('Adding fee to order #%d: Name="%s", Amount=%s, Tax Class=%s', 
+                                $order->get_id(), $fee_name, $fee['amount'], 
+                                isset($fee['tax_class']) ? $fee['tax_class'] : 'none'));
+                            
                         $order->add_fee(array(
-                            'name' => $fee['name'],
+                            'name' => $fee_name,
                             'amount' => floatval($fee['amount']),
                             'taxable' => !empty($fee['tax_class']) && $fee['tax_class'] !== 'no-tax',
                             'tax_class' => !empty($fee['tax_class']) ? $fee['tax_class'] : ''
@@ -205,7 +215,11 @@ class Woocommerce_Biller {
                         
                         Woocommerce_Logs::log_order_creation('info', 
                             sprintf('Added fee "%s" (%s) to order #%d', 
-                                $fee['name'], wc_price($fee['amount']), $order->get_id()));
+                                $fee_name, wc_price($fee['amount']), $order->get_id()));
+                    } else {
+                        Woocommerce_Logs::log_order_creation('warning', 
+                            sprintf('Skipped fee with invalid amount: %s', 
+                                wp_json_encode($fee)));
                     }
                 }
             }
@@ -217,9 +231,14 @@ class Woocommerce_Biller {
                         count($line_items['shipping_fees']), $proposal_id));
                 
                 foreach ($line_items['shipping_fees'] as $shipping) {
-                    if (!empty($shipping['description']) && !empty($shipping['amount'])) {
+                    // Check if shipping has an amount (description can be empty)
+                    if (!empty($shipping['amount']) && floatval($shipping['amount']) > 0) {
+                        $shipping_title = !empty($shipping['description']) 
+                            ? $shipping['description'] 
+                            : __('Shipping Fee', 'arsol-pfw');
+                            
                         $order->add_shipping(array(
-                            'method_title' => $shipping['description'],
+                            'method_title' => $shipping_title,
                             'method_id' => 'arsol_proposal_shipping',
                             'total' => floatval($shipping['amount'])
                         ));
@@ -228,7 +247,11 @@ class Woocommerce_Biller {
                         
                         Woocommerce_Logs::log_order_creation('info', 
                             sprintf('Added shipping "%s" (%s) to order #%d', 
-                                $shipping['description'], wc_price($shipping['amount']), $order->get_id()));
+                                $shipping_title, wc_price($shipping['amount']), $order->get_id()));
+                    } else {
+                        Woocommerce_Logs::log_order_creation('warning', 
+                            sprintf('Skipped shipping fee with invalid amount: %s', 
+                                wp_json_encode($shipping)));
                     }
                 }
             }
@@ -242,6 +265,15 @@ class Woocommerce_Biller {
             
             // Calculate totals
             $order->calculate_totals();
+            
+            // Log detailed order breakdown for debugging
+            Woocommerce_Logs::log_order_creation('debug', 
+                sprintf('Order #%d breakdown - Subtotal: %s, Total: %s, Fee Total: %s, Shipping Total: %s', 
+                    $order->get_id(), 
+                    wc_price($order->get_subtotal()), 
+                    wc_price($order->get_total()),
+                    wc_price($order->get_total_fees()),
+                    wc_price($order->get_shipping_total())));
             
             Woocommerce_Logs::log_order_creation('info', 
                 sprintf('Order #%d total calculated: %s (%d items)', 
