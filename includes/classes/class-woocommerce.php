@@ -10,7 +10,7 @@ class Woocommerce {
     /**
      * Meta key used for storing project data
      */
-    const PROJECT_META_KEY = '_wc_other/arsol-projects-for-woo/arsol-project';
+    const PROJECT_META_KEY = '_arsol_project_id';
 
     public function __construct() {
         // Initialize hooks
@@ -791,6 +791,37 @@ class Woocommerce {
         $results->max_num_pages = $subscriptions_query->max_num_pages;
         
         return $results;
+    }
+
+    /**
+     * Check if a post/ID is a WooCommerce order (HPOS compatible)
+     * 
+     * @param int $post_id Post/Order ID
+     * @return bool True if it's a WooCommerce order, false otherwise
+     */
+    public static function is_wc_order($post_id = 0) {
+        if (empty($post_id)) {
+            return false;
+        }
+        
+        // Use HPOS-compatible method if available
+        if (class_exists('\Automattic\WooCommerce\Utilities\OrderUtil')) {
+            return 'shop_order' === \Automattic\WooCommerce\Utilities\OrderUtil::get_order_type($post_id);
+        }
+        
+        // Fallback for older WooCommerce versions
+        $post = get_post($post_id);
+        return $post && 'shop_order' === $post->post_type;
+    }
+    
+    /**
+     * Get order object in HPOS-compatible way
+     * 
+     * @param int $order_id Order ID
+     * @return WC_Order|false Order object or false if not found
+     */
+    public static function get_order($order_id) {
+        return wc_get_order($order_id);
     }
 
 }

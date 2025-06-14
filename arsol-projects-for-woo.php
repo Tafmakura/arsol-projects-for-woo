@@ -93,4 +93,11 @@ function arsol_projects_init() {
     // Instantiate the Workflow_Handler class
     new Workflow_Handler();
 }
-add_action('plugins_loaded', 'arsol_projects_init'); 
+add_action('plugins_loaded', 'arsol_projects_init');
+
+// Declare HPOS compatibility
+add_action('before_woocommerce_init', function() {
+    if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+    }
+}); 
