@@ -267,46 +267,5 @@ class Woocommerce_Subscriptions_Biller {
         }
     }
     
-    /**
-     * Get subscription status options
-     * 
-     * @return array Status options
-     */
-    public static function get_subscription_statuses() {
-        if (!self::is_subscriptions_active()) {
-            return array();
-        }
-        
-        return wcs_get_subscription_statuses();
-    }
-    
-    /**
-     * Get billing period options
-     * 
-     * @return array Billing period options
-     */
-    public static function get_billing_periods() {
-        return array(
-            'day' => __('Day', 'arsol-pfw'),
-            'week' => __('Week', 'arsol-pfw'),
-            'month' => __('Month', 'arsol-pfw'),
-            'year' => __('Year', 'arsol-pfw')
-        );
-    }
-    
-    /**
-     * Get billing interval options
-     * 
-     * @return array Billing interval options
-     */
-    public static function get_billing_intervals() {
-        return array(
-            1 => __('Every', 'arsol-pfw'),
-            2 => __('Every 2nd', 'arsol-pfw'),
-            3 => __('Every 3rd', 'arsol-pfw'),
-            4 => __('Every 4th', 'arsol-pfw'),
-            5 => __('Every 5th', 'arsol-pfw'),
-            6 => __('Every 6th', 'arsol-pfw')
-        );
-    }
+
 }

@@ -363,7 +363,7 @@ class Woocommerce_Biller_Helper {
                     $period = sanitize_text_field($fee['period']);
                     
                     // Validate interval and period
-                    if (self::validate_billing_interval($interval) && self::validate_billing_period($period)) {
+                    if ($interval >= 1 && $interval <= 6 && in_array($period, array('day', 'week', 'month', 'year'))) {
                         $schedule['interval'] = $interval;
                         $schedule['period'] = $period;
                         break; // Use first valid schedule found
@@ -376,38 +376,13 @@ class Woocommerce_Biller_Helper {
     }
     
     /**
-     * Check if line items contain recurring items
+     * Check if line items have recurring items
      * 
      * @param array $line_items Line items array
      * @return bool True if has recurring items
      */
     public static function has_recurring_items($line_items) {
-        if (empty($line_items) || !is_array($line_items)) {
-            return false;
-        }
-        
-        return !empty($line_items['recurring_fees']);
+        return !empty($line_items['recurring_fees']) && is_array($line_items['recurring_fees']);
     }
-    
-    /**
-     * Validate billing interval
-     * 
-     * @param int $interval Billing interval
-     * @return bool Valid interval
-     */
-    public static function validate_billing_interval($interval) {
-        $valid_intervals = array(1, 2, 3, 4, 5, 6);
-        return in_array(intval($interval), $valid_intervals);
-    }
-    
-    /**
-     * Validate billing period
-     * 
-     * @param string $period Billing period
-     * @return bool Valid period
-     */
-    public static function validate_billing_period($period) {
-        $valid_periods = array('day', 'week', 'month', 'year');
-        return in_array($period, $valid_periods);
-    }
+
 }
