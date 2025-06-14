@@ -39,92 +39,31 @@ class Woocommerce_Helper {
     }
     
     /**
-     * Generate customer dropdown HTML using native WordPress function
-     * 
-     * @param string $name Field name
-     * @param int|string $selected Selected value  
-     * @param array $attributes Additional HTML attributes
-     * @param string $placeholder Custom placeholder text
-     * @return string HTML dropdown
-     */
-    public static function generate_customer_dropdown($name, $selected = '', $attributes = array(), $placeholder = '') {
-        // Use appropriate placeholder based on context
-        $default_placeholder = $placeholder ? $placeholder : __('Filter by customer', 'arsol-pfw');
-        
-        // Use native wp_dropdown_users function with customer filtering
-        $dropdown_args = array(
-            'name' => $name,
-            'selected' => $selected,
-            'echo' => false,
-            'show_option_none' => $default_placeholder,
-            'option_none_value' => '',
-            'show' => 'display_name',
-            'role__in' => array('customer', 'shop_manager', 'administrator'),
-            'orderby' => 'display_name',
-            'order' => 'ASC',
-            'class' => 'wc-customer-search enhanced'
-        );
-        
-        // Merge with provided attributes
-        if (!empty($attributes['class'])) {
-            $dropdown_args['class'] .= ' ' . $attributes['class'];
-        }
-        
-        $dropdown_html = wp_dropdown_users($dropdown_args);
-        
-        // Add Select2 data attributes for enhanced functionality
-        $dropdown_html = str_replace(
-            '<select',
-            '<select data-placeholder="' . esc_attr($default_placeholder) . '" data-allow_clear="true"',
-            $dropdown_html
-        );
-        
-        return $dropdown_html;
-    }
-    
-    /**
-     * Generate enhanced customer search dropdown for edit screens
-     * Uses WooCommerce's native AJAX customer search functionality
+     * Generate customer dropdown HTML
      * 
      * @param string $name Field name
      * @param int|string $selected Selected value
-     * @param string $placeholder Custom placeholder text
      * @param array $attributes Additional HTML attributes
-     * @return string HTML dropdown with AJAX search
+     * @return string HTML dropdown
      */
-    public static function generate_customer_search_dropdown($name, $selected = '', $placeholder = '', $attributes = array()) {
-        // Default placeholder for search context
-        $default_placeholder = $placeholder ? $placeholder : __('Search for customer...', 'arsol-pfw');
-        
+    public static function generate_customer_dropdown($name, $selected = '', $attributes = array()) {
         $default_attributes = array(
-            'class' => 'wc-customer-search enhanced',
-            'data-placeholder' => $default_placeholder,
-            'data-allow_clear' => 'true',
-            'data-action' => 'woocommerce_json_search_customers',
-            'data-nonce' => wp_create_nonce('search-customers')
+            'id' => 'filter-by-customer',
+            'class' => 'wc-customer-search select2-hidden-accessible enhanced',
+            'data-placeholder' => __('Filter by customer', 'arsol-pfw'),
+            'data-allow_clear' => 'true'
         );
         
-        $merged_attributes = array_merge($default_attributes, $attributes);
-        $attribute_string = '';
+        $attributes = array_merge($default_attributes, $attributes);
+        $customers = self::get_customers();
         
-        foreach ($merged_attributes as $attr_name => $attr_value) {
-            $attribute_string .= ' ' . esc_attr($attr_name) . '="' . esc_attr($attr_value) . '"';
-        }
-        
-        $html = '<select name="' . esc_attr($name) . '"' . $attribute_string . '>';
-        
-        // Add default option
-        $html .= '<option value="">' . esc_html($default_placeholder) . '</option>';
-        
-        // Add selected customer if provided
-        if (!empty($selected)) {
-            $customer_display = self::format_customer_display_name($selected);
-            $html .= '<option value="' . esc_attr($selected) . '" selected="selected">' . esc_html($customer_display) . '</option>';
-        }
-        
-        $html .= '</select>';
-        
-        return $html;
+        return Helper::generate_user_dropdown(
+            $name, 
+            $customers, 
+            $selected, 
+            __('Filter by customer', 'arsol-pfw'), 
+            $attributes
+        );
     }
     
     /**
