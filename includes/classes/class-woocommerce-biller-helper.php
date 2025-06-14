@@ -150,16 +150,18 @@ class Woocommerce_Biller_Helper {
                 
                 $shipping_amount = floatval($shipping['amount']);
                 
-                $order->add_shipping(array(
-                    'method_title' => $shipping_title,
-                    'method_id' => 'arsol_proposal_shipping',
-                    'total' => $shipping_amount
+                // Add shipping as fee instead of shipping item to avoid HPOS compatibility issues
+                $order->add_fee(array(
+                    'name' => $shipping_title . ' (Shipping)',
+                    'amount' => $shipping_amount,
+                    'taxable' => false,
+                    'tax_class' => ''
                 ));
                 
                 $shipping_added++;
                 
                 Woocommerce_Logs::log($log_source, 'info', 
-                    sprintf('Added shipping "%s" (%s) to order #%d', 
+                    sprintf('Added shipping "%s" (%s) as fee to order #%d', 
                         $shipping_title, wc_price($shipping_amount), $order->get_id()));
             } else {
                 Woocommerce_Logs::log($log_source, 'warning', 
@@ -314,14 +316,37 @@ class Woocommerce_Biller_Helper {
                         $parent_order->get_id()));
             }
             
+            // Debug: Log line items structure for fee processing
+            Woocommerce_Logs::log_subscription_creation('debug', 
+                sprintf('Line items for parent order #%d: %s', 
+                    $parent_order->get_id(), wp_json_encode($line_items)));
+            
+            // Debug: Check specific fee arrays
+            $one_time_fees_count = !empty($line_items['one_time_fees']) ? count($line_items['one_time_fees']) : 0;
+            $shipping_fees_count = !empty($line_items['shipping_fees']) ? count($line_items['shipping_fees']) : 0;
+            
+            Woocommerce_Logs::log_subscription_creation('debug', 
+                sprintf('Fee counts for parent order #%d - One-time: %d, Shipping: %d', 
+                    $parent_order->get_id(), $one_time_fees_count, $shipping_fees_count));
+            
             // Add one-time fees from proposal to parent order
             if (!empty($line_items['one_time_fees'])) {
+                Woocommerce_Logs::log_subscription_creation('debug', 
+                    sprintf('Processing one-time fees for parent order #%d', $parent_order->get_id()));
                 self::add_one_time_fees($parent_order, $line_items['one_time_fees'], 'subscription_creation');
+            } else {
+                Woocommerce_Logs::log_subscription_creation('debug', 
+                    sprintf('No one-time fees found for parent order #%d', $parent_order->get_id()));
             }
             
             // Add shipping fees from proposal to parent order
             if (!empty($line_items['shipping_fees'])) {
+                Woocommerce_Logs::log_subscription_creation('debug', 
+                    sprintf('Processing shipping fees for parent order #%d', $parent_order->get_id()));
                 self::add_shipping_fees($parent_order, $line_items['shipping_fees'], 'subscription_creation');
+            } else {
+                Woocommerce_Logs::log_subscription_creation('debug', 
+                    sprintf('No shipping fees found for parent order #%d', $parent_order->get_id()));
             }
             
             // Calculate totals
