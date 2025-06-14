@@ -21,21 +21,75 @@ class Woocommerce_Helper {
      * @return array Array of customer objects with formatted display names
      */
     public static function get_customers($additional_args = array()) {
-        $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
-        
-        // Use the Admin Users class to get users by customer roles with custom formatting
-        $customers = $admin_users->get_users_by_role(
-            array('customer', 'subscriber'),
-            $additional_args,
-            false // Don't include email in the standard way, we'll use customer format
+        $default_args = array(
+            'role__in' => array('customer', 'subscriber'),
+            'fields' => array('ID', 'user_login', 'user_email'),
+            'meta_query' => array(
+                'relation' => 'OR',
+                array(
+                    'key' => 'first_name',
+                    'value' => '',
+                    'compare' => '!='
+                ),
+                array(
+                    'key' => 'last_name',
+                    'value' => '',
+                    'compare' => '!='
+                )
+            ),
+            'orderby' => 'meta_value',
+            'meta_key' => 'first_name'
         );
         
-        // Override the display_name to use customer format
-        foreach ($customers as &$customer) {
-            $customer->display_name = $admin_users->format_user_display_name($customer->ID, false, 'customer');
+        $args = array_merge($default_args, $additional_args);
+        $users = get_users($args);
+        
+        $customers = array();
+        
+        foreach ($users as $user) {
+            $customers[] = (object) array(
+                'ID' => $user->ID,
+                'user_login' => $user->user_login,
+                'user_email' => $user->user_email,
+                'display_name' => self::format_customer_display_name($user->ID)
+            );
         }
         
         return $customers;
+    }
+    
+    /**
+     * Format customer display name for dropdowns
+     * Format: "First Last (#ID - email@example.com)"
+     * 
+     * @param int $user_id User ID
+     * @return string Formatted customer display name
+     */
+    public static function format_customer_display_name($user_id) {
+        $first_name = get_user_meta($user_id, 'first_name', true);
+        $last_name = get_user_meta($user_id, 'last_name', true);
+        $user = get_userdata($user_id);
+        
+        if (!$user) {
+            return '';
+        }
+        
+        // Create display name from first + last name
+        $display_name = '';
+        if (!empty($first_name) || !empty($last_name)) {
+            $display_name = trim($first_name . ' ' . $last_name);
+        } else {
+            $display_name = $user->user_login;
+        }
+        
+        // Add user ID and email in the specified format: "Name (#ID - email)"
+        if (!empty($user->user_email)) {
+            $display_name .= ' (#' . $user->ID . ' - ' . $user->user_email . ')';
+        } else {
+            $display_name .= ' (#' . $user->ID . ')';
+        }
+        
+        return $display_name;
     }
     
     /**
