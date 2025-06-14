@@ -436,9 +436,10 @@ class Users {
      * @param string|array $roles Role name(s) to filter by
      * @param array $user_query_args Additional arguments for get_users()
      * @param bool $include_email Whether to include email in display names
+     * @param string $format Display format: 'standard', 'customer'
      * @return array Array of user objects with formatted display names
      */
-    public function get_users_by_role($roles, $user_query_args = array(), $include_email = false) {
+    public function get_users_by_role($roles, $user_query_args = array(), $include_email = false, $format = 'standard') {
         $default_args = array(
             'fields' => array('ID', 'user_login', 'user_email'),
             'role__in' => is_array($roles) ? $roles : array($roles),
@@ -470,7 +471,7 @@ class Users {
                 'ID' => $user->ID,
                 'user_login' => $user->user_login,
                 'user_email' => $user->user_email,
-                'display_name' => $this->format_user_display_name($user->ID, $include_email),
+                'display_name' => $this->format_user_display_name($user->ID, $include_email, $format),
                 'roles' => $user_obj ? $user_obj->roles : array()
             );
         }
@@ -685,9 +686,10 @@ class Users {
      * 
      * @param int $user_id User ID
      * @param bool $include_email Whether to include email in parentheses
+     * @param string $format Display format: 'standard', 'customer'
      * @return string Formatted display name
      */
-    public function format_user_display_name($user_id, $include_email = false) {
+    public function format_user_display_name($user_id, $include_email = false, $format = 'standard') {
         $first_name = get_user_meta($user_id, 'first_name', true);
         $last_name = get_user_meta($user_id, 'last_name', true);
         $user = get_userdata($user_id);
@@ -704,32 +706,24 @@ class Users {
             $display_name = $user->user_login;
         }
         
-        // Add email if requested
-        if ($include_email && !empty($user->user_email)) {
-            $display_name .= ' (' . $user->user_email . ')';
-        }
-        
-        return $display_name;
-    }
-    
-    /**
-     * Format user display name with role information
-     * 
-     * @param int $user_id User ID
-     * @param bool $include_email Whether to include email
-     * @param bool $include_role Whether to include primary role
-     * @return string Formatted display name
-     */
-    public function format_user_display_name_with_role($user_id, $include_email = false, $include_role = true) {
-        $display_name = $this->format_user_display_name($user_id, $include_email);
-        
-        if ($include_role) {
-            $user_roles = $this->get_user_roles($user_id, true);
-            
-            if (!empty($user_roles)) {
-                $primary_role = array_values($user_roles)[0]; // Get first role
-                $display_name .= ' [' . $primary_role . ']';
-            }
+        // Apply formatting based on format type
+        switch ($format) {
+            case 'customer':
+                // Customer format: "First Last (#ID - email@example.com)"
+                if (!empty($user->user_email)) {
+                    $display_name .= ' (#' . $user->ID . ' - ' . $user->user_email . ')';
+                } else {
+                    $display_name .= ' (#' . $user->ID . ')';
+                }
+                break;
+                
+            case 'standard':
+            default:
+                // Standard format: "First Last" or "First Last (email@example.com)"
+                if ($include_email && !empty($user->user_email)) {
+                    $display_name .= ' (' . $user->user_email . ')';
+                }
+                break;
         }
         
         return $display_name;
@@ -744,10 +738,9 @@ class Users {
      * @param string $placeholder Placeholder text
      * @param array $attributes Additional HTML attributes
      * @param bool $include_email Whether to include email in display names
-     * @param bool $include_role Whether to include role in display names
      * @return string HTML dropdown
      */
-    public function generate_user_dropdown_by_role($name, $roles, $selected = '', $placeholder = '', $attributes = array(), $include_email = false, $include_role = false) {
+    public function generate_user_dropdown_by_role($name, $roles, $selected = '', $placeholder = '', $attributes = array(), $include_email = false) {
         $default_attributes = array(
             'class' => 'arsol-pfw-admin-select2',
             'data-allow_clear' => 'true'
@@ -773,15 +766,11 @@ class Users {
         }
         
         foreach ($users as $user) {
-            $display_name = $include_role ? 
-                $this->format_user_display_name_with_role($user->ID, $include_email, true) : 
-                $user->display_name;
-                
             $html .= sprintf(
                 '<option value="%s"%s>%s</option>',
                 esc_attr($user->ID),
                 selected($selected, $user->ID, false),
-                esc_html($display_name)
+                esc_html($user->display_name)
             );
         }
         
