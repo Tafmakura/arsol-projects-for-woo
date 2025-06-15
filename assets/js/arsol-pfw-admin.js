@@ -207,4 +207,13 @@ jQuery(document).ready(function($) {
     $('body').on('input', '.arsol-money-input', function() {
         formatMoneyInput($(this));
     });
+
+    // Initialize user Select2 dropdowns (project lead, etc.)
+    if ($.fn.select2 && $('.arsol-user-select2').length) {
+        $('.arsol-user-select2').select2({
+            placeholder: '— Select Project Lead —',
+            allowClear: true,
+            width: '100%'
+        });
+    }
 });

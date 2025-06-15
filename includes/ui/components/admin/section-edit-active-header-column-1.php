@@ -65,7 +65,7 @@ $all_statuses = get_terms(array(
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
-        <select id="project_lead" name="project_lead" class="wc-enhanced-select">
+        <select id="project_lead" name="project_lead" class="arsol-user-select2">
             <option value=""><?php _e('— Select —', 'arsol-pfw'); ?></option>
             <?php
             // Use the Admin\Users helper to build the list of valid project leads

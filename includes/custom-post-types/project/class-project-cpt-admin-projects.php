@@ -61,7 +61,7 @@ class Projects {
             $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
             $all_users = get_users(array('fields' => array('ID', 'display_name')));
 
-            echo '<select name="project_lead" class="arsol-pfw-admin-select2" data-placeholder="' . esc_attr__('Filter by project lead', 'arsol-pfw') . '" data-allow_clear="true">';
+            echo '<select name="project_lead" class="arsol-user-select2" data-placeholder="' . esc_attr__('Filter by project lead', 'arsol-pfw') . '" data-allow_clear="true">';
             echo '<option value="">' . __('Filter by project lead', 'arsol-pfw') . '</option>';
             foreach ($all_users as $user) {
                 if ($admin_users_helper->can_user_create_projects($user->ID)) {

@@ -39,7 +39,7 @@ $all_statuses = get_terms(array(
         </label>
         <select class="arsol-disabled-select" name="post_author_override" disabled style="width: 100%;">
             <?php if ($post->post_author): ?>
-                <?php 
+        <?php
                 $customer_user = get_userdata($post->post_author);
                 if ($customer_user) {
                     // Format customer display like WooCommerce: "First Last (#ID – email)" or fallback to "Display Name (#ID – email)"
