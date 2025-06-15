@@ -64,11 +64,30 @@ class Workflow_Handler {
     public function convert_request_to_proposal() {
         ob_start();
 
+        // Prepare conversion data for hooks
+        $request_id = isset($_GET['request_id']) ? intval($_GET['request_id']) : 0;
+        $conversion_data = array(
+            'request_id' => $request_id,
+            'user_id' => get_current_user_id(),
+            'conversion_method' => 'admin_conversion',
+            'timestamp' => current_time('timestamp')
+        );
+
+        /**
+         * Hook: arsol_before_proposal_conversion_validation
+         * Fired before any validation checks are performed
+         * 
+         * @param int $request_id The request ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_proposal_conversion_validation', $request_id, $conversion_data);
+
         if (!isset($_GET['request_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_proposal_nonce')) {
             wp_die(__('Invalid request or nonce.', 'arsol-pfw'));
         }
 
         $request_id = intval($_GET['request_id']);
+        $conversion_data['request_id'] = $request_id;
 
         if (!current_user_can('edit_post', $request_id) || !current_user_can('publish_posts')) {
             wp_die(__('You do not have sufficient permissions to perform this action.', 'arsol-pfw'));
@@ -80,12 +99,27 @@ class Workflow_Handler {
             wp_die(__('Invalid request.', 'arsol-pfw'));
         }
 
+        $conversion_data['request_post'] = $request_post;
+
         // Server-side validation of the request status
         $current_status = wp_get_object_terms($request_id, 'arsol-request-status', array('fields' => 'slugs'));
         if (empty($current_status) || $current_status[0] !== 'under-review') {
             wp_die(__('This request cannot be converted. The status must be "Under Review".', 'arsol-pfw'));
         }
 
+        $conversion_data['request_status'] = $current_status[0];
+
+        /**
+         * Hook: arsol_after_proposal_conversion_validated
+         * Fired after all validation checks pass, before proposal creation
+         * 
+         * @param int $request_id The request ID
+         * @param WP_Post $request_post The request post object
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_after_proposal_conversion_validated', $request_id, $request_post, $conversion_data);
+
+        // Create proposal args with filter for customization
         $proposal_args = array(
             'post_title'   => $request_post->post_title,
             'post_content' => $request_post->post_content,
@@ -94,11 +128,66 @@ class Workflow_Handler {
             'post_author'  => $request_post->post_author,
         );
 
+        /**
+         * Filter: arsol_proposal_conversion_args
+         * Allows modification of proposal creation arguments
+         * 
+         * @param array $proposal_args The proposal arguments
+         * @param int $request_id The request ID
+         * @param WP_Post $request_post The request post
+         * @param array $conversion_data Conversion context data
+         */
+        $proposal_args = apply_filters('arsol_proposal_conversion_args', $proposal_args, $request_id, $request_post, $conversion_data);
+
+        /**
+         * Hook: arsol_before_proposal_conversion_proposal_creation
+         * Fired immediately before the proposal post is created
+         * 
+         * @param array $proposal_args The proposal arguments that will be used
+         * @param int $request_id The request ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_proposal_conversion_proposal_creation', $proposal_args, $request_id, $conversion_data);
+
         $new_proposal_id = wp_insert_post($proposal_args);
 
         if (is_wp_error($new_proposal_id)) {
+            /**
+             * Hook: arsol_proposal_conversion_proposal_creation_failed
+             * Fired when proposal creation fails
+             * 
+             * @param WP_Error $error The error object
+             * @param int $request_id The request ID
+             * @param array $proposal_args The proposal arguments that failed
+             * @param array $conversion_data Conversion context data
+             */
+            do_action('arsol_proposal_conversion_proposal_creation_failed', $new_proposal_id, $request_id, $proposal_args, $conversion_data);
+            
             wp_die($new_proposal_id->get_error_message());
         }
+
+        $conversion_data['new_proposal_id'] = $new_proposal_id;
+
+        /**
+         * Hook: arsol_after_proposal_conversion_proposal_created
+         * Fired after the proposal is successfully created, before metadata copy
+         * 
+         * @param int $new_proposal_id The new proposal ID
+         * @param int $request_id The original request ID
+         * @param WP_Post $request_post The request post object
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_after_proposal_conversion_proposal_created', $new_proposal_id, $request_id, $request_post, $conversion_data);
+
+        /**
+         * Hook: arsol_before_proposal_conversion_metadata_copy
+         * Fired before copying metadata from request to proposal
+         * 
+         * @param int $new_proposal_id The new proposal ID
+         * @param int $request_id The request ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_proposal_conversion_metadata_copy', $new_proposal_id, $request_id, $conversion_data);
 
         // Store the original request creation date and basic info
         $request_post = get_post($request_id);
@@ -116,6 +205,17 @@ class Workflow_Handler {
             '_request_attachments'    => '_proposal_attachments',
         );
 
+        /**
+         * Filter: arsol_proposal_conversion_meta_mapping
+         * Allows modification of the meta key mapping from request to proposal
+         * 
+         * @param array $meta_to_copy Array of request_key => proposal_key mappings
+         * @param int $request_id The request ID
+         * @param int $new_proposal_id The new proposal ID
+         * @param array $conversion_data Conversion context data
+         */
+        $meta_to_copy = apply_filters('arsol_proposal_conversion_meta_mapping', $meta_to_copy, $request_id, $new_proposal_id, $conversion_data);
+
         foreach ($meta_to_copy as $request_key => $proposal_key) {
             $value = get_post_meta($request_id, $request_key, true);
             if ($value) {
@@ -126,14 +226,57 @@ class Workflow_Handler {
             }
         }
 
+        /**
+         * Hook: arsol_after_proposal_conversion_metadata_copied
+         * Fired after all metadata has been copied from request to proposal
+         * 
+         * @param int $new_proposal_id The new proposal ID
+         * @param int $request_id The request ID
+         * @param array $meta_to_copy The meta mapping that was used
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_after_proposal_conversion_metadata_copied', $new_proposal_id, $request_id, $meta_to_copy, $conversion_data);
+
+        /**
+         * Hook: arsol_before_proposal_conversion_request_deletion
+         * Fired before the original request is deleted
+         * 
+         * @param int $request_id The request ID about to be deleted
+         * @param int $new_proposal_id The new proposal ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_proposal_conversion_request_deletion', $request_id, $new_proposal_id, $conversion_data);
+
         // Delete the original request
         wp_delete_post($request_id, true);
+
+        /**
+         * Hook: arsol_after_proposal_conversion_complete
+         * Fired after the conversion is complete, before redirect
+         * 
+         * @param int $new_proposal_id The new proposal ID
+         * @param int $request_id The original request ID (now deleted)
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_after_proposal_conversion_complete', $new_proposal_id, $request_id, $conversion_data);
 
         // Clean the output buffer and redirect
         ob_end_clean();
 
+        /**
+         * Hook: arsol_before_proposal_conversion_redirect
+         * Fired just before redirecting to the new proposal
+         * Last chance to modify redirect or add notices
+         * 
+         * @param int $new_proposal_id The new proposal ID
+         * @param string $redirect_url The URL about to redirect to
+         * @param array $conversion_data Conversion context data
+         */
+        $redirect_url = admin_url('post.php?post=' . $new_proposal_id . '&action=edit');
+        do_action('arsol_before_proposal_conversion_redirect', $new_proposal_id, $redirect_url, $conversion_data);
+
         // Redirect to the new proposal's edit screen
-        $this->safe_redirect(admin_url('post.php?post=' . $new_proposal_id . '&action=edit'));
+        $this->safe_redirect($redirect_url);
     }
 
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
@@ -187,6 +330,35 @@ class Workflow_Handler {
             wp_die(__('Only published proposals can be converted to projects.', 'arsol-pfw'));
         }
 
+        // Prepare conversion data for hooks
+        $conversion_data = array(
+            'proposal_id' => $proposal_id,
+            'proposal_post' => $proposal_post,
+            'is_internal_call' => $is_internal_call,
+            'user_id' => get_current_user_id(),
+            'conversion_method' => $is_internal_call ? 'customer_approval' : 'admin_conversion'
+        );
+
+        /**
+         * Hook: arsol_before_project_conversion_validation
+         * Fired before any validation checks are performed
+         * 
+         * @param int $proposal_id The proposal ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_project_conversion_validation', $proposal_id, $conversion_data);
+
+        /**
+         * Hook: arsol_after_project_conversion_validated
+         * Fired after all validation checks pass, before project creation
+         * 
+         * @param int $proposal_id The proposal ID
+         * @param WP_Post $proposal_post The proposal post object
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_after_project_conversion_validated', $proposal_id, $proposal_post, $conversion_data);
+
+        // Create project args with filter for customization
         $project_args = array(
             'post_title'   => $proposal_post->post_title,
             'post_content' => $proposal_post->post_content,
@@ -195,10 +367,43 @@ class Workflow_Handler {
             'post_author'  => $proposal_post->post_author,
         );
 
+        /**
+         * Filter: arsol_project_conversion_args
+         * Allows modification of project creation arguments
+         * 
+         * @param array $project_args The project arguments
+         * @param int $proposal_id The proposal ID
+         * @param WP_Post $proposal_post The proposal post
+         * @param array $conversion_data Conversion context data
+         */
+        $project_args = apply_filters('arsol_project_conversion_args', $project_args, $proposal_id, $proposal_post, $conversion_data);
+
+        /**
+         * Hook: arsol_before_project_conversion_project_creation
+         * Fired immediately before the project post is created
+         * 
+         * @param array $project_args The project arguments that will be used
+         * @param int $proposal_id The proposal ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_project_conversion_project_creation', $project_args, $proposal_id, $conversion_data);
+
         $new_project_id = wp_insert_post($project_args);
 
         if (is_wp_error($new_project_id)) {
             delete_transient($conversion_lock_key);
+            
+            /**
+             * Hook: arsol_project_conversion_project_creation_failed
+             * Fired when project creation fails
+             * 
+             * @param WP_Error $error The error object
+             * @param int $proposal_id The proposal ID
+             * @param array $project_args The project arguments that failed
+             * @param array $conversion_data Conversion context data
+             */
+            do_action('arsol_project_conversion_project_creation_failed', $new_project_id, $proposal_id, $project_args, $conversion_data);
+            
             if ($is_internal_call) {
                 $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
             } else {
@@ -206,8 +411,29 @@ class Workflow_Handler {
             }
         }
 
+        /**
+         * Hook: arsol_after_project_conversion_project_created
+         * Fired immediately after project is created, before any metadata
+         * 
+         * @param int $project_id The new project ID
+         * @param int $proposal_id The original proposal ID
+         * @param WP_Post $proposal_post The proposal post object
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_after_project_conversion_project_created', $new_project_id, $proposal_id, $proposal_post, $conversion_data);
+
         // Set the project status to 'not-started'
         wp_set_object_terms($new_project_id, 'not-started', 'arsol-project-status');
+
+        /**
+         * Hook: arsol_before_project_conversion_metadata_copy
+         * Fired before copying metadata from proposal to project
+         * 
+         * @param int $project_id The new project ID
+         * @param int $proposal_id The original proposal ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_project_conversion_metadata_copy', $new_project_id, $proposal_id, $conversion_data);
 
         // Copy and rename relevant meta data from proposal to project
         $meta_to_copy = array(
@@ -220,6 +446,17 @@ class Workflow_Handler {
             '_proposal_delivery_date'    => '_project_due_date', // Correctly map to due date
         );
 
+        /**
+         * Filter: arsol_project_conversion_meta_mapping
+         * Allows modification of metadata mapping from proposal to project
+         * 
+         * @param array $meta_to_copy Array of proposal_key => project_key mappings
+         * @param int $project_id The new project ID
+         * @param int $proposal_id The original proposal ID
+         * @param array $conversion_data Conversion context data
+         */
+        $meta_to_copy = apply_filters('arsol_project_conversion_meta_mapping', $meta_to_copy, $new_project_id, $proposal_id, $conversion_data);
+
         foreach ($meta_to_copy as $proposal_key => $project_key) {
             $value = get_post_meta($proposal_id, $proposal_key, true);
             if ($value) {
@@ -229,6 +466,17 @@ class Workflow_Handler {
 
         // Store original proposal ID for reference
         update_post_meta($new_project_id, '_original_proposal_id', $proposal_id);
+
+        /**
+         * Hook: arsol_after_project_conversion_metadata_copied
+         * Fired after all metadata is copied from proposal to project
+         * 
+         * @param int $project_id The new project ID
+         * @param int $proposal_id The original proposal ID
+         * @param array $meta_to_copy The metadata that was copied
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_after_project_conversion_metadata_copied', $new_project_id, $proposal_id, $meta_to_copy, $conversion_data);
 
         // Capture any order creation errors and created order IDs for rollback
         $order_creation_errors = array();
@@ -260,8 +508,28 @@ class Workflow_Handler {
             }
         }, 20, 2); // Run after the billers (priority 10)
 
-        // Trigger action for order creation
+        /**
+         * Hook: arsol_before_project_conversion_order_creation
+         * Fired before order/subscription creation from proposal
+         * 
+         * @param int $project_id The new project ID
+         * @param int $proposal_id The original proposal ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_project_conversion_order_creation', $new_project_id, $proposal_id, $conversion_data);
+
+        // Trigger action for order creation (MAIN CONVERSION HOOK - Legacy)
         do_action('arsol_proposal_converted_to_project', $new_project_id, $proposal_id);
+
+        /**
+         * Hook: arsol_after_project_conversion_order_creation_attempt
+         * Fired after order creation attempt, before error checking
+         * 
+         * @param int $project_id The new project ID
+         * @param int $proposal_id The original proposal ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_after_project_conversion_order_creation_attempt', $new_project_id, $proposal_id, $conversion_data);
 
         // Add debugging to check what happened during order creation
         if (function_exists('wc_get_logger')) {
@@ -307,6 +575,18 @@ class Workflow_Handler {
 
         // Check if there were any order creation errors
         if (!empty($order_creation_errors)) {
+            /**
+             * Hook: arsol_before_project_conversion_rollback
+             * Fired before rollback due to order creation failure
+             * 
+             * @param int $project_id The project ID that will be deleted
+             * @param int $proposal_id The original proposal ID
+             * @param array $order_creation_errors Array of error messages
+             * @param array $created_order_ids Array of order IDs to be deleted
+             * @param array $conversion_data Conversion context data
+             */
+            do_action('arsol_before_project_conversion_rollback', $new_project_id, $proposal_id, $order_creation_errors, $created_order_ids, $conversion_data);
+            
             // Order creation failed - rollback everything
             
             // Delete any created orders first
@@ -328,6 +608,16 @@ class Workflow_Handler {
             // Clear the conversion lock
             delete_transient($conversion_lock_key);
             
+            /**
+             * Hook: arsol_after_project_conversion_rollback
+             * Fired after rollback is completed
+             * 
+             * @param int $proposal_id The original proposal ID (still exists)
+             * @param array $order_creation_errors Array of error messages
+             * @param array $conversion_data Conversion context data
+             */
+            do_action('arsol_after_project_conversion_rollback', $proposal_id, $order_creation_errors, $conversion_data);
+            
             $error_message = sprintf(
                 __('Failed to create orders from proposal. Errors: %s', 'arsol-pfw'),
                 implode('; ', $order_creation_errors)
@@ -346,15 +636,45 @@ class Workflow_Handler {
             }
         }
 
+        /**
+         * Hook: arsol_before_project_conversion_proposal_deletion
+         * Fired before the original proposal is deleted (conversion successful)
+         * 
+         * @param int $proposal_id The proposal ID that will be deleted
+         * @param int $project_id The new project ID
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_project_conversion_proposal_deletion', $proposal_id, $new_project_id, $conversion_data);
+
         // If we get here, both project and orders were created successfully
         // Now it's safe to delete the original proposal
         wp_delete_post($proposal_id, true);
+
+        /**
+         * Hook: arsol_after_project_conversion_complete
+         * Fired after successful conversion completion (proposal deleted, project active)
+         * 
+         * @param int $project_id The new project ID
+         * @param int $proposal_id The original proposal ID (now deleted)
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_after_project_conversion_complete', $new_project_id, $proposal_id, $conversion_data);
 
         // Clear the conversion lock
         delete_transient($conversion_lock_key);
 
         // Clean the output buffer and redirect
         ob_end_clean();
+
+        /**
+         * Hook: arsol_before_project_conversion_redirect
+         * Fired before redirect after successful conversion
+         * 
+         * @param int $project_id The new project ID
+         * @param int $proposal_id The original proposal ID (deleted)
+         * @param array $conversion_data Conversion context data
+         */
+        do_action('arsol_before_project_conversion_redirect', $new_project_id, $proposal_id, $conversion_data);
 
         // Redirect based on how the function was called
         if ($is_internal_call) {
@@ -410,10 +730,35 @@ class Workflow_Handler {
     }
 
     public function handle_create_request() {
+        // Prepare creation data for hooks
+        $creation_data = array(
+            'user_id' => get_current_user_id(),
+            'creation_method' => 'frontend_form',
+            'timestamp' => current_time('timestamp'),
+            'form_data' => $_POST
+        );
+
+        /**
+         * Hook: arsol_before_request_creation_validation
+         * Fired before any validation checks are performed
+         * 
+         * @param array $creation_data Creation context data
+         */
+        do_action('arsol_before_request_creation_validation', $creation_data);
+
         if (!wp_verify_nonce($_POST['arsol_request_nonce'], 'arsol_create_request')) {
             wp_die(__('Invalid nonce.', 'arsol-pfw'));
         }
 
+        /**
+         * Hook: arsol_after_request_creation_validated
+         * Fired after validation passes, before request creation
+         * 
+         * @param array $creation_data Creation context data
+         */
+        do_action('arsol_after_request_creation_validated', $creation_data);
+
+        // Prepare request args with filter for customization
         $post_data = array(
             'post_title'   => sanitize_text_field($_POST['request_title']),
             'post_content' => wp_kses_post($_POST['request_description']),
@@ -421,17 +766,119 @@ class Workflow_Handler {
             'post_type'    => 'arsol-pfw-request',
             'post_author'  => get_current_user_id(),
         );
+
+        /**
+         * Filter: arsol_request_creation_args
+         * Allows modification of request creation arguments
+         * 
+         * @param array $post_data The request arguments
+         * @param array $creation_data Creation context data
+         */
+        $post_data = apply_filters('arsol_request_creation_args', $post_data, $creation_data);
+
+        /**
+         * Hook: arsol_before_request_creation_post_creation
+         * Fired immediately before the request post is created
+         * 
+         * @param array $post_data The request arguments that will be used
+         * @param array $creation_data Creation context data
+         */
+        do_action('arsol_before_request_creation_post_creation', $post_data, $creation_data);
+
         $post_id = wp_insert_post($post_data);
         
         if (is_wp_error($post_id)) {
+            /**
+             * Hook: arsol_request_creation_post_creation_failed
+             * Fired when request creation fails
+             * 
+             * @param WP_Error $error The error object
+             * @param array $post_data The request arguments that failed
+             * @param array $creation_data Creation context data
+             */
+            do_action('arsol_request_creation_post_creation_failed', $post_id, $post_data, $creation_data);
+            
             $this->safe_redirect(wc_get_account_endpoint_url('project-create-request'));
         }
 
+        $creation_data['request_id'] = $post_id;
+
+        /**
+         * Hook: arsol_after_request_creation_post_created
+         * Fired after the request is successfully created, before metadata and status
+         * 
+         * @param int $post_id The new request ID
+         * @param array $post_data Request post data
+         * @param array $creation_data Creation context data
+         */
+        do_action('arsol_after_request_creation_post_created', $post_id, $post_data, $creation_data);
+
+        /**
+         * Hook: arsol_before_request_creation_status_assignment
+         * Fired before setting the request status
+         * 
+         * @param int $post_id The request ID
+         * @param string $default_status The default status to be assigned
+         * @param array $creation_data Creation context data
+         */
+        do_action('arsol_before_request_creation_status_assignment', $post_id, 'pending', $creation_data);
+
         wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
+
+        /**
+         * Hook: arsol_after_request_creation_status_assigned
+         * Fired after the request status is assigned
+         * 
+         * @param int $post_id The request ID
+         * @param string $assigned_status The status that was assigned
+         * @param array $creation_data Creation context data
+         */
+        do_action('arsol_after_request_creation_status_assigned', $post_id, 'pending', $creation_data);
+
+        /**
+         * Hook: arsol_before_request_creation_metadata_save
+         * Fired before saving request metadata
+         * 
+         * @param int $post_id The request ID
+         * @param array $form_data The form data to be processed
+         * @param array $creation_data Creation context data
+         */
+        do_action('arsol_before_request_creation_metadata_save', $post_id, $_POST, $creation_data);
+
         $this->update_request_meta($post_id, $_POST);
 
-        
-        $this->safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
+        /**
+         * Hook: arsol_after_request_creation_metadata_saved
+         * Fired after all metadata has been saved
+         * 
+         * @param int $post_id The request ID
+         * @param array $form_data The form data that was processed
+         * @param array $creation_data Creation context data
+         */
+        do_action('arsol_after_request_creation_metadata_saved', $post_id, $_POST, $creation_data);
+
+        /**
+         * Hook: arsol_after_request_creation_complete
+         * Fired after the request creation is complete, before redirect
+         * 
+         * @param int $post_id The new request ID
+         * @param array $creation_data Creation context data
+         */
+        do_action('arsol_after_request_creation_complete', $post_id, $creation_data);
+
+        /**
+         * Hook: arsol_before_request_creation_redirect
+         * Fired just before redirecting to the new request
+         * Last chance to modify redirect or add notices
+         * 
+         * @param int $post_id The new request ID
+         * @param string $redirect_url The URL about to redirect to
+         * @param array $creation_data Creation context data
+         */
+        $redirect_url = wc_get_account_endpoint_url('project-view-request/' . $post_id);
+        do_action('arsol_before_request_creation_redirect', $post_id, $redirect_url, $creation_data);
+
+        $this->safe_redirect($redirect_url);
     }
 
     public function handle_edit_request() {
