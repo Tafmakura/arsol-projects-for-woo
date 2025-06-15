@@ -100,7 +100,7 @@ $all_statuses = get_terms(array(
             'class' => 'arsol-user-select2',
             'selected' => $project_lead,
             'include' => $valid_user_ids,
-            'show_option_none' => __('— Select Project Lead —', 'arsol-pfw'),
+            'show_option_none' => __('Search for project manager...', 'arsol-pfw'),
             'option_none_value' => ''
         ));
         ?>

@@ -79,7 +79,7 @@ jQuery(document).ready(function($) {
                 }
                 
                 // Get placeholder from the first option or use default
-                var placeholder = $this.find('option:first').text() || '— Select Project Lead —';
+                var placeholder = $this.find('option:first').text() || 'Search for project manager...';
                 
                 $this.select2({
                     placeholder: placeholder,
