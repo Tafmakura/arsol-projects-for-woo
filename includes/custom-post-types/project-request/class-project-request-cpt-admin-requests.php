@@ -97,10 +97,16 @@ class Requests {
             if (!empty($current_customer)) {
                 $customer = get_userdata($current_customer);
                 if ($customer) {
+                    // Format customer display like WooCommerce: "First Last (#ID – email)" or fallback to "Display Name (#ID – email)"
+                    $customer_name = trim($customer->first_name . ' ' . $customer->last_name);
+                    if (empty($customer_name)) {
+                        $customer_name = $customer->display_name;
+                    }
+                    
                     printf(
                         '<option value="%s" selected="selected">%s (#%s &ndash; %s)</option>',
                         esc_attr($customer->ID),
-                        esc_html($customer->first_name . ' ' . $customer->last_name),
+                        esc_html($customer_name),
                         esc_html($customer->ID),
                         esc_html($customer->user_email)
                     );

@@ -48,10 +48,16 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
                 <?php 
                 $customer_user = get_userdata($post->post_author);
                 if ($customer_user) {
+                    // Format customer display like WooCommerce: "First Last (#ID – email)" or fallback to "Display Name (#ID – email)"
+                    $customer_name = trim($customer_user->first_name . ' ' . $customer_user->last_name);
+                    if (empty($customer_name)) {
+                        $customer_name = $customer_user->display_name;
+                    }
+                    
                     printf(
                         '<option value="%s" selected="selected">%s (#%s &ndash; %s)</option>',
                         esc_attr($customer_user->ID),
-                        esc_html($customer_user->first_name . ' ' . $customer_user->last_name),
+                        esc_html($customer_name),
                         esc_html($customer_user->ID),
                         esc_html($customer_user->user_email)
                     );
