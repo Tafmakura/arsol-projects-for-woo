@@ -90,7 +90,7 @@ $data = array(
 
 ### The Missing Link
 The JavaScript was receiving the data but not updating the hidden field:
-```javascript
+    ```javascript
 // ❌ BEFORE: Missing this line
 // $row.find('input[name*="[product_type]"]').val(data.product_type || '');
 

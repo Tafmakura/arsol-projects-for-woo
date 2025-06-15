@@ -89,7 +89,7 @@
             $builder
                 .on('click', '.add-line-item', this.addLineItem.bind(this))
                 .on('click', '.remove-line-item', this.removeLineItem.bind(this))
-                .on('change', '.arsol-description-input', this.productChanged.bind(this))
+                .on('change', '.arsol-product-item select.arsol-description-input', this.productChanged.bind(this))
                 .on('change', '.arsol-select-full', this.shippingMethodChanged.bind(this));
             
             // Use jQuery's one() method for input events with debouncing (WordPress pattern)

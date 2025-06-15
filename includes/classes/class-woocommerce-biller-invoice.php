@@ -429,16 +429,16 @@ class Woocommerce_Biller {
                         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
                             sprintf('Added subscription product #%d to subscription (item_id: %s)', 
                                 $item['product_id'], $item_id ? $item_id : 'failed'));
-                        
-                        // Set custom price if specified (only if order item was created successfully)
-                        if ($subscription_item && isset($item['price']) && $item['price'] !== '') {
-                            $subscription_item->set_subtotal($item['price'] * $item['quantity']);
-                            $subscription_item->set_total($item['price'] * $item['quantity']);
-                        }
-                        
-                        // Add start date
-                        if ($subscription_item && isset($item['start_date']) && !empty($item['start_date'])) {
-                            $subscription_item->add_meta_data('_subscription_start_date', $item['start_date']);
+                    
+                    // Set custom price if specified (only if order item was created successfully)
+                    if ($subscription_item && isset($item['price']) && $item['price'] !== '') {
+                        $subscription_item->set_subtotal($item['price'] * $item['quantity']);
+                        $subscription_item->set_total($item['price'] * $item['quantity']);
+                    }
+                    
+                    // Add start date
+                    if ($subscription_item && isset($item['start_date']) && !empty($item['start_date'])) {
+                        $subscription_item->add_meta_data('_subscription_start_date', $item['start_date']);
                         }
                     } else {
                         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 

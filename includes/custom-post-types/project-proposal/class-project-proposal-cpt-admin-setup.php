@@ -186,14 +186,20 @@ class Setup {
                 true
             );
             
-            // Only localize script data if we're on an actual proposal edit page with a post
-            if ($hook === 'post.php' && isset($post->post_type) && 'arsol-pfw-proposal' === $post->post_type) {
+            // Localize script data for both new and existing proposals
+            if (($hook === 'post.php' && isset($post->post_type) && 'arsol-pfw-proposal' === $post->post_type) || 
+                ($hook === 'post-new.php' && isset($_GET['post_type']) && 'arsol-pfw-proposal' === $_GET['post_type'])) {
                 // Get currency symbol based on ISO code for historical accuracy
-                $saved_code = get_post_meta($post->ID, '_arsol_proposal_currency', true);
+                $saved_code = '';
+                $line_items = array();
+                
+                // Only get post meta if we have a valid post ID (existing proposal)
+                if (isset($post->ID) && $post->ID > 0) {
+                    $saved_code = get_post_meta($post->ID, '_arsol_proposal_currency', true);
+                    $line_items = get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array();
+                }
+                
                 $currency_symbol = $saved_code ? get_woocommerce_currency_symbol($saved_code) : get_woocommerce_currency_symbol();
-
-                // Get line items and populate product names from IDs
-                $line_items = get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array();
                 
                 // Populate product names for existing products
                 if (!empty($line_items['products'])) {

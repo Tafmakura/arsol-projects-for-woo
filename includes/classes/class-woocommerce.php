@@ -221,7 +221,7 @@ class Woocommerce {
 
     /**
      * Get project from order using both Blocks API and fallback meta
-     * 
+     *
      * @param \WC_Order|\WC_Subscription $order The order object
      * @return string|int|false Project ID or false if none
      */
