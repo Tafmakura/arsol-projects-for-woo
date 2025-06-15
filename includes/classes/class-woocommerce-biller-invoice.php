@@ -408,18 +408,40 @@ class Woocommerce_Biller {
         if (!empty($line_items['products'])) {
             foreach ($line_items['products'] as $item) {
                 $product = wc_get_product($item['product_id']);
-                if ($product && in_array($item['product_type'], ['subscription', 'subscription_variation'])) {
-                    $item_id = $subscription->add_product($product, $item['quantity']); $subscription_item = $item_id ? $subscription->get_item($item_id) : null;
+                if ($product) {
+                    // Debug logging for product types
+                    $actual_product_type = $product->get_type();
+                    $stored_product_type = isset($item['product_type']) ? $item['product_type'] : 'not_set';
                     
-                    // Set custom price if specified (only if order item was created successfully)
-                    if ($subscription_item && isset($item['price']) && $item['price'] !== '') {
-                        $subscription_item->set_subtotal($item['price'] * $item['quantity']);
-                        $subscription_item->set_total($item['price'] * $item['quantity']);
-                    }
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
+                        sprintf('Processing product #%d for subscription: Actual type: %s, Stored type: %s', 
+                            $item['product_id'], $actual_product_type, $stored_product_type));
                     
-                    // Add start date
-                    if ($subscription_item && isset($item['start_date']) && !empty($item['start_date'])) {
-                        $subscription_item->add_meta_data('_subscription_start_date', $item['start_date']);
+                    // Use actual product type as fallback if stored type is missing
+                    $product_type_to_check = !empty($item['product_type']) ? $item['product_type'] : $actual_product_type;
+                    
+                    if (in_array($product_type_to_check, ['subscription', 'subscription_variation'])) {
+                        $item_id = $subscription->add_product($product, $item['quantity']); 
+                        $subscription_item = $item_id ? $subscription->get_item($item_id) : null;
+                        
+                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
+                            sprintf('Added subscription product #%d to subscription (item_id: %s)', 
+                                $item['product_id'], $item_id ? $item_id : 'failed'));
+                        
+                        // Set custom price if specified (only if order item was created successfully)
+                        if ($subscription_item && isset($item['price']) && $item['price'] !== '') {
+                            $subscription_item->set_subtotal($item['price'] * $item['quantity']);
+                            $subscription_item->set_total($item['price'] * $item['quantity']);
+                        }
+                        
+                        // Add start date
+                        if ($subscription_item && isset($item['start_date']) && !empty($item['start_date'])) {
+                            $subscription_item->add_meta_data('_subscription_start_date', $item['start_date']);
+                        }
+                    } else {
+                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
+                            sprintf('Skipped product #%d for subscription (type: %s)', 
+                                $item['product_id'], $product_type_to_check));
                     }
                 }
             }
@@ -439,6 +461,9 @@ class Woocommerce_Biller {
                 }
                 
                 $subscription->add_item($fee_item);
+                
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
+                    sprintf('Added recurring fee "%s" to subscription', $fee['description']));
             }
         }
     }
@@ -453,7 +478,18 @@ class Woocommerce_Biller {
         // Check for subscription products
         if (!empty($line_items['products'])) {
             foreach ($line_items['products'] as $item) {
-                if (in_array($item['product_type'], ['subscription', 'subscription_variation'])) {
+                // Use actual product type as fallback if stored type is missing
+                $product_type_to_check = !empty($item['product_type']) ? $item['product_type'] : '';
+                
+                // If stored type is not available, check the actual product
+                if (empty($product_type_to_check) && !empty($item['product_id'])) {
+                    $product = wc_get_product($item['product_id']);
+                    if ($product) {
+                        $product_type_to_check = $product->get_type();
+                    }
+                }
+                
+                if (in_array($product_type_to_check, ['subscription', 'subscription_variation'])) {
                     return true;
                 }
             }

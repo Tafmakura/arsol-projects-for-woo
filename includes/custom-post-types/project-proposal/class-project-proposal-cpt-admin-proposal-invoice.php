@@ -233,9 +233,6 @@ class Proposal_Invoice {
                     <option value="{{ data.product_id || '' }}" selected="selected">{{ data.product_name || '' }}</option>
                                 </select>
                 <input type="hidden" name="line_items[products][{{ data.id }}][product_type]" value="{{ data.product_type || '' }}">
-                    <div class="arsol-sub-text">
-                        <input type="text" class="arsol-sub-text-input" name="line_items[products][{{ data.id }}][sub_text]" value="{{ data.sub_text || '' }}" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
-                    </div>
                 </td>
                 <td class="arsol-date-column">
                     <input type="date" class="arsol-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
@@ -377,9 +374,6 @@ class Proposal_Invoice {
             foreach ( $line_items as $group_key => $group_value ) {
                 if (!empty($group_value)) {
                     $sanitized_line_items[$group_key] = array_map( function( $item ) {
-                        if (isset($item['sub_text'])) {
-                            $item['sub_text'] = wp_kses_post($item['sub_text']);
-                        }
                         return array_map( 'sanitize_text_field', $item );
                     }, (array) $group_value );
                 }

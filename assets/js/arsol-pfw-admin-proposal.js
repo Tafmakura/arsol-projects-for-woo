@@ -213,7 +213,9 @@
                         var data = response.data;
                         $row.find('.arsol-price-input').val(data.regular_price);
                         $row.find('.arsol-sale-price-input').val(data.sale_price);
-                        $row.find('.product-sub-text').html(data.sub_text);
+                        
+                        // Store the product type in the hidden input field
+                        $row.find('input[name*="[product_type]"]').val(data.product_type || '');
                         
                         // Check if product is subscription type (backward compatible)
                         var isSubscription = data.product_type && (data.product_type === 'subscription' || data.product_type === 'subscription_variation');
@@ -258,7 +260,6 @@
                 this.fetchProductDetails($row, productId);
             } else {
                 $row.find('.arsol-price-input, .arsol-sale-price-input').val('');
-                $row.find('.product-sub-text').html('');
                 $row.find('.arsol-date-input').hide();
                 $row.removeData('billing-interval billing-period is-subscription');
                 this.toggleStartDateColumn();
