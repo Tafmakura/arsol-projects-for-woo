@@ -100,26 +100,22 @@ class Proposals {
                 echo '</select>';
             }
 
-            // Customer filter
+            // Customer filter (WooCommerce native customer search)
             $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
-            $customers = get_users(array(
-                'orderby' => 'display_name',
-                'order' => 'ASC',
-                'fields' => array('ID', 'user_login', 'user_email')
-            ));
-            echo '<select name="customer" id="filter-by-customer" class="wc-customer-search select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by customer', 'arsol-pfw') . '" data-allow_clear="true">';
-            echo '<option value="">' . __('Filter by customer', 'arsol-pfw') . '</option>';
-            foreach ($customers as $customer) {
-                $label = esc_html($customer->user_login);
-                if (!empty($customer->user_email)) {
-                    $label .= ' (' . esc_html($customer->user_email) . ')';
+            echo '<select name="customer" id="filter-by-customer" class="wc-customer-search" data-placeholder="' . esc_attr__('Filter by customer', 'arsol-pfw') . '" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="' . esc_attr(wp_create_nonce('search-customers')) . '">';
+            
+            // If there's a current customer selected, add it as an option
+            if (!empty($current_customer)) {
+                $customer = get_userdata($current_customer);
+                if ($customer) {
+                    printf(
+                        '<option value="%s" selected="selected">%s (#%s &ndash; %s)</option>',
+                        esc_attr($customer->ID),
+                        esc_html($customer->first_name . ' ' . $customer->last_name),
+                        esc_html($customer->ID),
+                        esc_html($customer->user_email)
+                    );
                 }
-                printf(
-                    '<option value="%s" %s>%s</option>',
-                    esc_attr($customer->ID),
-                    selected($current_customer, $customer->ID, false),
-                    $label
-                );
             }
             echo '</select>';
 
@@ -144,23 +140,62 @@ class Proposals {
             }
             echo '</select>';
 
-            // Enqueue WooCommerce select2
-            wp_enqueue_script('select2');
+            // Enqueue WooCommerce select2 and customer search
+            wp_enqueue_script('selectWoo');
             wp_enqueue_style('select2');
+            wp_enqueue_script('wc-enhanced-select');
             
-            // Add inline script to initialize select2
+            // Add inline script to initialize WooCommerce customer search
             add_action('admin_footer', function() {
                 ?>
                 <script type="text/javascript">
                 jQuery(function($) {
-                    $('.wc-customer-search, .select2-enhanced').select2({
+                    // Initialize WooCommerce customer search
+                    $('.wc-customer-search').selectWoo({
+                        ajax: {
+                            url: wc_enhanced_select_params.ajax_url,
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                return {
+                                    term: params.term,
+                                    action: 'woocommerce_json_search_customers',
+                                    security: $(this).attr('data-security'),
+                                    exclude: []
+                                };
+                            },
+                            processResults: function (data) {
+                                var terms = [];
+                                if (data) {
+                                    $.each(data, function (id, text) {
+                                        terms.push({
+                                            id: id,
+                                            text: text
+                                        });
+                                    });
+                                }
+                                return {
+                                    results: terms
+                                };
+                            },
+                            cache: true
+                        },
+                        placeholder: $(this).attr('data-placeholder'),
+                        allowClear: $(this).attr('data-allow_clear') === 'true',
+                        minimumInputLength: 1
+                    }).addClass('enhanced');
+                    
+                    // Initialize other select2 dropdowns
+                    $('.select2-enhanced').selectWoo({
                         allowClear: true,
                         minimumResultsForSearch: 0,
-                        minimumInputLength: 1,
                         placeholder: function(){
                             return $(this).data('placeholder');
                         }
-                    }).next('.select2-container').css({'min-width': '200px', 'margin-right': '8px'});
+                    });
+                    
+                    // Add min-width and spacing to all select2 containers
+                    $('.select2-container').css({'min-width': '200px', 'margin-right': '8px'});
                 });
                 </script>
                 <?php

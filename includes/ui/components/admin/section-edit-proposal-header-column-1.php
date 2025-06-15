@@ -43,16 +43,22 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
                 </a>
             <?php endif; ?>
         </label>
-        <?php
-        $author_dropdown = wp_dropdown_users(array(
-            'name' => 'post_author_override',
-            'selected' => $post->post_author,
-            'include_selected' => true,
-            'echo' => false,
-            'class' => 'wc-customer-search'
-        ));
-        echo $author_dropdown;
-        ?>
+        <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>">
+            <?php if ($post->post_author): ?>
+                <?php 
+                $customer_user = get_userdata($post->post_author);
+                if ($customer_user) {
+                    printf(
+                        '<option value="%s" selected="selected">%s (#%s &ndash; %s)</option>',
+                        esc_attr($customer_user->ID),
+                        esc_html($customer_user->first_name . ' ' . $customer_user->last_name),
+                        esc_html($customer_user->ID),
+                        esc_html($customer_user->user_email)
+                    );
+                }
+                ?>
+            <?php endif; ?>
+        </select>
     </p>
 </div>
 
@@ -72,4 +78,45 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
         <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
     </p>
-</div> 
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    // Initialize WooCommerce customer search if not already initialized
+    if (typeof wc_enhanced_select_params !== 'undefined' && $('.wc-customer-search').length && !$('.wc-customer-search').hasClass('select2-hidden-accessible')) {
+        $('.wc-customer-search').selectWoo({
+            ajax: {
+                url: wc_enhanced_select_params.ajax_url,
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        term: params.term,
+                        action: 'woocommerce_json_search_customers',
+                        security: $(this).attr('data-security'),
+                        exclude: []
+                    };
+                },
+                processResults: function (data) {
+                    var terms = [];
+                    if (data) {
+                        $.each(data, function (id, text) {
+                            terms.push({
+                                id: id,
+                                text: text
+                            });
+                        });
+                    }
+                    return {
+                        results: terms
+                    };
+                },
+                cache: true
+            },
+            placeholder: $(this).attr('data-placeholder'),
+            allowClear: $(this).attr('data-allow_clear') === 'true',
+            minimumInputLength: 1
+        }).addClass('enhanced');
+    }
+});
+</script> 

@@ -70,29 +70,74 @@ class Projects {
             }
             echo '</select>';
 
-            // Customer filter (manual select for Select2)
+            // Customer filter (WooCommerce native customer search)
             $current_customer = isset($_GET['customer_id']) ? $_GET['customer_id'] : '';
-            $customers = get_users(array('role__in' => array('customer', 'subscriber')));
-            echo '<select name="customer_id" class="arsol-pfw-admin-select2" data-placeholder="' . esc_attr__('Filter by registered customer', 'arsol-pfw') . '" data-allow_clear="true">';
-            echo '<option value="">' . __('Filter by registered customer', 'arsol-pfw') . '</option>';
-            foreach ($customers as $customer) {
-                echo '<option value="' . esc_attr($customer->ID) . '"' . selected($current_customer, $customer->ID, false) . '>' . esc_html($customer->display_name) . '</option>';
+            echo '<select name="customer_id" class="wc-customer-search" data-placeholder="' . esc_attr__('Filter by registered customer', 'arsol-pfw') . '" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="' . esc_attr(wp_create_nonce('search-customers')) . '">';
+            
+            // If there's a current customer selected, add it as an option
+            if (!empty($current_customer)) {
+                $customer = get_userdata($current_customer);
+                if ($customer) {
+                    printf(
+                        '<option value="%s" selected="selected">%s (#%s &ndash; %s)</option>',
+                        esc_attr($customer->ID),
+                        esc_html($customer->first_name . ' ' . $customer->last_name),
+                        esc_html($customer->ID),
+                        esc_html($customer->user_email)
+                    );
+                }
             }
             echo '</select>';
 
-            // Enqueue WooCommerce select2
-            wp_enqueue_script('select2');
+            // Enqueue WooCommerce select2 and customer search
+            wp_enqueue_script('selectWoo');
             wp_enqueue_style('select2');
+            wp_enqueue_script('wc-enhanced-select');
             
-            // Add inline script to initialize select2 with min-width and spacing
+            // Add inline script to initialize WooCommerce customer search
             add_action('admin_footer', function() {
                 ?>
                 <script type="text/javascript">
                 jQuery(function($) {
-                    $('.wc-customer-search, .select2-enhanced').select2({
+                    // Initialize WooCommerce customer search
+                    $('.wc-customer-search').selectWoo({
+                        ajax: {
+                            url: wc_enhanced_select_params.ajax_url,
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                return {
+                                    term: params.term,
+                                    action: 'woocommerce_json_search_customers',
+                                    security: $(this).attr('data-security'),
+                                    exclude: []
+                                };
+                            },
+                            processResults: function (data) {
+                                var terms = [];
+                                if (data) {
+                                    $.each(data, function (id, text) {
+                                        terms.push({
+                                            id: id,
+                                            text: text
+                                        });
+                                    });
+                                }
+                                return {
+                                    results: terms
+                                };
+                            },
+                            cache: true
+                        },
+                        placeholder: $(this).attr('data-placeholder'),
+                        allowClear: $(this).attr('data-allow_clear') === 'true',
+                        minimumInputLength: 1
+                    }).addClass('enhanced').next('.select2-container').css({'min-width': '200px', 'margin-right': '8px'});
+                    
+                    // Initialize other select2 dropdowns
+                    $('.arsol-pfw-admin-select2').selectWoo({
                         allowClear: true,
                         minimumResultsForSearch: 0,
-                        minimumInputLength: 1,
                         placeholder: function(){
                             return $(this).data('placeholder');
                         }
