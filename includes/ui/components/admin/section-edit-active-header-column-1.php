@@ -65,24 +65,45 @@ $all_statuses = get_terms(array(
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
-        <select id="project_lead" name="project_lead" class="arsol-user-select2">
-            <option value=""><?php _e('— Select —', 'arsol-pfw'); ?></option>
-            <?php
-            // Use the Admin\Users helper to build the list of valid project leads
-            $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
-
-            // Fetch all users who can create projects according to plugin permissions
-            $potential_leads = get_users(array('fields' => array('ID', 'display_name')));
-
-            foreach ($potential_leads as $user) {
-                if ($admin_users_helper->can_user_create_projects($user->ID)) {
-                    echo '<option value="' . esc_attr($user->ID) . '"' . selected($project_lead, $user->ID, false) . '>';
-                    echo esc_html($user->display_name);
-                    echo '</option>';
-                }
+        <?php
+        // Get users who can create projects based on Project Manager Roles setting
+        $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
+        $project_lead_users = get_users(array(
+            'fields' => array('ID', 'display_name'),
+            'meta_query' => array(
+                'relation' => 'OR',
+                array(
+                    'key' => 'wp_capabilities',
+                    'value' => 'manage_projects',
+                    'compare' => 'LIKE'
+                ),
+                array(
+                    'key' => 'wp_capabilities', 
+                    'value' => 'create_projects',
+                    'compare' => 'LIKE'
+                )
+            )
+        ));
+        
+        // Filter to only users who can actually create projects
+        $valid_user_ids = array();
+        foreach ($project_lead_users as $user) {
+            if ($admin_users_helper->can_user_create_projects($user->ID)) {
+                $valid_user_ids[] = $user->ID;
             }
-            ?>
-        </select>
+        }
+        
+        // Use WordPress native dropdown
+        wp_dropdown_users(array(
+            'name' => 'project_lead',
+            'id' => 'project_lead',
+            'class' => 'arsol-user-select2',
+            'selected' => $project_lead,
+            'include' => $valid_user_ids,
+            'show_option_none' => __('— Select Project Lead —', 'arsol-pfw'),
+            'option_none_value' => ''
+        ));
+        ?>
     </p>
 </div>
 

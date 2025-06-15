@@ -1,10 +1,11 @@
 /**
  * Arsol Projects for WooCommerce - Admin Scripts
+ * Consolidated script for all admin dropdown functionality
  */
 jQuery(document).ready(function($) {
     'use strict';
     
-    // Initialize WooCommerce customer search if available
+    // Initialize WooCommerce customer search dropdowns
     function initWooCommerceCustomerSearch() {
         // Check if WooCommerce enhanced select is available
         if (typeof wc_enhanced_select_params === 'undefined' || typeof $.fn.selectWoo === 'undefined') {
@@ -59,8 +60,88 @@ jQuery(document).ready(function($) {
         }
     }
     
+    // Initialize WordPress native user Select2 dropdowns (project leads, etc.)
+    function initUserSelect2Dropdowns() {
+        // Check if Select2 is available
+        if (typeof $.fn.select2 === 'undefined') {
+            // Retry after a short delay if Select2 isn't loaded yet
+            setTimeout(initUserSelect2Dropdowns, 250);
+            return;
+        }
+        
+        if ($('.arsol-user-select2').length) {
+            $('.arsol-user-select2').each(function() {
+                var $this = $(this);
+                
+                // Skip if already initialized
+                if ($this.hasClass('select2-hidden-accessible')) {
+                    return;
+                }
+                
+                // Get placeholder from the first option or use default
+                var placeholder = $this.find('option:first').text() || '— Select Project Lead —';
+                
+                $this.select2({
+                    placeholder: placeholder,
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+        }
+    }
+    
+    // Initialize WooCommerce enhanced select dropdowns (status dropdowns, etc.)
+    function initWooCommerceEnhancedSelect() {
+        // Check if WooCommerce enhanced select is available
+        if (typeof $.fn.selectWoo === 'undefined') {
+            // Retry after a short delay if WooCommerce scripts aren't loaded yet
+            setTimeout(initWooCommerceEnhancedSelect, 250);
+            return;
+        }
+        
+        if ($('.wc-enhanced-select').length) {
+            $('.wc-enhanced-select').each(function() {
+                var $this = $(this);
+                
+                // Skip if already initialized
+                if ($this.hasClass('select2-hidden-accessible') || $this.hasClass('enhanced')) {
+                    return;
+                }
+                
+                $this.selectWoo({
+                    minimumResultsForSearch: 10,
+                    allowClear: $this.attr('data-allow_clear') === 'true',
+                    placeholder: $this.attr('data-placeholder') || $this.attr('placeholder')
+                }).addClass('enhanced');
+            });
+        }
+    }
+    
+    // Initialize disabled customer dropdowns with custom styling
+    function initDisabledCustomerDropdowns() {
+        if ($('.arsol-disabled-select').length) {
+            $('.arsol-disabled-select').each(function() {
+                var $this = $(this);
+                
+                // Add visual styling for disabled state
+                $this.addClass('arsol-disabled-dropdown');
+                
+                // Ensure it's properly disabled
+                $this.prop('disabled', true);
+            });
+        }
+    }
+    
+    // Comprehensive initialization function
+    function initAllDropdowns() {
+        initWooCommerceCustomerSearch();
+        initUserSelect2Dropdowns();
+        initWooCommerceEnhancedSelect();
+        initDisabledCustomerDropdowns();
+    }
+    
     // Initialize on page load
-    initWooCommerceCustomerSearch();
+    initAllDropdowns();
     
     // Re-initialize when new elements are added to the DOM using MutationObserver
     if (typeof MutationObserver !== 'undefined') {
@@ -70,7 +151,12 @@ jQuery(document).ready(function($) {
                 if (mutation.type === 'childList') {
                     mutation.addedNodes.forEach(function(node) {
                         if (node.nodeType === 1) { // Element node
-                            if ($(node).hasClass('wc-customer-search') || $(node).find('.wc-customer-search').length) {
+                            var $node = $(node);
+                            if ($node.hasClass('wc-customer-search') || 
+                                $node.hasClass('arsol-user-select2') || 
+                                $node.hasClass('wc-enhanced-select') || 
+                                $node.hasClass('arsol-disabled-select') ||
+                                $node.find('.wc-customer-search, .arsol-user-select2, .wc-enhanced-select, .arsol-disabled-select').length) {
                                 shouldReinit = true;
                             }
                         }
@@ -78,7 +164,7 @@ jQuery(document).ready(function($) {
                 }
             });
             if (shouldReinit) {
-                setTimeout(initWooCommerceCustomerSearch, 100);
+                setTimeout(initAllDropdowns, 100);
             }
         });
         
@@ -89,8 +175,13 @@ jQuery(document).ready(function($) {
     } else {
         // Fallback for older browsers
         $(document).on('DOMNodeInserted', function(e) {
-            if ($(e.target).hasClass('wc-customer-search') || $(e.target).find('.wc-customer-search').length) {
-                setTimeout(initWooCommerceCustomerSearch, 100);
+            var $target = $(e.target);
+            if ($target.hasClass('wc-customer-search') || 
+                $target.hasClass('arsol-user-select2') || 
+                $target.hasClass('wc-enhanced-select') || 
+                $target.hasClass('arsol-disabled-select') ||
+                $target.find('.wc-customer-search, .arsol-user-select2, .wc-enhanced-select, .arsol-disabled-select').length) {
+                setTimeout(initAllDropdowns, 100);
             }
         });
     }
@@ -124,12 +215,12 @@ jQuery(document).ready(function($) {
         
         if ($(conditionFieldSelector).val() === conditionValue) {
             conditionalRow.closest('tr').show();
-            } else {
+        } else {
             conditionalRow.closest('tr').hide();
         }
     }
 
-        // Initial check
+    // Initial check
     checkConditionalField();
 
     // Check on change
@@ -141,7 +232,7 @@ jQuery(document).ready(function($) {
         });
     }
     
-    // Initialize enhanced select fields if Select2 is available
+    // Legacy support for specific selectors (backwards compatibility)
     if ($.fn.select2 && $('#arsol_project_selector').length) {
         $('#arsol_project_selector').select2({
             placeholder: 'Select a project',
@@ -207,13 +298,4 @@ jQuery(document).ready(function($) {
     $('body').on('input', '.arsol-money-input', function() {
         formatMoneyInput($(this));
     });
-
-    // Initialize user Select2 dropdowns (project lead, etc.)
-    if ($.fn.select2 && $('.arsol-user-select2').length) {
-        $('.arsol-user-select2').select2({
-            placeholder: '— Select Project Lead —',
-            allowClear: true,
-            width: '100%'
-        });
-    }
 });

@@ -56,19 +56,47 @@ class Projects {
                 echo '</select>';
             }
 
-            // Project Lead filter (manual select for Select2)
+            // Project Lead filter (WordPress native user dropdown)
             $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
             $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
-            $all_users = get_users(array('fields' => array('ID', 'display_name')));
-
-            echo '<select name="project_lead" class="arsol-user-select2" data-placeholder="' . esc_attr__('Filter by project lead', 'arsol-pfw') . '" data-allow_clear="true">';
-            echo '<option value="">' . __('Filter by project lead', 'arsol-pfw') . '</option>';
-            foreach ($all_users as $user) {
+            
+            // Get users who can create projects based on Project Manager Roles setting
+            $project_lead_users = get_users(array(
+                'fields' => array('ID', 'display_name'),
+                'meta_query' => array(
+                    'relation' => 'OR',
+                    array(
+                        'key' => 'wp_capabilities',
+                        'value' => 'manage_projects',
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'wp_capabilities', 
+                        'value' => 'create_projects',
+                        'compare' => 'LIKE'
+                    )
+                )
+            ));
+            
+            // Filter to only users who can actually create projects
+            $valid_user_ids = array();
+            foreach ($project_lead_users as $user) {
                 if ($admin_users_helper->can_user_create_projects($user->ID)) {
-                    echo '<option value="' . esc_attr($user->ID) . '"' . selected($current_lead, $user->ID, false) . '>' . esc_html($user->display_name) . '</option>';
+                    $valid_user_ids[] = $user->ID;
                 }
             }
-            echo '</select>';
+            
+            // Use WordPress native dropdown with Select2 class
+            echo '<div class="arsol-user-select2-wrapper">';
+            wp_dropdown_users(array(
+                'name' => 'project_lead',
+                'class' => 'arsol-user-select2',
+                'selected' => $current_lead,
+                'include' => $valid_user_ids,
+                'show_option_none' => __('Filter by project lead', 'arsol-pfw'),
+                'option_none_value' => ''
+            ));
+            echo '</div>';
 
             // Customer filter (WooCommerce native customer search)
             $current_customer = isset($_GET['customer_id']) ? $_GET['customer_id'] : '';
