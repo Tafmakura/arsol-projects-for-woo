@@ -188,7 +188,8 @@ class Woocommerce_Biller {
             // Set order meta
             $order->add_meta_data('_arsol_proposal_id', $proposal_data['proposal_id']);
             if ($project_id) {
-                $order->add_meta_data('_arsol_project_id', $project_id);
+                // Save project using both methods to ensure compatibility
+                $this->save_project_to_order($order, $project_id);
             }
             $order->add_meta_data('_arsol_conversion_date', current_time('mysql'));
             
@@ -262,7 +263,8 @@ class Woocommerce_Biller {
             // Set subscription meta
             $subscription->add_meta_data('_arsol_proposal_id', $proposal_data['proposal_id']);
             if ($project_id) {
-                $subscription->add_meta_data('_arsol_project_id', $project_id);
+                // Save project using both methods to ensure compatibility
+                $this->save_project_to_order($subscription, $project_id);
             }
             $subscription->add_meta_data('_arsol_conversion_date', current_time('mysql'));
             

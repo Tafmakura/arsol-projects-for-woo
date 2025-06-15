@@ -302,7 +302,7 @@ class Woocommerce {
 
                     
                     <p class="form-field form-field-wide">
-                        <label><strong><?php esc_html_e('Parent project:', 'arsol-pfw'); ?></strong>
+                        <label><?php esc_html_e('Parent project:', 'arsol-pfw'); ?>
                         <?php if (!empty($project_id)): ?>
                             <a href="<?php echo esc_url(get_edit_post_link($project_id)); ?>"><?php echo esc_html($project_name); ?></a>
                         <?php else: ?>
