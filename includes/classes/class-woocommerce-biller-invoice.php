@@ -182,7 +182,7 @@ class Woocommerce_Biller {
             // Set billing and shipping addresses
             $this->set_order_addresses($order, $proposal_data['customer_id']);
             
-            // Add all line items to the order
+            // Add all line items to the order (Debug: logging line item types)
             $this->add_line_items_to_order($order, $proposal_data['line_items']);
             
             // Set order meta
@@ -376,8 +376,8 @@ class Woocommerce_Biller {
         }
         
         // Add one-time fees
-        if (!empty($line_items['onetime_fees'])) {
-            foreach ($line_items['onetime_fees'] as $fee) {
+        if (!empty($line_items['one_time_fees'])) {
+            foreach ($line_items['one_time_fees'] as $fee) {
                 $fee_item = new \WC_Order_Item_Fee();
                 $fee_item->set_name($fee['name']);
                 $fee_item->set_amount($fee['amount']);
@@ -390,7 +390,7 @@ class Woocommerce_Biller {
         if (!empty($line_items['shipping_fees'])) {
             foreach ($line_items['shipping_fees'] as $shipping) {
                 $shipping_item = new \WC_Order_Item_Shipping();
-                $shipping_item->set_method_title($shipping['name']);
+                $shipping_item->set_method_title($shipping['description']);
                 $shipping_item->set_total($shipping['amount']);
                 $order->add_item($shipping_item);
             }
