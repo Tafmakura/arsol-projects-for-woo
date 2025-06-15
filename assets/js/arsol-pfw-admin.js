@@ -6,12 +6,19 @@ jQuery(document).ready(function($) {
     
     // Initialize WooCommerce customer search if available
     function initWooCommerceCustomerSearch() {
-        if (typeof wc_enhanced_select_params !== 'undefined' && $('.wc-customer-search').length) {
+        // Check if WooCommerce enhanced select is available
+        if (typeof wc_enhanced_select_params === 'undefined' || typeof $.fn.selectWoo === 'undefined') {
+            // Retry after a short delay if WooCommerce scripts aren't loaded yet
+            setTimeout(initWooCommerceCustomerSearch, 250);
+            return;
+        }
+        
+        if ($('.wc-customer-search').length) {
             $('.wc-customer-search').each(function() {
                 var $this = $(this);
                 
                 // Skip if already initialized
-                if ($this.hasClass('select2-hidden-accessible')) {
+                if ($this.hasClass('select2-hidden-accessible') || $this.hasClass('enhanced')) {
                     return;
                 }
                 
@@ -55,12 +62,38 @@ jQuery(document).ready(function($) {
     // Initialize on page load
     initWooCommerceCustomerSearch();
     
-    // Re-initialize when new elements are added to the DOM
-    $(document).on('DOMNodeInserted', function(e) {
-        if ($(e.target).hasClass('wc-customer-search') || $(e.target).find('.wc-customer-search').length) {
-            setTimeout(initWooCommerceCustomerSearch, 100);
-        }
-    });
+    // Re-initialize when new elements are added to the DOM using MutationObserver
+    if (typeof MutationObserver !== 'undefined') {
+        var observer = new MutationObserver(function(mutations) {
+            var shouldReinit = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1) { // Element node
+                            if ($(node).hasClass('wc-customer-search') || $(node).find('.wc-customer-search').length) {
+                                shouldReinit = true;
+                            }
+                        }
+                    });
+                }
+            });
+            if (shouldReinit) {
+                setTimeout(initWooCommerceCustomerSearch, 100);
+            }
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    } else {
+        // Fallback for older browsers
+        $(document).on('DOMNodeInserted', function(e) {
+            if ($(e.target).hasClass('wc-customer-search') || $(e.target).find('.wc-customer-search').length) {
+                setTimeout(initWooCommerceCustomerSearch, 100);
+            }
+        });
+    }
     
     // Generic confirmation handler for conversion buttons
     $('body').on('click', '.arsol-confirm-conversion', function(e) {

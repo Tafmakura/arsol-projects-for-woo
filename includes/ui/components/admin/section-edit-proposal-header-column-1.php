@@ -84,45 +84,4 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
         <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
     </p>
-</div>
-
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-    // Initialize WooCommerce customer search if not already initialized
-    if (typeof wc_enhanced_select_params !== 'undefined' && $('.wc-customer-search').length && !$('.wc-customer-search').hasClass('select2-hidden-accessible')) {
-        $('.wc-customer-search').selectWoo({
-            ajax: {
-                url: wc_enhanced_select_params.ajax_url,
-                dataType: 'json',
-                delay: 250,
-                data: function (params) {
-                    return {
-                        term: params.term,
-                        action: 'woocommerce_json_search_customers',
-                        security: $(this).attr('data-security'),
-                        exclude: []
-                    };
-                },
-                processResults: function (data) {
-                    var terms = [];
-                    if (data) {
-                        $.each(data, function (id, text) {
-                            terms.push({
-                                id: id,
-                                text: text
-                            });
-                        });
-                    }
-                    return {
-                        results: terms
-                    };
-                },
-                cache: true
-            },
-            placeholder: $(this).attr('data-placeholder'),
-            allowClear: $(this).attr('data-allow_clear') === 'true',
-            minimumInputLength: 1
-        }).addClass('enhanced');
-    }
-});
-</script> 
+</div> 

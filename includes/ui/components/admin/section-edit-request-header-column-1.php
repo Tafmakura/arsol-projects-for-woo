@@ -37,18 +37,28 @@ $all_statuses = get_terms(array(
                 </a>
             <?php endif; ?>
         </label>
-        <?php
-        $author_dropdown = wp_dropdown_users(array(
-            'name' => '', // Remove name to make it non-saveable
-            'selected' => $post->post_author,
-            'include_selected' => true,
-            'echo' => false,
-            'class' => 'wc-customer-search'
-        ));
-        // Add disabled attribute to make it non-editable
-        $author_dropdown = str_replace('<select', '<select disabled', $author_dropdown);
-        echo $author_dropdown;
-        ?>
+        <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>">
+            <?php if ($post->post_author): ?>
+                <?php 
+                $customer_user = get_userdata($post->post_author);
+                if ($customer_user) {
+                    // Format customer display like WooCommerce: "First Last (#ID – email)" or fallback to "Display Name (#ID – email)"
+                    $customer_name = trim($customer_user->first_name . ' ' . $customer_user->last_name);
+                    if (empty($customer_name)) {
+                        $customer_name = $customer_user->display_name;
+                    }
+                    
+                    printf(
+                        '<option value="%s" selected="selected">%s (#%s &ndash; %s)</option>',
+                        esc_attr($customer_user->ID),
+                        esc_html($customer_name),
+                        esc_html($customer_user->ID),
+                        esc_html($customer_user->user_email)
+                    );
+                }
+                ?>
+            <?php endif; ?>
+        </select>
     </p>
 </div>
 
