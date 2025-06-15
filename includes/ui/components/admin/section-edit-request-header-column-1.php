@@ -37,7 +37,7 @@ $all_statuses = get_terms(array(
                 </a>
             <?php endif; ?>
         </label>
-        <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>">
+        <select class="arsol-disabled-select" name="post_author_override" disabled style="width: 100%;">
             <?php if ($post->post_author): ?>
                 <?php 
                 $customer_user = get_userdata($post->post_author);
@@ -55,8 +55,12 @@ $all_statuses = get_terms(array(
                         esc_html($customer_user->ID),
                         esc_html($customer_user->user_email)
                     );
+                } else {
+                    echo '<option value="">' . esc_html__('Customer not found', 'arsol-pfw') . '</option>';
                 }
                 ?>
+            <?php else: ?>
+                <option value=""><?php esc_html_e('No customer assigned', 'arsol-pfw'); ?></option>
             <?php endif; ?>
         </select>
     </p>

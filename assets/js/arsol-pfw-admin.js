@@ -17,8 +17,8 @@ jQuery(document).ready(function($) {
             $('.wc-customer-search').each(function() {
                 var $this = $(this);
                 
-                // Skip if already initialized
-                if ($this.hasClass('select2-hidden-accessible') || $this.hasClass('enhanced')) {
+                // Skip if already initialized or disabled
+                if ($this.hasClass('select2-hidden-accessible') || $this.hasClass('enhanced') || $this.is(':disabled')) {
                     return;
                 }
                 
