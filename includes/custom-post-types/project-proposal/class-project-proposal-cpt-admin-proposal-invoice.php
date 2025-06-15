@@ -251,7 +251,7 @@ class Proposal_Invoice {
         <script type="text/html" id="tmpl-arsol-onetime-fee-line-item">
             <tr class="arsol-line-item arsol-fee-item" data-id="{{ data.id }}">
                 <td class="arsol-description-column">
-                    <input type="text" class="arsol-description-input" name="line_items[one_time_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Setup Fee', 'arsol-pfw'); ?>">
+                    <input type="text" class="arsol-description-input" name="line_items[one_time_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Setup Fee', 'arsol-pfw'); ?>">
                 </td>
                 <td class="arsol-amount-column">
                     <input type="text" class="arsol-amount-input wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
@@ -271,7 +271,7 @@ class Proposal_Invoice {
         <script type="text/html" id="tmpl-arsol-recurring-fee-line-item">
              <tr class="arsol-line-item arsol-recurring-fee-item" data-id="{{ data.id }}">
                 <td class="arsol-description-column">
-                    <input type="text" class="arsol-description-input" name="line_items[recurring_fees][{{ data.id }}][name]" value="{{ data.name || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>">
+                    <input type="text" class="arsol-description-input" name="line_items[recurring_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>">
                 </td>
                 <td class="arsol-date-column">
                     <input type="date" class="arsol-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">

@@ -362,7 +362,7 @@ class Woocommerce_Biller {
         if (!empty($line_items['recurring_fees'])) {
             foreach ($line_items['recurring_fees'] as $fee) {
                 $fee_item = new \WC_Order_Item_Fee();
-                $fee_item->set_name($fee['name']);
+                $fee_item->set_name($fee['description']);
                 $fee_item->set_amount($fee['amount']);
                 $fee_item->set_total($fee['amount']);
                 
@@ -379,7 +379,7 @@ class Woocommerce_Biller {
         if (!empty($line_items['one_time_fees'])) {
             foreach ($line_items['one_time_fees'] as $fee) {
                 $fee_item = new \WC_Order_Item_Fee();
-                $fee_item->set_name($fee['name']);
+                $fee_item->set_name($fee['description']);
                 $fee_item->set_amount($fee['amount']);
                 $fee_item->set_total($fee['amount']);
                 $order->add_item($fee_item);
@@ -429,7 +429,7 @@ class Woocommerce_Biller {
         if (!empty($line_items['recurring_fees'])) {
             foreach ($line_items['recurring_fees'] as $fee) {
                 $fee_item = new \WC_Order_Item_Fee();
-                $fee_item->set_name($fee['name']);
+                $fee_item->set_name($fee['description']);
                 $fee_item->set_amount($fee['amount']);
                 $fee_item->set_total($fee['amount']);
                 
