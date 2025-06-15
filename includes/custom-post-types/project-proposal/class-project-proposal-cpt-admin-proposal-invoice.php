@@ -229,14 +229,13 @@ class Proposal_Invoice {
         <script type="text/html" id="tmpl-arsol-product-line-item">
             <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}">
                 <td class="arsol-description-column">
-                    <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]" style="width:100%;">
-                        <# if (data.product_id && data.product_name) { #>
-                            <option value="{{ data.product_id }}" selected="selected">{{ data.product_name }}</option>
-                        <# } else { #>
-                             <option value=""><?php _e('Select a product', 'arsol-pfw'); ?></option>
-                        <# } #>
-                    </select>
-                    <div class="product-sub-text">{{{ data.sub_text }}}</div>
+                                    <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]" style="width:100%;">
+                    <option value="{{ data.product_id || '' }}" selected="selected">{{ data.product_name || '' }}</option>
+                                </select>
+                <input type="hidden" name="line_items[products][{{ data.id }}][product_type]" value="{{ data.product_type || '' }}">
+                    <div class="arsol-sub-text">
+                        <input type="text" class="arsol-sub-text-input" name="line_items[products][{{ data.id }}][sub_text]" value="{{ data.sub_text || '' }}" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
+                    </div>
                 </td>
                 <td class="arsol-date-column">
                     <input type="date" class="arsol-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
@@ -408,7 +407,7 @@ class Proposal_Invoice {
             wp_send_json_error('Missing search term');
         }
 
-        $product_types = apply_filters('arsol_proposal_product_types', array('simple', 'variable', 'subscription', 'variation'));
+        $product_types = apply_filters('arsol_proposal_product_types', array('simple', 'subscription', 'subscription_variation', 'variation', 'external'));
 
         $query = new \WC_Product_Query( array(
             'limit' => 20,
@@ -442,6 +441,7 @@ class Proposal_Invoice {
             wp_send_json_error('Invalid product');
         }
         
+        $product_type = $product->get_type();
         $is_subscription = $product->is_type(array('subscription', 'subscription_variation'));
         $sign_up_fee = 0;
         $regular_price_val = 0;
@@ -474,7 +474,7 @@ class Proposal_Invoice {
         $data = array(
             'regular_price' => wc_format_decimal($regular_price_val, wc_get_price_decimals()),
             'sale_price' => $sale_price_val !== '' ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
-            'is_subscription' => $is_subscription,
+            'product_type' => $product_type, // WooCommerce product types with prices: simple, subscription, subscription_variation, variation, external
             'sign_up_fee' => wc_format_decimal($sign_up_fee, wc_get_price_decimals()),
             'billing_interval' => $billing_interval,
             'billing_period'   => $billing_period
