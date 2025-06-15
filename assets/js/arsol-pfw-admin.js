@@ -4,6 +4,64 @@
 jQuery(document).ready(function($) {
     'use strict';
     
+    // Initialize WooCommerce customer search if available
+    function initWooCommerceCustomerSearch() {
+        if (typeof wc_enhanced_select_params !== 'undefined' && $('.wc-customer-search').length) {
+            $('.wc-customer-search').each(function() {
+                var $this = $(this);
+                
+                // Skip if already initialized
+                if ($this.hasClass('select2-hidden-accessible')) {
+                    return;
+                }
+                
+                $this.selectWoo({
+                    ajax: {
+                        url: wc_enhanced_select_params.ajax_url,
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                term: params.term,
+                                action: 'woocommerce_json_search_customers',
+                                security: $this.attr('data-security'),
+                                exclude: []
+                            };
+                        },
+                        processResults: function (data) {
+                            var terms = [];
+                            if (data) {
+                                $.each(data, function (id, text) {
+                                    terms.push({
+                                        id: id,
+                                        text: text
+                                    });
+                                });
+                            }
+                            return {
+                                results: terms
+                            };
+                        },
+                        cache: true
+                    },
+                    placeholder: $this.attr('data-placeholder'),
+                    allowClear: $this.attr('data-allow_clear') === 'true',
+                    minimumInputLength: 1
+                }).addClass('enhanced');
+            });
+        }
+    }
+    
+    // Initialize on page load
+    initWooCommerceCustomerSearch();
+    
+    // Re-initialize when new elements are added to the DOM
+    $(document).on('DOMNodeInserted', function(e) {
+        if ($(e.target).hasClass('wc-customer-search') || $(e.target).find('.wc-customer-search').length) {
+            setTimeout(initWooCommerceCustomerSearch, 100);
+        }
+    });
+    
     // Generic confirmation handler for conversion buttons
     $('body').on('click', '.arsol-confirm-conversion', function(e) {
         e.preventDefault();

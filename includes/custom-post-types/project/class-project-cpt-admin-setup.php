@@ -14,7 +14,7 @@ class Setup {
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('template_redirect', array($this, 'handle_project_template_redirect'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_wc_admin_styles'));
+
         add_action('add_meta_boxes', array($this, 'remove_publish_metabox'));
         
         // Add header container after title
@@ -190,20 +190,7 @@ class Setup {
         remove_meta_box('submitdiv', 'arsol-project', 'side');
     }
 
-    /**
-     * Enqueue WooCommerce admin styles and scripts for arsol-project post type
-     */
-    public function enqueue_wc_admin_styles($hook) {
-        global $typenow;
-        if ($typenow === 'arsol-project' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-project')) {
-            // WooCommerce admin styles
-            wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
-            
-            // WooCommerce admin scripts for enhanced selects
-            wp_enqueue_script('wc-enhanced-select');
-            wp_enqueue_script('select2');
-        }
-    }
+
 
     /**
      * Render project header container

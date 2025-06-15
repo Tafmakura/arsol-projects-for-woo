@@ -14,7 +14,7 @@ class Setup {
         add_action('init', array($this, 'add_default_review_statuses'), 20);
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_proposals'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_wc_admin_styles'));
+        add_action('template_redirect', array($this, 'handle_proposal_template_redirect'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_proposal_assets'));
         add_action('add_meta_boxes', array($this, 'remove_publish_metabox'));
         
@@ -165,17 +165,6 @@ class Setup {
      */
     public function remove_publish_metabox() {
         remove_meta_box('submitdiv', 'arsol-pfw-proposal', 'side');
-    }
-
-    /**
-     * Enqueue WooCommerce admin styles for project proposal post type
-     */
-    public function enqueue_wc_admin_styles($hook) {
-        global $typenow;
-        if ($typenow === 'arsol-pfw-proposal' || (isset($_GET['post_type']) && $_GET['post_type'] === 'arsol-pfw-proposal')) {
-            // WooCommerce admin styles
-            wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
-        }
     }
 
     /**

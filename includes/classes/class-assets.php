@@ -129,10 +129,26 @@ class Assets {
 
         // Only load on specified post type pages
         if (in_array($screen->post_type, $allowed_post_types)) {
+            // Enqueue WooCommerce admin styles
+            wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
+            
+            // Enqueue WooCommerce admin scripts for enhanced selects and customer search
+            wp_enqueue_script('selectWoo');
+            wp_enqueue_script('wc-enhanced-select');
+            wp_enqueue_style('select2');
+            
+            // Enqueue our plugin assets
             wp_enqueue_style('arsol-pfw-admin');
             wp_enqueue_script('arsol-pfw-admin');
             
-            // Add localized data if needed
+            // Localize WooCommerce enhanced select script with parameters
+            wp_localize_script('wc-enhanced-select', 'wc_enhanced_select_params', array(
+                'ajax_url'                => admin_url('admin-ajax.php'),
+                'search_products_nonce'   => wp_create_nonce('search-products'),
+                'search_customers_nonce'  => wp_create_nonce('search-customers'),
+            ));
+            
+            // Localize our plugin script
             wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('arsol-pfw-admin'),

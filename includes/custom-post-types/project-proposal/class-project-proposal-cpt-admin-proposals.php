@@ -125,6 +125,8 @@ class Proposals {
             }
             echo '</select>';
 
+            // Customer search functionality is now handled by global admin JS
+
             // Related Request filter
             $current_request = isset($_GET['related_request']) ? $_GET['related_request'] : '';
             $requests = get_posts(array(
@@ -145,67 +147,6 @@ class Proposals {
                 );
             }
             echo '</select>';
-
-            // Enqueue WooCommerce select2 and customer search
-            wp_enqueue_script('selectWoo');
-            wp_enqueue_style('select2');
-            wp_enqueue_script('wc-enhanced-select');
-            
-            // Add inline script to initialize WooCommerce customer search
-            add_action('admin_footer', function() {
-                ?>
-                <script type="text/javascript">
-                jQuery(function($) {
-                    // Initialize WooCommerce customer search
-                    $('.wc-customer-search').selectWoo({
-                        ajax: {
-                            url: wc_enhanced_select_params.ajax_url,
-                            dataType: 'json',
-                            delay: 250,
-                            data: function (params) {
-                                return {
-                                    term: params.term,
-                                    action: 'woocommerce_json_search_customers',
-                                    security: $(this).attr('data-security'),
-                                    exclude: []
-                                };
-                            },
-                            processResults: function (data) {
-                                var terms = [];
-                                if (data) {
-                                    $.each(data, function (id, text) {
-                                        terms.push({
-                                            id: id,
-                                            text: text
-                                        });
-                                    });
-                                }
-                                return {
-                                    results: terms
-                                };
-                            },
-                            cache: true
-                        },
-                        placeholder: $(this).attr('data-placeholder'),
-                        allowClear: $(this).attr('data-allow_clear') === 'true',
-                        minimumInputLength: 1
-                    }).addClass('enhanced');
-                    
-                    // Initialize other select2 dropdowns
-                    $('.select2-enhanced').selectWoo({
-                        allowClear: true,
-                        minimumResultsForSearch: 0,
-                        placeholder: function(){
-                            return $(this).data('placeholder');
-                        }
-                    });
-                    
-                    // Add min-width and spacing to all select2 containers
-                    $('.select2-container').css({'min-width': '200px', 'margin-right': '8px'});
-                });
-                </script>
-                <?php
-            });
         }
     }
 
