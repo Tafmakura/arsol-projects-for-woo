@@ -14,7 +14,6 @@ if (!defined('ABSPATH')) {
 // Include the necessary classes (assuming they're autoloaded)
 use Arsol_Projects_For_Woo\Woocommerce_Biller;
 use Arsol_Projects_For_Woo\Woocommerce_Subscriptions_Biller;
-use Arsol_Projects_For_Woo\Woocommerce_Biller_Helper;
 
 /**
  * Test data structure that matches the expected format
@@ -176,8 +175,8 @@ function test_fee_validation() {
         'amount' => '-10.00' // Negative amount
     );
     
-    echo "Valid fee: " . (Woocommerce_Biller_Helper::validate_fee_data($valid_fee) ? 'PASS' : 'FAIL') . "\n";
-    echo "Invalid fee: " . (Woocommerce_Biller_Helper::validate_fee_data($invalid_fee) ? 'FAIL' : 'PASS') . "\n";
+    echo "Valid fee: " . (Woocommerce_Biller::validate_fee_data($valid_fee) ? 'PASS' : 'FAIL') . "\n";
+    echo "Invalid fee: " . (Woocommerce_Biller::validate_fee_data($invalid_fee) ? 'FAIL' : 'PASS') . "\n";
     
     echo "\n";
 }
@@ -203,7 +202,7 @@ function test_billing_schedule() {
         )
     );
     
-    $schedule = Woocommerce_Biller_Helper::get_billing_schedule($recurring_fees);
+    $schedule = Woocommerce_Biller::get_billing_schedule($recurring_fees);
     
     echo "Billing Schedule:\n";
     echo "- Interval: " . $schedule['interval'] . "\n";

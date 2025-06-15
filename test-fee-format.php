@@ -62,22 +62,23 @@ try {
 
 // Test 3: Test our helper class format
 echo "\nTest 3: Testing helper class format\n";
-if (class_exists('Arsol_Projects_For_Woo\\Woocommerce_Biller_Helper')) {
-    $order3 = wc_create_order();
-    echo "Created order #" . $order3->get_id() . "\n";
+if (class_exists('Arsol_Projects_For_Woo\\Woocommerce_Biller')) {
+    echo "\n=== Fee Addition Test ===\n";
+    
+    // Create a test order
+    $order3 = new WC_Order();
+    $order3->set_customer_id(1);
+    $order3->save();
     
     $test_fees = array(
-        array(
-            'name' => 'Helper Test Fee',
-            'amount' => '25.00',
-            'tax_class' => ''
-        )
+        'fee1' => array('name' => 'Test Fee 1', 'amount' => 25.00),
+        'fee2' => array('name' => 'Test Fee 2', 'amount' => 15.50, 'taxable' => true)
     );
     
-    $fees_added = Arsol_Projects_For_Woo\Woocommerce_Biller_Helper::add_one_time_fees($order3, $test_fees, 'test');
-    echo "Fees added by helper: " . $fees_added . "\n";
+    $fees_added = Arsol_Projects_For_Woo\Woocommerce_Biller::add_fees_to_order($order3, $test_fees, 'test');
     
     $fees3 = $order3->get_fees();
+    echo "Fees added by helper: " . $fees_added . "\n";
     echo "Total fees in order: " . count($fees3) . "\n";
     echo "Order total: $" . $order3->get_total() . "\n";
     
