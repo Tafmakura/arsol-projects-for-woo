@@ -342,16 +342,16 @@ class Woocommerce_Biller {
             foreach ($line_items['products'] as $item) {
                 $product = wc_get_product($item['product_id']);
                 if ($product) {
-                    $order_item = $order->add_product($product, $item['quantity']);
+                    $item_id = $order->add_product($product, $item['quantity']); $order_item = $item_id ? $order->get_item($item_id) : null;
                     
-                    // Set custom price if specified
-                    if (isset($item['price']) && $item['price'] !== '') {
+                    // Set custom price if specified (only if order item was created successfully)
+                    if ($order_item && isset($item['price']) && $item['price'] !== '') {
                         $order_item->set_subtotal($item['price'] * $item['quantity']);
                         $order_item->set_total($item['price'] * $item['quantity']);
                     }
                     
                     // Add start date for subscription products
-                    if (isset($item['start_date']) && !empty($item['start_date'])) {
+                    if ($order_item && isset($item['start_date']) && !empty($item['start_date'])) {
                         $order_item->add_meta_data('_subscription_start_date', $item['start_date']);
                     }
                 }
@@ -409,16 +409,16 @@ class Woocommerce_Biller {
             foreach ($line_items['products'] as $item) {
                 $product = wc_get_product($item['product_id']);
                 if ($product && in_array($item['product_type'], ['subscription', 'subscription_variation'])) {
-                    $subscription_item = $subscription->add_product($product, $item['quantity']);
+                    $item_id = $subscription->add_product($product, $item['quantity']); $subscription_item = $item_id ? $subscription->get_item($item_id) : null;
                     
-                    // Set custom price if specified
-                    if (isset($item['price']) && $item['price'] !== '') {
+                    // Set custom price if specified (only if order item was created successfully)
+                    if ($subscription_item && isset($item['price']) && $item['price'] !== '') {
                         $subscription_item->set_subtotal($item['price'] * $item['quantity']);
                         $subscription_item->set_total($item['price'] * $item['quantity']);
                     }
                     
                     // Add start date
-                    if (isset($item['start_date']) && !empty($item['start_date'])) {
+                    if ($subscription_item && isset($item['start_date']) && !empty($item['start_date'])) {
                         $subscription_item->add_meta_data('_subscription_start_date', $item['start_date']);
                     }
                 }
