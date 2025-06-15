@@ -381,7 +381,7 @@ class Shortcodes {
 	private function get_project_orders($project_id, $user_id) {
 		$args = array(
 			'customer_id' => $user_id,
-			'meta_key'   => self::PROJECT_META_KEY,
+			'meta_key'   => ARSOL_PROJECT_META_KEY,
 			'meta_value' => $project_id,
 			'return'     => 'ids',
 			'limit'      => -1

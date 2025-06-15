@@ -8,9 +8,10 @@ if (!defined('ABSPATH')) {
 
 class Woocommerce {
     /**
-     * Meta key used for storing project data
+     * Project meta key for orders and subscriptions
+     * Uses the global constant defined in the main plugin file
      */
-    const PROJECT_META_KEY = '_arsol_project_id';
+    const PROJECT_META_KEY = ARSOL_PROJECT_META_KEY;
 
     public function __construct() {
         // Initialize hooks
@@ -91,7 +92,7 @@ class Woocommerce {
             ?>
             <style type="text/css">
                 /* Hide duplicate project field */
-                p.form-field._wc_other\5c /arsol-projects-for-woo\5c /arsol-project_field {
+                p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
                     display: none !important;
                 }
             </style>
@@ -101,7 +102,7 @@ class Woocommerce {
                 // 1. The standard form field with the class name
                 // 2. Any project fields in the order_data_column > address section
                 var projectFields = $(
-                    'p.form-field._wc_other\\/arsol-projects-for-woo\\/arsol-project_field'
+                    'p.form-field._wc_other\\/arsol-pfw\\/parent-project-id_field'
                     // + ', div.order_data_column div.address p:contains("Project:")'
                 );
                 
@@ -219,28 +220,79 @@ class Woocommerce {
     }
 
     /**
-     * Get project ID from order
-     *
-     * @param \WC_Order $order The order object
-     * @return int|string Project ID or empty string if not set
+     * Get project from order using both Blocks API and fallback meta
+     * 
+     * @param \WC_Order|\WC_Subscription $order The order object
+     * @return string|int|false Project ID or false if none
      */
     private function get_project_from_order($order) {
-        // Use WooCommerce Blocks API to get the field value
+        // Use WooCommerce Blocks API to get the field value (recommended approach)
         if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
             try {
-                $field_id = 'arsol-projects-for-woo/arsol-project';
                 $checkout_fields = \Automattic\WooCommerce\Blocks\Package::container()->get(
                     \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
                 );
-                return $checkout_fields->get_field_from_object($field_id, $order, 'order');
+                return $checkout_fields->get_field_from_object(self::PROJECT_META_KEY, $order, 'order');
             } catch (\Exception $e) {
-                // If Blocks API fails, fallback to meta
-                return $order->get_meta(self::PROJECT_META_KEY);
+                // Log error if logging is available
+                if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error', 
+                        sprintf('Failed to get project from order using Blocks API: %s', $e->getMessage()));
+                }
+                return false;
             }
         }
         
-        // Fallback for non-Blocks environment
-        return $order->get_meta(self::PROJECT_META_KEY);
+        // If Blocks API is not available, log warning and return false
+        if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('warning', 
+                'WooCommerce Blocks API not available - cannot retrieve project');
+        }
+        
+        return false;
+    }
+
+    /**
+     * Save project to order using WooCommerce Blocks API (recommended approach)
+     * This ensures future-proof compatibility with WooCommerce's recommended practices
+     * 
+     * @param \WC_Order|\WC_Subscription $order The order object
+     * @param int $project_id The project ID to save
+     * @return bool True if saved successfully
+     */
+    public static function save_project_to_order($order, $project_id) {
+        // Use WooCommerce Blocks API (WooCommerce's recommended method)
+        if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
+            try {
+                $checkout_fields = \Automattic\WooCommerce\Blocks\Package::container()->get(
+                    \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
+                );
+                $checkout_fields->persist_field_for_order(self::PROJECT_META_KEY, $project_id, $order);
+                
+                // Log success if logging is available
+                if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
+                        sprintf('Saved project #%d to order #%d using Blocks API', $project_id, $order->get_id()));
+                }
+                
+                return true;
+            } catch (\Exception $e) {
+                // Log error if logging is available
+                if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error', 
+                        sprintf('Failed to save project using Blocks API: %s', $e->getMessage()));
+                }
+                return false;
+            }
+        }
+        
+        // If Blocks API is not available, log warning and return false
+        if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('warning', 
+                'WooCommerce Blocks API not available - project not saved');
+        }
+        
+        return false;
     }
 
     /**
@@ -287,7 +339,7 @@ class Woocommerce {
                     if (empty($parent_info['no_parent'])) {
                         // Get parent order
                         $parent_order = wc_get_order($parent_info['id']);
-                        $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
+                        $project_id = $parent_order ? $this->get_project_from_order($parent_order) : '';
                         
                         if (!empty($project_id)) {
                             $project = get_post($project_id);
@@ -359,8 +411,8 @@ class Woocommerce {
                 // Verify this is a valid project before saving
                 $project = get_post($project_id);
                 if ($project && $project->post_type === 'arsol-project') {
-                    // Cast to integer to match checkout format
-                    $order->update_meta_data(self::PROJECT_META_KEY, (int)$project_id);
+                    // Use centralized save method for consistency
+                    self::save_project_to_order($order, (int)$project_id);
                 }
             }
             
@@ -388,18 +440,18 @@ class Woocommerce {
                 if ($parent_order_id) {
                     $parent_order = wc_get_order($parent_order_id);
                     if ($parent_order) {
-                        $project_id = $parent_order->get_meta(self::PROJECT_META_KEY);
+                        $project_id = $this->get_project_from_order($parent_order);
                         $is_from_parent = true;
                     }
                 } else {
-                    $project_id = $order->get_meta(self::PROJECT_META_KEY);
+                    $project_id = $this->get_project_from_order($order);
                 }
             } else {
                 // Regular child order
                 $parent_info = $this->get_parent_order_info($order);
                 if ($parent_info && empty($parent_info['no_parent'])) {
                     $parent_order = wc_get_order($parent_info['id']);
-                    $project_id = $parent_order ? $parent_order->get_meta(self::PROJECT_META_KEY) : '';
+                    $project_id = $parent_order ? $this->get_project_from_order($parent_order) : '';
                     $is_from_parent = true;
                 }
             }
@@ -472,7 +524,7 @@ class Woocommerce {
                 if ($parent_info) {
                     $parent_order = wc_get_order($parent_info['id']);
                     if ($parent_order) {
-                        $project_id = $parent_order->get_meta(self::PROJECT_META_KEY);
+                        $project_id = $this->get_project_from_order($parent_order);
                         if (!empty($project_id)) {
                             $project = get_post($project_id);
                             if ($project) {
@@ -491,7 +543,7 @@ class Woocommerce {
             }
             
             // For parent orders or if parent relationship not found
-            $project_id = $order->get_meta(self::PROJECT_META_KEY);
+            $project_id = $this->get_project_from_order($order);
             if (!empty($project_id)) {
                 $project = get_post($project_id);
                 if ($project) {

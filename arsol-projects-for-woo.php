@@ -42,6 +42,9 @@ define('ARSOL_PROJECTS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ARSOL_PROJECTS_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('ARSOL_PROJECTS_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
+// Define project meta key constant for WooCommerce integration
+define('ARSOL_PROJECT_META_KEY', 'arsol-pfw/parent-project-id');
+
 // Use correct namespace
 use Arsol_Projects_For_Woo\Setup;
 use Arsol_Projects_For_Woo\Workflow\Workflow_Handler;

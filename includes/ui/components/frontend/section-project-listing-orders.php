@@ -20,13 +20,16 @@ if (!$project_id) {
 
 // Get paginated orders for the project.
 $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
-$customer_orders = wc_get_orders(array(
-    'meta_key' => '_arsol_project_id',
+$orders = wc_get_orders(array(
+    'meta_key' => ARSOL_PROJECT_META_KEY,
     'meta_value' => $project_id,
-    'paged' => $paged,
+    'limit' => $per_page,
+    'offset' => ($current_page - 1) * $per_page,
     'customer' => get_current_user_id(),
+    'orderby' => 'date',
+    'order' => 'DESC'
 ));
-$has_orders = !empty($customer_orders);
+$has_orders = !empty($orders);
 
 do_action('arsol_projects_before_project_orders', $has_orders, $project_id);
 ?>
@@ -45,8 +48,7 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id);
             </thead>
             <tbody>
                 <?php
-                foreach ($customer_orders as $customer_order) {
-                    $order = wc_get_order($customer_order);
+                foreach ($orders as $order) {
                     $item_count = $order->get_item_count() - $order->get_item_count_refunded();
                     ?>
                     <tr class="woocommerce-orders-table__row woocommerce-orders-table__row--status-<?php echo esc_attr($order->get_status()); ?> order">
@@ -81,7 +83,7 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id);
 
         <?php
         // Manually create pagination links
-        $total_pages = wc_get_orders(array('meta_key' => '_arsol_project_id', 'meta_value' => $project_id, 'paginate' => true, 'customer' => get_current_user_id()))->max_num_pages;
+        $total_pages = wc_get_orders(array('meta_key' => ARSOL_PROJECT_META_KEY, 'meta_value' => $project_id, 'paginate' => true, 'customer' => get_current_user_id()))->max_num_pages;
 
         if ($total_pages > 1) {
             echo '<nav class="woocommerce-pagination">';

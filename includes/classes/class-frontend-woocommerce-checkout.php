@@ -191,7 +191,7 @@ class Frontend_Woocommerce_Checkout {
                     $settings = get_option('arsol_projects_settings', array());
                     $is_required = !empty($settings['require_project_selection']);
 
-                    $field_id = 'arsol-projects-for-woo/arsol-project';
+                    $field_id = 'arsol-pfw/parent-project-id';
                     
                     $checkout_fields_controller = \Automattic\WooCommerce\Blocks\Package::container()->get(
                         \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
@@ -351,14 +351,15 @@ class Frontend_Woocommerce_Checkout {
                 $project_id = sanitize_text_field($_POST['arsol_project_id']);
             }
             // For block checkout
-            elseif (isset($data['arsol-projects-for-woo/arsol-project'])) {
-                $project_id = sanitize_text_field($data['arsol-projects-for-woo/arsol-project']);
+            elseif (isset($data['arsol-pfw/parent-project-id'])) {
+                $project_id = sanitize_text_field($data['arsol-pfw/parent-project-id']);
             }
         }
         
         if (!empty($project_id)) {
             $order = wc_get_order($order_id);
-            $order->update_meta_data(Woocommerce::PROJECT_META_KEY, $project_id);
+            // Use centralized save method for consistency across all components
+            \Arsol_Projects_For_Woo\Woocommerce::save_project_to_order($order, (int)$project_id);
             // The order->save() is called by WooCommerce after this hook.
         }
     }
