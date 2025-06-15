@@ -35,7 +35,7 @@ class Project {
         ?>
         <div class="project-details">
             <div class="major-actions">
-                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php echo ($post->post_status === 'publish') ? __('Update', 'arsol-pfw') : __('Publish', 'arsol-pfw'); ?>" style="width: 100%;">
+                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php echo ($post->post_status === 'publish') ? __('Update', 'arsol-pfw') : __('Publish', 'arsol-pfw'); ?>">
             </div>
         </div>
         <?php
