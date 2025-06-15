@@ -442,7 +442,7 @@ class Proposal_Invoice {
         }
         
         $product_type = $product->get_type();
-        $is_subscription = $product->is_type(array('subscription', 'subscription_variation'));
+        $is_subscription = in_array($product_type, array('subscription', 'subscription_variation'));
         $sign_up_fee = 0;
         $regular_price_val = 0;
         $sale_price_val = '';

@@ -215,7 +215,9 @@
                         $row.find('.arsol-sale-price-input').val(data.sale_price);
                         $row.find('.product-sub-text').html(data.sub_text);
                         
-                        if (data.is_subscription) {
+                        // Check if product is subscription type (backward compatible)
+                        var isSubscription = data.product_type && (data.product_type === 'subscription' || data.product_type === 'subscription_variation');
+                        if (isSubscription) {
                             $row.find('.arsol-date-input').show();
                             // Store subscription billing data on the row for calculations
                             $row.data('billing-interval', data.billing_interval || 1);
