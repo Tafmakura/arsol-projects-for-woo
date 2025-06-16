@@ -23,17 +23,12 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
 <?php if ($has_original_data): ?>
 
     <p class="form-field form-field-wide">
-        <label><strong><?php _e('Original Request Title:', 'arsol-pfw'); ?></strong></label>
+        <label><strong><?php _e('Project Title:', 'arsol-pfw'); ?></strong></label>
         <?php echo !empty($original_request_title) ? esc_html($original_request_title) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
     </p>
 
     <p class="form-field form-field-wide">
-        <label><strong><?php _e('Request ID:', 'arsol-pfw'); ?></strong></label>
-        <?php echo !empty($original_request_id) ? esc_html($original_request_id) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
-    </p>
-
-    <p class="form-field form-field-wide">
-        <label><strong><?php _e('Original Budget:', 'arsol-pfw'); ?></strong></label>
+        <label><strong><?php _e('Available Budget:', 'arsol-pfw'); ?></strong></label>
         <?php 
         if (!empty($original_request_budget)) {
             if (is_array($original_request_budget) && isset($original_request_budget['amount'])) {
@@ -60,7 +55,7 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
     </p>
 
     <p class="form-field form-field-wide">
-        <label><strong><?php _e('Original Description:', 'arsol-pfw'); ?></strong></label>
+        <label><strong><?php _e('Project Description:', 'arsol-pfw'); ?></strong></label>
         <?php echo !empty($original_request_content) ? wp_kses_post(wp_trim_words($original_request_content, 30)) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
     </p>
 
