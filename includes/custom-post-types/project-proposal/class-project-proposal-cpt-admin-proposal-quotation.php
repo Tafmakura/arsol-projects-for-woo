@@ -13,6 +13,7 @@ class Proposal_Quotation {
         add_action('save_post', array($this, 'save_quotation_meta_box'));
         add_action('wp_ajax_arsol_proposal_quotation_ajax_search_products', array($this, 'ajax_search_products'));
         add_action('wp_ajax_arsol_proposal_quotation_ajax_get_product_details', array($this, 'ajax_get_product_details'));
+        add_action('admin_footer', array($this, 'render_js_templates_in_footer'));
     }
 
     public function add_quotation_meta_box() {
@@ -212,10 +213,15 @@ class Proposal_Quotation {
            </div>
         </div>
         <?php
-        $this->render_js_templates();
     }
     
-    private function render_js_templates() {
+    public function render_js_templates_in_footer() {
+        // Only render templates on proposal admin pages
+        $screen = get_current_screen();
+        if (!$screen || $screen->post_type !== 'arsol-pfw-proposal') {
+            return;
+        }
+        
         // Prepare tax classes for dropdowns
         $tax_classes = \WC_Tax::get_tax_classes();
         $tax_class_options = array('no-tax' => __('No Tax', 'arsol-pfw'));
@@ -229,13 +235,13 @@ class Proposal_Quotation {
         <script type="text/html" id="tmpl-arsol-product-line-item">
             <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}">
                 <td class="arsol-description-column">
-                                    <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]" style="width:100%;">
+                                    <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]">
                     <option value="{{ data.product_id || '' }}" selected="selected">{{ data.product_name || '' }}</option>
                                 </select>
                 <input type="hidden" name="line_items[products][{{ data.id }}][product_type]" value="{{ data.product_type || '' }}">
                 </td>
                 <td class="arsol-date-column">
-                    <input type="date" class="arsol-date-input" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display:none;">
+                    <input type="date" class="arsol-date-input hidden-start-date" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
                 </td>
                 <td class="arsol-quantity-column"><input type="number" class="arsol-quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
                 <td class="arsol-price-column"><input type="text" class="arsol-price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>

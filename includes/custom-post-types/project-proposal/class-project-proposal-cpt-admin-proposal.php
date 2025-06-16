@@ -9,8 +9,6 @@ class Proposal {
         // Add meta boxes for single proposal admin screen
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
         
-        // Add styles to hide metaboxes initially
-        add_action('admin_head', array($this, 'hide_metaboxes_initially'));
         // Save proposal data
         add_action('save_post', array($this, 'save_proposal_details'));
         // Action to set review status when a proposal is published
@@ -76,7 +74,7 @@ class Proposal {
         <div class="proposal-details">
         </div>
         <div class="major-actions">
-            <div class="arsol-pfw-admin-project-actions" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="arsol-pfw-admin-project-actions">
                 <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php echo ($post->post_status === 'publish') ? __('Update', 'arsol-pfw') : __('Publish', 'arsol-pfw'); ?>">
             <?php
             $is_disabled = $post->post_status !== 'publish';
@@ -97,47 +95,10 @@ class Proposal {
             </span>
             </div>
         </div>
-        <script>
-            jQuery(document).ready(function($) {
-                function toggleCostProposalSections() {
-                    var selectedType = $('#cost_proposal_type').val();
-                    
-                    $('#arsol_budget_estimates_metabox').hide();
-                    $('#arsol_proposal_quotation_metabox').hide();
-
-                    if (selectedType === 'budget_estimates') {
-                        $('#arsol_budget_estimates_metabox').show();
-                    } else if (selectedType === 'quotation_line_items') {
-                        $('#arsol_proposal_quotation_metabox').show();
-                    }
-                }
-
-                // Initial toggle on page load
-                toggleCostProposalSections();
-
-                // Toggle when dropdown changes
-                $('#cost_proposal_type').on('change', function() {
-                    toggleCostProposalSections();
-                });
-            });
-        </script>
         <?php
     }
 
-    /**
-     * Adds inline styles to the admin head to hide conditional metaboxes by default.
-     */
-    public function hide_metaboxes_initially() {
-        global $post;
-        if (isset($post->post_type) && $post->post_type === 'arsol-pfw-proposal') {
-            echo '<style>
-                #arsol_budget_estimates_metabox,
-                #arsol_proposal_quotation_metabox {
-                    display: none;
-                }
-            </style>';
-        }
-    }
+
 
     /**
      * Save proposal details
@@ -182,7 +143,7 @@ class Proposal {
         $currency = get_woocommerce_currency();
 
         // Conditionally save/delete budget data
-        if ($cost_proposal_type === 'budget_estimates') {
+        if ($cost_proposal_type === 'budget') {
             // Sanitize and save the budget amount
             if (isset($_POST['proposal_budget'])) {
                 $budget_amount = wc_format_decimal(sanitize_text_field($_POST['proposal_budget']));
@@ -231,8 +192,8 @@ class Proposal {
             delete_post_meta($post_id, '_proposal_recurring_start_date');
         }
 
-        // Conditionally delete invoice data if it's not the selected type
-        if ($cost_proposal_type !== 'quotation_line_items') {
+        // Conditionally delete quotation data if it's not the selected type
+        if ($cost_proposal_type !== 'quotation') {
              delete_post_meta($post_id, '_arsol_proposal_quotation_line_items');
              delete_post_meta($post_id, '_arsol_proposal_one_time_total');
              delete_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped');

@@ -38,11 +38,11 @@ class Request {
         $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
         $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         ?>
-        <p style="margin-bottom: 15px;">
+        <p class="request-conversion-description">
             <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request status must be set to "Under Review" before conversion is allowed. This action cannot be undone.', 'arsol-pfw'); ?>
         </p>
         <div class="major-actions">
-            <div class="arsol-pfw-admin-project-actions" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="arsol-pfw-admin-project-actions">
                 <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php echo ($post->post_status === 'publish') ? __('Update', 'arsol-pfw') : __('Publish', 'arsol-pfw'); ?>">
                 <?php
                 $is_disabled = $current_status !== 'under-review';

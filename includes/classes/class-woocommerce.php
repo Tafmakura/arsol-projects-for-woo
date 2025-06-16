@@ -90,12 +90,6 @@ class Woocommerce {
         // Add script to remove duplicate fields
         add_action('admin_footer', function() {
             ?>
-            <style type="text/css">
-                /* Hide duplicate project field */
-                p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
-                    display: none !important;
-                }
-            </style>
             <script type="text/javascript">
             jQuery(function($) {
                 // Target both project field locations:
@@ -373,7 +367,7 @@ class Woocommerce {
                 ?>
                 <p class="form-field form-field-wide">
                     <label for="arsol_project_selector"><?php esc_html_e('Project:', 'arsol-pfw'); ?></label>
-                    <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select" style="width: 100%;">
+                    <select name="arsol_project" id="arsol_project_selector" class="wc-enhanced-select">
                         <option value="none" <?php selected(empty($selected_project), true); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
                         <?php foreach ($projects as $project) : ?>
                             <option value="<?php echo esc_attr($project->ID); ?>" 

@@ -7,6 +7,96 @@ body.post-type-arsol-pfw-proposal .select2-container {
     width: 100% !important;
 }
 
+/* === INLINE STYLES CONSOLIDATION === */
+
+/* Proposal Metabox Initial Hide */
+#arsol_budget_estimates_metabox,
+#arsol_proposal_quotation_metabox {
+    display: none;
+}
+
+/* Project Actions Layout */
+.arsol-pfw-admin-project-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Request Admin Description Text */
+.request-conversion-description {
+    margin-bottom: 15px;
+}
+
+/* WooCommerce Duplicate Field Fix */
+/* Hide duplicate project field */
+p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
+    display: none !important;
+}
+
+/* Quotation Template Inline Styles */
+.arsol-description-input {
+    width: 100% !important;
+}
+
+.arsol-date-input[style*="display:none"] {
+    display: none !important;
+}
+
+/* Project Selector Styling */
+#arsol_project_selector {
+    width: 100% !important;
+}
+
+/* Frontend Form Buttons */
+.form-project-create-request .submit-button,
+.form-project-create-active .submit-button {
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* Admin Component Styles */
+.arsol-disabled-select {
+    width: 100%;
+}
+
+/* Checkout Field Styles */
+#arsol_project_readonly {
+    background-color: #f9f9f9;
+    color: #666;
+}
+
+/* Settings Page Styles */
+.arsol-settings-wide-field {
+    width: 50%;
+}
+
+/* Demo Shortcode Styles */
+.arsol-template-override-demo {
+    padding: 20px;
+    margin: 20px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
+}
+
+.arsol-template-override-demo h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.arsol-template-override-demo p {
+    margin-bottom: 0;
+    color: #666;
+}
+
+.arsol-template-override-demo .demo-info {
+    font-size: 11px;
+    color: #999;
+    margin: 10px 0 0 0;
+}
+
+/* === END INLINE STYLES CONSOLIDATION === */
+
 /* Disabled customer dropdown styling */
 .wc-customer-user select:disabled,
 .arsol-disabled-select {
@@ -416,8 +506,6 @@ body.post-type-arsol-pfw-proposal .select2-container {
     text-align: right;
 }
 
-
-
 .section-footer .add-line-item {
     margin: 0;
 }
@@ -425,6 +513,27 @@ body.post-type-arsol-pfw-proposal .select2-container {
 .add-line-item:hover {
     background-color: #0073aa;
     color: white;
+}
+
+/* Disabled button styling */
+.add-line-item:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.arsol-confirm-conversion:disabled,
+#publish:disabled {
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.add-line-item:disabled:hover {
+    background-color: #ccc !important;
+    color: #666 !important;
 }
 
 .section-totals table {
@@ -900,7 +1009,53 @@ body.post-type-arsol-pfw-proposal .select2-container {
 }
 
 .arsol-pfw-project .form-field-row p {
-    margin: 9px 0 0 0;
+    margin-bottom: 0;
+}
+
+/* === INLINE STYLES CONSOLIDATION === */
+
+/* Proposal Metabox Initial Hide - now managed via CSS */
+#arsol_budget_estimates_metabox,
+#arsol_proposal_quotation_metabox {
+    display: none;
+}
+
+/* Request Admin Description Text */
+.request-conversion-description {
+    margin-bottom: 15px;
+}
+
+/* WooCommerce Duplicate Field Fix */
+/* Hide duplicate project field */
+p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
+    display: none !important;
+}
+
+/* Quotation Template Inline Styles */
+.arsol-description-input {
+    width: 100% !important;
+}
+
+.arsol-date-input.hidden-start-date {
+    display: none !important;
+}
+
+/* Frontend Form Buttons */
+.form-project-create-request .submit-button,
+.form-project-create-active .submit-button {
+    width: 100%;
+    margin-top: 8px;
+}
+
+/* Checkout Field Styles */
+#arsol_project_readonly {
+    background-color: #f9f9f9;
+    color: #666;
+}
+
+/* Settings Page Styles */
+.arsol-settings-wide-field {
+    width: 50%;
 }
 
 

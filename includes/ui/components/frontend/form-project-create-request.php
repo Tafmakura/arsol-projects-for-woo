@@ -88,7 +88,7 @@ if (!$is_edit) {
         
         <?php if (!$is_edit) : ?>
             <div class="form-row">
-                <button type="submit" class="button" style="width: 100%; margin-top: 8px;"><?php echo esc_html($button_text); ?></button>
+                <button type="submit" class="button submit-button"><?php echo esc_html($button_text); ?></button>
             </div>
         <?php endif; ?>
     </form>

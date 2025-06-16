@@ -510,7 +510,7 @@ class Workflow_Handler {
 
         /**
          * Hook: arsol_before_project_conversion_order_creation
-         * Fired before order/subscription creation from proposal
+         * Fired before attempting to create orders from proposal
          * 
          * @param int $project_id The new project ID
          * @param int $proposal_id The original proposal ID
@@ -518,6 +518,16 @@ class Workflow_Handler {
          */
         do_action('arsol_before_project_conversion_order_creation', $new_project_id, $proposal_id, $conversion_data);
 
+        // Get proposal type
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+        
+        // Only create orders for quotation proposals, not budget proposals
+        if ($cost_proposal_type !== 'quotation') {
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
+                sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $cost_proposal_type));
+            return false;
+        }
+        
         // Trigger action for order creation (MAIN CONVERSION HOOK - Legacy)
         do_action('arsol_proposal_converted_to_project', $new_project_id, $proposal_id);
 
@@ -558,19 +568,15 @@ class Workflow_Handler {
             }
             
             // Check proposal data
-            $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
-            $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
+            $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+            
+            $line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
             
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
-                sprintf('Proposal #%d details - Type: %s, Line items: %s', 
+                sprintf('Proposal #%d details - Type: %s, Quotation line items: %s', 
                     $proposal_id, 
                     $cost_proposal_type, 
                     !empty($line_items) ? 'present' : 'missing'));
-            
-            if (!empty($line_items)) {
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
-                    sprintf('Line items structure: %s', wp_json_encode(array_keys($line_items))));
-            }
         }
 
         // Check if there were any order creation errors
@@ -956,12 +962,13 @@ class Workflow_Handler {
         $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
         
         // Check cost proposal type
-        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+        
         $debug_info['cost_proposal_type'] = $cost_proposal_type;
-        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation_line_items');
+        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
         
         // Check line items
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
+        $line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
         $debug_info['has_line_items'] = !empty($line_items);
         $debug_info['line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
         

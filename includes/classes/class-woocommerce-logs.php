@@ -218,15 +218,16 @@ class Woocommerce_Logs {
         $debug_info['proposal_status'] = $proposal ? $proposal->post_status : 'N/A';
         $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
         
-        // Check cost proposal type
-        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
-        $debug_info['cost_proposal_type'] = $cost_proposal_type;
-        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation_line_items');
+        // Get proposal type
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
         
-        // Check line items
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
-        $debug_info['has_line_items'] = !empty($line_items);
-        $debug_info['line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
+        $debug_info['cost_proposal_type'] = $cost_proposal_type;
+        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
+        
+        // Check quotation line items
+        $line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
+        $debug_info['has_quotation_line_items'] = !empty($line_items);
+        $debug_info['quotation_line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
         
         if (!empty($line_items)) {
             $debug_info['products_count'] = !empty($line_items['products']) ? count($line_items['products']) : 0;
@@ -274,20 +275,21 @@ class Woocommerce_Logs {
             $debug_info['proposal_status'],
             $debug_info['proposal_author']));
         
-        // Check cost proposal type
-        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
+        // Get proposal type
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+        
         $debug_info['cost_proposal_type'] = $cost_proposal_type;
-        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation_line_items');
+        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
         
         self::log_conversion('info', sprintf('Cost proposal type: %s, Should create orders: %s', 
             $cost_proposal_type, $debug_info['should_create_orders'] ? 'YES' : 'NO'));
         
-        // Check line items in detail
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
-        $debug_info['has_line_items'] = !empty($line_items);
+        // Check quotation line items
+        $line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
+        $debug_info['has_quotation_line_items'] = !empty($line_items);
         
         if (!empty($line_items)) {
-            $debug_info['line_items_structure'] = array_keys($line_items);
+            $debug_info['quotation_line_items_structure'] = array_keys($line_items);
             
             // Analyze each section
             foreach (['products', 'one_time_fees', 'recurring_fees', 'shipping_fees'] as $section) {

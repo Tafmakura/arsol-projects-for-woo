@@ -43,7 +43,7 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
                 </a>
             <?php endif; ?>
         </label>
-        <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>">
+        <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>" required>
             <?php if ($post->post_author): ?>
                 <?php 
                 $customer_user = get_userdata($post->post_author);
@@ -71,11 +71,11 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="cost_proposal_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
-        <select id="cost_proposal_type" name="cost_proposal_type" class="wc-enhanced-select">
-            <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
-            <option value="budget_estimates" <?php selected($cost_proposal_type, 'budget_estimates'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
-            <option value="quotation_line_items" <?php selected($cost_proposal_type, 'quotation_line_items'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
-        </select>
+                        <select id="cost_proposal_type" name="cost_proposal_type" class="wc-enhanced-select">
+                    <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
+                    <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
+                    <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
+                </select>
     </p>
 </div>
 

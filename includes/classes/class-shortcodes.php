@@ -422,10 +422,10 @@ class Shortcodes {
 
 		ob_start();
 		?>
-		<div class="arsol-template-override-demo <?php echo esc_attr($style_class); ?>" style="padding: 20px; margin: 20px 0; border: 1px solid #ddd; border-radius: 4px; background: #f9f9f9;">
-			<h3 style="margin-top: 0; color: #333;"><?php echo esc_html($atts['title']); ?></h3>
-			<p style="margin-bottom: 0; color: #666;"><?php echo esc_html($atts['message']); ?></p>
-			<p style="font-size: 11px; color: #999; margin: 10px 0 0 0;">
+		<div class="arsol-template-override-demo <?php echo esc_attr($style_class); ?>">
+			<h3><?php echo esc_html($atts['title']); ?></h3>
+			<p><?php echo esc_html($atts['message']); ?></p>
+			<p class="demo-info">
 				<strong><?php _e('Project Type:', 'arsol-pfw'); ?></strong> <?php echo esc_html(ucfirst($atts['type'])); ?><br>
 				<strong><?php _e('Demo Shortcode:', 'arsol-pfw'); ?></strong> 
 				[arsol_template_override_demo title="<?php echo esc_attr($atts['title']); ?>" message="<?php echo esc_attr($atts['message']); ?>" type="<?php echo esc_attr($atts['type']); ?>" style="<?php echo esc_attr($atts['style']); ?>"]

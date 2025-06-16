@@ -37,7 +37,7 @@ $all_statuses = get_terms(array(
                 </a>
             <?php endif; ?>
         </label>
-        <select class="arsol-disabled-select" name="post_author_override" disabled style="width: 100%;">
+        <select class="arsol-disabled-select" name="post_author_override" disabled>
             <?php if ($post->post_author): ?>
         <?php
                 $customer_user = get_userdata($post->post_author);

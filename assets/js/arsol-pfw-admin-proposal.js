@@ -2,6 +2,150 @@
 (function($) {
     'use strict';
 
+    // Proposal Validation and Toggle System
+    var ArsolProposal = {
+        init: function() {
+            this.bindEvents();
+            this.initialValidation();
+        },
+
+        bindEvents: function() {
+            // Initial toggle on page load
+            this.toggleCostProposalSections();
+
+            // Toggle when dropdown changes
+            $('#cost_proposal_type').on('change', function() {
+                ArsolProposal.toggleCostProposalSections();
+                ArsolProposal.validateProposal(); // Re-validate when type changes
+            });
+
+            // Run validation on various input changes
+            $(document).on('input change', 'select[name="post_author_override"], #cost_proposal_type, input[name="proposal_budget"], input[name="proposal_budget_details"]', function() {
+                ArsolProposal.validateProposal();
+            });
+
+            // Run validation on quotation line item changes
+            $(document).on('input change', '.product-line-item input, .recurring-fee-line-item input, .onetime-fee-line-item input, .product-line-item select', function() {
+                if ($('#cost_proposal_type').val() === 'quotation') {
+                    ArsolProposal.validateProposal();
+                }
+            });
+
+            // Disable form submission if invalid
+            $('form#post').on('submit', function(e) {
+                if (!ArsolProposal.validateProposal()) {
+                    e.preventDefault();
+                    alert(arsol_proposal_vars.validation_message || 'Please complete all required fields before saving.');
+                    return false;
+                }
+            });
+        },
+
+        toggleCostProposalSections: function() {
+            var selectedType = $('#cost_proposal_type').val();
+            
+            $('#arsol_budget_estimates_metabox').hide();
+            $('#arsol_proposal_quotation_metabox').hide();
+
+            if (selectedType === 'budget') {
+                $('#arsol_budget_estimates_metabox').show();
+            } else if (selectedType === 'quotation') {
+                $('#arsol_proposal_quotation_metabox').show();
+            }
+        },
+
+        validateProposal: function() {
+            var isValid = true;
+            var proposalType = $('#cost_proposal_type').val();
+            var customer = $('select[name="post_author_override"]').val();
+
+            // Customer is always required
+            if (!customer) {
+                isValid = false;
+            }
+
+            // Type-specific validation
+            if (proposalType === 'budget') {
+                var budgetAmount = $('input[name="proposal_budget"]').val();
+                var budgetDetails = $('input[name="proposal_budget_details"]').val();
+                
+                if (!budgetAmount || parseFloat(budgetAmount) <= 0) {
+                    isValid = false;
+                }
+                if (budgetAmount && !budgetDetails) {
+                    isValid = false;
+                }
+            } else if (proposalType === 'quotation') {
+                // Check if at least one valid quotation line item exists
+                var hasValidItem = false;
+                $('.product-line-item, .recurring-fee-line-item, .onetime-fee-line-item').each(function() {
+                    var description = $(this).find('input[name*="description"], select[name*="product"]').val();
+                    var amount = $(this).find('input[name*="amount"], input[name*="price"]').val();
+                    
+                    if (description && amount && parseFloat(amount) > 0) {
+                        hasValidItem = true;
+                        return false; // Break loop
+                    }
+                });
+                
+                if (!hasValidItem) {
+                    isValid = false;
+                }
+            }
+
+            // Enable/disable buttons based on validation
+            $('.arsol-confirm-conversion, #publish').prop('disabled', !isValid);
+            
+            return isValid;
+        },
+
+        initialValidation: function() {
+            // Initial validation
+            this.validateProposal();
+        }
+    };
+
+    // Budget Totals System
+    var ArsolBudget = {
+        init: function() {
+            this.bindEvents();
+            this.updateBudgetTotals();
+        },
+
+        bindEvents: function() {
+            // Bind events using consolidated selectors
+            $('.js-amount-input').on('input', this.updateBudgetTotals.bind(this));
+            $('.js-billing-input').on('change', this.updateBudgetTotals.bind(this));
+        },
+
+        formatPrice: function(price) {
+            var currencySymbol = arsol_budget_vars.currency_symbol || '$';
+            var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
+        },
+
+        updateBudgetTotals: function() {
+            // Update one-time budget - target first amount input for one-time budget
+            var oneTimeAmount = parseFloat($('.js-amount-input').first().val()) || 0;
+            $('.budget-total-display').html(this.formatPrice(oneTimeAmount));
+            $('#budget-onetime-total-display').html(this.formatPrice(oneTimeAmount));
+            
+            // Update recurring budget - target recurring amount input specifically
+            var recurringAmount = parseFloat($('.recurring-budget-amount-input').val()) || 0;
+            var interval = parseInt($('.billing-interval').val()) || 1;
+            var period = $('.billing-period').val();
+            
+            var periodDisplay = period === 'month' ? 'mo' : (period === 'year' ? 'yr' : (period === 'week' ? 'wk' : (period === 'day' ? 'day' : period)));
+            var intervalText = interval > 1 ? interval : '';
+            var billingText = '/' + intervalText + periodDisplay;
+            
+            $('.recurring-budget-total-display').html(this.formatPrice(recurringAmount));
+            $('.arsol-billing-period').text(billingText);
+            $('#budget-recurring-total-display').html(this.formatPrice(recurringAmount));
+            $('#budget-recurring-period').text(billingText);
+        }
+    };
+
     var ArsolProposalQuotation = {
         // A flag to prevent multiple AJAX requests from firing at once.
         calculating: false,
@@ -94,7 +238,15 @@
             
             // Use jQuery's one() method for input events with debouncing (WordPress pattern)
             var debouncedCalculate = _.debounce(this.calculateTotals.bind(this), 300);
-            $builder.on('input change', '.arsol-quantity-input, .arsol-sale-price-input, .arsol-price-input, .arsol-amount-input, .arsol-billing-select', debouncedCalculate);
+            var debouncedValidate = _.debounce(this.updateAddButtonStates.bind(this), 300);
+            
+            $builder.on('input change', '.arsol-quantity-input, .arsol-sale-price-input, .arsol-price-input, .arsol-amount-input, .arsol-billing-select', function() {
+                debouncedCalculate();
+                debouncedValidate();
+            });
+            
+            // Also validate on description changes
+            $builder.on('input change', '.arsol-description-input', debouncedValidate);
             
             // Add WordPress-style custom event triggers for extensibility
             $(document).trigger('arsol:quotation-events-bound', [$builder]);
@@ -118,6 +270,7 @@
             }
             this.calculateTotals();
             this.toggleStartDateColumn();
+            this.updateAddButtonStates();
         },
 
         renderRow: function(type, data) {
@@ -239,9 +392,59 @@
 
         addLineItem: function(e) {
             e.preventDefault();
+            
+            // Validate last line item before adding new one
             var type = $(e.currentTarget).data('type');
+            var lastRowValid = this.validateLastLineItem(type);
+            
+            if (!lastRowValid) {
+                alert('Please complete the last line item before adding a new one.');
+                return;
+            }
+            
             this.renderRow(type, {});
             this.toggleStartDateColumn();
+            this.updateAddButtonStates();
+        },
+
+        validateLastLineItem: function(type) {
+            var containerMap = {
+                'product': '#product-lines-body',
+                'onetime-fee': '#onetime-fee-lines-body', 
+                'recurring-fee': '#recurring-fee-lines-body',
+                'shipping-fee': '#shipping-lines-body'
+            };
+            
+            var container = containerMap[type];
+            if (!container) return true;
+            
+            var $lastRow = $(container + ' tr.arsol-line-item').last();
+            if ($lastRow.length === 0) return true; // No existing rows
+            
+            var description = '';
+            var amount = '';
+            
+            if (type === 'product') {
+                description = $lastRow.find('select.arsol-description-input option:selected').text();
+                var price = $lastRow.find('.arsol-price-input').val();
+                var salePrice = $lastRow.find('.arsol-sale-price-input').val();
+                amount = salePrice || price;
+            } else {
+                description = $lastRow.find('.arsol-description-input').val();
+                amount = $lastRow.find('.arsol-amount-input').val();
+            }
+            
+            return description && description.trim() && amount && parseFloat(amount) > 0;
+        },
+
+        updateAddButtonStates: function() {
+            var self = this;
+            
+            $('.add-line-item').each(function() {
+                var type = $(this).data('type');
+                var isValid = self.validateLastLineItem(type);
+                $(this).prop('disabled', !isValid);
+            });
         },
 
         removeLineItem: function(e) {
@@ -249,6 +452,7 @@
             $(e.currentTarget).closest('tr').remove();
             this.calculateTotals();
             this.toggleStartDateColumn();
+            this.updateAddButtonStates();
         },
 
         productChanged: function(e) {
@@ -439,7 +643,18 @@
 
     // Initialize when DOM is ready
     $(document).ready(function() {
-        ArsolProposalQuotation.init();
+        // Initialize all systems
+        ArsolProposal.init();
+        
+        // Initialize quotation system if it exists
+        if ($('#proposal_quotation_builder').length > 0) {
+            ArsolProposalQuotation.init();
+        }
+        
+        // Initialize budget system if it exists
+        if ($('#proposal_budget_builder').length > 0) {
+            ArsolBudget.init();
+        }
     });
 
 })(jQuery); 

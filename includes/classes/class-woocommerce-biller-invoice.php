@@ -103,9 +103,17 @@ class Woocommerce_Biller {
     public function convert_proposal_to_order($proposal_id, $project_id = null) {
         // Validate proposal
         if (!$this->validate_proposal($proposal_id)) {
+            $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+            $error_messages = array(
+                'none' => __('Proposal validation failed. Please ensure a customer is assigned.', 'arsol-pfw'),
+                'budget' => __('Proposal validation failed. Please ensure a customer is assigned.', 'arsol-pfw'),
+                'quotation' => __('Proposal validation failed. Please ensure it has valid quotation line items (with description and amount) and a customer assigned.', 'arsol-pfw')
+            );
+            $error_message = isset($error_messages[$cost_proposal_type]) ? $error_messages[$cost_proposal_type] : $error_messages['none'];
+            
             return array(
                 'success' => false,
-                'message' => __('Proposal validation failed. Please ensure it has line items and a customer assigned.', 'arsol-pfw')
+                'message' => $error_message
             );
         }
         
@@ -506,7 +514,7 @@ class Woocommerce_Biller {
     }
     
     /**
-     * Validate proposal for conversion
+     * Validate proposal for conversion based on proposal type
      * 
      * @param int $proposal_id
      * @return bool
@@ -518,13 +526,7 @@ class Woocommerce_Biller {
             return false;
         }
         
-        // Check if proposal has line items
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
-        if (empty($line_items)) {
-            return false;
-        }
-        
-        // Check if proposal has a customer
+        // Check if proposal has a customer (post_author)
         $customer_id = $proposal->post_author;
         if (empty($customer_id)) {
             return false;
@@ -536,11 +538,60 @@ class Woocommerce_Biller {
             return false;
         }
         
-        return true;
+        // Get proposal type
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+        
+        // Validate based on proposal type
+        switch ($cost_proposal_type) {
+            case 'none':
+                // No requirements for 'none' type (no orders created)
+                return true;
+                
+            case 'budget':
+                // Budget type requires at least one-time budget with amount > 0
+                $budget_data = get_post_meta($proposal_id, '_proposal_budget', true);
+                if (empty($budget_data) || !is_array($budget_data)) {
+                    return false;
+                }
+                
+                $budget_amount = !empty($budget_data['amount']) ? floatval($budget_data['amount']) : 0;
+                if ($budget_amount <= 0) {
+                    return false;
+                }
+                
+                // If amount is provided, description is required
+                $budget_details = get_post_meta($proposal_id, '_proposal_budget_details', true);
+                if (empty($budget_details)) {
+                    return false;
+                }
+                
+                return true;
+                
+            case 'quotation':
+                // Quotation type requires at least one quotation line item with description and amount
+                $quotation_line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
+                if (empty($quotation_line_items) || !is_array($quotation_line_items)) {
+                    return false;
+                }
+                
+                // Check that at least one valid line item exists
+                $has_valid_item = false;
+                foreach ($quotation_line_items as $item) {
+                    if (!empty($item['description']) && !empty($item['amount']) && $item['amount'] > 0) {
+                        $has_valid_item = true;
+                        break;
+                    }
+                }
+                return $has_valid_item;
+                
+            default:
+                // Unknown proposal type
+                return false;
+        }
     }
     
     /**
-     * Get proposal data for conversion
+     * Get proposal data for conversion based on proposal type
      * 
      * @param int $proposal_id
      * @return array|false
@@ -551,14 +602,34 @@ class Woocommerce_Biller {
             return false;
         }
         
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);
-        $currency = get_post_meta($proposal_id, '_arsol_proposal_currency', true);
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+        $currency = get_post_meta($proposal_id, '_arsol_proposal_currency', true) ?: get_woocommerce_currency();
+        $line_items = array();
+        
+        // Get line items based on proposal type
+        switch ($cost_proposal_type) {
+            case 'quotation':
+                // Get quotation line items
+                $quotation_line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
+                if (!empty($quotation_line_items) && is_array($quotation_line_items)) {
+                    $line_items = $quotation_line_items;
+                }
+                break;
+                
+            case 'budget':
+            case 'none':
+            default:
+                // No line items for 'budget' and 'none' types (no orders created)
+                $line_items = array();
+                break;
+        }
         
         return array(
             'proposal_id' => $proposal_id,
             'customer_id' => $proposal->post_author,
-            'line_items' => $line_items ?: array(),
-            'currency' => $currency ?: get_woocommerce_currency()
+            'line_items' => $line_items,
+            'currency' => $currency,
+            'proposal_type' => $cost_proposal_type
         );
     }
 }

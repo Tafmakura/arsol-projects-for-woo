@@ -285,7 +285,7 @@ class Frontend_Woocommerce_Checkout {
                 echo '<div id="arsol-project-checkout-field">';
                 echo '<p class="form-row form-row-wide">';
                 echo '<label for="arsol_project_readonly"><strong>' . esc_html__('Project', 'arsol-pfw') . '</strong></label>';
-                echo '<input type="text" id="arsol_project_readonly" value="' . esc_attr($project->post_title) . '" readonly disabled style="background-color: #f9f9f9; color: #666;" />';
+                echo '<input type="text" id="arsol_project_readonly" value="' . esc_attr($project->post_title) . '" readonly disabled />';
                 echo '<input type="hidden" name="arsol_project_id" value="' . esc_attr($pre_assigned_project) . '" />';
                 echo '</p>';
                 echo '</div>';
