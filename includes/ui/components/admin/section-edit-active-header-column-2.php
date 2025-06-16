@@ -84,54 +84,46 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
 
 <?php elseif ($has_original_data): ?>
 
-    <?php if (!empty($original_request_title)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Original Title:', 'arsol-pfw'); ?></strong></label>
-        <?php echo esc_html($original_request_title); ?>
+        <?php echo !empty($original_request_title) ? esc_html($original_request_title) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
     </p>
-    <?php endif; ?>
 
-    <?php if (!empty($original_request_id)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Request ID:', 'arsol-pfw'); ?></strong></label>
-        <?php echo esc_html($original_request_id); ?>
+        <?php echo !empty($original_request_id) ? esc_html($original_request_id) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
     </p>
-    <?php endif; ?>
 
-    <?php if (!empty($original_request_budget)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Original Budget:', 'arsol-pfw'); ?></strong></label>
         <?php 
-        if (is_array($original_request_budget) && isset($original_request_budget['amount'])) {
-            $currency = isset($original_request_budget['currency']) ? $original_request_budget['currency'] : get_woocommerce_currency();
-            echo wc_price($original_request_budget['amount'], array('currency' => $currency));
+        if (!empty($original_request_budget)) {
+            if (is_array($original_request_budget) && isset($original_request_budget['amount'])) {
+                $currency = isset($original_request_budget['currency']) ? $original_request_budget['currency'] : get_woocommerce_currency();
+                echo wc_price($original_request_budget['amount'], array('currency' => $currency));
+            } else {
+                // Fallback for legacy or malformed data
+                echo wc_price($original_request_budget);
+            }
         } else {
-            // Fallback for legacy or malformed data
-            echo wc_price($original_request_budget);
+            echo '<em>' . __('Not provided', 'arsol-pfw') . '</em>';
         }
         ?>
     </p>
-    <?php endif; ?>
 
-    <?php if (!empty($original_request_start_date)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Requested Start Date:', 'arsol-pfw'); ?></strong></label>
-        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_start_date))); ?>
+        <?php echo !empty($original_request_start_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($original_request_start_date))) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
     </p>
-    <?php endif; ?>
 
-    <?php if (!empty($original_request_delivery_date)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></strong></label>
-        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($original_request_delivery_date))); ?>
+        <?php echo !empty($original_request_delivery_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($original_request_delivery_date))) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
     </p>
-    <?php endif; ?>
 
-    <?php if (!empty($original_request_content)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Original Description:', 'arsol-pfw'); ?></strong></label>
-        <?php echo wp_kses_post(wp_trim_words($original_request_content, 30)); ?>
+        <?php echo !empty($original_request_content) ? wp_kses_post(wp_trim_words($original_request_content, 30)) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
     </p>
-    <?php endif; ?>
 
     <?php endif; ?>
