@@ -218,16 +218,15 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     color: #d32f2f;
 }
 
-/* Conditional Fields */
-.arsol-conditional-field {
-    display: none;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
+/* Conditional Fields - WordPress Admin Settings */
+/* The conditional field row is hidden by default */
+.arsol-conditional-field-row {
+    display: none !important;
 }
 
-.arsol-conditional-field.show-conditional-field {
-    display: table-row;
-    opacity: 1;
+/* When shown by JavaScript, display the row */
+.arsol-conditional-field-row.show-conditional-field {
+    display: table-row !important;
 }
 
 /* User Permission Overrides */

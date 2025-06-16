@@ -205,32 +205,81 @@ jQuery(document).ready(function($) {
 
     // Conditional field logic for settings page
     function checkConditionalField() {
-        var conditionalRow = $('.arsol-conditional-field');
-        if (!conditionalRow.length) {
+        var conditionalRows = $('.arsol-conditional-field');
+        
+        if (!conditionalRows.length) {
             return;
         }
         
-        var conditionFieldSelector = 'select[name="' + conditionalRow.data('condition-field') + '"]';
-        var conditionValue = conditionalRow.data('condition-value');
-        
-        if ($(conditionFieldSelector).val() === conditionValue) {
-            conditionalRow.closest('tr').show();
-        } else {
-            conditionalRow.closest('tr').hide();
-        }
-    }
-
-    // Initial check
-    checkConditionalField();
-
-    // Check on change
-    var conditionalRow = $('.arsol-conditional-field');
-    if (conditionalRow.length) {
-        var conditionFieldSelector = 'select[name="' + conditionalRow.data('condition-field') + '"]';
-        $(document).on('change', conditionFieldSelector, function() {
-            checkConditionalField();
+        conditionalRows.each(function() {
+            var $this = $(this);
+            var conditionField = $this.data('condition-field');
+            var conditionValue = $this.data('condition-value');
+            
+            if (!conditionField || !conditionValue) {
+                return;
+            }
+            
+            // Build the correct selector for WordPress settings fields
+            var conditionFieldSelector = 'select[name="arsol_projects_settings[' + conditionField + ']"]';
+            var $conditionField = $(conditionFieldSelector);
+            
+            if (!$conditionField.length) {
+                // Fallback to ID-based selector
+                conditionFieldSelector = '#' + conditionField;
+                $conditionField = $(conditionFieldSelector);
+            }
+            
+            var $targetRow = $this.closest('tr');
+            if (!$targetRow.length) {
+                $targetRow = $this; // Fallback if not in a table structure
+            }
+            
+            // Mark the row as a conditional field row if not already marked
+            if (!$targetRow.hasClass('arsol-conditional-field-row')) {
+                $targetRow.addClass('arsol-conditional-field-row');
+            }
+            
+            if ($conditionField.length) {
+                var currentValue = $conditionField.val();
+                
+                if (currentValue === conditionValue) {
+                    $targetRow.addClass('show-conditional-field');
+                } else {
+                    $targetRow.removeClass('show-conditional-field');
+                }
+            }
         });
     }
+
+    // Check on change - use document ready to ensure all elements are loaded
+    $(document).ready(function() {
+        // Initial check after a small delay to ensure everything is loaded
+        setTimeout(function() {
+            checkConditionalField();
+        }, 100);
+        
+        var conditionalFields = $('.arsol-conditional-field');
+        if (conditionalFields.length) {
+            conditionalFields.each(function() {
+                var $this = $(this);
+                var conditionField = $this.data('condition-field');
+                if (conditionField) {
+                    var conditionFieldSelector = 'select[name="arsol_projects_settings[' + conditionField + ']"]';
+                    var $conditionField = $(conditionFieldSelector);
+                    
+                    if (!$conditionField.length) {
+                        // Fallback to ID-based selector
+                        conditionFieldSelector = '#' + conditionField;
+                    }
+                    
+                    $(document).on('change', conditionFieldSelector, function() {
+                        checkConditionalField();
+                    });
+                }
+            });
+        }
+    });
     
     // Legacy support for specific selectors (backwards compatibility)
     if ($.fn.select2 && $('#arsol_project_selector').length) {

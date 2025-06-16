@@ -219,6 +219,10 @@ class Settings_General {
 
         wp_enqueue_script('wc-enhanced-select');
         wp_enqueue_script('wc-product-search');
+        
+        // Enqueue our main admin script for conditional field functionality
+        wp_enqueue_script('arsol-pfw-admin');
+        wp_enqueue_style('arsol-pfw-admin');
     }
 
     /**
@@ -385,8 +389,17 @@ class Settings_General {
         $settings = get_option('arsol_projects_settings', array());
         $value = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'none';
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
+        
+        // Build data attributes for conditional functionality
+        $data_attributes = '';
+        if (isset($args['data-condition-field'])) {
+            $data_attributes .= ' data-condition-field="' . esc_attr($args['data-condition-field']) . '"';
+        }
+        if (isset($args['data-condition-value'])) {
+            $data_attributes .= ' data-condition-value="' . esc_attr($args['data-condition-value']) . '"';
+        }
         ?>
-        <div class="<?php echo $class; ?>">
+        <div class="<?php echo $class; ?>"<?php echo $data_attributes; ?>>
         <select id="default_user_permission"
                 name="arsol_projects_settings[default_user_permission]">
             <?php foreach ($args['options'] as $option => $label): ?>

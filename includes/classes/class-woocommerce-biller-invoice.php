@@ -562,10 +562,10 @@ class Woocommerce_Biller {
                 // If amount is provided, description is required
                 $budget_details = get_post_meta($proposal_id, '_proposal_budget_details', true);
                 if (empty($budget_details)) {
-                    return false;
-                }
-                
-                return true;
+            return false;
+        }
+        
+        return true;
                 
             case 'quotation':
                 // Quotation type requires at least one quotation line item with description and amount
