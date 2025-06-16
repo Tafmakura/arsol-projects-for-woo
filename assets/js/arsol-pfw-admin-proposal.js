@@ -83,7 +83,7 @@
         },
 
         bindEvents: function() {
-            var $builder = $('#proposal_invoice_builder');
+            var $builder = $('#proposal_quotation_builder');
             
             // Use event delegation for better performance with dynamic content
             $builder
@@ -97,7 +97,7 @@
             $builder.on('input change', '.arsol-quantity-input, .arsol-sale-price-input, .arsol-price-input, .arsol-amount-input, .arsol-billing-select', debouncedCalculate);
             
             // Add WordPress-style custom event triggers for extensibility
-            $(document).trigger('arsol:invoice-events-bound', [$builder]);
+            $(document).trigger('arsol:quotation-events-bound', [$builder]);
         },
         
         loadExistingItems: function() {
