@@ -19,7 +19,7 @@ class Proposal_Budget {
 
         add_meta_box(
             'arsol_budget_estimates_metabox',
-            __('Budget Estimates', 'arsol-pfw'),
+            __('Budget', 'arsol-pfw'),
             array($this, 'render_budget_estimates_meta_box'),
             'arsol-pfw-proposal',
             'normal',
@@ -47,7 +47,7 @@ class Proposal_Budget {
         $recurring_start_date = get_post_meta($post->ID, '_proposal_recurring_start_date', true);
         ?>
         <div id="proposal_budget_builder">
-            <!-- Budget Estimates Section -->
+            <!-- Budget Section -->
             <div class="line-items-container">
                 <table class="widefat" id="budget-line-items">
                     <thead>
