@@ -101,7 +101,15 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
     <?php if (!empty($original_request_budget)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Original Budget:', 'arsol-pfw'); ?></strong></label>
-        <?php echo wc_price($original_request_budget['amount']); ?>
+        <?php 
+        if (is_array($original_request_budget) && isset($original_request_budget['amount'])) {
+            $currency = isset($original_request_budget['currency']) ? $original_request_budget['currency'] : get_woocommerce_currency();
+            echo wc_price($original_request_budget['amount'], array('currency' => $currency));
+        } else {
+            // Fallback for legacy or malformed data
+            echo wc_price($original_request_budget);
+        }
+        ?>
     </p>
     <?php endif; ?>
 
