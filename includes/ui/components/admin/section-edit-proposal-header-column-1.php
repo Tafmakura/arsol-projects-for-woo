@@ -74,7 +74,7 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
         <select id="cost_proposal_type" name="cost_proposal_type" class="wc-enhanced-select">
             <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
             <option value="budget_estimates" <?php selected($cost_proposal_type, 'budget_estimates'); ?>><?php _e('Budget Estimates', 'arsol-pfw'); ?></option>
-            <option value="invoice_line_items" <?php selected($cost_proposal_type, 'invoice_line_items'); ?>><?php _e('Invoice Line Items', 'arsol-pfw'); ?></option>
+            <option value="quotation_line_items" <?php selected($cost_proposal_type, 'quotation_line_items'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
         </select>
     </p>
 </div>

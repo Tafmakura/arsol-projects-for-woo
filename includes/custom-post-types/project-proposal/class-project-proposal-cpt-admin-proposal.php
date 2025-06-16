@@ -103,12 +103,12 @@ class Proposal {
                     var selectedType = $('#cost_proposal_type').val();
                     
                     $('#arsol_budget_estimates_metabox').hide();
-                    $('#arsol_proposal_invoice_metabox').hide();
+                    $('#arsol_proposal_quotation_metabox').hide();
 
                     if (selectedType === 'budget_estimates') {
                         $('#arsol_budget_estimates_metabox').show();
-                    } else if (selectedType === 'invoice_line_items') {
-                        $('#arsol_proposal_invoice_metabox').show();
+                    } else if (selectedType === 'quotation_line_items') {
+                        $('#arsol_proposal_quotation_metabox').show();
                     }
                 }
 
@@ -132,7 +132,7 @@ class Proposal {
         if (isset($post->post_type) && $post->post_type === 'arsol-pfw-proposal') {
             echo '<style>
                 #arsol_budget_estimates_metabox,
-                #arsol_proposal_invoice_metabox {
+                #arsol_proposal_quotation_metabox {
                     display: none;
                 }
             </style>';
@@ -232,8 +232,8 @@ class Proposal {
         }
 
         // Conditionally delete invoice data if it's not the selected type
-        if ($cost_proposal_type !== 'invoice_line_items') {
-             delete_post_meta($post_id, '_arsol_proposal_line_items');
+        if ($cost_proposal_type !== 'quotation_line_items') {
+             delete_post_meta($post_id, '_arsol_proposal_quotation_line_items');
              delete_post_meta($post_id, '_arsol_proposal_one_time_total');
              delete_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped');
         }

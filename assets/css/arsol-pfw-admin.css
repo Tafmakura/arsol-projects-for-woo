@@ -171,9 +171,9 @@ body.post-type-arsol-pfw-proposal .select2-container {
 }
 
 /* === ARSOL PROPOSAL ADMIN CSS === */
-/* Combined styles for Budget and Invoice sections */
+/* Combined styles for Budget and Quotation sections */
 
-/* === CONSOLIDATED PROPOSAL/INVOICE CSS SYSTEM === */
+/* === CONSOLIDATED PROPOSAL/QUOTATION CSS SYSTEM === */
 
 /* === BASE CONTAINER STYLING === */
 .line-items-container {
@@ -494,10 +494,10 @@ body.post-type-arsol-pfw-proposal .select2-container {
         width: 100px;
     }
     
-    #arsol_proposal_invoice_metabox #product-line-items th:nth-child(4),
-    #arsol_proposal_invoice_metabox #product-line-items td:nth-child(4),
-    #arsol_proposal_invoice_metabox #product-line-items th:nth-child(5),
-    #arsol_proposal_invoice_metabox #product-line-items td:nth-child(5) {
+    #arsol_proposal_quotation_metabox #product-line-items th:nth-child(4),
+    #arsol_proposal_quotation_metabox #product-line-items td:nth-child(4),
+    #arsol_proposal_quotation_metabox #product-line-items th:nth-child(5),
+    #arsol_proposal_quotation_metabox #product-line-items td:nth-child(5) {
         width: 90px;
     }
 }
@@ -569,15 +569,15 @@ body.post-type-arsol-pfw-proposal .select2-container {
 }
 
 /* === PRODUCT SECTION SPECIFIC === */
-#arsol_proposal_invoice_metabox #product-line-items th:nth-child(3),
-#arsol_proposal_invoice_metabox #product-line-items td:nth-child(3) {
+#arsol_proposal_quotation_metabox #product-line-items th:nth-child(3),
+#arsol_proposal_quotation_metabox #product-line-items td:nth-child(3) {
     width: 80px; /* Quantity */
 }
 
-#arsol_proposal_invoice_metabox #product-line-items th:nth-child(4),
-#arsol_proposal_invoice_metabox #product-line-items td:nth-child(4),
-#arsol_proposal_invoice_metabox #product-line-items th:nth-child(5),
-#arsol_proposal_invoice_metabox #product-line-items td:nth-child(5) {
+#arsol_proposal_quotation_metabox #product-line-items th:nth-child(4),
+#arsol_proposal_quotation_metabox #product-line-items td:nth-child(4),
+#arsol_proposal_quotation_metabox #product-line-items th:nth-child(5),
+#arsol_proposal_quotation_metabox #product-line-items td:nth-child(5) {
     width: 100px; /* Price columns */
 }
 

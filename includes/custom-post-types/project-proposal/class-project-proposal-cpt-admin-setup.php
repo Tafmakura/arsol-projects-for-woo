@@ -196,7 +196,7 @@ class Setup {
                 // Only get post meta if we have a valid post ID (existing proposal)
                 if (isset($post->ID) && $post->ID > 0) {
                     $saved_code = get_post_meta($post->ID, '_arsol_proposal_currency', true);
-                    $line_items = get_post_meta($post->ID, '_arsol_proposal_line_items', true) ?: array();
+                    $line_items = get_post_meta($post->ID, '_arsol_proposal_quotation_line_items', true) ?: array();
                 }
                 
                 $currency_symbol = $saved_code ? get_woocommerce_currency_symbol($saved_code) : get_woocommerce_currency_symbol();
@@ -215,10 +215,10 @@ class Setup {
 
                 wp_localize_script(
                     'arsol-proposal-admin',
-                    'arsol_proposal_invoice_vars',
+                    'arsol_proposal_quotation_vars',
                     array(
                         'ajax_url' => admin_url('admin-ajax.php'),
-                        'nonce'   => wp_create_nonce('arsol-proposal-invoice-nonce'),
+                        'nonce'   => wp_create_nonce('arsol-proposal-quotation-nonce'),
                         'currency_symbol' => $currency_symbol,
                         'line_items' => $line_items,
                         'calculation_constants' => \Arsol_Projects_For_Woo\Woocommerce_Subscriptions::get_calculation_constants()

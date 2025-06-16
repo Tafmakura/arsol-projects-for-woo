@@ -958,7 +958,7 @@ class Workflow_Handler {
         // Check cost proposal type
         $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
         $debug_info['cost_proposal_type'] = $cost_proposal_type;
-        $debug_info['should_create_orders'] = ($cost_proposal_type === 'invoice_line_items');
+        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation_line_items');
         
         // Check line items
         $line_items = get_post_meta($proposal_id, '_arsol_proposal_line_items', true);

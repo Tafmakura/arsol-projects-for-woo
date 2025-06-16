@@ -7,29 +7,29 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Proposal_Invoice {
+class Proposal_Quotation {
     public function __construct() {
-        add_action('add_meta_boxes', array($this, 'add_invoice_meta_box'));
-        add_action('save_post', array($this, 'save_invoice_meta_box'));
-        add_action('wp_ajax_arsol_proposal_invoice_ajax_search_products', array($this, 'ajax_search_products'));
-        add_action('wp_ajax_arsol_proposal_invoice_ajax_get_product_details', array($this, 'ajax_get_product_details'));
+        add_action('add_meta_boxes', array($this, 'add_quotation_meta_box'));
+        add_action('save_post', array($this, 'save_quotation_meta_box'));
+        add_action('wp_ajax_arsol_proposal_quotation_ajax_search_products', array($this, 'ajax_search_products'));
+        add_action('wp_ajax_arsol_proposal_quotation_ajax_get_product_details', array($this, 'ajax_get_product_details'));
     }
 
-    public function add_invoice_meta_box() {
+    public function add_quotation_meta_box() {
         add_meta_box(
-            'arsol_proposal_invoice_metabox',
-            __('Invoice Line Items', 'arsol-pfw'),
-            array($this, 'render_invoice_meta_box'),
+            'arsol_proposal_quotation_metabox',
+            __('Quotation', 'arsol-pfw'),
+            array($this, 'render_quotation_meta_box'),
             'arsol-pfw-proposal',
             'normal',
             'high'
         );
     }
 
-    public function render_invoice_meta_box($post) {
-        wp_nonce_field('arsol_proposal_invoice_save', 'arsol_proposal_invoice_nonce');
+    public function render_quotation_meta_box($post) {
+        wp_nonce_field('arsol_proposal_quotation_save', 'arsol_proposal_quotation_nonce');
         ?>
-        <div id="proposal_invoice_builder">
+        <div id="proposal_quotation_builder">
             <!-- Products Section -->
             <div class="line-items-container">
                 <h3><?php _e('Products & Services', 'arsol-pfw'); ?></h3>
@@ -163,7 +163,7 @@ class Proposal_Invoice {
             </div>
             <hr>
             <!-- Totals Section -->
-            <div class="arsol-totals-container arsol-invoice-totals">
+            <div class="arsol-totals-container arsol-quotation-totals">
                 <div class="arsol-totals-left">
                     <!-- Empty space for consistency -->
                 </div>
@@ -346,8 +346,8 @@ class Proposal_Invoice {
         <?php
     }
 
-    public function save_invoice_meta_box($post_id) {
-        if (!isset($_POST['arsol_proposal_invoice_nonce']) || !wp_verify_nonce($_POST['arsol_proposal_invoice_nonce'], 'arsol_proposal_invoice_save')) {
+    public function save_quotation_meta_box($post_id) {
+        if (!isset($_POST['arsol_proposal_quotation_nonce']) || !wp_verify_nonce($_POST['arsol_proposal_quotation_nonce'], 'arsol_proposal_quotation_save')) {
             return;
         }
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -363,7 +363,7 @@ class Proposal_Invoice {
         }
         
         $cost_proposal_type = get_post_meta($post_id, '_cost_proposal_type', true);
-        if ($cost_proposal_type !== 'invoice_line_items') {
+        if ($cost_proposal_type !== 'quotation_line_items') {
             return;
         }
 
@@ -380,7 +380,7 @@ class Proposal_Invoice {
             }
         }
         
-        update_post_meta($post_id, '_arsol_proposal_line_items', $sanitized_line_items);
+        update_post_meta($post_id, '_arsol_proposal_quotation_line_items', $sanitized_line_items);
         update_post_meta($post_id, '_arsol_proposal_one_time_total', sanitize_text_field($_POST['line_items_one_time_total']));
         
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
@@ -394,7 +394,7 @@ class Proposal_Invoice {
     }
 
     public function ajax_search_products() {
-        check_ajax_referer('arsol-proposal-invoice-nonce', 'nonce');
+        check_ajax_referer('arsol-proposal-quote-nonce', 'nonce');
 
         $search_term = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
         if (empty($search_term)) {
@@ -423,7 +423,7 @@ class Proposal_Invoice {
     }
 
     public function ajax_get_product_details() {
-        check_ajax_referer('arsol-proposal-invoice-nonce', 'nonce');
+        check_ajax_referer('arsol-proposal-quote-nonce', 'nonce');
         
         $product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
         if (!$product_id) {
