@@ -31,13 +31,12 @@
                 }
             });
 
-            // Disable form submission if invalid
+            // Add real-time validation feedback instead of blocking submission
             $('form#post').on('submit', function(e) {
-                if (!ArsolProposal.validateProposal()) {
-                    e.preventDefault();
-                    alert(arsol_proposal_vars.validation_message || 'Please complete all required fields before saving.');
-                    return false;
-                }
+                // Run validation to show inline error messages, but allow normal HTML5 validation to handle blocking
+                ArsolProposal.validateProposal();
+                // Let the browser's native HTML5 validation handle the actual submission blocking
+                // This provides a better user experience with clear field-level feedback
             });
         },
 
@@ -59,21 +58,46 @@
             var proposalType = $('#cost_proposal_type').val();
             var customer = $('select[name="post_author_override"]').val();
 
-            // Customer is always required
+            // Clear any existing validation messages
+            $('.arsol-validation-error').remove();
+
+            // Customer is always required - add HTML5 validation
+            var customerSelect = $('select[name="post_author_override"]');
             if (!customer) {
                 isValid = false;
+                customerSelect.attr('required', true);
+                if (!customerSelect.siblings('.arsol-validation-error').length) {
+                    customerSelect.after('<div class="arsol-validation-error" style="color: #dc3232; font-size: 13px; margin-top: 5px;">Please select a customer before publishing.</div>');
+                }
+            } else {
+                customerSelect.removeAttr('required');
             }
 
             // Type-specific validation
             if (proposalType === 'budget') {
-                var budgetAmount = $('input[name="proposal_budget"]').val();
-                var budgetDetails = $('input[name="proposal_budget_details"]').val();
+                var budgetAmountInput = $('input[name="proposal_budget"]');
+                var budgetDetailsInput = $('input[name="proposal_budget_details"]');
+                var budgetAmount = budgetAmountInput.val();
+                var budgetDetails = budgetDetailsInput.val();
                 
                 if (!budgetAmount || parseFloat(budgetAmount) <= 0) {
                     isValid = false;
+                    budgetAmountInput.attr('required', true);
+                    if (!budgetAmountInput.siblings('.arsol-validation-error').length) {
+                        budgetAmountInput.after('<div class="arsol-validation-error" style="color: #dc3232; font-size: 13px; margin-top: 5px;">Please enter a valid budget amount.</div>');
+                    }
+                } else {
+                    budgetAmountInput.removeAttr('required');
                 }
+                
                 if (budgetAmount && !budgetDetails) {
                     isValid = false;
+                    budgetDetailsInput.attr('required', true);
+                    if (!budgetDetailsInput.siblings('.arsol-validation-error').length) {
+                        budgetDetailsInput.after('<div class="arsol-validation-error" style="color: #dc3232; font-size: 13px; margin-top: 5px;">Please provide budget details.</div>');
+                    }
+                } else {
+                    budgetDetailsInput.removeAttr('required');
                 }
             } else if (proposalType === 'quotation') {
                 // Check if at least one valid quotation line item exists
@@ -88,13 +112,31 @@
                     }
                 });
                 
+                // Create or update a hidden validation field for HTML5 validation
+                var quotationValidationField = $('#quotation_validation_field');
+                if (quotationValidationField.length === 0) {
+                    $('#proposal_quotation_builder').append('<input type="hidden" id="quotation_validation_field" name="quotation_validation" style="position: absolute; left: -9999px;">');
+                    quotationValidationField = $('#quotation_validation_field');
+                }
+                
                 if (!hasValidItem) {
                     isValid = false;
+                    quotationValidationField.attr('required', true);
+                    quotationValidationField.attr('data-validation-message', 'Please add at least one valid line item with description and amount before publishing.');
+                    
+                    var quotationContainer = $('#proposal_quotation_builder');
+                    if (!quotationContainer.find('.arsol-validation-error').length) {
+                        quotationContainer.prepend('<div class="arsol-validation-error" style="color: #dc3232; font-size: 13px; margin-bottom: 15px; padding: 10px; background: #fff2f2; border-left: 4px solid #dc3232;">Please add at least one valid line item with description and amount before publishing.</div>');
+                    }
+                } else {
+                    quotationValidationField.removeAttr('required');
+                    quotationValidationField.val('valid');
                 }
             }
 
-            // Enable/disable buttons based on validation
-            $('.arsol-confirm-conversion, #publish').prop('disabled', !isValid);
+            // Button disabling removed - now uses HTML5 validation with inline error messages
+            // This provides better UX than confusing disabled buttons
+            // $('.arsol-confirm-conversion, #publish').prop('disabled', !isValid);
             
             return isValid;
         },
