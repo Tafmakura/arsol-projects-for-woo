@@ -464,12 +464,24 @@
                         
                         // Check if product is subscription type (backward compatible)
                         var isSubscription = data.product_type && (data.product_type === 'subscription' || data.product_type === 'subscription_variation');
+                        console.log('fetchProductDetails response:', {
+                            productType: data.product_type,
+                            isSubscription: isSubscription,
+                            billingInterval: data.billing_interval,
+                            billingPeriod: data.billing_period
+                        });
+                        
                         if (isSubscription) {
                             $row.find('.arsol-date-input').show();
                             // Store subscription billing data on the row for calculations
                             $row.data('billing-interval', data.billing_interval || 1);
                             $row.data('billing-period', data.billing_period || 'month');
                             $row.data('is-subscription', true);
+                            console.log('Set subscription data on row:', {
+                                billingInterval: $row.data('billing-interval'),
+                                billingPeriod: $row.data('billing-period'),
+                                isSubscription: $row.data('is-subscription')
+                            });
                         } else {
                             $row.find('.arsol-date-input').hide();
                             $row.removeData('billing-interval billing-period is-subscription');
@@ -612,11 +624,26 @@
                 
                 $(this).find('.arsol-subtotal-column').html(ArsolProposalQuotation.formatPrice(subtotal));
                 
-                var $startDateInput = $(this).find('.arsol-date-input');
-                if ($startDateInput.is(':visible') && $(this).data('is-subscription')) {
+                // Debug logging for subscription detection
+                console.log('Product row check:', {
+                    isSubscription: $(this).data('is-subscription'),
+                    billingInterval: $(this).data('billing-interval'),
+                    billingPeriod: $(this).data('billing-period'),
+                    productType: $(this).find('input[name*="[product_type]"]').val(),
+                    subtotal: subtotal
+                });
+                
+                // Check if this is a subscription product based on stored data
+                if ($(this).data('is-subscription')) {
                     // This is a subscription product
                     var interval = parseInt($(this).data('billing-interval')) || 1;
                     var period = $(this).data('billing-period') || 'month';
+                    
+                    console.log('Subscription product found - adding to recurring totals:', {
+                        subtotal: subtotal,
+                        interval: interval,
+                        period: period
+                    });
                     
                     // Create billing text for display
                     var periodText = period === 'month' ? 'mo' : (period === 'year' ? 'yr' : (period === 'week' ? 'wk' : (period === 'day' ? 'day' : period)));
@@ -630,6 +657,7 @@
                     ArsolProposalQuotation.updateRecurringTotals(productRecurringTotals, interval, period, subtotal);
                 } else {
                     // This is a one-time product
+                    console.log('One-time product - adding to one-time total:', subtotal);
                     oneTimeTotal += subtotal;
                     productSubtotal += subtotal;
                 }
@@ -717,7 +745,7 @@
 
             // Update main totals
             $('#one-time-total-display').html(ArsolProposalQuotation.formatPrice(oneTimeTotal));
-            $('#average-monthly-total-display').html(ArsolProposalQuotation.formatPrice(averageYearlyTotal) + (hasRecurring ? ' /yr' : ''));
+            $('#average-monthly-total-display').html(ArsolProposalQuotation.formatPrice(averageMonthlyTotal) + (hasRecurring ? ' /mo' : ''));
 
             // Update hidden inputs for form submission
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
