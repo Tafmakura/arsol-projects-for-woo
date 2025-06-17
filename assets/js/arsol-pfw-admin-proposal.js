@@ -459,7 +459,7 @@
 
             if (type === 'product') {
                 this.initSelect2($newRow);
-                if(data.product_id) {
+                if(data.product_id && !data.regular_price) {
                      this.fetchProductDetails($newRow, data.product_id);
                 }
             }
