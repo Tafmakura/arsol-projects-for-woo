@@ -50,7 +50,7 @@ class Proposal_Quotation {
                 </table>
                 <div class="section-footer">
                     <div class="section-footer-left">
-                        <button type="button" class="button add-line-item" data-type="product"><?php _e('+ Add Product', 'arsol-pfw'); ?></button>
+                        <button type="button" class="button add-line-item add-product-button" data-type="product"><?php _e('+ Add Product', 'arsol-pfw'); ?></button>
                     </div>
                     <div class="section-footer-right">
                         <div class="section-totals">
@@ -86,7 +86,7 @@ class Proposal_Quotation {
                 </table>
                 <div class="section-footer">
                     <div class="section-footer-left">
-                        <button type="button" class="button add-line-item" data-type="recurring-fee"><?php _e('+ Add Recurring Fee', 'arsol-pfw'); ?></button>
+                        <button type="button" class="button add-line-item add-recurring-fee-button" data-type="recurring-fee"><?php _e('+ Add Recurring Fee', 'arsol-pfw'); ?></button>
                     </div>
                     <div class="section-footer-right">
                         <div class="section-totals">
@@ -117,7 +117,7 @@ class Proposal_Quotation {
                 </table>
                 <div class="section-footer">
                     <div class="section-footer-left">
-                        <button type="button" class="button add-line-item" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
+                        <button type="button" class="button add-line-item add-onetime-fee-button" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
                     </div>
                     <div class="section-footer-right">
                         <div class="section-totals">
@@ -149,7 +149,7 @@ class Proposal_Quotation {
                 </table>
                 <div class="section-footer">
                     <div class="section-footer-left">
-                        <button type="button" class="button add-line-item" data-type="shipping-fee"><?php _e('+ Add Shipping Fee', 'arsol-pfw'); ?></button>
+                        <button type="button" class="button add-line-item add-shipping-fee-button" data-type="shipping-fee"><?php _e('+ Add Shipping Fee', 'arsol-pfw'); ?></button>
                     </div>
                     <div class="section-footer-right">
                         <div class="section-totals">

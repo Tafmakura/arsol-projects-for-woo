@@ -472,7 +472,6 @@
                         });
                         
                         if (isSubscription) {
-                            $row.find('.arsol-date-input').show();
                             // Store subscription billing data on the row for calculations
                             $row.data('billing-interval', data.billing_interval || 1);
                             $row.data('billing-period', data.billing_period || 'month');
@@ -483,7 +482,7 @@
                                 isSubscription: $row.data('is-subscription')
                             });
                         } else {
-                            $row.find('.arsol-date-input').hide();
+                            // Remove subscription data for non-subscription products
                             $row.removeData('billing-interval billing-period is-subscription');
                         }
                         
@@ -568,7 +567,6 @@
                 this.fetchProductDetails($row, productId);
             } else {
                 $row.find('.arsol-price-input, .arsol-sale-price-input').val('');
-                $row.find('.arsol-date-input').hide();
                 $row.removeData('billing-interval billing-period is-subscription');
                 this.toggleStartDateColumn();
                 this.calculateTotals();
@@ -577,6 +575,8 @@
 
         toggleStartDateColumn: function() {
             var hasSubscriptions = false;
+            
+            // Stage 1: Check if ANY product is a subscription (column-level visibility)
             $('#product-lines-body tr.arsol-line-item').each(function() {
                 if ($(this).data('is-subscription')) {
                     hasSubscriptions = true;
@@ -584,13 +584,26 @@
                 }
             });
 
-            // Only control start date column visibility in Products & Services table
-            // Recurring Fees table should always show start dates
+            // Stage 1: Show/hide entire start date column in Products & Services
             if (hasSubscriptions) {
                 $('#product-line-items .arsol-date-column').show();
             } else {
                 $('#product-line-items .arsol-date-column').hide();
             }
+            
+            // Stage 2: Show/hide individual start date inputs per product line
+            $('#product-lines-body tr.arsol-line-item').each(function() {
+                var $row = $(this);
+                var $dateInput = $row.find('.arsol-date-input');
+                
+                if ($row.data('is-subscription')) {
+                    // This specific product is a subscription - show its start date input
+                    $dateInput.show();
+                } else {
+                    // This specific product is not a subscription - hide its start date input
+                    $dateInput.hide();
+                }
+            });
         },
 
         getCycleKey: function(interval, period) {
