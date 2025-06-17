@@ -7,7 +7,7 @@ class Proposal_Budget {
 
     public function __construct() {
         add_action('add_meta_boxes', array($this, 'add_budget_estimates_meta_box'));
-        add_action('save_post', array($this, 'save_budget_meta_box'));
+        // Note: Save logic is now handled centrally in the main Proposal class
     }
 
     public function add_budget_estimates_meta_box() {
@@ -31,7 +31,7 @@ class Proposal_Budget {
         wp_nonce_field('arsol_proposal_budget_save', 'arsol_proposal_budget_nonce');
         
         // Get current values
-        $budget_data = get_post_meta($post->ID, '_proposal_budget', true);
+        $budget_data = get_post_meta($post->ID, '_proposal_onetime_budget', true);
         $recurring_budget_data = get_post_meta($post->ID, '_proposal_recurring_budget', true);
 
         $budget_amount = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
@@ -42,9 +42,9 @@ class Proposal_Budget {
             ? $budget_data['currency'] 
             : (!empty($recurring_budget_data['currency']) ? $recurring_budget_data['currency'] : get_woocommerce_currency());
 
-        $billing_interval = get_post_meta($post->ID, '_proposal_billing_interval', true) ?: '1';
-        $billing_period = get_post_meta($post->ID, '_proposal_billing_period', true) ?: 'month';
-        $recurring_start_date = get_post_meta($post->ID, '_proposal_recurring_start_date', true);
+        $billing_interval = get_post_meta($post->ID, '_proposal_recurring_budget_billing_interval', true) ?: '1';
+        $billing_period = get_post_meta($post->ID, '_proposal_recurring_budget_billing_period', true) ?: 'month';
+        $recurring_start_date = get_post_meta($post->ID, '_proposal_recurring_budget_start_date', true);
         ?>
         <div id="proposal_budget_builder">
             <!-- Budget Section -->
@@ -65,7 +65,7 @@ class Proposal_Budget {
                             <td class="arsol-description-column">
                                 <div class="arsol-flex-container">
                                     <strong class="arsol-flex-fixed arsol-budget-description"><?php _e('One-Time Budget', 'arsol-pfw'); ?></strong>
-                                    <input type="text" class="arsol-description-input js-details-input" name="proposal_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>" required>
+                                    <input type="text" class="arsol-description-input js-details-input" name="proposal_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_onetime_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>" required>
                                 </div>
                             </td>
                             <td class="arsol-date-column">
@@ -169,56 +169,5 @@ class Proposal_Budget {
         </div>
         </div>
         <?php
-    }
-
-    public function save_budget_meta_box($post_id) {
-        if (!isset($_POST['arsol_proposal_budget_nonce']) || !wp_verify_nonce($_POST['arsol_proposal_budget_nonce'], 'arsol_proposal_budget_save')) {
-            return;
-        }
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-            return;
-        }
-        if (!current_user_can('edit_post', $post_id)) {
-            return;
-        }
-        if (get_post_type($post_id) !== 'arsol-pfw-proposal') {
-            return;
-        }
-
-        // Save budget data
-        if (isset($_POST['proposal_budget'])) {
-            $budget_amount = sanitize_text_field($_POST['proposal_budget']);
-            update_post_meta($post_id, '_proposal_budget', array('amount' => $budget_amount, 'currency' => get_woocommerce_currency()));
-        }
-
-        if (isset($_POST['proposal_budget_details'])) {
-            update_post_meta($post_id, '_proposal_budget_details', sanitize_text_field($_POST['proposal_budget_details']));
-        }
-
-        if (isset($_POST['proposal_recurring_budget'])) {
-            $recurring_budget_amount = sanitize_text_field($_POST['proposal_recurring_budget']);
-            update_post_meta($post_id, '_proposal_recurring_budget', array('amount' => $recurring_budget_amount, 'currency' => get_woocommerce_currency()));
-        }
-
-        if (isset($_POST['proposal_recurring_budget_details'])) {
-            update_post_meta($post_id, '_proposal_recurring_budget_details', sanitize_text_field($_POST['proposal_recurring_budget_details']));
-        }
-
-        if (isset($_POST['proposal_billing_interval'])) {
-            update_post_meta($post_id, '_proposal_billing_interval', sanitize_text_field($_POST['proposal_billing_interval']));
-        }
-
-        if (isset($_POST['proposal_billing_period'])) {
-            update_post_meta($post_id, '_proposal_billing_period', sanitize_text_field($_POST['proposal_billing_period']));
-        }
-
-        if (isset($_POST['proposal_recurring_start_date'])) {
-            update_post_meta($post_id, '_proposal_recurring_start_date', sanitize_text_field($_POST['proposal_recurring_start_date']));
-        }
-
-        // Save notes
-        if (isset($_POST['arsol_proposal_notes'])) {
-            update_post_meta($post_id, '_arsol_proposal_notes', wp_kses_post($_POST['arsol_proposal_notes']));
-        }
     }
 }

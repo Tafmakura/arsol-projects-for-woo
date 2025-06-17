@@ -199,7 +199,7 @@ class Workflow_Handler {
 
         // Copy relevant meta data from request to proposal, renaming keys as needed
         $meta_to_copy = array(
-            '_request_budget'         => '_proposal_budget',
+            '_request_budget'         => '_proposal_onetime_budget',
             '_request_start_date'     => '_proposal_start_date',
             '_request_delivery_date'  => '_proposal_delivery_date',
             '_request_attachments'    => '_proposal_attachments',
@@ -437,11 +437,11 @@ class Workflow_Handler {
 
         // Copy and rename relevant meta data from proposal to project
         $meta_to_copy = array(
-            '_proposal_budget'           => '_project_budget',
+            '_proposal_onetime_budget'   => '_project_budget',
             '_proposal_recurring_budget' => '_project_recurring_budget',
-            '_proposal_billing_interval' => '_project_billing_interval',
-            '_proposal_billing_period'   => '_project_billing_period',
-            '_proposal_recurring_start_date' => '_project_recurring_start_date',
+            '_proposal_recurring_budget_billing_interval' => '_project_billing_interval',
+            '_proposal_recurring_budget_billing_period'   => '_project_billing_period',
+            '_proposal_recurring_budget_start_date' => '_project_recurring_start_date',
             '_proposal_start_date'       => '_proposal_start_date', // Keep for display
             '_proposal_delivery_date'    => '_project_due_date', // Correctly map to due date
         );

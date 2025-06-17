@@ -52,7 +52,7 @@ class Proposals {
                 break;
                 
             case 'proposal_budget':
-                $budget = get_post_meta($post_id, '_proposal_budget', true);
+                $budget = get_post_meta($post_id, '_proposal_onetime_budget', true);
                 if ($budget) {
                     echo wc_price($budget);
                 }

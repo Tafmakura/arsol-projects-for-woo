@@ -549,7 +549,7 @@ class Woocommerce_Biller {
                 
             case 'budget':
                 // Budget type requires at least one-time budget with amount > 0
-                $budget_data = get_post_meta($proposal_id, '_proposal_budget', true);
+                $budget_data = get_post_meta($proposal_id, '_proposal_onetime_budget', true);
                 if (empty($budget_data) || !is_array($budget_data)) {
                     return false;
                 }
@@ -560,12 +560,12 @@ class Woocommerce_Biller {
                 }
                 
                 // If amount is provided, description is required
-                $budget_details = get_post_meta($proposal_id, '_proposal_budget_details', true);
+                $budget_details = get_post_meta($proposal_id, '_proposal_onetime_budget_details', true);
                 if (empty($budget_details)) {
-            return false;
-        }
-        
-        return true;
+                    return false;
+                }
+                
+                return true;
                 
             case 'quotation':
                 // Quotation type requires at least one quotation line item with description and amount

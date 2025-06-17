@@ -99,114 +99,162 @@ class Proposal {
      * Save proposal details
      */
     public function save_proposal_details($post_id) {
-        // Check if our nonce is set.
-        if (!isset($_POST['proposal_details_meta_box_nonce'])) {
+        // Check if this is our post type
+        if (get_post_type($post_id) !== 'arsol-pfw-proposal') {
             return;
         }
 
-        // Verify that the nonce is valid.
-        if (!wp_verify_nonce($_POST['proposal_details_meta_box_nonce'], 'proposal_details_meta_box')) {
-            return;
-        }
-
-        // If this is an autosave, our form has not been submitted, so we don't want to do anything.
+        // Check if this is an autosave
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
 
-        // Check the user's permissions.
-        if (isset($_POST['post_type']) && 'arsol-pfw-proposal' == $_POST['post_type']) {
+        // Check user permissions
         if (!current_user_can('edit_post', $post_id)) {
             return;
-            }
         }
+
+        // Get currency
+        $currency = get_woocommerce_currency();
         
-        // It's safe for us to save the data now.
+        // Get cost proposal type
         $cost_proposal_type = isset($_POST['cost_proposal_type']) ? sanitize_text_field($_POST['cost_proposal_type']) : 'none';
         update_post_meta($post_id, '_cost_proposal_type', $cost_proposal_type);
 
         // Save secondary status
         if (isset($_POST['proposal_secondary_status'])) {
             $secondary_status = sanitize_text_field($_POST['proposal_secondary_status']);
-            // Validate the value is one of the allowed options
             if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
                 update_post_meta($post_id, '_proposal_secondary_status', $secondary_status);
             }
         }
 
-        // Get currency
-        $currency = get_woocommerce_currency();
-
-        // Conditionally save/delete budget data
-        if ($cost_proposal_type === 'budget') {
-            // Sanitize and save the budget amount
-            if (isset($_POST['proposal_budget'])) {
-                $budget_amount = wc_format_decimal(sanitize_text_field($_POST['proposal_budget']));
-                $budget_data = array(
-                    'amount' => $budget_amount,
-                    'currency' => $currency
-                );
-                update_post_meta($post_id, '_proposal_budget', $budget_data);
-            }
-
-            // Sanitize and save the recurring budget amount
-        if (isset($_POST['proposal_recurring_budget'])) {
-                $recurring_budget_amount = wc_format_decimal(sanitize_text_field($_POST['proposal_recurring_budget']));
-                $recurring_budget_data = array(
-                    'amount' => $recurring_budget_amount,
-                    'currency' => $currency
-                );
-                update_post_meta($post_id, '_proposal_recurring_budget', $recurring_budget_data);
-            } else {
-                delete_post_meta($post_id, '_proposal_recurring_budget');
-        }
-
-            // Save billing cycle if recurring budget is set
-            if (!empty($_POST['proposal_recurring_budget']) && $_POST['proposal_recurring_budget'] > 0) {
-        if (isset($_POST['proposal_billing_interval'])) {
-            update_post_meta($post_id, '_proposal_billing_interval', sanitize_text_field($_POST['proposal_billing_interval']));
-        }
-        if (isset($_POST['proposal_billing_period'])) {
-            update_post_meta($post_id, '_proposal_billing_period', sanitize_text_field($_POST['proposal_billing_period']));
-        }
-        if (isset($_POST['proposal_recurring_start_date'])) {
-            update_post_meta($post_id, '_proposal_recurring_start_date', sanitize_text_field($_POST['proposal_recurring_start_date']));
-                }
-            } else {
-                // If there's no recurring budget, delete the meta
-                delete_post_meta($post_id, '_proposal_billing_interval');
-                delete_post_meta($post_id, '_proposal_billing_period');
-                delete_post_meta($post_id, '_proposal_recurring_start_date');
-            }
-        } else {
-            // If not budget estimates, delete all budget meta to keep things clean
-            delete_post_meta($post_id, '_proposal_budget');
-            delete_post_meta($post_id, '_proposal_recurring_budget');
-            delete_post_meta($post_id, '_proposal_billing_interval');
-            delete_post_meta($post_id, '_proposal_billing_period');
-            delete_post_meta($post_id, '_proposal_recurring_start_date');
-        }
-
-        // Conditionally delete quotation data if it's not the selected type
-        if ($cost_proposal_type !== 'quotation') {
-             delete_post_meta($post_id, '_arsol_proposal_quotation_line_items');
-             delete_post_meta($post_id, '_arsol_proposal_one_time_total');
-             delete_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped');
-        }
-
-        // Save start date
+        // Save basic proposal fields
         if (isset($_POST['proposal_start_date'])) {
             update_post_meta($post_id, '_proposal_start_date', sanitize_text_field($_POST['proposal_start_date']));
         }
-
-        // Save delivery date
         if (isset($_POST['proposal_delivery_date'])) {
             update_post_meta($post_id, '_proposal_delivery_date', sanitize_text_field($_POST['proposal_delivery_date']));
         }
-
-        // Save expiration date
         if (isset($_POST['proposal_expiration_date'])) {
             update_post_meta($post_id, '_proposal_expiration_date', sanitize_text_field($_POST['proposal_expiration_date']));
+        }
+
+        // Save notes (for all types)
+        if (isset($_POST['arsol_proposal_notes'])) {
+            update_post_meta($post_id, '_arsol_proposal_notes', wp_kses_post($_POST['arsol_proposal_notes']));
+        }
+
+        // Handle budget data
+        if ($cost_proposal_type === 'budget') {
+            // Save budget data
+            if (isset($_POST['proposal_budget'])) {
+                $budget_amount = wc_format_decimal(sanitize_text_field($_POST['proposal_budget']));
+                update_post_meta($post_id, '_proposal_onetime_budget', array('amount' => $budget_amount, 'currency' => $currency));
+            }
+            if (isset($_POST['proposal_budget_details'])) {
+                update_post_meta($post_id, '_proposal_onetime_budget_details', sanitize_text_field($_POST['proposal_budget_details']));
+            }
+
+            // Save recurring budget data
+            if (isset($_POST['proposal_recurring_budget'])) {
+                $recurring_budget_amount = wc_format_decimal(sanitize_text_field($_POST['proposal_recurring_budget']));
+                update_post_meta($post_id, '_proposal_recurring_budget', array('amount' => $recurring_budget_amount, 'currency' => $currency));
+            } else {
+                delete_post_meta($post_id, '_proposal_recurring_budget');
+            }
+            if (isset($_POST['proposal_recurring_budget_details'])) {
+                update_post_meta($post_id, '_proposal_recurring_budget_details', sanitize_text_field($_POST['proposal_recurring_budget_details']));
+            }
+
+            // Save billing cycle if recurring budget is set
+            if (!empty($_POST['proposal_recurring_budget']) && $_POST['proposal_recurring_budget'] > 0) {
+                if (isset($_POST['proposal_billing_interval'])) {
+                    update_post_meta($post_id, '_proposal_recurring_budget_billing_interval', sanitize_text_field($_POST['proposal_billing_interval']));
+                }
+                if (isset($_POST['proposal_billing_period'])) {
+                    update_post_meta($post_id, '_proposal_recurring_budget_billing_period', sanitize_text_field($_POST['proposal_billing_period']));
+                }
+                if (isset($_POST['proposal_recurring_start_date'])) {
+                    update_post_meta($post_id, '_proposal_recurring_budget_start_date', sanitize_text_field($_POST['proposal_recurring_start_date']));
+                }
+            } else {
+                // If there's no recurring budget, delete the meta
+                delete_post_meta($post_id, '_proposal_recurring_budget_billing_interval');
+                delete_post_meta($post_id, '_proposal_recurring_budget_billing_period');
+                delete_post_meta($post_id, '_proposal_recurring_budget_start_date');
+            }
+
+            // Clean up quotation data when budget is selected
+            delete_post_meta($post_id, '_arsol_proposal_quotation_line_items');
+            delete_post_meta($post_id, '_arsol_proposal_one_time_total');
+            delete_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped');
+        }
+        // Handle quotation data
+        elseif ($cost_proposal_type === 'quotation') {
+            // Save quotation line items
+            if (isset($_POST['quotation_line_items'])) {
+                $line_items = $_POST['quotation_line_items'];
+                
+                // Process and sanitize line items
+                $sanitized_items = array();
+                foreach ($line_items as $item) {
+                    $sanitized_item = array(
+                        'type' => sanitize_text_field($item['type']),
+                        'description' => sanitize_text_field($item['description']),
+                        'amount' => wc_format_decimal($item['amount']),
+                        'currency' => $currency
+                    );
+                    
+                    // Add optional fields based on type
+                    if (!empty($item['start_date'])) {
+                        $sanitized_item['start_date'] = sanitize_text_field($item['start_date']);
+                    }
+                    if (!empty($item['billing_interval'])) {
+                        $sanitized_item['billing_interval'] = sanitize_text_field($item['billing_interval']);
+                    }
+                    if (!empty($item['billing_period'])) {
+                        $sanitized_item['billing_period'] = sanitize_text_field($item['billing_period']);
+                    }
+                    
+                    $sanitized_items[] = $sanitized_item;
+                }
+                
+                update_post_meta($post_id, '_arsol_proposal_quotation_line_items', $sanitized_items);
+            }
+
+            // Save totals
+            if (isset($_POST['one_time_total'])) {
+                update_post_meta($post_id, '_arsol_proposal_one_time_total', wc_format_decimal($_POST['one_time_total']));
+            }
+            if (isset($_POST['recurring_totals_grouped'])) {
+                update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $_POST['recurring_totals_grouped']);
+            }
+
+            // Clean up budget data when quotation is selected
+            delete_post_meta($post_id, '_proposal_onetime_budget');
+            delete_post_meta($post_id, '_proposal_onetime_budget_details');
+            delete_post_meta($post_id, '_proposal_recurring_budget');
+            delete_post_meta($post_id, '_proposal_recurring_budget_details');
+            delete_post_meta($post_id, '_proposal_recurring_budget_billing_interval');
+            delete_post_meta($post_id, '_proposal_recurring_budget_billing_period');
+            delete_post_meta($post_id, '_proposal_recurring_budget_start_date');
+        }
+        // Handle 'none' type - clean up all cost proposal data
+        else {
+            // Clean up budget data
+            delete_post_meta($post_id, '_proposal_onetime_budget');
+            delete_post_meta($post_id, '_proposal_onetime_budget_details');
+            delete_post_meta($post_id, '_proposal_recurring_budget');
+            delete_post_meta($post_id, '_proposal_recurring_budget_details');
+            delete_post_meta($post_id, '_proposal_recurring_budget_billing_interval');
+            delete_post_meta($post_id, '_proposal_recurring_budget_billing_period');
+            delete_post_meta($post_id, '_proposal_recurring_budget_start_date');
+            
+            // Clean up quotation data
+            delete_post_meta($post_id, '_arsol_proposal_quotation_line_items');
+            delete_post_meta($post_id, '_arsol_proposal_one_time_total');
+            delete_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped');
         }
     }
 }

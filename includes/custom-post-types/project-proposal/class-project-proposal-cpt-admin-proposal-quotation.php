@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
 class Proposal_Quotation {
     public function __construct() {
         add_action('add_meta_boxes', array($this, 'add_quotation_meta_box'));
-        add_action('save_post', array($this, 'save_quotation_meta_box'));
         add_action('wp_ajax_arsol_proposal_quotation_ajax_search_products', array($this, 'ajax_search_products'));
         add_action('wp_ajax_arsol_proposal_quotation_ajax_get_product_details', array($this, 'ajax_get_product_details'));
         add_action('admin_footer', array($this, 'render_js_templates_in_footer'));
@@ -350,53 +349,6 @@ class Proposal_Quotation {
             </tr>
         </script>
         <?php
-    }
-
-    public function save_quotation_meta_box($post_id) {
-        if (!isset($_POST['arsol_proposal_quotation_nonce']) || !wp_verify_nonce($_POST['arsol_proposal_quotation_nonce'], 'arsol_proposal_quotation_save')) {
-            return;
-        }
-        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-            return;
-        }
-        if (!current_user_can('edit_post', $post_id)) {
-            return;
-        }
-        
-        // Save Notes
-        if (isset($_POST['arsol_proposal_notes'])) {
-            update_post_meta($post_id, '_arsol_proposal_notes', wp_kses_post($_POST['arsol_proposal_notes']));
-        }
-        
-        $cost_proposal_type = get_post_meta($post_id, '_cost_proposal_type', true);
-        if ($cost_proposal_type !== 'quotation') {
-            return;
-        }
-
-        $line_items = isset($_POST['line_items']) ? (array) $_POST['line_items'] : array();
-        
-        $sanitized_line_items = array();
-        if (!empty($line_items)) {
-            foreach ( $line_items as $group_key => $group_value ) {
-                if (!empty($group_value)) {
-                    $sanitized_line_items[$group_key] = array_map( function( $item ) {
-                        return array_map( 'sanitize_text_field', $item );
-                    }, (array) $group_value );
-                }
-            }
-        }
-        
-        update_post_meta($post_id, '_arsol_proposal_quotation_line_items', $sanitized_line_items);
-        update_post_meta($post_id, '_arsol_proposal_one_time_total', sanitize_text_field($_POST['line_items_one_time_total']));
-        
-        $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
-        $recurring_totals = json_decode($recurring_totals_json, true);
-        update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $recurring_totals);
-        
-        // Save currency ISO code as the primary source of truth
-        $currency_code = get_woocommerce_currency();
-        update_post_meta($post_id, '_arsol_proposal_currency', $currency_code);
-        update_post_meta($post_id, '_arsol_proposal_currency_symbol', get_woocommerce_currency_symbol($currency_code));
     }
 
     public function ajax_search_products() {
