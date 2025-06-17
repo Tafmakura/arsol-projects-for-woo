@@ -375,7 +375,9 @@ class Proposal_Quotation {
 
         // Clean up budget data when saving quotation
         delete_post_meta($post_id, '_proposal_budget');
+        delete_post_meta($post_id, '_proposal_budget_details');
         delete_post_meta($post_id, '_proposal_recurring_budget');
+        delete_post_meta($post_id, '_proposal_recurring_budget_details');
         delete_post_meta($post_id, '_proposal_billing_interval');
         delete_post_meta($post_id, '_proposal_billing_period');
         delete_post_meta($post_id, '_proposal_recurring_start_date');
