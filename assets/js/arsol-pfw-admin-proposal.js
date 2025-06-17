@@ -461,6 +461,11 @@
                 this.initSelect2($newRow);
                 if(data.product_id && !data.regular_price) {
                      this.fetchProductDetails($newRow, data.product_id);
+                } else if (data.product_type && (data.product_type === 'subscription' || data.product_type === 'subscription_variation')) {
+                    // Set subscription data for existing saved subscription products
+                    $newRow.data('billing-interval', data.interval || 1);
+                    $newRow.data('billing-period', data.period || 'month');
+                    $newRow.data('is-subscription', true);
                 }
             }
         },
