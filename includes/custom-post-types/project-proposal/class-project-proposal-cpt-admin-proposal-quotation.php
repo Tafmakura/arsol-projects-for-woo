@@ -235,7 +235,7 @@ class Proposal_Quotation {
         <script type="text/html" id="tmpl-arsol-product-line-item">
             <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}">
                 <td class="arsol-description-column">
-                                    <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]">
+                                    <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]" required>
                     <option value="{{ data.product_id || '' }}" selected="selected">{{ data.product_name || '' }}</option>
                                 </select>
                 <input type="hidden" name="line_items[products][{{ data.id }}][product_type]" value="{{ data.product_type || '' }}">
@@ -244,7 +244,7 @@ class Proposal_Quotation {
                     <input type="date" class="arsol-date-input hidden-start-date" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
                 </td>
                 <td class="arsol-quantity-column"><input type="number" class="arsol-quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
-                <td class="arsol-price-column"><input type="text" class="arsol-price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}"></td>
+                <td class="arsol-price-column"><input type="text" class="arsol-price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}" required></td>
                 <td class="arsol-sale-price-column"><input type="text" class="arsol-sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
                 <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
@@ -254,10 +254,10 @@ class Proposal_Quotation {
         <script type="text/html" id="tmpl-arsol-onetime-fee-line-item">
             <tr class="arsol-line-item arsol-fee-item" data-id="{{ data.id }}">
                 <td class="arsol-description-column">
-                    <input type="text" class="arsol-description-input" name="line_items[one_time_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Setup Fee', 'arsol-pfw'); ?>">
+                    <input type="text" class="arsol-description-input" name="line_items[one_time_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Setup Fee', 'arsol-pfw'); ?>" required>
                 </td>
                 <td class="arsol-amount-column">
-                    <input type="text" class="arsol-amount-input wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
+                    <input type="text" class="arsol-amount-input wc_input_price" name="line_items[one_time_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}" required>
                 </td>
                 <td class="arsol-taxable-column">
                     <select name="line_items[one_time_fees][{{ data.id }}][tax_class]">
@@ -274,13 +274,13 @@ class Proposal_Quotation {
         <script type="text/html" id="tmpl-arsol-recurring-fee-line-item">
              <tr class="arsol-line-item arsol-recurring-fee-item" data-id="{{ data.id }}">
                 <td class="arsol-description-column">
-                    <input type="text" class="arsol-description-input" name="line_items[recurring_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>">
+                    <input type="text" class="arsol-description-input" name="line_items[recurring_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>" required>
                 </td>
                 <td class="arsol-date-column">
-                    <input type="date" class="arsol-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
+                    <input type="date" class="arsol-date-input hidden-start-date" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
                 </td>
                 <td class="arsol-amount-column">
-                    <input type="text" class="arsol-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
+                    <input type="text" class="arsol-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}" required>
                 </td>
                 <td class="arsol-billing-cycle-column">
                     <div class="arsol-billing-period" id="arsol-billing-period-{{ data.id }}">
@@ -325,7 +325,7 @@ class Proposal_Quotation {
             ?>
             <tr class="arsol-line-item arsol-shipping-fee-item" data-id="{{ data.id }}">
                 <td class="arsol-description-column">
-                    <input type="text" class="arsol-description-input" name="line_items[shipping_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Express Shipping', 'arsol-pfw'); ?>">
+                    <input type="text" class="arsol-description-input" name="line_items[shipping_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Express Shipping', 'arsol-pfw'); ?>" required>
                 </td>
                 <td class="arsol-shipping-class-column">
                     <select class="arsol-select-full" name="line_items[shipping_fees][{{ data.id }}][shipping_class_id]">
@@ -336,7 +336,7 @@ class Proposal_Quotation {
                     </select>
                 </td>
                 <td class="arsol-amount-column">
-                    <input type="text" class="arsol-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}">
+                    <input type="text" class="arsol-amount-input wc_input_price" name="line_items[shipping_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}" required>
                 </td>
                 <td class="arsol-taxable-column">
                     <select name="line_items[shipping_fees][{{ data.id }}][tax_class]">
