@@ -185,6 +185,11 @@ class Proposal_Budget {
             return;
         }
 
+        $cost_proposal_type = get_post_meta($post_id, '_cost_proposal_type', true);
+        if ($cost_proposal_type !== 'budget') {
+            return;
+        }
+
         // Save budget data
         if (isset($_POST['proposal_budget'])) {
             $budget_amount = sanitize_text_field($_POST['proposal_budget']);
