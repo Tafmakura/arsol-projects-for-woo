@@ -584,12 +584,12 @@
                 }
             });
 
-            // Only show start date column if there are subscription products
-            // Recurring fees have their own billing period controls, not start dates
+            // Only control start date column visibility in Products & Services table
+            // Recurring Fees table should always show start dates
             if (hasSubscriptions) {
-                $('.arsol-date-column').show();
+                $('#product-line-items .arsol-date-column').show();
             } else {
-                $('.arsol-date-column').hide();
+                $('#product-line-items .arsol-date-column').hide();
             }
         },
 
