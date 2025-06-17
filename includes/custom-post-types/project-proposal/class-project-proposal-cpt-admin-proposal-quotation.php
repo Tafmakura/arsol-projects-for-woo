@@ -284,19 +284,31 @@ class Proposal_Quotation {
                 </td>
                 <td class="arsol-billing-cycle-column">
                     <div class="arsol-billing-period" id="arsol-billing-period-{{ data.id }}">
+                    <?php
+                        $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(
+                            1 => __('1', 'arsol-pfw'),
+                            2 => __('2', 'arsol-pfw'),
+                            3 => __('3', 'arsol-pfw'),
+                            4 => __('4', 'arsol-pfw'),
+                            5 => __('5', 'arsol-pfw'),
+                            6 => __('6', 'arsol-pfw')
+                        );
+                        $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array(
+                            'day' => __('day', 'arsol-pfw'),
+                            'week' => __('week', 'arsol-pfw'),
+                            'month' => __('month', 'arsol-pfw'),
+                            'year' => __('year', 'arsol-pfw')
+                        );
+                    ?>
                     <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="arsol-billing-select">
-                        <option value="1" <# if ((data.interval || '1') == '1') { #>selected="selected"<# } #>>1</option>
-                        <option value="2" <# if ((data.interval || '1') == '2') { #>selected="selected"<# } #>>2</option>
-                        <option value="3" <# if ((data.interval || '1') == '3') { #>selected="selected"<# } #>>3</option>
-                        <option value="4" <# if ((data.interval || '1') == '4') { #>selected="selected"<# } #>>4</option>
-                        <option value="5" <# if ((data.interval || '1') == '5') { #>selected="selected"<# } #>>5</option>
-                        <option value="6" <# if ((data.interval || '1') == '6') { #>selected="selected"<# } #>>6</option>
+                        <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
+                            <option value="{{ value }}" <# if ((data.interval || '1') == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                        <# }); #>
                     </select>
                     <select name="line_items[recurring_fees][{{ data.id }}][period]" class="arsol-billing-select">
-                        <option value="day" <# if ((data.period || 'month') == 'day') { #>selected="selected"<# } #>>day</option>
-                        <option value="week" <# if ((data.period || 'month') == 'week') { #>selected="selected"<# } #>>week</option>
-                        <option value="month" <# if ((data.period || 'month') == 'month') { #>selected="selected"<# } #>>month</option>
-                        <option value="year" <# if ((data.period || 'month') == 'year') { #>selected="selected"<# } #>>year</option>
+                         <# _.each(<?php echo json_encode($periods); ?>, function(label, value) { #>
+                            <option value="{{ value }}" <# if ((data.period || 'month') == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                        <# }); #>
                     </select>
                     </div>
                 </td>
