@@ -196,7 +196,7 @@ class Assets {
                     
                     wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_quotation_vars', array(
                         'ajax_url' => admin_url('admin-ajax.php'),
-                        'nonce' => wp_create_nonce('arsol_proposal_quotation_ajax'),
+                        'nonce' => wp_create_nonce('arsol-proposal-quotation-nonce'),
                         'currency_symbol' => get_woocommerce_currency_symbol(),
                         'line_items' => $line_items,
                         'calculation_constants' => array(

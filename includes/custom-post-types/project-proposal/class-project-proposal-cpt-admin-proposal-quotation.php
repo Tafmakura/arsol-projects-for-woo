@@ -400,7 +400,7 @@ class Proposal_Quotation {
     }
 
     public function ajax_search_products() {
-        check_ajax_referer('arsol-proposal-quote-nonce', 'nonce');
+        check_ajax_referer('arsol-proposal-quotation-nonce', 'nonce');
 
         $search_term = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
         if (empty($search_term)) {
@@ -429,7 +429,7 @@ class Proposal_Quotation {
     }
 
     public function ajax_get_product_details() {
-        check_ajax_referer('arsol-proposal-quote-nonce', 'nonce');
+        check_ajax_referer('arsol-proposal-quotation-nonce', 'nonce');
         
         $product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
         if (!$product_id) {
