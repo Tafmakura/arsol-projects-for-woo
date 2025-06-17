@@ -118,6 +118,11 @@
                     budgetDetailsInput.removeAttr('required');
                 }
             } else if (proposalType === 'quotation') {
+                // Clear any required attributes from budget fields since they're hidden
+                $('input[name="proposal_budget"]').removeAttr('required');
+                $('input[name="proposal_budget_details"]').removeAttr('required');
+                $('input[name="proposal_recurring_budget"]').removeAttr('required');
+                
                 // Check if user has added any line items
                 var hasAnyLineItems = $('.arsol-line-item.arsol-product-item, .arsol-line-item.arsol-recurring-fee-item, .arsol-line-item.arsol-fee-item, .arsol-line-item.arsol-shipping-fee-item').length > 0;
                 
@@ -142,6 +147,13 @@
                         }
                     }
                 }
+            }
+
+            // Clear budget field required attributes for any proposal type that isn't 'budget'
+            if (proposalType !== 'budget') {
+                $('input[name="proposal_budget"]').removeAttr('required');
+                $('input[name="proposal_budget_details"]').removeAttr('required');
+                $('input[name="proposal_recurring_budget"]').removeAttr('required');
             }
 
             // Button disabling removed - now uses HTML5 validation with inline error messages
