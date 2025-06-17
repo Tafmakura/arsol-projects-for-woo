@@ -200,21 +200,21 @@ class Proposal {
                 // Process products
                 if (!empty($line_items['products'])) {
                     foreach ($line_items['products'] as $item) {
-                        $sanitized_item = array(
+                    $sanitized_item = array(
                             'type' => 'product',
                             'product_id' => absint($item['product_id']),
                             'product_type' => sanitize_text_field($item['product_type']),
                             'quantity' => absint($item['quantity']),
                             'price' => wc_format_decimal($item['price']),
-                            'currency' => $currency
-                        );
-                        
+                        'currency' => $currency
+                    );
+                    
                         if (!empty($item['sale_price'])) {
                             $sanitized_item['sale_price'] = wc_format_decimal($item['sale_price']);
                         }
-                        if (!empty($item['start_date'])) {
-                            $sanitized_item['start_date'] = sanitize_text_field($item['start_date']);
-                        }
+                    if (!empty($item['start_date'])) {
+                        $sanitized_item['start_date'] = sanitize_text_field($item['start_date']);
+                    }
                         
                         $sanitized_items[] = $sanitized_item;
                     }
@@ -248,9 +248,9 @@ class Proposal {
                         
                         if (!empty($item['start_date'])) {
                             $sanitized_item['start_date'] = sanitize_text_field($item['start_date']);
-                        }
-                        
-                        $sanitized_items[] = $sanitized_item;
+                    }
+                    
+                    $sanitized_items[] = $sanitized_item;
                     }
                 }
                 
