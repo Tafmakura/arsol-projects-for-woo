@@ -302,12 +302,12 @@ class Proposal_Quotation {
                     ?>
                     <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="arsol-billing-select">
                         <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
-                            <option value="{{ value }}" <# if ((data.interval || '1') == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                            <option value="{{ value }}" <# if (data.interval == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
                     <select name="line_items[recurring_fees][{{ data.id }}][period]" class="arsol-billing-select">
                          <# _.each(<?php echo json_encode($periods); ?>, function(label, value) { #>
-                            <option value="{{ value }}" <# if ((data.period || 'month') == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                            <option value="{{ value }}" <# if (data.period == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
                     </div>
