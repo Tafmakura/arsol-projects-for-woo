@@ -369,7 +369,7 @@ class Proposal_Quotation {
         }
         
         $cost_proposal_type = get_post_meta($post_id, '_cost_proposal_type', true);
-        if ($cost_proposal_type !== 'quotation_line_items') {
+        if ($cost_proposal_type !== 'quotation') {
             return;
         }
 
