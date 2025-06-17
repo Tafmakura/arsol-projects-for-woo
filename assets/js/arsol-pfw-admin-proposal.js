@@ -34,10 +34,13 @@
 
             // Add real-time validation feedback and smart cleanup on submission
             $('form#post').on('submit', function(e) {
+                console.log('Form submission started');
                 // First run all pre-save cleanup tasks (only on submit, not on real-time validation)
                 ArsolProposal.presaveCleanup();
+                console.log('Pre-save cleanup completed');
                 // Then run validation to show inline error messages
-                ArsolProposal.validateProposal();
+                var isValid = ArsolProposal.validateProposal();
+                console.log('Validation result:', isValid);
                 // Let the browser's native HTML5 validation handle the actual submission blocking
                 // This provides a better user experience with clear field-level feedback
             });
@@ -116,12 +119,12 @@
                 }
             } else if (proposalType === 'quotation') {
                 // Check if user has added any line items
-                var hasAnyLineItems = $('.product-line-item, .recurring-fee-line-item, .onetime-fee-line-item').length > 0;
+                var hasAnyLineItems = $('.arsol-line-item.arsol-product-item, .arsol-line-item.arsol-recurring-fee-item, .arsol-line-item.arsol-fee-item, .arsol-line-item.arsol-shipping-fee-item').length > 0;
                 
                 if (hasAnyLineItems) {
                     // Only validate if user has started adding line items
                     var hasValidItem = false;
-                    $('.product-line-item, .recurring-fee-line-item, .onetime-fee-line-item').each(function() {
+                    $('.arsol-line-item.arsol-product-item, .arsol-line-item.arsol-recurring-fee-item, .arsol-line-item.arsol-fee-item, .arsol-line-item.arsol-shipping-fee-item').each(function() {
                         var description = $(this).find('input[name*="description"], select[name*="product"]').val();
                         var amount = $(this).find('input[name*="amount"], input[name*="price"]').val();
                         
@@ -150,8 +153,10 @@
 
         // Pre-save cleanup function - runs all cleanup tasks before saving
         presaveCleanup: function() {
+            console.log('Pre-save cleanup started');
             // Clean up empty proposal sections
             this.cleanupEmptyProposalSections();
+            console.log('Pre-save cleanup finished');
             
             // Add other pre-save cleanup tasks here as needed
             // this.cleanupOtherStuff();
@@ -160,6 +165,7 @@
         // Clean up empty proposal sections (moved from cleanupEmptySections)
         cleanupEmptyProposalSections: function() {
             var proposalType = $('#cost_proposal_type').val();
+            console.log('Cleanup check - current proposal type:', proposalType);
             
             // Only cleanup if the user is actually trying to save/submit
             // Don't cleanup if user is just exploring different proposal types
@@ -181,12 +187,15 @@
                 }
             } else if (proposalType === 'quotation') {
                 // Check if quotation section is completely empty
-                var hasAnyLineItems = $('.product-line-item, .recurring-fee-line-item, .onetime-fee-line-item').length > 0;
+                var hasAnyLineItems = $('.arsol-line-item.arsol-product-item, .arsol-line-item.arsol-recurring-fee-item, .arsol-line-item.arsol-fee-item, .arsol-line-item.arsol-shipping-fee-item').length > 0;
+                console.log('Cleanup check - found line items:', hasAnyLineItems, 'count:', $('.arsol-line-item.arsol-product-item, .arsol-line-item.arsol-recurring-fee-item, .arsol-line-item.arsol-fee-item, .arsol-line-item.arsol-shipping-fee-item').length);
                 
                 if (!hasAnyLineItems) {
                     // Auto-cleanup: set type to 'none' if no line items exist on save
                     $('#cost_proposal_type').val('none');
                     console.log('Pre-save cleanup: Empty quotation section changed to "none"');
+                } else {
+                    console.log('Pre-save cleanup: Quotation has line items, keeping proposal type as quotation');
                 }
             }
         },
