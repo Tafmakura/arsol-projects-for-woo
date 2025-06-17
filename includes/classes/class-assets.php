@@ -154,67 +154,73 @@ class Assets {
             'arsol-pfw-proposal'
         );
 
-        // Only load on specified post type pages
-        if (in_array($screen->post_type, $allowed_post_types)) {
-            // Enqueue WooCommerce admin styles
+        // Check if we're on a post type page that needs admin assets OR the settings page
+        $is_post_type_page = in_array($screen->post_type, $allowed_post_types);
+        $is_settings_page = ($hook === 'toplevel_page_arsol-projects');
+        
+        if ($is_post_type_page || $is_settings_page) {
+            // Enqueue WooCommerce admin styles and scripts
+            if ($is_post_type_page) {
+                // WooCommerce assets are mainly needed for post type pages
             wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
-            
-            // Enqueue WooCommerce admin scripts for enhanced selects and customer search
             wp_enqueue_script('selectWoo');
             wp_enqueue_script('wc-enhanced-select');
             wp_enqueue_style('select2');
+            }
             
-            // Enqueue our plugin assets
+            // Always enqueue our plugin assets
             wp_enqueue_style('arsol-pfw-admin');
             wp_enqueue_script('arsol-pfw-admin');
             
-            // Enqueue post-type specific JavaScript
-            if ($screen->post_type === 'arsol-pfw-proposal') {
-                wp_enqueue_script('arsol-pfw-admin-proposal');
-                
-                // Localize proposal script
-                wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_vars', array(
-                    'validation_message' => __('Please complete all required fields before saving.', 'arsol-pfw'),
-                ));
-                
-                // Localize budget script
-                wp_localize_script('arsol-pfw-admin-proposal', 'arsol_budget_vars', array(
-                    'currency_symbol' => get_woocommerce_currency_symbol(),
-                ));
-                
-                // Always localize quotation script for proposals (needed for all proposal types)
-                global $post;
-                $line_items = array();
-                if ($post) {
-                    $line_items = get_post_meta($post->ID, '_arsol_proposal_quotation_line_items', true) ?: array();
+            // Enqueue post-type specific JavaScript (only for post type pages)
+            if ($is_post_type_page) {
+                if ($screen->post_type === 'arsol-pfw-proposal') {
+                    wp_enqueue_script('arsol-pfw-admin-proposal');
+                    
+                    // Localize proposal script
+                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_vars', array(
+                        'validation_message' => __('Please complete all required fields before saving.', 'arsol-pfw'),
+                    ));
+                    
+                    // Localize budget script
+                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_budget_vars', array(
+                        'currency_symbol' => get_woocommerce_currency_symbol(),
+                    ));
+                    
+                    // Always localize quotation script for proposals (needed for all proposal types)
+                    global $post;
+                    $line_items = array();
+                    if ($post) {
+                        $line_items = get_post_meta($post->ID, '_arsol_proposal_quotation_line_items', true) ?: array();
+                    }
+                    
+                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_quotation_vars', array(
+                        'ajax_url' => admin_url('admin-ajax.php'),
+                        'nonce' => wp_create_nonce('arsol_proposal_quotation_ajax'),
+                        'currency_symbol' => get_woocommerce_currency_symbol(),
+                        'line_items' => $line_items,
+                        'calculation_constants' => array(
+                            'days_in_month' => 30.44, // Average days in a month
+                            'days_in_year' => 365.25  // Average days in a year
+                        )
+                    ));
+                    
+                } elseif ($screen->post_type === 'arsol-project') {
+                    wp_enqueue_script('arsol-pfw-admin-active');
+                    
+                } elseif ($screen->post_type === 'arsol-pfw-request') {
+                    wp_enqueue_script('arsol-pfw-admin-request');
                 }
                 
-                wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_quotation_vars', array(
-                    'ajax_url' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('arsol_proposal_quotation_ajax'),
-                    'currency_symbol' => get_woocommerce_currency_symbol(),
-                    'line_items' => $line_items,
-                    'calculation_constants' => array(
-                        'days_in_month' => 30.44, // Average days in a month
-                        'days_in_year' => 365.25  // Average days in a year
-                    )
-                ));
-                
-            } elseif ($screen->post_type === 'arsol-project') {
-                wp_enqueue_script('arsol-pfw-admin-active');
-                
-            } elseif ($screen->post_type === 'arsol-pfw-request') {
-                wp_enqueue_script('arsol-pfw-admin-request');
-            }
-            
-            // Localize WooCommerce enhanced select script with parameters
+                // Localize WooCommerce enhanced select script with parameters (only for post type pages)
             wp_localize_script('wc-enhanced-select', 'wc_enhanced_select_params', array(
                 'ajax_url'                => admin_url('admin-ajax.php'),
                 'search_products_nonce'   => wp_create_nonce('search-products'),
                 'search_customers_nonce'  => wp_create_nonce('search-customers'),
             ));
+            }
             
-            // Localize our main plugin script
+            // Localize our main plugin script (for both post type pages and settings page)
             wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('arsol-pfw-admin'),

@@ -13,9 +13,6 @@ class Proposal {
         add_action('save_post', array($this, 'save_proposal_details'));
         // Action to set review status when a proposal is published
         add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
-
-        // Setup confirm conversion script
-        add_action('admin_footer', array($this, 'output_confirm_conversion_script'));
     }
 
     public function set_proposal_review_status($new_status, $old_status, $post) {
@@ -97,8 +94,6 @@ class Proposal {
         </div>
         <?php
     }
-
-
 
     /**
      * Save proposal details
@@ -213,13 +208,5 @@ class Proposal {
         if (isset($_POST['proposal_expiration_date'])) {
             update_post_meta($post_id, '_proposal_expiration_date', sanitize_text_field($_POST['proposal_expiration_date']));
         }
-    }
-
-    /**
-     * Output confirm conversion script
-     */
-    public function output_confirm_conversion_script() {
-        // Removed duplicate script - functionality handled by global admin.js
-        // This was causing double-triggering of conversion confirmations
     }
 }

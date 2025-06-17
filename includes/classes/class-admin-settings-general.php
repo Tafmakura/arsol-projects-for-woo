@@ -217,12 +217,12 @@ class Settings_General {
             return;
         }
 
+        // Enqueue WooCommerce scripts for the settings page (for product/category selectors)
         wp_enqueue_script('wc-enhanced-select');
         wp_enqueue_script('wc-product-search');
         
-        // Enqueue our main admin script for conditional field functionality
-        wp_enqueue_script('arsol-pfw-admin');
-        wp_enqueue_style('arsol-pfw-admin');
+        // Note: arsol-pfw-admin script and style are now handled by the Assets class
+        // which includes the settings page in its enqueue logic
     }
 
     /**
