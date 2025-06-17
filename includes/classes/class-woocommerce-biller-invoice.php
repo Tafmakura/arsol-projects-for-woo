@@ -574,14 +574,49 @@ class Woocommerce_Biller {
                     return false;
                 }
                 
-                // Check that at least one valid line item exists
+                // Check that at least one valid line item exists across all item types
                 $has_valid_item = false;
-                foreach ($quotation_line_items as $item) {
-                    if (!empty($item['description']) && !empty($item['amount']) && $item['amount'] > 0) {
-                        $has_valid_item = true;
-                        break;
+                
+                // Check products
+                if (!empty($quotation_line_items['products'])) {
+                    foreach ($quotation_line_items['products'] as $item) {
+                        if (!empty($item['description']) && isset($item['regular_price']) && floatval($item['regular_price']) > 0) {
+                            $has_valid_item = true;
+                            break;
+                        }
                     }
                 }
+                
+                // Check one-time fees
+                if (!$has_valid_item && !empty($quotation_line_items['one_time_fees'])) {
+                    foreach ($quotation_line_items['one_time_fees'] as $item) {
+                        if (!empty($item['description']) && !empty($item['amount']) && floatval($item['amount']) > 0) {
+                            $has_valid_item = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Check recurring fees
+                if (!$has_valid_item && !empty($quotation_line_items['recurring_fees'])) {
+                    foreach ($quotation_line_items['recurring_fees'] as $item) {
+                        if (!empty($item['description']) && !empty($item['amount']) && floatval($item['amount']) > 0) {
+                            $has_valid_item = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Check shipping fees
+                if (!$has_valid_item && !empty($quotation_line_items['shipping_fees'])) {
+                    foreach ($quotation_line_items['shipping_fees'] as $item) {
+                        if (!empty($item['description']) && !empty($item['amount']) && floatval($item['amount']) > 0) {
+                            $has_valid_item = true;
+                            break;
+                        }
+                    }
+                }
+                
                 return $has_valid_item;
                 
             default:

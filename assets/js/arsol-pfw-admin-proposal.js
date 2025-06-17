@@ -52,7 +52,7 @@
 
             // Customer is always required
             var customerSelect = $('select[name="post_author_override"]');
-            customerSelect.attr('required', true);
+                customerSelect.attr('required', true);
 
             // Clear all quotation field requirements first
             $('input[name*="line_items"][name*="price"]').removeAttr('required');
@@ -72,7 +72,7 @@
                 var hasBudgetContent = budgetAmount || budgetDetails || recurringBudget;
                 
                 if (hasBudgetContent) {
-                    budgetAmountInput.attr('required', true);
+                        budgetAmountInput.attr('required', true);
                     if (budgetAmount) {
                         budgetDetailsInput.attr('required', true);
                     } else {
