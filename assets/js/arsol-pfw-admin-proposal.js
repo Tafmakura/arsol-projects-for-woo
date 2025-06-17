@@ -509,6 +509,10 @@
                         
                         ArsolProposalQuotation.toggleStartDateColumn();
                         ArsolProposalQuotation.calculateTotals();
+                        // Delay button state update to ensure DOM is fully updated
+                        setTimeout(function() {
+                            ArsolProposalQuotation.updateProductButtonState();
+                        }, 100);
                     }
                 }
             });
@@ -568,6 +572,28 @@
                 var price = $lastRow.find('.arsol-price-input').val();
                 var salePrice = $lastRow.find('.arsol-sale-price-input').val();
                 amount = salePrice || price;
+                
+                // Debug logging for product validation
+                console.log('Product validation check:', {
+                    description: description,
+                    descriptionTrimmed: description.trim(),
+                    price: price,
+                    salePrice: salePrice,
+                    amount: amount,
+                    amountParsed: parseFloat(amount),
+                    isValid: description && description.trim() && amount && parseFloat(amount) > 0
+                });
+                
+                // Debug logging for product validation
+                console.log('Product validation check:', {
+                    description: description,
+                    descriptionTrimmed: description.trim(),
+                    price: price,
+                    salePrice: salePrice,
+                    amount: amount,
+                    amountParsed: parseFloat(amount),
+                    isValid: description && description.trim() && amount && parseFloat(amount) > 0
+                });
             } else {
                 description = $lastRow.find('.arsol-description-input').val();
                 amount = $lastRow.find('.arsol-amount-input').val();
@@ -591,6 +617,7 @@
 
         // Convenience methods for updating individual section buttons
         updateProductButtonState: function() {
+            console.log('updateProductButtonState called');
             this.updateAddButtonState('product', '.add-product-button');
         },
 
