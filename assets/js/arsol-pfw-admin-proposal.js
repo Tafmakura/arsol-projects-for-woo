@@ -578,10 +578,9 @@
         toggleStartDateColumn: function() {
             var hasSubscriptions = false;
             $('#product-lines-body tr.arsol-line-item').each(function() {
-                var $startDateInput = $(this).find('.arsol-date-input');
-                if ($startDateInput.is(':visible')) {
+                if ($(this).data('is-subscription')) {
                     hasSubscriptions = true;
-                    return false;
+                    return false; // break loop
                 }
             });
 
@@ -745,7 +744,7 @@
 
             // Update main totals
             $('#one-time-total-display').html(ArsolProposalQuotation.formatPrice(oneTimeTotal));
-            $('#average-monthly-total-display').html(ArsolProposalQuotation.formatPrice(averageMonthlyTotal) + (hasRecurring ? ' /mo' : ''));
+            $('#average-monthly-total-display').html(ArsolProposalQuotation.formatPrice(averageYearlyTotal) + (hasRecurring ? ' /yr' : ''));
 
             // Update hidden inputs for form submission
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
