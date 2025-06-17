@@ -16,11 +16,12 @@
             // Toggle when dropdown changes
             $('#cost_proposal_type').on('change', function() {
                 ArsolProposal.toggleCostProposalSections();
-                ArsolProposal.validateProposal(); // Re-validate when type changes
+                // Removed validation trigger here - let it happen naturally on input changes
+                // ArsolProposal.validateProposal(); // Re-validate when type changes
             });
 
             // Run validation on various input changes
-            $(document).on('input change', 'select[name="post_author_override"], #cost_proposal_type, input[name="proposal_budget"], input[name="proposal_budget_details"]', function() {
+            $(document).on('input change', 'select[name="post_author_override"], input[name="proposal_budget"], input[name="proposal_budget_details"]', function() {
                 ArsolProposal.validateProposal();
             });
 
@@ -31,9 +32,11 @@
                 }
             });
 
-            // Add real-time validation feedback instead of blocking submission
+            // Add real-time validation feedback and smart cleanup on submission
             $('form#post').on('submit', function(e) {
-                // Run validation to show inline error messages, but allow normal HTML5 validation to handle blocking
+                // First run all pre-save cleanup tasks (only on submit, not on real-time validation)
+                ArsolProposal.presaveCleanup();
+                // Then run validation to show inline error messages
                 ArsolProposal.validateProposal();
                 // Let the browser's native HTML5 validation handle the actual submission blocking
                 // This provides a better user experience with clear field-level feedback
@@ -73,7 +76,7 @@
                 customerSelect.removeAttr('required');
             }
 
-            // Smart validation: Only validate if user has started adding content
+            // Type-specific validation (without aggressive auto-cleanup)
             if (proposalType === 'budget') {
                 var budgetAmountInput = $('input[name="proposal_budget"]');
                 var budgetDetailsInput = $('input[name="proposal_budget_details"]');
@@ -85,13 +88,8 @@
                 // Check if user has started filling budget fields
                 var hasBudgetContent = budgetAmount || budgetDetails || recurringBudget;
                 
-                if (!hasBudgetContent) {
-                    // Auto-cleanup: set type to 'none' if completely empty
-                    $('#cost_proposal_type').val('none').trigger('change');
-                    budgetAmountInput.removeAttr('required');
-                    budgetDetailsInput.removeAttr('required');
-                } else {
-                    // Validate since user has started adding content
+                if (hasBudgetContent) {
+                    // Only validate if user has started adding content
                     if (!budgetAmount || parseFloat(budgetAmount) <= 0) {
                         isValid = false;
                         budgetAmountInput.attr('required', true);
@@ -111,16 +109,17 @@
                     } else {
                         budgetDetailsInput.removeAttr('required');
                     }
+                } else {
+                    // Clear validation for empty budget
+                    budgetAmountInput.removeAttr('required');
+                    budgetDetailsInput.removeAttr('required');
                 }
             } else if (proposalType === 'quotation') {
                 // Check if user has added any line items
                 var hasAnyLineItems = $('.product-line-item, .recurring-fee-line-item, .onetime-fee-line-item').length > 0;
                 
-                if (!hasAnyLineItems) {
-                    // Auto-cleanup: set type to 'none' if no line items exist
-                    $('#cost_proposal_type').val('none').trigger('change');
-                } else {
-                    // Validate since user has started adding line items
+                if (hasAnyLineItems) {
+                    // Only validate if user has started adding line items
                     var hasValidItem = false;
                     $('.product-line-item, .recurring-fee-line-item, .onetime-fee-line-item').each(function() {
                         var description = $(this).find('input[name*="description"], select[name*="product"]').val();
@@ -143,10 +142,53 @@
             }
 
             // Button disabling removed - now uses HTML5 validation with inline error messages
-            // Auto-cleanup logic ensures empty sections don't cause validation errors
+            // Auto-cleanup moved to form submission to prevent overly sensitive behavior
             // $('.arsol-confirm-conversion, #publish').prop('disabled', !isValid);
             
             return isValid;
+        },
+
+        // Pre-save cleanup function - runs all cleanup tasks before saving
+        presaveCleanup: function() {
+            // Clean up empty proposal sections
+            this.cleanupEmptyProposalSections();
+            
+            // Add other pre-save cleanup tasks here as needed
+            // this.cleanupOtherStuff();
+        },
+
+        // Clean up empty proposal sections (moved from cleanupEmptySections)
+        cleanupEmptyProposalSections: function() {
+            var proposalType = $('#cost_proposal_type').val();
+            
+            // Only cleanup if the user is actually trying to save/submit
+            // Don't cleanup if user is just exploring different proposal types
+            if (proposalType === 'budget') {
+                var budgetAmountInput = $('input[name="proposal_budget"]');
+                var budgetDetailsInput = $('input[name="proposal_budget_details"]');
+                var recurringBudgetInput = $('input[name="proposal_recurring_budget"]');
+                var budgetAmount = budgetAmountInput.val();
+                var budgetDetails = budgetDetailsInput.val();
+                var recurringBudget = recurringBudgetInput.val();
+                
+                // Check if budget section is completely empty
+                var hasBudgetContent = budgetAmount || budgetDetails || recurringBudget;
+                
+                if (!hasBudgetContent) {
+                    // Auto-cleanup: set type to 'none' if completely empty on save
+                    $('#cost_proposal_type').val('none');
+                    console.log('Pre-save cleanup: Empty budget section changed to "none"');
+                }
+            } else if (proposalType === 'quotation') {
+                // Check if quotation section is completely empty
+                var hasAnyLineItems = $('.product-line-item, .recurring-fee-line-item, .onetime-fee-line-item').length > 0;
+                
+                if (!hasAnyLineItems) {
+                    // Auto-cleanup: set type to 'none' if no line items exist on save
+                    $('#cost_proposal_type').val('none');
+                    console.log('Pre-save cleanup: Empty quotation section changed to "none"');
+                }
+            }
         },
 
         initialValidation: function() {
