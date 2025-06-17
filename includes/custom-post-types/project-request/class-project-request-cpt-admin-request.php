@@ -43,7 +43,11 @@ class Request {
         </p>
         <div class="major-actions">
             <div class="arsol-pfw-admin-project-actions">
-                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php echo ($post->post_status === 'publish') ? __('Update', 'arsol-pfw') : __('Publish', 'arsol-pfw'); ?>">
+                <?php if ($post->post_status === 'publish'): ?>
+                    <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
+                <?php else: ?>
+                    <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
+                <?php endif; ?>
                 <?php
                 $is_disabled = $current_status !== 'under-review';
                 $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);

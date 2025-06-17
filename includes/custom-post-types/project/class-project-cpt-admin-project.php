@@ -35,7 +35,11 @@ class Project {
         ?>
         <div class="project-details">
             <div class="major-actions">
-                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php echo ($post->post_status === 'publish') ? __('Update', 'arsol-pfw') : __('Publish', 'arsol-pfw'); ?>">
+                <?php if ($post->post_status === 'publish'): ?>
+                    <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
+                <?php else: ?>
+                    <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
+                <?php endif; ?>
             </div>
         </div>
         <?php
