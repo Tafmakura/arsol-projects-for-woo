@@ -683,10 +683,10 @@
                 
                 if ($row.data('is-subscription')) {
                     // This specific product is a subscription - show its start date input
-                    $dateInput.show();
+                    $dateInput.removeClass('hidden-start-date');
                 } else {
                     // This specific product is not a subscription - hide its start date input
-                    $dateInput.hide();
+                    $dateInput.addClass('hidden-start-date');
                 }
             });
         },
