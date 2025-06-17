@@ -16,33 +16,17 @@
             // Toggle when dropdown changes
             $('#cost_proposal_type').on('change', function() {
                 ArsolProposal.toggleCostProposalSections();
-                // Removed validation trigger here - let it happen naturally on input changes
-                // ArsolProposal.validateProposal(); // Re-validate when type changes
+                ArsolProposal.updateRequiredFields();
             });
 
-            // Run validation on various input changes
+            // Update required fields on input changes
             $(document).on('input change', 'select[name="post_author_override"], input[name="proposal_budget"], input[name="proposal_budget_details"]', function() {
-                ArsolProposal.validateProposal();
+                ArsolProposal.updateRequiredFields();
             });
 
-            // Run validation on quotation line item changes
-            $(document).on('input change', '.product-line-item input, .recurring-fee-line-item input, .onetime-fee-line-item input, .product-line-item select', function() {
-                if ($('#cost_proposal_type').val() === 'quotation') {
-                    ArsolProposal.validateProposal();
-                }
-            });
-
-            // Add real-time validation feedback and smart cleanup on submission
+            // Pre-save cleanup on form submission
             $('form#post').on('submit', function(e) {
-                console.log('Form submission started');
-                // First run all pre-save cleanup tasks (only on submit, not on real-time validation)
                 ArsolProposal.presaveCleanup();
-                console.log('Pre-save cleanup completed');
-                // Then run validation to show inline error messages
-                var isValid = ArsolProposal.validateProposal();
-                console.log('Validation result:', isValid);
-                // Let the browser's native HTML5 validation handle the actual submission blocking
-                // This provides a better user experience with clear field-level feedback
             });
         },
 
@@ -59,108 +43,44 @@
             }
         },
 
-        validateProposal: function() {
-            var isValid = true;
+        updateRequiredFields: function() {
             var proposalType = $('#cost_proposal_type').val();
-            var customer = $('select[name="post_author_override"]').val();
 
-            // Clear any existing validation messages
-            $('.arsol-validation-error').remove();
-
-            // Customer is always required - add HTML5 validation
+            // Customer is always required
             var customerSelect = $('select[name="post_author_override"]');
-            if (!customer) {
-                isValid = false;
-                customerSelect.attr('required', true);
-                if (!customerSelect.siblings('.arsol-validation-error').length) {
-                    customerSelect.after('<div class="arsol-validation-error" style="color: #dc3232; font-size: 13px; margin-top: 5px;">Please select a customer before publishing.</div>');
-                }
-            } else {
-                customerSelect.removeAttr('required');
-            }
+            customerSelect.attr('required', true);
 
-            // Type-specific validation (without aggressive auto-cleanup)
+            // Type-specific required field management
             if (proposalType === 'budget') {
                 var budgetAmountInput = $('input[name="proposal_budget"]');
                 var budgetDetailsInput = $('input[name="proposal_budget_details"]');
-                var recurringBudgetInput = $('input[name="proposal_recurring_budget"]');
                 var budgetAmount = budgetAmountInput.val();
                 var budgetDetails = budgetDetailsInput.val();
-                var recurringBudget = recurringBudgetInput.val();
+                var recurringBudget = $('input[name="proposal_recurring_budget"]').val();
                 
                 // Check if user has started filling budget fields
                 var hasBudgetContent = budgetAmount || budgetDetails || recurringBudget;
                 
                 if (hasBudgetContent) {
-                    // Only validate if user has started adding content
-                    if (!budgetAmount || parseFloat(budgetAmount) <= 0) {
-                        isValid = false;
-                        budgetAmountInput.attr('required', true);
-                        if (!budgetAmountInput.siblings('.arsol-validation-error').length) {
-                            budgetAmountInput.after('<div class="arsol-validation-error" style="color: #dc3232; font-size: 13px; margin-top: 5px;">Please enter a valid budget amount.</div>');
-                        }
-                    } else {
-                        budgetAmountInput.removeAttr('required');
-                    }
-                    
-                    if (budgetAmount && !budgetDetails) {
-                        isValid = false;
+                    budgetAmountInput.attr('required', true);
+                    if (budgetAmount) {
                         budgetDetailsInput.attr('required', true);
-                        if (!budgetDetailsInput.siblings('.arsol-validation-error').length) {
-                            budgetDetailsInput.after('<div class="arsol-validation-error" style="color: #dc3232; font-size: 13px; margin-top: 5px;">Please provide budget details.</div>');
-                        }
                     } else {
                         budgetDetailsInput.removeAttr('required');
                     }
                 } else {
-                    // Clear validation for empty budget
                     budgetAmountInput.removeAttr('required');
                     budgetDetailsInput.removeAttr('required');
                 }
-            } else if (proposalType === 'quotation') {
-                // Clear any required attributes from budget fields since they're hidden
-                $('input[name="proposal_budget"]').removeAttr('required');
-                $('input[name="proposal_budget_details"]').removeAttr('required');
+                
+                // Clear quotation required fields
                 $('input[name="proposal_recurring_budget"]').removeAttr('required');
-                
-                // Check if user has added any line items
-                var hasAnyLineItems = $('.arsol-line-item.arsol-product-item, .arsol-line-item.arsol-recurring-fee-item, .arsol-line-item.arsol-fee-item, .arsol-line-item.arsol-shipping-fee-item').length > 0;
-                
-                if (hasAnyLineItems) {
-                    // Only validate if user has started adding line items
-                    var hasValidItem = false;
-                    $('.arsol-line-item.arsol-product-item, .arsol-line-item.arsol-recurring-fee-item, .arsol-line-item.arsol-fee-item, .arsol-line-item.arsol-shipping-fee-item').each(function() {
-                        var description = $(this).find('input[name*="description"], select[name*="product"]').val();
-                        var amount = $(this).find('input[name*="amount"], input[name*="price"]').val();
-                        
-                        if (description && amount && parseFloat(amount) > 0) {
-                            hasValidItem = true;
-                            return false; // Break loop
-                        }
-                    });
-                    
-                    if (!hasValidItem) {
-                        isValid = false;
-                        var quotationContainer = $('#proposal_quotation_builder');
-                        if (!quotationContainer.find('.arsol-validation-error').length) {
-                            quotationContainer.prepend('<div class="arsol-validation-error" style="color: #dc3232; font-size: 13px; margin-bottom: 15px; padding: 10px; background: #fff2f2; border-left: 4px solid #dc3232;">Please complete the line items you\'ve added or remove them to save as a basic proposal.</div>');
-                        }
-                    }
-                }
-            }
-
-            // Clear budget field required attributes for any proposal type that isn't 'budget'
-            if (proposalType !== 'budget') {
+            } else {
+                // Clear budget required fields for non-budget types
                 $('input[name="proposal_budget"]').removeAttr('required');
                 $('input[name="proposal_budget_details"]').removeAttr('required');
                 $('input[name="proposal_recurring_budget"]').removeAttr('required');
             }
-
-            // Button disabling removed - now uses HTML5 validation with inline error messages
-            // Auto-cleanup moved to form submission to prevent overly sensitive behavior
-            // $('.arsol-confirm-conversion, #publish').prop('disabled', !isValid);
-            
-            return isValid;
         },
 
         // Pre-save cleanup function - runs all cleanup tasks before saving
@@ -213,8 +133,8 @@
         },
 
         initialValidation: function() {
-            // Initial validation
-            this.validateProposal();
+            // Set initial required fields
+            this.updateRequiredFields();
         }
     };
 
