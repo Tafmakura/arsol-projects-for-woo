@@ -55,10 +55,10 @@
             customerSelect.attr('required', true);
 
             // Clear all quotation field requirements first
-            $('input[name*="line_items"][name*="price"]').prop('required', false);
-            $('select[name*="line_items"][name*="product_id"]').prop('required', false);
-            $('input[name*="line_items"][name*="description"]').prop('required', false);
-            $('input[name*="line_items"][name*="amount"]').prop('required', false);
+            $('input[name*="line_items"][name*="price"]').removeAttr('required');
+            $('select[name*="line_items"][name*="product_id"]').removeAttr('required');
+            $('input[name*="line_items"][name*="description"]').removeAttr('required');
+            $('input[name*="line_items"][name*="amount"]').removeAttr('required');
 
             // Type-specific required field management
             if (proposalType === 'budget') {
@@ -76,17 +76,17 @@
                     if (budgetAmount) {
                         budgetDetailsInput.attr('required', true);
                     } else {
-                        budgetDetailsInput.prop('required', false);
+                        budgetDetailsInput.removeAttr('required');
                     }
                 } else {
-                    budgetAmountInput.prop('required', false);
-                    budgetDetailsInput.prop('required', false);
+                    budgetAmountInput.removeAttr('required');
+                    budgetDetailsInput.removeAttr('required');
                 }
                 
                 // Clear budget required fields for non-budget types
-                $('input[name="proposal_budget"]').prop('required', false);
-                $('input[name="proposal_budget_details"]').prop('required', false);
-                $('input[name="proposal_recurring_budget"]').prop('required', false);
+                $('input[name="proposal_budget"]').removeAttr('required');
+                $('input[name="proposal_budget_details"]').removeAttr('required');
+                $('input[name="proposal_recurring_budget"]').removeAttr('required');
             } else if (proposalType === 'quotation') {
                 // Make quotation line item fields required
                 $('input[name*="line_items"][name*="[price]"]').attr('required', true);
@@ -95,14 +95,14 @@
                 $('input[name*="line_items"][name*="[amount]"]').attr('required', true);
                 
                 // Clear budget required fields
-                $('input[name="proposal_budget"]').prop('required', false);
-                $('input[name="proposal_budget_details"]').prop('required', false);
-                $('input[name="proposal_recurring_budget"]').prop('required', false);
+                $('input[name="proposal_budget"]').removeAttr('required');
+                $('input[name="proposal_budget_details"]').removeAttr('required');
+                $('input[name="proposal_recurring_budget"]').removeAttr('required');
             } else {
                 // Clear all required fields for 'none' type
-                $('input[name="proposal_budget"]').prop('required', false);
-                $('input[name="proposal_budget_details"]').prop('required', false);
-                $('input[name="proposal_recurring_budget"]').prop('required', false);
+                $('input[name="proposal_budget"]').removeAttr('required');
+                $('input[name="proposal_budget_details"]').removeAttr('required');
+                $('input[name="proposal_recurring_budget"]').removeAttr('required');
             }
         },
 
@@ -196,9 +196,8 @@
             var billingText = '/' + intervalText + periodDisplay;
             
             $('.recurring-budget-total-display').html(this.formatPrice(recurringAmount));
-            $('.arsol-billing-period').text(billingText);
-            $('#budget-recurring-total-display').html(this.formatPrice(recurringAmount));
             $('#budget-recurring-period').text(billingText);
+            $('#budget-recurring-total-display').html(this.formatPrice(recurringAmount));
         }
     };
 
@@ -613,10 +612,10 @@
                 $('input[name*="line_items"][name*="[amount]"]').attr('required', true);
             } else {
                 // Remove required from quotation fields
-                $('input[name*="line_items"][name*="[price]"]').prop('required', false);
-                $('select[name*="line_items"][name*="[product_id]"]').prop('required', false);
-                $('input[name*="line_items"][name*="[description]"]').prop('required', false);
-                $('input[name*="line_items"][name*="[amount]"]').prop('required', false);
+                $('input[name*="line_items"][name*="[price]"]').removeAttr('required');
+                $('select[name*="line_items"][name*="[product_id]"]').removeAttr('required');
+                $('input[name*="line_items"][name*="[description]"]').removeAttr('required');
+                $('input[name*="line_items"][name*="[amount]"]').removeAttr('required');
             }
         },
 
