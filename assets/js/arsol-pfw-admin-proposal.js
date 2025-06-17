@@ -2,9 +2,57 @@
 (function($) {
     'use strict';
 
+    // Debug: Verify script is loading
+    console.log('Arsol Proposal Admin Script: Loading started');
+
+    // Dependency checks
+    if (typeof $ === 'undefined') {
+        console.error('Arsol Proposal Admin: jQuery is not loaded');
+        return;
+    }
+
+    // Check for WordPress template function
+    if (typeof wp === 'undefined' || typeof wp.template !== 'function') {
+        console.error('Arsol Proposal Admin: WordPress template function is not available');
+        return;
+    }
+
+    // Check for required localized variables
+    if (typeof arsol_budget_vars === 'undefined') {
+        console.error('Arsol Proposal Admin: arsol_budget_vars is not defined');
+    }
+
+    if (typeof arsol_pfw_proposal_quotation_vars === 'undefined') {
+        console.error('Arsol Proposal Admin: arsol_pfw_proposal_quotation_vars is not defined');
+    }
+
+    // Safe debounce function that falls back if underscore is not available
+    function safeDebounce(func, delay) {
+        if (typeof _ !== 'undefined' && typeof _.debounce === 'function') {
+            return _.debounce(func, delay);
+        }
+        
+        // Fallback debounce implementation
+        var timeoutId;
+        return function() {
+            var context = this;
+            var args = arguments;
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(function() {
+                func.apply(context, args);
+            }, delay);
+        };
+    }
+
     // Proposal Validation and Toggle System
     var ArsolProposal = {
         init: function() {
+            // Check if we're on the right page
+            if ($('#cost_proposal_type').length === 0) {
+                console.log('Arsol Proposal Admin: Not on proposal page, skipping initialization');
+                return;
+            }
+            
             this.bindEvents();
             this.initialValidation();
         },
@@ -284,7 +332,7 @@
                 .on('change', '.arsol-product-item select.arsol-description-input', this.productChanged.bind(this));
             
             // Use jQuery's debounced input events for calculations
-            var debouncedCalculate = _.debounce ? _.debounce(this.calculateTotals.bind(this), 300) : this.calculateTotals.bind(this);
+            var debouncedCalculate = safeDebounce(this.calculateTotals.bind(this), 300);
             
             // Products & Services section
             $builder.on('input change', '#product-lines-body .arsol-quantity-input, #product-lines-body .arsol-sale-price-input, #product-lines-body .arsol-price-input, #product-lines-body .arsol-description-input', function() {
@@ -498,18 +546,31 @@
 
     // Initialize when DOM is ready
     $(document).ready(function() {
+        console.log('Arsol Proposal Admin: DOM ready, starting initialization');
+        console.log('Available elements:', {
+            cost_proposal_type: $('#cost_proposal_type').length,
+            proposal_quotation_builder: $('#proposal_quotation_builder').length,
+            proposal_budget_builder: $('#proposal_budget_builder').length,
+            post_form: $('form#post').length
+        });
+        
         // Initialize all systems
+        console.log('Initializing ArsolProposal...');
         ArsolProposal.init();
         
         // Initialize quotation system if it exists
         if ($('#proposal_quotation_builder').length > 0) {
+            console.log('Initializing ArsolProposalQuotation...');
             ArsolProposalQuotation.init();
         }
         
         // Initialize budget system if it exists
         if ($('#proposal_budget_builder').length > 0) {
+            console.log('Initializing ArsolBudget...');
             ArsolBudget.init();
         }
+        
+        console.log('Arsol Proposal Admin: Initialization complete');
     });
 
 })(jQuery); 
