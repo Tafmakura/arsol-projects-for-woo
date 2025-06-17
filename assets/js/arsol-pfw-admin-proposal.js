@@ -330,15 +330,36 @@
             
             // Use jQuery's one() method for input events with debouncing (WordPress pattern)
             var debouncedCalculate = _.debounce(this.calculateTotals.bind(this), 300);
-            var debouncedValidate = _.debounce(this.updateAddButtonStates.bind(this), 300);
             
-            $builder.on('input change', '.arsol-quantity-input, .arsol-sale-price-input, .arsol-price-input, .arsol-amount-input, .arsol-billing-select', function() {
+            // Targeted validation for each section
+            var debouncedValidateProduct = _.debounce(this.updateProductButtonState.bind(this), 300);
+            var debouncedValidateRecurringFee = _.debounce(this.updateRecurringFeeButtonState.bind(this), 300);
+            var debouncedValidateOnetimeFee = _.debounce(this.updateOnetimeFeeButtonState.bind(this), 300);
+            var debouncedValidateShippingFee = _.debounce(this.updateShippingFeeButtonState.bind(this), 300);
+            
+            // Products & Services section
+            $builder.on('input change', '#product-lines-body .arsol-quantity-input, #product-lines-body .arsol-sale-price-input, #product-lines-body .arsol-price-input, #product-lines-body .arsol-description-input', function() {
                 debouncedCalculate();
-                debouncedValidate();
+                debouncedValidateProduct();
             });
             
-            // Also validate on description changes
-            $builder.on('input change', '.arsol-description-input', debouncedValidate);
+            // Recurring Fees section
+            $builder.on('input change', '#recurring-fee-lines-body .arsol-amount-input, #recurring-fee-lines-body .arsol-billing-select, #recurring-fee-lines-body .arsol-description-input', function() {
+                debouncedCalculate();
+                debouncedValidateRecurringFee();
+            });
+            
+            // One-Time Fees section
+            $builder.on('input change', '#onetime-fee-lines-body .arsol-amount-input, #onetime-fee-lines-body .arsol-description-input', function() {
+                debouncedCalculate();
+                debouncedValidateOnetimeFee();
+            });
+            
+            // Shipping Fees section
+            $builder.on('input change', '#shipping-lines-body .arsol-amount-input, #shipping-lines-body .arsol-description-input', function() {
+                debouncedCalculate();
+                debouncedValidateShippingFee();
+            });
             
             // Add WordPress-style custom event triggers for extensibility
             $(document).trigger('arsol:quotation-events-bound', [$builder]);
@@ -507,7 +528,22 @@
             
             this.renderRow(type, {});
             this.toggleStartDateColumn();
-            this.updateAddButtonStates();
+            
+            // Update only the button for this specific section
+            switch(type) {
+                case 'product':
+                    this.updateProductButtonState();
+                    break;
+                case 'recurring-fee':
+                    this.updateRecurringFeeButtonState();
+                    break;
+                case 'onetime-fee':
+                    this.updateOnetimeFeeButtonState();
+                    break;
+                case 'shipping-fee':
+                    this.updateShippingFeeButtonState();
+                    break;
+            }
         },
 
         validateLastLineItem: function(type) {
@@ -541,21 +577,70 @@
         },
 
         updateAddButtonStates: function() {
-            var self = this;
-            
-            $('.add-line-item').each(function() {
-                var type = $(this).data('type');
-                var isValid = self.validateLastLineItem(type);
-                $(this).prop('disabled', !isValid);
-            });
+            // Update each section's add button independently
+            this.updateAddButtonState('product', '.add-product-button');
+            this.updateAddButtonState('recurring-fee', '.add-recurring-fee-button');
+            this.updateAddButtonState('onetime-fee', '.add-onetime-fee-button');
+            this.updateAddButtonState('shipping-fee', '.add-shipping-fee-button');
+        },
+
+        updateAddButtonState: function(type, buttonSelector) {
+            var isValid = this.validateLastLineItem(type);
+            $(buttonSelector).prop('disabled', !isValid);
+        },
+
+        // Convenience methods for updating individual section buttons
+        updateProductButtonState: function() {
+            this.updateAddButtonState('product', '.add-product-button');
+        },
+
+        updateRecurringFeeButtonState: function() {
+            this.updateAddButtonState('recurring-fee', '.add-recurring-fee-button');
+        },
+
+        updateOnetimeFeeButtonState: function() {
+            this.updateAddButtonState('onetime-fee', '.add-onetime-fee-button');
+        },
+
+        updateShippingFeeButtonState: function() {
+            this.updateAddButtonState('shipping-fee', '.add-shipping-fee-button');
         },
 
         removeLineItem: function(e) {
             e.preventDefault();
-            $(e.currentTarget).closest('tr').remove();
+            var $row = $(e.currentTarget).closest('tr');
+            
+            // Determine which section this row belongs to
+            var type = '';
+            if ($row.closest('#product-lines-body').length) {
+                type = 'product';
+            } else if ($row.closest('#recurring-fee-lines-body').length) {
+                type = 'recurring-fee';
+            } else if ($row.closest('#onetime-fee-lines-body').length) {
+                type = 'onetime-fee';
+            } else if ($row.closest('#shipping-lines-body').length) {
+                type = 'shipping-fee';
+            }
+            
+            $row.remove();
             this.calculateTotals();
             this.toggleStartDateColumn();
-            this.updateAddButtonStates();
+            
+            // Update only the button for the section that had an item removed
+            switch(type) {
+                case 'product':
+                    this.updateProductButtonState();
+                    break;
+                case 'recurring-fee':
+                    this.updateRecurringFeeButtonState();
+                    break;
+                case 'onetime-fee':
+                    this.updateOnetimeFeeButtonState();
+                    break;
+                case 'shipping-fee':
+                    this.updateShippingFeeButtonState();
+                    break;
+            }
         },
 
         productChanged: function(e) {
