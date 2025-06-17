@@ -191,7 +191,36 @@ class Assets {
                     global $post;
                     $line_items = array();
                     if ($post) {
-                        $line_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
+                        $saved_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
+                        
+                        // Transform flat array to nested structure expected by JavaScript
+                        $line_items = array(
+                            'products' => array(),
+                            'one_time_fees' => array(),
+                            'recurring_fees' => array(),
+                            'shipping_fees' => array()
+                        );
+                        
+                        if (is_array($saved_items)) {
+                            foreach ($saved_items as $index => $item) {
+                                if (!isset($item['type'])) continue;
+                                
+                                switch ($item['type']) {
+                                    case 'product':
+                                        $line_items['products'][$index] = $item;
+                                        break;
+                                    case 'one_time_fee':
+                                        $line_items['one_time_fees'][$index] = $item;
+                                        break;
+                                    case 'recurring_fee':
+                                        $line_items['recurring_fees'][$index] = $item;
+                                        break;
+                                    case 'shipping_fee':
+                                        $line_items['shipping_fees'][$index] = $item;
+                                        break;
+                                }
+                            }
+                        }
                     }
                     
                     wp_localize_script('arsol-pfw-admin-proposal', 'arsol_pfw_proposal_quotation_vars', array(
