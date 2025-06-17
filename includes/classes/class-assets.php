@@ -175,35 +175,44 @@ class Assets {
             // Enqueue post-type specific JavaScript (only for post type pages)
             if ($is_post_type_page) {
                 if ($screen->post_type === 'arsol-pfw-proposal') {
-                    wp_enqueue_script('arsol-pfw-admin-proposal');
+                    // Only enqueue proposal script on specific proposal screens:
+                    // - 'post' = Add New Proposal / Edit Proposal
+                    // - 'edit' = Proposal List (All Proposals)
+                    $is_proposal_admin_screen = in_array($screen->base, array('post', 'edit'));
                     
-                    // Localize proposal script
-                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_vars', array(
-                        'validation_message' => __('Please complete all required fields before saving.', 'arsol-pfw'),
-                    ));
-                    
-                    // Localize budget script
-                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_budget_vars', array(
-                        'currency_symbol' => get_woocommerce_currency_symbol(),
-                    ));
-                    
-                    // Always localize quotation script for proposals (needed for all proposal types)
-                    global $post;
-                    $line_items = array();
-                    if ($post) {
-                        $line_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
+                    if ($is_proposal_admin_screen) {
+                        wp_enqueue_script('arsol-pfw-admin-proposal');
+                        
+                        // Localize proposal script
+                        wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_vars', array(
+                            'validation_message' => __('Please complete all required fields before saving.', 'arsol-pfw'),
+                            'screen_base' => $screen->base, // Pass screen type to JS
+                        ));
+                        
+                        // Localize budget script
+                        wp_localize_script('arsol-pfw-admin-proposal', 'arsol_budget_vars', array(
+                            'currency_symbol' => get_woocommerce_currency_symbol(),
+                        ));
+                        
+                        // Localize quotation script for proposals (needed for all proposal types)
+                        // Only get line items on edit screens (not on list screens)
+                        global $post;
+                        $line_items = array();
+                        if ($post && $screen->base === 'post') {
+                            $line_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
+                        }
+                        
+                        wp_localize_script('arsol-pfw-admin-proposal', 'arsol_pfw_proposal_quotation_vars', array(
+                            'ajax_url' => admin_url('admin-ajax.php'),
+                            'nonce' => wp_create_nonce('arsol-proposal-quotation-nonce'),
+                            'currency_symbol' => get_woocommerce_currency_symbol(),
+                            'line_items' => $line_items,
+                            'calculation_constants' => array(
+                                'days_in_month' => 30.44, // Average days in a month
+                                'days_in_year' => 365.25  // Average days in a year
+                            )
+                        ));
                     }
-                    
-                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_pfw_proposal_quotation_vars', array(
-                        'ajax_url' => admin_url('admin-ajax.php'),
-                        'nonce' => wp_create_nonce('arsol-proposal-quotation-nonce'),
-                        'currency_symbol' => get_woocommerce_currency_symbol(),
-                        'line_items' => $line_items,
-                        'calculation_constants' => array(
-                            'days_in_month' => 30.44, // Average days in a month
-                            'days_in_year' => 365.25  // Average days in a year
-                        )
-                    ));
                     
                 } elseif ($screen->post_type === 'arsol-project') {
                     wp_enqueue_script('arsol-pfw-admin-active');
