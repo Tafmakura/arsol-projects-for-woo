@@ -584,9 +584,9 @@
                 }
             });
 
-            var hasRecurringFees = $('#recurring-fee-lines-body tr.arsol-line-item').length > 0;
-
-            if (hasSubscriptions || hasRecurringFees) {
+            // Only show start date column if there are subscription products
+            // Recurring fees have their own billing period controls, not start dates
+            if (hasSubscriptions) {
                 $('.arsol-date-column').show();
             } else {
                 $('.arsol-date-column').hide();
