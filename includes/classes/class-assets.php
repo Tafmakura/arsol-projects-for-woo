@@ -191,10 +191,10 @@ class Assets {
                     global $post;
                     $line_items = array();
                     if ($post) {
-                        $line_items = get_post_meta($post->ID, '_arsol_proposal_quotation_line_items', true) ?: array();
+                        $line_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
                     }
                     
-                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_quotation_vars', array(
+                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_pfw_proposal_quotation_vars', array(
                         'ajax_url' => admin_url('admin-ajax.php'),
                         'nonce' => wp_create_nonce('arsol-proposal-quotation-nonce'),
                         'currency_symbol' => get_woocommerce_currency_symbol(),

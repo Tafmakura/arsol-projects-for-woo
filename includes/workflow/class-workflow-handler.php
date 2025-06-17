@@ -570,7 +570,7 @@ class Workflow_Handler {
             // Check proposal data
             $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
             
-            $line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
+            $line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
             
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
                 sprintf('Proposal #%d details - Type: %s, Quotation line items: %s', 
@@ -968,7 +968,7 @@ class Workflow_Handler {
         $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
         
         // Check line items
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
+        $line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
         $debug_info['has_line_items'] = !empty($line_items);
         $debug_info['line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
         

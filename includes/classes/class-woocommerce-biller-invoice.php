@@ -569,7 +569,7 @@ class Woocommerce_Biller {
                 
             case 'quotation':
                 // Quotation type requires at least one quotation line item with description and amount
-                $quotation_line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
+                $quotation_line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
                 if (empty($quotation_line_items) || !is_array($quotation_line_items)) {
                     return false;
                 }
@@ -577,7 +577,17 @@ class Woocommerce_Biller {
                 // Check that at least one valid line item exists
                 $has_valid_item = false;
                 foreach ($quotation_line_items as $item) {
-                    if (!empty($item['description']) && !empty($item['amount']) && $item['amount'] > 0) {
+                    // Check based on item type
+                    $valid = false;
+                    if ($item['type'] === 'product' && !empty($item['product_id']) && !empty($item['price']) && $item['price'] > 0) {
+                        $valid = true;
+                    } elseif (in_array($item['type'], ['one_time_fee', 'recurring_fee', 'shipping_fee'])) {
+                        if (!empty($item['description']) && !empty($item['amount']) && $item['amount'] > 0) {
+                            $valid = true;
+                        }
+                    }
+                    
+                    if ($valid) {
                         $has_valid_item = true;
                         break;
                     }
@@ -610,7 +620,7 @@ class Woocommerce_Biller {
         switch ($cost_proposal_type) {
             case 'quotation':
                 // Get quotation line items
-                $quotation_line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
+                $quotation_line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
                 if (!empty($quotation_line_items) && is_array($quotation_line_items)) {
                     $line_items = $quotation_line_items;
                 }

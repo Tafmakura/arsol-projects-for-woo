@@ -186,49 +186,90 @@ class Proposal {
             }
 
             // Clean up quotation data when budget is selected
-            delete_post_meta($post_id, '_arsol_proposal_quotation_line_items');
-            delete_post_meta($post_id, '_arsol_proposal_one_time_total');
-            delete_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped');
+            delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items');
         }
         // Handle quotation data
         elseif ($cost_proposal_type === 'quotation') {
-            // Save quotation line items
-            if (isset($_POST['quotation_line_items'])) {
-                $line_items = $_POST['quotation_line_items'];
+            // Save quotation line items with new standardized structure
+            if (isset($_POST['arsol_pfw_quotation_items'])) {
+                $line_items = $_POST['arsol_pfw_quotation_items'];
                 
-                // Process and sanitize line items
+                // Process and sanitize line items by type
                 $sanitized_items = array();
-                foreach ($line_items as $item) {
-                    $sanitized_item = array(
-                        'type' => sanitize_text_field($item['type']),
-                        'description' => sanitize_text_field($item['description']),
-                        'amount' => wc_format_decimal($item['amount']),
-                        'currency' => $currency
-                    );
-                    
-                    // Add optional fields based on type
-                    if (!empty($item['start_date'])) {
-                        $sanitized_item['start_date'] = sanitize_text_field($item['start_date']);
+                
+                // Process products
+                if (!empty($line_items['products'])) {
+                    foreach ($line_items['products'] as $item) {
+                        $sanitized_item = array(
+                            'type' => 'product',
+                            'product_id' => absint($item['product_id']),
+                            'product_type' => sanitize_text_field($item['product_type']),
+                            'quantity' => absint($item['quantity']),
+                            'price' => wc_format_decimal($item['price']),
+                            'currency' => $currency
+                        );
+                        
+                        if (!empty($item['sale_price'])) {
+                            $sanitized_item['sale_price'] = wc_format_decimal($item['sale_price']);
+                        }
+                        if (!empty($item['start_date'])) {
+                            $sanitized_item['start_date'] = sanitize_text_field($item['start_date']);
+                        }
+                        
+                        $sanitized_items[] = $sanitized_item;
                     }
-                    if (!empty($item['billing_interval'])) {
-                        $sanitized_item['billing_interval'] = sanitize_text_field($item['billing_interval']);
-                    }
-                    if (!empty($item['billing_period'])) {
-                        $sanitized_item['billing_period'] = sanitize_text_field($item['billing_period']);
-                    }
-                    
-                    $sanitized_items[] = $sanitized_item;
                 }
                 
-                update_post_meta($post_id, '_arsol_proposal_quotation_line_items', $sanitized_items);
-            }
-
-            // Save totals
-            if (isset($_POST['one_time_total'])) {
-                update_post_meta($post_id, '_arsol_proposal_one_time_total', wc_format_decimal($_POST['one_time_total']));
-            }
-            if (isset($_POST['recurring_totals_grouped'])) {
-                update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $_POST['recurring_totals_grouped']);
+                // Process one-time fees
+                if (!empty($line_items['one_time_fees'])) {
+                    foreach ($line_items['one_time_fees'] as $item) {
+                        $sanitized_items[] = array(
+                            'type' => 'one_time_fee',
+                            'description' => sanitize_text_field($item['description']),
+                            'amount' => wc_format_decimal($item['amount']),
+                            'tax_class' => sanitize_text_field($item['tax_class']),
+                            'currency' => $currency
+                        );
+                    }
+                }
+                
+                // Process recurring fees
+                if (!empty($line_items['recurring_fees'])) {
+                    foreach ($line_items['recurring_fees'] as $item) {
+                        $sanitized_item = array(
+                            'type' => 'recurring_fee',
+                            'description' => sanitize_text_field($item['description']),
+                            'amount' => wc_format_decimal($item['amount']),
+                            'interval' => absint($item['interval']),
+                            'period' => sanitize_text_field($item['period']),
+                            'tax_class' => sanitize_text_field($item['tax_class']),
+                            'currency' => $currency
+                        );
+                        
+                        if (!empty($item['start_date'])) {
+                            $sanitized_item['start_date'] = sanitize_text_field($item['start_date']);
+                        }
+                        
+                        $sanitized_items[] = $sanitized_item;
+                    }
+                }
+                
+                // Process shipping fees
+                if (!empty($line_items['shipping_fees'])) {
+                    foreach ($line_items['shipping_fees'] as $item) {
+                        $sanitized_items[] = array(
+                            'type' => 'shipping_fee',
+                            'description' => sanitize_text_field($item['description']),
+                            'amount' => wc_format_decimal($item['amount']),
+                            'shipping_class_id' => absint($item['shipping_class_id']),
+                            'tax_class' => sanitize_text_field($item['tax_class']),
+                            'currency' => $currency
+                        );
+                    }
+                }
+                
+                // Save with new standardized meta key
+                update_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items', $sanitized_items);
             }
 
             // Clean up budget data when quotation is selected
@@ -252,9 +293,7 @@ class Proposal {
             delete_post_meta($post_id, '_proposal_recurring_budget_start_date');
             
             // Clean up quotation data
-            delete_post_meta($post_id, '_arsol_proposal_quotation_line_items');
-            delete_post_meta($post_id, '_arsol_proposal_one_time_total');
-            delete_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped');
+            delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items');
         }
     }
 }
