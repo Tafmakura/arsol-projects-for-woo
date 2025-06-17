@@ -209,18 +209,7 @@ class Assets {
                             }
                         }
                         
-                        // Ensure recurring fees have interval and period data for the template
-                        if (!empty($line_items['recurring_fees'])) {
-                            foreach ($line_items['recurring_fees'] as $key => $recurring_fee) {
-                                // Set default interval and period if not present
-                                if (!isset($recurring_fee['interval'])) {
-                                    $line_items['recurring_fees'][$key]['interval'] = '1';
-                                }
-                                if (!isset($recurring_fee['period'])) {
-                                    $line_items['recurring_fees'][$key]['period'] = 'month';
-                                }
-                            }
-                        }
+
                     }
                     
                     wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_quotation_vars', array(
