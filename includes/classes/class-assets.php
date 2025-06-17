@@ -192,6 +192,22 @@ class Assets {
                     $line_items = array();
                     if ($post) {
                         $line_items = get_post_meta($post->ID, '_arsol_proposal_quotation_line_items', true) ?: array();
+                        
+                        // Fetch product names and map saved prices for existing product line items
+                        if (!empty($line_items['products'])) {
+                            foreach ($line_items['products'] as $key => $product_item) {
+                                if (!empty($product_item['product_id'])) {
+                                    $product = wc_get_product($product_item['product_id']);
+                                    if ($product) {
+                                        $line_items['products'][$key]['product_name'] = $product->get_formatted_name();
+                                    }
+                                }
+                                // Map saved price to regular_price for the JavaScript template
+                                if (isset($product_item['price'])) {
+                                    $line_items['products'][$key]['regular_price'] = $product_item['price'];
+                                }
+                            }
+                        }
                     }
                     
                     wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_quotation_vars', array(
