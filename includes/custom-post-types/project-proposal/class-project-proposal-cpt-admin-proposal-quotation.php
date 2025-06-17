@@ -277,7 +277,7 @@ class Proposal_Quotation {
                     <input type="text" class="arsol-description-input" name="line_items[recurring_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>" required>
                 </td>
                 <td class="arsol-date-column">
-                    <input type="date" class="arsol-date-input hidden-start-date" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
+                    <input type="date" class="arsol-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
                 </td>
                 <td class="arsol-amount-column">
                     <input type="text" class="arsol-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}" required>
@@ -285,8 +285,20 @@ class Proposal_Quotation {
                 <td class="arsol-billing-cycle-column">
                     <div class="arsol-billing-period" id="arsol-billing-period-{{ data.id }}">
                     <?php
-                        $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(1=>1);
-                        $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array('month' => 'month');
+                        $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(
+                            1 => __('1', 'arsol-pfw'),
+                            2 => __('2', 'arsol-pfw'),
+                            3 => __('3', 'arsol-pfw'),
+                            4 => __('4', 'arsol-pfw'),
+                            5 => __('5', 'arsol-pfw'),
+                            6 => __('6', 'arsol-pfw')
+                        );
+                        $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array(
+                            'day' => __('day', 'arsol-pfw'),
+                            'week' => __('week', 'arsol-pfw'),
+                            'month' => __('month', 'arsol-pfw'),
+                            'year' => __('year', 'arsol-pfw')
+                        );
                     ?>
                     <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="arsol-billing-select">
                         <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
