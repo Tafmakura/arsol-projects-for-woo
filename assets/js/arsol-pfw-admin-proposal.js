@@ -262,6 +262,14 @@
             // Initialize product search if it's a product row
             if (type === 'product') {
                 this.initProductSearch($newRow.find('select.arsol-description-input'));
+                
+                // Handle subscription product styling for existing items
+                if (data.product_type && (data.product_type === 'subscription' || data.product_type === 'subscription_variation')) {
+                    $newRow.addClass('arsol-subscription-product');
+                    $newRow.find('.arsol-date-input').removeClass('hidden-start-date').show();
+                } else {
+                    $newRow.find('.arsol-date-input').addClass('hidden-start-date').hide();
+                }
             }
         },
 
@@ -306,9 +314,32 @@
                 }, function(response) {
                     if (response.success) {
                         var product = response.data;
+                        
+                        // Set basic product info
                         $row.find('.arsol-price-input').val(product.regular_price);
                         $row.find('.arsol-sale-price-input').val(product.sale_price);
-                        $row.find('input[name*="[product_type]"]').val(product.type);
+                        $row.find('input[name*="[product_type]"]').val(product.product_type);
+                        
+                        // Handle subscription products
+                        var isSubscription = product.product_type === 'subscription' || product.product_type === 'subscription_variation';
+                        
+                        if (isSubscription) {
+                            // Show start date field for subscription products
+                            $row.find('.arsol-date-input').removeClass('hidden-start-date').show();
+                            
+                            // Store subscription meta data in hidden fields if they exist
+                            $row.find('input[name*="[billing_interval]"]').val(product.billing_interval || 1);
+                            $row.find('input[name*="[billing_period]"]').val(product.billing_period || 'month');
+                            $row.find('input[name*="[sign_up_fee]"]').val(product.sign_up_fee || 0);
+                            
+                            // Add subscription indicator to the row
+                            $row.addClass('arsol-subscription-product');
+                        } else {
+                            // Hide start date field for non-subscription products
+                            $row.find('.arsol-date-input').addClass('hidden-start-date').hide();
+                            $row.removeClass('arsol-subscription-product');
+                        }
+                        
                         ArsolProposalQuotation.calculateTotals();
                     }
                 });
@@ -356,15 +387,37 @@
 
             // Calculate product totals
             $('#product-lines-body tr.arsol-line-item').each(function() {
-                var quantity = parseFloat($(this).find('.arsol-quantity-input').val()) || 0;
-                var salePrice = parseFloat($(this).find('.arsol-sale-price-input').val());
-                var regularPrice = parseFloat($(this).find('.arsol-price-input').val());
+                var $row = $(this);
+                var quantity = parseFloat($row.find('.arsol-quantity-input').val()) || 0;
+                var salePrice = parseFloat($row.find('.arsol-sale-price-input').val());
+                var regularPrice = parseFloat($row.find('.arsol-price-input').val());
                 var price = !isNaN(salePrice) && salePrice > 0 ? salePrice : regularPrice;
                 price = isNaN(price) ? 0 : price;
                 var subtotal = quantity * price;
                 
-                $(this).find('.arsol-subtotal-column').html(ArsolProposalQuotation.formatPrice(subtotal));
-                oneTimeTotal += subtotal;
+                // Check if this is a subscription product
+                var productType = $row.find('input[name*="[product_type]"]').val();
+                var isSubscription = productType === 'subscription' || productType === 'subscription_variation';
+                
+                if (isSubscription) {
+                    // For subscription products, show recurring price format
+                    var billingInterval = $row.find('input[name*="[billing_interval]"]').val() || 1;
+                    var billingPeriod = $row.find('input[name*="[billing_period]"]').val() || 'month';
+                    
+                    var periodText = billingPeriod === 'month' ? 'mo' : (billingPeriod === 'year' ? 'yr' : (billingPeriod === 'week' ? 'wk' : (billingPeriod === 'day' ? 'day' : billingPeriod)));
+                    var intervalText = billingInterval > 1 ? billingInterval : '';
+                    var billingText = '/' + intervalText + periodText;
+                    
+                    $row.find('.arsol-subtotal-column').html(ArsolProposalQuotation.formatPrice(subtotal) + ' ' + billingText);
+                    
+                    // Add sign-up fee to one-time total if it exists
+                    var signUpFee = parseFloat($row.find('input[name*="[sign_up_fee]"]').val()) || 0;
+                    oneTimeTotal += signUpFee * quantity;
+                } else {
+                    // For regular products, show one-time price
+                    $row.find('.arsol-subtotal-column').html(ArsolProposalQuotation.formatPrice(subtotal));
+                    oneTimeTotal += subtotal;
+                }
             });
 
             // Calculate one-time fee totals

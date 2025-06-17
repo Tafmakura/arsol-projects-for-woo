@@ -237,6 +237,9 @@ class Proposal_Quotation {
                     <option value="{{ data.product_id || '' }}" selected="selected">{{ data.product_name || '' }}</option>
                                 </select>
                 <input type="hidden" name="arsol_pfw_quotation_items[products][{{ data.id }}][product_type]" value="{{ data.product_type || '' }}">
+                <input type="hidden" name="arsol_pfw_quotation_items[products][{{ data.id }}][billing_interval]" value="{{ data.billing_interval || '' }}">
+                <input type="hidden" name="arsol_pfw_quotation_items[products][{{ data.id }}][billing_period]" value="{{ data.billing_period || '' }}">
+                <input type="hidden" name="arsol_pfw_quotation_items[products][{{ data.id }}][sign_up_fee]" value="{{ data.sign_up_fee || '' }}">
                 </td>
                 <td class="arsol-date-column">
                     <input type="date" class="arsol-date-input hidden-start-date" name="arsol_pfw_quotation_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
