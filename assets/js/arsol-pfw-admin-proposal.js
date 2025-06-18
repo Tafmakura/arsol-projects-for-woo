@@ -382,37 +382,26 @@
         initSelect2: function($row) {
             var $select = $row.find('.arsol-description-input');
             
-            // Use requestAnimationFrame to ensure DOM element is fully rendered 
-            // before initializing Select2 - fixes the "Results Could Not be loaded" 
-            // error that appears briefly on first search in dynamically created elements
+            // Use the EXACT same approach as the working settings field
+            // Add WooCommerce's standard classes and data attributes to trigger auto-enhancement
+            $select.addClass('wc-product-search')
+                   .attr('data-placeholder', 'Search for a product...')
+                   .attr('data-action', 'woocommerce_json_search_products_and_variations')
+                   .attr('data-allow_clear', 'false');
+            
+            // Use requestAnimationFrame to ensure DOM element is fully rendered
             requestAnimationFrame(function() {
-                $select.select2({
-                    ajax: {
-                        url: arsol_proposal_quotation_vars.ajax_url,
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                action: 'woocommerce_json_search_products_and_variations',
-                                security: arsol_proposal_quotation_vars.search_products_nonce,
-                                term: params.term,
-                                limit: 20
-                            };
-                        },
-                        processResults: function(data) { 
-                            var terms = [];
-                            if (data) {
-                                $.each(data, function(id, text) {
-                                    terms.push({ id: id, text: text });
-                                });
-                            }
-                            return { results: terms };
-                        },
-                        cache: true
-                    },
-                    placeholder: 'Search for a product...',
-                    minimumInputLength: 1
-                });
+                // Let WooCommerce's auto-enhancement handle the initialization
+                // by triggering the standard enhanced select initialization
+                if (typeof $.fn.selectWoo !== 'undefined' && typeof wc_enhanced_select_params !== 'undefined') {
+                    // Manually trigger WooCommerce's selectWoo initialization for this element
+                    $select.selectWoo().addClass('enhanced');
+                } else {
+                    // Retry if WooCommerce libraries aren't ready yet
+                    setTimeout(function() {
+                        ArsolProposalQuotation.initSelect2($row);
+                    }, 250);
+                }
             });
         },
 
