@@ -390,14 +390,38 @@
             // Manually trigger WooCommerce's enhanced select initialization
             // This gives us control over when it happens
             setTimeout(function() {
-                $select.addClass('wc-product-search');
+                // Don't add wc-product-search class to avoid WooCommerce's auto-init
+                // $select.addClass('wc-product-search');
                 
-                // Trigger WooCommerce's enhanced select initialization
+                // Trigger WooCommerce's enhanced select initialization with proper config
                 if (typeof $.fn.selectWoo !== 'undefined') {
-                    // Use WooCommerce's own initialization pattern
-                    $select.filter(':not(.enhanced)').each(function() {
-                        $(this).selectWoo().addClass('enhanced');
-                    });
+                    $select.filter(':not(.enhanced)').selectWoo({
+                        ajax: {
+                            url: arsol_proposal_quotation_vars.ajax_url,
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    action: 'arsol_search_products_with_price',
+                                    security: arsol_proposal_quotation_vars.search_products_nonce,
+                                    term: params.term,
+                                    limit: 20
+                                };
+                            },
+                            processResults: function(data) {
+                                var terms = [];
+                                if (data) {
+                                    $.each(data, function(id, text) {
+                                        terms.push({ id: id, text: text });
+                                    });
+                                }
+                                return { results: terms };
+                            }
+                        },
+                        placeholder: 'Search for a product...',
+                        minimumInputLength: 1,
+                        allowClear: false
+                    }).addClass('enhanced');
                 }
             }, 100);
         },
