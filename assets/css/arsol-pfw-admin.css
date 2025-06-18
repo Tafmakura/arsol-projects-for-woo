@@ -485,12 +485,19 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 
 /* === SHARED UI ELEMENTS === */
 .remove-line-item {
-    color: #a00;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 2px 5px !important;
+    background: #dc3232 !important;
+    color: white !important;
+    width: 30px !important;
+    height: 30px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-decoration: none !important;
+    border: none !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    font-size: 14px !important;
     line-height: 1 !important;
-    height: auto !important;
 }
 
 .add-line-item {
