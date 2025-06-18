@@ -485,8 +485,6 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 
 /* === SHARED UI ELEMENTS === */
 .remove-line-item {
-    background: #dc3232 !important;
-    color: white !important;
     width: 30px !important;
     height: 30px !important;
     display: inline-flex !important;
