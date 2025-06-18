@@ -375,6 +375,14 @@
                     $newRow.data('billing-interval', data.interval || 1);
                     $newRow.data('billing-period', data.period || 'month');
                     $newRow.data('is-subscription', true);
+                    
+                    // Show date input for existing subscriptions
+                    $newRow.find('.arsol-date-column .arsol-not-applicable').hide();
+                    $newRow.find('.arsol-date-column .arsol-date-input').show();
+                } else if (data.product_type) {
+                    // For existing non-subscription products, show "—"
+                    $newRow.find('.arsol-date-column .arsol-date-input').hide();
+                    $newRow.find('.arsol-date-column .arsol-not-applicable').show();
                 }
             }
         },
@@ -474,9 +482,17 @@
                                 billingPeriod: $row.data('billing-period'),
                                 isSubscription: $row.data('is-subscription')
                             });
+                            
+                            // Show date input for subscriptions
+                            $row.find('.arsol-date-column .arsol-not-applicable').hide();
+                            $row.find('.arsol-date-column .arsol-date-input').show();
                         } else {
                             // Remove subscription data for non-subscription products
                             $row.removeData('billing-interval billing-period is-subscription');
+                            
+                            // Show "—" for non-subscriptions
+                            $row.find('.arsol-date-column .arsol-date-input').hide();
+                            $row.find('.arsol-date-column .arsol-not-applicable').show();
                         }
                         
                         ArsolProposalQuotation.toggleStartDateColumn();

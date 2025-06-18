@@ -242,12 +242,8 @@ class Proposal_Quotation {
                 <input type="hidden" name="line_items[products][{{ data.id }}][product_type]" value="{{ data.product_type || '' }}">
                 </td>
                 <td class="arsol-date-column">
-                    <# if (data.product_type === 'subscription' || data.product_type === 'subscription_variation') { #>
-                        <input type="date" class="arsol-date-input hidden-start-date" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
-                    <# } else { #>
-                        <span class="arsol-not-applicable">—</span>
-                        <input type="hidden" name="line_items[products][{{ data.id }}][start_date]" value="">
-                    <# } #>
+                    <span class="arsol-not-applicable" style="display: none;">—</span>
+                    <input type="date" class="arsol-date-input hidden-start-date" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
                 </td>
                 <td class="arsol-quantity-column"><input type="number" class="arsol-quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
                 <td class="arsol-price-column"><input type="text" class="arsol-price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}" required></td>
