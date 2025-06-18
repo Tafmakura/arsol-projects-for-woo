@@ -159,11 +159,9 @@ class Proposal {
                         }
                         return $data;
                     }, 10, 2);
-                } else if ($is_updating_published) {
-                    // For published posts, prevent the save entirely to avoid data corruption
-                    // The user will see the validation errors and can fix them
-                    return;
                 }
+                // Note: Removed the early return for published posts to allow meta data saving
+                // even when validation fails. Users will still see validation errors.
             }
         }
         
@@ -193,6 +191,11 @@ class Proposal {
                 );
                 update_post_meta($post_id, '_proposal_budget', $budget_data);
             }
+            
+            // Save budget details
+            if (isset($_POST['proposal_budget_details'])) {
+                update_post_meta($post_id, '_proposal_budget_details', sanitize_text_field($_POST['proposal_budget_details']));
+            }
 
             // Sanitize and save the recurring budget amount
         if (isset($_POST['proposal_recurring_budget'])) {
@@ -205,6 +208,11 @@ class Proposal {
             } else {
                 delete_post_meta($post_id, '_proposal_recurring_budget');
         }
+        
+            // Save recurring budget details
+            if (isset($_POST['proposal_recurring_budget_details'])) {
+                update_post_meta($post_id, '_proposal_recurring_budget_details', sanitize_text_field($_POST['proposal_recurring_budget_details']));
+            }
 
             // Save billing cycle if recurring budget is set
             if (!empty($_POST['proposal_recurring_budget']) && $_POST['proposal_recurring_budget'] > 0) {
@@ -226,7 +234,9 @@ class Proposal {
         } else {
             // If not budget estimates, delete all budget meta to keep things clean
             delete_post_meta($post_id, '_proposal_budget');
+            delete_post_meta($post_id, '_proposal_budget_details');
             delete_post_meta($post_id, '_proposal_recurring_budget');
+            delete_post_meta($post_id, '_proposal_recurring_budget_details');
             delete_post_meta($post_id, '_proposal_billing_interval');
             delete_post_meta($post_id, '_proposal_billing_period');
             delete_post_meta($post_id, '_proposal_recurring_start_date');
@@ -252,6 +262,11 @@ class Proposal {
         // Save expiration date
         if (isset($_POST['proposal_expiration_date'])) {
             update_post_meta($post_id, '_proposal_expiration_date', sanitize_text_field($_POST['proposal_expiration_date']));
+        }
+        
+        // Save proposal notes (used by both budget and quotation types)
+        if (isset($_POST['arsol_proposal_notes'])) {
+            update_post_meta($post_id, '_arsol_proposal_notes', wp_kses_post($_POST['arsol_proposal_notes']));
         }
     }
     
