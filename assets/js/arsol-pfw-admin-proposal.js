@@ -480,8 +480,11 @@
                             $row.find('.arsol-date-column .arsol-date-input').show();
                         } else {
                             // Remove subscription data for non-subscription products
-                            // Default state (show "—", hide date input) is already correct
                             $row.removeData('billing-interval billing-period is-subscription');
+                            
+                            // Switch back to default state (show "—", hide date input)
+                            $row.find('.arsol-date-column .arsol-date-input').hide();
+                            $row.find('.arsol-date-column .arsol-not-applicable').show();
                         }
                         
                         ArsolProposalQuotation.toggleStartDateColumn();
