@@ -948,15 +948,15 @@
             $('#line_items_recurring_totals').val(JSON.stringify(recurringTotals));
 
             // Update summary if it exists
-            this.updateSummary(productSubtotal, productRecurringTotals[this.getCycleKey(1, 'month')].total, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal);
+            this.updateSummary(productSubtotal, productAverageMonthlyTotal, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal);
 
             this.calculating = false;
         },
         
-        updateSummary: function(productSubtotal, productRecurringSubtotal, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal) {
+        updateSummary: function(productSubtotal, productAverageMonthlyTotal, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal) {
             // Update quotation summary in header column 3
             $('#summary-product-subtotal-display').html(this.formatPrice(productSubtotal));
-            $('#summary-product-recurring-display').html(this.formatPrice(productRecurringSubtotal));
+            $('#summary-product-recurring-display').html(this.formatPrice(productAverageMonthlyTotal));
             $('#summary-onetime-fee-display').html(this.formatPrice(onetimeFeeSubtotal));
             $('#summary-recurring-fee-display').html(this.formatPrice(recurringFeeSubtotal));
             $('#summary-shipping-display').html(this.formatPrice(shippingSubtotal));
@@ -964,7 +964,7 @@
             $('#summary-avg-yearly-total-display').html(this.formatPrice(averageYearlyTotal));
             
             // Show/hide product row based on values
-            if (productSubtotal > 0 || productRecurringSubtotal > 0) {
+            if (productSubtotal > 0 || productAverageMonthlyTotal > 0) {
                 $('#products-row').show();
                 
                 // Show/hide one-time and recurring product sub-sections
@@ -974,7 +974,7 @@
                     $('#products-onetime').hide();
                 }
                 
-                if (productRecurringSubtotal > 0) {
+                if (productAverageMonthlyTotal > 0) {
                     $('#products-recurring').show();
                 } else {
                     $('#products-recurring').hide();
