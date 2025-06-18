@@ -145,7 +145,7 @@ class Proposal {
         $should_validate = $is_trying_to_publish || $is_updating_published;
         
         if ($should_validate) {
-            $validation_errors = $this->validate_proposal_data($post_id, $cost_proposal_type);
+        $validation_errors = $this->validate_proposal_data($post_id, $cost_proposal_type);
         
         if (!empty($validation_errors)) {
             // Store errors for display

@@ -393,12 +393,21 @@
                         delay: 250,
                         data: function(params) {
                             return {
-                                action: 'arsol_proposal_quotation_ajax_search_products',
-                                nonce: arsol_proposal_quotation_vars.nonce,
-                                search: params.term,
+                                action: 'woocommerce_json_search_products_and_variations',
+                                security: arsol_proposal_quotation_vars.search_products_nonce,
+                                term: params.term,
+                                limit: 20
                             };
                         },
-                        processResults: function(data) { return { results: data.data }; },
+                        processResults: function(data) { 
+                            var terms = [];
+                            if (data) {
+                                $.each(data, function(id, text) {
+                                    terms.push({ id: id, text: text });
+                                });
+                            }
+                            return { results: terms };
+                        },
                         cache: true
                     },
                     placeholder: 'Search for a product...',

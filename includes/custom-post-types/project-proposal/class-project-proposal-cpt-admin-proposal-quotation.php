@@ -11,7 +11,7 @@ class Proposal_Quotation {
     public function __construct() {
         add_action('add_meta_boxes', array($this, 'add_quotation_meta_box'));
         add_action('save_post', array($this, 'save_quotation_meta_box'));
-        add_action('wp_ajax_arsol_proposal_quotation_ajax_search_products', array($this, 'ajax_search_products'));
+        // Removed custom product search - now using WooCommerce's built-in woocommerce_json_search_products_and_variations
         add_action('wp_ajax_arsol_proposal_quotation_ajax_get_product_details', array($this, 'ajax_get_product_details'));
         add_action('admin_footer', array($this, 'render_js_templates_in_footer'));
     }
@@ -408,34 +408,7 @@ class Proposal_Quotation {
         update_post_meta($post_id, '_arsol_proposal_currency_symbol', get_woocommerce_currency_symbol($currency_code));
     }
 
-    public function ajax_search_products() {
-        check_ajax_referer('arsol-proposal-quotation-nonce', 'nonce');
-
-        $search_term = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
-        if (empty($search_term)) {
-            wp_send_json_error('Missing search term');
-        }
-
-        $product_types = apply_filters('arsol_proposal_product_types', array('simple', 'subscription', 'subscription_variation', 'variation', 'external'));
-
-        $query = new \WC_Product_Query( array(
-            'limit' => 20,
-            'status' => 'publish',
-            's' => $search_term,
-            'stock_status' => 'instock',
-            'type' => $product_types,
-        ) );
-
-        $products = array();
-        foreach ( $query->get_products() as $product ) {
-            $products[] = array(
-                'id'   => $product->get_id(),
-                'text' => $product->get_formatted_name(),
-            );
-        }
-        
-        wp_send_json_success($products);
-    }
+    // Removed ajax_search_products method - now using WooCommerce's built-in woocommerce_json_search_products_and_variations
 
     public function ajax_get_product_details() {
         check_ajax_referer('arsol-proposal-quotation-nonce', 'nonce');
