@@ -382,27 +382,48 @@
         initSelect2: function($row) {
             var $select = $row.find('.arsol-description-input');
             
-            // Use the EXACT same approach as the working settings field
-            // Add WooCommerce's standard classes and data attributes to trigger auto-enhancement
+            // Simplified approach: Use WooCommerce's exact pattern
+            // This matches how WooCommerce initializes product search in their own admin
+            
+            // Add the required classes and attributes
             $select.addClass('wc-product-search')
                    .attr('data-placeholder', 'Search for a product...')
                    .attr('data-action', 'woocommerce_json_search_products_and_variations')
                    .attr('data-allow_clear', 'false');
             
-            // Use requestAnimationFrame to ensure DOM element is fully rendered
-            requestAnimationFrame(function() {
-                // Let WooCommerce's auto-enhancement handle the initialization
-                // by triggering the standard enhanced select initialization
-                if (typeof $.fn.selectWoo !== 'undefined' && typeof wc_enhanced_select_params !== 'undefined') {
-                    // Manually trigger WooCommerce's selectWoo initialization for this element
-                    $select.selectWoo().addClass('enhanced');
-                } else {
-                    // Retry if WooCommerce libraries aren't ready yet
-                    setTimeout(function() {
-                        ArsolProposalQuotation.initSelect2($row);
-                    }, 250);
+            // Use setTimeout to ensure DOM is ready
+            setTimeout(function() {
+                // Initialize with the same method WooCommerce uses
+                if (typeof $.fn.selectWoo !== 'undefined') {
+                    $select.selectWoo({
+                        ajax: {
+                            url: arsol_proposal_quotation_vars.ajax_url,
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    action: 'woocommerce_json_search_products_and_variations',
+                                    security: arsol_proposal_quotation_vars.search_products_nonce,
+                                    term: params.term,
+                                    limit: 20
+                                };
+                            },
+                            processResults: function(data) {
+                                var terms = [];
+                                if (data) {
+                                    $.each(data, function(id, text) {
+                                        terms.push({ id: id, text: text });
+                                    });
+                                }
+                                return { results: terms };
+                            }
+                        },
+                        placeholder: 'Search for a product...',
+                        minimumInputLength: 1,
+                        allowClear: false
+                    });
                 }
-            });
+            }, 100);
         },
 
         fetchProductDetails: function($row, productId) {

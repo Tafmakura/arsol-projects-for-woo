@@ -111,7 +111,7 @@ class Assets {
         wp_register_script(
             'arsol-pfw-admin-proposal',
             $plugin_url . 'assets/js/arsol-pfw-admin-proposal.js',
-            array('jquery', 'wp-util', 'underscore'),
+            array('jquery', 'wp-util', 'underscore', 'selectWoo', 'wc-enhanced-select'),
             $this->get_file_version('assets/js/arsol-pfw-admin-proposal.js'),
             true
         );
