@@ -1076,8 +1076,9 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 /* Horizontal div row layout for summary */
 .summary-row {
     margin-bottom: 12px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 8px;
+    border-bottom: 1px 0;
+    border-style: solid #eee;
+    padding: 8px 0;
 }
 
 .summary-row:last-child {
