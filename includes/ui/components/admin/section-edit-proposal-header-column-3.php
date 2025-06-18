@@ -94,7 +94,7 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
                     <span><?php _e('One-Time Total:', 'arsol-pfw'); ?></span> <span id="summary-one-time-total-display"><?php echo wc_price(0); ?></span>
                 </div>
                 <div id="yearly-total-row" style="display: none;">
-                    <span><?php _e('Avg Yearly Total:', 'arsol-pfw'); ?></span> <span id="summary-avg-yearly-total-display"><?php echo wc_price(0); ?></span>
+                    <span><?php _e('Avg Recurring Total:', 'arsol-pfw'); ?></span> <span id="summary-avg-yearly-total-display"><?php echo wc_price(0); ?></span>
                 </div>
             </div>
         </div>
