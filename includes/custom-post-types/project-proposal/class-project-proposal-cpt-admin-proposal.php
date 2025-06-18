@@ -64,6 +64,8 @@ class Proposal {
         $original_start_date = get_post_meta($post->ID, '_original_request_start_date', true);
         $original_delivery_date = get_post_meta($post->ID, '_original_request_delivery_date', true);
 
+        // WordPress automatically preserves form data on validation failures - no temporary storage needed
+
         // Get author dropdown
         $author_dropdown = wp_dropdown_users(array(
             'name' => 'post_author_override',
@@ -136,26 +138,36 @@ class Proposal {
         
         // Store post ID for error display and validate data
         $this->post_id_being_saved = $post_id;
-        $validation_errors = $this->validate_proposal_data($post_id, $cost_proposal_type);
         
-        if (!empty($validation_errors)) {
-            // Store errors for display
-            $this->validation_errors = $validation_errors;
+        // Determine what kind of save operation this is
+        $is_trying_to_publish = isset($_POST['publish']); // Draft -> Publish
+        $is_updating_published = isset($_POST['save']) && get_post_status($post_id) === 'publish'; // Published -> Published
+        $should_validate = $is_trying_to_publish || $is_updating_published;
+        
+        if ($should_validate) {
+            $validation_errors = $this->validate_proposal_data($post_id, $cost_proposal_type);
             
-            // Prevent saving if validation fails and post is being published
-            if (isset($_POST['publish']) || get_post_status($post_id) === 'publish') {
-                // Change post status back to draft
-                remove_action('save_post', array($this, 'save_proposal_details'));
-                wp_update_post(array(
-                    'ID' => $post_id,
-                    'post_status' => 'draft'
-                ));
-                add_action('save_post', array($this, 'save_proposal_details'));
+            if (!empty($validation_errors)) {
+                // Store errors for display
+                $this->validation_errors = $validation_errors;
                 
-                return; // Stop execution to prevent saving invalid data
+                if ($is_trying_to_publish) {
+                    // Prevent publishing by changing status to draft
+                    add_filter('wp_insert_post_data', function($data, $postarr) use ($post_id) {
+                        if (isset($postarr['ID']) && $postarr['ID'] == $post_id) {
+                            $data['post_status'] = 'draft';
+                        }
+                        return $data;
+                    }, 10, 2);
+                } else if ($is_updating_published) {
+                    // For published posts, prevent the save entirely to avoid data corruption
+                    // The user will see the validation errors and can fix them
+                    return;
+                }
             }
         }
         
+        // Save all meta data normally (no temporary data needed)
         update_post_meta($post_id, '_cost_proposal_type', $cost_proposal_type);
 
         // Save secondary status
