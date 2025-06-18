@@ -229,23 +229,12 @@ class Assets {
                     wp_enqueue_script('arsol-pfw-admin-request');
                 }
                 
-                // Localize WooCommerce enhanced select script with parameters (only for post type pages)
-            wp_localize_script('wc-enhanced-select', 'wc_enhanced_select_params', array(
-                'ajax_url'                => admin_url('admin-ajax.php'),
-                'search_products_nonce'   => wp_create_nonce('search-products'),
-                'search_customers_nonce'  => wp_create_nonce('search-customers'),
-                // Language strings for proper UI messages
-                'i18n_no_matches'         => _x('No matches found', 'enhanced select', 'arsol-pfw'),
-                'i18n_ajax_error'         => _x('Loading failed', 'enhanced select', 'arsol-pfw'),
-                'i18n_input_too_short_1'  => _x('Please enter 1 or more characters', 'enhanced select', 'arsol-pfw'),
-                'i18n_input_too_short_n'  => _x('Please enter %qty% or more characters', 'enhanced select', 'arsol-pfw'),
-                'i18n_input_too_long_1'   => _x('Please delete 1 character', 'enhanced select', 'arsol-pfw'),
-                'i18n_input_too_long_n'   => _x('Please delete %qty% characters', 'enhanced select', 'arsol-pfw'),
-                'i18n_selection_too_long_1' => _x('You can only select 1 item', 'enhanced select', 'arsol-pfw'),
-                'i18n_selection_too_long_n' => _x('You can only select %qty% items', 'enhanced select', 'arsol-pfw'),
-                'i18n_load_more'          => _x('Loading more results…', 'enhanced select', 'arsol-pfw'),
-                'i18n_searching'          => _x('Searching…', 'enhanced select', 'arsol-pfw'),
-            ));
+                // WooCommerce should already provide wc_enhanced_select_params, but ensure our nonces are available
+                // Only add minimal necessary data for our custom functionality
+                wp_localize_script('wc-enhanced-select', 'arsol_enhanced_select_params', array(
+                    'search_products_nonce'   => wp_create_nonce('search-products'),
+                    'search_customers_nonce'  => wp_create_nonce('search-customers'),
+                ));
             }
             
             // Localize our main plugin script (for both post type pages and settings page)

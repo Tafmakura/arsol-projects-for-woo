@@ -401,9 +401,16 @@
                             dataType: 'json',
                             delay: 250,
                             data: function(params) {
+                                // Use WooCommerce's native nonce if available, otherwise use our custom one
+                                var nonce = (typeof wc_enhanced_select_params !== 'undefined' && wc_enhanced_select_params.search_products_nonce) 
+                                    ? wc_enhanced_select_params.search_products_nonce 
+                                    : (typeof arsol_enhanced_select_params !== 'undefined' && arsol_enhanced_select_params.search_products_nonce)
+                                        ? arsol_enhanced_select_params.search_products_nonce
+                                        : arsol_proposal_quotation_vars.search_products_nonce;
+                                        
                                 return {
                                     action: 'woocommerce_json_search_products_and_variations',
-                                    security: arsol_proposal_quotation_vars.search_products_nonce,
+                                    security: nonce,
                                     term: params.term,
                                     limit: 20
                                 };
