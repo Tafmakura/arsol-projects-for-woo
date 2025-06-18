@@ -1100,4 +1100,17 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     margin-bottom: 2px;
 }
 
+/* Empty state styling */
+.summary-empty-state {
+    text-align: center;
+    padding: 20px 15px;
+    color: #666;
+    font-style: italic;
+}
+
+.summary-empty-state p {
+    margin: 0;
+    font-size: 14px;
+}
+
 

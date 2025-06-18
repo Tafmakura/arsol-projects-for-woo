@@ -232,6 +232,10 @@
                     $('#summary-budget-start-date').text('');
                 }
             }
+            
+            // Show empty state if no budget data is available
+            var hasBudgetData = hasOneTime || hasRecurring;
+            $('#budget-empty-state').toggle(!hasBudgetData);
         }
     };
 
@@ -1012,8 +1016,25 @@
             var shippingText = $('#shipping-subtotal-display').text();
             $('#shipping-row').toggle(shippingText && !shippingText.includes('$0.00'));
             
+            // Show/hide totals section rows
+            var oneTimeTotalText = $('#one-time-total-display').text();
+            var hasOneTimeTotal = oneTimeTotalText && !oneTimeTotalText.includes('$0.00');
+            $('#onetime-total-row').toggle(hasOneTimeTotal);
+            
             var yearlyTotalText = $('#average-monthly-total-display').text();
-            $('#yearly-total-row').toggle(yearlyTotalText && !yearlyTotalText.includes('$0.00') && yearlyTotalText.trim() !== '');
+            var hasYearlyTotal = yearlyTotalText && !yearlyTotalText.includes('$0.00') && yearlyTotalText.trim() !== '';
+            $('#yearly-total-row').toggle(hasYearlyTotal);
+            
+            // Show/hide the entire totals row only if at least one total is meaningful
+            $('#totals-row').toggle(hasOneTimeTotal || hasYearlyTotal);
+            
+            // Show empty state if no quotation data is available
+            var hasQuotationData = (hasProductSubtotal || hasProductRecurring) || 
+                                   (onetimeFeeText && !onetimeFeeText.includes('$0.00')) ||
+                                   hasRecurringFees ||
+                                   (shippingText && !shippingText.includes('$0.00')) ||
+                                   hasOneTimeTotal || hasYearlyTotal;
+            $('#quotation-empty-state').toggle(!hasQuotationData);
         },
 
         formatPrice: function(price) {

@@ -21,6 +21,11 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
     <div id="budget-summary-template" style="display: none;">
         <h4><?php _e('📊 BUDGET SUMMARY', 'arsol-pfw'); ?></h4>
         
+        <!-- Empty state message for budget -->
+        <div id="budget-empty-state" class="summary-empty-state" style="display: none;">
+            <p><?php _e('No budget data available', 'arsol-pfw'); ?></p>
+        </div>
+        
         <div class="summary-row" id="budget-onetime-row" style="display: none;">
             <div class="summary-heading"><strong><?php _e('One-Time Budget:', 'arsol-pfw'); ?></strong></div>
             <div class="summary-content">
@@ -41,6 +46,11 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
     <!-- Quotation Summary Template -->
     <div id="quotation-summary-template" style="display: none;">
         <h4><?php _e('📋 QUOTATION SUMMARY', 'arsol-pfw'); ?></h4>
+        
+        <!-- Empty state message for quotation -->
+        <div id="quotation-empty-state" class="summary-empty-state" style="display: none;">
+            <p><?php _e('No quotation data available', 'arsol-pfw'); ?></p>
+        </div>
         
         <div class="summary-row" id="products-row" style="display: none;">
             <div class="summary-heading"><strong><?php _e('Products:', 'arsol-pfw'); ?></strong></div>
@@ -80,7 +90,7 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
         <div class="summary-row" id="totals-row">
             <div class="summary-heading"><strong><?php _e('TOTALS', 'arsol-pfw'); ?></strong></div>
             <div class="summary-content">
-                <div>
+                <div id="onetime-total-row">
                     <span><?php _e('One-Time Total:', 'arsol-pfw'); ?></span> <span id="summary-one-time-total-display"><?php echo wc_price(0); ?></span>
                 </div>
                 <div id="yearly-total-row" style="display: none;">
