@@ -434,7 +434,7 @@
                     if (typeof wc_enhanced_select_params !== 'undefined' && wc_enhanced_select_params.i18n_searching) {
                         selectWooOptions.language = {
                             errorLoading: function() {
-                                return wc_enhanced_select_params.i18n_searching;
+                                return wc_enhanced_select_params.i18n_ajax_error || 'Loading failed';
                             },
                             inputTooShort: function(args) {
                                 var remainingChars = args.minimum - args.input.length;
