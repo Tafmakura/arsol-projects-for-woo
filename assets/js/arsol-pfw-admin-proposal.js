@@ -382,48 +382,54 @@
         initSelect2: function($row) {
             var $select = $row.find('.arsol-description-input');
             
-            // Set up WooCommerce attributes but don't add the auto-init class yet
-            $select.attr('data-placeholder', 'Search for a product...')
-                   .attr('data-action', 'arsol_search_products_with_price')
-                   .attr('data-allow_clear', 'false');
-            
-            // Manually trigger WooCommerce's enhanced select initialization
-            // This gives us control over when it happens
-            setTimeout(function() {
-                // Don't add wc-product-search class to avoid WooCommerce's auto-init
-                // $select.addClass('wc-product-search');
-                
-                // Trigger WooCommerce's enhanced select initialization with proper config
-                if (typeof $.fn.selectWoo !== 'undefined') {
-                    $select.filter(':not(.enhanced)').selectWoo({
-                        ajax: {
-                            url: arsol_proposal_quotation_vars.ajax_url,
-                            dataType: 'json',
-                            delay: 250,
-                            data: function(params) {
-                                return {
-                                    action: 'arsol_search_products_with_price',
-                                    security: arsol_proposal_quotation_vars.search_products_nonce,
-                                    term: params.term,
-                                    limit: 20
-                                };
-                            },
-                            processResults: function(data) {
-                                var terms = [];
-                                if (data) {
-                                    $.each(data, function(id, text) {
-                                        terms.push({ id: id, text: text });
-                                    });
-                                }
-                                return { results: terms };
-                            }
-                        },
-                        placeholder: 'Search for a product...',
-                        minimumInputLength: 1,
-                        allowClear: false
-                    }).addClass('enhanced');
+            // Manual initialization to control when "Searching..." appears
+            $select.selectWoo({
+                ajax: {
+                    url: arsol_proposal_quotation_vars.ajax_url,
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        var nonce = (typeof arsol_enhanced_select_params !== 'undefined' && arsol_enhanced_select_params.search_products_nonce)
+                            ? arsol_enhanced_select_params.search_products_nonce
+                            : arsol_proposal_quotation_vars.search_products_nonce;
+                            
+                        return {
+                            action: 'arsol_search_products_with_price',
+                            security: nonce,
+                            term: params.term,
+                            limit: 20
+                        };
+                    },
+                    processResults: function(data) {
+                        var terms = [];
+                        if (data) {
+                            $.each(data, function(id, text) {
+                                terms.push({ id: id, text: text });
+                            });
+                        }
+                        return { results: terms };
+                    }
+                },
+                placeholder: 'Search for a product...',
+                minimumInputLength: 1,
+                allowClear: false,
+                language: {
+                    inputTooShort: function(args) {
+                        var remainingChars = args.minimum - args.input.length;
+                        if (remainingChars === 1) {
+                            return 'Please enter 1 or more characters';
+                        }
+                        return 'Please enter ' + remainingChars + ' or more characters';
+                    },
+                    noResults: function() {
+                        return 'No matches found';
+                    },
+                    searching: function() {
+                        return 'Searching…';
+                    }
+                    // No errorLoading function = no "Searching..." when dropdown opens empty
                 }
-            }, 100);
+            });
         },
 
         fetchProductDetails: function($row, productId) {
