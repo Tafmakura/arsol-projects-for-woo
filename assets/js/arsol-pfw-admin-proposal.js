@@ -380,23 +380,41 @@
         },
 
         initSelect2: function($row) {
-            $row.find('.arsol-description-input').select2({
-                ajax: {
-                    url: arsol_proposal_quotation_vars.ajax_url,
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            action: 'arsol_proposal_quotation_ajax_search_products',
-                            nonce: arsol_proposal_quotation_vars.nonce,
-                            search: params.term,
-                        };
+            var $select = $row.find('.arsol-description-input');
+            
+            // Use requestAnimationFrame to ensure DOM element is fully rendered 
+            // before initializing Select2 - fixes the "Results Could Not be loaded" 
+            // error that appears briefly on first search in dynamically created elements
+            requestAnimationFrame(function() {
+                $select.select2({
+                    ajax: {
+                        url: arsol_proposal_quotation_vars.ajax_url,
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                action: 'arsol_proposal_quotation_ajax_search_products',
+                                nonce: arsol_proposal_quotation_vars.nonce,
+                                search: params.term,
+                            };
+                        },
+                        processResults: function(data) { return { results: data.data }; },
+                        cache: true
                     },
-                    processResults: function(data) { return { results: data.data }; },
-                    cache: true
-                },
-                placeholder: 'Search for a product...',
-                minimumInputLength: 1
+                    placeholder: 'Search for a product...',
+                    minimumInputLength: 1,
+                    language: {
+                        searching: function() {
+                            return 'Searching...';
+                        },
+                        noResults: function() {
+                            return 'No products found';
+                        },
+                        errorLoading: function() {
+                            return 'Unable to load results';
+                        }
+                    }
+                });
             });
         },
 
