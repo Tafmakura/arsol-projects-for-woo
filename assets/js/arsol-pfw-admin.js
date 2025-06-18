@@ -1,149 +1,138 @@
 /**
  * Arsol Projects for WooCommerce - Admin Scripts
- * Consolidated script for all admin dropdown functionality
+ * Optimized script using WooCommerce Enhanced Select patterns
  */
 jQuery(document).ready(function($) {
     'use strict';
     
-    // Initialize WooCommerce customer search dropdowns
-    function initWooCommerceCustomerSearch() {
+    // Enhanced initialization using WooCommerce's built-in enhanced select
+    function initWooCommerceEnhancedDropdowns() {
         // Check if WooCommerce enhanced select is available
-        if (typeof wc_enhanced_select_params === 'undefined' || typeof $.fn.selectWoo === 'undefined') {
+        if (typeof $.fn.selectWoo === 'undefined' || typeof wc_enhanced_select_params === 'undefined') {
             // Retry after a short delay if WooCommerce scripts aren't loaded yet
-            setTimeout(initWooCommerceCustomerSearch, 250);
+            setTimeout(initWooCommerceEnhancedDropdowns, 250);
             return;
         }
         
-        if ($('.wc-customer-search').length) {
-            $('.wc-customer-search').each(function() {
-                var $this = $(this);
-                
-                // Skip if already initialized or disabled
-                if ($this.hasClass('select2-hidden-accessible') || $this.hasClass('enhanced') || $this.is(':disabled')) {
-                    return;
-                }
-                
-                $this.selectWoo({
+        // Initialize all WooCommerce enhanced select fields
+        $(':input.wc-enhanced-select, :input.wc-product-search, :input.wc-customer-search').filter(':not(.enhanced)').each(function() {
+            var select2_args = $.extend({
+                minimumResultsForSearch: 10,
+                allowClear: $(this).data('allow_clear') ? true : false,
+                placeholder: $(this).data('placeholder')
+            }, getEnhancedSelectFormatString());
+
+            if ($(this).data('action')) {
+                select2_args = $.extend(select2_args, {
                     ajax: {
                         url: wc_enhanced_select_params.ajax_url,
                         dataType: 'json',
                         delay: 250,
-                        data: function (params) {
+                        data: function(params) {
                             return {
                                 term: params.term,
-                                action: 'woocommerce_json_search_customers',
-                                security: $this.attr('data-security'),
-                                exclude: []
+                                action: $(this).data('action'),
+                                security: $(this).data('security') || wc_enhanced_select_params.search_products_nonce,
+                                exclude: $(this).data('exclude'),
+                                include: $(this).data('include'),
+                                limit: $(this).data('limit')
                             };
                         },
-                        processResults: function (data) {
+                        processResults: function(data) {
                             var terms = [];
                             if (data) {
-                                $.each(data, function (id, text) {
-                                    terms.push({
-                                        id: id,
-                                        text: text
-                                    });
+                                $.each(data, function(id, text) {
+                                    terms.push({ id: id, text: text });
                                 });
                             }
-                            return {
-                                results: terms
-                            };
+                            return { results: terms };
                         },
                         cache: true
-                    },
-                    placeholder: $this.attr('data-placeholder'),
-                    allowClear: $this.attr('data-allow_clear') === 'true',
-                    minimumInputLength: 1
-                }).addClass('enhanced');
-            });
-        }
-    }
-    
-    // Initialize WordPress native user Select2 dropdowns (project leads, etc.)
-    function initUserSelect2Dropdowns() {
-        // Check if Select2 is available
-        if (typeof $.fn.select2 === 'undefined') {
-            // Retry after a short delay if Select2 isn't loaded yet
-            setTimeout(initUserSelect2Dropdowns, 250);
-            return;
-        }
-        
-        if ($('.arsol-user-select2').length) {
-            $('.arsol-user-select2').each(function() {
-                var $this = $(this);
-                
-                // Skip if already initialized
-                if ($this.hasClass('select2-hidden-accessible')) {
-                    return;
-                }
-                
-                // Get placeholder from the first option or use default
-                var placeholder = $this.find('option:first').text() || 'Search for project manager...';
-                
-                $this.select2({
-                    placeholder: placeholder,
-                    allowClear: true,
-                    width: '100%'
+                    }
                 });
-            });
-        }
+            }
+
+            $(this).selectWoo(select2_args).addClass('enhanced');
+        });
     }
     
-    // Initialize WooCommerce enhanced select dropdowns (status dropdowns, etc.)
-    function initWooCommerceEnhancedSelect() {
-        // Check if WooCommerce enhanced select is available
-        if (typeof $.fn.selectWoo === 'undefined') {
-            // Retry after a short delay if WooCommerce scripts aren't loaded yet
-            setTimeout(initWooCommerceEnhancedSelect, 250);
+    // Simplified user select initialization using native Select2
+    function initUserSelectDropdowns() {
+        if (typeof $.fn.select2 === 'undefined') {
+            setTimeout(initUserSelectDropdowns, 250);
             return;
         }
         
-        if ($('.wc-enhanced-select').length) {
-            $('.wc-enhanced-select').each(function() {
-                var $this = $(this);
-                
-                // Skip if already initialized
-                if ($this.hasClass('select2-hidden-accessible') || $this.hasClass('enhanced')) {
-                    return;
+        $('.arsol-user-select2').filter(':not(.enhanced)').each(function() {
+            var placeholder = $(this).data('placeholder') || $(this).find('option:first').text() || 'Search...';
+            
+            $(this).select2({
+                placeholder: placeholder,
+                allowClear: true,
+                width: '100%'
+            }).addClass('enhanced');
+        });
+    }
+    
+    // WooCommerce enhanced select helper function (from WC core)
+    function getEnhancedSelectFormatString() {
+        return {
+            'language': {
+                errorLoading: function() {
+                    // Workaround for https://github.com/select2/select2/issues/4355 instead of i18n_ajax_error.
+                    return wc_enhanced_select_params.i18n_searching;
+                },
+                inputTooLong: function(args) {
+                    var overChars = args.input.length - args.maximum;
+                    if (1 === overChars) {
+                        return wc_enhanced_select_params.i18n_input_too_long_1;
+                    }
+                    return wc_enhanced_select_params.i18n_input_too_long_n.replace('%qty%', overChars);
+                },
+                inputTooShort: function(args) {
+                    var remainingChars = args.minimum - args.input.length;
+                    if (1 === remainingChars) {
+                        return wc_enhanced_select_params.i18n_input_too_short_1;
+                    }
+                    return wc_enhanced_select_params.i18n_input_too_short_n.replace('%qty%', remainingChars);
+                },
+                loadingMore: function() {
+                    return wc_enhanced_select_params.i18n_load_more;
+                },
+                maximumSelected: function(args) {
+                    if (args.maximum === 1) {
+                        return wc_enhanced_select_params.i18n_selection_too_long_1;
+                    }
+                    return wc_enhanced_select_params.i18n_selection_too_long_n.replace('%qty%', args.maximum);
+                },
+                noResults: function() {
+                    return wc_enhanced_select_params.i18n_no_matches;
+                },
+                searching: function() {
+                    return wc_enhanced_select_params.i18n_searching;
                 }
-                
-                $this.selectWoo({
-                    minimumResultsForSearch: 10,
-                    allowClear: $this.attr('data-allow_clear') === 'true',
-                    placeholder: $this.attr('data-placeholder') || $this.attr('placeholder')
-                }).addClass('enhanced');
-            });
-        }
+            }
+        };
     }
     
-    // Initialize disabled customer dropdowns with custom styling
-    function initDisabledCustomerDropdowns() {
-        if ($('.arsol-disabled-select').length) {
-            $('.arsol-disabled-select').each(function() {
-                var $this = $(this);
-                
-                // Add visual styling for disabled state
-                $this.addClass('arsol-disabled-dropdown');
-                
-                // Ensure it's properly disabled
-                $this.prop('disabled', true);
-            });
-        }
+    // Initialize disabled dropdowns with consistent styling
+    function initDisabledDropdowns() {
+        $('.arsol-disabled-select').each(function() {
+            $(this).addClass('arsol-disabled-dropdown').prop('disabled', true);
+        });
     }
     
-    // Comprehensive initialization function
+    // Main initialization function
     function initAllDropdowns() {
-        initWooCommerceCustomerSearch();
-        initUserSelect2Dropdowns();
-        initWooCommerceEnhancedSelect();
-        initDisabledCustomerDropdowns();
+        initWooCommerceEnhancedDropdowns();
+        initUserSelectDropdowns();
+        initDisabledDropdowns();
     }
     
     // Initialize on page load
     initAllDropdowns();
     
-    // Re-initialize when new elements are added to the DOM using MutationObserver
+    // Re-initialize using modern MutationObserver API
     if (typeof MutationObserver !== 'undefined') {
         var observer = new MutationObserver(function(mutations) {
             var shouldReinit = false;
@@ -152,11 +141,8 @@ jQuery(document).ready(function($) {
                     mutation.addedNodes.forEach(function(node) {
                         if (node.nodeType === 1) { // Element node
                             var $node = $(node);
-                            if ($node.hasClass('wc-customer-search') || 
-                                $node.hasClass('arsol-user-select2') || 
-                                $node.hasClass('wc-enhanced-select') || 
-                                $node.hasClass('arsol-disabled-select') ||
-                                $node.find('.wc-customer-search, .arsol-user-select2, .wc-enhanced-select, .arsol-disabled-select').length) {
+                            if ($node.is('.wc-enhanced-select, .wc-product-search, .wc-customer-search, .arsol-user-select2, .arsol-disabled-select') || 
+                                $node.find('.wc-enhanced-select, .wc-product-search, .wc-customer-search, .arsol-user-select2, .arsol-disabled-select').length) {
                                 shouldReinit = true;
                             }
                         }
@@ -171,18 +157,6 @@ jQuery(document).ready(function($) {
         observer.observe(document.body, {
             childList: true,
             subtree: true
-        });
-    } else {
-        // Fallback for older browsers
-        $(document).on('DOMNodeInserted', function(e) {
-            var $target = $(e.target);
-            if ($target.hasClass('wc-customer-search') || 
-                $target.hasClass('arsol-user-select2') || 
-                $target.hasClass('wc-enhanced-select') || 
-                $target.hasClass('arsol-disabled-select') ||
-                $target.find('.wc-customer-search, .arsol-user-select2, .wc-enhanced-select, .arsol-disabled-select').length) {
-                setTimeout(initAllDropdowns, 100);
-            }
         });
     }
     
