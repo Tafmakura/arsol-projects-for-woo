@@ -382,14 +382,24 @@
         initSelect2: function($row) {
             var $select = $row.find('.arsol-description-input');
             
-            // Use WooCommerce's simplest approach - just add the class and let WooCommerce handle everything
-            $select.addClass('wc-product-search')
-                   .attr('data-placeholder', 'Search for a product...')
+            // Set up WooCommerce attributes but don't add the auto-init class yet
+            $select.attr('data-placeholder', 'Search for a product...')
                    .attr('data-action', 'arsol_search_products_with_price')
                    .attr('data-allow_clear', 'false');
             
-            // Let WooCommerce's enhanced select system handle the initialization automatically
-            // This ensures consistent behavior with all other WooCommerce product searches
+            // Manually trigger WooCommerce's enhanced select initialization
+            // This gives us control over when it happens
+            setTimeout(function() {
+                $select.addClass('wc-product-search');
+                
+                // Trigger WooCommerce's enhanced select initialization
+                if (typeof $.fn.selectWoo !== 'undefined') {
+                    // Use WooCommerce's own initialization pattern
+                    $select.filter(':not(.enhanced)').each(function() {
+                        $(this).selectWoo().addClass('enhanced');
+                    });
+                }
+            }, 100);
         },
 
         fetchProductDetails: function($row, productId) {
