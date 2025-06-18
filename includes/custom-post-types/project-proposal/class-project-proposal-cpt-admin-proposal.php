@@ -5,6 +5,9 @@ namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin;
 if (!defined('ABSPATH')) exit;
 
 class Proposal {
+    private $validation_errors = array();
+    private $post_id_being_saved = null;
+    
     public function __construct() {
         // Add meta boxes for single proposal admin screen
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
@@ -13,6 +16,9 @@ class Proposal {
         add_action('save_post', array($this, 'save_proposal_details'));
         // Action to set review status when a proposal is published
         add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
+        
+        // Add admin notices for validation errors
+        add_action('admin_notices', array($this, 'display_validation_errors'));
     }
 
     public function set_proposal_review_status($new_status, $old_status, $post) {
@@ -127,6 +133,29 @@ class Proposal {
         
         // It's safe for us to save the data now.
         $cost_proposal_type = isset($_POST['cost_proposal_type']) ? sanitize_text_field($_POST['cost_proposal_type']) : 'none';
+        
+        // Store post ID for error display and validate data
+        $this->post_id_being_saved = $post_id;
+        $validation_errors = $this->validate_proposal_data($post_id, $cost_proposal_type);
+        
+        if (!empty($validation_errors)) {
+            // Store errors for display
+            $this->validation_errors = $validation_errors;
+            
+            // Prevent saving if validation fails and post is being published
+            if (isset($_POST['publish']) || get_post_status($post_id) === 'publish') {
+                // Change post status back to draft
+                remove_action('save_post', array($this, 'save_proposal_details'));
+                wp_update_post(array(
+                    'ID' => $post_id,
+                    'post_status' => 'draft'
+                ));
+                add_action('save_post', array($this, 'save_proposal_details'));
+                
+                return; // Stop execution to prevent saving invalid data
+            }
+        }
+        
         update_post_meta($post_id, '_cost_proposal_type', $cost_proposal_type);
 
         // Save secondary status
@@ -212,5 +241,178 @@ class Proposal {
         if (isset($_POST['proposal_expiration_date'])) {
             update_post_meta($post_id, '_proposal_expiration_date', sanitize_text_field($_POST['proposal_expiration_date']));
         }
+    }
+    
+    /**
+     * Display validation errors as admin notices
+     */
+    public function display_validation_errors() {
+        global $post;
+        
+        // Only show on proposal edit screen
+        if (!$post || $post->post_type !== 'arsol-pfw-proposal' || empty($this->validation_errors)) {
+            return;
+        }
+        
+        // Only show errors for the post that was just saved
+        if ($this->post_id_being_saved && $post->ID !== $this->post_id_being_saved) {
+            return;
+        }
+        
+        foreach ($this->validation_errors as $error) {
+            echo '<div class="notice notice-error is-dismissible"><p>' . esc_html($error) . '</p></div>';
+        }
+        
+        // Clear errors after displaying
+        $this->validation_errors = array();
+        $this->post_id_being_saved = null;
+    }
+    
+    /**
+     * Validate proposal data based on type
+     */
+    private function validate_proposal_data($post_id, $cost_proposal_type) {
+        $errors = array();
+        
+        // Universal validation
+        $errors = array_merge($errors, $this->validate_universal_fields($post_id));
+        
+        // Type-specific validation
+        switch ($cost_proposal_type) {
+            case 'quotation':
+                $errors = array_merge($errors, $this->validate_quotation_fields($post_id));
+                break;
+            case 'budget':
+                $errors = array_merge($errors, $this->validate_budget_fields($post_id));
+                break;
+        }
+        
+        return $errors;
+    }
+    
+    /**
+     * Validate universal proposal fields
+     */
+    private function validate_universal_fields($post_id) {
+        $errors = array();
+        
+        // Get post data
+        $post = get_post($post_id);
+        
+        // Validate title
+        if (empty($post->post_title) || trim($post->post_title) === '') {
+            $errors[] = __('Proposal title is required.', 'arsol-pfw');
+        }
+        
+        // Validate content/description
+        if (empty($post->post_content) || trim($post->post_content) === '') {
+            $errors[] = __('Proposal description is required.', 'arsol-pfw');
+        }
+        
+        // Validate customer assignment (post author)
+        if (empty($post->post_author) || $post->post_author <= 0) {
+            $errors[] = __('A customer must be assigned to the proposal.', 'arsol-pfw');
+        }
+        
+        return $errors;
+    }
+    
+    /**
+     * Validate quotation-specific fields
+     */
+    private function validate_quotation_fields($post_id) {
+        $errors = array();
+        
+        // Get quotation line items
+        $quotation_line_items = get_post_meta($post_id, '_arsol_proposal_quotation_line_items', true);
+        
+        if (empty($quotation_line_items) || !is_array($quotation_line_items)) {
+            $errors[] = __('Quotation proposals must have at least one line item.', 'arsol-pfw');
+            return $errors;
+        }
+        
+        $has_valid_item = false;
+        
+        // Check products
+        if (!empty($quotation_line_items['products']) && is_array($quotation_line_items['products'])) {
+            foreach ($quotation_line_items['products'] as $item) {
+                if (!empty($item['description']) && !empty($item['regular_price']) && $item['regular_price'] > 0) {
+                    $has_valid_item = true;
+                    break;
+                }
+            }
+        }
+        
+        // Check one-time fees
+        if (!$has_valid_item && !empty($quotation_line_items['one_time_fees']) && is_array($quotation_line_items['one_time_fees'])) {
+            foreach ($quotation_line_items['one_time_fees'] as $item) {
+                if (!empty($item['description']) && !empty($item['amount']) && $item['amount'] > 0) {
+                    $has_valid_item = true;
+                    break;
+                }
+            }
+        }
+        
+        // Check recurring fees
+        if (!$has_valid_item && !empty($quotation_line_items['recurring_fees']) && is_array($quotation_line_items['recurring_fees'])) {
+            foreach ($quotation_line_items['recurring_fees'] as $item) {
+                if (!empty($item['description']) && !empty($item['amount']) && $item['amount'] > 0) {
+                    $has_valid_item = true;
+                    break;
+                }
+            }
+        }
+        
+        // Check shipping fees
+        if (!$has_valid_item && !empty($quotation_line_items['shipping_fees']) && is_array($quotation_line_items['shipping_fees'])) {
+            foreach ($quotation_line_items['shipping_fees'] as $item) {
+                if (!empty($item['description']) && !empty($item['amount']) && $item['amount'] > 0) {
+                    $has_valid_item = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!$has_valid_item) {
+            $errors[] = __('Quotation proposals must have at least one valid line item with description and amount greater than zero.', 'arsol-pfw');
+        }
+        
+        return $errors;
+    }
+    
+    /**
+     * Validate budget-specific fields
+     */
+    private function validate_budget_fields($post_id) {
+        $errors = array();
+        
+        // Get budget data
+        $budget_data = get_post_meta($post_id, '_proposal_budget', true);
+        $recurring_budget_data = get_post_meta($post_id, '_proposal_recurring_budget', true);
+        
+        // At least one budget amount is required
+        $has_budget = false;
+        
+        if (!empty($budget_data['amount']) && $budget_data['amount'] > 0) {
+            $has_budget = true;
+        }
+        
+        if (!empty($recurring_budget_data['amount']) && $recurring_budget_data['amount'] > 0) {
+            $has_budget = true;
+            
+            // Validate recurring budget billing cycle
+            $billing_interval = get_post_meta($post_id, '_proposal_billing_interval', true);
+            $billing_period = get_post_meta($post_id, '_proposal_billing_period', true);
+            
+            if (empty($billing_interval) || empty($billing_period)) {
+                $errors[] = __('Recurring budget requires billing interval and period to be specified.', 'arsol-pfw');
+            }
+        }
+        
+        if (!$has_budget) {
+            $errors[] = __('Budget proposals must have at least one budget amount greater than zero.', 'arsol-pfw');
+        }
+        
+        return $errors;
     }
 }

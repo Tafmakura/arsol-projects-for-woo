@@ -611,8 +611,8 @@ class Woocommerce_Biller {
                 if (!$has_valid_item && !empty($quotation_line_items['shipping_fees'])) {
                     foreach ($quotation_line_items['shipping_fees'] as $item) {
                         if (!empty($item['description']) && !empty($item['amount']) && floatval($item['amount']) > 0) {
-                            $has_valid_item = true;
-                            break;
+                        $has_valid_item = true;
+                        break;
                         }
                     }
                 }

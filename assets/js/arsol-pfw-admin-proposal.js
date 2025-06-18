@@ -6,7 +6,7 @@
     var ArsolProposal = {
         init: function() {
             this.bindEvents();
-            this.initialValidation();
+            this.updateRequiredFields();
         },
 
         bindEvents: function() {
@@ -52,7 +52,7 @@
 
             // Customer is always required
             var customerSelect = $('select[name="post_author_override"]');
-                customerSelect.attr('required', true);
+            customerSelect.attr('required', true);
 
             // Clear all quotation field requirements first
             $('input[name*="line_items"][name*="price"]').removeAttr('required');
@@ -61,49 +61,16 @@
             $('input[name*="line_items"][name*="amount"]').removeAttr('required');
 
             // Type-specific required field management
-            if (proposalType === 'budget') {
-                var budgetAmountInput = $('input[name="proposal_budget"]');
-                var budgetDetailsInput = $('input[name="proposal_budget_details"]');
-                var budgetAmount = budgetAmountInput.val();
-                var budgetDetails = budgetDetailsInput.val();
-                var recurringBudget = $('input[name="proposal_recurring_budget"]').val();
-                
-                // Check if user has started filling budget fields
-                var hasBudgetContent = budgetAmount || budgetDetails || recurringBudget;
-                
-                if (hasBudgetContent) {
-                        budgetAmountInput.attr('required', true);
-                    if (budgetAmount) {
-                        budgetDetailsInput.attr('required', true);
-                    } else {
-                        budgetDetailsInput.removeAttr('required');
-                    }
-                } else {
-                    budgetAmountInput.removeAttr('required');
-                    budgetDetailsInput.removeAttr('required');
-                }
-                
-                // Clear budget required fields for non-budget types
-                $('input[name="proposal_budget"]').removeAttr('required');
-                $('input[name="proposal_budget_details"]').removeAttr('required');
-                $('input[name="proposal_recurring_budget"]').removeAttr('required');
-            } else if (proposalType === 'quotation') {
+            if (proposalType === 'quotation') {
                 // Make quotation line item fields required
                 $('input[name*="line_items"][name*="[price]"]').attr('required', true);
                 $('select[name*="line_items"][name*="[product_id]"]').attr('required', true);
                 $('input[name*="line_items"][name*="[description]"]').attr('required', true);
                 $('input[name*="line_items"][name*="[amount]"]').attr('required', true);
-                
-                // Clear budget required fields
-                $('input[name="proposal_budget"]').removeAttr('required');
-                $('input[name="proposal_budget_details"]').removeAttr('required');
-                $('input[name="proposal_recurring_budget"]').removeAttr('required');
-            } else {
-                // Clear all required fields for 'none' type
-                $('input[name="proposal_budget"]').removeAttr('required');
-                $('input[name="proposal_budget_details"]').removeAttr('required');
-                $('input[name="proposal_recurring_budget"]').removeAttr('required');
             }
+            
+            // Note: WordPress backend validation will handle actual validation
+            // This just provides visual feedback to users
         },
 
         // Pre-save cleanup function - runs all cleanup tasks before saving
