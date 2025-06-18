@@ -382,37 +382,100 @@
         initSelect2: function($row) {
             var $select = $row.find('.arsol-description-input');
             
-            // Use requestAnimationFrame to ensure DOM element is fully rendered 
-            // before initializing Select2 - fixes the "Results Could Not be loaded" 
-            // error that appears briefly on first search in dynamically created elements
+            // Use WooCommerce's native enhanced select pattern (same as settings page)
+            // This eliminates timing issues by leveraging WooCommerce's proven system
+            $select.addClass('wc-product-search')
+                   .attr('data-action', 'woocommerce_json_search_products_and_variations')
+                   .attr('data-placeholder', 'Search for a product...')
+                   .attr('data-allow_clear', 'false')
+                   .attr('data-multiple', 'false');
+            
+            // Use requestAnimationFrame for DOM readiness, then initialize with WooCommerce's system
             requestAnimationFrame(function() {
-                $select.select2({
-                    ajax: {
-                        url: arsol_proposal_quotation_vars.ajax_url,
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                action: 'woocommerce_json_search_products_and_variations',
-                                security: arsol_proposal_quotation_vars.search_products_nonce,
-                                term: params.term,
-                                limit: 20
-                            };
+                // Check if WooCommerce's selectWoo is available (preferred)
+                if (typeof $.fn.selectWoo !== 'undefined') {
+                    $select.selectWoo({
+                        ajax: {
+                            url: wc_enhanced_select_params.ajax_url,
+                            dataType: 'json',
+                            delay: 300,
+                            timeout: 15000,
+                            data: function(params) {
+                                return {
+                                    action: 'woocommerce_json_search_products_and_variations',
+                                    security: wc_enhanced_select_params.search_products_nonce,
+                                    term: params.term,
+                                    limit: 20,
+                                    exclude: []
+                                };
+                            },
+                            processResults: function(data) {
+                                var terms = [];
+                                if (data && typeof data === 'object') {
+                                    $.each(data, function(id, text) {
+                                        if (id && text) {
+                                            terms.push({ 
+                                                id: id, 
+                                                text: text.toString()
+                                            });
+                                        }
+                                    });
+                                }
+                                return { results: terms };
+                            },
+                            cache: true
                         },
-                        processResults: function(data) { 
-                            var terms = [];
-                            if (data) {
-                                $.each(data, function(id, text) {
-                                    terms.push({ id: id, text: text });
-                                });
-                            }
-                            return { results: terms };
+                        placeholder: 'Search for a product...',
+                        minimumInputLength: 1,
+                        allowClear: false,
+                        escapeMarkup: function(markup) { return markup; }
+                    }).addClass('enhanced');
+                } 
+                // Fallback to Select2 if selectWoo isn't available
+                else if (typeof $.fn.select2 !== 'undefined') {
+                    $select.select2({
+                        ajax: {
+                            url: arsol_proposal_quotation_vars.ajax_url,
+                            dataType: 'json',
+                            delay: 300,
+                            timeout: 15000,
+                            data: function(params) {
+                                return {
+                                    action: 'woocommerce_json_search_products_and_variations',
+                                    security: arsol_proposal_quotation_vars.search_products_nonce,
+                                    term: params.term,
+                                    limit: 20,
+                                    exclude: []
+                                };
+                            },
+                            processResults: function(data) {
+                                var terms = [];
+                                if (data && typeof data === 'object') {
+                                    $.each(data, function(id, text) {
+                                        if (id && text) {
+                                            terms.push({ 
+                                                id: id, 
+                                                text: text.toString()
+                                            });
+                                        }
+                                    });
+                                }
+                                return { results: terms };
+                            },
+                            cache: true
                         },
-                        cache: true
-                    },
-                    placeholder: 'Search for a product...',
-                    minimumInputLength: 1
-                });
+                        placeholder: 'Search for a product...',
+                        minimumInputLength: 1,
+                        allowClear: false,
+                        escapeMarkup: function(markup) { return markup; }
+                    }).addClass('enhanced');
+                }
+                // Last resort: retry after delay
+                else {
+                    setTimeout(function() {
+                        ArsolProposalQuotation.initSelect2($row);
+                    }, 250);
+                }
             });
         },
 
