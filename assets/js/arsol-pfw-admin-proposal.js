@@ -383,12 +383,13 @@
             var $select = $row.find('.arsol-description-input');
             
             // Set up WooCommerce attributes but don't add the auto-init class yet
+            // This prevents WooCommerce from automatically initializing with default settings
             $select.attr('data-placeholder', 'Search for a product...')
                    .attr('data-action', 'arsol_search_products_with_price')
                    .attr('data-allow_clear', 'false');
             
             // Manually trigger WooCommerce's enhanced select initialization
-            // This gives us control over when it happens
+            // This gives us control over when it happens and with what configuration
             setTimeout(function() {
                 // Don't add wc-product-search class to avoid WooCommerce's auto-init
                 // $select.addClass('wc-product-search');
@@ -399,16 +400,17 @@
                         ajax: {
                             url: arsol_proposal_quotation_vars.ajax_url,
                             dataType: 'json',
-                            delay: 250,
+                            delay: 250, // Wait 250ms after user stops typing before making request
                             data: function(params) {
                                 return {
-                                    action: 'arsol_search_products_with_price',
-                                    security: arsol_proposal_quotation_vars.search_products_nonce,
-                                    term: params.term,
-                                    limit: 20
+                                    action: 'arsol_search_products_with_price', // Our custom AJAX action
+                                    security: arsol_proposal_quotation_vars.search_products_nonce, // WordPress nonce for security
+                                    term: params.term, // The search term user typed
+                                    limit: 20 // Maximum number of results to return
                                 };
                             },
                             processResults: function(data) {
+                                // Convert the AJAX response into Select2 format
                                 var terms = [];
                                 if (data) {
                                     $.each(data, function(id, text) {
@@ -418,12 +420,21 @@
                                 return { results: terms };
                             }
                         },
-                        placeholder: 'Search for a product...',
-                        minimumInputLength: 1,
-                        allowClear: false
-                    }).addClass('enhanced');
+                        placeholder: 'Search for a product...', // Text shown when nothing is selected
+                        minimumInputLength: 1, // User must type at least 1 character before search triggers
+                        allowClear: false, // Don't show the 'X' to clear selection
+                        language: {
+                            errorLoading: function() {
+                                // Custom message when AJAX request fails or times out
+                                // This replaces the default "The results could not be loaded" message
+                                // WooCommerce uses a similar workaround for Select2 issue #4355
+                                // where errorLoading gets called inappropriately on dropdown open
+                                return 'Searching...';
+                            }
+                        }
+                    }).addClass('enhanced'); // Mark as enhanced to prevent re-initialization
                 }
-            }, 100);
+            }, 100); // Small delay to ensure DOM is ready
         },
 
         fetchProductDetails: function($row, productId) {
