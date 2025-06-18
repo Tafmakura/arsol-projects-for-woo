@@ -1077,7 +1077,7 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 .summary-row {
    /* margin-bottom: 12px;*/
     border: solid #eee;
-    border: 1px 0;
+    border-width: 1px 0;
     padding: 8px 0;
 }
 
