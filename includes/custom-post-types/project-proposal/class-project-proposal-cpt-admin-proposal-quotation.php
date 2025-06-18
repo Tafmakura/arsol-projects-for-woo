@@ -417,23 +417,23 @@ class Proposal_Quotation {
     public function ajax_search_products_with_price() {
         check_ajax_referer('search-products', 'security');
 
-        $term = wc_clean(stripslashes($_GET['term']));
-        $limit = absint($_GET['limit'] ?? 20);
+        $term = isset($_GET['term']) ? wc_clean(stripslashes($_GET['term'])) : '';
+        $limit = isset($_GET['limit']) ? absint($_GET['limit']) : 20;
 
         if (empty($term)) {
             wp_die();
         }
 
-        // Define allowed product types (purchasable types only)
+        // Define allowed product types
         $allowed_types = array('simple', 'external', 'variation');
         
-        // Add subscription types if WooCommerce Subscriptions is active
-        if (Woocommerce_Subscriptions::is_woo_subscriptions_active()) {
+        // Add subscription types if available
+        if (class_exists('WC_Subscriptions')) {
             $allowed_types[] = 'subscription';
             $allowed_types[] = 'subscription_variation';
         }
 
-        // Base query args
+        // Simple query
         $args = array(
             'post_type'      => array('product', 'product_variation'),
             'post_status'    => 'publish',
@@ -448,24 +448,17 @@ class Proposal_Quotation {
         if ($products) {
             foreach ($products as $product_id) {
                 $product = wc_get_product($product_id);
-                if (!$product) continue;
+                if (!$product) {
+                    continue;
+                }
 
-                // Filter by product type - only include purchasable types
+                // Only include allowed types
                 if (!in_array($product->get_type(), $allowed_types)) {
                     continue;
                 }
 
-                // Skip products that aren't purchasable (WooCommerce's own check)
-                if (!$product->is_purchasable()) {
-                    continue;
-                }
-
-                // Format product name with price info
+                // Simple name formatting
                 $formatted_name = $product->get_formatted_name();
-                if ($product->get_price()) {
-                    $formatted_name .= ' (' . wc_price($product->get_price()) . ')';
-                }
-
                 $found_products[$product_id] = $formatted_name;
             }
         }
