@@ -395,7 +395,7 @@
             setTimeout(function() {
                 // Initialize with the same method WooCommerce uses
                 if (typeof $.fn.selectWoo !== 'undefined') {
-                    $select.selectWoo({
+                    var selectWooOptions = {
                         ajax: {
                             url: arsol_proposal_quotation_vars.ajax_url,
                             dataType: 'json',
@@ -421,7 +421,31 @@
                         placeholder: 'Search for a product...',
                         minimumInputLength: 1,
                         allowClear: false
-                    });
+                    };
+                    
+                    // Add language parameters if available
+                    if (typeof wc_enhanced_select_params !== 'undefined' && wc_enhanced_select_params.i18n_searching) {
+                        selectWooOptions.language = {
+                            errorLoading: function() {
+                                return wc_enhanced_select_params.i18n_searching;
+                            },
+                            inputTooShort: function(args) {
+                                var remainingChars = args.minimum - args.input.length;
+                                if (1 === remainingChars) {
+                                    return wc_enhanced_select_params.i18n_input_too_short_1;
+                                }
+                                return wc_enhanced_select_params.i18n_input_too_short_n.replace('%qty%', remainingChars);
+                            },
+                            noResults: function() {
+                                return wc_enhanced_select_params.i18n_no_matches;
+                            },
+                            searching: function() {
+                                return wc_enhanced_select_params.i18n_searching;
+                            }
+                        };
+                    }
+                    
+                    $select.selectWoo(selectWooOptions);
                 }
             }, 100);
         },
