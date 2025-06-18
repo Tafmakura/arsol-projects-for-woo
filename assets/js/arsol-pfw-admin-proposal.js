@@ -54,19 +54,29 @@
             var customerSelect = $('select[name="post_author_override"]');
             customerSelect.attr('required', true);
 
+            // Disable all fields by default
+            $('#arsol_budget_estimates_metabox input, #arsol_budget_estimates_metabox select').prop('disabled', true);
+            $('#arsol_proposal_quotation_metabox input, #arsol_proposal_quotation_metabox select').prop('disabled', true);
+
             // Clear all quotation field requirements first
             $('input[name*="line_items"][name*="price"]').removeAttr('required');
             $('select[name*="line_items"][name*="product_id"]').removeAttr('required');
             $('input[name*="line_items"][name*="description"]').removeAttr('required');
             $('input[name*="line_items"][name*="amount"]').removeAttr('required');
 
-            // Type-specific required field management
+            // Type-specific field management
             if (proposalType === 'quotation') {
-                // Make quotation line item fields required
+                // Enable quotation fields and make required
+                $('#arsol_proposal_quotation_metabox input, #arsol_proposal_quotation_metabox select').prop('disabled', false);
                 $('input[name*="line_items"][name*="[price]"]').attr('required', true);
                 $('select[name*="line_items"][name*="[product_id]"]').attr('required', true);
                 $('input[name*="line_items"][name*="[description]"]').attr('required', true);
                 $('input[name*="line_items"][name*="[amount]"]').attr('required', true);
+            } else if (proposalType === 'budget') {
+                // Enable budget fields and make required
+                $('#arsol_budget_estimates_metabox input, #arsol_budget_estimates_metabox select').prop('disabled', false);
+                $('input[name="proposal_budget"]').attr('required', true);
+                $('input[name="proposal_budget_details"]').attr('required', true);
             }
             
             // Note: WordPress backend validation will handle actual validation
