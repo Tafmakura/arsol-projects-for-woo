@@ -203,31 +203,26 @@
         },
         
         updateSummary: function() {
-            // Update budget summary in header column 3
-            var oneTimeAmount = parseFloat($('.js-amount-input').first().val()) || 0;
-            var recurringAmount = parseFloat($('.recurring-budget-amount-input').val()) || 0;
-            var interval = parseInt($('.billing-interval').val()) || 1;
-            var period = $('.billing-period').val();
+            // Copy existing totals from budget displays instead of recalculating
+            // This prevents NaN errors and ensures consistency
             
-            var periodDisplay = period === 'month' ? 'mo' : (period === 'year' ? 'yr' : (period === 'week' ? 'wk' : (period === 'day' ? 'day' : period)));
-            var intervalText = interval > 1 ? interval : '';
-            var billingText = '/' + intervalText + periodDisplay;
+            // Copy one-time budget total
+            $('#summary-budget-onetime-display').html($('#budget-onetime-total-display').html());
             
-            // Update summary displays
-            $('#summary-budget-onetime-display').html(this.formatPrice(oneTimeAmount));
-            $('#summary-budget-recurring-display').html(this.formatPrice(recurringAmount));
-            $('#summary-budget-billing-period').text(billingText);
+            // Copy recurring budget total and billing period
+            $('#summary-budget-recurring-display').html($('#budget-recurring-total-display').html());
+            $('#summary-budget-billing-period').text($('#budget-recurring-period').text());
             
-            // Show/hide budget rows based on values
-            if (oneTimeAmount > 0) {
-                $('#budget-onetime-row').show();
-            } else {
-                $('#budget-onetime-row').hide();
-            }
+            // Show/hide budget rows based on display content
+            var oneTimeText = $('#budget-onetime-total-display').text();
+            var hasOneTime = oneTimeText && !oneTimeText.includes('$0.00');
+            $('#budget-onetime-row').toggle(hasOneTime);
             
-            if (recurringAmount > 0) {
-                $('#budget-recurring-row').show();
-                
+            var recurringText = $('#budget-recurring-total-display').text();
+            var hasRecurring = recurringText && !recurringText.includes('$0.00');
+            $('#budget-recurring-row').toggle(hasRecurring);
+            
+            if (hasRecurring) {
                 // Add start date if available
                 var startDate = $('.recurring-budget-start-date').val();
                 if (startDate) {
@@ -236,8 +231,6 @@
                 } else {
                     $('#summary-budget-start-date').text('');
                 }
-            } else {
-                $('#budget-recurring-row').hide();
             }
         }
     };
@@ -948,52 +941,54 @@
             $('#line_items_recurring_totals').val(JSON.stringify(recurringTotals));
 
             // Update summary if it exists
-            this.updateSummary(productSubtotal, productAverageMonthlyTotal, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal);
+            this.updateSummary();
 
             this.calculating = false;
         },
         
-        updateSummary: function(productSubtotal, productAverageMonthlyTotal, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal) {
-            // Update quotation summary in header column 3
-            $('#summary-product-subtotal-display').html(this.formatPrice(productSubtotal));
-            $('#summary-product-recurring-display').html(this.formatPrice(productAverageMonthlyTotal));
-            $('#summary-onetime-fee-display').html(this.formatPrice(onetimeFeeSubtotal));
-            $('#summary-recurring-fee-display').html(this.formatPrice(recurringFeeSubtotal));
-            $('#summary-shipping-display').html(this.formatPrice(shippingSubtotal));
-            $('#summary-one-time-total-display').html(this.formatPrice(oneTimeTotal));
-            $('#summary-avg-yearly-total-display').html(this.formatPrice(averageYearlyTotal));
+        updateSummary: function() {
+            // Copy existing totals from quotation displays instead of recalculating
+            // This prevents NaN errors and ensures consistency
             
-            // Show/hide product row based on values
-            if (productSubtotal > 0 || productAverageMonthlyTotal > 0) {
+            // Copy product totals
+            var productSubtotalText = $('#product-subtotal-display').text();
+            var productRecurringText = $('#product-avg-monthly-display').text();
+            $('#summary-product-subtotal-display').html($('#product-subtotal-display').html());
+            $('#summary-product-recurring-display').html($('#product-avg-monthly-display').html());
+            
+            // Copy fee totals
+            $('#summary-onetime-fee-display').html($('#onetime-fee-subtotal-display').html());
+            $('#summary-recurring-fee-display').html($('#recurring-fee-avg-monthly-display').html());
+            
+            // Copy shipping total
+            $('#summary-shipping-display').html($('#shipping-subtotal-display').html());
+            
+            // Copy main totals
+            $('#summary-one-time-total-display').html($('#one-time-total-display').html());
+            $('#summary-avg-yearly-total-display').html($('#average-monthly-total-display').html());
+            
+            // Show/hide rows based on whether the original displays have meaningful values
+            // Check if product subtotal is greater than $0.00
+            var hasProductSubtotal = productSubtotalText && !productSubtotalText.includes('$0.00');
+            var hasProductRecurring = productRecurringText && !productRecurringText.includes('$0.00') && productRecurringText.trim() !== '';
+            
+            if (hasProductSubtotal || hasProductRecurring) {
                 $('#products-row').show();
-                
-                // Show/hide one-time and recurring product sub-sections
-                if (productSubtotal > 0) {
-                    $('#products-onetime').show();
-                } else {
-                    $('#products-onetime').hide();
-                }
-                
-                if (productAverageMonthlyTotal > 0) {
-                    $('#products-recurring').show();
-                } else {
-                    $('#products-recurring').hide();
-                }
+                $('#products-onetime').toggle(hasProductSubtotal);
+                $('#products-recurring').toggle(hasProductRecurring);
             } else {
                 $('#products-row').hide();
             }
             
-            // Show/hide one-time fees row
-            if (onetimeFeeSubtotal > 0) {
-                $('#onetime-fees-row').show();
-            } else {
-                $('#onetime-fees-row').hide();
-            }
+            // Show/hide other rows based on display content
+            var onetimeFeeText = $('#onetime-fee-subtotal-display').text();
+            $('#onetime-fees-row').toggle(onetimeFeeText && !onetimeFeeText.includes('$0.00'));
             
-            // Show/hide recurring fees row
-            if (recurringFeeSubtotal > 0) {
-                $('#recurring-fees-row').show();
-                
+            var recurringFeeText = $('#recurring-fee-avg-monthly-display').text();
+            var hasRecurringFees = recurringFeeText && !recurringFeeText.includes('$0.00') && recurringFeeText.trim() !== '';
+            $('#recurring-fees-row').toggle(hasRecurringFees);
+            
+            if (hasRecurringFees) {
                 // Add start date if available (find the earliest start date from recurring fees)
                 var earliestStartDate = null;
                 $('#recurring-fee-lines-body tr.arsol-line-item').each(function() {
@@ -1012,23 +1007,13 @@
                 } else {
                     $('#summary-recurring-start-date').text('');
                 }
-            } else {
-                $('#recurring-fees-row').hide();
             }
             
-            // Show/hide shipping row
-            if (shippingSubtotal > 0) {
-                $('#shipping-row').show();
-            } else {
-                $('#shipping-row').hide();
-            }
+            var shippingText = $('#shipping-subtotal-display').text();
+            $('#shipping-row').toggle(shippingText && !shippingText.includes('$0.00'));
             
-            // Show/hide yearly total row
-            if (averageYearlyTotal > 0) {
-                $('#yearly-total-row').show();
-            } else {
-                $('#yearly-total-row').hide();
-            }
+            var yearlyTotalText = $('#average-monthly-total-display').text();
+            $('#yearly-total-row').toggle(yearlyTotalText && !yearlyTotalText.includes('$0.00') && yearlyTotalText.trim() !== '');
         },
 
         formatPrice: function(price) {
