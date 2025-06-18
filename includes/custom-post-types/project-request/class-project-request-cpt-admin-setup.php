@@ -148,8 +148,8 @@ class Setup {
      */
     public function add_default_request_statuses() {
         $default_statuses = array(
-            'pending'       => 'Pending',
-            'under-review'  => 'Under Review'
+            'processing'        => 'Processing',
+            'ready-for-request' => 'Ready for Request'
         );
 
         foreach ($default_statuses as $slug => $name) {
@@ -159,6 +159,8 @@ class Setup {
         }
 
         $old_statuses_to_remove = array(
+            'pending',
+            'under-review',
             'approved',
             'rejected',
             'cancelled'

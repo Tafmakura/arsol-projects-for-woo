@@ -10,7 +10,9 @@ class Setup {
     public function __construct() {
         // Add project proposal post type
         add_action('init', array($this, 'register_post_type'), 15);
+        add_action('init', array($this, 'register_proposal_status_taxonomy'), 15);
         add_action('init', array($this, 'register_review_status_taxonomy'), 15);
+        add_action('init', array($this, 'add_default_proposal_statuses'), 20);
         add_action('init', array($this, 'add_default_review_statuses'), 20);
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_proposals'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
@@ -114,6 +116,36 @@ class Setup {
     }
 
     /**
+     * Register project proposal status taxonomy
+     */
+    public function register_proposal_status_taxonomy() {
+        $labels = array(
+            'name'              => __('Proposal Statuses', 'arsol-pfw'),
+            'singular_name'     => __('Proposal Status', 'arsol-pfw'),
+            'search_items'      => __('Search Proposal Statuses', 'arsol-pfw'),
+            'all_items'         => __('All Proposal Statuses', 'arsol-pfw'),
+            'edit_item'         => __('Edit Proposal Status', 'arsol-pfw'),
+            'update_item'       => __('Update Proposal Status', 'arsol-pfw'),
+            'add_new_item'      => __('Add New Proposal Status', 'arsol-pfw'),
+            'new_item_name'     => __('New Proposal Status Name', 'arsol-pfw'),
+            'menu_name'         => __('Proposal Statuses', 'arsol-pfw'),
+        );
+
+        $args = array(
+            'hierarchical'      => false,
+            'labels'            => $labels,
+            'show_ui'           => true,
+            'show_admin_column' => true,
+            'query_var'         => true,
+            'rewrite'           => array('slug' => 'proposal-status'),
+            'show_in_rest'      => true,
+            'meta_box_cb'       => false,
+        );
+
+        register_taxonomy('arsol-proposal-status', 'arsol-pfw-proposal', $args);
+    }
+
+    /**
      * Register project proposal review status taxonomy
      */
     public function register_review_status_taxonomy() {
@@ -141,6 +173,24 @@ class Setup {
         );
 
         register_taxonomy('arsol-review-status', 'arsol-pfw-proposal', $args);
+    }
+
+    /**
+     * Add default proposal statuses
+     */
+    public function add_default_proposal_statuses() {
+        $default_statuses = array(
+            'processing'        => 'Processing',
+            'pending-approval'  => 'Pending Approval',
+            'rejected'          => 'Rejected',
+            'approved'          => 'Approved'
+        );
+
+        foreach ($default_statuses as $slug => $name) {
+            if (!term_exists($slug, 'arsol-proposal-status')) {
+                wp_insert_term($name, 'arsol-proposal-status', array('slug' => $slug));
+            }
+        }
     }
 
     /**
@@ -265,7 +315,7 @@ class Setup {
     }
 
     /**
-     * Save proposal header fields including secondary status
+     * Save proposal header fields including status fields
      */
     public function save_proposal_header_fields($post_id) {
         // Skip autosaves and revisions
@@ -283,7 +333,12 @@ class Setup {
             return;
         }
         
-        // Save secondary status
+        // Save proposal status
+        if (isset($_POST['proposal_status'])) {
+            wp_set_object_terms($post_id, sanitize_text_field($_POST['proposal_status']), 'arsol-proposal-status', false);
+        }
+        
+        // Save secondary status (keeping existing functionality)
         if (isset($_POST['proposal_secondary_status'])) {
             $secondary_status = sanitize_text_field($_POST['proposal_secondary_status']);
             // Validate the value is one of the allowed options
