@@ -249,7 +249,7 @@ class Proposal_Quotation {
                 <td class="arsol-price-column"><input type="text" class="arsol-price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}" required></td>
                 <td class="arsol-sale-price-column"><input type="text" class="arsol-sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
                 <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
-                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">🗑️</a></td>
+                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
 
@@ -269,7 +269,7 @@ class Proposal_Quotation {
                     </select>
                 </td>
                 <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
-                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">🗑️</a></td>
+                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
 
@@ -310,7 +310,7 @@ class Proposal_Quotation {
                     </select>
                 </td>
                 <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
-                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">🗑️</a></td>
+                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
 
@@ -348,7 +348,7 @@ class Proposal_Quotation {
                     </select>
                 </td>
                 <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
-                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">🗑️</a></td>
+                <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
             </tr>
         </script>
         <?php
