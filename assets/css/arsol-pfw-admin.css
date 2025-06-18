@@ -490,13 +490,7 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    text-decoration: none !important;
-    border: none !important;
-    padding: 0 !important;
-    cursor: pointer !important;
-    font-size: 14px !important;
-    line-height: 1 !important;
-}
+ }
 
 .add-line-item {
     margin-top: 10px;
