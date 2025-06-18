@@ -376,14 +376,11 @@
                     $newRow.data('billing-period', data.period || 'month');
                     $newRow.data('is-subscription', true);
                     
-                    // Show date input for existing subscriptions
+                    // Show date input for existing subscriptions (default is "—")
                     $newRow.find('.arsol-date-column .arsol-not-applicable').hide();
                     $newRow.find('.arsol-date-column .arsol-date-input').show();
-                } else if (data.product_type) {
-                    // For existing non-subscription products, show "—"
-                    $newRow.find('.arsol-date-column .arsol-date-input').hide();
-                    $newRow.find('.arsol-date-column .arsol-not-applicable').show();
                 }
+                // Non-subscription products use default state (show "—", hide date input)
             }
         },
 
@@ -477,22 +474,14 @@
                             $row.data('billing-interval', data.billing_interval || 1);
                             $row.data('billing-period', data.billing_period || 'month');
                             $row.data('is-subscription', true);
-                            console.log('Set subscription data on row:', {
-                                billingInterval: $row.data('billing-interval'),
-                                billingPeriod: $row.data('billing-period'),
-                                isSubscription: $row.data('is-subscription')
-                            });
                             
-                            // Show date input for subscriptions
+                            // Show date input for subscriptions (default is "—")
                             $row.find('.arsol-date-column .arsol-not-applicable').hide();
                             $row.find('.arsol-date-column .arsol-date-input').show();
                         } else {
                             // Remove subscription data for non-subscription products
+                            // Default state (show "—", hide date input) is already correct
                             $row.removeData('billing-interval billing-period is-subscription');
-                            
-                            // Show "—" for non-subscriptions
-                            $row.find('.arsol-date-column .arsol-date-input').hide();
-                            $row.find('.arsol-date-column .arsol-not-applicable').show();
                         }
                         
                         ArsolProposalQuotation.toggleStartDateColumn();
