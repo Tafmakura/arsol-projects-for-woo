@@ -402,18 +402,7 @@
                         cache: true
                     },
                     placeholder: 'Search for a product...',
-                    minimumInputLength: 1,
-                    language: {
-                        searching: function() {
-                            return 'Searching...';
-                        },
-                        noResults: function() {
-                            return 'No products found';
-                        },
-                        errorLoading: function() {
-                            return 'Unable to load results';
-                        }
-                    }
+                    minimumInputLength: 1
                 });
             });
         },
