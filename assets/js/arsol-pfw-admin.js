@@ -67,9 +67,9 @@ jQuery(document).ready(function($) {
             var placeholder = $(this).data('placeholder') || $(this).find('option:first').text() || 'Search...';
             
             $(this).select2({
-                placeholder: placeholder,
-                allowClear: true,
-                width: '100%'
+                    placeholder: placeholder,
+                    allowClear: true,
+                    width: '100%'
             }).addClass('enhanced');
         });
     }
@@ -117,7 +117,7 @@ jQuery(document).ready(function($) {
     
     // Initialize disabled dropdowns with consistent styling
     function initDisabledDropdowns() {
-        $('.arsol-disabled-select').each(function() {
+            $('.arsol-disabled-select').each(function() {
             $(this).addClass('arsol-disabled-dropdown').prop('disabled', true);
         });
     }

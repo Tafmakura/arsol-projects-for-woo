@@ -11,7 +11,8 @@ class Proposal_Quotation {
     public function __construct() {
         add_action('add_meta_boxes', array($this, 'add_quotation_meta_box'));
         add_action('save_post', array($this, 'save_quotation_meta_box'));
-        // Removed custom product search - now using WooCommerce's built-in woocommerce_json_search_products_and_variations
+        // Custom product search for products with prices only
+        add_action('wp_ajax_arsol_search_products_with_price', array($this, 'ajax_search_products_with_price'));
         add_action('wp_ajax_arsol_proposal_quotation_ajax_get_product_details', array($this, 'ajax_get_product_details'));
         add_action('admin_footer', array($this, 'render_js_templates_in_footer'));
     }
@@ -408,7 +409,69 @@ class Proposal_Quotation {
         update_post_meta($post_id, '_arsol_proposal_currency_symbol', get_woocommerce_currency_symbol($currency_code));
     }
 
-    // Removed ajax_search_products method - now using WooCommerce's built-in woocommerce_json_search_products_and_variations
+    /**
+     * AJAX handler for searching purchasable products
+     * Shows: Simple products, variations, external products, subscriptions (if enabled)
+     * Excludes: Grouped products, variable products (parents), and other non-purchasable types
+     */
+    public function ajax_search_products_with_price() {
+        check_ajax_referer('search-products', 'security');
+
+        $term = wc_clean(stripslashes($_GET['term']));
+        $limit = absint($_GET['limit'] ?? 20);
+
+        if (empty($term)) {
+            wp_die();
+        }
+
+        // Define allowed product types (purchasable types only)
+        $allowed_types = array('simple', 'external', 'variation');
+        
+        // Add subscription types if WooCommerce Subscriptions is active
+        if (Woocommerce_Subscriptions::is_woo_subscriptions_active()) {
+            $allowed_types[] = 'subscription';
+            $allowed_types[] = 'subscription_variation';
+        }
+
+        // Base query args
+        $args = array(
+            'post_type'      => array('product', 'product_variation'),
+            'post_status'    => 'publish',
+            'posts_per_page' => $limit,
+            's'              => $term,
+            'fields'         => 'ids'
+        );
+
+        $products = get_posts($args);
+        $found_products = array();
+
+        if ($products) {
+            foreach ($products as $product_id) {
+                $product = wc_get_product($product_id);
+                if (!$product) continue;
+
+                // Filter by product type - only include purchasable types
+                if (!in_array($product->get_type(), $allowed_types)) {
+                    continue;
+                }
+
+                // Skip products that aren't purchasable (WooCommerce's own check)
+                if (!$product->is_purchasable()) {
+                    continue;
+                }
+
+                // Format product name with price info
+                $formatted_name = $product->get_formatted_name();
+                if ($product->get_price()) {
+                    $formatted_name .= ' (' . wc_price($product->get_price()) . ')';
+                }
+
+                $found_products[$product_id] = $formatted_name;
+            }
+        }
+
+        wp_send_json($found_products);
+    }
 
     public function ajax_get_product_details() {
         check_ajax_referer('arsol-proposal-quotation-nonce', 'nonce');
