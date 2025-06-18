@@ -88,7 +88,7 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
         </div>
         
         <div class="summary-row" id="totals-row">
-            <div class="summary-heading"><strong><?php _e('TOTALS', 'arsol-pfw'); ?></strong></div>
+            <div class="summary-heading"><strong><?php _e('Grand Totals', 'arsol-pfw'); ?></strong></div>
             <div class="summary-content">
                 <div id="onetime-total-row">
                     <span><?php _e('One-Time Total:', 'arsol-pfw'); ?></span> <span id="summary-one-time-total-display"><?php echo wc_price(0); ?></span>
