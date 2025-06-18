@@ -578,7 +578,7 @@ class Woocommerce {
     }
 
     /**
-     * Get orders associated with a project (including child orders)
+     * Get orders associated with a project using optimized WooCommerce CRUD
      *
      * @param int $project_id Project ID
      * @param int $user_id User ID
@@ -587,76 +587,90 @@ class Woocommerce {
      * @return object Orders object with pagination data
      */
     public static function get_project_orders($project_id, $user_id, $current_page = 1, $per_page = 10) {
-        // Step 1: Get parent orders associated with this project
-        $parent_order_args = array(
-            'customer_id' => $user_id,
-            'meta_key' => self::PROJECT_META_KEY,
-            'meta_value' => $project_id,
-            'return' => 'ids',
-            'limit' => -1, // Get all for now, we'll paginate later
+        // Use WooCommerce's built-in pagination system
+        $args = array(
+            'customer' => $user_id,
+            'meta_query' => array(
+                array(
+                    'key' => self::PROJECT_META_KEY,
+                    'value' => $project_id,
+                    'compare' => '='
+                )
+            ),
+            'limit' => $per_page,
+            'offset' => ($current_page - 1) * $per_page,
+            'orderby' => 'date',
+            'order' => 'DESC',
+            'paginate' => true
         );
-        $parent_order_ids = wc_get_orders($parent_order_args);
+
+        // Get orders with built-in pagination
+        $orders_query = wc_get_orders($args);
         
-        // Step 2: Get all orders related to those parent orders
-        $all_order_ids = array();
+        // Get child orders (renewals, switches, resubscribes) if any parent orders exist
+        $all_order_ids = $orders_query->orders;
         
-        // First, add the parent orders themselves
-        $all_order_ids = array_merge($all_order_ids, $parent_order_ids);
-        
-        // Then add child orders for each parent
-        foreach ($parent_order_ids as $parent_id) {
-            // Find renewal orders
-            $renewal_args = array(
-                'customer_id' => $user_id,
-                'meta_key' => '_subscription_renewal',
-                'meta_value' => $parent_id,
-                'return' => 'ids',
+        if (!empty($all_order_ids)) {
+            $child_order_args = array(
+                'customer' => $user_id,
+                'meta_query' => array(
+                    'relation' => 'OR',
+                    array(
+                        'key' => '_subscription_renewal',
+                        'value' => $all_order_ids,
+                        'compare' => 'IN'
+                    ),
+                    array(
+                        'key' => '_subscription_switch', 
+                        'value' => $all_order_ids,
+                        'compare' => 'IN'
+                    ),
+                    array(
+                        'key' => '_subscription_resubscribe',
+                        'value' => $all_order_ids,
+                        'compare' => 'IN'
+                    )
+                ),
+                'orderby' => 'date',
+                'order' => 'DESC',
+                'return' => 'ids'
             );
-            $renewal_orders = wc_get_orders($renewal_args);
-            $all_order_ids = array_merge($all_order_ids, $renewal_orders);
             
-            // Find switch orders
-            $switch_args = array(
-                'customer_id' => $user_id,
-                'meta_key' => '_subscription_switch',
-                'meta_value' => $parent_id,
-                'return' => 'ids',
-            );
-            $switch_orders = wc_get_orders($switch_args);
-            $all_order_ids = array_merge($all_order_ids, $switch_orders);
+            $child_order_ids = wc_get_orders($child_order_args);
             
-            // Find resubscribe orders
-            $resubscribe_args = array(
-                'customer_id' => $user_id,
-                'meta_key' => '_subscription_resubscribe',
-                'meta_value' => $parent_id,
-                'return' => 'ids',
-            );
-            $resubscribe_orders = wc_get_orders($resubscribe_args);
-            $all_order_ids = array_merge($all_order_ids, $resubscribe_orders);
+            // Merge and remove duplicates
+            $all_order_ids = array_unique(array_merge($all_order_ids, $child_order_ids));
+            
+            // Sort by date (most recent first)
+            if (!empty($all_order_ids)) {
+                $orders_objects = array_map('wc_get_order', $all_order_ids);
+                usort($orders_objects, function($a, $b) {
+                    return $b->get_date_created()->getTimestamp() - $a->get_date_created()->getTimestamp();
+                });
+                $all_order_ids = array_map(function($order) { return $order->get_id(); }, $orders_objects);
+            }
+            
+            // Re-paginate the combined results
+            $total = count($all_order_ids);
+            $max_pages = ceil($total / $per_page);
+            $offset = ($current_page - 1) * $per_page;
+            $paginated_order_ids = array_slice($all_order_ids, $offset, $per_page);
+            
+            // Create result object
+            $result = new \stdClass();
+            $result->orders = $paginated_order_ids;
+            $result->total = $total;
+            $result->max_num_pages = $max_pages;
+            
+            return $result;
         }
         
-        // Remove duplicates and sort
-        $all_order_ids = array_unique($all_order_ids);
-        rsort($all_order_ids); // Most recent first
-        
-        // Paginate the results
-        $total = count($all_order_ids);
-        $max_pages = ceil($total / $per_page);
-        $offset = ($current_page - 1) * $per_page;
-        $order_ids = array_slice($all_order_ids, $offset, $per_page);
-        
-        // Create result object similar to WooCommerce customer orders
-        $result = new \stdClass();
-        $result->orders = $order_ids;
-        $result->total = $total;
-        $result->max_num_pages = $max_pages;
-        
-        return $result;
+        // Return original result if no child orders
+        return $orders_query;
     }
 
     /**
-     * Get subscriptions associated with a project
+     * Get subscriptions associated with a project using optimized WooCommerce Subscriptions CRUD
      *
      * @param int $project_id Project ID
      * @param int $user_id User ID
@@ -666,54 +680,42 @@ class Woocommerce {
      */
     public static function get_project_subscriptions($project_id, $user_id, $current_page = 1, $per_page = 10) {
         // Check if WooCommerce Subscriptions is active
-        if (!class_exists('WC_Subscriptions')) {
+        if (!class_exists('WC_Subscriptions') || !function_exists('wcs_get_subscriptions')) {
             return self::create_empty_subscriptions_result();
         }
         
-        // Step 1: Get parent orders associated with this project
-        $parent_order_args = array(
+        // Use WooCommerce Subscriptions' built-in functions with pagination
+        $subscription_args = array(
+            'subscriptions_per_page' => $per_page,
+            'offset' => ($current_page - 1) * $per_page,
             'customer_id' => $user_id,
-            'meta_key' => self::PROJECT_META_KEY,
-            'meta_value' => $project_id,
-            'return' => 'ids',
-            'limit' => -1, // Get all
+            'meta_query' => array(
+                array(
+                    'key' => self::PROJECT_META_KEY,
+                    'value' => $project_id,
+                    'compare' => '='
+                )
+            ),
+            'orderby' => 'start_date',
+            'order' => 'DESC'
         );
-        $parent_order_ids = wc_get_orders($parent_order_args);
         
-        // Step 2: Find all subscriptions related to these parent orders
-        $all_subscription_ids = array();
+        // Get subscriptions with built-in pagination
+        $subscriptions = wcs_get_subscriptions($subscription_args);
         
-        foreach ($parent_order_ids as $parent_id) {
-            // Check if this order has created subscriptions
-            $parent_order = wc_get_order($parent_id);
-            if ($parent_order) {
-                // Get subscriptions for this order
-                if (function_exists('wcs_get_subscriptions_for_order')) {
-                    $subscriptions = wcs_get_subscriptions_for_order($parent_order);
-                    if (!empty($subscriptions)) {
-                        foreach ($subscriptions as $subscription) {
-                            $all_subscription_ids[] = $subscription->get_id();
-                        }
-                    }
-                }
-            }
-        }
+        // Get total count for pagination
+        $count_args = array_merge($subscription_args, array(
+            'subscriptions_per_page' => -1,
+            'offset' => 0
+        ));
+        $all_subscriptions = wcs_get_subscriptions($count_args);
+        $total = count($all_subscriptions);
         
-        // Remove duplicates and sort
-        $all_subscription_ids = array_unique($all_subscription_ids);
-        rsort($all_subscription_ids); // Most recent first
-        
-        // Paginate the results
-        $total = count($all_subscription_ids);
-        $max_pages = ceil($total / $per_page);
-        $offset = ($current_page - 1) * $per_page;
-        $subscription_ids = array_slice($all_subscription_ids, $offset, $per_page);
-        
-        // Create result object similar to WooCommerce customer subscriptions
+        // Create result object
         $result = new \stdClass();
-        $result->subscriptions = $subscription_ids;
+        $result->subscriptions = array_keys($subscriptions);
         $result->total = $total;
-        $result->max_num_pages = $max_pages;
+        $result->max_num_pages = ceil($total / $per_page);
         
         return $result;
     }
