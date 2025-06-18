@@ -146,11 +146,11 @@ class Proposal {
         
         if ($should_validate) {
             $validation_errors = $this->validate_proposal_data($post_id, $cost_proposal_type);
+        
+        if (!empty($validation_errors)) {
+            // Store errors for display
+            $this->validation_errors = $validation_errors;
             
-            if (!empty($validation_errors)) {
-                // Store errors for display
-                $this->validation_errors = $validation_errors;
-                
                 if ($is_trying_to_publish) {
                     // Prevent publishing by changing status to draft
                     add_filter('wp_insert_post_data', function($data, $postarr) use ($post_id) {
