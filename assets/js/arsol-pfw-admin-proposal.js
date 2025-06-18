@@ -397,12 +397,12 @@
                 // Trigger WooCommerce's enhanced select initialization with proper config
                 if (typeof $.fn.selectWoo !== 'undefined') {
                     $select.filter(':not(.enhanced)').selectWoo({
-                        ajax: {
-                            url: arsol_proposal_quotation_vars.ajax_url,
-                            dataType: 'json',
+                ajax: {
+                    url: arsol_proposal_quotation_vars.ajax_url,
+                    dataType: 'json',
                             delay: 250, // Wait 250ms after user stops typing before making request
-                            data: function(params) {
-                                return {
+                    data: function(params) {
+                        return {
                                     action: 'arsol_search_products_with_price', // Our custom AJAX action
                                     security: arsol_proposal_quotation_vars.search_products_nonce, // WordPress nonce for security
                                     term: params.term, // The search term user typed
@@ -429,7 +429,7 @@
                                 // This replaces the default "The results could not be loaded" message
                                 // WooCommerce uses a similar workaround for Select2 issue #4355
                                 // where errorLoading gets called inappropriately on dropdown open
-                                return 'Searching...';
+                                return 'Still searching...';
                             }
                         }
                     }).addClass('enhanced'); // Mark as enhanced to prevent re-initialization
