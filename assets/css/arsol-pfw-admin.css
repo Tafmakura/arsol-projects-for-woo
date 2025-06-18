@@ -15,6 +15,12 @@ body.post-type-arsol-pfw-proposal .select2-container {
     display: none;
 }
 
+/* Hide Budget and Quotation from Screen Options */
+#screen-options-wrap label[for="arsol_budget_estimates_metabox-hide"],
+#screen-options-wrap label[for="arsol_proposal_quotation_metabox-hide"] {
+    display: none !important;
+}
+
 /* Project Actions Layout */
 .arsol-pfw-admin-project-actions {
     display: flex;

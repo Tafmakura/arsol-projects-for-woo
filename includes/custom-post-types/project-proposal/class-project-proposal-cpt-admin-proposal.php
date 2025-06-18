@@ -212,7 +212,7 @@ class Proposal {
             // Save recurring budget details
             if (isset($_POST['proposal_recurring_budget_details'])) {
                 update_post_meta($post_id, '_proposal_recurring_budget_details', sanitize_text_field($_POST['proposal_recurring_budget_details']));
-            }
+        }
 
             // Save billing cycle if recurring budget is set
             if (!empty($_POST['proposal_recurring_budget']) && $_POST['proposal_recurring_budget'] > 0) {
