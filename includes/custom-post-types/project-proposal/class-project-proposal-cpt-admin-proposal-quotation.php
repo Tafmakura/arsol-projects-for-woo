@@ -457,9 +457,8 @@ class Proposal_Quotation {
                     continue;
                 }
 
-                // Simple name formatting
-                $formatted_name = $product->get_formatted_name();
-                $found_products[$product_id] = $formatted_name;
+                // Simple product name
+                $found_products[$product_id] = $product->get_name();
             }
         }
 
