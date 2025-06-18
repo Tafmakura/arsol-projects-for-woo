@@ -45,6 +45,9 @@
             } else if (selectedType === 'quotation') {
                 $('#arsol_proposal_quotation_metabox').show();
             }
+            
+            // Update proposal summary based on type
+            this.updateProposalSummary(selectedType);
         },
 
         updateRequiredFields: function() {
@@ -125,6 +128,35 @@
         initialValidation: function() {
             // Set initial required fields
             this.updateRequiredFields();
+        },
+
+        updateProposalSummary: function(proposalType) {
+            var summaryContainer = $('#proposal-summary-container');
+            var budgetTemplate = $('#budget-summary-template');
+            var quotationTemplate = $('#quotation-summary-template');
+            
+            // Hide all templates first
+            budgetTemplate.hide();
+            quotationTemplate.hide();
+            
+            if (proposalType === 'budget') {
+                summaryContainer.show();
+                budgetTemplate.show();
+                // Trigger budget summary update
+                if (typeof ArsolBudget !== 'undefined' && ArsolBudget.updateSummary) {
+                    ArsolBudget.updateSummary();
+                }
+            } else if (proposalType === 'quotation') {
+                summaryContainer.show();
+                quotationTemplate.show();
+                // Trigger quotation summary update
+                if (typeof ArsolProposalQuotation !== 'undefined' && ArsolProposalQuotation.updateSummary) {
+                    ArsolProposalQuotation.updateSummary();
+                }
+            } else {
+                // Hide summary for 'none' or any other value
+                summaryContainer.hide();
+            }
         }
     };
 
@@ -185,6 +217,28 @@
             $('#summary-budget-onetime-display').html(this.formatPrice(oneTimeAmount));
             $('#summary-budget-recurring-display').html(this.formatPrice(recurringAmount));
             $('#summary-budget-billing-period').text(billingText);
+            
+            // Show/hide budget rows based on values
+            if (oneTimeAmount > 0) {
+                $('#budget-onetime-row').show();
+            } else {
+                $('#budget-onetime-row').hide();
+            }
+            
+            if (recurringAmount > 0) {
+                $('#budget-recurring-row').show();
+                
+                // Add start date if available
+                var startDate = $('.recurring-budget-start-date').val();
+                if (startDate) {
+                    var formattedDate = new Date(startDate).toLocaleDateString();
+                    $('#summary-budget-start-date').text(' (starts ' + formattedDate + ')');
+                } else {
+                    $('#summary-budget-start-date').text('');
+                }
+            } else {
+                $('#budget-recurring-row').hide();
+            }
         }
     };
 
@@ -894,7 +948,7 @@
             $('#line_items_recurring_totals').val(JSON.stringify(recurringTotals));
 
             // Update summary if it exists
-            this.updateSummary(productSubtotal, productAverageMonthlyTotal, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal);
+            this.updateSummary(productSubtotal, productRecurringTotals[this.getCycleKey(1, 'month')].total, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal);
 
             this.calculating = false;
         },
@@ -908,6 +962,73 @@
             $('#summary-shipping-display').html(this.formatPrice(shippingSubtotal));
             $('#summary-one-time-total-display').html(this.formatPrice(oneTimeTotal));
             $('#summary-avg-yearly-total-display').html(this.formatPrice(averageYearlyTotal));
+            
+            // Show/hide product row based on values
+            if (productSubtotal > 0 || productRecurringSubtotal > 0) {
+                $('#products-row').show();
+                
+                // Show/hide one-time and recurring product sub-sections
+                if (productSubtotal > 0) {
+                    $('#products-onetime').show();
+                } else {
+                    $('#products-onetime').hide();
+                }
+                
+                if (productRecurringSubtotal > 0) {
+                    $('#products-recurring').show();
+                } else {
+                    $('#products-recurring').hide();
+                }
+            } else {
+                $('#products-row').hide();
+            }
+            
+            // Show/hide one-time fees row
+            if (onetimeFeeSubtotal > 0) {
+                $('#onetime-fees-row').show();
+            } else {
+                $('#onetime-fees-row').hide();
+            }
+            
+            // Show/hide recurring fees row
+            if (recurringFeeSubtotal > 0) {
+                $('#recurring-fees-row').show();
+                
+                // Add start date if available (find the earliest start date from recurring fees)
+                var earliestStartDate = null;
+                $('#recurring-fee-lines-body tr.arsol-line-item').each(function() {
+                    var startDate = $(this).find('.arsol-start-date-input').val();
+                    if (startDate) {
+                        var date = new Date(startDate);
+                        if (!earliestStartDate || date < earliestStartDate) {
+                            earliestStartDate = date;
+                        }
+                    }
+                });
+                
+                if (earliestStartDate) {
+                    var formattedDate = earliestStartDate.toLocaleDateString();
+                    $('#summary-recurring-start-date').text(' (starts ' + formattedDate + ')');
+                } else {
+                    $('#summary-recurring-start-date').text('');
+                }
+            } else {
+                $('#recurring-fees-row').hide();
+            }
+            
+            // Show/hide shipping row
+            if (shippingSubtotal > 0) {
+                $('#shipping-row').show();
+            } else {
+                $('#shipping-row').hide();
+            }
+            
+            // Show/hide yearly total row
+            if (averageYearlyTotal > 0) {
+                $('#yearly-total-row').show();
+            } else {
+                $('#yearly-total-row').hide();
+            }
         },
 
         formatPrice: function(price) {

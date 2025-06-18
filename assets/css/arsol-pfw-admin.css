@@ -1080,4 +1080,31 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     color: #333;
 }
 
+/* Horizontal div row layout for summary */
+.summary-row {
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.summary-heading {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.summary-content {
+    color: #666;
+    line-height: 1.4;
+}
+
+.summary-content > div {
+    margin-bottom: 2px;
+}
+
 
