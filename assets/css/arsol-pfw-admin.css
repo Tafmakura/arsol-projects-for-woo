@@ -1064,4 +1064,20 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     width: 50%;
 }
 
+/* Proposal Summary Styling (reuses existing classes) */
+.arsol-proposal-summary {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #f9f9f9;
+    padding: 15px;
+}
+
+.arsol-proposal-summary h4 {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
 

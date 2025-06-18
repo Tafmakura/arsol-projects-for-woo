@@ -165,6 +165,26 @@
             $('.recurring-budget-total-display').html(this.formatPrice(recurringAmount));
             $('#budget-recurring-period').text(billingText);
             $('#budget-recurring-total-display').html(this.formatPrice(recurringAmount));
+            
+            // Update summary if it exists
+            this.updateSummary();
+        },
+        
+        updateSummary: function() {
+            // Update budget summary in header column 3
+            var oneTimeAmount = parseFloat($('.js-amount-input').first().val()) || 0;
+            var recurringAmount = parseFloat($('.recurring-budget-amount-input').val()) || 0;
+            var interval = parseInt($('.billing-interval').val()) || 1;
+            var period = $('.billing-period').val();
+            
+            var periodDisplay = period === 'month' ? 'mo' : (period === 'year' ? 'yr' : (period === 'week' ? 'wk' : (period === 'day' ? 'day' : period)));
+            var intervalText = interval > 1 ? interval : '';
+            var billingText = '/' + intervalText + periodDisplay;
+            
+            // Update summary displays
+            $('#summary-budget-onetime-display').html(this.formatPrice(oneTimeAmount));
+            $('#summary-budget-recurring-display').html(this.formatPrice(recurringAmount));
+            $('#summary-budget-billing-period').text(billingText);
         }
     };
 
@@ -873,7 +893,21 @@
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
             $('#line_items_recurring_totals').val(JSON.stringify(recurringTotals));
 
+            // Update summary if it exists
+            this.updateSummary(productSubtotal, productAverageMonthlyTotal, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal);
+
             this.calculating = false;
+        },
+        
+        updateSummary: function(productSubtotal, productRecurringSubtotal, onetimeFeeSubtotal, recurringFeeSubtotal, shippingSubtotal, oneTimeTotal, averageYearlyTotal) {
+            // Update quotation summary in header column 3
+            $('#summary-product-subtotal-display').html(this.formatPrice(productSubtotal));
+            $('#summary-product-recurring-display').html(this.formatPrice(productRecurringSubtotal));
+            $('#summary-onetime-fee-display').html(this.formatPrice(onetimeFeeSubtotal));
+            $('#summary-recurring-fee-display').html(this.formatPrice(recurringFeeSubtotal));
+            $('#summary-shipping-display').html(this.formatPrice(shippingSubtotal));
+            $('#summary-one-time-total-display').html(this.formatPrice(oneTimeTotal));
+            $('#summary-avg-yearly-total-display').html(this.formatPrice(averageYearlyTotal));
         },
 
         formatPrice: function(price) {
