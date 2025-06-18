@@ -234,7 +234,7 @@ class Proposal_Quotation {
         }
         ?>
         <script type="text/html" id="tmpl-arsol-product-line-item">
-            <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}">
+            <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}" <# if (data.product_type === 'subscription' || data.product_type === 'subscription_variation') { #>data-is-subscription="true" data-billing-interval="{{ data.billing_interval || 1 }}" data-billing-period="{{ data.billing_period || 'month' }}"<# } #>>
                 <td class="arsol-description-column">
                                     <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]" required>
                     <option value="{{ data.product_id || '' }}" selected="selected">{{ data.product_name || '' }}</option>
