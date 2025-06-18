@@ -398,23 +398,27 @@ class Proposal {
     private function validate_budget_fields($post_id) {
         $errors = array();
         
-        // Get budget data
-        $budget_data = get_post_meta($post_id, '_proposal_budget', true);
-        $recurring_budget_data = get_post_meta($post_id, '_proposal_recurring_budget', true);
+        // Validate against POST data (what's being submitted) not existing meta data
+        $proposal_budget = isset($_POST['proposal_budget']) ? sanitize_text_field($_POST['proposal_budget']) : '';
+        $proposal_recurring_budget = isset($_POST['proposal_recurring_budget']) ? sanitize_text_field($_POST['proposal_recurring_budget']) : '';
+        
+        // Convert to numeric values for validation
+        $budget_amount = !empty($proposal_budget) ? floatval(wc_format_decimal($proposal_budget)) : 0;
+        $recurring_budget_amount = !empty($proposal_recurring_budget) ? floatval(wc_format_decimal($proposal_recurring_budget)) : 0;
         
         // At least one budget amount is required
         $has_budget = false;
         
-        if (!empty($budget_data['amount']) && $budget_data['amount'] > 0) {
+        if ($budget_amount > 0) {
             $has_budget = true;
         }
         
-        if (!empty($recurring_budget_data['amount']) && $recurring_budget_data['amount'] > 0) {
+        if ($recurring_budget_amount > 0) {
             $has_budget = true;
             
-            // Validate recurring budget billing cycle
-            $billing_interval = get_post_meta($post_id, '_proposal_billing_interval', true);
-            $billing_period = get_post_meta($post_id, '_proposal_billing_period', true);
+            // Validate recurring budget billing cycle from POST data
+            $billing_interval = isset($_POST['proposal_billing_interval']) ? sanitize_text_field($_POST['proposal_billing_interval']) : '';
+            $billing_period = isset($_POST['proposal_billing_period']) ? sanitize_text_field($_POST['proposal_billing_period']) : '';
             
             if (empty($billing_interval) || empty($billing_period)) {
                 $errors[] = __('Recurring budget requires billing interval and period to be specified.', 'arsol-pfw');
