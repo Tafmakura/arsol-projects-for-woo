@@ -154,45 +154,28 @@
         updateConditionalVisibility: function() {
             const costType = $('#cost_proposal_type').val();
             
-            // Hide all conditional elements first and add arsol-pfw-hidden class
-            $('.arsol-pfw-show-if-proposal-cost-type-is-none, .arsol-pfw-show-if-proposal-cost-type-is-budget, .arsol-pfw-show-if-proposal-cost-type-is-quotation').each(function() {
-                $(this).addClass('arsol-pfw-hidden').hide();
-            });
+            // Hide all conditional elements with inline display:none
+            $('.arsol-pfw-show-if-proposal-cost-type-is-none, .arsol-pfw-show-if-proposal-cost-type-is-budget, .arsol-pfw-show-if-proposal-cost-type-is-quotation').css('display', 'none');
             
-            // Show elements based on current cost type
-            let targetClass = '';
+            // Show elements based on current cost type by removing inline display style
             if (costType === 'none') {
-                targetClass = '.arsol-pfw-show-if-proposal-cost-type-is-none';
+                $('.arsol-pfw-show-if-proposal-cost-type-is-none').css('display', '');
             } else if (costType === 'budget') {
-                targetClass = '.arsol-pfw-show-if-proposal-cost-type-is-budget';
+                $('.arsol-pfw-show-if-proposal-cost-type-is-budget').css('display', '');
             } else if (costType === 'quotation') {
-                targetClass = '.arsol-pfw-show-if-proposal-cost-type-is-quotation';
+                $('.arsol-pfw-show-if-proposal-cost-type-is-quotation').css('display', '');
             }
             
-            if (targetClass) {
-                $(targetClass).each(function() {
-                    // Remove inline display style to let CSS classes take control
-                    $(this).css('display', '').removeClass('arsol-pfw-hidden').addClass('arsol-pfw-show');
-                });
-            }
-            
-            // Handle hide-if classes (opposite logic)
-            $('.arsol-pfw-hide-if-proposal-cost-type-is-none, .arsol-pfw-hide-if-proposal-cost-type-is-budget, .arsol-pfw-hide-if-proposal-cost-type-is-quotation').each(function() {
-                $(this).removeClass('arsol-pfw-hidden').addClass('arsol-pfw-show').css('display', '');
-            });
+            // Handle hide-if classes (show all first, then hide specific ones)
+            $('.arsol-pfw-hide-if-proposal-cost-type-is-none, .arsol-pfw-hide-if-proposal-cost-type-is-budget, .arsol-pfw-hide-if-proposal-cost-type-is-quotation').css('display', '');
             
             // Hide elements that should be hidden for current cost type
-            let hideClass = '';
             if (costType === 'none') {
-                hideClass = '.arsol-pfw-hide-if-proposal-cost-type-is-none';
+                $('.arsol-pfw-hide-if-proposal-cost-type-is-none').css('display', 'none');
             } else if (costType === 'budget') {
-                hideClass = '.arsol-pfw-hide-if-proposal-cost-type-is-budget';
+                $('.arsol-pfw-hide-if-proposal-cost-type-is-budget').css('display', 'none');
             } else if (costType === 'quotation') {
-                hideClass = '.arsol-pfw-hide-if-proposal-cost-type-is-quotation';
-            }
-            
-            if (hideClass) {
-                $(hideClass).addClass('arsol-pfw-hidden').removeClass('arsol-pfw-show').hide();
+                $('.arsol-pfw-hide-if-proposal-cost-type-is-quotation').css('display', 'none');
             }
         }
     };
