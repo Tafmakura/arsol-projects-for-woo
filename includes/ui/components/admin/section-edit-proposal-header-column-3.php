@@ -14,20 +14,21 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
 $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true);
 ?>
 
-<?php if (empty($cost_proposal_type) || $cost_proposal_type === 'none') : ?>
-<p class="arsol-pfw-show-if-proposal-cost-type-is-none" style="margin-bottom: 15px; color: #666; font-style: italic;">
+<p class="arsol-pfw-show-if-proposal-cost-type-is-none" style="display: none; margin-bottom: 15px; color: #666; font-style: italic;">
     <?php _e('Consider selecting a cost type if your proposal involves pricing. Budget allows you to set estimated costs and recurring fees for planning purposes. Quotation creates detailed line items with products and services that can generate customer invoices and orders. Choose the option that best fits your proposal needs.', 'arsol-pfw'); ?>
 </p>
-<?php else : ?>
-<p class="arsol-pfw-show-if-proposal-cost-type-is-none arsol-pfw-hidden" style="margin-bottom: 15px; color: #666; font-style: italic;">
-    <?php _e('Consider selecting a cost type if your proposal involves pricing. Budget allows you to set estimated costs and recurring fees for planning purposes. Quotation creates detailed line items with products and services that can generate customer invoices and orders. Choose the option that best fits your proposal needs.', 'arsol-pfw'); ?>
-</p>
-<?php endif; ?>
 
-
+<!-- Cost Proposal Type Guidance -->
+<div class="arsol-pfw-show-if-proposal-cost-type-is-none" style="display: none;">
+    <div class="cost-proposal-guidance">
+        <h4><?php _e('💡 Cost Proposal Type Guidance', 'arsol-pfw'); ?></h4>
+        <p><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php _e('Use when providing estimated costs or budget ranges. Good for initial planning and rough estimates.', 'arsol-pfw'); ?></p>
+        <p><strong><?php _e('Quotation:', 'arsol-pfw'); ?></strong> <?php _e('Use when providing exact pricing with specific products, services, and terms. This becomes a binding proposal when accepted.', 'arsol-pfw'); ?></p>
+    </div>
+</div>
 
 <!-- Budget Summary Template -->
-<div id="budget-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-budget">
+<div id="budget-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-budget" style="display: none;">
     <h4><?php _e('📊 Budget Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for budget -->
@@ -53,7 +54,7 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
 </div>
 
 <!-- Quotation Summary Template -->
-<div id="quotation-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-quotation">
+<div id="quotation-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-quotation" style="display: none;">
     <h4><?php _e('📋 Quotation Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for quotation -->
