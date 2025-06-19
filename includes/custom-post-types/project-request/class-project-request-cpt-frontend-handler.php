@@ -59,7 +59,7 @@ class Frontend_Handler {
         
         if (!is_wp_error($request_id)) {
             // Set default request status
-            wp_set_object_terms($request_id, 'pending', 'arsol-request-status');
+            wp_set_object_terms($request_id, 'processing', 'arsol-request-status');
             
             // Save additional request meta
             if (!empty($budget)) {

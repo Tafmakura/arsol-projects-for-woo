@@ -55,10 +55,10 @@ class Workflow_Handler {
     }
 
     public function set_proposal_review_status($new_status, $old_status, $post) {
-        if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
-            // Set the review status to 'under-review'
-            wp_set_object_terms($post->ID, 'under-review', 'arsol-review-status');
-        }
+        // Removed automatic review status setting - using proposal status only
+        // if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
+        //     wp_set_object_terms($post->ID, 'under-review', 'arsol-review-status');
+        // }
     }
 
     public function convert_request_to_proposal() {
@@ -712,7 +712,7 @@ class Workflow_Handler {
         $proposal_id = intval($_GET['proposal_id']);
         if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
             // Set the proposal status to 'approved' before conversion
-            wp_set_object_terms($proposal_id, 'approved', 'arsol-review-status');
+            wp_set_object_terms($proposal_id, 'approved', 'arsol-proposal-status');
             
             // Re-use the conversion logic
             $this->convert_proposal_to_project($proposal_id, true);
@@ -728,7 +728,7 @@ class Workflow_Handler {
 
         $proposal_id = intval($_GET['proposal_id']);
         if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
-            wp_set_object_terms($proposal_id, 'rejected', 'arsol-review-status');
+            wp_set_object_terms($proposal_id, 'rejected', 'arsol-proposal-status');
             $this->safe_redirect(wp_get_referer());
         } else {
             wp_die(__('You do not have permission to reject this proposal.', 'arsol-pfw'));
@@ -827,9 +827,9 @@ class Workflow_Handler {
          * @param string $default_status The default status to be assigned
          * @param array $creation_data Creation context data
          */
-        do_action('arsol_before_request_creation_status_assignment', $post_id, 'pending', $creation_data);
+        do_action('arsol_before_request_creation_status_assignment', $post_id, 'processing', $creation_data);
 
-        wp_set_object_terms($post_id, 'pending', 'arsol-request-status');
+        wp_set_object_terms($post_id, 'processing', 'arsol-request-status');
 
         /**
          * Hook: arsol_after_request_creation_status_assigned
@@ -839,7 +839,7 @@ class Workflow_Handler {
          * @param string $assigned_status The status that was assigned
          * @param array $creation_data Creation context data
          */
-        do_action('arsol_after_request_creation_status_assigned', $post_id, 'pending', $creation_data);
+        do_action('arsol_after_request_creation_status_assigned', $post_id, 'processing', $creation_data);
 
         /**
          * Hook: arsol_before_request_creation_metadata_save

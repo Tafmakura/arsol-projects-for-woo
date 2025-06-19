@@ -149,29 +149,12 @@ class Setup {
     public function add_default_request_statuses() {
         $default_statuses = array(
             'processing'        => 'Processing',
-            'ready-for-request' => 'Ready for Request'
+            'pending-request'   => 'Pending Request'
         );
 
         foreach ($default_statuses as $slug => $name) {
             if (!term_exists($slug, 'arsol-request-status')) {
                 wp_insert_term($name, 'arsol-request-status', array('slug' => $slug));
-            }
-        }
-
-        $old_statuses_to_remove = array(
-            'pending',
-            'under-review',
-            'approved',
-            'rejected',
-            'cancelled'
-        );
-
-        foreach ($old_statuses_to_remove as $slug) {
-            if (term_exists($slug, 'arsol-request-status')) {
-                $term = get_term_by('slug', $slug, 'arsol-request-status');
-                if ($term) {
-                    wp_delete_term($term->term_id, 'arsol-request-status');
-                }
             }
         }
     }

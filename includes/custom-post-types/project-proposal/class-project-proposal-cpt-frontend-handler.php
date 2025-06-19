@@ -152,10 +152,10 @@ class Frontend_Handler {
          * @param string $default_status The default status to be assigned
          * @param array $creation_data Creation context data
          */
-        do_action('arsol_before_proposal_creation_status_assignment', $proposal_id, 'pending', $creation_data);
+        do_action('arsol_before_proposal_creation_status_assignment', $proposal_id, 'processing', $creation_data);
 
         // Set default proposal status
-        wp_set_object_terms($proposal_id, 'pending', 'arsol-proposal-status');
+        wp_set_object_terms($proposal_id, 'processing', 'arsol-proposal-status');
 
         /**
          * Hook: arsol_after_proposal_creation_status_assigned
@@ -165,7 +165,7 @@ class Frontend_Handler {
          * @param string $assigned_status The status that was assigned
          * @param array $creation_data Creation context data
          */
-        do_action('arsol_after_proposal_creation_status_assigned', $proposal_id, 'pending', $creation_data);
+        do_action('arsol_after_proposal_creation_status_assigned', $proposal_id, 'processing', $creation_data);
 
         /**
          * Hook: arsol_before_proposal_creation_metadata_save
