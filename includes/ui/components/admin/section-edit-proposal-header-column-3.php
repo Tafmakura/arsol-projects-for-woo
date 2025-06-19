@@ -23,7 +23,7 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
         </br>
         <!-- Empty state message for budget -->
         <div id="budget-empty-state" class="summary-empty-state" style="display: none;">
-            <p><?php _e('Your budget is empty', 'arsol-pfw'); ?></p>
+            <p><?php _e('Your budget proposal is empty', 'arsol-pfw'); ?></p>
         </div>
         
         <div class="summary-row" id="budget-onetime-row" style="display: none;">
