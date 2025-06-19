@@ -17,7 +17,7 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
 <!-- Cost Proposal Type Guidance -->
 <div class="arsol-pfw-show-if-proposal-cost-type-is-none" style="display: none;">
     <div class="cost-proposal-guidance">
-        <h4><?php _e('💡 Cost Proposal Type Guidance', 'arsol-pfw'); ?></h4>
+        <label><?php _e('💡 Cost Proposal Type Guidance', 'arsol-pfw'); ?></label>
         <p><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php _e('Use when providing estimated costs or budget ranges. Good for initial planning and rough estimates.', 'arsol-pfw'); ?></p>
         <p><strong><?php _e('Quotation:', 'arsol-pfw'); ?></strong> <?php _e('Use when providing exact pricing with specific products, services, and terms. This becomes a binding proposal when accepted.', 'arsol-pfw'); ?></p>
     </div>
