@@ -102,6 +102,11 @@ $all_proposal_statuses = get_terms(array(
                     <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
                 </select>
     </p>
+    <?php if (empty($cost_proposal_type) || $cost_proposal_type === 'none') : ?>
+    <p class="form-field form-field-wide" style="margin-top: 10px; color: #666; font-style: italic;">
+        <?php _e('Consider selecting a cost type if your proposal involves pricing. Budget allows you to set estimated costs and recurring fees for planning purposes. Quotation creates detailed line items with products and services that can generate customer invoices and orders. Choose the option that best fits your proposal needs.', 'arsol-pfw'); ?>
+    </p>
+    <?php endif; ?>
 </div>
 
 <div class="form-field-row">
