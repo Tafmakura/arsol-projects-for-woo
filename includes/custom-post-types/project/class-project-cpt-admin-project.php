@@ -34,13 +34,15 @@ class Project {
         wp_nonce_field('project_details_meta_box', 'project_details_meta_box_nonce');
         ?>
         <div class="project-details">
-            <div class="major-actions">
-                <?php if ($post->post_status === 'publish'): ?>
-                    <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
-                <?php else: ?>
-                    <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
-                <?php endif; ?>
-            </div>
+            <!-- Main content area for any future project-specific content -->
+        </div>
+        
+        <div class="major-actions">
+            <?php if ($post->post_status === 'publish'): ?>
+                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
+            <?php else: ?>
+                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
+            <?php endif; ?>
         </div>
         <?php
     }

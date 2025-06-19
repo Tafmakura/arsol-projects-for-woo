@@ -41,32 +41,32 @@ class Request {
         <p class="request-conversion-description">
             <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request status must be set to "Under Review" before conversion is allowed. This action cannot be undone.', 'arsol-pfw'); ?>
         </p>
+        
         <div class="major-actions">
-            <div class="arsol-pfw-admin-project-actions">
-                <?php if ($post->post_status === 'publish'): ?>
-                    <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
-                <?php else: ?>
-                    <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
-                <?php endif; ?>
-                <?php
-                $is_disabled = $current_status !== 'under-review';
-                $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
-                $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
-                $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete the original request.', 'arsol-pfw'));
-                $tooltip_text = $is_disabled 
-                    ? __('The request status must be "Under Review" to enable conversion.', 'arsol-pfw')
-                    : __('Converts this request into a new proposal.', 'arsol-pfw');
-                ?>
-                <span title="<?php echo esc_attr($tooltip_text); ?>">
-                    <a href="#" 
-                       class="button button-secondary arsol-confirm-conversion<?php if ($is_disabled) echo ' disabled'; ?>" 
-                       data-url="<?php echo esc_url($convert_url); ?>" 
-                       data-message="<?php echo $confirm_message; ?>"
-                       <?php disabled($is_disabled, true); ?>>
-                       <?php _e('Convert to Proposal', 'arsol-pfw'); ?>
-                    </a>
-                </span>
-            </div>
+            <?php if ($post->post_status === 'publish'): ?>
+                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
+            <?php else: ?>
+                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
+            <?php endif; ?>
+            
+            <?php
+            $is_disabled = $current_status !== 'under-review';
+            $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
+            $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
+            $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete the original request.', 'arsol-pfw'));
+            $tooltip_text = $is_disabled 
+                ? __('The request status must be "Under Review" to enable conversion.', 'arsol-pfw')
+                : __('Converts this request into a new proposal.', 'arsol-pfw');
+            ?>
+            <span title="<?php echo esc_attr($tooltip_text); ?>">
+                <a href="#" 
+                   class="button button-secondary arsol-confirm-conversion<?php if ($is_disabled) echo ' disabled'; ?>" 
+                   data-url="<?php echo esc_url($convert_url); ?>" 
+                   data-message="<?php echo $confirm_message; ?>"
+                   <?php disabled($is_disabled, true); ?>>
+                   <?php _e('Convert to Proposal', 'arsol-pfw'); ?>
+                </a>
+            </span>
         </div>
         <?php
     }

@@ -188,9 +188,9 @@ class Setup {
      */
     public function remove_publish_metabox() {
         remove_meta_box('submitdiv', 'arsol-project', 'side');
+        // Remove author metabox
+        remove_meta_box('authordiv', 'arsol-project', 'normal');
     }
-
-
 
     /**
      * Render project header container

@@ -164,6 +164,8 @@ class Setup {
      */
     public function remove_publish_metabox() {
         remove_meta_box('submitdiv', 'arsol-pfw-request', 'side');
+        // Remove author metabox
+        remove_meta_box('authordiv', 'arsol-pfw-request', 'normal');
     }
 
     /**

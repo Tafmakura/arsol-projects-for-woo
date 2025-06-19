@@ -22,11 +22,22 @@ body.post-type-arsol-pfw-proposal .select2-container {
 }
 
 /* Project Actions Layout */
-.arsol-pfw-admin-project-actions {
+.major-actions {
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    margin-top: 10px;
     display: flex;
+    flex-direction: row-reverse;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
 }
+
+.major-actions .button {
+    margin: 0;
+}
+
+
 
 /* Request Admin Description Text */
 .request-conversion-description {
@@ -111,17 +122,6 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     cursor: not-allowed;
     opacity: 0.8;
     font-size: 13px !important;
-}
-
-.arsol-pfw-admin-project-actions {
-    margin-top: 10px;
-    text-align: right;
-}
-
-.major-actions {
-    padding-top: 10px;
-    border-top: 1px solid #ddd;
-    margin-top: 10px;
 }
 
 .arsol-pfw-budget-display label {

@@ -77,14 +77,16 @@ class Proposal {
 
         ?>
         <div class="proposal-details">
+            <!-- Main content area for any future proposal-specific content -->
         </div>
+        
         <div class="major-actions">
-            <div class="arsol-pfw-admin-project-actions">
-                <?php if ($post->post_status === 'publish'): ?>
-                    <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
-                <?php else: ?>
-                    <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
-                <?php endif; ?>
+            <?php if ($post->post_status === 'publish'): ?>
+                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
+            <?php else: ?>
+                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
+            <?php endif; ?>
+            
             <?php
             $is_disabled = $post->post_status !== 'publish';
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
@@ -102,7 +104,6 @@ class Proposal {
                        data-message="<?php echo $confirm_message; ?>"
                        <?php disabled($is_disabled, true); ?> />
             </span>
-            </div>
         </div>
         <?php
     }
