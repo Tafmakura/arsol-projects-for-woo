@@ -14,10 +14,6 @@ $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
 $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true);
 ?>
 
-<p class="arsol-pfw-show-if-proposal-cost-type-is-none" style="display: none; margin-bottom: 15px; color: #666; font-style: italic;">
-    <?php _e('Consider selecting a cost type if your proposal involves pricing. Budget allows you to set estimated costs and recurring fees for planning purposes. Quotation creates detailed line items with products and services that can generate customer invoices and orders. Choose the option that best fits your proposal needs.', 'arsol-pfw'); ?>
-</p>
-
 <!-- Cost Proposal Type Guidance -->
 <div class="arsol-pfw-show-if-proposal-cost-type-is-none" style="display: none;">
     <div class="cost-proposal-guidance">
