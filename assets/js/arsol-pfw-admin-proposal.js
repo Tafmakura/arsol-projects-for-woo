@@ -133,32 +133,19 @@
         },
 
         updateProposalSummary: function(proposalType) {
-            var summaryContainer = $('#proposal-summary-container');
-            var budgetTemplate = $('#budget-summary-template');
-            var quotationTemplate = $('#quotation-summary-template');
-            
-            // Hide all templates first
-            budgetTemplate.hide();
-            quotationTemplate.hide();
-            
+            // Trigger appropriate summary updates based on proposal type
             if (proposalType === 'budget') {
-                summaryContainer.show();
-                budgetTemplate.show();
                 // Trigger budget summary update
                 if (typeof ArsolBudget !== 'undefined' && ArsolBudget.updateSummary) {
                     ArsolBudget.updateSummary();
                 }
             } else if (proposalType === 'quotation') {
-                summaryContainer.show();
-                quotationTemplate.show();
                 // Trigger quotation summary update
                 if (typeof ArsolProposalQuotation !== 'undefined' && ArsolProposalQuotation.updateSummary) {
                     ArsolProposalQuotation.updateSummary();
                 }
-            } else {
-                // Hide summary for 'none' or any other value
-                summaryContainer.hide();
             }
+            // Note: Visibility is now handled by the class-based conditional system
         },
 
         // Generic conditional visibility system
