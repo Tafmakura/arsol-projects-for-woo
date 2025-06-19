@@ -1114,4 +1114,13 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     font-size: 14px;
 }
 
+/* Conditional Visibility System */
+.arsol-pfw-hidden { 
+    display: none !important; 
+}
+
+.arsol-pfw-show { 
+    display: block !important; 
+}
+
 

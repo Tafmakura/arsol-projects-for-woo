@@ -15,30 +15,16 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
 ?>
 
 <?php if (empty($cost_proposal_type) || $cost_proposal_type === 'none') : ?>
-<p id="cost-type-guidance" style="margin-bottom: 15px; color: #666; font-style: italic;">
+<p class="arsol-pfw-show-if-proposal-cost-type-is-none" style="margin-bottom: 15px; color: #666; font-style: italic;">
     <?php _e('Consider selecting a cost type if your proposal involves pricing. Budget allows you to set estimated costs and recurring fees for planning purposes. Quotation creates detailed line items with products and services that can generate customer invoices and orders. Choose the option that best fits your proposal needs.', 'arsol-pfw'); ?>
 </p>
 <?php else : ?>
-<p id="cost-type-guidance" style="margin-bottom: 15px; color: #666; font-style: italic; display: none;">
+<p class="arsol-pfw-show-if-proposal-cost-type-is-none arsol-pfw-hidden" style="margin-bottom: 15px; color: #666; font-style: italic;">
     <?php _e('Consider selecting a cost type if your proposal involves pricing. Budget allows you to set estimated costs and recurring fees for planning purposes. Quotation creates detailed line items with products and services that can generate customer invoices and orders. Choose the option that best fits your proposal needs.', 'arsol-pfw'); ?>
 </p>
 <?php endif; ?>
 
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-    // Handle cost proposal type changes
-    $('#cost_proposal_type').on('change', function() {
-        var selectedType = $(this).val();
-        var guidanceElement = $('#cost-type-guidance');
-        
-        if (selectedType === 'none' || selectedType === '') {
-            guidanceElement.show();
-        } else {
-            guidanceElement.hide();
-        }
-    });
-});
-</script>
+
 
 <!-- Proposal Summary Container (initially hidden, controlled by JavaScript) -->
 <div class="arsol-proposal-summary" id="proposal-summary-container" style="display: none;">
