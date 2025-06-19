@@ -80,35 +80,31 @@ class Proposal {
             <!-- Main content area for any future proposal-specific content -->
         </div>
         
-        <ul class="order_actions submitbox">
-            <li class="wide">
-                <div id="delete-action">
-                    <?php
-                    $is_disabled = $post->post_status !== 'publish';
-                    $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
-                    $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
-                    $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Invoices will be created if selected.', 'arsol-pfw'));
-                    $tooltip_text = $is_disabled
-                        ? __('The proposal must be published before it can be converted.', 'arsol-pfw')
-                        : __('Converts this proposal into a new project.', 'arsol-pfw');
-                    ?>
-                    <span title="<?php echo esc_attr($tooltip_text); ?>">
-                        <input type="button" 
-                               class="button button-secondary arsol-confirm-conversion<?php if ($is_disabled) echo ' disabled'; ?>" 
-                               value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
-                               data-url="<?php echo esc_url($convert_url); ?>" 
-                               data-message="<?php echo $confirm_message; ?>"
-                               <?php disabled($is_disabled, true); ?> />
-                    </span>
-                </div>
-
-                <?php if ($post->post_status === 'publish'): ?>
-                    <button type="submit" class="button save_order button-primary" name="save" value="Update">Update</button>
-                <?php else: ?>
-                    <button type="submit" class="button save_order button-primary" name="publish" value="Publish">Publish</button>
-                <?php endif; ?>
-            </li>
-        </ul>
+        <div class="major-actions">
+            <?php if ($post->post_status === 'publish'): ?>
+                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
+            <?php else: ?>
+                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
+            <?php endif; ?>
+            
+            <?php
+            $is_disabled = $post->post_status !== 'publish';
+            $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
+            $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
+            $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Invoices will be created if selected.', 'arsol-pfw'));
+            $tooltip_text = $is_disabled
+                ? __('The proposal must be published before it can be converted.', 'arsol-pfw')
+                : __('Converts this proposal into a new project.', 'arsol-pfw');
+            ?>
+            <span title="<?php echo esc_attr($tooltip_text); ?>">
+                <input type="button" 
+                       class="button button-secondary arsol-confirm-conversion" 
+                       value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
+                       data-url="<?php echo esc_url($convert_url); ?>" 
+                       data-message="<?php echo $confirm_message; ?>"
+                       <?php disabled($is_disabled, true); ?> />
+            </span>
+        </div>
         <?php
     }
 
