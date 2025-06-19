@@ -33,17 +33,15 @@ class Project {
         // Add nonce for security
         wp_nonce_field('project_details_meta_box', 'project_details_meta_box_nonce');
         ?>
-        <div class="project-details">
-            <!-- Main content area for any future project-specific content -->
-        </div>
-        
-        <div class="major-actions">
-            <?php if ($post->post_status === 'publish'): ?>
-                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
-            <?php else: ?>
-                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
-            <?php endif; ?>
-        </div>
+        <ul class="order_actions submitbox">
+            <li class="wide">
+                <?php if ($post->post_status === 'publish'): ?>
+                    <button type="submit" class="button save_order button-primary" name="save" value="Update">Update</button>
+                <?php else: ?>
+                    <button type="submit" class="button save_order button-primary" name="publish" value="Publish">Publish</button>
+                <?php endif; ?>
+            </li>
+        </ul>
         <?php
     }
 
