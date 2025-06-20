@@ -33,17 +33,17 @@ class Proposal_Quotation {
         ?>
         <div id="arsol_pfw_proposal_quotation_builder">
             <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-quotation-builder.php'; ?>
-        </div>
+                    </div>
         
         <div class="arsol-pfw-proposal-notes-section">
             <h3><?php _e('Proposal Notes', 'arsol-pfw'); ?></h3>
-            <?php
+                <?php
             // Get current notes content
             $notes_content = get_post_meta($post->ID, '_arsol_pfw_proposal_notes', true);
             
             wp_editor($notes_content, 'arsol_pfw_proposal_notes', array(
                 'textarea_name' => 'arsol_pfw_proposal_notes',
-                'media_buttons' => false,
+                        'media_buttons' => false,
                 'textarea_rows' => 5,
                 'teeny' => true,
                 'quicktags' => true

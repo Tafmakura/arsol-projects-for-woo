@@ -275,6 +275,51 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 
 /* === CONSOLIDATED PROPOSAL/QUOTATION CSS SYSTEM === */
 
+/* === QUOTATION BUILDER SECTION STYLING === */
+.arsol-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.arsol-section-header h3 {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.arsol-quotation-summary {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid #ddd;
+}
+
+.arsol-empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #666;
+    font-style: italic;
+    background: #f9f9f9;
+    border: 1px dashed #ccc;
+    border-radius: 4px;
+}
+
+.arsol-summary-table {
+    margin-top: 15px;
+}
+
+.arsol-summary-label {
+    font-weight: 600;
+    padding-right: 15px;
+}
+
+.arsol-summary-amount {
+    text-align: right;
+}
+
 /* === BASE CONTAINER STYLING === */
 .line-items-container {
     margin-bottom: 20px;
