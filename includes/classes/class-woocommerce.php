@@ -36,6 +36,24 @@ class Woocommerce {
         add_action('woocommerce_subscription_details_after_subscription_table', array($this, 'display_project_details'));
     }
 
+    /**
+     * Clean amount input by removing non-numeric characters except decimal points
+     * 
+     * This method standardizes amount cleaning across the plugin to ensure
+     * consistent handling of user input with commas, spaces, or other characters.
+     * 
+     * @param string|float|int $amount The amount to clean
+     * @return string The cleaned amount as a string
+     */
+    public static function clean_amount_input($amount) {
+        if (empty($amount) && $amount !== '0' && $amount !== 0) {
+            return '';
+        }
+        
+        // Convert to string and remove all non-numeric characters except decimal points
+        return preg_replace('/[^0-9.]/', '', (string) $amount);
+    }
+
     public function init() {
         // Add your initialization code here
     }

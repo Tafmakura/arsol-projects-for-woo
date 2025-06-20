@@ -64,7 +64,7 @@ class Frontend_Handler {
             // Save additional request meta
             if (!empty($budget)) {
                 // Remove formatting from budget amount (commas, etc.)
-                $amount = preg_replace('/[^\d.]/', '', $budget);
+                $amount = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($budget);
                 $currency = get_woocommerce_currency();
                 
                 if (!empty($amount)) {

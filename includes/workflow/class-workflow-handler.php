@@ -988,6 +988,10 @@ class Workflow_Handler {
     private function update_request_meta($post_id, $data) {
         if (isset($data['request_budget'])) {
             $amount = wc_clean(wp_unslash($data['request_budget']));
+            // Remove commas and other non-numeric characters except decimal point
+            $amount = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($amount);
+            // Convert to proper decimal format
+            $amount = wc_format_decimal($amount);
             $currency = get_woocommerce_currency();
             update_post_meta($post_id, '_arsol_pfw_request_budget', ['amount' => $amount, 'currency' => $currency]);
         }
