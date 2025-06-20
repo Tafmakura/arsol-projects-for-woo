@@ -71,36 +71,36 @@ class Woocommerce_Biller {
             throw new Exception(__('Failed to retrieve proposal data.', 'arsol-pfw'));
         }
         
-            // Step 1: Always create parent order with ALL line items
-            $order_result = $this->create_parent_order($proposal_data, $project_id);
-            if (!$order_result['success']) {
+        // Step 1: Always create parent order with ALL line items
+        $order_result = $this->create_parent_order($proposal_data, $project_id);
+        if (!$order_result['success']) {
             throw new Exception($order_result['message']);
-            }
-            
-            $order_id = $order_result['order_id'];
-            $result_message = sprintf(__('Order #%s created successfully.', 'arsol-pfw'), $order_id);
-            
-            // Step 2: Check for recurring items and create subscription if needed
-            $has_recurring = $this->has_recurring_items($proposal_data['line_items']);
-            $subscription_id = null;
-            
-            if ($has_recurring) {
-                $subscription_result = $this->create_subscription($proposal_data, $order_id, $project_id);
-                if ($subscription_result['success']) {
-                    $subscription_id = $subscription_result['subscription_id'];
-                    $result_message .= sprintf(__(' Subscription #%s created successfully.', 'arsol-pfw'), $subscription_id);
-                } else {
+        }
+        
+        $order_id = $order_result['order_id'];
+        $result_message = sprintf(__('Order #%s created successfully.', 'arsol-pfw'), $order_id);
+        
+        // Step 2: Check for recurring items and create subscription if needed
+        $has_recurring = $this->has_recurring_items($proposal_data['line_items']);
+        $subscription_id = null;
+        
+        if ($has_recurring) {
+            $subscription_result = $this->create_subscription($proposal_data, $order_id, $project_id);
+            if ($subscription_result['success']) {
+                $subscription_id = $subscription_result['subscription_id'];
+                $result_message .= sprintf(__(' Subscription #%s created successfully.', 'arsol-pfw'), $subscription_id);
+            } else {
                 // Subscription creation failed - throw exception to trigger rollback
                 throw new Exception(sprintf(__('Subscription creation failed: %s', 'arsol-pfw'), $subscription_result['message']));
             }
-            }
-            
-            return array(
-                'success' => true,
-                'message' => $result_message,
-                'order_id' => $order_id,
-                'subscription_id' => $subscription_id
-            );
+        }
+        
+        return array(
+            'success' => true,
+            'message' => $result_message,
+            'order_id' => $order_id,
+            'subscription_id' => $subscription_id
+        );
     }
     
     /**

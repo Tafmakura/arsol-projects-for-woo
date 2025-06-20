@@ -490,7 +490,7 @@ class Workflow_Handler {
 
         // Get proposal type
         $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
-        
+
         $created_order_ids = array();
         $conversion_successful = true;
         $error_message = '';
@@ -526,8 +526,8 @@ class Workflow_Handler {
                     sprintf('Successfully created orders for project #%d: %s', $new_project_id, $result['message']));
                 
             } else {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
-                sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $cost_proposal_type));
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
+                    sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $cost_proposal_type));
             }
             
         } catch (Exception $e) {
