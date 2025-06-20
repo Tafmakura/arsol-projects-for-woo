@@ -15,7 +15,7 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
 ?>
 
 <!-- Cost Proposal Type Guidance -->
-<div class="arsol-pfw-show-if-proposal-cost-type-is-none" style="display: none;">
+<div class="arsol-pfw-show-if-proposal-costing-type-is-none" style="display: none;">
     <div class="cost-proposal-guidance">
         <h4><?php _e('💡 Cost Proposal Type Guidance', 'arsol-pfw'); ?></h4>
         <p><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php _e('Use when providing estimated costs or budget ranges. Good for initial planning and rough estimates.', 'arsol-pfw'); ?></p>
@@ -24,7 +24,7 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
 </div>
 
 <!-- Budget Summary Template -->
-<div id="budget-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-budget" style="display: none;">
+<div id="budget-summary-template" class="arsol-pfw-show-if-proposal-costing-type-is-budget" style="display: none;">
     <h4><?php _e('📊 Budget Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for budget -->
@@ -50,7 +50,7 @@ $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true
 </div>
 
 <!-- Quotation Summary Template -->
-<div id="quotation-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-quotation" style="display: none;">
+<div id="quotation-summary-template" class="arsol-pfw-show-if-proposal-costing-type-is-quotation" style="display: none;">
     <h4><?php _e('📋 Quotation Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for quotation -->
