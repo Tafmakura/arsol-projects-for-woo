@@ -138,7 +138,7 @@ class Projects {
             if (!empty($_GET['project_lead'])) {
                 $meta_query = $query->get('meta_query') ?: [];
                 $meta_query[] = [
-                    'key' => '_project_lead',
+                    'key' => '_arsol_pfw_project_lead',
                     'value' => sanitize_text_field($_GET['project_lead']),
                     'compare' => '='
                 ];

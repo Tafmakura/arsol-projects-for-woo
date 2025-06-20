@@ -137,7 +137,7 @@ class Workflow_Handler {
         // Create proposal args with filter for customization
         $proposal_args = array(
             'post_title'   => $request_post->post_title,
-            'post_content' => $request_post->post_content,
+            'post_content' => '', // ✅ CLEAN CONTENT FLOW: Empty slate for proposal writing
             'post_status'  => 'publish',
             'post_type'    => 'arsol-pfw-proposal',
             'post_author'  => $request_post->post_author,
@@ -220,10 +220,10 @@ class Workflow_Handler {
 
         // Copy relevant meta data from request to proposal, renaming keys as needed
         $meta_to_copy = array(
-            '_request_budget'         => '_arsol_pfw_proposal_budget_onetime_amount',
-            '_request_start_date'     => '_arsol_pfw_proposal_start_date',
-            '_request_delivery_date'  => '_arsol_pfw_proposal_delivery_date',
-            '_request_attachments'    => '_arsol_pfw_proposal_attachments',
+            '_arsol_pfw_request_budget'         => '_arsol_pfw_proposal_budget_onetime_amount',
+            '_arsol_pfw_request_start_date'     => '_arsol_pfw_proposal_start_date',
+            '_arsol_pfw_request_delivery_date'  => '_arsol_pfw_proposal_delivery_date',
+            '_arsol_pfw_request_attachments'    => '_arsol_pfw_proposal_attachments',
         );
 
         /**
@@ -242,8 +242,7 @@ class Workflow_Handler {
             if ($value) {
                 // Copy to the main editable proposal field
                 update_post_meta($new_proposal_id, $proposal_key, $value);
-                // Also copy to a new field to preserve the original request data for display
-                update_post_meta($new_proposal_id, '_original' . $request_key, $value);
+                // Note: Original request data is already stored in _arsol_pfw_proposal_request_* fields above
             }
         }
 
@@ -470,16 +469,61 @@ class Workflow_Handler {
          */
         do_action('arsol_before_project_conversion_metadata_copy', $new_project_id, $proposal_id, $conversion_data);
 
-        // Copy and rename relevant meta data from proposal to project
-        $meta_to_copy = array(
-            '_arsol_pfw_proposal_budget_onetime_amount'           => '_project_budget',
-            '_arsol_pfw_proposal_budget_recurring_amount' => '_project_recurring_budget',
-            '_arsol_pfw_proposal_budget_recurring_amount_billing_interval' => '_project_billing_interval',
-            '_arsol_pfw_proposal_budget_recurring_amount_billing_period'   => '_project_billing_period',
-            '_arsol_pfw_proposal_budget_recurring_billing_start_date' => '_project_recurring_start_date',
-            '_arsol_pfw_proposal_start_date'       => '_arsol_pfw_proposal_start_date', // Keep for display
-            '_arsol_pfw_proposal_delivery_date'    => '_project_due_date', // Correctly map to due date
+        // ✅ PHASE 2: COMPREHENSIVE META KEY RESTRUCTURING
+        
+        // 1. Preserve proposal content in project meta
+        update_post_meta($new_project_id, '_arsol_pfw_project_proposal_details', $proposal_post->post_content);
+        
+        // 2. Rename request data with project context
+        $request_meta_mapping = array(
+            '_arsol_pfw_proposal_request_details' => '_arsol_pfw_project_request_details',
+            '_arsol_pfw_proposal_request_title' => '_arsol_pfw_project_request_title',
+            '_arsol_pfw_proposal_request_date' => '_arsol_pfw_project_request_date',
+            '_arsol_pfw_proposal_request_budget' => '_arsol_pfw_project_request_budget',
+            '_arsol_pfw_proposal_request_start_date' => '_arsol_pfw_project_request_start_date',
+            '_arsol_pfw_proposal_request_delivery_date' => '_arsol_pfw_project_request_delivery_date',
+            '_arsol_pfw_proposal_request_attachments' => '_arsol_pfw_project_request_attachments',
         );
+        
+        // 3. Rename proposal data with project context
+        $proposal_meta_mapping = array(
+            '_arsol_pfw_proposal_start_date' => '_arsol_pfw_project_proposal_start_date',
+            '_arsol_pfw_proposal_delivery_date' => '_arsol_pfw_project_proposal_delivery_date',
+            '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
+            '_arsol_pfw_proposal_timeline' => '_arsol_pfw_project_proposal_timeline',
+            '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
+        );
+        
+        // 4. Get proposal type for type-aware handling
+        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+        
+        // 5. Type-aware meta mapping
+        $type_specific_mapping = array();
+        
+        if ($cost_proposal_type === 'budget') {
+            // Budget proposals: Preserve ALL budget details
+            $type_specific_mapping = array(
+                '_arsol_pfw_proposal_budget_onetime_amount' => '_arsol_pfw_project_proposal_budget_onetime_amount',
+                '_arsol_pfw_proposal_budget_onetime_amount_details' => '_arsol_pfw_project_proposal_budget_onetime_amount_details',
+                '_arsol_pfw_proposal_budget_recurring_amount' => '_arsol_pfw_project_proposal_budget_recurring_amount',
+                '_arsol_pfw_proposal_budget_recurring_amount_details' => '_arsol_pfw_project_proposal_budget_recurring_amount_details',
+                '_arsol_pfw_proposal_budget_recurring_amount_billing_interval' => '_arsol_pfw_project_proposal_budget_recurring_amount_billing_interval',
+                '_arsol_pfw_proposal_budget_recurring_amount_billing_period' => '_arsol_pfw_project_proposal_budget_recurring_amount_billing_period',
+                '_arsol_pfw_proposal_budget_recurring_billing_start_date' => '_arsol_pfw_project_proposal_budget_recurring_billing_start_date',
+            );
+        } elseif ($cost_proposal_type === 'quotation') {
+            // Quotation proposals: Preserve quotation details with key totals
+            $type_specific_mapping = array(
+                '_arsol_pfw_proposal_quotation_line_items' => '_arsol_pfw_project_proposal_quotation_line_items',
+                '_arsol_pfw_proposal_quotation_onetime_total' => '_arsol_pfw_project_proposal_quotation_onetime_total',
+                '_arsol_pfw_proposal_quotation_recurring_totals_grouped' => '_arsol_pfw_project_proposal_quotation_recurring_average_total',
+                '_arsol_pfw_proposal_quotation_currency' => '_arsol_pfw_project_proposal_quotation_currency',
+                '_arsol_pfw_proposal_quotation_currency_symbol' => '_arsol_pfw_project_proposal_quotation_currency_symbol',
+            );
+        }
+        
+        // 6. Combine all mappings
+        $meta_to_copy = array_merge($request_meta_mapping, $proposal_meta_mapping, $type_specific_mapping);
 
         /**
          * Filter: arsol_project_conversion_meta_mapping
@@ -488,10 +532,12 @@ class Workflow_Handler {
          * @param array $meta_to_copy Array of proposal_key => project_key mappings
          * @param int $project_id The new project ID
          * @param int $proposal_id The original proposal ID
+         * @param string $cost_proposal_type The proposal type (budget/quotation/none)
          * @param array $conversion_data Conversion context data
          */
-        $meta_to_copy = apply_filters('arsol_project_conversion_meta_mapping', $meta_to_copy, $new_project_id, $proposal_id, $conversion_data);
+        $meta_to_copy = apply_filters('arsol_project_conversion_meta_mapping', $meta_to_copy, $new_project_id, $proposal_id, $cost_proposal_type, $conversion_data);
 
+        // 7. Copy all meta data
         foreach ($meta_to_copy as $proposal_key => $project_key) {
             $value = get_post_meta($proposal_id, $proposal_key, true);
             if ($value) {
@@ -503,8 +549,8 @@ class Workflow_Handler {
         update_post_meta($new_project_id, '_arsol_pfw_project_original_proposal_id', $proposal_id);
 
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
-            sprintf('Metadata copied from proposal #%d to project #%d: %s', 
-                $proposal_id, $new_project_id, implode(', ', array_keys($meta_to_copy))));
+            sprintf('Metadata copied from proposal #%d to project #%d (type: %s): %s', 
+                $proposal_id, $new_project_id, $cost_proposal_type, implode(', ', array_keys($meta_to_copy))));
 
         /**
          * Hook: arsol_after_project_conversion_metadata_copied
@@ -513,9 +559,10 @@ class Workflow_Handler {
          * @param int $project_id The new project ID
          * @param int $proposal_id The original proposal ID
          * @param array $meta_to_copy The metadata that was copied
+         * @param string $cost_proposal_type The proposal type
          * @param array $conversion_data Conversion context data
          */
-        do_action('arsol_after_project_conversion_metadata_copied', $new_project_id, $proposal_id, $meta_to_copy, $conversion_data);
+        do_action('arsol_after_project_conversion_metadata_copied', $new_project_id, $proposal_id, $meta_to_copy, $cost_proposal_type, $conversion_data);
 
         /**
          * Hook: arsol_before_project_conversion_order_creation
@@ -527,9 +574,7 @@ class Workflow_Handler {
          */
         do_action('arsol_before_project_conversion_order_creation', $new_project_id, $proposal_id, $conversion_data);
 
-        // Get proposal type
-        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
-        
+        // Get proposal type (already retrieved above)
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
             sprintf('Starting billing operations for proposal #%d (type: %s) → project #%d', 
                 $proposal_id, $cost_proposal_type, $new_project_id));
@@ -555,15 +600,15 @@ class Workflow_Handler {
                 // Store created order IDs for potential rollback
                 if (!empty($result['order_id'])) {
                     $created_order_ids[] = $result['order_id'];
-                    update_post_meta($new_project_id, '_project_woocommerce_order_id', $result['order_id']);
+                    update_post_meta($new_project_id, '_arsol_pfw_project_woocommerce_order_id', $result['order_id']);
                 }
                 
                 if (!empty($result['subscription_id'])) {
                     $created_order_ids[] = $result['subscription_id'];
-                    update_post_meta($new_project_id, '_project_woocommerce_subscription_id', $result['subscription_id']);
+                    update_post_meta($new_project_id, '_arsol_pfw_project_woocommerce_subscription_id', $result['subscription_id']);
                 }
                 
-                update_post_meta($new_project_id, '_project_order_creation_note', $result['message']);
+                update_post_meta($new_project_id, '_arsol_pfw_project_order_creation_note', $result['message']);
                 
                 \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info',
                     sprintf('Successfully created orders for project #%d: %s', $new_project_id, $result['message']));
@@ -581,7 +626,7 @@ class Workflow_Handler {
                 sprintf('Order creation failed for project #%d: %s', $new_project_id, $error_message));
             
             // Store error for debugging
-            update_post_meta($new_project_id, '_project_order_creation_error', $error_message);
+            update_post_meta($new_project_id, '_arsol_pfw_project_order_creation_error', $error_message);
         }
 
         /**
@@ -941,13 +986,13 @@ class Workflow_Handler {
         if (isset($data['request_budget'])) {
             $amount = wc_clean(wp_unslash($data['request_budget']));
             $currency = get_woocommerce_currency();
-            update_post_meta($post_id, '_request_budget', ['amount' => $amount, 'currency' => $currency]);
+            update_post_meta($post_id, '_arsol_pfw_request_budget', ['amount' => $amount, 'currency' => $currency]);
         }
         if (isset($data['request_start_date'])) {
-            update_post_meta($post_id, '_request_start_date', sanitize_text_field($data['request_start_date']));
+            update_post_meta($post_id, '_arsol_pfw_request_start_date', sanitize_text_field($data['request_start_date']));
         }
         if (isset($data['request_delivery_date'])) {
-            update_post_meta($post_id, '_request_delivery_date', sanitize_text_field($data['request_delivery_date']));
+            update_post_meta($post_id, '_arsol_pfw_request_delivery_date', sanitize_text_field($data['request_delivery_date']));
         }
     }
 

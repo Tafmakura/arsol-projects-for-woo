@@ -19,8 +19,8 @@ if (!isset($project_id)) {
 }
 
 // Get project meta data
-$budget = get_post_meta($project_id, '_project_budget', true);
-$start_date = get_post_meta($project_id, '_project_start_date', true);
+$budget = get_post_meta($project_id, '_arsol_pfw_project_budget', true);
+$start_date = get_post_meta($project_id, '_arsol_pfw_project_start_date', true);
 $delivery_date = get_post_meta($project_id, '_project_delivery_date', true);
 $status_terms = wp_get_post_terms($project_id, 'arsol-project-status', array('fields' => 'names'));
 $status = !empty($status_terms) ? $status_terms[0] : __('N/A', 'arsol-pfw');

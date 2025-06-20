@@ -81,27 +81,32 @@ class Project {
 
             // Set start date on the first transition to 'in-progress'
             if ($new_status === 'in-progress' && $old_status !== 'in-progress') {
-                if (empty(get_post_meta($post_id, '_project_start_date', true))) {
-                    update_post_meta($post_id, '_project_start_date', current_time('mysql'));
+                if (empty(get_post_meta($post_id, '_arsol_pfw_project_start_date', true))) {
+                    update_post_meta($post_id, '_arsol_pfw_project_start_date', current_time('mysql'));
                 }
             }
             
             wp_set_object_terms($post_id, $new_status, 'arsol-project-status', false);
         }
 
-        // Save project lead (from header column)
+        // Set default start date if not already set
+        if (empty(get_post_meta($post_id, '_arsol_pfw_project_start_date', true))) {
+            update_post_meta($post_id, '_arsol_pfw_project_start_date', current_time('mysql'));
+        }
+
+        // Save project lead
         if (isset($_POST['project_lead'])) {
-            update_post_meta($post_id, '_project_lead', sanitize_text_field($_POST['project_lead']));
+            update_post_meta($post_id, '_arsol_pfw_project_lead', sanitize_text_field($_POST['project_lead']));
         }
 
-        // Save project start date (from header column)
+        // Save project start date
         if (isset($_POST['project_start_date'])) {
-            update_post_meta($post_id, '_project_start_date', sanitize_text_field($_POST['project_start_date']));
+            update_post_meta($post_id, '_arsol_pfw_project_start_date', sanitize_text_field($_POST['project_start_date']));
         }
 
-        // Save due date
+        // Save project due date
         if (isset($_POST['project_due_date'])) {
-            update_post_meta($post_id, '_project_due_date', sanitize_text_field($_POST['project_due_date']));
+            update_post_meta($post_id, '_arsol_pfw_project_due_date', sanitize_text_field($_POST['project_due_date']));
         }
     }
 }

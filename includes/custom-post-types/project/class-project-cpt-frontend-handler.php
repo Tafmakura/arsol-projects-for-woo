@@ -184,11 +184,11 @@ class Frontend_Handler {
                     'amount'   => $amount,
                     'currency' => $currency
                 );
-                update_post_meta($project_id, '_project_budget', $budget_data);
+                update_post_meta($project_id, '_arsol_pfw_project_budget', $budget_data);
             }
         }
         if (!empty($start_date)) {
-            update_post_meta($project_id, '_project_start_date', $start_date);
+            update_post_meta($project_id, '_arsol_pfw_project_start_date', $start_date);
         }
         if (!empty($delivery_date)) {
             update_post_meta($project_id, '_project_delivery_date', $delivery_date);

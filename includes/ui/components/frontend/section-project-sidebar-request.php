@@ -52,9 +52,9 @@ $status_terms = wp_get_post_terms($request_id, 'arsol-request-status', ['fields'
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
 
 // Get request metadata
-$request_budget = get_post_meta($request_id, '_request_budget', true);
-$start_date = get_post_meta($request_id, '_request_start_date', true);
-$delivery_date = get_post_meta($request_id, '_request_delivery_date', true);
+$request_budget = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
+$start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
+$delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', true);
 ?>
 
 <?php if ($request_budget || $start_date || $delivery_date) : ?>

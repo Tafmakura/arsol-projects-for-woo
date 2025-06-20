@@ -72,14 +72,14 @@ class Frontend_Handler {
                         'amount'   => $amount,
                         'currency' => $currency
                     );
-                    update_post_meta($request_id, '_request_budget', $budget_data);
+                    update_post_meta($request_id, '_arsol_pfw_request_budget', $budget_data);
                 }
             }
             if (!empty($start_date)) {
-                update_post_meta($request_id, '_request_start_date', $start_date);
+                update_post_meta($request_id, '_arsol_pfw_request_start_date', $start_date);
             }
             if (!empty($delivery_date)) {
-                update_post_meta($request_id, '_request_delivery_date', $delivery_date);
+                update_post_meta($request_id, '_arsol_pfw_request_delivery_date', $delivery_date);
             }
             
             // Redirect to the specific request view

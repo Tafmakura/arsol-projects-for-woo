@@ -51,7 +51,7 @@ class Requests {
                 break;
                 
             case 'request_budget':
-                $budget = get_post_meta($post_id, '_request_budget', true);
+                $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
                 if ($budget) {
                     echo wc_price($budget);
                 }

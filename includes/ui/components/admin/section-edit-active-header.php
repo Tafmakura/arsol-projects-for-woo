@@ -26,9 +26,9 @@ $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
 $project_status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
 $project_status = !empty($project_status_terms) ? $project_status_terms[0] : 'not-started';
-$project_lead = get_post_meta($project_id, '_project_lead', true);
-$start_date = get_post_meta($project_id, '_project_start_date', true);
-$due_date = get_post_meta($project_id, '_project_due_date', true);
+$project_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
+$start_date = get_post_meta($project_id, '_arsol_pfw_project_start_date', true);
+$due_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
 
 // Get all project statuses
 $all_statuses = get_terms(array(
@@ -44,10 +44,10 @@ $original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_original_
 // Check for proposal data first (priority) - must have actual displayable data
 if ($original_proposal_id) {
     // Check if there's any actual proposal data to show (excluding expiration date)
-    $budget_data = get_post_meta($project_id, '_project_budget', true);
-    $recurring_budget_data = get_post_meta($project_id, '_project_recurring_budget', true);
+    $budget_data = get_post_meta($project_id, '_arsol_pfw_project_budget', true);
+    $recurring_budget_data = get_post_meta($project_id, '_arsol_pfw_project_recurring_budget', true);
     $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_start_date', true);
-    $proposed_delivery_date = get_post_meta($project_id, '_project_due_date', true);
+    $proposed_delivery_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
     
     if ($budget_data || $recurring_budget_data || $proposed_start_date || $proposed_delivery_date) {
         $has_proposal_data = true;

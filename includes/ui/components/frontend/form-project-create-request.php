@@ -16,10 +16,10 @@ $is_edit = isset($is_edit) && $is_edit;
 if ($is_edit) {
     $title = $post->post_title;
     $content = $post->post_content;
-    $budget_data = get_post_meta($post->ID, '_request_budget', true);
+    $budget_data = get_post_meta($post->ID, '_arsol_pfw_request_budget', true);
     $budget = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
-    $start_date = get_post_meta($post->ID, '_request_start_date', true);
-    $delivery_date = get_post_meta($post->ID, '_request_delivery_date', true);
+    $start_date = get_post_meta($post->ID, '_arsol_pfw_request_start_date', true);
+    $delivery_date = get_post_meta($post->ID, '_arsol_pfw_request_delivery_date', true);
 } else {
     $title = '';
     $content = '';
