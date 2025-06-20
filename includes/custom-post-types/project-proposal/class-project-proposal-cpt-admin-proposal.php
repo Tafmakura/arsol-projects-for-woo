@@ -185,11 +185,23 @@ class Proposal {
         if ($cost_proposal_type === 'budget') {
             // Sanitize and save the budget amount
             if (isset($_POST['arsol_pfw_proposal_budget_onetime_amount'])) {
-                $budget_amount = wc_format_decimal(sanitize_text_field($_POST['arsol_pfw_proposal_budget_onetime_amount']));
-                $budget_data = array(
-                    'amount' => $budget_amount,
-                    'currency' => $currency
-                );
+                $budget_input = $_POST['arsol_pfw_proposal_budget_onetime_amount'];
+                
+                // Handle both form input (string) and conversion data (array)
+                if (is_array($budget_input) && isset($budget_input['amount'])) {
+                    // Data is already in correct format from conversion
+                    $budget_data = array(
+                        'amount' => $budget_input['amount'],
+                        'currency' => isset($budget_input['currency']) ? $budget_input['currency'] : $currency
+                    );
+                } else {
+                    // Data is from form input, needs processing
+                    $budget_amount = wc_format_decimal(sanitize_text_field($budget_input));
+                    $budget_data = array(
+                        'amount' => $budget_amount,
+                        'currency' => $currency
+                    );
+                }
                 update_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', $budget_data);
             }
             
@@ -199,32 +211,55 @@ class Proposal {
             }
 
             // Sanitize and save the recurring budget amount
-        if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount'])) {
-                $recurring_budget_amount = wc_format_decimal(sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount']));
-                $recurring_budget_data = array(
-                    'amount' => $recurring_budget_amount,
-                    'currency' => $currency
-                );
+            if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount'])) {
+                $recurring_budget_input = $_POST['arsol_pfw_proposal_budget_recurring_amount'];
+                
+                // Handle both form input (string) and conversion data (array)
+                if (is_array($recurring_budget_input) && isset($recurring_budget_input['amount'])) {
+                    // Data is already in correct format from conversion
+                    $recurring_budget_data = array(
+                        'amount' => $recurring_budget_input['amount'],
+                        'currency' => isset($recurring_budget_input['currency']) ? $recurring_budget_input['currency'] : $currency
+                    );
+                } else {
+                    // Data is from form input, needs processing
+                    $recurring_budget_amount = wc_format_decimal(sanitize_text_field($recurring_budget_input));
+                    $recurring_budget_data = array(
+                        'amount' => $recurring_budget_amount,
+                        'currency' => $currency
+                    );
+                }
                 update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount', $recurring_budget_data);
             } else {
                 delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount');
-        }
+            }
         
             // Save recurring budget details
             if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_details'])) {
                 update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_details', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_details']));
-        }
+            }
 
             // Save billing cycle if recurring budget is set
-            if (!empty($_POST['arsol_pfw_proposal_budget_recurring_amount']) && $_POST['arsol_pfw_proposal_budget_recurring_amount'] > 0) {
-        if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_interval'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_interval', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_interval']));
-        }
-        if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_period'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_period', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_period']));
-        }
-        if (isset($_POST['arsol_pfw_proposal_budget_recurring_billing_start_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_start_date', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_billing_start_date']));
+            $recurring_budget_value = $_POST['arsol_pfw_proposal_budget_recurring_amount'] ?? null;
+            $has_recurring_budget = false;
+            
+            if ($recurring_budget_value) {
+                if (is_array($recurring_budget_value) && isset($recurring_budget_value['amount'])) {
+                    $has_recurring_budget = $recurring_budget_value['amount'] > 0;
+                } else {
+                    $has_recurring_budget = $recurring_budget_value > 0;
+                }
+            }
+            
+            if ($has_recurring_budget) {
+                if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_interval'])) {
+                    update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_interval', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_interval']));
+                }
+                if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_period'])) {
+                    update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_period', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_period']));
+                }
+                if (isset($_POST['arsol_pfw_proposal_budget_recurring_billing_start_date'])) {
+                    update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_start_date', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_billing_start_date']));
                 }
             } else {
                 // If there's no recurring budget, delete the meta
@@ -415,12 +450,27 @@ class Proposal {
         $errors = array();
         
         // Validate against POST data (what's being submitted) not existing meta data
-        $proposal_budget = isset($_POST['arsol_pfw_proposal_budget_onetime_amount']) ? sanitize_text_field($_POST['arsol_pfw_proposal_budget_onetime_amount']) : '';
-        $proposal_recurring_budget = isset($_POST['arsol_pfw_proposal_budget_recurring_amount']) ? sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount']) : '';
+        $proposal_budget = isset($_POST['arsol_pfw_proposal_budget_onetime_amount']) ? $_POST['arsol_pfw_proposal_budget_onetime_amount'] : '';
+        $proposal_recurring_budget = isset($_POST['arsol_pfw_proposal_budget_recurring_amount']) ? $_POST['arsol_pfw_proposal_budget_recurring_amount'] : '';
         
-        // Convert to numeric values for validation
-        $budget_amount = !empty($proposal_budget) ? floatval(wc_format_decimal($proposal_budget)) : 0;
-        $recurring_budget_amount = !empty($proposal_recurring_budget) ? floatval(wc_format_decimal($proposal_recurring_budget)) : 0;
+        // Convert to numeric values for validation, handling both string and array inputs
+        $budget_amount = 0;
+        if (!empty($proposal_budget)) {
+            if (is_array($proposal_budget) && isset($proposal_budget['amount'])) {
+                $budget_amount = floatval($proposal_budget['amount']);
+            } else {
+                $budget_amount = floatval(wc_format_decimal(sanitize_text_field($proposal_budget)));
+            }
+        }
+        
+        $recurring_budget_amount = 0;
+        if (!empty($proposal_recurring_budget)) {
+            if (is_array($proposal_recurring_budget) && isset($proposal_recurring_budget['amount'])) {
+                $recurring_budget_amount = floatval($proposal_recurring_budget['amount']);
+            } else {
+                $recurring_budget_amount = floatval(wc_format_decimal(sanitize_text_field($proposal_recurring_budget)));
+            }
+        }
         
         // At least one budget amount is required
         $has_budget = false;

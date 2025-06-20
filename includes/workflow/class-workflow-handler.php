@@ -246,6 +246,12 @@ class Workflow_Handler {
             }
         }
 
+        // Set the proposal costing type to 'budget' if budget data was copied
+        $request_budget = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
+        if (!empty($request_budget)) {
+            update_post_meta($new_proposal_id, '_arsol_pfw_proposal_costing_type', 'budget');
+        }
+
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_request_to_proposal_conversion('info', 
             sprintf('Metadata copied from request #%d to proposal #%d: %s', 
                 $request_id, $new_proposal_id, implode(', ', array_keys($meta_to_copy))));

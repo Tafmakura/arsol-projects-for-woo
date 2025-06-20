@@ -53,7 +53,13 @@ class Requests {
             case 'request_budget':
                 $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
                 if ($budget) {
-                    echo wc_price($budget);
+                    if (is_array($budget) && isset($budget['amount'])) {
+                        $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();
+                        echo wc_price($budget['amount'], array('currency' => $currency));
+                    } else {
+                        // Legacy support for simple numeric values
+                        echo wc_price($budget);
+                    }
                 }
                 break;
                 
