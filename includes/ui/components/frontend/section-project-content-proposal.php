@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Get proposal details
-$proposal_budget = get_post_meta($post->ID, '_proposal_budget', true);
+$proposal_budget = get_post_meta($post->ID, '_arsol_pfw_proposal_budget_onetime_amount', true);
 $proposal_timeline = get_post_meta($post->ID, '_proposal_timeline', true);
 $related_request_id = get_post_meta($post->ID, '_related_request_id', true);
 $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';

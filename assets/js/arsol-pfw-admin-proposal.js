@@ -15,7 +15,7 @@
             this.updateConditionalVisibility();
 
             // Toggle when dropdown changes
-            $('#cost_proposal_type').on('change', function() {
+            $('#arsol_pfw_proposal_costing_type').on('change', function() {
                 ArsolProposal.toggleCostProposalSections();
                 ArsolProposal.updateRequiredFields();
                 ArsolProposal.updateConditionalVisibility();
@@ -26,7 +26,7 @@
             });
 
             // Update required fields on input changes
-            $(document).on('input change', 'select[name="post_author_override"], input[name="proposal_budget"], input[name="proposal_budget_details"]', function() {
+            $(document).on('input change', 'select[name="post_author_override"], input[name="arsol_pfw_proposal_budget_onetime_amount"], input[name="arsol_pfw_proposal_budget_onetime_details"]', function() {
                 ArsolProposal.updateRequiredFields();
             });
 
@@ -37,7 +37,7 @@
         },
 
         toggleCostProposalSections: function() {
-            var selectedType = $('#cost_proposal_type').val();
+            var selectedType = $('#arsol_pfw_proposal_costing_type').val();
             
             $('#arsol_budget_estimates_metabox').hide();
             $('#arsol_proposal_quotation_metabox').hide();
@@ -53,15 +53,15 @@
         },
 
         updateRequiredFields: function() {
-            var proposalType = $('#cost_proposal_type').val();
+            var proposalType = $('#arsol_pfw_proposal_costing_type').val();
 
             // Customer is always required
             var customerSelect = $('select[name="post_author_override"]');
             customerSelect.attr('required', true);
 
             // Clear all field requirements first - budget fields
-            $('input[name="proposal_budget"]').removeAttr('required');
-            $('input[name="proposal_budget_details"]').removeAttr('required');
+            $('input[name="arsol_pfw_proposal_budget_onetime_amount"]').removeAttr('required');
+            $('input[name="arsol_pfw_proposal_budget_onetime_details"]').removeAttr('required');
             
             // Clear all field requirements first - quotation fields (existing and new line items)
             $('input[name*="line_items"][name*="price"]').removeAttr('required');
@@ -72,8 +72,8 @@
             // Type-specific required field management
             if (proposalType === 'budget') {
                 // Make budget fields required (these have hardcoded required in HTML)
-                $('input[name="proposal_budget"]').attr('required', true);
-                $('input[name="proposal_budget_details"]').attr('required', true);
+                $('input[name="arsol_pfw_proposal_budget_onetime_amount"]').attr('required', true);
+                $('input[name="arsol_pfw_proposal_budget_onetime_details"]').attr('required', true);
                 
                 // Ensure quotation fields are not required when budget is selected
                 $('input[name*="line_items"][name*="price"]').removeAttr('required');
@@ -83,8 +83,8 @@
                 
             } else if (proposalType === 'quotation') {
                 // Ensure budget fields are not required when quotation is selected
-                $('input[name="proposal_budget"]').removeAttr('required');
-                $('input[name="proposal_budget_details"]').removeAttr('required');
+                $('input[name="arsol_pfw_proposal_budget_onetime_amount"]').removeAttr('required');
+                $('input[name="arsol_pfw_proposal_budget_onetime_details"]').removeAttr('required');
                 
                 // Make quotation line item fields required (these have hardcoded required in templates)
                 $('input[name*="line_items"][name*="price"]').attr('required', true);
@@ -94,8 +94,8 @@
                 
             } else {
                 // For 'none' type, ensure no fields are required
-                $('input[name="proposal_budget"]').removeAttr('required');
-                $('input[name="proposal_budget_details"]').removeAttr('required');
+                $('input[name="arsol_pfw_proposal_budget_onetime_amount"]').removeAttr('required');
+                $('input[name="arsol_pfw_proposal_budget_onetime_details"]').removeAttr('required');
                 $('input[name*="line_items"][name*="price"]').removeAttr('required');
                 $('select[name*="line_items"][name*="product_id"]').removeAttr('required');
                 $('input[name*="line_items"][name*="description"]').removeAttr('required');
@@ -119,15 +119,15 @@
 
         // Clean up empty proposal sections (moved from cleanupEmptySections)
         cleanupEmptyProposalSections: function() {
-            var proposalType = $('#cost_proposal_type').val();
+            var proposalType = $('#arsol_pfw_proposal_costing_type').val();
             console.log('Cleanup check - current proposal type:', proposalType);
             
             // Only cleanup if the user is actually trying to save/submit
             // Don't cleanup if user is just exploring different proposal types
             if (proposalType === 'budget') {
-                var budgetAmountInput = $('input[name="proposal_budget"]');
-                var budgetDetailsInput = $('input[name="proposal_budget_details"]');
-                var recurringBudgetInput = $('input[name="proposal_recurring_budget"]');
+                var budgetAmountInput = $('input[name="arsol_pfw_proposal_budget_onetime_amount"]');
+                var budgetDetailsInput = $('input[name="arsol_pfw_proposal_budget_onetime_details"]');
+                var recurringBudgetInput = $('input[name="arsol_pfw_proposal_recurring_budget"]');
                 var budgetAmount = budgetAmountInput.val();
                 var budgetDetails = budgetDetailsInput.val();
                 var recurringBudget = recurringBudgetInput.val();
@@ -137,7 +137,7 @@
                 
                 if (!hasBudgetContent) {
                     // Auto-cleanup: set type to 'none' if completely empty on save
-                    $('#cost_proposal_type').val('none');
+                    $('#arsol_pfw_proposal_costing_type').val('none');
                     console.log('Pre-save cleanup: Empty budget section changed to "none"');
                 }
             } else if (proposalType === 'quotation') {
@@ -147,7 +147,7 @@
                 
                 if (!hasAnyLineItems) {
                     // Auto-cleanup: set type to 'none' if no line items exist on save
-                    $('#cost_proposal_type').val('none');
+                    $('#arsol_pfw_proposal_costing_type').val('none');
                     console.log('Pre-save cleanup: Empty quotation section changed to "none"');
                 } else {
                     console.log('Pre-save cleanup: Quotation has line items, keeping proposal type as quotation');
@@ -180,7 +180,7 @@
          * Update conditional visibility based on cost proposal type
          */
         updateConditionalVisibility: function() {
-            const costType = $('#cost_proposal_type').val();
+            const costType = $('#arsol_pfw_proposal_costing_type').val();
             
             // Hide all conditional elements with inline display:none
             $('.arsol-pfw-show-if-proposal-cost-type-is-none, .arsol-pfw-show-if-proposal-cost-type-is-budget, .arsol-pfw-show-if-proposal-cost-type-is-quotation').css('display', 'none');
@@ -738,7 +738,7 @@
         },
 
         updateQuotationFieldRequirements: function() {
-            var proposalType = $('#cost_proposal_type').val();
+            var proposalType = $('#arsol_pfw_proposal_costing_type').val();
             
             if (proposalType === 'quotation') {
                 // Make quotation line item fields required

@@ -220,10 +220,10 @@ class Workflow_Handler {
 
         // Copy relevant meta data from request to proposal, renaming keys as needed
         $meta_to_copy = array(
-            '_request_budget'         => '_proposal_budget',
-            '_request_start_date'     => '_proposal_start_date',
-            '_request_delivery_date'  => '_proposal_delivery_date',
-            '_request_attachments'    => '_proposal_attachments',
+            '_request_budget'         => '_arsol_pfw_proposal_request_budget',
+            '_request_start_date'     => '_arsol_pfw_proposal_request_start_date',
+            '_request_delivery_date'  => '_arsol_pfw_proposal_request_delivery_date',
+            '_request_attachments'    => '_arsol_pfw_proposal_attachments',
         );
 
         /**
@@ -472,13 +472,13 @@ class Workflow_Handler {
 
         // Copy and rename relevant meta data from proposal to project
         $meta_to_copy = array(
-            '_proposal_budget'           => '_project_budget',
-            '_proposal_recurring_budget' => '_project_recurring_budget',
-            '_proposal_billing_interval' => '_project_billing_interval',
-            '_proposal_billing_period'   => '_project_billing_period',
-            '_proposal_recurring_start_date' => '_project_recurring_start_date',
-            '_proposal_start_date'       => '_proposal_start_date', // Keep for display
-            '_proposal_delivery_date'    => '_project_due_date', // Correctly map to due date
+            '_arsol_pfw_proposal_budget_onetime_amount'           => '_project_budget',
+            '_arsol_pfw_proposal_budget_recurring_amount' => '_project_recurring_budget',
+            '_arsol_pfw_proposal_budget_recurring_billing_interval' => '_project_billing_interval',
+            '_arsol_pfw_proposal_budget_recurring_billing_period'   => '_project_billing_period',
+            '_arsol_pfw_proposal_budget_recurring_billing_start_date' => '_project_recurring_start_date',
+            '_arsol_pfw_proposal_start_date'       => '_proposal_start_date', // Keep for display
+            '_arsol_pfw_proposal_delivery_date'    => '_project_due_date', // Correctly map to due date
         );
 
         /**
@@ -528,7 +528,7 @@ class Workflow_Handler {
         do_action('arsol_before_project_conversion_order_creation', $new_project_id, $proposal_id, $conversion_data);
 
         // Get proposal type
-        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
         
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
             sprintf('Starting billing operations for proposal #%d (type: %s) → project #%d', 
@@ -985,13 +985,13 @@ class Workflow_Handler {
         $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
         
         // Check cost proposal type
-        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
         
         $debug_info['cost_proposal_type'] = $cost_proposal_type;
         $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
         
         // Check line items
-        $line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
+        $line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
         $debug_info['has_line_items'] = !empty($line_items);
         $debug_info['line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
         

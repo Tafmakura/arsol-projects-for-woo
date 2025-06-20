@@ -19,7 +19,7 @@ class Proposal_Quotation {
 
     public function add_quotation_meta_box() {
         add_meta_box(
-            'arsol_proposal_quotation_metabox',
+            'arsol_pfw_proposal_quotation_metabox',
             __('Quotation', 'arsol-pfw'),
             array($this, 'render_quotation_meta_box'),
             'arsol-pfw-proposal',
@@ -29,189 +29,27 @@ class Proposal_Quotation {
     }
 
     public function render_quotation_meta_box($post) {
-        wp_nonce_field('arsol_proposal_quotation_save', 'arsol_proposal_quotation_nonce');
+        wp_nonce_field('arsol_pfw_proposal_quotation_save', 'arsol_pfw_proposal_quotation_nonce');
         ?>
-        <div id="proposal_quotation_builder">
-            <!-- Products Section -->
-            <div class="line-items-container">
-                <h3><?php _e('Products & Services', 'arsol-pfw'); ?></h3>
-                <table class="widefat" id="product-line-items">
-                    <thead>
-                        <tr>
-                                                    <th class="arsol-description-column"><?php _e('Product', 'arsol-pfw'); ?></th>
-                        <th class="arsol-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
-                        <th class="arsol-quantity-column"><?php _e('Qty', 'arsol-pfw'); ?></th>
-                        <th class="arsol-price-column"><?php _e('Price', 'arsol-pfw'); ?></th>
-                        <th class="arsol-sale-price-column"><?php _e('Sale Price', 'arsol-pfw'); ?></th>
-                        <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                        <th class="arsol-actions-column"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="product-lines-body"></tbody>
-                </table>
-                <div class="section-footer">
-                    <div class="section-footer-left">
-                        <button type="button" class="button add-line-item add-product-button" data-type="product"><?php _e('+ Add Product', 'arsol-pfw'); ?></button>
-                    </div>
-                    <div class="section-footer-right">
-                        <div class="section-totals">
-                            <table>
-                                <tr>
-                                    <td class="total-amount"><strong><?php _e('Total:', 'arsol-pfw'); ?></strong> <span id="product-subtotal-display"><?php echo wc_price(0); ?></span></td>
-                                </tr>
-                                <tr>
-                                    <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="product-avg-monthly-display"><?php echo wc_price(0); ?></span></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <!-- Recurring Fees Section -->
-            <div class="line-items-container">
-                <h3><?php _e('Recurring Fees', 'arsol-pfw'); ?></h3>
-                <table class="widefat" id="recurring-fee-line-items">
-                    <thead>
-                        <tr>
-                                                    <th class="arsol-description-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
-                        <th class="arsol-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
-                        <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
-                        <th class="arsol-billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
-                        <th class="arsol-taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
-                        <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                        <th class="arsol-actions-column"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="recurring-fee-lines-body"></tbody>
-                </table>
-                <div class="section-footer">
-                    <div class="section-footer-left">
-                        <button type="button" class="button add-line-item add-recurring-fee-button" data-type="recurring-fee"><?php _e('+ Add Recurring Fee', 'arsol-pfw'); ?></button>
-                    </div>
-                    <div class="section-footer-right">
-                        <div class="section-totals">
-                            <table>
-                                <tr>
-                                    <td class="total-amount"><strong><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></strong> <span id="recurring-fee-avg-monthly-display"><?php echo wc_price(0); ?></span></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <!-- One-Time Fees Section -->
-            <div class="line-items-container">
-                <h3><?php _e('One-Time Fees', 'arsol-pfw'); ?></h3>
-                <table class="widefat" id="onetime-fee-line-items">
-                     <thead>
-                        <tr>
-                                                    <th class="arsol-description-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
-                        <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
-                        <th class="arsol-taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
-                        <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                        <th class="arsol-actions-column"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="onetime-fee-lines-body"></tbody>
-                </table>
-                <div class="section-footer">
-                    <div class="section-footer-left">
-                        <button type="button" class="button add-line-item add-onetime-fee-button" data-type="onetime-fee"><?php _e('+ Add Fee', 'arsol-pfw'); ?></button>
-                    </div>
-                    <div class="section-footer-right">
-                        <div class="section-totals">
-                            <table>
-                                <tr>
-                                    <td class="total-amount"><strong><?php _e('Total:', 'arsol-pfw'); ?></strong> <span id="onetime-fee-subtotal-display"><?php echo wc_price(0); ?></span></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <!-- Shipping Section -->
-            <div class="line-items-container">
-                <h3><?php _e('Shipping', 'arsol-pfw'); ?></h3>
-                <table class="widefat" id="shipping-lines-table">
-                     <thead>
-                        <tr>
-                                                    <th class="arsol-description-column"><?php _e('Description', 'arsol-pfw'); ?></th>
-                        <th class="arsol-shipping-class-column"><?php _e('Shipping Class', 'arsol-pfw'); ?></th>
-                        <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
-                        <th class="arsol-taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
-                        <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
-                        <th class="arsol-actions-column"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="shipping-lines-body"></tbody>
-                </table>
-                <div class="section-footer">
-                    <div class="section-footer-left">
-                        <button type="button" class="button add-line-item add-shipping-fee-button" data-type="shipping-fee"><?php _e('+ Add Shipping Fee', 'arsol-pfw'); ?></button>
-                    </div>
-                    <div class="section-footer-right">
-                        <div class="section-totals">
-                            <table>
-                                <tr>
-                                    <td class="total-amount"><strong><?php _e('Total:', 'arsol-pfw'); ?></strong> <span id="shipping-subtotal-display"><?php echo wc_price(0); ?></span></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <hr>
-            <!-- Totals Section -->
-            <div class="arsol-totals-container arsol-quotation-totals">
-                <div class="arsol-totals-left">
-                    <!-- Empty space for consistency -->
-                </div>
-                <div class="arsol-totals-right">
-                    <table class="arsol-totals-table">
-                        <tbody>
-                            <tr class="arsol-total-row">
-                                <td class="arsol-total-label"><?php _e('One-Time Total:', 'arsol-pfw'); ?></td>
-                                <td class="arsol-total-amount">
-                                    <span id="one-time-total-display"><?php echo wc_price(0); ?></span>
-                                </td>
-                            </tr>
-                            <tr class="arsol-total-row">
-                                <td class="arsol-total-label"><?php _e('Average Recurring Total:', 'arsol-pfw'); ?></td>
-                                <td class="arsol-total-amount">
-                                    <span id="average-monthly-total-display"><?php echo wc_price(0); ?></span>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
-                <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
-            </div>
-            <hr>
-            <!-- Notes Section -->
-            <div class="line-items-container">
-                <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
-                <p class="description"><?php _e('These notes will be displayed on the frontend proposal view.', 'arsol-pfw'); ?></p>
-                <?php
-                $notes_content = get_post_meta($post->ID, '_arsol_proposal_notes', true);
-                wp_editor(
-                    $notes_content,
-                    'arsol_proposal_notes',
-                    array(
-                        'textarea_name' => 'arsol_proposal_notes',
-                        'textarea_rows' => 8,
-                        'media_buttons' => false,
-                        'tinymce' => array(
-                            'toolbar1' => 'bold,italic,underline,bullist,numlist,link,unlink',
-                            'toolbar2' => ''
-                        ),
-                    )
-                );
-                ?>
-           </div>
+        <div id="arsol_pfw_proposal_quotation_builder">
+            <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-quotation-builder.php'; ?>
+        </div>
+        
+        <div class="arsol-pfw-proposal-notes-section">
+            <h3><?php _e('Proposal Notes', 'arsol-pfw'); ?></h3>
+            <?php
+            // Get current notes content
+            $notes_content = get_post_meta($post->ID, '_arsol_pfw_proposal_notes', true);
+            
+            wp_editor($notes_content, 'arsol_pfw_proposal_notes', array(
+                'textarea_name' => 'arsol_pfw_proposal_notes',
+                'media_buttons' => false,
+                'textarea_rows' => 5,
+                'teeny' => true,
+                'quicktags' => true
+            ));
+            ?>
+            <p class="description"><?php _e('These notes will be displayed on the frontend proposal view.', 'arsol-pfw'); ?></p>
         </div>
         <?php
     }
@@ -355,7 +193,7 @@ class Proposal_Quotation {
     }
 
     public function save_quotation_meta_box($post_id) {
-        if (!isset($_POST['arsol_proposal_quotation_nonce']) || !wp_verify_nonce($_POST['arsol_proposal_quotation_nonce'], 'arsol_proposal_quotation_save')) {
+        if (!isset($_POST['arsol_pfw_proposal_quotation_nonce']) || !wp_verify_nonce($_POST['arsol_pfw_proposal_quotation_nonce'], 'arsol_pfw_proposal_quotation_save')) {
             return;
         }
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
@@ -366,23 +204,23 @@ class Proposal_Quotation {
         }
         
         // Save Notes
-        if (isset($_POST['arsol_proposal_notes'])) {
-            update_post_meta($post_id, '_arsol_proposal_notes', wp_kses_post($_POST['arsol_proposal_notes']));
+        if (isset($_POST['arsol_pfw_proposal_notes'])) {
+            update_post_meta($post_id, '_arsol_pfw_proposal_notes', wp_kses_post($_POST['arsol_pfw_proposal_notes']));
         }
         
-        $cost_proposal_type = get_post_meta($post_id, '_cost_proposal_type', true);
+        $cost_proposal_type = get_post_meta($post_id, '_arsol_pfw_proposal_costing_type', true);
         if ($cost_proposal_type !== 'quotation') {
             return;
         }
 
         // Clean up budget data when saving quotation
-        delete_post_meta($post_id, '_proposal_budget');
-        delete_post_meta($post_id, '_proposal_budget_details');
-        delete_post_meta($post_id, '_proposal_recurring_budget');
-        delete_post_meta($post_id, '_proposal_recurring_budget_details');
-        delete_post_meta($post_id, '_proposal_billing_interval');
-        delete_post_meta($post_id, '_proposal_billing_period');
-        delete_post_meta($post_id, '_proposal_recurring_start_date');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_details');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_details');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_interval');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_period');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_start_date');
 
         $line_items = isset($_POST['line_items']) ? (array) $_POST['line_items'] : array();
         
@@ -397,17 +235,17 @@ class Proposal_Quotation {
             }
         }
         
-        update_post_meta($post_id, '_arsol_proposal_quotation_line_items', $sanitized_line_items);
-        update_post_meta($post_id, '_arsol_proposal_one_time_total', sanitize_text_field($_POST['line_items_one_time_total']));
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items', $sanitized_line_items);
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_onetime_total', sanitize_text_field($_POST['line_items_one_time_total']));
         
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
         $recurring_totals = json_decode($recurring_totals_json, true);
-        update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $recurring_totals);
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_recurring_totals', $recurring_totals);
         
         // Save currency ISO code as the primary source of truth
         $currency_code = get_woocommerce_currency();
-        update_post_meta($post_id, '_arsol_proposal_currency', $currency_code);
-        update_post_meta($post_id, '_arsol_proposal_currency_symbol', get_woocommerce_currency_symbol($currency_code));
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_currency', $currency_code);
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_currency_symbol', get_woocommerce_currency_symbol($currency_code));
     }
 
     /**
