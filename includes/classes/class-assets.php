@@ -191,7 +191,10 @@ class Assets {
                     global $post;
                     $line_items = array();
                     if ($post) {
-                        $line_items = get_post_meta($post->ID, '_arsol_proposal_quotation_line_items', true) ?: array();
+                        $line_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
+                        
+                        // Debug: Log what we're loading
+                        error_log('ARSOL DEBUG - Loading line items for proposal ' . $post->ID . ': ' . print_r($line_items, true));
                         
                         // Fetch product names and map saved prices for existing product line items
                         if (!empty($line_items['products'])) {
