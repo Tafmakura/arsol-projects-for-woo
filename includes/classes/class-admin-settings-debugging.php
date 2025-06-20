@@ -24,24 +24,25 @@ class Settings_Debugging {
     public function register_settings() {
         register_setting('arsol_pfw_debug_options', 'arsol_pfw_debug_options');
 
-        // Debugging Section
+        // WooCommerce Logs Section - single section for all debug options
         add_settings_section(
-            'arsol_projects_debugging_section',
-            __('Debug Logging Options', 'arsol-pfw'),
-            array($this, 'render_debugging_description'),
+            'arsol_projects_woocommerce_logs_section',
+            __('WooCommerce Logs', 'arsol-pfw'),
+            array($this, 'render_woocommerce_logs_description'),
             'arsol_projects_debugging_settings'
         );
 
-        // Add debug option checkboxes
+        // Add all debug option checkboxes under WooCommerce Logs header
         if (class_exists('Arsol_Projects_For_Woo\Woocommerce_Logs')) {
             $debug_options = Woocommerce_Logs::get_available_debug_options();
+            
             foreach ($debug_options as $option_key => $option_label) {
                 add_settings_field(
                     $option_key,
                     $option_label,
                     array($this, 'render_debug_checkbox'),
                     'arsol_projects_debugging_settings',
-                    'arsol_projects_debugging_section',
+                    'arsol_projects_woocommerce_logs_section',
                     [
                         'option_key' => $option_key,
                         'label' => $option_label
@@ -51,8 +52,9 @@ class Settings_Debugging {
         }
     }
 
-    public function render_debugging_description() {
-        echo '<p>' . esc_html__('Enable debug logging for different components to help troubleshoot issues. Logs can be found', 'arsol-pfw') . ' <a href="' . esc_url(admin_url('admin.php?page=wc-status&tab=logs')) . '" target="_blank">' . esc_html__('here', 'arsol-pfw') . '</a>.</p>';
+    public function render_woocommerce_logs_description() {
+        echo '<p>' . esc_html__('Enable debug logging for different components to help troubleshoot issues.', 'arsol-pfw') . '</p>';
+        echo '<p>' . esc_html__('Logs can be found', 'arsol-pfw') . ' <a href="' . esc_url(admin_url('admin.php?page=wc-status&tab=logs')) . '" target="_blank">' . esc_html__('here', 'arsol-pfw') . '</a>.</p>';
         echo '<p><strong>' . esc_html__('Note:', 'arsol-pfw') . '</strong> ' . esc_html__('Only enable logging when needed as it can generate large log files over time.', 'arsol-pfw') . '</p>';
     }
 
