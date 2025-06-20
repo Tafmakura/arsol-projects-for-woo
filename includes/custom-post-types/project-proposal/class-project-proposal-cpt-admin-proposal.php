@@ -135,7 +135,7 @@ class Proposal {
         }
         
         // It's safe for us to save the data now.
-        $cost_proposal_type = isset($_POST['arsol_pfw_proposal_costing_type']) ? sanitize_text_field($_POST['arsol_pfw_proposal_costing_type']) : 'none';
+        $cost_proposal_type = isset($_POST['cost_proposal_type']) ? sanitize_text_field($_POST['cost_proposal_type']) : 'none';
         
         // Store post ID for error display and validate data
         $this->post_id_being_saved = $post_id;
@@ -169,7 +169,14 @@ class Proposal {
         // Save all meta data normally (no temporary data needed)
         update_post_meta($post_id, '_arsol_pfw_proposal_costing_type', $cost_proposal_type);
 
-
+        // Save secondary status
+        if (isset($_POST['proposal_secondary_status'])) {
+            $secondary_status = sanitize_text_field($_POST['proposal_secondary_status']);
+            // Validate the value is one of the allowed options
+            if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
+                update_post_meta($post_id, '_arsol_pfw_proposal_secondary_status', $secondary_status);
+            }
+        }
 
         // Get currency
         $currency = get_woocommerce_currency();

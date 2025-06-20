@@ -127,7 +127,7 @@
             if (proposalType === 'budget') {
                 var budgetAmountInput = $('input[name="arsol_pfw_proposal_budget_onetime_amount"]');
                 var budgetDetailsInput = $('input[name="arsol_pfw_proposal_budget_onetime_details"]');
-                var recurringBudgetInput = $('input[name="arsol_pfw_proposal_budget_recurring_amount"]');
+                var recurringBudgetInput = $('input[name="arsol_pfw_proposal_recurring_budget"]');
                 var budgetAmount = budgetAmountInput.val();
                 var budgetDetails = budgetDetailsInput.val();
                 var recurringBudget = recurringBudgetInput.val();
@@ -272,7 +272,7 @@
             
             if (hasRecurring) {
                 // Add start date if available
-                var startDate = $('.start-date-input').val();
+                var startDate = $('.recurring-budget-start-date').val();
                 if (startDate) {
                     var formattedDate = new Date(startDate).toLocaleDateString();
                     $('#summary-budget-start-date').text(' (starts ' + formattedDate + ')');
