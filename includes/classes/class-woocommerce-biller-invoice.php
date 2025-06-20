@@ -28,8 +28,8 @@ class Woocommerce_Biller {
      * Initialize hooks
      */
     private function init_hooks() {
-        // Hook into the proposal-to-project conversion workflow
-        add_action('arsol_proposal_converted_to_project', array($this, 'handle_proposal_conversion'), 10, 2);
+        // Note: Legacy hook removed in favor of direct exception-throwing calls
+        // The conversion is now handled directly in the workflow with proper try-catch
     }
     
     /**
@@ -41,57 +41,7 @@ class Woocommerce_Biller {
         }
     }
     
-    /**
-     * Handle proposal conversion to project
-     * 
-     * This method is automatically called when a proposal is converted to a project.
-     * It creates WooCommerce orders and subscriptions based on the proposal's line items.
-     * 
-     * @param int $project_id The newly created project ID
-     * @param int $proposal_id The original proposal ID
-     */
-    public function handle_proposal_conversion($project_id, $proposal_id) {
-        try {
-            // Log the conversion attempt
-            if (function_exists('wc_get_logger')) {
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
-                    sprintf('Starting order creation for project #%d from proposal #%d', $project_id, $proposal_id));
-            }
-            
-            // Convert proposal to order
-            $result = $this->convert_proposal_to_order($proposal_id, $project_id);
-            
-            if ($result['success']) {
-                // Store success information on the project
-                update_post_meta($project_id, '_project_order_creation_note', $result['message']);
-                
-                if (!empty($result['order_id'])) {
-                    update_post_meta($project_id, '_project_woocommerce_order_id', $result['order_id']);
-                }
-                
-                if (!empty($result['subscription_id'])) {
-                    update_post_meta($project_id, '_project_woocommerce_subscription_id', $result['subscription_id']);
-                }
-                
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
-                    sprintf('Successfully created orders for project #%d: %s', $project_id, $result['message']));
-                    
-            } else {
-                // Store error information on the project for rollback handling
-                update_post_meta($project_id, '_project_order_creation_error', $result['message']);
-                
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error',
-                    sprintf('Failed to create orders for project #%d: %s', $project_id, $result['message']));
-            }
-            
-        } catch (Exception $e) {
-            $error_message = sprintf(__('Order creation failed with exception: %s', 'arsol-pfw'), $e->getMessage());
-            update_post_meta($project_id, '_project_order_creation_error', $error_message);
-            
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error',
-                sprintf('Exception during order creation for project #%d: %s', $project_id, $e->getMessage()));
-        }
-    }
+    // Note: handle_proposal_conversion method removed - now using direct exception-throwing calls
     
     /**
      * Convert proposal to WooCommerce order and subscription
@@ -99,6 +49,7 @@ class Woocommerce_Biller {
      * @param int $proposal_id The proposal ID to convert
      * @param int $project_id The associated project ID (optional)
      * @return array Result array with success status and message
+     * @throws Exception When conversion fails
      */
     public function convert_proposal_to_order($proposal_id, $project_id = null) {
         // Validate proposal
@@ -111,60 +62,45 @@ class Woocommerce_Biller {
             );
             $error_message = isset($error_messages[$cost_proposal_type]) ? $error_messages[$cost_proposal_type] : $error_messages['none'];
             
-            return array(
-                'success' => false,
-                'message' => $error_message
-            );
+            throw new Exception($error_message);
         }
         
         // Get proposal data
         $proposal_data = $this->get_proposal_data($proposal_id);
         if (!$proposal_data) {
-            return array(
-                'success' => false,
-                'message' => __('Failed to retrieve proposal data.', 'arsol-pfw')
-            );
+            throw new Exception(__('Failed to retrieve proposal data.', 'arsol-pfw'));
         }
         
-        try {
-            // Step 1: Always create parent order with ALL line items
-            $order_result = $this->create_parent_order($proposal_data, $project_id);
-            if (!$order_result['success']) {
-                return $order_result;
-            }
-            
-            $order_id = $order_result['order_id'];
-            $result_message = sprintf(__('Order #%s created successfully.', 'arsol-pfw'), $order_id);
-            
-            // Step 2: Check for recurring items and create subscription if needed
-            $has_recurring = $this->has_recurring_items($proposal_data['line_items']);
-            $subscription_id = null;
-            
-            if ($has_recurring) {
-                $subscription_result = $this->create_subscription($proposal_data, $order_id, $project_id);
-                if ($subscription_result['success']) {
-                    $subscription_id = $subscription_result['subscription_id'];
-                    $result_message .= sprintf(__(' Subscription #%s created successfully.', 'arsol-pfw'), $subscription_id);
-                } else {
-                    // Subscription creation failed - should we rollback the order?
-                    // For now, we'll keep the order and just log the subscription error
-                    $result_message .= sprintf(__(' Warning: Subscription creation failed: %s', 'arsol-pfw'), $subscription_result['message']);
-                }
-            }
-            
-            return array(
-                'success' => true,
-                'message' => $result_message,
-                'order_id' => $order_id,
-                'subscription_id' => $subscription_id
-            );
-            
-        } catch (Exception $e) {
-            return array(
-                'success' => false,
-                'message' => sprintf(__('Order creation failed: %s', 'arsol-pfw'), $e->getMessage())
-            );
+        // Step 1: Always create parent order with ALL line items
+        $order_result = $this->create_parent_order($proposal_data, $project_id);
+        if (!$order_result['success']) {
+            throw new Exception($order_result['message']);
         }
+        
+        $order_id = $order_result['order_id'];
+        $result_message = sprintf(__('Order #%s created successfully.', 'arsol-pfw'), $order_id);
+        
+        // Step 2: Check for recurring items and create subscription if needed
+        $has_recurring = $this->has_recurring_items($proposal_data['line_items']);
+        $subscription_id = null;
+        
+        if ($has_recurring) {
+            $subscription_result = $this->create_subscription($proposal_data, $order_id, $project_id);
+            if ($subscription_result['success']) {
+                $subscription_id = $subscription_result['subscription_id'];
+                $result_message .= sprintf(__(' Subscription #%s created successfully.', 'arsol-pfw'), $subscription_id);
+            } else {
+                // Subscription creation failed - throw exception to trigger rollback
+                throw new Exception(sprintf(__('Subscription creation failed: %s', 'arsol-pfw'), $subscription_result['message']));
+            }
+        }
+        
+        return array(
+            'success' => true,
+            'message' => $result_message,
+            'order_id' => $order_id,
+            'subscription_id' => $subscription_id
+        );
     }
     
     /**

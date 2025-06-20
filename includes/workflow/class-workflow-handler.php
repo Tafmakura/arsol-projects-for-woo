@@ -478,36 +478,6 @@ class Workflow_Handler {
          */
         do_action('arsol_after_project_conversion_metadata_copied', $new_project_id, $proposal_id, $meta_to_copy, $conversion_data);
 
-        // Capture any order creation errors and created order IDs for rollback
-        $order_creation_errors = array();
-        $created_order_ids = array();
-        
-        // Hook into order creation to capture errors and order IDs
-        add_action('arsol_proposal_converted_to_project', function($project_id, $proposal_id) use (&$order_creation_errors, &$created_order_ids) {
-            // Check for order creation errors after the billers run
-            $order_error = get_post_meta($project_id, '_project_order_creation_error', true);
-            $subscription_error = get_post_meta($project_id, '_project_subscription_creation_error', true);
-            
-            if (!empty($order_error)) {
-                $order_creation_errors[] = $order_error;
-            }
-            if (!empty($subscription_error)) {
-                $order_creation_errors[] = $subscription_error;
-            }
-            
-            // Collect created order IDs for potential rollback
-            $order_note = get_post_meta($project_id, '_project_order_creation_note', true);
-            $subscription_note = get_post_meta($project_id, '_project_subscription_creation_note', true);
-            
-            // Extract order IDs from success notes
-            if (!empty($order_note) && preg_match('/#(\d+)/', $order_note, $matches)) {
-                $created_order_ids[] = intval($matches[1]);
-            }
-            if (!empty($subscription_note) && preg_match('/#(\d+)/', $subscription_note, $matches)) {
-                $created_order_ids[] = intval($matches[1]);
-            }
-        }, 20, 2); // Run after the billers (priority 10)
-
         /**
          * Hook: arsol_before_project_conversion_order_creation
          * Fired before attempting to create orders from proposal
@@ -520,16 +490,56 @@ class Workflow_Handler {
 
         // Get proposal type
         $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
-        
-        // Only create orders for quotation proposals, not budget proposals
-        if ($cost_proposal_type !== 'quotation') {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
-                sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $cost_proposal_type));
-            return false;
+
+        $created_order_ids = array();
+        $conversion_successful = true;
+        $error_message = '';
+
+        try {
+            // Only create orders for quotation proposals
+            if ($cost_proposal_type === 'quotation') {
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
+                    sprintf('Creating orders for quotation proposal %d', $proposal_id));
+                
+                // Create a biller instance and convert proposal to order
+                $biller = new \Arsol_Projects_For_Woo\Woocommerce_Biller();
+                $result = $biller->convert_proposal_to_order($proposal_id, $new_project_id);
+                
+                if (!$result['success']) {
+                    throw new Exception($result['message']);
+                }
+                
+                // Store created order IDs for potential rollback
+                if (!empty($result['order_id'])) {
+                    $created_order_ids[] = $result['order_id'];
+                    update_post_meta($new_project_id, '_project_woocommerce_order_id', $result['order_id']);
+                }
+                
+                if (!empty($result['subscription_id'])) {
+                    $created_order_ids[] = $result['subscription_id'];
+                    update_post_meta($new_project_id, '_project_woocommerce_subscription_id', $result['subscription_id']);
+                }
+                
+                update_post_meta($new_project_id, '_project_order_creation_note', $result['message']);
+                
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
+                    sprintf('Successfully created orders for project #%d: %s', $new_project_id, $result['message']));
+                
+            } else {
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
+                    sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $cost_proposal_type));
+            }
+            
+        } catch (Exception $e) {
+            $conversion_successful = false;
+            $error_message = $e->getMessage();
+            
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error',
+                sprintf('Order creation failed for project #%d: %s', $new_project_id, $error_message));
+            
+            // Store error for debugging
+            update_post_meta($new_project_id, '_project_order_creation_error', $error_message);
         }
-        
-        // Trigger action for order creation (MAIN CONVERSION HOOK - Legacy)
-        do_action('arsol_proposal_converted_to_project', $new_project_id, $proposal_id);
 
         /**
          * Hook: arsol_after_project_conversion_order_creation_attempt
@@ -541,46 +551,8 @@ class Workflow_Handler {
          */
         do_action('arsol_after_project_conversion_order_creation_attempt', $new_project_id, $proposal_id, $conversion_data);
 
-        // Add debugging to check what happened during order creation
-        if (function_exists('wc_get_logger')) {
-            $logger = wc_get_logger();
-            
-            // Check what meta was set on the project
-            $order_note = get_post_meta($new_project_id, '_project_order_creation_note', true);
-            $order_error = get_post_meta($new_project_id, '_project_order_creation_error', true);
-            $subscription_note = get_post_meta($new_project_id, '_project_subscription_creation_note', true);
-            $subscription_error = get_post_meta($new_project_id, '_project_subscription_creation_error', true);
-            
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
-                sprintf('Conversion results for project #%d from proposal #%d:', $new_project_id, $proposal_id));
-            
-            if (!empty($order_note)) {
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 'Order creation note: ' . $order_note);
-            }
-            if (!empty($order_error)) {
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error', 'Order creation error: ' . $order_error);
-            }
-            if (!empty($subscription_note)) {
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 'Subscription creation note: ' . $subscription_note);
-            }
-            if (!empty($subscription_error)) {
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error', 'Subscription creation error: ' . $subscription_error);
-            }
-            
-            // Check proposal data
-            $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
-            
-            $line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
-            
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info',
-                sprintf('Proposal #%d details - Type: %s, Quotation line items: %s', 
-                    $proposal_id, 
-                    $cost_proposal_type, 
-                    !empty($line_items) ? 'present' : 'missing'));
-        }
-
-        // Check if there were any order creation errors
-        if (!empty($order_creation_errors)) {
+        // Handle rollback if conversion failed
+        if (!$conversion_successful) {
             /**
              * Hook: arsol_before_project_conversion_rollback
              * Fired before rollback due to order creation failure
@@ -591,11 +563,9 @@ class Workflow_Handler {
              * @param array $created_order_ids Array of order IDs to be deleted
              * @param array $conversion_data Conversion context data
              */
-            do_action('arsol_before_project_conversion_rollback', $new_project_id, $proposal_id, $order_creation_errors, $created_order_ids, $conversion_data);
+            do_action('arsol_before_project_conversion_rollback', $new_project_id, $proposal_id, array($error_message), $created_order_ids, $conversion_data);
             
-            // Order creation failed - rollback everything
-            
-            // Delete any created orders first
+            // Rollback: Delete any created orders first
             foreach ($created_order_ids as $order_id) {
                 $order = wc_get_order($order_id);
                 if ($order) {
@@ -622,23 +592,23 @@ class Workflow_Handler {
              * @param array $order_creation_errors Array of error messages
              * @param array $conversion_data Conversion context data
              */
-            do_action('arsol_after_project_conversion_rollback', $proposal_id, $order_creation_errors, $conversion_data);
+            do_action('arsol_after_project_conversion_rollback', $proposal_id, array($error_message), $conversion_data);
             
-            $error_message = sprintf(
-                __('Failed to create orders from proposal. Errors: %s', 'arsol-pfw'),
-                implode('; ', $order_creation_errors)
+            $full_error_message = sprintf(
+                __('Failed to create orders from proposal. Error: %s', 'arsol-pfw'),
+                $error_message
             );
             
             if ($is_internal_call) {
                 // For internal calls, add error notice and redirect back
                 if (function_exists('wc_add_notice')) {
-                    wc_add_notice($error_message, 'error');
+                    wc_add_notice($full_error_message, 'error');
                 }
                 $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
                 return;
             } else {
                 // For admin calls, show error and stop
-                wp_die($error_message);
+                wp_die($full_error_message);
             }
         }
 

@@ -81,11 +81,11 @@ class Proposal {
         </div>
         
         <div class="major-actions">
-            <?php if ($post->post_status === 'publish'): ?>
-                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
-            <?php else: ?>
-                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
-            <?php endif; ?>
+                <?php if ($post->post_status === 'publish'): ?>
+                    <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
+                <?php else: ?>
+                    <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
+                <?php endif; ?>
             
             <?php
             $is_disabled = $post->post_status !== 'publish';
