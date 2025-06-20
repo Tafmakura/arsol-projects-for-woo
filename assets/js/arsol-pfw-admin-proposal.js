@@ -19,10 +19,7 @@
                 ArsolProposal.toggleCostProposalSections();
                 ArsolProposal.updateRequiredFields();
                 ArsolProposal.updateConditionalVisibility();
-                // Also update quotation field requirements if quotation object exists
-                if (typeof ArsolProposalQuotation !== 'undefined') {
-                    ArsolProposalQuotation.updateQuotationFieldRequirements();
-                }
+                // Note: Required fields are now managed by the main ArsolProposal.updateRequiredFields() method
             });
 
             // Update required fields on input changes
@@ -54,28 +51,66 @@
 
         updateRequiredFields: function() {
             var proposalType = $('#cost_proposal_type').val();
+            console.log('Updating required fields for proposal type:', proposalType);
 
-            // Customer is always required
-            var customerSelect = $('select[name="post_author_override"]');
-            customerSelect.attr('required', true);
+            // Step 1: Remove ALL required attributes from ALL fields first
+            this.clearAllRequiredFields();
 
-            // Clear all quotation field requirements first
+            // Step 2: Set universal required fields (always required regardless of type)
+            this.setUniversalRequiredFields();
+
+            // Step 3: Set type-specific required fields
+            if (proposalType === 'budget') {
+                this.setBudgetRequiredFields();
+            } else if (proposalType === 'quotation') {
+                this.setQuotationRequiredFields();
+            }
+            // Note: 'none' type has no additional required fields beyond universal ones
+
+            console.log('Required fields updated successfully');
+        },
+
+        clearAllRequiredFields: function() {
+            // Remove required from all possible fields
+            $('select[name="post_author_override"]').removeAttr('required');
+            $('input[name="proposal_budget"]').removeAttr('required');
+            $('input[name="proposal_budget_details"]').removeAttr('required');
+            $('input[name="proposal_recurring_budget"]').removeAttr('required');
+            $('input[name="proposal_recurring_budget_details"]').removeAttr('required');
+            
+            // Remove required from all existing quotation fields
             $('input[name*="line_items"][name*="price"]').removeAttr('required');
             $('select[name*="line_items"][name*="product_id"]').removeAttr('required');
             $('input[name*="line_items"][name*="description"]').removeAttr('required');
             $('input[name*="line_items"][name*="amount"]').removeAttr('required');
+            $('input[name*="line_items"][name*="regular_price"]').removeAttr('required');
+        },
 
-            // Type-specific required field management
-            if (proposalType === 'quotation') {
-                // Make quotation line item fields required
-                $('input[name*="line_items"][name*="[price]"]').attr('required', true);
-                $('select[name*="line_items"][name*="[product_id]"]').attr('required', true);
-                $('input[name*="line_items"][name*="[description]"]').attr('required', true);
-                $('input[name*="line_items"][name*="[amount]"]').attr('required', true);
-            }
+        setUniversalRequiredFields: function() {
+            // Customer is always required
+            $('select[name="post_author_override"]').attr('required', true);
+            // Note: Title and content are handled by WordPress core validation
+        },
+
+        setBudgetRequiredFields: function() {
+            // For budget proposals, at least one budget amount is required
+            // We'll make the one-time budget required by default
+            $('input[name="proposal_budget"]').attr('required', true);
+            $('input[name="proposal_budget_details"]').attr('required', true);
             
-            // Note: WordPress backend validation will handle actual validation
-            // This just provides visual feedback to users
+            // Note: Recurring budget is optional, but if filled, its details become required
+            // This is handled by dynamic validation in the backend
+        },
+
+        setQuotationRequiredFields: function() {
+            // For quotation proposals, make existing line item fields required
+            $('input[name*="line_items"][name*="regular_price"]').attr('required', true);
+            $('select[name*="line_items"][name*="product_id"]').attr('required', true);
+            $('input[name*="line_items"][name*="description"]').attr('required', true);
+            $('input[name*="line_items"][name*="amount"]').attr('required', true);
+            
+            // Note: New line items added dynamically will get required attributes
+            // through the template system and this method being called again
         },
 
         // Pre-save cleanup function - runs all cleanup tasks before saving
@@ -604,6 +639,11 @@
             this.renderRow(type, {});
             this.toggleStartDateColumn();
             
+            // Update required fields for newly added line items
+            if (typeof ArsolProposal !== 'undefined') {
+                ArsolProposal.updateRequiredFields();
+            }
+            
             // Update only the button for this specific section
             switch(type) {
                 case 'product':
@@ -704,23 +744,7 @@
             this.updateAddButtonState('shipping-fee', '.add-shipping-fee-button');
         },
 
-        updateQuotationFieldRequirements: function() {
-            var proposalType = $('#cost_proposal_type').val();
-            
-            if (proposalType === 'quotation') {
-                // Make quotation line item fields required
-                $('input[name*="line_items"][name*="[price]"]').attr('required', true);
-                $('select[name*="line_items"][name*="[product_id]"]').attr('required', true);
-                $('input[name*="line_items"][name*="[description]"]').attr('required', true);
-                $('input[name*="line_items"][name*="[amount]"]').attr('required', true);
-            } else {
-                // Remove required from quotation fields
-                $('input[name*="line_items"][name*="[price]"]').removeAttr('required');
-                $('select[name*="line_items"][name*="[product_id]"]').removeAttr('required');
-                $('input[name*="line_items"][name*="[description]"]').removeAttr('required');
-                $('input[name*="line_items"][name*="[amount]"]').removeAttr('required');
-            }
-        },
+        // Note: Required field management moved to ArsolProposal.updateRequiredFields() for consistency
 
         removeLineItem: function(e) {
             e.preventDefault();

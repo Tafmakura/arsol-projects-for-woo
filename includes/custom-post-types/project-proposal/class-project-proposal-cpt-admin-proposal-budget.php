@@ -64,14 +64,14 @@ class Proposal_Budget {
                             <td class="arsol-description-column">
                                 <div class="arsol-flex-container">
                                     <strong class="arsol-flex-fixed arsol-budget-description"><?php _e('One-Time Budget', 'arsol-pfw'); ?></strong>
-                                    <input type="text" class="arsol-description-input js-details-input" name="proposal_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>" required>
+                                    <input type="text" class="arsol-description-input js-details-input" name="proposal_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
                                 </div>
                             </td>
                             <td class="arsol-date-column">
                                 <span class="arsol-not-applicable">—</span>
                             </td>
                             <td class="arsol-amount-column">
-                                <input type="text" class="arsol-amount-input js-amount-input arsol-budget-amount wc_input_price" name="proposal_budget" value="<?php echo esc_attr($budget_amount); ?>" placeholder="0.00" required min="0.01" step="0.01">
+                                <input type="text" class="arsol-amount-input js-amount-input arsol-budget-amount wc_input_price" name="proposal_budget" value="<?php echo esc_attr($budget_amount); ?>" placeholder="0.00" min="0.01" step="0.01">
                             </td>
                             <td class="arsol-billing-cycle-column">
                                 <span class="arsol-not-applicable">—</span>
