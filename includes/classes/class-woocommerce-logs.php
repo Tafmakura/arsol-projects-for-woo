@@ -17,9 +17,9 @@ class Woocommerce_Logs {
      * Log sources for different components
      */
     const LOG_SOURCES = array(
-        'conversion' => 'arsol-pfw-conversion',
-        'order_creation' => 'arsol-pfw-order-creation',
-        'subscription_creation' => 'arsol-pfw-subscription-creation',
+        'request_to_proposal_conversion' => 'arsol-pfw-request-to-proposal',
+        'proposal_to_project_conversion' => 'arsol-pfw-proposal-to-project',
+        'woocommerce_billing_operations' => 'arsol-pfw-woocommerce-billing',
         'checkout' => 'arsol-pfw-checkout',
         'general' => 'arsol-pfw-general'
     );
@@ -90,33 +90,33 @@ class Woocommerce_Logs {
     }
     
     /**
-     * Log conversion-related messages
+     * Log request to proposal conversion messages
      * 
      * @param string $level Log level
      * @param string $message Log message
      */
-    public static function log_conversion($level, $message) {
-        self::log($level, $message, 'conversion', 'enable_conversion_logs');
+    public static function log_request_to_proposal_conversion($level, $message) {
+        self::log($level, $message, 'request_to_proposal_conversion', 'enable_request_to_proposal_conversion_logs');
     }
     
     /**
-     * Log order creation messages
+     * Log proposal to project conversion messages
      * 
      * @param string $level Log level
      * @param string $message Log message
      */
-    public static function log_order_creation($level, $message) {
-        self::log($level, $message, 'order_creation', 'enable_order_creation_logs');
+    public static function log_proposal_to_project_conversion($level, $message) {
+        self::log($level, $message, 'proposal_to_project_conversion', 'enable_proposal_to_project_conversion_logs');
     }
     
     /**
-     * Log subscription creation messages
+     * Log WooCommerce billing operations (orders, subscriptions, etc.)
      * 
      * @param string $level Log level
      * @param string $message Log message
      */
-    public static function log_subscription_creation($level, $message) {
-        self::log($level, $message, 'subscription_creation', 'enable_subscription_creation_logs');
+    public static function log_woocommerce_billing($level, $message) {
+        self::log($level, $message, 'woocommerce_billing_operations', 'enable_woocommerce_billing_logs');
     }
     
     /**
@@ -146,9 +146,9 @@ class Woocommerce_Logs {
      */
     public static function get_available_debug_options() {
         return array(
-            'enable_conversion_logs' => __('Proposal to Project Conversion', 'arsol-pfw'),
-            'enable_order_creation_logs' => __('Order Creation', 'arsol-pfw'),
-            'enable_subscription_creation_logs' => __('Subscription Creation', 'arsol-pfw'),
+            'enable_request_to_proposal_conversion_logs' => __('Request → Proposal Conversion', 'arsol-pfw'),
+            'enable_proposal_to_project_conversion_logs' => __('Proposal → Project Conversion', 'arsol-pfw'), 
+            'enable_woocommerce_billing_logs' => __('WooCommerce Billing Operations', 'arsol-pfw'),
             'enable_checkout_logs' => __('Checkout Process', 'arsol-pfw'),
             'enable_general_logs' => __('General Operations', 'arsol-pfw'),
         );
@@ -209,7 +209,7 @@ class Woocommerce_Logs {
     public static function debug_proposal_conversion($proposal_id) {
         $debug_info = array();
         
-        self::log_conversion('info', sprintf('Starting debug analysis for proposal #%d', $proposal_id));
+        self::log_woocommerce_billing('info', sprintf('Starting debug analysis for proposal #%d', $proposal_id));
         
         // Check proposal exists
         $proposal = get_post($proposal_id);
@@ -246,7 +246,7 @@ class Woocommerce_Logs {
         // Check WooCommerce Subscriptions
         $debug_info['wc_subscriptions_active'] = class_exists('WC_Subscriptions') && function_exists('wcs_create_subscription');
         
-        self::log_conversion('info', sprintf('Debug analysis complete for proposal #%d: %s', $proposal_id, wp_json_encode($debug_info)));
+        self::log_woocommerce_billing('info', sprintf('Debug analysis complete for proposal #%d: %s', $proposal_id, wp_json_encode($debug_info)));
         
         return $debug_info;
     }
@@ -260,7 +260,7 @@ class Woocommerce_Logs {
     public static function debug_proposal_conversion_detailed($proposal_id) {
         $debug_info = array();
         
-        self::log_conversion('info', sprintf('=== DETAILED DEBUG ANALYSIS FOR PROPOSAL #%d ===', $proposal_id));
+        self::log_woocommerce_billing('info', sprintf('=== DETAILED DEBUG ANALYSIS FOR PROPOSAL #%d ===', $proposal_id));
         
         // Check proposal exists
         $proposal = get_post($proposal_id);
@@ -269,7 +269,7 @@ class Woocommerce_Logs {
         $debug_info['proposal_status'] = $proposal ? $proposal->post_status : 'N/A';
         $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
         
-        self::log_conversion('info', sprintf('Proposal exists: %s, Type: %s, Status: %s, Author: %s', 
+        self::log_woocommerce_billing('info', sprintf('Proposal exists: %s, Type: %s, Status: %s, Author: %s', 
             $debug_info['proposal_exists'] ? 'YES' : 'NO',
             $debug_info['proposal_type'],
             $debug_info['proposal_status'],
@@ -281,7 +281,7 @@ class Woocommerce_Logs {
         $debug_info['cost_proposal_type'] = $cost_proposal_type;
         $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
         
-        self::log_conversion('info', sprintf('Cost proposal type: %s, Should create orders: %s', 
+        self::log_woocommerce_billing('info', sprintf('Cost proposal type: %s, Should create orders: %s', 
             $cost_proposal_type, $debug_info['should_create_orders'] ? 'YES' : 'NO'));
         
         // Check quotation line items
@@ -332,17 +332,17 @@ class Woocommerce_Logs {
                         $debug_info[$section . '_details'][] = $item_debug;
                     }
                     
-                    self::log_conversion('info', sprintf('%s (%d items): %s', 
+                    self::log_woocommerce_billing('info', sprintf('%s (%d items): %s', 
                         ucwords(str_replace('_', ' ', $section)), 
                         $debug_info[$section . '_count'],
                         wp_json_encode($debug_info[$section . '_details'])));
                 } else {
                     $debug_info[$section . '_count'] = 0;
-                    self::log_conversion('info', sprintf('%s: NONE', ucwords(str_replace('_', ' ', $section))));
+                    self::log_woocommerce_billing('info', sprintf('%s: NONE', ucwords(str_replace('_', ' ', $section))));
                 }
             }
         } else {
-            self::log_conversion('error', 'NO LINE ITEMS FOUND');
+            self::log_woocommerce_billing('error', 'NO LINE ITEMS FOUND');
         }
         
         // Check if customer exists
@@ -351,7 +351,7 @@ class Woocommerce_Logs {
             $debug_info['customer_exists'] = $customer && $customer->get_id();
             $debug_info['customer_email'] = $customer ? $customer->get_billing_email() : 'N/A';
             
-            self::log_conversion('info', sprintf('Customer #%d exists: %s, Email: %s', 
+            self::log_woocommerce_billing('info', sprintf('Customer #%d exists: %s, Email: %s', 
                 $proposal->post_author, 
                 $debug_info['customer_exists'] ? 'YES' : 'NO',
                 $debug_info['customer_email']));
@@ -359,10 +359,10 @@ class Woocommerce_Logs {
         
         // Check WooCommerce Subscriptions
         $debug_info['wc_subscriptions_active'] = class_exists('WC_Subscriptions') && function_exists('wcs_create_subscription');
-        self::log_conversion('info', sprintf('WooCommerce Subscriptions active: %s', 
+        self::log_woocommerce_billing('info', sprintf('WooCommerce Subscriptions active: %s', 
             $debug_info['wc_subscriptions_active'] ? 'YES' : 'NO'));
         
-        self::log_conversion('info', '=== END DETAILED DEBUG ANALYSIS ===');
+        self::log_woocommerce_billing('info', '=== END DETAILED DEBUG ANALYSIS ===');
         
         return $debug_info;
     }

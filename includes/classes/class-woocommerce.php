@@ -220,30 +220,30 @@ class Woocommerce {
      * @return string|int|false Project ID or false if none
      */
     private function get_project_from_order($order) {
-        // Use WooCommerce Blocks API to get the field value (recommended approach)
-        if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
-            try {
-                $checkout_fields = \Automattic\WooCommerce\Blocks\Package::container()->get(
-                    \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
-                );
-                return $checkout_fields->get_field_from_object(self::PROJECT_META_KEY, $order, 'order');
-            } catch (\Exception $e) {
-                // Log error if logging is available
-                if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error', 
-                        sprintf('Failed to get project from order using Blocks API: %s', $e->getMessage()));
-                }
-                return false;
+        if (is_numeric($order)) {
+            $order = wc_get_order($order);
+        }
+        
+        if (!$order) {
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('error',
+                'Invalid order provided to get_project_from_order');
+            return false;
+        }
+        
+        // Try WooCommerce meta first (HPOS compatible)
+        $project_id = $order->get_meta('_arsol_project_id');
+        
+        // Fallback to legacy meta
+        if (!$project_id) {
+            $project_id = get_post_meta($order->get_id(), '_arsol_project_id', true);
+            
+            if ($project_id) {
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('warning',
+                    sprintf('Used legacy meta for order #%d project lookup', $order->get_id()));
             }
         }
         
-        // If Blocks API is not available, log warning and return false
-        if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('warning', 
-                'WooCommerce Blocks API not available - cannot retrieve project');
-        }
-        
-        return false;
+        return $project_id ? intval($project_id) : false;
     }
 
     /**
@@ -255,38 +255,20 @@ class Woocommerce {
      * @return bool True if saved successfully
      */
     public static function save_project_to_order($order, $project_id) {
-        // Use WooCommerce Blocks API (WooCommerce's recommended method)
-        if (class_exists('Automattic\WooCommerce\Blocks\Package')) {
-            try {
-                $checkout_fields = \Automattic\WooCommerce\Blocks\Package::container()->get(
-                    \Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class
-                );
-                $checkout_fields->persist_field_for_order(self::PROJECT_META_KEY, $project_id, $order);
-                
-                // Log success if logging is available
-                if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('info', 
-                        sprintf('Saved project #%d to order #%d using Blocks API', $project_id, $order->get_id()));
-                }
-                
-                return true;
-            } catch (\Exception $e) {
-                // Log error if logging is available
-                if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('error', 
-                        sprintf('Failed to save project using Blocks API: %s', $e->getMessage()));
-                }
-                return false;
-            }
+        if (!$order || !$project_id) {
+            return;
         }
         
-        // If Blocks API is not available, log warning and return false
-        if (class_exists('\Arsol_Projects_For_Woo\Woocommerce_Logs')) {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_conversion('warning', 
-                'WooCommerce Blocks API not available - project not saved');
-        }
+        // Use WooCommerce meta methods for HPOS compatibility
+        $order->add_meta_data('_arsol_project_id', $project_id);
         
-        return false;
+        // Legacy meta for backward compatibility
+        update_post_meta($order->get_id(), '_arsol_project_id', $project_id);
+        
+        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info',
+            sprintf('Project #%d linked to order #%d', $project_id, $order->get_id()));
+        
+        return true;
     }
 
     /**
