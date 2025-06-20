@@ -28,7 +28,7 @@ $proposal_status = get_post_status($post);
 $start_date = get_post_meta($proposal_id, '_proposal_start_date', true);
 $delivery_date = get_post_meta($proposal_id, '_proposal_delivery_date', true);
 $expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true);
-$cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
+$cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
 
 // Check if has original request data
 $has_request_data = false;

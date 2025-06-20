@@ -191,7 +191,7 @@ class Assets {
                     global $post;
                     $line_items = array();
                     if ($post) {
-                        $line_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
+                        $line_items = get_post_meta($post->ID, '_arsol_proposal_quotation_line_items', true) ?: array();
                         
                         // Fetch product names and map saved prices for existing product line items
                         if (!empty($line_items['products'])) {

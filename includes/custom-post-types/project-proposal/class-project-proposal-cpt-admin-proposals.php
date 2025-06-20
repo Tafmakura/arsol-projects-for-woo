@@ -52,7 +52,7 @@ class Proposals {
                 break;
                 
             case 'proposal_budget':
-                $budget = get_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
+                $budget = get_post_meta($post_id, '_proposal_budget', true);
                 if ($budget) {
                     echo wc_price($budget);
                 }

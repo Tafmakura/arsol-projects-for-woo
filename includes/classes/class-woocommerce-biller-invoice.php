@@ -54,7 +54,7 @@ class Woocommerce_Biller {
     public function convert_proposal_to_order($proposal_id, $project_id = null) {
         // Validate proposal
         if (!$this->validate_proposal($proposal_id)) {
-            $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+            $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
             $error_messages = array(
                 'none' => __('Proposal validation failed. Please ensure a customer is assigned.', 'arsol-pfw'),
                 'budget' => __('Proposal validation failed. Please ensure a customer is assigned.', 'arsol-pfw'),
@@ -497,7 +497,7 @@ class Woocommerce_Biller {
         }
         
         // Get proposal type
-        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
         
         // Validate based on proposal type
         switch ($cost_proposal_type) {
@@ -507,7 +507,7 @@ class Woocommerce_Biller {
                 
             case 'budget':
                 // Budget type requires at least one-time budget with amount > 0
-                $budget_data = get_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
+                $budget_data = get_post_meta($proposal_id, '_proposal_budget', true);
                 if (empty($budget_data) || !is_array($budget_data)) {
                     return false;
                 }
@@ -518,16 +518,16 @@ class Woocommerce_Biller {
                 }
                 
                 // If amount is provided, description is required
-                $budget_details = get_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_details', true);
+                $budget_details = get_post_meta($proposal_id, '_proposal_budget_details', true);
                 if (empty($budget_details)) {
-                    return false;
-                }
-                
-                return true;
+            return false;
+        }
+        
+        return true;
                 
             case 'quotation':
                 // Quotation type requires at least one quotation line item with description and amount
-                $quotation_line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
+                $quotation_line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
                 if (empty($quotation_line_items) || !is_array($quotation_line_items)) {
                     return false;
                 }
@@ -595,15 +595,15 @@ class Woocommerce_Biller {
             return false;
         }
         
-        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
-        $currency = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_currency', true) ?: get_woocommerce_currency();
+        $cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true) ?: 'none';
+        $currency = get_post_meta($proposal_id, '_arsol_proposal_currency', true) ?: get_woocommerce_currency();
         $line_items = array();
         
         // Get line items based on proposal type
         switch ($cost_proposal_type) {
             case 'quotation':
                 // Get quotation line items
-                $quotation_line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
+                $quotation_line_items = get_post_meta($proposal_id, '_arsol_proposal_quotation_line_items', true);
                 if (!empty($quotation_line_items) && is_array($quotation_line_items)) {
                     $line_items = $quotation_line_items;
                 }
