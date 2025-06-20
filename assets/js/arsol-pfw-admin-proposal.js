@@ -59,26 +59,47 @@
             var customerSelect = $('select[name="post_author_override"]');
             customerSelect.attr('required', true);
 
-            // Clear all field requirements first
+            // Clear all field requirements first - budget fields
             $('input[name="proposal_budget"]').removeAttr('required');
             $('input[name="proposal_budget_details"]').removeAttr('required');
+            
+            // Clear all field requirements first - quotation fields (existing and new line items)
             $('input[name*="line_items"][name*="price"]').removeAttr('required');
             $('select[name*="line_items"][name*="product_id"]').removeAttr('required');
             $('input[name*="line_items"][name*="description"]').removeAttr('required');
             $('input[name*="line_items"][name*="amount"]').removeAttr('required');
-            $('input[name*="line_items"][name*="regular_price"]').removeAttr('required');
 
             // Type-specific required field management
             if (proposalType === 'budget') {
-                // Make budget fields required
+                // Make budget fields required (these have hardcoded required in HTML)
                 $('input[name="proposal_budget"]').attr('required', true);
                 $('input[name="proposal_budget_details"]').attr('required', true);
+                
+                // Ensure quotation fields are not required when budget is selected
+                $('input[name*="line_items"][name*="price"]').removeAttr('required');
+                $('select[name*="line_items"][name*="product_id"]').removeAttr('required');
+                $('input[name*="line_items"][name*="description"]').removeAttr('required');
+                $('input[name*="line_items"][name*="amount"]').removeAttr('required');
+                
             } else if (proposalType === 'quotation') {
-                // Make quotation line item fields required
-                $('input[name*="line_items"][name*="regular_price"]').attr('required', true);
+                // Ensure budget fields are not required when quotation is selected
+                $('input[name="proposal_budget"]').removeAttr('required');
+                $('input[name="proposal_budget_details"]').removeAttr('required');
+                
+                // Make quotation line item fields required (these have hardcoded required in templates)
+                $('input[name*="line_items"][name*="price"]').attr('required', true);
                 $('select[name*="line_items"][name*="product_id"]').attr('required', true);
                 $('input[name*="line_items"][name*="description"]').attr('required', true);
                 $('input[name*="line_items"][name*="amount"]').attr('required', true);
+                
+            } else {
+                // For 'none' type, ensure no fields are required
+                $('input[name="proposal_budget"]').removeAttr('required');
+                $('input[name="proposal_budget_details"]').removeAttr('required');
+                $('input[name*="line_items"][name*="price"]').removeAttr('required');
+                $('select[name*="line_items"][name*="product_id"]').removeAttr('required');
+                $('input[name*="line_items"][name*="description"]').removeAttr('required');
+                $('input[name*="line_items"][name*="amount"]').removeAttr('required');
             }
             
             // Note: WordPress backend validation will handle actual validation
