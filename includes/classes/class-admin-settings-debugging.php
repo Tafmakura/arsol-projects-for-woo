@@ -42,15 +42,6 @@ class Settings_Debugging {
             <th scope="row"><?php esc_html_e('WooCommerce Logs', 'arsol-pfw'); ?></th>
             <td>
                 <div class="arsol-pfw-setting-field arsol-pfw-woocommerce-logs">
-                    <p class="description">
-                        <?php esc_html_e('Enable debug logging for different components to help troubleshoot issues.', 'arsol-pfw'); ?>
-                        <?php esc_html_e('Logs can be found', 'arsol-pfw'); ?> 
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=wc-status&tab=logs')); ?>" target="_blank">
-                            <?php esc_html_e('here', 'arsol-pfw'); ?>
-                        </a>.
-                        <strong><?php esc_html_e('Note:', 'arsol-pfw'); ?></strong> 
-                        <?php esc_html_e('Only enable logging when needed as it can generate large log files over time.', 'arsol-pfw'); ?>
-                    </p>
                     
                     <?php foreach ($available_options as $option_key => $option_label) : ?>
                         <?php $checked = !empty($debug_options[$option_key]); ?>
