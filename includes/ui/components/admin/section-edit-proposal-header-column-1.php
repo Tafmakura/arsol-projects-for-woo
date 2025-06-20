@@ -13,10 +13,10 @@ $proposal_id = $post->ID;
 $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
 $proposal_status = get_post_status($post);
-$start_date = get_post_meta($proposal_id, '_proposal_start_date', true);
-$delivery_date = get_post_meta($proposal_id, '_proposal_delivery_date', true);
-$expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true);
-$cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
+$start_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_start_date', true);
+$delivery_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_delivery_date', true);
+$expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_date', true);
+$cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
 
 // Get status terms
 $proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'slugs'));
@@ -31,12 +31,12 @@ $all_proposal_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-half">
-        <label for="proposal_start_date"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="proposal_start_date" name="proposal_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
+        <label for="arsol_pfw_proposal_start_date"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="arsol_pfw_proposal_start_date" name="arsol_pfw_proposal_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
     </p>
     <p class="form-field form-field-half">
-        <label for="proposal_delivery_date"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="proposal_delivery_date" name="proposal_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
+        <label for="arsol_pfw_proposal_delivery_date"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="arsol_pfw_proposal_delivery_date" name="arsol_pfw_proposal_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
     </p>
 </div>
 
@@ -95,8 +95,8 @@ $all_proposal_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="cost_proposal_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
-                        <select id="cost_proposal_type" name="cost_proposal_type" class="wc-enhanced-select">
+        <label for="arsol_pfw_proposal_costing_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
+                        <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select">
                     <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
                     <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
                     <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
@@ -106,7 +106,7 @@ $all_proposal_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-half">
-        <label for="proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="proposal_expiration_date" name="proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
+        <label for="arsol_pfw_proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="arsol_pfw_proposal_expiration_date" name="arsol_pfw_proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
     </p>
 </div> 

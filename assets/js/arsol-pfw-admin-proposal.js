@@ -127,7 +127,7 @@
             if (proposalType === 'budget') {
                 var budgetAmountInput = $('input[name="arsol_pfw_proposal_budget_onetime_amount"]');
                 var budgetDetailsInput = $('input[name="arsol_pfw_proposal_budget_onetime_amount_details"]');
-                var recurringBudgetInput = $('input[name="proposal_recurring_budget"]');
+                var recurringBudgetInput = $('input[name="arsol_pfw_proposal_budget_recurring_amount"]');
                 var budgetAmount = budgetAmountInput.val();
                 var budgetDetails = budgetDetailsInput.val();
                 var recurringBudget = recurringBudgetInput.val();

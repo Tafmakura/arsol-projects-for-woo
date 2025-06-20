@@ -86,17 +86,17 @@ class Proposal_Budget {
                             <td class="arsol-description-column">
                                 <div class="arsol-flex-container">
                                     <strong class="arsol-flex-fixed arsol-budget-description"><?php _e('Recurring Budget', 'arsol-pfw'); ?></strong>
-                                    <input type="text" class="arsol-description-input js-details-input" name="proposal_recurring_budget_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_proposal_recurring_budget_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
+                                    <input type="text" class="arsol-description-input js-details-input" name="arsol_pfw_proposal_budget_recurring_amount_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_arsol_pfw_proposal_budget_recurring_amount_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
                                 </div>
                             </td>
                             <td class="arsol-date-column">
-                                <input type="date" class="arsol-date-input js-date-input start-date-input" name="proposal_recurring_start_date" value="<?php echo esc_attr($recurring_start_date); ?>">
+                                <input type="date" class="arsol-date-input js-date-input start-date-input" name="arsol_pfw_proposal_budget_recurring_billing_start_date" value="<?php echo esc_attr($recurring_start_date); ?>">
                             </td>
                             <td class="arsol-amount-column">
-                                <input type="text" class="arsol-amount-input js-amount-input arsol-budget-amount recurring-budget-amount-input wc_input_price" name="proposal_recurring_budget" value="<?php echo esc_attr($recurring_budget_amount); ?>" placeholder="0.00">
+                                <input type="text" class="arsol-amount-input js-amount-input arsol-budget-amount recurring-budget-amount-input wc_input_price" name="arsol_pfw_proposal_budget_recurring_amount" value="<?php echo esc_attr($recurring_budget_amount); ?>" placeholder="0.00">
                             </td>
                             <td class="arsol-billing-cycle-column">
-                                <select name="proposal_billing_interval" class="arsol-billing-select js-billing-input billing-interval">
+                                <select name="arsol_pfw_proposal_budget_recurring_amount_billing_interval" class="arsol-billing-select js-billing-input billing-interval">
                             <?php
                                     $intervals = array('1' => __('every', 'arsol-pfw'), '2' => __('every 2nd', 'arsol-pfw'), '3' => __('every 3rd', 'arsol-pfw'), '4' => __('every 4th', 'arsol-pfw'), '5' => __('every 5th', 'arsol-pfw'), '6' => __('every 6th', 'arsol-pfw'));
                             foreach ($intervals as $value => $label) {
@@ -104,7 +104,7 @@ class Proposal_Budget {
                             }
                             ?>
                         </select>
-                                <select name="proposal_billing_period" class="arsol-billing-select js-billing-input billing-period">
+                                <select name="arsol_pfw_proposal_budget_recurring_amount_billing_period" class="arsol-billing-select js-billing-input billing-period">
                             <?php
                                     $periods = array('day' => __('day', 'arsol-pfw'), 'week' => __('week', 'arsol-pfw'), 'month' => __('month', 'arsol-pfw'), 'year' => __('year', 'arsol-pfw'));
                             foreach ($periods as $value => $label) {
@@ -150,12 +150,12 @@ class Proposal_Budget {
             <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
             <p class="description"><?php _e('These notes will be displayed to the customer on the project proposal.', 'arsol-pfw'); ?></p>
             <?php
-            $notes_content = get_post_meta($post->ID, '_arsol_proposal_notes', true);
+            $notes_content = get_post_meta($post->ID, '_arsol_pfw_proposal_notes', true);
             wp_editor(
                 $notes_content,
                     'arsol_proposal_notes_budget',
                 array(
-                        'textarea_name' => 'arsol_proposal_notes',
+                        'textarea_name' => 'arsol_pfw_proposal_notes',
                     'textarea_rows' => 8,
                     'media_buttons' => false,
                     'tinymce' => array(
