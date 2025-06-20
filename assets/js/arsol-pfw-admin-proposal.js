@@ -231,13 +231,7 @@
         formatPrice: function(price) {
             var currencySymbol = arsol_budget_vars.currency_symbol || '$';
             var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            
-            // Create a temporary div to decode HTML entities in currency symbol
-            var tempDiv = document.createElement('div');
-            tempDiv.innerHTML = currencySymbol;
-            var decodedSymbol = tempDiv.textContent || tempDiv.innerText || currencySymbol;
-            
-            return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + decodedSymbol + '</span>' + formattedPrice + '</bdi></span>';
+            return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
         },
 
         updateBudgetTotals: function() {
@@ -1090,13 +1084,7 @@
         formatPrice: function(price) {
             var currencySymbol = arsol_proposal_quotation_vars.currency_symbol;
             var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            
-            // Create a temporary div to decode HTML entities in currency symbol
-            var tempDiv = document.createElement('div');
-            tempDiv.innerHTML = currencySymbol;
-            var decodedSymbol = tempDiv.textContent || tempDiv.innerText || currencySymbol;
-            
-            return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + decodedSymbol + '</span>' + formattedPrice + '</bdi></span>';
+            return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
         }
     };
 
