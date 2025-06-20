@@ -59,19 +59,26 @@
             var customerSelect = $('select[name="post_author_override"]');
             customerSelect.attr('required', true);
 
-            // Clear all quotation field requirements first
+            // Clear all field requirements first
+            $('input[name="proposal_budget"]').removeAttr('required');
+            $('input[name="proposal_budget_details"]').removeAttr('required');
             $('input[name*="line_items"][name*="price"]').removeAttr('required');
             $('select[name*="line_items"][name*="product_id"]').removeAttr('required');
             $('input[name*="line_items"][name*="description"]').removeAttr('required');
             $('input[name*="line_items"][name*="amount"]').removeAttr('required');
+            $('input[name*="line_items"][name*="regular_price"]').removeAttr('required');
 
             // Type-specific required field management
-            if (proposalType === 'quotation') {
+            if (proposalType === 'budget') {
+                // Make budget fields required
+                $('input[name="proposal_budget"]').attr('required', true);
+                $('input[name="proposal_budget_details"]').attr('required', true);
+            } else if (proposalType === 'quotation') {
                 // Make quotation line item fields required
-                $('input[name*="line_items"][name*="[price]"]').attr('required', true);
-                $('select[name*="line_items"][name*="[product_id]"]').attr('required', true);
-                $('input[name*="line_items"][name*="[description]"]').attr('required', true);
-                $('input[name*="line_items"][name*="[amount]"]').attr('required', true);
+                $('input[name*="line_items"][name*="regular_price"]').attr('required', true);
+                $('select[name*="line_items"][name*="product_id"]').attr('required', true);
+                $('input[name*="line_items"][name*="description"]').attr('required', true);
+                $('input[name*="line_items"][name*="amount"]').attr('required', true);
             }
             
             // Note: WordPress backend validation will handle actual validation
@@ -604,6 +611,11 @@
             this.renderRow(type, {});
             this.toggleStartDateColumn();
             
+            // Update required fields for newly added line items
+            if (typeof ArsolProposal !== 'undefined') {
+                ArsolProposal.updateRequiredFields();
+            }
+            
             // Update only the button for this specific section
             switch(type) {
                 case 'product':
@@ -709,16 +721,16 @@
             
             if (proposalType === 'quotation') {
                 // Make quotation line item fields required
-                $('input[name*="line_items"][name*="[price]"]').attr('required', true);
-                $('select[name*="line_items"][name*="[product_id]"]').attr('required', true);
-                $('input[name*="line_items"][name*="[description]"]').attr('required', true);
-                $('input[name*="line_items"][name*="[amount]"]').attr('required', true);
+                $('input[name*="line_items"][name*="regular_price"]').attr('required', true);
+                $('select[name*="line_items"][name*="product_id"]').attr('required', true);
+                $('input[name*="line_items"][name*="description"]').attr('required', true);
+                $('input[name*="line_items"][name*="amount"]').attr('required', true);
             } else {
                 // Remove required from quotation fields
-                $('input[name*="line_items"][name*="[price]"]').removeAttr('required');
-                $('select[name*="line_items"][name*="[product_id]"]').removeAttr('required');
-                $('input[name*="line_items"][name*="[description]"]').removeAttr('required');
-                $('input[name*="line_items"][name*="[amount]"]').removeAttr('required');
+                $('input[name*="line_items"][name*="regular_price"]').removeAttr('required');
+                $('select[name*="line_items"][name*="product_id"]').removeAttr('required');
+                $('input[name*="line_items"][name*="description"]').removeAttr('required');
+                $('input[name*="line_items"][name*="amount"]').removeAttr('required');
             }
         },
 
