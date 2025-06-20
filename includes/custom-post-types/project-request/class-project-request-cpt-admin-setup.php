@@ -21,6 +21,9 @@ class Setup {
         
         // Hook request details into header
         add_action('arsol_request_details_content', array($this, 'render_request_details_content'));
+        
+        // Protect core status terms from deletion
+        add_action('pre_delete_term', array($this, 'protect_core_request_statuses'), 10, 2);
     }
 
     public function register_post_type() {
@@ -132,12 +135,13 @@ class Setup {
         $args = array(
             'hierarchical'      => false,
             'labels'            => $labels,
-            'show_ui'           => true,
-            'show_admin_column' => true,
+            'show_ui'           => false,        // Hide taxonomy management UI
+            'show_admin_column' => true,         // Keep admin columns
             'query_var'         => true,
             'rewrite'           => array('slug' => 'request-status'),
             'show_in_rest'      => true,
-            'meta_box_cb'       => false,
+            'meta_box_cb'       => false,        // Remove meta box
+            'show_in_menu'      => false,        // Hide from menus
         );
 
         register_taxonomy('arsol-request-status', 'arsol-pfw-request', $args);
@@ -149,7 +153,8 @@ class Setup {
     public function add_default_request_statuses() {
         $default_statuses = array(
             'processing'        => 'Processing',
-            'pending-request'   => 'Pending Request'
+            'on-hold'          => 'On Hold',
+            'approved'         => 'Approved'
         );
 
         foreach ($default_statuses as $slug => $name) {
@@ -195,6 +200,24 @@ class Setup {
         $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-request-header-column-2.php';
         if (file_exists($template_path)) {
             include $template_path;
+        }
+    }
+
+    /**
+     * Protect core request status terms from deletion
+     */
+    public function protect_core_request_statuses($term_id, $taxonomy) {
+        if ($taxonomy === 'arsol-request-status') {
+            $term = get_term($term_id);
+            $protected_slugs = array('processing', 'on-hold', 'approved');
+            
+            if ($term && in_array($term->slug, $protected_slugs)) {
+                wp_die(
+                    __('This request status cannot be deleted as it\'s required for system functionality.', 'arsol-pfw'),
+                    __('Protected Status', 'arsol-pfw'),
+                    array('response' => 403)
+                );
+            }
         }
     }
 } 

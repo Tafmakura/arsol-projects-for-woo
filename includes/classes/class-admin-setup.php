@@ -127,6 +127,14 @@ class Setup {
             // Sort the submenu by key to ensure proper order
             ksort($submenu[$parent_slug]);
         }
+        
+        // Remove taxonomy management pages for protected statuses
+        remove_submenu_page('edit.php?post_type=arsol-pfw-request', 'edit-tags.php?taxonomy=arsol-request-status&post_type=arsol-pfw-request');
+        remove_submenu_page('edit.php?post_type=arsol-pfw-proposal', 'edit-tags.php?taxonomy=arsol-proposal-status&post_type=arsol-pfw-proposal');
+        
+        // Also remove from main project menu if they appear there
+        remove_submenu_page('edit.php?post_type=arsol-project', 'edit-tags.php?taxonomy=arsol-request-status');
+        remove_submenu_page('edit.php?post_type=arsol-project', 'edit-tags.php?taxonomy=arsol-proposal-status');
     }
     
     /**

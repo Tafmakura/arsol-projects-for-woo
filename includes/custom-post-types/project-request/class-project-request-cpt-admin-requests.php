@@ -58,7 +58,7 @@ class Requests {
                         echo wc_price($budget['amount'], array('currency' => $currency));
                     } else {
                         // Legacy support for simple numeric values
-                        echo wc_price($budget);
+                    echo wc_price($budget);
                     }
                 }
                 break;
@@ -153,8 +153,9 @@ class Requests {
      * Register bulk actions
      */
     public function register_bulk_actions($bulk_actions) {
+        $bulk_actions['mark_processing'] = __('Mark as Processing', 'arsol-pfw');
+        $bulk_actions['mark_on_hold'] = __('Mark as On Hold', 'arsol-pfw');
         $bulk_actions['mark_approved'] = __('Mark as Approved', 'arsol-pfw');
-        $bulk_actions['mark_rejected'] = __('Mark as Rejected', 'arsol-pfw');
         return $bulk_actions;
     }
 
@@ -162,11 +163,17 @@ class Requests {
      * Handle bulk actions
      */
     public function handle_bulk_actions($redirect_to, $doaction, $post_ids) {
-        if ($doaction !== 'mark_approved' && $doaction !== 'mark_rejected') {
+        $valid_actions = array(
+            'mark_processing' => 'processing',
+            'mark_on_hold' => 'on-hold', 
+            'mark_approved' => 'approved'
+        );
+        
+        if (!array_key_exists($doaction, $valid_actions)) {
             return $redirect_to;
         }
 
-        $status = $doaction === 'mark_approved' ? 'approved' : 'rejected';
+        $status = $valid_actions[$doaction];
         
         foreach ($post_ids as $post_id) {
             wp_set_object_terms($post_id, $status, 'arsol-request-status', false);

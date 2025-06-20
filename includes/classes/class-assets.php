@@ -190,19 +190,19 @@ class Assets {
                     // Always localize quotation script for proposals (needed for all proposal types)
                     global $post;
                     $line_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
-                    
-                    // Fetch product names and map saved prices for existing product line items
-                    if (!empty($line_items['products'])) {
-                        foreach ($line_items['products'] as $key => $product_item) {
-                            if (!empty($product_item['product_id'])) {
-                                $product = wc_get_product($product_item['product_id']);
-                                if ($product) {
-                                    $line_items['products'][$key]['product_name'] = $product->get_formatted_name();
+                        
+                        // Fetch product names and map saved prices for existing product line items
+                        if (!empty($line_items['products'])) {
+                            foreach ($line_items['products'] as $key => $product_item) {
+                                if (!empty($product_item['product_id'])) {
+                                    $product = wc_get_product($product_item['product_id']);
+                                    if ($product) {
+                                        $line_items['products'][$key]['product_name'] = $product->get_formatted_name();
+                                    }
                                 }
-                            }
-                            // Map saved price to regular_price for the JavaScript template
-                            if (isset($product_item['price'])) {
-                                $line_items['products'][$key]['regular_price'] = $product_item['price'];
+                                // Map saved price to regular_price for the JavaScript template
+                                if (isset($product_item['price'])) {
+                                    $line_items['products'][$key]['regular_price'] = $product_item['price'];
                             }
                         }
                     }
@@ -229,9 +229,9 @@ class Assets {
                 // WooCommerce should already provide wc_enhanced_select_params, but ensure our nonces are available
                 // Only add minimal necessary data for our custom functionality
                 wp_localize_script('wc-enhanced-select', 'arsol_enhanced_select_params', array(
-                    'search_products_nonce'   => wp_create_nonce('search-products'),
-                    'search_customers_nonce'  => wp_create_nonce('search-customers'),
-                ));
+                'search_products_nonce'   => wp_create_nonce('search-products'),
+                'search_customers_nonce'  => wp_create_nonce('search-customers'),
+            ));
             }
             
             // Localize our main plugin script (for both post type pages and settings page)

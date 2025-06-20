@@ -24,6 +24,9 @@ class Setup {
         
         // Save header fields including secondary status
         add_action('save_post', array($this, 'save_proposal_header_fields'));
+        
+        // Protect core proposal status terms from deletion
+        add_action('pre_pre_delete_term", array($this, "protect_core_proposal_statuses'), 10, 2);
     }
 
     public function register_post_type() {
@@ -132,12 +135,13 @@ class Setup {
         $args = array(
             'hierarchical'      => false,
             'labels'            => $labels,
-            'show_ui'           => true,
-            'show_admin_column' => true,
+            'show_ui'           => false,        // Hide taxonomy management UI
+            'show_admin_column' => true,         // Keep admin columns
             'query_var'         => true,
             'rewrite'           => array('slug' => 'proposal-status'),
             'show_in_rest'      => true,
-            'meta_box_cb'       => false,
+            'meta_box_cb'       => false,        // Remove meta box
+            'show_in_menu'      => false,        // Hide from menus
         );
 
         register_taxonomy('arsol-proposal-status', 'arsol-pfw-proposal', $args);
@@ -150,16 +154,34 @@ class Setup {
         $default_statuses = array(
             'processing'        => 'Processing',
             'pending-approval'  => 'Pending Approval',
-            'approved'          => 'Approved',
-            'rejected'          => 'Rejected'
+            'rejected'          => 'Rejected',
+            'approved'          => 'Approved'
         );
 
         foreach ($default_statuses as $slug => $name) {
             if (!term_exists($slug, 'arsol-proposal-status')) {
                 wp_insert_term($name, 'arsol-proposal-status', array('slug' => $slug));
+                    }
+    }
+    
+    /**
+     * Protect core proposal status terms from deletion
+     */
+    public function protect_core_proposal_statuses($term_id, $taxonomy) {
+        if ($taxonomy === 'arsol-proposal-status') {
+            $term = get_term($term_id);
+            $protected_slugs = array('processing', 'pending-approval', 'rejected', 'approved');
+            
+            if ($term && in_array($term->slug, $protected_slugs)) {
+                wp_die(
+                    __('This proposal status cannot be deleted as it\'s required for system functionality.', 'arsol-pfw'),
+                    __('Protected Status', 'arsol-pfw'),
+                    array('response' => 403)
+                );
             }
         }
     }
+}
 
     /**
      * Remove the publish metabox
@@ -302,4 +324,40 @@ class Setup {
             }
         }
     }
+    
+    /**
+     * Protect core proposal status terms from deletion
+     */
+    public function protect_core_proposal_statuses($term_id, $taxonomy) {
+        if ($taxonomy === 'arsol-proposal-status') {
+            $term = get_term($term_id);
+            $protected_slugs = array('processing', 'pending-approval', 'rejected', 'approved');
+            
+            if ($term && in_array($term->slug, $protected_slugs)) {
+                wp_die(
+                    __('This proposal status cannot be deleted as it\'s required for system functionality.', 'arsol-pfw'),
+                    __('Protected Status', 'arsol-pfw'),
+                    array('response' => 403)
+                );
+            }
+        }
+    }
 } 
+    /**
+     * Protect core proposal status terms from deletion
+     */
+    public function protect_core_proposal_statuses($term_id, $taxonomy) {
+        if ($taxonomy === "arsol-proposal-status") {
+            $term = get_term($term_id);
+            $protected_slugs = array("processing", "pending-approval", "rejected", "approved");
+            
+            if ($term && in_array($term->slug, $protected_slugs)) {
+                wp_die(
+                    __("This proposal status cannot be deleted as it's required for system functionality.", "arsol-pfw"),
+                    __("Protected Status", "arsol-pfw"),
+                    array("response" => 403)
+                );
+            }
+        }
+    }
+}
