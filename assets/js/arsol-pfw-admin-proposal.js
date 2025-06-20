@@ -377,7 +377,7 @@
         },
 
         bindEvents: function() {
-            var $builder = $('#arsol_pfw_proposal_quotation_builder');
+            var $builder = $('#proposal_quotation_builder');
             
             // Use event delegation for better performance with dynamic content
             $builder
@@ -1112,7 +1112,7 @@
         ArsolProposal.init();
         
         // Initialize quotation system if it exists
-        if ($('#arsol_pfw_proposal_quotation_builder').length > 0) {
+        if ($('#proposal_quotation_builder').length > 0) {
             ArsolProposalQuotation.init();
         }
         

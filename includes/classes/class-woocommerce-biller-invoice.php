@@ -92,7 +92,7 @@ class Woocommerce_Biller {
                 } else {
                 // Subscription creation failed - throw exception to trigger rollback
                 throw new Exception(sprintf(__('Subscription creation failed: %s', 'arsol-pfw'), $subscription_result['message']));
-                }
+            }
             }
             
             return array(
@@ -520,10 +520,10 @@ class Woocommerce_Biller {
                 // If amount is provided, description is required
                 $budget_details = get_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_details', true);
                 if (empty($budget_details)) {
-            return false;
-        }
-        
-        return true;
+                    return false;
+                }
+                
+                return true;
                 
             case 'quotation':
                 // Quotation type requires at least one quotation line item with description and amount
