@@ -12,12 +12,12 @@ body.post-type-arsol-pfw-proposal .select2-container {
 /* Proposal Metabox Conditional Display */
 #arsol_budget_estimates_metabox,
 #arsol_pfw_proposal_quotation_metabox {
-    display: none !important;
+    display: none;
 }
 
 #arsol_budget_estimates_metabox.arsol-pfw-show-if-proposal-costing-type-is-budget,
 #arsol_pfw_proposal_quotation_metabox.arsol-pfw-show-if-proposal-costing-type-is-quotation {
-    display: block !important;
+    display: block;
 }
 
 /* Hide Budget and Quotation from Screen Options */
@@ -1025,7 +1025,11 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 
 /* === INLINE STYLES CONSOLIDATION === */
 
-
+/* Proposal Metabox Initial Hide - now managed via CSS */
+#arsol_budget_estimates_metabox,
+#arsol_pfw_proposal_quotation_metabox {
+    display: none;
+}
 
 /* Request Admin Description Text */
 .request-conversion-description {
