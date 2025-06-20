@@ -52,11 +52,11 @@ $status_terms = wp_get_post_terms($proposal_id, 'arsol-review-status', ['fields'
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
 
 // Get proposal metadata
-$proposal_budget = get_post_meta($proposal_id, '_proposal_budget', true);
-$start_date = get_post_meta($proposal_id, '_proposal_start_date', true);
-$delivery_date = get_post_meta($proposal_id, '_proposal_delivery_date', true);
-$expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true);
-$timeline = get_post_meta($proposal_id, '_proposal_timeline', true);
+$proposal_budget = get_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
+$start_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_start_date', true);
+$delivery_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_delivery_date', true);
+$expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_date', true);
+$timeline = get_post_meta($proposal_id, '_arsol_pfw_proposal_timeline', true);
 ?>
 
 <?php if ($proposal_budget || $start_date || $delivery_date || $expiration_date || $timeline) : ?>

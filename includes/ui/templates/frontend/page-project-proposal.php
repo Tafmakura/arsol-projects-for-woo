@@ -64,7 +64,7 @@ wp_reset_postdata();
     <h2><?php _e('Notes', 'arsol-pfw'); ?></h2>
     <div class="arsol-project-section-content">
         <?php
-        $notes = get_post_meta($proposal_id, '_arsol_proposal_notes', true);
+        $notes = get_post_meta($proposal_id, '_arsol_pfw_proposal_notes', true);
         if (!empty($notes)) :
             echo wpautop(wp_kses_post($notes));
         endif;

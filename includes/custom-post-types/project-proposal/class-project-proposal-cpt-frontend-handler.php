@@ -179,10 +179,10 @@ class Frontend_Handler {
 
         // Save additional proposal meta
         if (!empty($budget)) {
-            update_post_meta($proposal_id, '_proposal_budget', $budget);
+            update_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', $budget);
         }
         if (!empty($timeline)) {
-            update_post_meta($proposal_id, '_proposal_timeline', $timeline);
+            update_post_meta($proposal_id, '_arsol_pfw_proposal_timeline', $timeline);
         }
         if ($request_id) {
             update_post_meta($proposal_id, '_related_request_id', $request_id);

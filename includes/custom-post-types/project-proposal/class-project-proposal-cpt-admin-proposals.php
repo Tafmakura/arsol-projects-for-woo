@@ -52,14 +52,14 @@ class Proposals {
                 break;
                 
             case 'proposal_budget':
-                $budget = get_post_meta($post_id, '_proposal_budget', true);
+                $budget = get_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
                 if ($budget) {
                     echo wc_price($budget);
                 }
                 break;
                 
             case 'proposal_timeline':
-                $timeline = get_post_meta($post_id, '_proposal_timeline', true);
+                $timeline = get_post_meta($post_id, '_arsol_pfw_proposal_timeline', true);
                 if ($timeline) {
                     echo sprintf(_n('%d day', '%d days', $timeline, 'arsol-pfw'), $timeline);
                 }

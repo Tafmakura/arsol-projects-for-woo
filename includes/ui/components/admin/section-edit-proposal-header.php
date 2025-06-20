@@ -25,18 +25,18 @@ $proposal_id = $post->ID;
 $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
 $proposal_status = get_post_status($post);
-$start_date = get_post_meta($proposal_id, '_proposal_start_date', true);
-$delivery_date = get_post_meta($proposal_id, '_proposal_delivery_date', true);
-$expiration_date = get_post_meta($proposal_id, '_proposal_expiration_date', true);
-$cost_proposal_type = get_post_meta($proposal_id, '_cost_proposal_type', true);
+$start_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_start_date', true);
+$delivery_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_delivery_date', true);
+$expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_date', true);
+$cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
 
 // Check if has original request data
 $has_request_data = false;
 $original_request_id = get_post_meta($proposal_id, '_original_request_id', true);
 if ($original_request_id || 
-    get_post_meta($proposal_id, '_original_request_budget', true) ||
-    get_post_meta($proposal_id, '_original_request_start_date', true) ||
-    get_post_meta($proposal_id, '_original_request_delivery_date', true)) {
+    get_post_meta($proposal_id, '_arsol_pfw_proposal_request_budget', true) ||
+    get_post_meta($proposal_id, '_arsol_pfw_proposal_request_start_date', true) ||
+    get_post_meta($proposal_id, '_arsol_pfw_proposal_request_delivery_date', true)) {
     $has_request_data = true;
 }
 

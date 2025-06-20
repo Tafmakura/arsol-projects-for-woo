@@ -198,13 +198,13 @@ class Setup {
         }
 
         // Get original request data
-        $original_budget = get_post_meta($post->ID, '_original_request_budget', true);
-        $original_start_date = get_post_meta($post->ID, '_original_request_start_date', true);
-        $original_delivery_date = get_post_meta($post->ID, '_original_request_delivery_date', true);
-        $original_request_date = get_post_meta($post->ID, '_original_request_date', true);
-        $original_request_title = get_post_meta($post->ID, '_original_request_title', true);
-        $original_request_content = get_post_meta($post->ID, '_original_request_content', true);
-        $original_request_attachments = get_post_meta($post->ID, '_original_request_attachments', true);
+        $original_budget = get_post_meta($post->ID, '_arsol_pfw_proposal_request_budget', true);
+        $original_start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_start_date', true);
+        $original_delivery_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_delivery_date', true);
+        $original_request_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_date', true);
+        $original_request_title = get_post_meta($post->ID, '_arsol_pfw_proposal_request_title', true);
+        $original_request_content = get_post_meta($post->ID, '_arsol_pfw_proposal_request_details', true);
+        $original_request_attachments = get_post_meta($post->ID, '_arsol_pfw_proposal_request_attachments', true);
         
         // Display in WooCommerce order column format
         if ($original_request_title) {
@@ -260,11 +260,11 @@ class Setup {
      * Check if proposal has original request data
      */
     private function has_original_request_data($post_id) {
-        $original_budget = get_post_meta($post_id, '_original_request_budget', true);
-        $original_start_date = get_post_meta($post_id, '_original_request_start_date', true);
-        $original_delivery_date = get_post_meta($post_id, '_original_request_delivery_date', true);
-        $original_request_date = get_post_meta($post_id, '_original_request_date', true);
-        $original_request_attachments = get_post_meta($post_id, '_original_request_attachments', true);
+        $original_budget = get_post_meta($post_id, '_arsol_pfw_proposal_request_budget', true);
+        $original_start_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_start_date', true);
+        $original_delivery_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_delivery_date', true);
+        $original_request_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_date', true);
+        $original_request_attachments = get_post_meta($post_id, '_arsol_pfw_proposal_request_attachments', true);
         
         return !empty($original_budget) || !empty($original_start_date) || !empty($original_delivery_date) || !empty($original_request_date) || !empty($original_request_attachments);
     }
@@ -294,11 +294,11 @@ class Setup {
         }
         
         // Save secondary status (keeping existing functionality)
-        if (isset($_POST['proposal_secondary_status'])) {
-            $secondary_status = sanitize_text_field($_POST['proposal_secondary_status']);
+        if (isset($_POST['arsol_pfw_proposal_secondary_status'])) {
+            $secondary_status = sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
             // Validate the value is one of the allowed options
             if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
-                update_post_meta($post_id, '_proposal_secondary_status', $secondary_status);
+                update_post_meta($post_id, '_arsol_pfw_proposal_secondary_status', $secondary_status);
             }
         }
     }

@@ -187,7 +187,7 @@ class Proposal_Quotation {
                         </tbody>
                     </table>
                 </div>
-                <input type="hidden" name="line_items_one_time_total" id="line_items_one_time_total">
+                <input type="hidden" name="arsol_pfw_proposal_quotation_onetime_total" id="line_items_one_time_total">
                 <input type="hidden" name="line_items_recurring_totals" id="line_items_recurring_totals">
             </div>
             <hr>
@@ -196,12 +196,12 @@ class Proposal_Quotation {
                 <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
                 <p class="description"><?php _e('These notes will be displayed on the frontend proposal view.', 'arsol-pfw'); ?></p>
                 <?php
-                $notes_content = get_post_meta($post->ID, '_arsol_proposal_notes', true);
+                $notes_content = get_post_meta($post->ID, '_arsol_pfw_proposal_notes', true);
                 wp_editor(
                     $notes_content,
                     'arsol_proposal_notes',
                     array(
-                        'textarea_name' => 'arsol_proposal_notes',
+                        'textarea_name' => 'arsol_pfw_proposal_notes',
                         'textarea_rows' => 8,
                         'media_buttons' => false,
                         'tinymce' => array(
@@ -366,23 +366,23 @@ class Proposal_Quotation {
         }
         
         // Save Notes
-        if (isset($_POST['arsol_proposal_notes'])) {
-            update_post_meta($post_id, '_arsol_proposal_notes', wp_kses_post($_POST['arsol_proposal_notes']));
+        if (isset($_POST['arsol_pfw_proposal_notes'])) {
+            update_post_meta($post_id, '_arsol_pfw_proposal_notes', wp_kses_post($_POST['arsol_pfw_proposal_notes']));
         }
         
-        $cost_proposal_type = get_post_meta($post_id, '_cost_proposal_type', true);
+        $cost_proposal_type = get_post_meta($post_id, '_arsol_pfw_proposal_costing_type', true);
         if ($cost_proposal_type !== 'quotation') {
             return;
         }
 
         // Clean up budget data when saving quotation
-        delete_post_meta($post_id, '_proposal_budget');
-        delete_post_meta($post_id, '_proposal_budget_details');
-        delete_post_meta($post_id, '_proposal_recurring_budget');
-        delete_post_meta($post_id, '_proposal_recurring_budget_details');
-        delete_post_meta($post_id, '_proposal_billing_interval');
-        delete_post_meta($post_id, '_proposal_billing_period');
-        delete_post_meta($post_id, '_proposal_recurring_start_date');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount_details');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_details');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_interval');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_period');
+        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_start_date');
 
         $line_items = isset($_POST['line_items']) ? (array) $_POST['line_items'] : array();
         
@@ -397,17 +397,17 @@ class Proposal_Quotation {
             }
         }
         
-        update_post_meta($post_id, '_arsol_proposal_quotation_line_items', $sanitized_line_items);
-        update_post_meta($post_id, '_arsol_proposal_one_time_total', sanitize_text_field($_POST['line_items_one_time_total']));
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items', $sanitized_line_items);
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_onetime_total', sanitize_text_field($_POST['arsol_pfw_proposal_quotation_onetime_total']));
         
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
         $recurring_totals = json_decode($recurring_totals_json, true);
-        update_post_meta($post_id, '_arsol_proposal_recurring_totals_grouped', $recurring_totals);
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_recurring_totals_grouped', $recurring_totals);
         
         // Save currency ISO code as the primary source of truth
         $currency_code = get_woocommerce_currency();
-        update_post_meta($post_id, '_arsol_proposal_currency', $currency_code);
-        update_post_meta($post_id, '_arsol_proposal_currency_symbol', get_woocommerce_currency_symbol($currency_code));
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_currency', $currency_code);
+        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_currency_symbol', get_woocommerce_currency_symbol($currency_code));
     }
 
     /**

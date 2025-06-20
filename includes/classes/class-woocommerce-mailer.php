@@ -184,7 +184,7 @@ class Woocommerce_Mailer {
             return array();
         }
         
-        $customer_id = get_post_meta($proposal_id, '_proposal_customer_id', true);
+        $customer_id = get_post_meta($proposal_id, '_arsol_pfw_proposal_customer_id', true);
         $customer = get_user_by('id', $customer_id);
         
         return array(
