@@ -487,10 +487,7 @@ class Workflow_Handler {
         
         // 3. Rename proposal data with project context
         $proposal_meta_mapping = array(
-            '_arsol_pfw_proposal_start_date' => '_arsol_pfw_project_proposal_start_date',
-            '_arsol_pfw_proposal_delivery_date' => '_arsol_pfw_project_proposal_delivery_date',
             '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
-            '_arsol_pfw_proposal_timeline' => '_arsol_pfw_project_proposal_timeline',
             '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
         );
         
@@ -546,7 +543,7 @@ class Workflow_Handler {
         }
 
         // Store original proposal ID for reference
-        update_post_meta($new_project_id, '_arsol_pfw_project_original_proposal_id', $proposal_id);
+        update_post_meta($new_project_id, '_arsol_pfw_project_proposal_id', $proposal_id);
 
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
             sprintf('Metadata copied from proposal #%d to project #%d (type: %s): %s', 

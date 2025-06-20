@@ -191,7 +191,7 @@ class Frontend_Handler {
             update_post_meta($project_id, '_arsol_pfw_project_start_date', $start_date);
         }
         if (!empty($delivery_date)) {
-            update_post_meta($project_id, '_project_delivery_date', $delivery_date);
+            update_post_meta($project_id, '_arsol_pfw_project_delivery_date', $delivery_date);
         }
 
         /**

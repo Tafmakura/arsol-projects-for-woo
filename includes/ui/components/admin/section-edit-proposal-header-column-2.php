@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
 }
 
 $proposal_id = $post->ID;
-$original_request_id = get_post_meta($proposal_id, '_original_request_id', true);
+$original_request_id = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_id', true);
 $original_request_title = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_title', true);
 $original_request_content = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_details', true);
 $original_request_budget = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_budget', true);

@@ -39,7 +39,7 @@ $all_statuses = get_terms(array(
 // Check if has original proposal data
 $has_proposal_data = false;
 $column_2_title = __('Project Details', 'arsol-pfw');
-$original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_original_proposal_id', true);
+$original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_id', true);
 
 // Check for proposal data first (priority) - must have actual displayable data
 if ($original_proposal_id) {
@@ -55,7 +55,7 @@ if ($original_proposal_id) {
     }
 } else {
     // Check for original request data as fallback - must have actual displayable data
-    $original_request_id = get_post_meta($project_id, '_original_request_id', true);
+    $original_request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
     $original_request_title = get_post_meta($project_id, '_arsol_pfw_proposal_request_title', true);
     $original_request_content = get_post_meta($project_id, '_arsol_pfw_proposal_request_details', true);
     $original_request_budget = get_post_meta($project_id, '_arsol_pfw_proposal_request_budget', true);

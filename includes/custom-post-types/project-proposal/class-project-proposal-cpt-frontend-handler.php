@@ -68,7 +68,6 @@ class Frontend_Handler {
         $title = isset($_POST['proposal_title']) ? sanitize_text_field($_POST['proposal_title']) : '';
         $description = isset($_POST['proposal_description']) ? wp_kses_post($_POST['proposal_description']) : '';
         $budget = isset($_POST['proposal_budget']) ? sanitize_text_field($_POST['proposal_budget']) : '';
-        $timeline = isset($_POST['proposal_timeline']) ? sanitize_text_field($_POST['proposal_timeline']) : '';
         $request_id = isset($_POST['request_id']) ? absint($_POST['request_id']) : 0;
 
         // Validate required fields
@@ -181,11 +180,8 @@ class Frontend_Handler {
         if (!empty($budget)) {
             update_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', $budget);
         }
-        if (!empty($timeline)) {
-            update_post_meta($proposal_id, '_arsol_pfw_proposal_timeline', $timeline);
-        }
         if ($request_id) {
-            update_post_meta($proposal_id, '_related_request_id', $request_id);
+            update_post_meta($proposal_id, '_arsol_pfw_proposal_request_id', $request_id);
         }
 
         /**

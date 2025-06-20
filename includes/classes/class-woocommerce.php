@@ -551,7 +551,7 @@ class Woocommerce {
         }
 
         // Check if user is a collaborator
-        $collaborators = get_post_meta($project_id, '_project_collaborators', true);
+        $collaborators = get_post_meta($project_id, '_arsol_pfw_project_collaborators', true);
         if (is_array($collaborators) && in_array($user_id, $collaborators)) {
             return true;
         }

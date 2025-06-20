@@ -12,7 +12,7 @@ if (!$post || $post->post_type !== 'arsol-project') {
 $project_id = $post->ID;
 
 // Check for original proposal data first
-$original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_original_proposal_id', true);
+$original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_id', true);
 $has_proposal_data = false;
 
 // If from proposal, get proposal budget/date data
@@ -28,7 +28,7 @@ if ($original_proposal_id) {
 }
 
 // Check for original request data (fallback if no proposal data)
-$original_request_id = get_post_meta($project_id, '_original_request_id', true);
+$original_request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
 $original_request_title = get_post_meta($project_id, '_arsol_pfw_proposal_request_title', true);
 $original_request_content = get_post_meta($project_id, '_arsol_pfw_proposal_request_details', true);
 $original_request_budget = get_post_meta($project_id, '_arsol_pfw_proposal_request_budget', true);

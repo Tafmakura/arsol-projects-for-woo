@@ -10,8 +10,8 @@ if (!$post || $post->post_type !== 'arsol-project') {
 }
 
 $project_id = $post->ID;
-$project_orders = get_post_meta($project_id, '_project_orders', true);
-$project_subscriptions = get_post_meta($project_id, '_project_subscriptions', true);
+$project_orders = get_post_meta($project_id, '_arsol_pfw_project_orders', true);
+$project_subscriptions = get_post_meta($project_id, '_arsol_pfw_project_subscriptions', true);
 ?>
 
 <?php if (!empty($project_orders) && is_array($project_orders)): ?>

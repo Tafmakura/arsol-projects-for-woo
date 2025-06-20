@@ -32,7 +32,7 @@ $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_t
 
 // Check if has original request data
 $has_request_data = false;
-$original_request_id = get_post_meta($proposal_id, '_original_request_id', true);
+$original_request_id = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_id', true);
 if ($original_request_id || 
     get_post_meta($proposal_id, '_arsol_pfw_proposal_request_budget', true) ||
     get_post_meta($proposal_id, '_arsol_pfw_proposal_request_start_date', true) ||

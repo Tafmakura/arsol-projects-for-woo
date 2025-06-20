@@ -58,7 +58,7 @@ class Requests {
                 break;
                 
             case 'request_timeline':
-                $timeline = get_post_meta($post_id, '_request_timeline', true);
+                $timeline = get_post_meta($post_id, '_arsol_pfw_request_timeline', true);
                 if ($timeline) {
                     echo sprintf(_n('%d day', '%d days', $timeline, 'arsol-pfw'), $timeline);
                 }

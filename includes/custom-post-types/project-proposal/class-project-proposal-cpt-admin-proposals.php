@@ -31,7 +31,6 @@ class Proposals {
         $new_columns['title'] = $columns['title'];
         $new_columns['proposal_status'] = __('Status', 'arsol-pfw');
         $new_columns['proposal_budget'] = __('Budget', 'arsol-pfw');
-        $new_columns['proposal_timeline'] = __('Timeline', 'arsol-pfw');
         $new_columns['related_request'] = __('Related Request', 'arsol-pfw');
         $new_columns['author'] = $columns['author'];
         $new_columns['date'] = $columns['date'];
@@ -58,15 +57,8 @@ class Proposals {
                 }
                 break;
                 
-            case 'proposal_timeline':
-                $timeline = get_post_meta($post_id, '_arsol_pfw_proposal_timeline', true);
-                if ($timeline) {
-                    echo sprintf(_n('%d day', '%d days', $timeline, 'arsol-pfw'), $timeline);
-                }
-                break;
-                
             case 'related_request':
-                $request_id = get_post_meta($post_id, '_related_request', true);
+                $request_id = get_post_meta($post_id, '_arsol_pfw_proposal_request_id', true);
                 if ($request_id) {
                     $request = get_post($request_id);
                     if ($request) {
@@ -177,7 +169,7 @@ class Proposals {
             if (!empty($_GET['related_request'])) {
                 $meta_query = $query->get('meta_query') ?: [];
                 $meta_query[] = [
-                    'key' => '_related_request',
+                    'key' => '_arsol_pfw_proposal_request_id',
                     'value' => sanitize_text_field($_GET['related_request']),
                     'compare' => '='
                 ];

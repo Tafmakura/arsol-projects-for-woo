@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 
 // Get request details
 $request_budget = get_post_meta($post->ID, '_arsol_pfw_request_budget', true);
-$request_timeline = get_post_meta($post->ID, '_request_timeline', true);
+$request_timeline = get_post_meta($post->ID, '_arsol_pfw_request_timeline', true);
 $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
 $status_terms = wp_get_post_terms($post->ID, 'arsol-request-status', ['fields' => 'slugs']);
