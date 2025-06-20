@@ -39,14 +39,8 @@
         toggleCostProposalSections: function() {
             var selectedType = $('#arsol_pfw_proposal_costing_type').val();
             
-            $('#arsol_budget_estimates_metabox').hide();
-            $('#arsol_pfw_proposal_quotation_metabox').hide();
-
-            if (selectedType === 'budget') {
-                $('#arsol_budget_estimates_metabox').show();
-            } else if (selectedType === 'quotation') {
-                $('#arsol_pfw_proposal_quotation_metabox').show();
-            }
+            // Removed direct show/hide - now handled by updateConditionalVisibility()
+            // through CSS classes for better consistency
             
             // Update proposal summary based on type
             this.updateProposalSummary(selectedType);
@@ -197,16 +191,16 @@
                 $quotationMetabox.addClass('arsol-pfw-show-if-proposal-costing-type-is-quotation');
             }
             
-            // Hide all conditional elements with inline display:none
-            $('.arsol-pfw-show-if-proposal-costing-type-is-none, .arsol-pfw-show-if-proposal-costing-type-is-budget, .arsol-pfw-show-if-proposal-costing-type-is-quotation').css('display', 'none');
+            // Handle other conditional elements (not metaboxes) with inline styles
+            $('.arsol-pfw-show-if-proposal-costing-type-is-none, .arsol-pfw-show-if-proposal-costing-type-is-budget, .arsol-pfw-show-if-proposal-costing-type-is-quotation').not('#arsol_budget_estimates_metabox, #arsol_pfw_proposal_quotation_metabox').css('display', 'none');
             
             // Show elements based on current cost type by removing inline display style
             if (costType === 'none') {
                 $('.arsol-pfw-show-if-proposal-costing-type-is-none').css('display', '');
             } else if (costType === 'budget') {
-                $('.arsol-pfw-show-if-proposal-costing-type-is-budget').css('display', '');
+                $('.arsol-pfw-show-if-proposal-costing-type-is-budget').not('#arsol_budget_estimates_metabox').css('display', '');
             } else if (costType === 'quotation') {
-                $('.arsol-pfw-show-if-proposal-costing-type-is-quotation').css('display', '');
+                $('.arsol-pfw-show-if-proposal-costing-type-is-quotation').not('#arsol_pfw_proposal_quotation_metabox').css('display', '');
             }
             
             // Handle hide-if classes (show all first, then hide specific ones)
