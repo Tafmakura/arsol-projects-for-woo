@@ -43,14 +43,13 @@ $original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_original_
 
 // Check for proposal data first (priority) - must have actual displayable data
 if ($original_proposal_id) {
-    // Check if there's any actual proposal data to show
+    // Check if there's any actual proposal data to show (excluding expiration date)
     $budget_data = get_post_meta($project_id, '_project_budget', true);
     $recurring_budget_data = get_post_meta($project_id, '_project_recurring_budget', true);
     $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_start_date', true);
     $proposed_delivery_date = get_post_meta($project_id, '_project_due_date', true);
-    $proposed_expiration_date = get_post_meta($project_id, '_arsol_pfw_proposal_expiration_date', true);
     
-    if ($budget_data || $recurring_budget_data || $proposed_start_date || $proposed_delivery_date || $proposed_expiration_date) {
+    if ($budget_data || $recurring_budget_data || $proposed_start_date || $proposed_delivery_date) {
         $has_proposal_data = true;
         $column_2_title = __('Proposal Details', 'arsol-pfw');
     }
