@@ -227,7 +227,7 @@ class Woocommerce {
         if (!$order) {
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('error',
                 'Invalid order provided to get_project_from_order');
-            return false;
+                return false;
         }
         
         // Try WooCommerce meta first (HPOS compatible)
@@ -633,18 +633,18 @@ class Woocommerce {
             }
             
             // Re-paginate the combined results
-            $total = count($all_order_ids);
-            $max_pages = ceil($total / $per_page);
-            $offset = ($current_page - 1) * $per_page;
+        $total = count($all_order_ids);
+        $max_pages = ceil($total / $per_page);
+        $offset = ($current_page - 1) * $per_page;
             $paginated_order_ids = array_slice($all_order_ids, $offset, $per_page);
-            
+        
             // Create result object
-            $result = new \stdClass();
+        $result = new \stdClass();
             $result->orders = $paginated_order_ids;
-            $result->total = $total;
-            $result->max_num_pages = $max_pages;
-            
-            return $result;
+        $result->total = $total;
+        $result->max_num_pages = $max_pages;
+        
+        return $result;
         }
         
         // Return original result if no child orders

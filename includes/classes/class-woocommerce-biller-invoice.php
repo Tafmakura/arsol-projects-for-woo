@@ -92,7 +92,7 @@ class Woocommerce_Biller {
                 } else {
                 // Subscription creation failed - throw exception to trigger rollback
                 throw new Exception(sprintf(__('Subscription creation failed: %s', 'arsol-pfw'), $subscription_result['message']));
-            }
+                }
             }
             
             return array(
