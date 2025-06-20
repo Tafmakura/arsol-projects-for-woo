@@ -106,9 +106,4 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
     </div>
 </div>
 
-<?php if (!empty($expiration_date)) : ?>
-<p class="form-field form-field-wide">
-    <label><strong><?php _e('Expiration Date:', 'arsol-pfw'); ?></strong></label>
-    <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($expiration_date))); ?>
-</p>
-<?php endif; ?> 
+<?php /* Expiration Date removed from admin display - still shows on frontend */ ?> 
