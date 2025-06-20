@@ -596,7 +596,7 @@ class Woocommerce_Biller {
         }
         
         $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
-        $currency = get_post_meta($proposal_id, '_arsol_proposal_currency', true) ?: get_woocommerce_currency();
+        $currency = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_currency', true) ?: get_woocommerce_currency();
         $line_items = array();
         
         // Get line items based on proposal type

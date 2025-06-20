@@ -399,9 +399,7 @@ class Proposal_Quotation {
         
         update_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items', $sanitized_line_items);
         
-        // Debug: Log what we're saving
-        error_log('ARSOL DEBUG - Raw POST line_items for proposal ' . $post_id . ': ' . print_r($line_items, true));
-        error_log('ARSOL DEBUG - Sanitized line items for proposal ' . $post_id . ': ' . print_r($sanitized_line_items, true));
+        // Save line items to database
         
         update_post_meta($post_id, '_arsol_pfw_proposal_quotation_onetime_total', sanitize_text_field($_POST['arsol_pfw_proposal_quotation_onetime_total']));
         

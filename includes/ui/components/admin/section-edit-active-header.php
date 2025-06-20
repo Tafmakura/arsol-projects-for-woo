@@ -39,16 +39,16 @@ $all_statuses = get_terms(array(
 // Check if has original proposal data
 $has_proposal_data = false;
 $column_2_title = __('Project Details', 'arsol-pfw');
-$original_proposal_id = get_post_meta($project_id, '_original_proposal_id', true);
+$original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_original_proposal_id', true);
 
 // Check for proposal data first (priority) - must have actual displayable data
 if ($original_proposal_id) {
     // Check if there's any actual proposal data to show
     $budget_data = get_post_meta($project_id, '_project_budget', true);
     $recurring_budget_data = get_post_meta($project_id, '_project_recurring_budget', true);
-    $proposed_start_date = get_post_meta($project_id, '_proposal_start_date', true);
-    $proposed_delivery_date = get_post_meta($project_id, '_proposal_delivery_date', true);
-    $proposed_expiration_date = get_post_meta($project_id, '_proposal_expiration_date', true);
+    $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_start_date', true);
+    $proposed_delivery_date = get_post_meta($project_id, '_project_due_date', true);
+    $proposed_expiration_date = get_post_meta($project_id, '_arsol_pfw_proposal_expiration_date', true);
     
     if ($budget_data || $recurring_budget_data || $proposed_start_date || $proposed_delivery_date || $proposed_expiration_date) {
         $has_proposal_data = true;
@@ -57,11 +57,11 @@ if ($original_proposal_id) {
 } else {
     // Check for original request data as fallback - must have actual displayable data
     $original_request_id = get_post_meta($project_id, '_original_request_id', true);
-    $original_request_title = get_post_meta($project_id, '_original_request_title', true);
-    $original_request_content = get_post_meta($project_id, '_original_request_content', true);
-    $original_request_budget = get_post_meta($project_id, '_original_request_budget', true);
-    $original_request_start_date = get_post_meta($project_id, '_original_request_start_date', true);
-    $original_request_delivery_date = get_post_meta($project_id, '_original_request_delivery_date', true);
+    $original_request_title = get_post_meta($project_id, '_arsol_pfw_proposal_request_title', true);
+    $original_request_content = get_post_meta($project_id, '_arsol_pfw_proposal_request_details', true);
+    $original_request_budget = get_post_meta($project_id, '_arsol_pfw_proposal_request_budget', true);
+    $original_request_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_start_date', true);
+    $original_request_delivery_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_delivery_date', true);
     
     if ($original_request_id || $original_request_title || $original_request_content || $original_request_budget || $original_request_start_date || $original_request_delivery_date) {
     $has_proposal_data = true;

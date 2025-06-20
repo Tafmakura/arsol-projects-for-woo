@@ -189,26 +189,20 @@ class Assets {
                     
                     // Always localize quotation script for proposals (needed for all proposal types)
                     global $post;
-                    $line_items = array();
-                    if ($post) {
-                        $line_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
-                        
-                        // Debug: Log what we're loading
-                        error_log('ARSOL DEBUG - Loading line items for proposal ' . $post->ID . ': ' . print_r($line_items, true));
-                        
-                        // Fetch product names and map saved prices for existing product line items
-                        if (!empty($line_items['products'])) {
-                            foreach ($line_items['products'] as $key => $product_item) {
-                                if (!empty($product_item['product_id'])) {
-                                    $product = wc_get_product($product_item['product_id']);
-                                    if ($product) {
-                                        $line_items['products'][$key]['product_name'] = $product->get_formatted_name();
-                                    }
+                    $line_items = get_post_meta($post->ID, '_arsol_pfw_proposal_quotation_line_items', true) ?: array();
+                    
+                    // Fetch product names and map saved prices for existing product line items
+                    if (!empty($line_items['products'])) {
+                        foreach ($line_items['products'] as $key => $product_item) {
+                            if (!empty($product_item['product_id'])) {
+                                $product = wc_get_product($product_item['product_id']);
+                                if ($product) {
+                                    $line_items['products'][$key]['product_name'] = $product->get_formatted_name();
                                 }
-                                // Map saved price to regular_price for the JavaScript template
-                                if (isset($product_item['price'])) {
-                                    $line_items['products'][$key]['regular_price'] = $product_item['price'];
-                                }
+                            }
+                            // Map saved price to regular_price for the JavaScript template
+                            if (isset($product_item['price'])) {
+                                $line_items['products'][$key]['regular_price'] = $product_item['price'];
                             }
                         }
                     }
