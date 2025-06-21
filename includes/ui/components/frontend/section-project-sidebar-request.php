@@ -101,7 +101,19 @@ do_action('arsol_pfw_sidebar_after', 'request', $sidebar_data);
     <div class="arsol-pfw-project-status-info">
         <h3><?php esc_html_e('Request Status', 'arsol-pfw'); ?></h3>
         <p class="status-badge status-on-hold"><?php esc_html_e('On Hold', 'arsol-pfw'); ?></p>
-        <p class="status-description"><?php esc_html_e('Your request is temporarily paused', 'arsol-pfw'); ?></p>
+        <p class="status-description"><?php esc_html_e('Temporarily paused - still editable', 'arsol-pfw'); ?></p>
+    </div>
+
+    <div class="arsol-pfw-project-action">
+        <button type="submit" form="arsol-request-edit-form" class="brxe-button bricks-button button-primary request-action-btn">
+            <?php esc_html_e('Update Request', 'arsol-pfw'); ?>
+        </button>
+    </div>
+    
+    <div class="arsol-pfw-project-action">
+        <button type="button" class="brxe-button bricks-button sm outline bricks-color-primary cancel-request-btn" data-confirm-text="<?php esc_attr_e('Are you sure you want to cancel this request?', 'arsol-pfw'); ?>">
+            <?php esc_html_e('Cancel Request', 'arsol-pfw'); ?>
+        </button>
     </div>
 
     <div class="arsol-pfw-project-action">
@@ -112,10 +124,6 @@ do_action('arsol_pfw_sidebar_after', 'request', $sidebar_data);
         <a href="/services/" class="brxe-button bricks-button sm outline bricks-color-primary"><?php esc_html_e('View Our Services', 'arsol-pfw'); ?></a>
     </div>
 
-    <div class="arsol-pfw-project-action">
-        <button type="button" class="brxe-button bricks-button sm outline bricks-color-secondary" onclick="window.print()"><?php esc_html_e('Print Request Details', 'arsol-pfw'); ?></button>
-    </div>
-
     <div class="arsol-pfw-on-hold-timeline">
         <h4><?php esc_html_e('Expected Timeline', 'arsol-pfw'); ?></h4>
         <ul>
@@ -123,4 +131,5 @@ do_action('arsol_pfw_sidebar_after', 'request', $sidebar_data);
             <li><?php esc_html_e('Next update: Within 7 days', 'arsol-pfw'); ?></li>
         </ul>
     </div>
-<?php endif; ?> 
+<?php endif; ?>
+
