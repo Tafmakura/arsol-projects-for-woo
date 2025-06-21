@@ -16,7 +16,7 @@ do_action('arsol_projects_before_request_state', $post->ID);
 
 <div class="project-overview-wrapper">
     <div class="project-content">
-        <?php if ($current_status === 'processing') : ?>
+        <?php if ($current_status === 'pending-review') : ?>
             <?php
             // Show edit form for processing requests
             \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
@@ -25,6 +25,39 @@ do_action('arsol_projects_before_request_state', $post->ID);
                 ['is_edit' => true, 'post' => $post]
             );
             ?>
+        <?php elseif ($current_status === 'on-hold') : ?>
+            <div class="arsol-pfw-project-overview-empty">
+                <div class="arsol-pfw-empty-state">
+                    <div class="arsol-pfw-empty-state__content">
+                        <h1><?php esc_html_e('Your Project Request is On Hold', 'arsol-pfw'); ?></h1>
+                        <p><?php printf(esc_html__('Your project request "%s" has been temporarily placed on hold. This could be due to resource availability, additional information needed, or other project priorities.', 'arsol-pfw'), '<strong>' . esc_html($post->post_title) . '</strong>'); ?></p>
+                        
+                        <div class="arsol-pfw-on-hold-info">
+                            <h2><?php esc_html_e('What happens next?', 'arsol-pfw'); ?></h2>
+                            <ul>
+                                <li><?php esc_html_e('Our team will review your request when resources become available', 'arsol-pfw'); ?></li>
+                                <li><?php esc_html_e('We may contact you for additional information if needed', 'arsol-pfw'); ?></li>
+                                <li><?php esc_html_e('You will be notified when your request moves to the next stage', 'arsol-pfw'); ?></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="arsol-pfw-dummy-content">
+                            <h2><?php esc_html_e('Project Details', 'arsol-pfw'); ?></h2>
+                            <p><?php echo wp_kses_post($post->post_content); ?></p>
+                            
+                            <h3><?php esc_html_e('Current Status Information', 'arsol-pfw'); ?></h3>
+                            <p><strong><?php esc_html_e('Status:', 'arsol-pfw'); ?></strong> <?php esc_html_e('On Hold', 'arsol-pfw'); ?></p>
+                            <p><strong><?php esc_html_e('Last Updated:', 'arsol-pfw'); ?></strong> <?php echo esc_html(get_the_modified_date()); ?></p>
+                            <p><strong><?php esc_html_e('Expected Review Date:', 'arsol-pfw'); ?></strong> <?php esc_html_e('To be determined', 'arsol-pfw'); ?></p>
+                            
+                            <div class="arsol-pfw-contact-info">
+                                <h3><?php esc_html_e('Need to discuss your request?', 'arsol-pfw'); ?></h3>
+                                <p><?php esc_html_e('Contact our team at support@example.com or call (555) 123-4567', 'arsol-pfw'); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         <?php else : ?>
             <div class="arsol-pfw-project-overview-empty">
                 <div class="arsol-pfw-empty-state">

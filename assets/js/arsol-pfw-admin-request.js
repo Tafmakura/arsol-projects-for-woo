@@ -55,9 +55,9 @@
             
             if ($statusSelect.length && $conversionButton.length) {
                 var currentStatus = $statusSelect.val();
-                var isUnderReview = currentStatus === 'under-review';
+                var isApproved = currentStatus === 'approved';
                 
-                if (isUnderReview) {
+                if (isApproved) {
                     $conversionButton.removeClass('disabled').prop('disabled', false);
                 } else {
                     $conversionButton.addClass('disabled').prop('disabled', true);

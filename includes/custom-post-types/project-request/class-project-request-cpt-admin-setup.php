@@ -210,7 +210,7 @@ class Setup {
     public function protect_core_request_statuses($term_id, $taxonomy) {
         if ($taxonomy === 'arsol-request-status') {
             $term = get_term($term_id);
-            $protected_slugs = array('processing', 'on-hold', 'approved');
+            $protected_slugs = array('on-hold', 'approved');
             
             if ($term && in_array($term->slug, $protected_slugs)) {
                 wp_die(

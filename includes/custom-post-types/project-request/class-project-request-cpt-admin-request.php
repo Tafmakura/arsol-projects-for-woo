@@ -50,12 +50,12 @@ class Request {
             <?php endif; ?>
             
             <?php
-            $is_disabled = $current_status !== 'processing';
+            $is_disabled = $current_status !== 'approved';
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
             $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
             $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete the original request.', 'arsol-pfw'));
             $tooltip_text = $is_disabled
-                ? __('The request must be in processing status before it can be converted.', 'arsol-pfw')
+                ? __('The request must be in approved status before it can be converted.', 'arsol-pfw')
                 : __('Converts this request into a new proposal.', 'arsol-pfw');
             ?>
             <span title="<?php echo esc_attr($tooltip_text); ?>">
