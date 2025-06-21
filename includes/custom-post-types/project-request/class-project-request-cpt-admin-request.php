@@ -39,7 +39,7 @@ class Request {
         $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         ?>
         <p class="request-conversion-description">
-            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request status must be set to "Under Review" before conversion is allowed. This action cannot be undone.', 'arsol-pfw'); ?>
+            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request status must be set to "Approved" before conversion is allowed. This action cannot be undone.', 'arsol-pfw'); ?>
         </p>
         
         <div class="major-actions">

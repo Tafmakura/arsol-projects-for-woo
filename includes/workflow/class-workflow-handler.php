@@ -112,11 +112,11 @@ class Workflow_Handler {
 
         // Server-side validation of the request status
         $current_status = wp_get_object_terms($request_id, 'arsol-request-status', array('fields' => 'slugs'));
-        if (empty($current_status) || $current_status[0] !== 'under-review') {
+        if (empty($current_status) || $current_status[0] !== 'approved') {
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_request_to_proposal_conversion('error', 
-                sprintf('Request to proposal conversion failed: Request #%d status is "%s", must be "under-review"', 
+                sprintf('Request to proposal conversion failed: Request #%d status is "%s", must be "approved"', 
                     $request_id, empty($current_status) ? 'none' : $current_status[0]));
-            wp_die(__('This request cannot be converted. The status must be "Under Review".', 'arsol-pfw'));
+            wp_die(__('This request cannot be converted. The status must be "Approved".', 'arsol-pfw'));
         }
 
         $conversion_data['request_status'] = $current_status[0];
