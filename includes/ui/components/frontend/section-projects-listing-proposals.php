@@ -34,9 +34,9 @@ do_action('arsol_projects_before_user_proposals', $has_items);
                     if ($post_status === 'draft') {
                         $status = __('Draft', 'arsol-pfw');
                     } else {
-                        $review_status_terms = wp_get_post_terms($proposal_id, 'arsol-review-status', array('fields' => 'names'));
-                        if (!is_wp_error($review_status_terms) && !empty($review_status_terms)) {
-                            $status = $review_status_terms[0];
+                        $proposal_status_terms = wp_get_post_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'names'));
+                        if (!is_wp_error($proposal_status_terms) && !empty($proposal_status_terms)) {
+                            $status = $proposal_status_terms[0];
                         } else {
                             $status = __('Published', 'arsol-pfw');
                         }

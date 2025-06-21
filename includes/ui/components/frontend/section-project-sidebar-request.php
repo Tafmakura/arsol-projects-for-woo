@@ -83,7 +83,7 @@ $delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', 
 do_action('arsol_pfw_sidebar_after', 'request', $sidebar_data);
 ?>
 
-<?php if ($current_status === 'pending-review') : ?>
+<?php if ($current_status === 'processing') : ?>
     <div class="arsol-pfw-project-action">
         <button type="submit" form="request-edit-form" class="brxe-button bricks-button button-primary request-action-btn">
             <?php esc_html_e('Update Request', 'arsol-pfw'); ?>
@@ -97,7 +97,7 @@ do_action('arsol_pfw_sidebar_after', 'request', $sidebar_data);
     </div>
 <?php endif; ?>
 
-<?php if ($current_status === 'under-review') : ?>
+<?php if ($current_status === 'on-hold') : ?>
     <div class="arsol-pfw-project-action">
         <a href="/contact-us/" class="brxe-button bricks-button sm outline bricks-color-primary"><?php esc_html_e('Contact Support', 'arsol-pfw'); ?></a>
     </div>

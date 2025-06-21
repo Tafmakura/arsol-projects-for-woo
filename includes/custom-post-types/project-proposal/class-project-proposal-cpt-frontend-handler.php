@@ -20,9 +20,75 @@ class Frontend_Handler {
      */
     public function __construct() {
         add_action('template_redirect', array($this, 'handle_project_proposal_submission'));
-    }
+        add_filter('the_content', array($this, 'display_proposal_content'));    }
+
 
     /**
+     * Display proposal content with status messages
+     */
+    public function display_proposal_content($content) {
+        if (!is_singular('arsol-pfw-proposal') || !in_the_loop() || !is_main_query()) {
+            return $content;
+        }
+
+        global $post;
+        $current_user_id = get_current_user_id();
+        $customer_id = get_post_meta($post->ID, '_arsol_pfw_proposal_customer_id', true);
+
+        // Check if current user is the assigned customer
+        if ($current_user_id != $customer_id) {
+            return '<div class="arsol-pfw-error"><p>You do not have permission to view this proposal.</p></div>';
+        }
+
+        // Get proposal status
+        $status_terms = get_the_terms($post->ID, 'arsol-proposal-status');
+        $status = $status_terms && !is_wp_error($status_terms) ? $status_terms[0]->slug : 'processing';
+
+        // Display status-specific messages in content section
+        $status_message = '';
+        switch ($status) {
+            case 'processing':
+                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-info">
+                    <p><strong>Status:</strong> Your proposal is currently being processed. We are preparing the details and will have it ready for your review soon.</p>
+                </div>';
+                break;
+                
+            case 'pending-approval':
+                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-warning">
+                    <p><strong>Status:</strong> Your proposal is ready and pending your approval. Please review the details below and let us know if you approve.</p>
+                </div>';
+                break;
+                
+            case 'approved':
+                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-success">
+                    <p><strong>Status:</strong> Excellent! Your proposal has been approved and a project will be created for you shortly.</p>
+                </div>';
+                break;
+                
+            case 'rejected':
+                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-error">
+                    <p><strong>Status:</strong> This proposal has been rejected. If you have questions or would like to discuss alternatives, please contact us.</p>
+                </div>';
+                break;
+        }
+
+        // Check if user can proceed (only for approved status)
+        $can_proceed = ($status === 'approved');
+        
+        if (!$can_proceed && in_array($status, ['processing', 'pending-approval', 'rejected'])) {
+            $status_message .= '<div class="arsol-pfw-notice arsol-pfw-notice-info">
+                <p><strong>Cannot Proceed:</strong> You cannot proceed to the next step until your proposal has been approved.</p>
+            </div>';
+        }
+
+        // Build content with status messages
+        $proposal_content = $status_message;
+        $proposal_content .= '<div class="arsol-pfw-proposal-details">';
+        $proposal_content .= $content;
+        $proposal_content .= '</div>';
+
+        return $proposal_content;
+    }    /**
      * Handle project proposal form submission
      */
     public function handle_project_proposal_submission() {

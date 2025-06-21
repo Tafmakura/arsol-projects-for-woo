@@ -182,6 +182,8 @@ class Proposals {
      * Register bulk actions
      */
     public function register_bulk_actions($bulk_actions) {
+        $bulk_actions['mark_processing'] = __('Mark as Processing', 'arsol-pfw');
+        $bulk_actions['mark_pending_approval'] = __('Mark as Pending Approval', 'arsol-pfw');
         $bulk_actions['mark_approved'] = __('Mark as Approved', 'arsol-pfw');
         $bulk_actions['mark_rejected'] = __('Mark as Rejected', 'arsol-pfw');
         return $bulk_actions;
@@ -191,11 +193,18 @@ class Proposals {
      * Handle bulk actions
      */
     public function handle_bulk_actions($redirect_to, $doaction, $post_ids) {
-        if ($doaction !== 'mark_approved' && $doaction !== 'mark_rejected') {
+        $valid_actions = array(
+            'mark_processing' => 'processing',
+            'mark_pending_approval' => 'pending-approval',
+            'mark_approved' => 'approved',
+            'mark_rejected' => 'rejected'
+        );
+        
+        if (!array_key_exists($doaction, $valid_actions)) {
             return $redirect_to;
         }
 
-        $status = $doaction === 'mark_approved' ? 'approved' : 'rejected';
+        $status = $valid_actions[$doaction];
         
         foreach ($post_ids as $post_id) {
             wp_set_object_terms($post_id, $status, 'arsol-proposal-status', false);

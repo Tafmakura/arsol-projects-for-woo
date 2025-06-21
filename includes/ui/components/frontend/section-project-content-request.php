@@ -16,9 +16,9 @@ do_action('arsol_projects_before_request_state', $post->ID);
 
 <div class="project-overview-wrapper">
     <div class="project-content">
-        <?php if ($current_status === 'pending-review') : ?>
+        <?php if ($current_status === 'processing') : ?>
             <?php
-            // Show edit form for pending review requests
+            // Show edit form for processing requests
             \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
                 'project_request_edit_form',
                 ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-request.php',

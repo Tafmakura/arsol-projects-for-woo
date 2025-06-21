@@ -153,7 +153,8 @@ class Requests {
      * Register bulk actions
      */
     public function register_bulk_actions($bulk_actions) {
-        $bulk_actions['mark_processing'] = __('Mark as Processing', 'arsol-pfw');
+        $bulk_actions['mark_pending_review'] = __('Mark as Pending Review', 'arsol-pfw');
+        $bulk_actions['mark_under_review'] = __('Mark as Under Review', 'arsol-pfw');
         $bulk_actions['mark_on_hold'] = __('Mark as On Hold', 'arsol-pfw');
         $bulk_actions['mark_approved'] = __('Mark as Approved', 'arsol-pfw');
         return $bulk_actions;
@@ -164,8 +165,9 @@ class Requests {
      */
     public function handle_bulk_actions($redirect_to, $doaction, $post_ids) {
         $valid_actions = array(
-            'mark_processing' => 'processing',
-            'mark_on_hold' => 'on-hold', 
+            'mark_pending_review' => 'pending-review',
+            'mark_under_review' => 'under-review',
+            'mark_on_hold' => 'on-hold',
             'mark_approved' => 'approved'
         );
         

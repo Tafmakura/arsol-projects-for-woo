@@ -20,6 +20,74 @@ class Frontend_Handler {
      */
     public function __construct() {
         add_action('template_redirect', array($this, 'handle_create_request_submission'));
+        add_filter('the_content', array($this, 'display_request_content'));
+    }
+
+    /**
+     * Display request content with status messages
+     */
+    public function display_request_content($content) {
+        if (!is_singular('arsol-pfw-request') || !in_the_loop() || !is_main_query()) {
+            return $content;
+        }
+
+        global $post;
+        $current_user_id = get_current_user_id();
+        $post_author_id = $post->post_author;
+
+        // Check if current user is the author
+        if ($current_user_id !== $post_author_id) {
+            return '<div class="arsol-pfw-error"><p>You do not have permission to view this request.</p></div>';
+        }
+
+        // Get request status
+        $status_terms = get_the_terms($post->ID, 'arsol-request-status');
+        $status = $status_terms && !is_wp_error($status_terms) ? $status_terms[0]->slug : 'pending-review';
+
+        // Display status-specific messages in content section
+        $status_message = '';
+        switch ($status) {
+            case 'pending-review':
+                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-info">
+                    <p><strong>Status:</strong> Your request is pending review. We will review it shortly and get back to you.</p>
+                </div>';
+                break;
+                
+            case 'under-review':
+                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-warning">
+                    <p><strong>Status:</strong> Your request is currently under review. We are evaluating the details and will update you soon.</p>
+                </div>';
+                break;
+                
+            case 'on-hold':
+                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-warning">
+                    <p><strong>Status:</strong> Your request is currently on hold. We may need additional information or are waiting for resources to become available.</p>
+                </div>';
+                break;
+                
+            case 'approved':
+                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-success">
+                    <p><strong>Status:</strong> Great news! Your request has been approved and a proposal will be created for you shortly.</p>
+                </div>';
+                break;
+        }
+
+        // Check if user can proceed (only for approved status)
+        $can_proceed = ($status === 'approved');
+        
+        if (!$can_proceed && $status !== 'approved') {
+            $status_message .= '<div class="arsol-pfw-notice arsol-pfw-notice-info">
+                <p><strong>Cannot Proceed:</strong> You cannot proceed to the next step until your request has been approved.</p>
+            </div>';
+        }
+
+        // Build content with status messages
+        $request_content = $status_message;
+        $request_content .= '<div class="arsol-pfw-request-details">';
+        $request_content .= $content;
+        $request_content .= '</div>';
+
+        return $request_content;
     }
 
     /**
@@ -58,8 +126,8 @@ class Frontend_Handler {
         $request_id = wp_insert_post($request_data);
         
         if (!is_wp_error($request_id)) {
-            // Set default request status
-            wp_set_object_terms($request_id, 'processing', 'arsol-request-status');
+            // Set default request status to 'pending-review'
+            wp_set_object_terms($request_id, 'pending-review', 'arsol-request-status');
             
             // Save additional request meta
             if (!empty($budget)) {

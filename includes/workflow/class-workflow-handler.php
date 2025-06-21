@@ -57,7 +57,7 @@ class Workflow_Handler {
     public function set_proposal_review_status($new_status, $old_status, $post) {
         // Removed automatic review status setting - using proposal status only
         // if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
-        //     wp_set_object_terms($post->ID, 'under-review', 'arsol-review-status');
+        // Set proposal to pending-approval status when published');
         // }
     }
 
@@ -898,9 +898,9 @@ class Workflow_Handler {
          * @param string $default_status The default status to be assigned
          * @param array $creation_data Creation context data
          */
-        do_action('arsol_before_request_creation_status_assignment', $post_id, 'processing', $creation_data);
+        do_action('arsol_before_request_creation_status_assignment', $post_id, 'pending-review', $creation_data);
 
-        wp_set_object_terms($post_id, 'processing', 'arsol-request-status');
+        wp_set_object_terms($post_id, 'pending-review', 'arsol-request-status');
 
         /**
          * Hook: arsol_after_request_creation_status_assigned
@@ -910,7 +910,7 @@ class Workflow_Handler {
          * @param string $assigned_status The status that was assigned
          * @param array $creation_data Creation context data
          */
-        do_action('arsol_after_request_creation_status_assigned', $post_id, 'processing', $creation_data);
+        do_action('arsol_after_request_creation_status_assigned', $post_id, 'pending-review', $creation_data);
 
         /**
          * Hook: arsol_before_request_creation_metadata_save

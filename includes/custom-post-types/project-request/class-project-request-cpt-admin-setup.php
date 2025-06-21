@@ -152,7 +152,8 @@ class Setup {
      */
     public function add_default_request_statuses() {
         $default_statuses = array(
-            'processing'        => 'Processing',
+            'pending-review'    => 'Pending Review',
+            'under-review'      => 'Under Review',
             'on-hold'          => 'On Hold',
             'approved'         => 'Approved'
         );

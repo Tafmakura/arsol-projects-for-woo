@@ -48,7 +48,7 @@ do_action('arsol_pfw_sidebar_fields_end', 'proposal', $sidebar_data);
 
 <?php
 // Get status and metadata
-$status_terms = wp_get_post_terms($proposal_id, 'arsol-review-status', ['fields' => 'slugs']);
+$status_terms = wp_get_post_terms($proposal_id, 'arsol-proposal-status', ['fields' => 'slugs']);
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
 
 // Get proposal metadata
@@ -83,7 +83,7 @@ $timeline = get_post_meta($proposal_id, '_arsol_pfw_proposal_timeline', true);
 </div>
 <?php endif; ?>
 
-<?php if ($current_status === 'under-review') : ?>
+<?php if ($current_status === 'pending-approval') : ?>
     <div class="arsol-pfw-project-action">
         <a href="<?php echo esc_url(wp_nonce_url(add_query_arg(['action' => 'arsol_approve_proposal', 'proposal_id' => $proposal_id], admin_url('admin-post.php')), 'arsol_approve_proposal_nonce')); ?>" class="brxe-button bricks-button button-primary arsol-confirm-action" data-message="<?php esc_attr_e('Are you sure you want to approve this proposal? This will convert it into a project.', 'arsol-pfw'); ?>">
             <?php esc_html_e('Approve Proposal', 'arsol-pfw'); ?>
