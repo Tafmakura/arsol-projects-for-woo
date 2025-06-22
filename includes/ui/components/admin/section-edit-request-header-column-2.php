@@ -52,7 +52,7 @@ $submission_date = get_the_time('l j F \a\t g:ia', $post);
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label><strong><?php _e('Project Description:', 'arsol-pfw'); ?></strong></label>
+        <label><strong><?php _e('Project Request Details:', 'arsol-pfw'); ?></strong></label>
         <?php echo $request_content ? wp_kses_post(wp_trim_words($request_content, 50)) : __('N/A', 'arsol-pfw'); ?>
     </p>
 </div>
