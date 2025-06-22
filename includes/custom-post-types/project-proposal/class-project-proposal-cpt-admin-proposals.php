@@ -30,7 +30,6 @@ class Proposals {
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
         $new_columns['proposal_status'] = __('Status', 'arsol-pfw');
-        $new_columns['proposal_budget'] = __('Budget', 'arsol-pfw');
         $new_columns['related_request'] = __('Related Request', 'arsol-pfw');
         $new_columns['author'] = $columns['author'];
         $new_columns['date'] = $columns['date'];
@@ -47,13 +46,6 @@ class Proposals {
                 $status = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'names'));
                 if (!empty($status) && !is_wp_error($status)) {
                     echo esc_html($status[0]);
-                }
-                break;
-                
-            case 'proposal_budget':
-                $budget = get_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
-                if ($budget) {
-                    echo wc_price($budget);
                 }
                 break;
                 
