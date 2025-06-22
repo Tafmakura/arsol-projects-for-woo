@@ -95,6 +95,19 @@ $all_proposal_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
+        <label for="arsol_pfw_proposal_secondary_status"><?php _e('Secondary Status:', 'arsol-pfw'); ?></label>
+        <?php $current_secondary_status = get_post_meta($post->ID, '_arsol_pfw_proposal_secondary_status', true); ?>
+        <select id="arsol_pfw_proposal_secondary_status" name="arsol_pfw_proposal_secondary_status" class="wc-enhanced-select">
+            <option value="" <?php selected($current_secondary_status, ''); ?>><?php _e('— Select Status —', 'arsol-pfw'); ?></option>
+            <option value="ready_for_review" <?php selected($current_secondary_status, 'ready_for_review'); ?>><?php _e('Ready for Review', 'arsol-pfw'); ?></option>
+            <option value="processing" <?php selected($current_secondary_status, 'processing'); ?>><?php _e('Processing', 'arsol-pfw'); ?></option>
+            <option value="approved" <?php selected($current_secondary_status, 'approved'); ?>><?php _e('Approved', 'arsol-pfw'); ?></option>
+        </select>
+    </p>
+</div>
+
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
         <label for="arsol_pfw_proposal_costing_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
                         <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select">
                     <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>

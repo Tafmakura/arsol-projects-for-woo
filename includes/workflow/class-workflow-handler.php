@@ -14,6 +14,9 @@ class Workflow_Handler {
         // Actions for converting proposal to project
         add_action('admin_post_arsol_convert_to_project', array($this, 'convert_proposal_to_project'));
 
+        // Debug: Confirm action registration
+        error_log('ARSOL DEBUG: admin_post_arsol_convert_to_project action registered');
+
         // Action to set review status when a proposal is published
         add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
 
@@ -279,11 +282,16 @@ class Workflow_Handler {
     }
 
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
+        // Add debugging to help troubleshoot 404 issues
+        error_log('ARSOL DEBUG: convert_proposal_to_project called with proposal_id=' . $proposal_id . ', is_internal_call=' . ($is_internal_call ? 'true' : 'false'));
+        error_log('ARSOL DEBUG: $_GET data: ' . print_r($_GET, true));
+        
         ob_start();
 
-        // Get proposal ID first if not provided
+        // Get proposal ID first if not provided (admin_post action)
         if (empty($proposal_id)) {
             if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce')) {
+                error_log('ARSOL DEBUG: Invalid proposal or nonce - proposal_id: ' . (isset($_GET['proposal_id']) ? $_GET['proposal_id'] : 'not set') . ', nonce valid: ' . (wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce') ? 'yes' : 'no'));
                 wp_die(__('Invalid proposal or nonce.', 'arsol-pfw'));
             }
             $proposal_id = intval($_GET['proposal_id']);

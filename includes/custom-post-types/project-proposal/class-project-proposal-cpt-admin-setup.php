@@ -297,7 +297,7 @@ class Setup {
         if (isset($_POST['arsol_pfw_proposal_secondary_status'])) {
             $secondary_status = sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
             // Validate the value is one of the allowed options
-            if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
+            if (in_array($secondary_status, ['ready_for_review', 'processing', 'approved'])) {
                 update_post_meta($post_id, '_arsol_pfw_proposal_secondary_status', $secondary_status);
             }
         }

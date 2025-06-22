@@ -89,12 +89,23 @@ class Proposal {
             
             <?php
             $is_disabled = $post->post_status !== 'publish';
+            $secondary_status = get_post_meta($post->ID, '_arsol_pfw_proposal_secondary_status', true);
+            $is_secondary_approved = ($secondary_status === 'approved');
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
             $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
             $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Invoices will be created if selected.', 'arsol-pfw'));
-            $tooltip_text = $is_disabled
-                ? __('The proposal must be published before it can be converted.', 'arsol-pfw')
-                : __('Converts this proposal into a new project.', 'arsol-pfw');
+            
+            // Updated tooltip logic for both conditions
+            $tooltip_text = '';
+            if ($is_disabled && !$is_secondary_approved) {
+                $tooltip_text = __('The proposal must be published and have secondary status "approved" before it can be converted.', 'arsol-pfw');
+            } elseif ($is_disabled) {
+                $tooltip_text = __('The proposal must be published before it can be converted.', 'arsol-pfw');
+            } elseif (!$is_secondary_approved) {
+                $tooltip_text = __('The proposal secondary status must be set to "approved" before it can be converted.', 'arsol-pfw');
+            } else {
+                $tooltip_text = __('Converts this proposal into a new project.', 'arsol-pfw');
+            }
             ?>
             <span title="<?php echo esc_attr($tooltip_text); ?>">
                 <input type="button" 
@@ -102,7 +113,8 @@ class Proposal {
                        value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
                        data-url="<?php echo esc_url($convert_url); ?>" 
                        data-message="<?php echo $confirm_message; ?>"
-                       <?php disabled($is_disabled, true); ?> />
+                       data-published="<?php echo $post->post_status === 'publish' ? 'true' : 'false'; ?>"
+                       data-secondary-status="<?php echo esc_attr($secondary_status); ?>" />
             </span>
         </div>
         <?php
@@ -173,7 +185,7 @@ class Proposal {
         if (isset($_POST['arsol_pfw_proposal_secondary_status'])) {
             $secondary_status = sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
             // Validate the value is one of the allowed options
-            if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
+            if (in_array($secondary_status, ['ready_for_review', 'processing', 'approved'])) {
                 update_post_meta($post_id, '_arsol_pfw_proposal_secondary_status', $secondary_status);
             }
         }
