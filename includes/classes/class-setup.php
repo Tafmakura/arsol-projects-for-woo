@@ -16,6 +16,30 @@ class Setup {
         // Register activation and deactivation hooks
         register_activation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'activate'));
         register_deactivation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'deactivate'));
+        
+        // Schedule automatic conversion cleanup
+        add_action('wp', array($this, 'schedule_conversion_cleanup'));
+        add_action('arsol_cleanup_stuck_conversions', array($this, 'cleanup_stuck_conversions'));
+    }
+
+    /**
+     * Schedule conversion cleanup cron job
+     */
+    public function schedule_conversion_cleanup() {
+        if (!wp_next_scheduled('arsol_cleanup_stuck_conversions')) {
+            wp_schedule_event(time(), 'hourly', 'arsol_cleanup_stuck_conversions');
+        }
+    }
+
+    /**
+     * Cleanup stuck conversions via cron
+     */
+    public function cleanup_stuck_conversions() {
+        $cleaned = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::cleanup_stuck_workflows(30);
+        if ($cleaned > 0) {
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                "Automatic cleanup: removed {$cleaned} stuck conversions");
+        }
     }
 
     public function init() {
@@ -111,6 +135,9 @@ class Setup {
      * @return void
      */
     public function deactivate() {
+        // Clear scheduled cron jobs
+        wp_clear_scheduled_hook('arsol_cleanup_stuck_conversions');
+        
         // Flush rewrite rules on deactivation to clean up
         flush_rewrite_rules();
     }

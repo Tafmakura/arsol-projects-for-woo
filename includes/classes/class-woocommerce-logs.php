@@ -140,6 +140,16 @@ class Woocommerce_Logs {
     }
     
     /**
+     * Log workflow-related messages (conversions, transactions, rollbacks)
+     * 
+     * @param string $level Log level
+     * @param string $message Log message
+     */
+    public static function log_workflow($level, $message) {
+        self::log($level, $message, 'general', 'enable_workflow_logs');
+    }
+    
+    /**
      * Get all available debug options
      * 
      * @return array Debug options with labels
@@ -151,6 +161,7 @@ class Woocommerce_Logs {
             'enable_woocommerce_billing_logs' => __('WooCommerce Billing Operations', 'arsol-pfw'),
             'enable_checkout_logs' => __('Checkout Process', 'arsol-pfw'),
             'enable_general_logs' => __('General Operations', 'arsol-pfw'),
+            'enable_workflow_logs' => __('Workflow & Transaction System', 'arsol-pfw'),
         );
     }
     
