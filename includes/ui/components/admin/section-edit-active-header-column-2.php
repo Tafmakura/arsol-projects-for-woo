@@ -29,11 +29,11 @@ if ($original_proposal_id) {
 
 // Check for original request data (fallback if no proposal data)
 $original_request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
-$original_request_title = get_post_meta($project_id, '_arsol_pfw_proposal_request_title', true);
-$original_request_content = get_post_meta($project_id, '_arsol_pfw_proposal_request_details', true);
-$original_request_budget = get_post_meta($project_id, '_arsol_pfw_proposal_request_budget', true);
-$original_request_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_start_date', true);
-$original_request_delivery_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_delivery_date', true);
+$original_request_title = get_post_meta($project_id, '_arsol_pfw_project_request_title', true);
+$original_request_content = get_post_meta($project_id, '_arsol_pfw_project_request_details', true);
+$original_request_budget = get_post_meta($project_id, '_arsol_pfw_project_request_budget', true);
+$original_request_start_date = get_post_meta($project_id, '_arsol_pfw_project_request_start_date', true);
+$original_request_delivery_date = get_post_meta($project_id, '_arsol_pfw_project_request_delivery_date', true);
 
 $has_original_data = $original_request_id || $original_request_budget || $original_request_start_date || $original_request_delivery_date;
 ?>
@@ -83,11 +83,6 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
     <?php /* Proposal Expiration Date removed from project post type display */ ?>
 
 <?php elseif ($has_original_data): ?>
-
-    <p class="form-field form-field-wide">
-        <label><strong><?php _e('Project Title:', 'arsol-pfw'); ?></strong></label>
-        <?php echo !empty($original_request_title) ? esc_html($original_request_title) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
-    </p>
 
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Available Budget:', 'arsol-pfw'); ?></strong></label>

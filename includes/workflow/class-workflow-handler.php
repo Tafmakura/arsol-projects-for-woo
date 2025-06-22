@@ -76,11 +76,11 @@ class Workflow_Handler {
             }
 
             // Security validation
-            if (!isset($_GET['request_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_proposal_nonce')) {
+        if (!isset($_GET['request_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_proposal_nonce')) {
                 throw new Exception(__('Invalid request or nonce.', 'arsol-pfw'));
-            }
+        }
 
-            if (!current_user_can('edit_post', $request_id) || !current_user_can('publish_posts')) {
+        if (!current_user_can('edit_post', $request_id) || !current_user_can('publish_posts')) {
                 throw new Exception(__('You do not have sufficient permissions to perform this action.', 'arsol-pfw'));
             }
             
@@ -96,10 +96,10 @@ class Workflow_Handler {
             
             // Validation step
             update_post_meta($request_id, '_arsol_conversion_step', 'validation');
-            
-            // Server-side validation of the request status
-            $current_status = wp_get_object_terms($request_id, 'arsol-request-status', array('fields' => 'slugs'));
-            if (empty($current_status) || $current_status[0] !== 'approved') {
+
+        // Server-side validation of the request status
+        $current_status = wp_get_object_terms($request_id, 'arsol-request-status', array('fields' => 'slugs'));
+        if (empty($current_status) || $current_status[0] !== 'approved') {
                 throw new Exception(sprintf(
                     __('This request cannot be converted. The status is "%s", must be "approved".', 'arsol-pfw'),
                     empty($current_status) ? 'none' : $current_status[0]
@@ -122,50 +122,50 @@ class Workflow_Handler {
              */
             do_action('arsol_before_proposal_conversion_validation', $request_id, $conversion_data);
 
-            /**
-             * Hook: arsol_after_proposal_conversion_validated
-             * Fired after all validation checks pass, before proposal creation
-             */
-            do_action('arsol_after_proposal_conversion_validated', $request_id, $request_post, $conversion_data);
+        /**
+         * Hook: arsol_after_proposal_conversion_validated
+         * Fired after all validation checks pass, before proposal creation
+         */
+        do_action('arsol_after_proposal_conversion_validated', $request_id, $request_post, $conversion_data);
             
             // Creation step
             update_post_meta($request_id, '_arsol_conversion_step', 'creation');
-            
-            // Create proposal args with filter for customization
-            $proposal_args = array(
-                'post_title'   => $request_post->post_title,
-                'post_content' => '', // ✅ CLEAN CONTENT FLOW: Empty slate for proposal writing
-                'post_status'  => 'publish',
-                'post_type'    => 'arsol-pfw-proposal',
-                'post_author'  => $request_post->post_author,
-            );
 
-            /**
-             * Filter: arsol_proposal_conversion_args
-             * Allows modification of proposal creation arguments
-             */
-            $proposal_args = apply_filters('arsol_proposal_conversion_args', $proposal_args, $request_id, $request_post, $conversion_data);
+        // Create proposal args with filter for customization
+        $proposal_args = array(
+            'post_title'   => $request_post->post_title,
+            'post_content' => '', // ✅ CLEAN CONTENT FLOW: Empty slate for proposal writing
+            'post_status'  => 'publish',
+            'post_type'    => 'arsol-pfw-proposal',
+            'post_author'  => $request_post->post_author,
+        );
 
-            /**
-             * Hook: arsol_before_proposal_conversion_proposal_creation
-             * Fired immediately before the proposal post is created
-             */
-            do_action('arsol_before_proposal_conversion_proposal_creation', $proposal_args, $request_id, $conversion_data);
+        /**
+         * Filter: arsol_proposal_conversion_args
+         * Allows modification of proposal creation arguments
+         */
+        $proposal_args = apply_filters('arsol_proposal_conversion_args', $proposal_args, $request_id, $request_post, $conversion_data);
 
-            $new_proposal_id = wp_insert_post($proposal_args);
-            if (is_wp_error($new_proposal_id)) {
+        /**
+         * Hook: arsol_before_proposal_conversion_proposal_creation
+         * Fired immediately before the proposal post is created
+         */
+        do_action('arsol_before_proposal_conversion_proposal_creation', $proposal_args, $request_id, $conversion_data);
+
+        $new_proposal_id = wp_insert_post($proposal_args);
+        if (is_wp_error($new_proposal_id)) {
                 throw new Exception($new_proposal_id->get_error_message());
             }
             
             // Record created entity
             $this->record_transaction_entity($request_id, $new_proposal_id);
-            $conversion_data['new_proposal_id'] = $new_proposal_id;
+        $conversion_data['new_proposal_id'] = $new_proposal_id;
 
-            /**
-             * Hook: arsol_after_proposal_conversion_proposal_created
-             * Fired after the proposal is successfully created, before metadata copy
-             */
-            do_action('arsol_after_proposal_conversion_proposal_created', $new_proposal_id, $request_id, $request_post, $conversion_data);
+        /**
+         * Hook: arsol_after_proposal_conversion_proposal_created
+         * Fired after the proposal is successfully created, before metadata copy
+         */
+        do_action('arsol_after_proposal_conversion_proposal_created', $new_proposal_id, $request_id, $request_post, $conversion_data);
             
             // Metadata copy step
             update_post_meta($request_id, '_arsol_conversion_step', 'metadata_copy');

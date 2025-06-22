@@ -23,11 +23,6 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
 <?php if ($has_original_data): ?>
 
     <p class="form-field form-field-wide">
-        <label><strong><?php _e('Project Title:', 'arsol-pfw'); ?></strong></label>
-        <?php echo !empty($original_request_title) ? esc_html($original_request_title) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?>
-    </p>
-
-    <p class="form-field form-field-wide">
         <label><strong><?php _e('Available Budget:', 'arsol-pfw'); ?></strong></label>
         <?php 
         if (!empty($original_request_budget)) {
