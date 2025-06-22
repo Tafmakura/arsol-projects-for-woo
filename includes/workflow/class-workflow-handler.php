@@ -242,10 +242,23 @@ class Workflow_Handler {
             }
         }
         
-        // 3. Set proposal status to pending-approval
+        // 3. Transfer request budget as proposed budget
+        $request_budget = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
+        if (!empty($request_budget)) {
+            // Set proposal costing type to budget
+            update_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', 'budget');
+            
+            // Transfer request budget as proposed budget
+            update_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', $request_budget);
+            
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_request_to_proposal_conversion('info', 
+                "Budget transferred: Request budget → Proposal budget");
+        }
+        
+        // 4. Set proposal status to pending-approval
         wp_set_object_terms($proposal_id, 'pending-approval', 'arsol-proposal-status');
         
-        // 4. Copy custom fields and taxonomies
+        // 5. Copy custom fields and taxonomies
         $custom_fields = get_post_meta($request_id);
         foreach ($custom_fields as $key => $values) {
             if (strpos($key, '_arsol_pfw_') === 0 && !isset($meta_mapping[$key])) {
@@ -1210,12 +1223,21 @@ class Workflow_Handler {
      * Set conversion success notice
      */
     private function set_conversion_success_notice($from_type, $to_type, $from_id, $to_id, $title) {
+        // Map types to proper display names
+        $type_names = array(
+            'request' => __('Project Request', 'arsol-pfw'),
+            'proposal' => __('Project Proposal', 'arsol-pfw'),
+            'project' => __('Project', 'arsol-pfw')
+        );
+        
+        $from_name = isset($type_names[$from_type]) ? $type_names[$from_type] : ucfirst(str_replace('_', ' ', $from_type));
+        $to_name = isset($type_names[$to_type]) ? $type_names[$to_type] : ucfirst(str_replace('_', ' ', $to_type));
+        
         $message = sprintf(
-            __('✅ %s "%s" successfully converted to %s #%d.', 'arsol-pfw'),
-            ucfirst(str_replace('_', ' ', $from_type)),
+            __('%s "%s" successfully converted to %s.', 'arsol-pfw'),
+            $from_name,
             $title,
-            ucfirst(str_replace('_', ' ', $to_type)),
-            $to_id
+            $to_name
         );
         
         $this->set_admin_notice('success', $message, array(
@@ -1229,11 +1251,21 @@ class Workflow_Handler {
      * Set conversion failure notice
      */
     private function set_conversion_failure_notice($from_type, $to_type, $from_id, $title, $error) {
+        // Map types to proper display names
+        $type_names = array(
+            'request' => __('Project Request', 'arsol-pfw'),
+            'proposal' => __('Project Proposal', 'arsol-pfw'),
+            'project' => __('Project', 'arsol-pfw')
+        );
+        
+        $from_name = isset($type_names[$from_type]) ? $type_names[$from_type] : ucfirst(str_replace('_', ' ', $from_type));
+        $to_name = isset($type_names[$to_type]) ? $type_names[$to_type] : ucfirst(str_replace('_', ' ', $to_type));
+        
         $message = sprintf(
-            __('❌ Failed to convert %s "%s" to %s. Error: %s', 'arsol-pfw'),
-            ucfirst(str_replace('_', ' ', $from_type)),
+            __('Failed to convert %s "%s" to %s. Error: %s', 'arsol-pfw'),
+            $from_name,
             $title,
-            ucfirst(str_replace('_', ' ', $to_type)),
+            $to_name,
             $error
         );
         
