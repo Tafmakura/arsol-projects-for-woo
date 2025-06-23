@@ -2,7 +2,6 @@
  * Arsol Projects for WooCommerce - Admin Styles
  */
 
-
 /* === INLINE STYLES CONSOLIDATION === */
 
 /* Proposal Metabox Initial Hide */
@@ -33,31 +32,32 @@
     margin: 0;
 }
 
-
-
 /* Request Admin Description Text */
 .request-conversion-description {
     margin-bottom: 15px;
 }
 
-/* WooCommerce Duplicate Field Fix */
-/* Hide duplicate project field */
+/* WooCommerce Duplicate Field Fix - Hide duplicate project field */
 p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     display: none !important;
 }
 
-/* Quotation Template Inline Styles */
+/* Form Input Styling */
 .arsol-description-input {
     width: 100% !important;
+    flex: 1;
+    min-width: 150px !important;
 }
 
-.arsol-date-input[style*="display:none"] {
+.arsol-date-input[style*="display:none"],
+.arsol-date-input.hidden-start-date {
     display: none !important;
 }
 
 /* Project Selector Styling */
 #arsol_project_selector {
     width: 100% !important;
+    max-width: 25em;
 }
 
 /* Frontend Form Buttons */
@@ -152,12 +152,6 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 }
 
 /* Project field styling */
-#arsol_project_selector {
-    width: 100%;
-    max-width: 25em;
-}
-
-/* Project column in orders list */
 .column-project {
     width: 15%;
 }
@@ -391,12 +385,6 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 .arsol-quantity-input {
     width: 100%;
     text-align: right;
-}
-
-.arsol-description-input {
-    width: 100% !important;
-    flex: 1;
-    min-width: 150px !important;
 }
 
 .arsol-date-input {
@@ -1014,104 +1002,6 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     margin-bottom: 0;
 }
 
-/* === INLINE STYLES CONSOLIDATION === */
-
-/* Proposal Metabox Initial Hide - now managed via CSS */
-#arsol_budget_estimates_metabox,
-#arsol_proposal_quotation_metabox {
-    display: none;
-}
-
-/* Request Admin Description Text */
-.request-conversion-description {
-    margin-bottom: 15px;
-}
-
-/* WooCommerce Duplicate Field Fix */
-/* Hide duplicate project field */
-p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
-    display: none !important;
-}
-
-/* Quotation Template Inline Styles */
-.arsol-description-input {
-    width: 100% !important;
-}
-
-.arsol-date-input.hidden-start-date {
-    display: none !important;
-}
-
-/* Frontend Form Buttons */
-.form-project-create-request .submit-button,
-.form-project-create-active .submit-button {
-    width: 100%;
-    margin-top: 8px;
-}
-
-/* Checkout Field Styles */
-#arsol_project_readonly {
-    background-color: #f9f9f9;
-    color: #666;
-}
-
-/* Settings Page Styles */
-.arsol-settings-wide-field {
-    width: 50%;
-}
-
-/* Proposal Summary Styling (reuses existing classes) */
-
-.arsol-proposal-summary h4 {
-    margin: 0 0 15px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-}
-
-/* Horizontal div row layout for summary */
-.summary-row {
-   /* margin-bottom: 12px;*/
-    border: solid #eee;
-    border-width: 1px 0 0 0;
-    padding: 8px 0;
-}
-
-.summary-row:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.summary-heading {
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: #333;
-}
-
-.summary-content {
-    color: #666;
-    line-height: 1.4;
-}
-
-.summary-content > div {
-    margin-bottom: 2px;
-}
-
-/* Empty state styling */
-.summary-empty-state {
-    text-align: center;
-    padding: 20px 15px;
-    color: #666;
-    font-style: italic;
-}
-
-.summary-empty-state p {
-    margin: 0;
-    font-size: 14px;
-}
-
-/* Conditional Visibility System */
-
 /* === ADMIN FILTER STYLING === */
 /* Fix filter dropdown display and spacing with high specificity */
 body.wp-admin .tablenav.top .actions {
@@ -1146,7 +1036,6 @@ body.wp-admin select[name="customer"] {
 body.wp-admin .tablenav .select2-container,
 body.wp-admin .tablenav .selectWoo-container {
     min-width: 200px !important;
-    margin-right: 8px !important;
     display: inline-block !important;
 }
 
@@ -1254,17 +1143,6 @@ body.wp-admin .tablenav .actions .selectWoo-container.enhanced {
 /* Prevent layout shifting during Select2 initialization */
 body.wp-admin .tablenav .actions .select2-container:not(.select2-container--open) {
     transition: none !important;
-}
-
-/* Hide elements during initialization to prevent flash of unstyled content */
-body.wp-admin .wc-customer-search:not(.enhanced),
-body.wp-admin .arsol-user-select2:not(.enhanced) {
-    visibility: hidden !important;
-}
-
-body.wp-admin .wc-customer-search.enhanced,
-body.wp-admin .arsol-user-select2.enhanced {
-    visibility: visible !important;
 }
 
 /* Hide elements during initialization to prevent flash of unstyled content */
