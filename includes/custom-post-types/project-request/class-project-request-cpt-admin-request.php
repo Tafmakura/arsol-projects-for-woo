@@ -39,7 +39,7 @@ class Request {
         $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         ?>
         <p class="request-conversion-description">
-            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request status must be set to "Approved" before conversion is allowed. This action cannot be undone.', 'arsol-pfw'); ?>
+            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request status must be set to "Approved" before conversion. This action cannot be undone.', 'arsol-pfw'); ?>
         </p>
         
         <div class="major-actions">
@@ -53,7 +53,7 @@ class Request {
             $is_disabled = $current_status !== 'approved';
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
             $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
-            $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete the original request.', 'arsol-pfw'));
+            $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete your current request request.', 'arsol-pfw'));
             $tooltip_text = $is_disabled
                 ? __('The request must be in approved status before it can be converted.', 'arsol-pfw')
                 : __('Converts this request into a new proposal.', 'arsol-pfw');

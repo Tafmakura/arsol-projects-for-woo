@@ -81,7 +81,7 @@ class Proposal {
         </div>
         
         <p class="proposal-conversion-description">
-            <?php _e('This action will create a new project based on this proposal and permanently delete the original proposal. The proposal status must be set to "Approved" before conversion is allowed. Orders and invoices will be created for quotation proposals. This action cannot be undone.', 'arsol-pfw'); ?>
+            <?php _e('This action will create a new project based on this proposal and permanently delete the original proposal. The proposal status must be set to "Approved" before conversion. Orders and invoices will be created for quotation proposals. This action cannot be undone.', 'arsol-pfw'); ?>
         </p>
         
         <div class="major-actions">
@@ -102,7 +102,7 @@ class Proposal {
             
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
             $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
-            $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Invoices will be created if selected.', 'arsol-pfw'));
+            $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Orders and subscriptions will be created if the Quotation costing is selected.', 'arsol-pfw'));
             
             if ($is_not_published) {
                 $tooltip_text = __('The proposal must be published before it can be converted.', 'arsol-pfw');
