@@ -114,13 +114,14 @@
         updateRequestStatusVisibility: function() {
             var selectedStatus = $('#request_status').val() || '';
             
-            // Handle request feedback visibility
+            // Hide all conditional elements first with inline display:none
+            $('.arsol-pfw-show-if-request-status-is-on-hold, .arsol-pfw-hide-if-request-status-is-on-hold').css('display', 'none');
+            
+            // Show elements based on current status by removing inline display style
             if (selectedStatus === 'on-hold') {
-                $('.arsol-pfw-show-if-request-status-is-on-hold').show();
-                $('.arsol-pfw-hide-if-request-status-is-on-hold').hide();
+                $('.arsol-pfw-show-if-request-status-is-on-hold').css('display', '');
             } else {
-                $('.arsol-pfw-show-if-request-status-is-on-hold').hide();
-                $('.arsol-pfw-hide-if-request-status-is-on-hold').show();
+                $('.arsol-pfw-hide-if-request-status-is-on-hold').css('display', '');
             }
         },
 

@@ -1200,15 +1200,6 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     display: none !important;
 }
 
-/* Default state - hide feedback editor until status is set to on-hold */
-#arsol_request_feedback_metabox .arsol-pfw-show-if-request-status-is-on-hold {
-    display: none;
-}
-
-#arsol_request_feedback_metabox .arsol-pfw-hide-if-request-status-is-on-hold {
-    display: block;
-}
-
 /* Request Feedback Editor Styling */
 .arsol-request-feedback-editor {
     margin-top: 10px;
