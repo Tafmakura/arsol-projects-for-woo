@@ -477,7 +477,7 @@ class Users {
             $classes .= ' ' . esc_attr($args['class']);
         }
         
-        echo '<select name="' . esc_attr($args['name']) . '" id="' . esc_attr($args['id']) . '" class="' . esc_attr($classes) . '" data-placeholder="' . esc_attr($args['placeholder']) . '" data-action="arsol_json_search_project_leads" data-security="' . wp_create_nonce('search-project-leads') . '">';
+        echo '<select name="' . esc_attr($args['name']) . '" id="' . esc_attr($args['id']) . '" class="' . esc_attr($classes) . '" data-placeholder="' . esc_attr($args['placeholder']) . '" data-allow_clear="true" data-action="arsol_json_search_project_leads" data-security="' . wp_create_nonce('search-project-leads') . '">';
         echo '<option value="">' . esc_html($args['placeholder']) . '</option>';
         
         // If there's a selected value, add it as an option
