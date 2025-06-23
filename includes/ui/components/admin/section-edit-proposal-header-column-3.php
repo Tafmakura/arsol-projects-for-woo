@@ -24,7 +24,7 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
 </div>
 
 <!-- Budget Summary Template -->
-<div id="budget-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-budget" style="display: none;">
+<div id="budget-summary-template" class="form-field-wide arsol-pfw-show-if-proposal-cost-type-is-budget" style="display: none;">
     <h4><?php _e('📊 Budget Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for budget -->
@@ -46,7 +46,7 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
 </div>
 
 <!-- Quotation Summary Template -->
-<div id="quotation-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-quotation" style="display: none;">
+<div id="quotation-summary-template" class="form-field-wide arsol-pfw-show-if-proposal-cost-type-is-quotation" style="display: none;">
     <h4><?php _e('📋 Quotation Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for quotation -->
