@@ -52,35 +52,7 @@ class Proposals {
             case 'customer':
                 $post = get_post($post_id);
                 if ($post && $post->post_author) {
-                    $customer = get_userdata($post->post_author);
-                    if ($customer) {
-                        // Priority: display_name -> first/last name -> email
-                        $customer_display = '';
-                        
-                        if (!empty($customer->display_name)) {
-                            $customer_display = $customer->display_name;
-                        } elseif (!empty($customer->first_name) || !empty($customer->last_name)) {
-                            $customer_display = trim($customer->first_name . ' ' . $customer->last_name);
-                        } elseif (!empty($customer->user_email)) {
-                            $customer_display = $customer->user_email;
-                        } else {
-                            $customer_display = __('Unknown Customer', 'arsol-pfw');
-                        }
-                        
-                        // Make it a link to filter by this customer
-                        $filter_url = add_query_arg(array(
-                            'post_type' => 'arsol-pfw-proposal',
-                            'customer' => $customer->ID
-                        ), admin_url('edit.php'));
-                        
-                        printf(
-                            '<a href="%s">%s</a>',
-                            esc_url($filter_url),
-                            esc_html($customer_display)
-                        );
-                    } else {
-                        echo '<span class="na">&ndash;</span>';
-                    }
+                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($post->post_author, 'arsol-pfw-proposal');
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
@@ -88,7 +60,7 @@ class Proposals {
                 
             case 'project_lead':
                 $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
-                echo \Arsol_Projects_For_Woo\Classes\Helper::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
+                echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
                 break;
         }
     }
@@ -116,54 +88,15 @@ class Proposals {
                 echo '</select>';
             }
 
-            // Project Lead filter (WordPress native user dropdown)
+            // Project Lead filter
             $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
-            $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
-            
-            // Get users who can create projects based on Project Manager Roles setting
-            $project_lead_users = get_users(array(
-                'fields' => array('ID', 'display_name'),
-                'meta_query' => array(
-                    'relation' => 'OR',
-                    array(
-                        'key' => 'wp_capabilities',
-                        'value' => 'manage_projects',
-                        'compare' => 'LIKE'
-                    ),
-                    array(
-                        'key' => 'wp_capabilities', 
-                        'value' => 'create_projects',
-                        'compare' => 'LIKE'
-                    )
-                )
-            ));
-            
-            // Filter to only users who can actually create projects
-            $valid_user_ids = array();
-            foreach ($project_lead_users as $user) {
-                if ($admin_users_helper->can_user_create_projects($user->ID)) {
-                    $valid_user_ids[] = $user->ID;
-                }
-            }
-            
-            // Use searchable select similar to customer field
             echo '<div class="arsol-user-select2-wrapper">';
-            echo '<select class="arsol-project-lead-search" name="project_lead" id="filter-by-project-lead" data-placeholder="' . esc_attr__('Filter by project lead', 'arsol-pfw') . '" data-allow_clear="true" data-action="arsol_pfw_json_search_project_leads" data-security="' . esc_attr(wp_create_nonce('search-project-leads')) . '">';
-            
-            // If there's a current project lead selected, add it as an option
-            if (!empty($current_lead)) {
-                $project_lead_user = get_userdata($current_lead);
-                if ($project_lead_user) {
-                    printf(
-                        '<option value="%s" selected="selected">%s (#%s - %s)</option>',
-                        esc_attr($project_lead_user->ID),
-                        esc_html($project_lead_user->display_name),
-                        esc_html($project_lead_user->ID),
-                        esc_html($project_lead_user->user_email)
-                    );
-                }
-            }
-            echo '</select>';
+            \Arsol_Projects_For_Woo\Admin\Users::render_project_lead_search_field(array(
+                'name' => 'project_lead',
+                'id' => 'filter-by-project-lead',
+                'selected' => $current_lead,
+                'placeholder' => __('Filter by project lead', 'arsol-pfw')
+            ));
             echo '</div>';
 
             // Customer filter (WooCommerce native customer search)
@@ -174,18 +107,12 @@ class Proposals {
             if (!empty($current_customer)) {
                 $customer = get_userdata($current_customer);
                 if ($customer) {
-                    // Format customer display like WooCommerce: "First Last (#ID – email)" or fallback to "Display Name (#ID – email)"
-                    $customer_name = trim($customer->first_name . ' ' . $customer->last_name);
-                    if (empty($customer_name)) {
-                        $customer_name = $customer->display_name;
-                    }
+                    $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer);
                     
                     printf(
-                        '<option value="%s" selected="selected">%s (#%s &ndash; %s)</option>',
+                        '<option value="%s" selected="selected">%s</option>',
                         esc_attr($customer->ID),
-                        esc_html($customer_name),
-                        esc_html($customer->ID),
-                        esc_html($customer->user_email)
+                        esc_html($customer_display)
                     );
                 }
             }

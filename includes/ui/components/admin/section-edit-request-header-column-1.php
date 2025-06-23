@@ -42,18 +42,12 @@ $all_statuses = get_terms(array(
         <?php
                 $customer_user = get_userdata($post->post_author);
                 if ($customer_user) {
-                    // Format customer display like WooCommerce: "First Last (#ID – email)" or fallback to "Display Name (#ID – email)"
-                    $customer_name = trim($customer_user->first_name . ' ' . $customer_user->last_name);
-                    if (empty($customer_name)) {
-                        $customer_name = $customer_user->display_name;
-                    }
+                    $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer_user);
                     
                     printf(
-                        '<option value="%s" selected="selected">%s (#%s &ndash; %s)</option>',
+                        '<option value="%s" selected="selected">%s</option>',
                         esc_attr($customer_user->ID),
-                        esc_html($customer_name),
-                        esc_html($customer_user->ID),
-                        esc_html($customer_user->user_email)
+                        esc_html($customer_display)
                     );
                 } else {
                     echo '<option value="">' . esc_html__('Customer not found', 'arsol-pfw') . '</option>';

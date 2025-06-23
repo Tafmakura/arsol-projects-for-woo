@@ -877,4 +877,88 @@ class Woocommerce {
         return wc_get_order($order_id);
     }
 
+    /**
+     * Format customer display name with priority: Display Name → First Last → Email
+     * 
+     * @param int|\WP_User $user User ID or user object
+     * @return string Formatted customer name
+     */
+    public static function format_customer_name($user) {
+        if (is_numeric($user)) {
+            $user = get_userdata($user);
+        }
+        
+        if (!$user) {
+            return __('Unknown Customer', 'arsol-pfw');
+        }
+        
+        // Priority: display_name → first/last name → email
+        if (!empty($user->display_name)) {
+            return $user->display_name;
+        } elseif (!empty($user->first_name) || !empty($user->last_name)) {
+            return trim($user->first_name . ' ' . $user->last_name);
+        } elseif (!empty($user->user_email)) {
+            return $user->user_email;
+        } else {
+            return __('Unknown Customer', 'arsol-pfw');
+        }
+    }
+    
+    /**
+     * Format customer display for admin dropdowns (includes ID and email)
+     * Format: "Display Name (#ID – email)" or "First Last (#ID – email)"
+     * 
+     * @param int|\WP_User $user User ID or user object
+     * @return string Formatted customer display for admin
+     */
+    public static function format_customer_admin_display($user) {
+        if (is_numeric($user)) {
+            $user = get_userdata($user);
+        }
+        
+        if (!$user) {
+            return __('Unknown Customer', 'arsol-pfw');
+        }
+        
+        $customer_name = self::format_customer_name($user);
+        
+        return sprintf(
+            '%s (#%s – %s)',
+            $customer_name,
+            $user->ID,
+            $user->user_email
+        );
+    }
+    
+    /**
+     * Create a customer filter link for admin columns
+     * 
+     * @param int|\WP_User $user User ID or user object
+     * @param string $post_type Post type for the filter URL
+     * @return string HTML link or fallback display
+     */
+    public static function create_customer_filter_link($user, $post_type = 'arsol-project') {
+        if (is_numeric($user)) {
+            $user = get_userdata($user);
+        }
+        
+        if (!$user) {
+            return '<span class="na">&ndash;</span>';
+        }
+        
+        $customer_name = self::format_customer_name($user);
+        
+        // Create filter URL
+        $filter_url = add_query_arg(array(
+            'post_type' => $post_type,
+            'customer' => $user->ID
+        ), admin_url('edit.php'));
+        
+        return sprintf(
+            '<a href="%s">%s</a>',
+            esc_url($filter_url),
+            esc_html($customer_name)
+        );
+    }
+
 }

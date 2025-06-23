@@ -65,35 +65,7 @@ class Requests {
             case 'customer':
                 $post = get_post($post_id);
                 if ($post && $post->post_author) {
-                    $customer = get_userdata($post->post_author);
-                    if ($customer) {
-                        // Priority: display_name -> first/last name -> email
-                        $customer_display = '';
-                        
-                        if (!empty($customer->display_name)) {
-                            $customer_display = $customer->display_name;
-                        } elseif (!empty($customer->first_name) || !empty($customer->last_name)) {
-                            $customer_display = trim($customer->first_name . ' ' . $customer->last_name);
-                        } elseif (!empty($customer->user_email)) {
-                            $customer_display = $customer->user_email;
-                        } else {
-                            $customer_display = __('Unknown Customer', 'arsol-pfw');
-                        }
-                        
-                        // Make it a link to filter by this customer
-                        $filter_url = add_query_arg(array(
-                            'post_type' => 'arsol-pfw-request',
-                            'customer' => $customer->ID
-                        ), admin_url('edit.php'));
-                        
-                        printf(
-                            '<a href="%s">%s</a>',
-                            esc_url($filter_url),
-                            esc_html($customer_display)
-                        );
-                    } else {
-                        echo '<span class="na">&ndash;</span>';
-                    }
+                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($post->post_author, 'arsol-pfw-request');
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
@@ -132,18 +104,12 @@ class Requests {
             if (!empty($current_customer)) {
                 $customer = get_userdata($current_customer);
                 if ($customer) {
-                    // Format customer display like WooCommerce: "First Last (#ID – email)" or fallback to "Display Name (#ID – email)"
-                    $customer_name = trim($customer->first_name . ' ' . $customer->last_name);
-                    if (empty($customer_name)) {
-                        $customer_name = $customer->display_name;
-                    }
+                    $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer);
                     
                     printf(
-                        '<option value="%s" selected="selected">%s (#%s &ndash; %s)</option>',
+                        '<option value="%s" selected="selected">%s</option>',
                         esc_attr($customer->ID),
-                        esc_html($customer_name),
-                        esc_html($customer->ID),
-                        esc_html($customer->user_email)
+                        esc_html($customer_display)
                     );
                 }
             }

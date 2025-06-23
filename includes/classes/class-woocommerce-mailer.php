@@ -194,7 +194,7 @@ class Woocommerce_Mailer {
             'proposal_status' => $proposal->post_status,
             'customer_id' => $customer_id,
             'customer_email' => $customer ? $customer->user_email : '',
-            'customer_name' => $customer ? $customer->display_name : '',
+            'customer_name' => $customer ? \Arsol_Projects_For_Woo\Woocommerce::format_customer_name($customer) : '',
             'proposal_url' => get_permalink($proposal_id),
             'admin_url' => admin_url('post.php?post=' . $proposal_id . '&action=edit')
         );
