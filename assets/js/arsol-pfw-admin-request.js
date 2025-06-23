@@ -12,13 +12,11 @@
             // Handle conversion confirmation for requests
             this.handleConversionConfirmation();
             this.handleStatusChanges();
-            this.handleSecondaryStatusChanges();
         },
 
         initializeComponents: function() {
             // Initialize any components specific to requests
-            this.updateProposalConversionButtonState();
-            this.updateRequestConversionButtonState();
+            this.updateConversionButtonState();
         },
 
         handleConversionConfirmation: function() {
@@ -48,26 +46,13 @@
             // Disable the button to prevent double-clicks
             $button.prop('disabled', true).addClass('disabled');
             
-            // Check if we need to publish or just save
-            var $publishButton = $('#publish');
-            var $saveButton = $('#save-post');
-            var needsPublishing = $publishButton.length > 0 && $publishButton.is(':visible');
+            // Trigger WordPress's built-in save
+            $('#publish, #save-post').trigger('click');
             
-            if (needsPublishing) {
-                // Trigger publish to make the post available for conversion
-                $publishButton.trigger('click');
-            } else {
-                // Trigger save for already published posts
-                $saveButton.trigger('click');
-            }
-            
-            // Wait for save/publish to complete, then convert
+            // Wait for save to complete, then convert
             var checkSave = setInterval(function() {
-                // Check if save/publish is complete (no longer in saving state)
-                var publishComplete = !$publishButton.hasClass('button-primary-disabled');
-                var saveComplete = !$saveButton.hasClass('button-primary-disabled');
-                
-                if (publishComplete && saveComplete) {
+                // Check if save is complete (no longer in saving state)
+                if (!$('#publish').hasClass('button-primary-disabled') && !$('#save-post').hasClass('button-primary-disabled')) {
                     clearInterval(checkSave);
                     
                     // Small delay to ensure save is fully complete
@@ -88,70 +73,23 @@
             // Handle request status changes
             $('select[name="request_status"]').on('change', function() {
                 var newStatus = $(this).val();
-                ArsolRequest.updateRequestConversionButtonState();
+                ArsolRequest.updateConversionButtonState();
             });
         },
 
-        handleSecondaryStatusChanges: function() {
-            // Handle proposal secondary status changes
-            $('select[name="arsol_pfw_proposal_secondary_status"]').on('change', function() {
-                ArsolRequest.updateProposalConversionButtonState();
-            });
-        },
-
-        updateProposalConversionButtonState: function() {
-            // Update the conversion button state for proposals based on published status and secondary status
-            var $conversionButton = $('.arsol-confirm-conversion');
-            
-            if ($conversionButton.length) {
-                var isPublished = $conversionButton.data('published') === 'true' || $conversionButton.data('published') === true;
-                var currentSecondaryStatus = $('select[name="arsol_pfw_proposal_secondary_status"]').val();
-                var isSecondaryApproved = currentSecondaryStatus === 'approved';
-                
-                // Update data attribute for current secondary status
-                $conversionButton.attr('data-secondary-status', currentSecondaryStatus);
-                
-                // Enable only if both conditions are met
-                if (isPublished && isSecondaryApproved) {
-                    $conversionButton.removeClass('disabled').prop('disabled', false);
-                    $conversionButton.parent().attr('title', 'Converts this proposal into a new project.');
-                } else {
-                    $conversionButton.addClass('disabled').prop('disabled', true);
-                    
-                    // Update tooltip based on what's missing
-                    var tooltip = '';
-                    if (!isPublished && !isSecondaryApproved) {
-                        tooltip = 'The proposal must be published and have secondary status "approved" before it can be converted.';
-                    } else if (!isPublished) {
-                        tooltip = 'The proposal must be published before it can be converted.';
-                    } else if (!isSecondaryApproved) {
-                        tooltip = 'The proposal secondary status must be set to "approved" before it can be converted.';
-                    }
-                    $conversionButton.parent().attr('title', tooltip);
-                }
-            }
-        },
-
-        updateRequestConversionButtonState: function() {
-            // Update the conversion button state for requests based on request status
-            var $conversionButton = $('.arsol-confirm-conversion');
+        updateConversionButtonState: function() {
+            // Update the conversion button state based on request status
             var $statusSelect = $('select[name="request_status"]');
+            var $conversionButton = $('.arsol-confirm-conversion');
             
-            // Only proceed if this is a request page (has request status dropdown)
             if ($statusSelect.length && $conversionButton.length) {
                 var currentStatus = $statusSelect.val();
                 var isApproved = currentStatus === 'approved';
                 
-                // Update data attribute for current status
-                $conversionButton.attr('data-request-status', currentStatus);
-                
-                // Enable only if status is approved
                 if (isApproved) {
                     $conversionButton.removeClass('disabled').prop('disabled', false);
-                    $conversionButton.parent().attr('title', 'Converts this request into a new proposal.');
                 } else {
                     $conversionButton.addClass('disabled').prop('disabled', true);
-                    $conversionButton.parent().attr('title', 'The request must be in approved status before it can be converted.');
                 }
             }
         }
