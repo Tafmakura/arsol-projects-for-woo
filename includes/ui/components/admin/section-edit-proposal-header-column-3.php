@@ -24,7 +24,7 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
 </div>
 
 <!-- Budget Summary Template -->
-<div id="budget-summary-template" class="form-field-wide arsol-pfw-show-if-proposal-cost-type-is-budget" style="display: none;">
+<div id="budget-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-budget" style="display: none;">
     <h4><?php _e('📊 Budget Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for budget -->
@@ -32,12 +32,12 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
         <p><?php _e('Your budget proposal is empty', 'arsol-pfw'); ?></p>
     </div>
     
-    <p class="summary-row" id="budget-onetime-row" style="display: none;">
+    <p class="form-field form-field-wide summary-row" id="budget-onetime-row" style="display: none;">
         <label><strong><?php _e('One-Time Budget:', 'arsol-pfw'); ?></strong></label>
         <?php _e('Total:', 'arsol-pfw'); ?> <span id="summary-budget-onetime-display"><?php echo wc_price(0); ?></span>
     </p>
     
-    <p class="summary-row" id="budget-recurring-row" style="display: none;">
+    <p class="form-field form-field-wide summary-row" id="budget-recurring-row" style="display: none;">
         <label><strong><?php _e('Recurring Budget:', 'arsol-pfw'); ?></strong></label>
         <?php _e('Average Monthly Total:', 'arsol-pfw'); ?> 
         <span id="summary-budget-recurring-display"><?php echo wc_price(0); ?></span><span id="summary-budget-billing-period">/mo</span>
@@ -46,7 +46,7 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
 </div>
 
 <!-- Quotation Summary Template -->
-<div id="quotation-summary-template" class="form-field-wide arsol-pfw-show-if-proposal-cost-type-is-quotation" style="display: none;">
+<div id="quotation-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-quotation" style="display: none;">
     <h4><?php _e('📋 Quotation Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for quotation -->
@@ -54,7 +54,7 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
         <p><?php _e('Your quotation is empty', 'arsol-pfw'); ?></p>
     </div>
     
-    <p class="summary-row" id="products-row" style="display: none;">
+    <p class="form-field form-field-wide summary-row" id="products-row" style="display: none;">
         <label><strong><?php _e('Products:', 'arsol-pfw'); ?></strong></label>
         <span id="products-onetime" style="display: none;">
             <?php _e('Sub Total:', 'arsol-pfw'); ?> <span id="summary-product-subtotal-display"><?php echo wc_price(0); ?></span>
@@ -64,24 +64,24 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
         </span>
     </p>
     
-    <p class="summary-row" id="onetime-fees-row" style="display: none;">
+    <p class="form-field form-field-wide summary-row" id="onetime-fees-row" style="display: none;">
         <label><strong><?php _e('One-Time Fees:', 'arsol-pfw'); ?></strong></label>
         <?php _e('Sub Total:', 'arsol-pfw'); ?> <span id="summary-onetime-fee-display"><?php echo wc_price(0); ?></span>
     </p>
     
-    <p class="summary-row" id="recurring-fees-row" style="display: none;">
+    <p class="form-field form-field-wide summary-row" id="recurring-fees-row" style="display: none;">
         <label><strong><?php _e('Recurring Fees:', 'arsol-pfw'); ?></strong></label>
         <?php _e('Average Monthly Sub Total:', 'arsol-pfw'); ?> 
         <span id="summary-recurring-fee-display"><?php echo wc_price(0); ?></span>
         <span id="summary-recurring-start-date"></span>
     </p>
     
-    <p class="summary-row" id="shipping-row" style="display: none;">
+    <p class="form-field form-field-wide summary-row" id="shipping-row" style="display: none;">
         <label><strong><?php _e('Shipping:', 'arsol-pfw'); ?></strong></label>
         <?php _e('Sub Total:', 'arsol-pfw'); ?> <span id="summary-shipping-display"><?php echo wc_price(0); ?></span>
     </p>
     
-    <p class="summary-row" id="totals-row">
+    <p class="form-field form-field-wide summary-row" id="totals-row">
         <label><strong><?php _e('Grand Totals:', 'arsol-pfw'); ?></strong></label>
         <span id="onetime-total-row">
             <?php _e('One-Time Total:', 'arsol-pfw'); ?> <span id="summary-one-time-total-display"><?php echo wc_price(0); ?></span>
