@@ -1190,42 +1190,20 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     color: #333;
 }
 
-/* Summary container with border */
-#budget-summary-template,
-#quotation-summary-template {
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    background: #fafafa;
-    padding: 0;
-    margin-top: 10px;
-}
-
-/* Summary rows using p and label structure */
+/* Summary rows using p and label structure with border-top */
 #budget-summary-template p.summary-row,
 #quotation-summary-template p.summary-row {
-    margin: 0 !important;
-    padding: 12px 15px;
-    border-bottom: 1px solid #eee;
+    margin-bottom: 0 !important;
+    padding: 8px 0;
+    border-top: 1px solid #eee;
     display: block;
-    background: #fff;
-}
-
-#budget-summary-template p.summary-row:last-child,
-#quotation-summary-template p.summary-row:last-child {
-    border-bottom: none;
-    border-radius: 0 0 2px 2px;
-}
-
-#budget-summary-template p.summary-row:first-child,
-#quotation-summary-template p.summary-row:first-child {
-    border-radius: 2px 2px 0 0;
 }
 
 #budget-summary-template p.summary-row label,
 #quotation-summary-template p.summary-row label {
     display: block;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     color: #333;
     font-size: 13px;
 }
@@ -1240,7 +1218,6 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 
 #budget-summary-template p.summary-row span,
 #quotation-summary-template p.summary-row span {
-    display: block;
     margin-bottom: 2px;
 }
 
@@ -1253,11 +1230,9 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 /* Empty state styling */
 .summary-empty-state {
     text-align: center;
-    padding: 30px 15px;
+    padding: 20px 15px;
     color: #666;
     font-style: italic;
-    background: #fff;
-    border-radius: 2px;
 }
 
 .summary-empty-state p {
