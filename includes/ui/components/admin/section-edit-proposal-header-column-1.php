@@ -80,6 +80,54 @@ $all_proposal_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
+        <label for="proposal_project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
+        <?php
+        // Get current project lead
+        $proposal_project_lead = get_post_meta($proposal_id, '_arsol_pfw_proposal_project_lead', true);
+        
+        // Get users who can create projects based on Project Manager Roles setting
+        $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
+        $project_lead_users = get_users(array(
+            'fields' => array('ID', 'display_name'),
+            'meta_query' => array(
+                'relation' => 'OR',
+                array(
+                    'key' => 'wp_capabilities',
+                    'value' => 'manage_projects',
+                    'compare' => 'LIKE'
+                ),
+                array(
+                    'key' => 'wp_capabilities', 
+                    'value' => 'create_projects',
+                    'compare' => 'LIKE'
+                )
+            )
+        ));
+        
+        // Filter to only users who can actually create projects
+        $valid_user_ids = array();
+        foreach ($project_lead_users as $user) {
+            if ($admin_users_helper->can_user_create_projects($user->ID)) {
+                $valid_user_ids[] = $user->ID;
+            }
+        }
+        
+        // Use WordPress native dropdown
+        wp_dropdown_users(array(
+            'name' => 'proposal_project_lead',
+            'id' => 'proposal_project_lead',
+            'class' => 'arsol-user-select2',
+            'selected' => $proposal_project_lead,
+            'include' => $valid_user_ids,
+            'show_option_none' => __('Search for project lead...', 'arsol-pfw'),
+            'option_none_value' => ''
+        ));
+        ?>
+    </p>
+</div>
+
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
         <label for="proposal_status"><?php _e('Proposal Status:', 'arsol-pfw'); ?></label>
         <select id="proposal_status" name="proposal_status" class="wc-enhanced-select">
             <?php if (!empty($all_proposal_statuses) && !is_wp_error($all_proposal_statuses)) : ?>

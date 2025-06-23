@@ -64,7 +64,7 @@ $all_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="project_lead"><?php _e('Project Manager:', 'arsol-pfw'); ?></label>
+        <label for="project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
         <?php
         // Get users who can create projects based on Project Manager Roles setting
         $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
@@ -100,7 +100,7 @@ $all_statuses = get_terms(array(
             'class' => 'arsol-user-select2',
             'selected' => $project_lead,
             'include' => $valid_user_ids,
-            'show_option_none' => __('Search for project manager...', 'arsol-pfw'),
+            'show_option_none' => __('Search for project lead...', 'arsol-pfw'),
             'option_none_value' => ''
         ));
         ?>

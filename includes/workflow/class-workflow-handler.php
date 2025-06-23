@@ -586,6 +586,7 @@ class Workflow_Handler {
         $proposal_meta_mapping = array(
             '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
             '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
+            '_arsol_pfw_proposal_project_lead' => '_arsol_pfw_project_lead',
         );
         
         // 4. Get proposal type for type-aware handling

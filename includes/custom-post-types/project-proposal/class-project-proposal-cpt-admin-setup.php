@@ -293,6 +293,11 @@ class Setup {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['proposal_status']), 'arsol-proposal-status', false);
         }
         
+        // Save project lead
+        if (isset($_POST['proposal_project_lead'])) {
+            update_post_meta($post_id, '_arsol_pfw_proposal_project_lead', sanitize_text_field($_POST['proposal_project_lead']));
+        }
+        
         // Save secondary status (keeping existing functionality)
         if (isset($_POST['arsol_pfw_proposal_secondary_status'])) {
             $secondary_status = sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
