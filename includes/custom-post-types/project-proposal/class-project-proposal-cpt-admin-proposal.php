@@ -332,17 +332,10 @@ class Proposal {
                 $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
                 
                 if ($current_proposal_status === 'approved') {
-                    // Sanitize and redirect to conversion URL
+                    // Direct PHP redirect - same approach as request to proposal conversion
                     $conversion_url = esc_url_raw($_POST['arsol_convert_after_save']);
-                    
-                    // Add a small delay to ensure save is complete, then redirect
-                    add_action('admin_notices', function() use ($conversion_url) {
-                        echo '<script type="text/javascript">
-                            setTimeout(function() {
-                                window.location.href = "' . $conversion_url . '";
-                            }, 100);
-                        </script>';
-                    });
+                    wp_redirect($conversion_url);
+                    exit;
                 } else {
                     // Show error notice if not approved
                     add_action('admin_notices', function() use ($current_proposal_status) {
