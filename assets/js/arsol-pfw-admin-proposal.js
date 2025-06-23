@@ -1120,7 +1120,14 @@
             var url = $button.data('url');
             var message = $button.data('message');
             
+            console.log('ARSOL DEBUG: Convert button clicked', {
+                url: url,
+                message: message,
+                disabled: $button.hasClass('disabled') || $button.prop('disabled')
+            });
+            
             if ($button.hasClass('disabled') || $button.prop('disabled')) {
+                console.log('ARSOL DEBUG: Button is disabled, aborting');
                 return false;
             }
             
@@ -1128,6 +1135,7 @@
             var $form = $('#post');
             if ($form.length && $form[0].checkValidity) {
                 if (!$form[0].checkValidity()) {
+                    console.log('ARSOL DEBUG: Form validation failed');
                     // Focus on first invalid field (WordPress behavior)
                     var $firstInvalid = $form.find(':invalid').first();
                     if ($firstInvalid.length) {
@@ -1139,24 +1147,42 @@
                 }
             }
             
+            console.log('ARSOL DEBUG: Form validation passed');
+            
             // Step 2: Show confirmation dialog
             if (!confirm(message)) {
+                console.log('ARSOL DEBUG: User cancelled confirmation');
                 return false;
             }
             
-            // Step 3: Add conversion URL as hidden input and submit form
-            $('<input>').attr({
+            console.log('ARSOL DEBUG: User confirmed conversion');
+            
+            // Step 3: Remove any existing conversion inputs (prevent duplicates)
+            $form.find('input[name="arsol_convert_after_save"]').remove();
+            
+            // Step 4: Add conversion URL as hidden input
+            var $hiddenInput = $('<input>').attr({
                 type: 'hidden',
                 name: 'arsol_convert_after_save',
                 value: url
-            }).appendTo($form);
+            });
+            $hiddenInput.appendTo($form);
             
-            // Trigger pre-save cleanup (same as form submission)
+            console.log('ARSOL DEBUG: Added hidden input with conversion URL:', url);
+            
+            // Step 5: Trigger pre-save cleanup (same as form submission)
             if (typeof ArsolProposal !== 'undefined' && ArsolProposal.presaveCleanup) {
+                console.log('ARSOL DEBUG: Running presave cleanup');
                 ArsolProposal.presaveCleanup();
             }
             
-            // Submit form normally (WordPress will handle save and redirect)
+            // Step 6: Disable the button to prevent double-clicks
+            $button.prop('disabled', true).addClass('disabled');
+            $button.text('Converting...');
+            
+            console.log('ARSOL DEBUG: Submitting form with conversion parameter');
+            
+            // Step 7: Submit form normally (WordPress will handle save and redirect)
             $form.submit();
             
             return false;
