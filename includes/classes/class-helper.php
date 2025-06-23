@@ -44,28 +44,38 @@ class Helper {
             wp_die();
         }
         
-        // Get valid project lead user IDs
-        $valid_user_ids = self::get_project_lead_user_ids();
-        
-        if (empty($valid_user_ids)) {
-            wp_send_json($results);
-        }
-        
-        // Search for users
+        // Simple search for users with project management capabilities
         $user_args = array(
             'search' => '*' . $term . '*',
             'search_columns' => array('display_name', 'user_login', 'user_email', 'user_nicename'),
-            'include' => $valid_user_ids,
             'number' => $limit,
-            'fields' => array('ID', 'display_name', 'user_email', 'first_name', 'last_name')
+            'fields' => array('ID', 'display_name', 'user_email', 'first_name', 'last_name'),
+            'meta_query' => array(
+                'relation' => 'OR',
+                array(
+                    'key' => 'wp_capabilities',
+                    'value' => 'manage_projects',
+                    'compare' => 'LIKE'
+                ),
+                array(
+                    'key' => 'wp_capabilities',
+                    'value' => 'create_projects',
+                    'compare' => 'LIKE'
+                )
+            )
         );
         
         $users = get_users($user_args);
         
         foreach ($users as $user) {
-            $display_name = self::format_project_lead_display($user->ID);
-            // Remove HTML tags for Select2 display
-            $display_name = wp_strip_all_tags($display_name);
+            $display_name = '';
+            if (!empty($user->display_name)) {
+                $display_name = $user->display_name;
+            } elseif (!empty($user->first_name) || !empty($user->last_name)) {
+                $display_name = trim($user->first_name . ' ' . $user->last_name);
+            } else {
+                $display_name = $user->user_email;
+            }
             
             $results[$user->ID] = $display_name;
         }
@@ -120,17 +130,15 @@ class Helper {
     }
     
     /**
-     * Get users who can create projects
-     * Reusable method for getting valid project lead users
+     * Get users who can manage projects
+     * Simple method for getting project lead users
      *
-     * @return array Array of user IDs who can create projects
+     * @return array Array of user IDs who can manage projects
      */
     public static function get_project_lead_user_ids() {
-        $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
-        
-        // Get users who can create projects based on Project Manager Roles setting
+        // Simple search for users with project management capabilities
         $project_lead_users = get_users(array(
-            'fields' => array('ID', 'display_name'),
+            'fields' => 'ID',
             'meta_query' => array(
                 'relation' => 'OR',
                 array(
@@ -146,15 +154,7 @@ class Helper {
             )
         ));
         
-        // Filter to only users who can actually create projects
-        $valid_user_ids = array();
-        foreach ($project_lead_users as $user) {
-            if ($admin_users_helper->can_user_create_projects($user->ID)) {
-                $valid_user_ids[] = $user->ID;
-            }
-        }
-        
-        return $valid_user_ids;
+        return $project_lead_users;
     }
     
     /**

@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
     'use strict';
-
+    
     function initUserSelectDropdowns() {
         $('.arsol-user-select2').filter(':not(.enhanced)').each(function() {
             var $this = $(this);
