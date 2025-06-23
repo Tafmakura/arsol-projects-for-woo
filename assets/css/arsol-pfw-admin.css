@@ -1117,108 +1117,193 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 /* Conditional Visibility System */
 
 /* === ADMIN FILTER STYLING === */
-/* Fix filter dropdown display and spacing */
-.tablenav.top .actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+/* Fix filter dropdown display and spacing with high specificity */
+body.wp-admin .tablenav.top .actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
 }
 
-.tablenav.top .actions select {
-    min-width: 140px;
-    margin-right: 0;
-}
-
-/* Status filter dropdown styling */
-.status-filter-dropdown {
+body.wp-admin .tablenav.top .actions select {
     min-width: 140px !important;
-    max-width: 200px;
+    margin-right: 0 !important;
 }
 
-/* Customer filter styling */
-.wc-customer-search {
+/* Status filter dropdown styling with high specificity */
+body.wp-admin .status-filter-dropdown,
+body.wp-admin select[name*="status"] {
+    min-width: 140px !important;
+    max-width: 200px !important;
+    margin-right: 8px !important;
+}
+
+/* Customer filter styling with high specificity */
+body.wp-admin .wc-customer-search,
+body.wp-admin select[name="customer"] {
     min-width: 200px !important;
-    max-width: 300px;
+    max-width: 300px !important;
+    margin-right: 8px !important;
 }
 
-/* Enhanced select container fixes */
-.tablenav .select2-container {
+/* Enhanced select container fixes with high specificity */
+body.wp-admin .tablenav .select2-container,
+body.wp-admin .tablenav .selectWoo-container {
     min-width: 200px !important;
-    margin-right: 8px;
+    margin-right: 8px !important;
+    display: inline-block !important;
 }
 
-.tablenav .select2-container .select2-selection--single {
-    height: 32px;
-    line-height: 30px;
+body.wp-admin .tablenav .select2-container .select2-selection--single,
+body.wp-admin .tablenav .selectWoo-container .select2-selection--single {
+    height: 32px !important;
+    line-height: 30px !important;
 }
 
-.tablenav .select2-container .select2-selection__rendered {
-    line-height: 30px;
-    padding-left: 8px;
+body.wp-admin .tablenav .select2-container .select2-selection__rendered,
+body.wp-admin .tablenav .selectWoo-container .select2-selection__rendered {
+    line-height: 30px !important;
+    padding-left: 8px !important;
 }
 
-.tablenav .select2-container .select2-selection__arrow {
-    height: 30px;
+body.wp-admin .tablenav .select2-container .select2-selection__arrow,
+body.wp-admin .tablenav .selectWoo-container .select2-selection__arrow {
+    height: 30px !important;
 }
 
-/* Project lead filter wrapper */
-.arsol-user-select2-wrapper {
-    display: inline-block;
-    min-width: 180px;
-    margin-right: 8px;
+/* Project lead filter wrapper with high specificity */
+body.wp-admin .arsol-user-select2-wrapper {
+    display: inline-block !important;
+    min-width: 180px !important;
+    margin-right: 8px !important;
 }
 
-.arsol-user-select2 {
+body.wp-admin .arsol-user-select2 {
     min-width: 180px !important;
 }
 
-/* Filter button styling */
-.tablenav .actions input[type="submit"] {
-    margin-left: 8px;
+/* Filter button styling with high specificity */
+body.wp-admin .tablenav .actions input[type="submit"] {
+    margin-left: 8px !important;
+    vertical-align: top !important;
 }
 
-/* Responsive filter layout */
+/* Prevent WordPress/WooCommerce from breaking our layout */
+body.wp-admin .tablenav .actions > * {
+    vertical-align: top !important;
+    margin-bottom: 0 !important;
+}
+
+/* Fix for Select2 dropdown positioning */
+body.wp-admin .select2-container--default.select2-container--open {
+    z-index: 999999 !important;
+}
+
+body.wp-admin .select2-dropdown {
+    z-index: 999999 !important;
+}
+
+/* Responsive filter layout with high specificity */
 @media screen and (max-width: 1200px) {
-    .tablenav.top .actions {
-        flex-wrap: wrap;
-        gap: 6px;
+    body.wp-admin .tablenav.top .actions {
+        flex-wrap: wrap !important;
+        gap: 6px !important;
     }
     
-    .tablenav.top .actions select,
-    .tablenav .select2-container,
-    .arsol-user-select2-wrapper {
-        min-width: 120px;
-        margin-bottom: 4px;
+    body.wp-admin .tablenav.top .actions select,
+    body.wp-admin .tablenav .select2-container,
+    body.wp-admin .tablenav .selectWoo-container,
+    body.wp-admin .arsol-user-select2-wrapper {
+        min-width: 120px !important;
+        margin-bottom: 4px !important;
     }
     
-    .wc-customer-search {
+    body.wp-admin .wc-customer-search {
         min-width: 160px !important;
     }
 }
 
 @media screen and (max-width: 768px) {
-    .tablenav.top .actions {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
+    body.wp-admin .tablenav.top .actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
     }
     
-    .tablenav.top .actions select,
-    .tablenav .select2-container,
-    .arsol-user-select2-wrapper,
-    .wc-customer-search {
+    body.wp-admin .tablenav.top .actions select,
+    body.wp-admin .tablenav .select2-container,
+    body.wp-admin .tablenav .selectWoo-container,
+    body.wp-admin .arsol-user-select2-wrapper,
+    body.wp-admin .wc-customer-search {
         width: 100% !important;
         min-width: 100% !important;
         max-width: 100% !important;
-        margin-right: 0;
-        margin-bottom: 8px;
+        margin-right: 0 !important;
+        margin-bottom: 8px !important;
     }
     
-    .tablenav .actions input[type="submit"] {
-        margin-left: 0;
-        width: 100%;
+    body.wp-admin .tablenav .actions input[type="submit"] {
+        margin-left: 0 !important;
+        width: 100% !important;
     }
+}
+
+/* Force stable layout after Select2 initialization */
+body.wp-admin .tablenav .actions .select2-container.enhanced,
+body.wp-admin .tablenav .actions .selectWoo-container.enhanced {
+    display: inline-block !important;
+    vertical-align: top !important;
+}
+
+/* Prevent layout shifting during Select2 initialization */
+body.wp-admin .tablenav .actions .select2-container:not(.select2-container--open) {
+    transition: none !important;
+}
+
+/* Hide elements during initialization to prevent flash of unstyled content */
+body.wp-admin .wc-customer-search:not(.enhanced),
+body.wp-admin .arsol-user-select2:not(.enhanced) {
+    visibility: hidden !important;
+}
+
+body.wp-admin .wc-customer-search.enhanced,
+body.wp-admin .arsol-user-select2.enhanced {
+    visibility: visible !important;
+}
+
+/* Hide elements during initialization to prevent flash of unstyled content */
+body.wp-admin .wc-customer-search:not(.enhanced),
+body.wp-admin .arsol-user-select2:not(.enhanced) {
+    visibility: hidden !important;
+}
+
+body.wp-admin .wc-customer-search.enhanced,
+body.wp-admin .arsol-user-select2.enhanced {
+    visibility: visible !important;
+}
+
+/* Fix for proposals page specific issues */
+body.post-type-arsol-pfw-proposal .tablenav .actions {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+}
+
+body.post-type-arsol-pfw-proposal .tablenav .actions select,
+body.post-type-arsol-pfw-proposal .tablenav .actions .select2-container {
+    margin-right: 8px !important;
+    margin-bottom: 0 !important;
+}
+
+/* Ensure proper rendering on proposals page */
+body.post-type-arsol-pfw-proposal .tablenav .select2-container {
+    min-width: 200px !important;
+    display: inline-block !important;
+}
+
+body.post-type-arsol-pfw-proposal .status-filter-dropdown {
+    min-width: 140px !important;
 }
 
 /* === END ADMIN FILTER STYLING === */

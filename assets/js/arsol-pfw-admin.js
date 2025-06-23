@@ -124,68 +124,116 @@ jQuery(document).ready(function($) {
     
     // Initialize admin table filters
     function initAdminTableFilters() {
-        // Initialize status filter dropdowns
-        $('.status-filter-dropdown').filter(':not(.enhanced)').each(function() {
-            $(this).addClass('enhanced');
-        });
-        
-        // Initialize customer search filters with proper WooCommerce integration
-        $('.wc-customer-search').filter(':not(.enhanced)').each(function() {
-            var $this = $(this);
-            var select2_args = {
-                allowClear: $this.data('allow_clear') ? true : false,
-                placeholder: $this.data('placeholder') || 'Search for a customer...',
-                minimumInputLength: 3,
-                ajax: {
-                    url: wc_enhanced_select_params.ajax_url,
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            term: params.term,
-                            action: $this.data('action') || 'woocommerce_json_search_customers',
-                            security: $this.data('security') || wc_enhanced_select_params.search_customers_nonce,
-                            exclude: $this.data('exclude'),
-                            include: $this.data('include'),
-                            limit: $this.data('limit') || 20
-                        };
-                    },
-                    processResults: function(data) {
-                        var terms = [];
-                        if (data) {
-                            $.each(data, function(id, text) {
-                                terms.push({ id: id, text: text });
-                            });
-                        }
-                        return { results: terms };
-                    },
-                    cache: true
+        // Add a small delay to ensure CSS is fully loaded
+        setTimeout(function() {
+            // Initialize status filter dropdowns
+            $('.status-filter-dropdown').filter(':not(.enhanced)').each(function() {
+                $(this).addClass('enhanced');
+            });
+            
+            // Initialize customer search filters with proper WooCommerce integration
+            $('.wc-customer-search').filter(':not(.enhanced)').each(function() {
+                var $this = $(this);
+                
+                // Preserve original styling before Select2 initialization
+                var originalWidth = $this.css('width');
+                var originalMinWidth = $this.css('min-width');
+                
+                var select2_args = {
+                    allowClear: $this.data('allow_clear') ? true : false,
+                    placeholder: $this.data('placeholder') || 'Search for a customer...',
+                    minimumInputLength: 3,
+                    width: 'resolve', // Use existing width
+                    ajax: {
+                        url: wc_enhanced_select_params.ajax_url,
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                term: params.term,
+                                action: $this.data('action') || 'woocommerce_json_search_customers',
+                                security: $this.data('security') || wc_enhanced_select_params.search_customers_nonce,
+                                exclude: $this.data('exclude'),
+                                include: $this.data('include'),
+                                limit: $this.data('limit') || 20
+                            };
+                        },
+                        processResults: function(data) {
+                            var terms = [];
+                            if (data) {
+                                $.each(data, function(id, text) {
+                                    terms.push({ id: id, text: text });
+                                });
+                            }
+                            return { results: terms };
+                        },
+                        cache: true
+                    }
+                };
+                
+                if (typeof $.fn.selectWoo !== 'undefined') {
+                    $this.selectWoo(select2_args).addClass('enhanced');
+                } else if (typeof $.fn.select2 !== 'undefined') {
+                    $this.select2(select2_args).addClass('enhanced');
                 }
-            };
+                
+                // Force stable layout after initialization
+                setTimeout(function() {
+                    var $container = $this.next('.select2-container');
+                    if ($container.length) {
+                        $container.css({
+                            'display': 'inline-block',
+                            'vertical-align': 'top',
+                            'min-width': originalMinWidth || '200px'
+                        });
+                    }
+                }, 10);
+            });
             
-            if (typeof $.fn.selectWoo !== 'undefined') {
-                $this.selectWoo(select2_args).addClass('enhanced');
-            } else if (typeof $.fn.select2 !== 'undefined') {
-                $this.select2(select2_args).addClass('enhanced');
-            }
-        });
-        
-        // Initialize user select dropdowns for project leads
-        $('.arsol-user-select2').filter(':not(.enhanced)').each(function() {
-            var placeholder = $(this).data('placeholder') || $(this).find('option:first').text() || 'Filter by project lead';
+            // Initialize user select dropdowns for project leads
+            $('.arsol-user-select2').filter(':not(.enhanced)').each(function() {
+                var $this = $(this);
+                var placeholder = $this.data('placeholder') || $this.find('option:first').text() || 'Filter by project lead';
+                
+                // Preserve original styling
+                var originalWidth = $this.css('width');
+                var originalMinWidth = $this.css('min-width');
+                
+                var select2_args = {
+                    placeholder: placeholder,
+                    allowClear: true,
+                    width: 'resolve'
+                };
+                
+                if (typeof $.fn.selectWoo !== 'undefined') {
+                    $this.selectWoo(select2_args).addClass('enhanced');
+                } else if (typeof $.fn.select2 !== 'undefined') {
+                    $this.select2(select2_args).addClass('enhanced');
+                }
+                
+                // Force stable layout after initialization
+                setTimeout(function() {
+                    var $container = $this.next('.select2-container');
+                    if ($container.length) {
+                        $container.css({
+                            'display': 'inline-block',
+                            'vertical-align': 'top',
+                            'min-width': originalMinWidth || '180px'
+                        });
+                    }
+                }, 10);
+            });
             
-            var select2_args = {
-                placeholder: placeholder,
-                allowClear: true,
-                width: '100%'
-            };
-            
-            if (typeof $.fn.selectWoo !== 'undefined') {
-                $(this).selectWoo(select2_args).addClass('enhanced');
-            } else if (typeof $.fn.select2 !== 'undefined') {
-                $(this).select2(select2_args).addClass('enhanced');
-            }
-        });
+            // Ensure proper layout for the entire filter container
+            setTimeout(function() {
+                $('.tablenav .actions').css({
+                    'display': 'flex',
+                    'align-items': 'center',
+                    'flex-wrap': 'wrap',
+                    'gap': '8px'
+                });
+            }, 50);
+        }, 100);
     }
     
     // Main initialization function
