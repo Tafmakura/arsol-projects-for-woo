@@ -115,7 +115,7 @@
             var selectedStatus = $('#request_status').val() || '';
             
             // Hide all feedback metaboxes first
-            $('#arsol_request_onhold_feedback_metabox, #arsol_request_underreview_feedback_metabox, #arsol_request_approved_feedback_metabox').each(function() {
+            $('#arsol_request_onhold_feedback_metabox, #arsol_request_underreview_feedback_metabox').each(function() {
                 this.style.setProperty('display', 'none', 'important');
             });
             
@@ -124,8 +124,6 @@
                 $('#arsol_request_onhold_feedback_metabox')[0].style.setProperty('display', 'block', 'important');
             } else if (selectedStatus === 'under-review') {
                 $('#arsol_request_underreview_feedback_metabox')[0].style.setProperty('display', 'block', 'important');
-            } else if (selectedStatus === 'approved') {
-                $('#arsol_request_approved_feedback_metabox')[0].style.setProperty('display', 'block', 'important');
             }
         },
 

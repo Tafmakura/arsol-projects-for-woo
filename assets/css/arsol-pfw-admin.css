@@ -18,8 +18,7 @@
 
 /* Show Request Feedback Metaboxes in Screen Options */
 #screen-options-wrap label[for="arsol_request_onhold_feedback_metabox-hide"],
-#screen-options-wrap label[for="arsol_request_underreview_feedback_metabox-hide"],
-#screen-options-wrap label[for="arsol_request_approved_feedback_metabox-hide"] {
+#screen-options-wrap label[for="arsol_request_underreview_feedback_metabox-hide"] {
     display: block !important;
 }
 
@@ -1191,15 +1190,13 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 
 /* Request Status Conditional Visibility - Consolidated */
 .arsol-pfw-show-if-request-status-is-on-hold,
-.arsol-pfw-show-if-request-status-is-under-review,
-.arsol-pfw-show-if-request-status-is-approved {
+.arsol-pfw-show-if-request-status-is-under-review {
     display: block !important;
 }
 
 .arsol-pfw-hide-if-request-status-is-not-on-hold,
 .arsol-pfw-hide-if-request-status-is-on-hold,
-.arsol-pfw-hide-if-request-status-is-under-review,
-.arsol-pfw-hide-if-request-status-is-approved {
+.arsol-pfw-hide-if-request-status-is-under-review {
     display: none !important;
 }
 
@@ -1256,8 +1253,7 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 
 /* Request Feedback Metaboxes - Hidden by default to prevent FOUC */
 #arsol_request_onhold_feedback_metabox,
-#arsol_request_underreview_feedback_metabox,
-#arsol_request_approved_feedback_metabox {
+#arsol_request_underreview_feedback_metabox {
     display: none !important;
 }
 
