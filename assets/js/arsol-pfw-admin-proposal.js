@@ -1114,6 +1114,9 @@
         
         // Handle conversion confirmation for proposals
         $(document).on('click', '.arsol-confirm-conversion', function(e) {
+            // Only handle if we're on a proposal page
+            if (!$('#proposal_status').length) return;
+            
             e.preventDefault();
             
             var $button = $(this);
@@ -1161,6 +1164,47 @@
             
             return false;
         });
+        
+        // Dynamic convert button enablement based on status selection
+        // This overrides PHP logic but keeps it as backup for server-side validation
+        function updateConvertButtonState() {
+            var $convertBtn = $('.arsol-confirm-conversion');
+            if ($convertBtn.length === 0) return;
+            
+            // Check which page we're on and get the appropriate status
+            var selectedStatus = '';
+            if ($('#proposal_status').length) {
+                // Proposal page
+                selectedStatus = $('#proposal_status').val();
+            } else if ($('#request_status').length) {
+                // Request page  
+                selectedStatus = $('#request_status').val();
+            }
+            
+            if (selectedStatus === 'approved') {
+                // Enable button and update tooltip
+                $convertBtn.prop('disabled', false)
+                          .removeClass('disabled')
+                          .closest('span')
+                          .attr('title', $convertBtn.is('[data-message]') ? 
+                              'Converts this ' + ($('#proposal_status').length ? 'proposal' : 'request') + ' to the next stage.' :
+                              'Converts this item to the next stage.');
+            } else {
+                // Keep disabled and update tooltip
+                var itemType = $('#proposal_status').length ? 'proposal' : 'request';
+                var statusDisplay = selectedStatus || 'none';
+                $convertBtn.prop('disabled', true)
+                          .addClass('disabled')
+                          .closest('span')
+                          .attr('title', 'The ' + itemType + ' status must be "Approved" before it can be converted. Current status: "' + statusDisplay + '".');
+            }
+        }
+        
+        // Update button state when status changes
+        $(document).on('change', '#proposal_status, #request_status', updateConvertButtonState);
+        
+        // Update button state on page load
+        updateConvertButtonState();
     });
 
 })(jQuery); 
