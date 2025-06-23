@@ -1200,13 +1200,7 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     display: block;
 }
 
-/* Content styling for summary sections */
-#budget-summary-template p.summary-row,
-#quotation-summary-template p.summary-row {
-    color: #666;
-    line-height: 1.4;
-    font-size: 13px;
-}
+
 
 #budget-summary-template p.summary-row span,
 #quotation-summary-template p.summary-row span {
