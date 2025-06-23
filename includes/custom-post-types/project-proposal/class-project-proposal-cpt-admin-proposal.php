@@ -88,13 +88,25 @@ class Proposal {
                 <?php endif; ?>
             
             <?php
-            $is_disabled = $post->post_status !== 'publish';
+            // Check proposal status for conversion eligibility
+            $proposal_status_terms = wp_get_object_terms($post->ID, 'arsol-proposal-status', array('fields' => 'slugs'));
+            $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
+            
+            $is_not_published = $post->post_status !== 'publish';
+            $is_not_approved = $current_proposal_status !== 'approved';
+            $is_disabled = $is_not_published || $is_not_approved;
+            
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
             $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
             $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Invoices will be created if selected.', 'arsol-pfw'));
-            $tooltip_text = $is_disabled
-                ? __('The proposal must be published before it can be converted.', 'arsol-pfw')
-                : __('Converts this proposal into a new project.', 'arsol-pfw');
+            
+            if ($is_not_published) {
+                $tooltip_text = __('The proposal must be published before it can be converted.', 'arsol-pfw');
+            } elseif ($is_not_approved) {
+                $tooltip_text = sprintf(__('The proposal status must be "Approved" before it can be converted. Current status: "%s".', 'arsol-pfw'), $current_proposal_status);
+            } else {
+                $tooltip_text = __('Converts this proposal into a new project.', 'arsol-pfw');
+            }
             ?>
             <span title="<?php echo esc_attr($tooltip_text); ?>">
                 <input type="button" 

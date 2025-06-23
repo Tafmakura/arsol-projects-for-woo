@@ -329,6 +329,16 @@ class Workflow_Handler {
             wp_die(__('Only published proposals can be converted to projects.', 'arsol-pfw'));
         }
 
+        // Server-side validation: Check proposal status
+        $proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'slugs'));
+        $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
+
+        if ($current_proposal_status !== 'approved') {
+            delete_transient($conversion_lock_key);
+            wp_die(sprintf(__('This proposal cannot be converted. The status is "%s", must be "approved".', 'arsol-pfw'), 
+                $current_proposal_status ?: 'none'));
+        }
+
         // Prepare conversion data for hooks
         $conversion_data = array(
             'proposal_id' => $proposal_id,
