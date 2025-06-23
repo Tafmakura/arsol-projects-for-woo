@@ -44,25 +44,21 @@ class Helper {
             wp_die();
         }
         
-        // Simple search for users with project management capabilities
+        // Get roles from Project Manager Roles setting
+        $settings = get_option('arsol_projects_settings', array());
+        $manage_roles = isset($settings['manage_roles']) ? $settings['manage_roles'] : array('administrator');
+        $create_roles = isset($settings['create_roles']) ? $settings['create_roles'] : array('administrator');
+        
+        // Combine both role types for project leads
+        $allowed_roles = array_unique(array_merge($manage_roles, $create_roles));
+        
+        // Search for users with the configured roles
         $user_args = array(
             'search' => '*' . $term . '*',
             'search_columns' => array('display_name', 'user_login', 'user_email', 'user_nicename'),
             'number' => $limit,
             'fields' => array('ID', 'display_name', 'user_email', 'first_name', 'last_name'),
-            'meta_query' => array(
-                'relation' => 'OR',
-                array(
-                    'key' => 'wp_capabilities',
-                    'value' => 'manage_projects',
-                    'compare' => 'LIKE'
-                ),
-                array(
-                    'key' => 'wp_capabilities',
-                    'value' => 'create_projects',
-                    'compare' => 'LIKE'
-                )
-            )
+            'role__in' => $allowed_roles
         );
         
         $users = get_users($user_args);
@@ -131,27 +127,23 @@ class Helper {
     
     /**
      * Get users who can manage projects
-     * Simple method for getting project lead users
+     * Uses roles from Project Manager Roles setting
      *
      * @return array Array of user IDs who can manage projects
      */
     public static function get_project_lead_user_ids() {
-        // Simple search for users with project management capabilities
+        // Get roles from Project Manager Roles setting
+        $settings = get_option('arsol_projects_settings', array());
+        $manage_roles = isset($settings['manage_roles']) ? $settings['manage_roles'] : array('administrator');
+        $create_roles = isset($settings['create_roles']) ? $settings['create_roles'] : array('administrator');
+        
+        // Combine both role types for project leads
+        $allowed_roles = array_unique(array_merge($manage_roles, $create_roles));
+        
+        // Get users with the configured roles
         $project_lead_users = get_users(array(
             'fields' => 'ID',
-            'meta_query' => array(
-                'relation' => 'OR',
-                array(
-                    'key' => 'wp_capabilities',
-                    'value' => 'manage_projects',
-                    'compare' => 'LIKE'
-                ),
-                array(
-                    'key' => 'wp_capabilities', 
-                    'value' => 'create_projects',
-                    'compare' => 'LIKE'
-                )
-            )
+            'role__in' => $allowed_roles
         ));
         
         return $project_lead_users;
