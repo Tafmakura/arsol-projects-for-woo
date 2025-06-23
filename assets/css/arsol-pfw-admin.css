@@ -1191,7 +1191,7 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 }
 
 /* Summary rows styled like form fields with borders */
-.summary-row {
+.arsol-proposal-summary .summary-row {
     margin-bottom: 0;
     padding: 8px 0;
     border: solid #eee;
@@ -1199,12 +1199,12 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     display: block;
 }
 
-.summary-row:last-child {
+.arsol-proposal-summary .summary-row:last-child {
     margin-bottom: 0;
     border-bottom: 1px solid #eee;
 }
 
-.summary-heading {
+.arsol-proposal-summary .summary-heading {
     display: block;
     font-weight: 600;
     margin-bottom: 3px;
@@ -1212,18 +1212,18 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     font-size: 13px;
 }
 
-.summary-content {
+.arsol-proposal-summary .summary-content {
     color: #666;
     line-height: 1.4;
     font-size: 13px;
     margin-left: 0;
 }
 
-.summary-content > div {
+.arsol-proposal-summary .summary-content > div {
     margin-bottom: 2px;
 }
 
-.summary-content em {
+.arsol-proposal-summary .summary-content em {
     font-style: italic;
     color: #666;
 }
