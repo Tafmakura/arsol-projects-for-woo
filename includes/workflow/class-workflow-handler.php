@@ -2,6 +2,8 @@
 
 namespace Arsol_Projects_For_Woo\Workflow;
 
+use Exception;
+
 if (!defined('ABSPATH')) {
     exit;
 }
