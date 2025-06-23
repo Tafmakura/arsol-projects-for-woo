@@ -1120,7 +1120,7 @@ body.wp-admin .select2-dropdown {
     body.wp-admin .tablenav .selectWoo-container,
     body.wp-admin .arsol-user-select2-wrapper,
     body.wp-admin .wc-customer-search {
-        width: 100% !important;
+    width: 100% !important;
         min-width: 100% !important;
         max-width: 100% !important;
         margin-right: 0 !important;

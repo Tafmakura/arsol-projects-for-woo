@@ -111,7 +111,7 @@ class Workflow_Handler {
                     \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
                         "Successfully cleared stuck workflow for request #{$request_id}. Proceeding with conversion...");
                 } else {
-                    throw new Exception(__('Conversion already in progress.', 'arsol-pfw'));
+                throw new Exception(__('Conversion already in progress.', 'arsol-pfw'));
                 }
             }
             

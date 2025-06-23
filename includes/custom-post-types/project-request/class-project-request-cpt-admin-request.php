@@ -59,13 +59,12 @@ class Request {
                 : __('Converts this request into a new proposal.', 'arsol-pfw');
             ?>
             <span title="<?php echo esc_attr($tooltip_text); ?>">
-                <a href="#" 
-                   class="button button-secondary arsol-confirm-conversion<?php if ($is_disabled) echo ' disabled'; ?>" 
-                   data-url="<?php echo esc_url($convert_url); ?>" 
-                   data-message="<?php echo $confirm_message; ?>"
-                   <?php disabled($is_disabled, true); ?>>
-                   <?php _e('Convert to Proposal', 'arsol-pfw'); ?>
-                </a>
+                <input type="button" 
+                       class="button button-secondary arsol-confirm-conversion" 
+                       value="<?php _e('Convert to Proposal', 'arsol-pfw'); ?>" 
+                       data-url="<?php echo esc_url($convert_url); ?>" 
+                       data-message="<?php echo $confirm_message; ?>"
+                       <?php disabled($is_disabled, true); ?> />
             </span>
         </div>
         <?php
