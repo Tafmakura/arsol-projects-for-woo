@@ -17,6 +17,7 @@ $start_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_start_date', true
 $delivery_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_delivery_date', true);
 $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_date', true);
 $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
+$proposal_project_lead = get_post_meta($proposal_id, '_arsol_pfw_proposal_project_lead', true);
 
 // Get status terms
 $proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'slugs'));
