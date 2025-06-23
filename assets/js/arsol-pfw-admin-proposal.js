@@ -1111,6 +1111,25 @@
         if ($('#proposal_budget_builder').length > 0) {
             ArsolBudget.init();
         }
+        
+        // Handle conversion confirmation for proposals
+        $(document).on('click', '.arsol-confirm-conversion', function(e) {
+            e.preventDefault();
+            
+            var $button = $(this);
+            var url = $button.data('url');
+            var message = $button.data('message');
+            
+            if ($button.hasClass('disabled') || $button.prop('disabled')) {
+                return false;
+            }
+            
+            if (url && confirm(message)) {
+                window.location.href = url;
+            }
+            
+            return false;
+        });
     });
 
 })(jQuery); 
