@@ -1124,9 +1124,40 @@
                 return false;
             }
             
-            if (url && confirm(message)) {
-                window.location.href = url;
+            // Step 1: HTML5 Validation (same as WordPress update/publish buttons)
+            var $form = $('#post');
+            if ($form.length && $form[0].checkValidity) {
+                if (!$form[0].checkValidity()) {
+                    // Focus on first invalid field (WordPress behavior)
+                    var $firstInvalid = $form.find(':invalid').first();
+                    if ($firstInvalid.length) {
+                        $firstInvalid.focus();
+                        // Trigger validation display
+                        $form[0].reportValidity();
+                    }
+                    return false;
+                }
             }
+            
+            // Step 2: Show confirmation dialog
+            if (!confirm(message)) {
+                return false;
+            }
+            
+            // Step 3: Add conversion URL as hidden input and submit form
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'arsol_convert_after_save',
+                value: url
+            }).appendTo($form);
+            
+            // Trigger pre-save cleanup (same as form submission)
+            if (typeof ArsolProposal !== 'undefined' && ArsolProposal.presaveCleanup) {
+                ArsolProposal.presaveCleanup();
+            }
+            
+            // Submit form normally (WordPress will handle save and redirect)
+            $form.submit();
             
             return false;
         });

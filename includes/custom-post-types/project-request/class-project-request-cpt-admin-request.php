@@ -99,5 +99,34 @@ class Request {
         if (isset($_POST['request_status'])) {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status', false);
         }
+        
+        // Handle conversion after save (WordPress-native approach)
+        if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
+            // Check if request is in approved status for conversion
+            $current_status = wp_get_object_terms($post_id, 'arsol-request-status', array('fields' => 'slugs'));
+            $current_status = !empty($current_status) ? $current_status[0] : '';
+            
+            if ($current_status === 'approved') {
+                // Sanitize and redirect to conversion URL
+                $conversion_url = esc_url_raw($_POST['arsol_convert_after_save']);
+                
+                // Add a small delay to ensure save is complete, then redirect
+                add_action('admin_notices', function() use ($conversion_url) {
+                    echo '<script type="text/javascript">
+                        setTimeout(function() {
+                            window.location.href = "' . $conversion_url . '";
+                        }, 100);
+                    </script>';
+                });
+            } else {
+                // Show error notice if not approved
+                add_action('admin_notices', function() use ($current_status) {
+                    $status_display = $current_status ?: 'none';
+                    echo '<div class="notice notice-error is-dismissible">
+                        <p>' . sprintf(__('Cannot convert request. Status is "%s", must be "approved".', 'arsol-pfw'), $status_display) . '</p>
+                    </div>';
+                });
+            }
+        }
     }
 }
