@@ -1190,32 +1190,42 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     color: #333;
 }
 
-/* Horizontal div row layout for summary */
+/* Summary rows styled like form fields with borders */
 .summary-row {
-   /* margin-bottom: 12px;*/
+    margin-bottom: 0;
+    padding: 8px 0;
     border: solid #eee;
     border-width: 1px 0 0 0;
-    padding: 8px 0;
+    display: block;
 }
 
 .summary-row:last-child {
-    border-bottom: none;
     margin-bottom: 0;
+    border-bottom: 1px solid #eee;
 }
 
 .summary-heading {
+    display: block;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     color: #333;
+    font-size: 13px;
 }
 
 .summary-content {
     color: #666;
     line-height: 1.4;
+    font-size: 13px;
+    margin-left: 0;
 }
 
 .summary-content > div {
     margin-bottom: 2px;
+}
+
+.summary-content em {
+    font-style: italic;
+    color: #666;
 }
 
 /* Empty state styling */
