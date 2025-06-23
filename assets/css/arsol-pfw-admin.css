@@ -1192,8 +1192,9 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 
 /* Summary rows using p and label structure with border-top */
 #budget-summary-template p.summary-row,
-#quotation-summary-template p.summary-row {
-    margin-bottom: 0 !important;
+#quotation-summary-template p.summary-row,
+.form-field .summary-row,
+.form-field-wide .summary-row {
     padding: 8px 0;
     border-top: 1px solid #eee;
     display: block;
