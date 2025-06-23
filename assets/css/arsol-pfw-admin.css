@@ -1200,15 +1200,6 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     display: block;
 }
 
-#budget-summary-template p.summary-row label,
-#quotation-summary-template p.summary-row label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 3px;
-    color: #333;
-    font-size: 13px;
-}
-
 /* Content styling for summary sections */
 #budget-summary-template p.summary-row,
 #quotation-summary-template p.summary-row {
