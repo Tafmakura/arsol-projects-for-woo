@@ -124,50 +124,26 @@ class Proposal {
      * Save proposal details
      */
     public function save_proposal_details($post_id) {
-        // Debug: Log all incoming POST data for conversion attempts
-        if (isset($_POST['arsol_convert_after_save'])) {
-            error_log('ARSOL DEBUG: === CONVERSION ATTEMPT START ===');
-            error_log('ARSOL DEBUG: POST data keys: ' . print_r(array_keys($_POST), true));
-            error_log('ARSOL DEBUG: arsol_convert_after_save value: ' . $_POST['arsol_convert_after_save']);
-            error_log('ARSOL DEBUG: Post ID: ' . $post_id);
-        }
-        
         // Check if our nonce is set.
         if (!isset($_POST['proposal_details_meta_box_nonce'])) {
-            if (isset($_POST['arsol_convert_after_save'])) {
-                error_log('ARSOL DEBUG: No nonce set, returning early');
-            }
             return;
         }
 
         // Verify that the nonce is valid.
         if (!wp_verify_nonce($_POST['proposal_details_meta_box_nonce'], 'proposal_details_meta_box')) {
-            if (isset($_POST['arsol_convert_after_save'])) {
-                error_log('ARSOL DEBUG: Nonce verification failed');
-            }
             return;
         }
 
         // If this is an autosave, our form has not been submitted, so we don't want to do anything.
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
-            if (isset($_POST['arsol_convert_after_save'])) {
-                error_log('ARSOL DEBUG: Autosave detected, returning early');
-            }
             return;
         }
 
         // Check the user's permissions.
         if (isset($_POST['post_type']) && 'arsol-pfw-proposal' == $_POST['post_type']) {
         if (!current_user_can('edit_post', $post_id)) {
-            if (isset($_POST['arsol_convert_after_save'])) {
-                error_log('ARSOL DEBUG: User lacks edit permissions');
-            }
             return;
             }
-        }
-        
-        if (isset($_POST['arsol_convert_after_save'])) {
-            error_log('ARSOL DEBUG: All security checks passed, proceeding with save');
         }
         
         // It's safe for us to save the data now.
@@ -349,32 +325,18 @@ class Proposal {
         
         // Handle conversion after save (WordPress-native approach)
         if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
-            // Debug: Log that conversion was requested
-            error_log('ARSOL DEBUG: Conversion requested for proposal ' . $post_id);
-            error_log('ARSOL DEBUG: Validation errors count: ' . count($this->validation_errors));
-            if (!empty($this->validation_errors)) {
-                error_log('ARSOL DEBUG: Validation errors: ' . print_r($this->validation_errors, true));
-            }
-            
             // Only proceed if save was successful (no validation errors)
             if (empty($this->validation_errors)) {
                 // Check if proposal is in approved status for conversion
                 $proposal_status_terms = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'slugs'));
                 $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
                 
-                error_log('ARSOL DEBUG: Current proposal status: ' . $current_proposal_status);
-                
                 if ($current_proposal_status === 'approved') {
                     // Sanitize and redirect to conversion URL
                     $conversion_url = esc_url_raw($_POST['arsol_convert_after_save']);
                     
-                    error_log('ARSOL DEBUG: Redirecting to conversion URL: ' . $conversion_url);
-                    
                     // Add a small delay to ensure save is complete, then redirect
                     add_action('admin_notices', function() use ($conversion_url) {
-                        echo '<div class="notice notice-info is-dismissible">
-                            <p>' . __('Proposal saved successfully. Converting to project...', 'arsol-pfw') . '</p>
-                        </div>';
                         echo '<script type="text/javascript">
                             setTimeout(function() {
                                 window.location.href = "' . $conversion_url . '";
@@ -383,7 +345,6 @@ class Proposal {
                     });
                 } else {
                     // Show error notice if not approved
-                    error_log('ARSOL DEBUG: Cannot convert - status is not approved: ' . $current_proposal_status);
                     add_action('admin_notices', function() use ($current_proposal_status) {
                         $status_display = $current_proposal_status ?: 'none';
                         echo '<div class="notice notice-error is-dismissible">
@@ -391,14 +352,6 @@ class Proposal {
                         </div>';
                     });
                 }
-            } else {
-                // Show validation error notice
-                error_log('ARSOL DEBUG: Cannot convert - validation errors exist');
-                add_action('admin_notices', function() {
-                    echo '<div class="notice notice-error is-dismissible">
-                        <p>' . __('Cannot convert proposal. Please fix the validation errors above and try again.', 'arsol-pfw') . '</p>
-                    </div>';
-                });
             }
         }
     }
