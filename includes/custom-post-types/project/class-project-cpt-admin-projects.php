@@ -22,15 +22,105 @@ class Projects {
      * Add custom columns
      */
     public function add_custom_columns($columns) {
-        // Example: $columns['project_status'] = 'Status';
-        return $columns;
+        $new_columns = array();
+        
+        // Add columns in desired order
+        $new_columns['cb'] = $columns['cb'];
+        $new_columns['title'] = $columns['title'];
+        $new_columns['customer'] = __('Customer', 'arsol-pfw');
+        $new_columns['project_status'] = __('Status', 'arsol-pfw');
+        $new_columns['project_lead'] = __('Project Lead', 'arsol-pfw');
+        $new_columns['date'] = $columns['date'];
+        
+        return $new_columns;
     }
 
     /**
      * Render custom column content
      */
     public function render_custom_column($column, $post_id) {
-        // Example: if ($column === 'project_status') { echo 'Status here'; }
+        switch ($column) {
+            case 'project_status':
+                $status = wp_get_object_terms($post_id, 'arsol-project-status', array('fields' => 'names'));
+                if (!empty($status) && !is_wp_error($status)) {
+                    echo esc_html($status[0]);
+                }
+                break;
+                
+            case 'customer':
+                $post = get_post($post_id);
+                if ($post && $post->post_author) {
+                    $customer = get_userdata($post->post_author);
+                    if ($customer) {
+                        // Priority: display_name -> first/last name -> email
+                        $customer_display = '';
+                        
+                        if (!empty($customer->display_name)) {
+                            $customer_display = $customer->display_name;
+                        } elseif (!empty($customer->first_name) || !empty($customer->last_name)) {
+                            $customer_display = trim($customer->first_name . ' ' . $customer->last_name);
+                        } elseif (!empty($customer->user_email)) {
+                            $customer_display = $customer->user_email;
+                        } else {
+                            $customer_display = __('Unknown Customer', 'arsol-pfw');
+                        }
+                        
+                        // Make it a link to filter by this customer
+                        $filter_url = add_query_arg(array(
+                            'post_type' => 'arsol-project',
+                            'customer' => $customer->ID
+                        ), admin_url('edit.php'));
+                        
+                        printf(
+                            '<a href="%s">%s</a>',
+                            esc_url($filter_url),
+                            esc_html($customer_display)
+                        );
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
+                } else {
+                    echo '<span class="na">&ndash;</span>';
+                }
+                break;
+                
+            case 'project_lead':
+                $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
+                if ($lead_id) {
+                    $lead_user = get_userdata($lead_id);
+                    if ($lead_user) {
+                        // Priority: display_name -> first/last name -> email
+                        $lead_display = '';
+                        
+                        if (!empty($lead_user->display_name)) {
+                            $lead_display = $lead_user->display_name;
+                        } elseif (!empty($lead_user->first_name) || !empty($lead_user->last_name)) {
+                            $lead_display = trim($lead_user->first_name . ' ' . $lead_user->last_name);
+                        } elseif (!empty($lead_user->user_email)) {
+                            $lead_display = $lead_user->user_email;
+                        } else {
+                            $lead_display = __('Unknown Lead', 'arsol-pfw');
+                        }
+                        
+                        // Make it a link to filter by this project lead
+                        $filter_url = add_query_arg(array(
+                            'post_type' => 'arsol-project',
+                            'project_lead' => $lead_user->ID
+                        ), admin_url('edit.php'));
+                        
+                        printf(
+                            '<a href="%s">%s</a>',
+                            esc_url($filter_url),
+                            esc_html($lead_display)
+                        );
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
+                } else {
+                    echo '<span class="na">&ndash;</span>';
+                }
+                break;
+        }
     }
 
     /**

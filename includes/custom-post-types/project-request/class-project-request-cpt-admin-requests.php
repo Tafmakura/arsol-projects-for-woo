@@ -29,10 +29,9 @@ class Requests {
         // Add columns in desired order
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
+        $new_columns['customer'] = __('Customer', 'arsol-pfw');
         $new_columns['request_status'] = __('Status', 'arsol-pfw');
         $new_columns['request_budget'] = __('Budget', 'arsol-pfw');
-        $new_columns['request_timeline'] = __('Timeline', 'arsol-pfw');
-        $new_columns['author'] = $columns['author'];
         $new_columns['date'] = $columns['date'];
         
         return $new_columns;
@@ -58,15 +57,45 @@ class Requests {
                         echo wc_price($budget['amount'], array('currency' => $currency));
                     } else {
                         // Legacy support for simple numeric values
-                    echo wc_price($budget);
+                        echo wc_price($budget);
                     }
                 }
                 break;
                 
-            case 'request_timeline':
-                $timeline = get_post_meta($post_id, '_arsol_pfw_request_timeline', true);
-                if ($timeline) {
-                    echo sprintf(_n('%d day', '%d days', $timeline, 'arsol-pfw'), $timeline);
+            case 'customer':
+                $post = get_post($post_id);
+                if ($post && $post->post_author) {
+                    $customer = get_userdata($post->post_author);
+                    if ($customer) {
+                        // Priority: display_name -> first/last name -> email
+                        $customer_display = '';
+                        
+                        if (!empty($customer->display_name)) {
+                            $customer_display = $customer->display_name;
+                        } elseif (!empty($customer->first_name) || !empty($customer->last_name)) {
+                            $customer_display = trim($customer->first_name . ' ' . $customer->last_name);
+                        } elseif (!empty($customer->user_email)) {
+                            $customer_display = $customer->user_email;
+                        } else {
+                            $customer_display = __('Unknown Customer', 'arsol-pfw');
+                        }
+                        
+                        // Make it a link to filter by this customer
+                        $filter_url = add_query_arg(array(
+                            'post_type' => 'arsol-pfw-request',
+                            'customer' => $customer->ID
+                        ), admin_url('edit.php'));
+                        
+                        printf(
+                            '<a href="%s">%s</a>',
+                            esc_url($filter_url),
+                            esc_html($customer_display)
+                        );
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
+                } else {
+                    echo '<span class="na">&ndash;</span>';
                 }
                 break;
         }

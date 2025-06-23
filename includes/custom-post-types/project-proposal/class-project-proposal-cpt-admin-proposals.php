@@ -29,8 +29,8 @@ class Proposals {
         // Add columns in desired order
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
+        $new_columns['customer'] = __('Customer', 'arsol-pfw');
         $new_columns['proposal_status'] = __('Status', 'arsol-pfw');
-        $new_columns['author'] = $columns['author'];
         $new_columns['date'] = $columns['date'];
         
         return $new_columns;
@@ -45,6 +45,43 @@ class Proposals {
                 $status = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'names'));
                 if (!empty($status) && !is_wp_error($status)) {
                     echo esc_html($status[0]);
+                }
+                break;
+                
+            case 'customer':
+                $post = get_post($post_id);
+                if ($post && $post->post_author) {
+                    $customer = get_userdata($post->post_author);
+                    if ($customer) {
+                        // Priority: display_name -> first/last name -> email
+                        $customer_display = '';
+                        
+                        if (!empty($customer->display_name)) {
+                            $customer_display = $customer->display_name;
+                        } elseif (!empty($customer->first_name) || !empty($customer->last_name)) {
+                            $customer_display = trim($customer->first_name . ' ' . $customer->last_name);
+                        } elseif (!empty($customer->user_email)) {
+                            $customer_display = $customer->user_email;
+                        } else {
+                            $customer_display = __('Unknown Customer', 'arsol-pfw');
+                        }
+                        
+                        // Make it a link to filter by this customer
+                        $filter_url = add_query_arg(array(
+                            'post_type' => 'arsol-pfw-proposal',
+                            'customer' => $customer->ID
+                        ), admin_url('edit.php'));
+                        
+                        printf(
+                            '<a href="%s">%s</a>',
+                            esc_url($filter_url),
+                            esc_html($customer_display)
+                        );
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
+                } else {
+                    echo '<span class="na">&ndash;</span>';
                 }
                 break;
         }
