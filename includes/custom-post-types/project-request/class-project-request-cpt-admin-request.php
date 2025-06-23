@@ -29,7 +29,7 @@ class Request {
         // Add Request Feedback metaboxes for different statuses
         add_meta_box(
             'arsol_request_onhold_feedback_metabox',
-            __('On-Hold Feedback', 'arsol-pfw'),
+            __('Customer Feedback', 'arsol-pfw'),
             array($this, 'render_onhold_feedback_metabox'),
             'arsol-pfw-request',
             'normal',
@@ -39,7 +39,7 @@ class Request {
         
         add_meta_box(
             'arsol_request_underreview_feedback_metabox',
-            __('Under Review Feedback', 'arsol-pfw'),
+            __('Customer Feedback', 'arsol-pfw'),
             array($this, 'render_underreview_feedback_metabox'),
             'arsol-pfw-request',
             'normal',
