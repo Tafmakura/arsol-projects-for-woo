@@ -16,8 +16,10 @@
     display: none !important;
 }
 
-/* Show Request Feedback in Screen Options */
-#screen-options-wrap label[for="arsol_request_feedback_metabox-hide"] {
+/* Show Request Feedback Metaboxes in Screen Options */
+#screen-options-wrap label[for="arsol_request_onhold_feedback_metabox-hide"],
+#screen-options-wrap label[for="arsol_request_underreview_feedback_metabox-hide"],
+#screen-options-wrap label[for="arsol_request_approved_feedback_metabox-hide"] {
     display: block !important;
 }
 
@@ -1197,6 +1199,22 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 }
 
 .arsol-pfw-hide-if-request-status-is-on-hold {
+    display: none !important;
+}
+
+.arsol-pfw-show-if-request-status-is-under-review {
+    display: block !important;
+}
+
+.arsol-pfw-hide-if-request-status-is-under-review {
+    display: none !important;
+}
+
+.arsol-pfw-show-if-request-status-is-approved {
+    display: block !important;
+}
+
+.arsol-pfw-hide-if-request-status-is-approved {
     display: none !important;
 }
 

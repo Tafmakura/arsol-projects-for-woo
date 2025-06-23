@@ -115,52 +115,59 @@
             var selectedStatus = $('#request_status').val() || '';
             
             // Hide all conditional elements first with inline display:none
-            $('.arsol-pfw-show-if-request-status-is-on-hold, .arsol-pfw-hide-if-request-status-is-on-hold').css('display', 'none');
+            $('.arsol-pfw-show-if-request-status-is-on-hold, .arsol-pfw-hide-if-request-status-is-on-hold, .arsol-pfw-show-if-request-status-is-under-review, .arsol-pfw-hide-if-request-status-is-under-review, .arsol-pfw-show-if-request-status-is-approved, .arsol-pfw-hide-if-request-status-is-approved').css('display', 'none');
             
             // Show elements based on current status by removing inline display style
             if (selectedStatus === 'on-hold') {
                 $('.arsol-pfw-show-if-request-status-is-on-hold').css('display', '');
+            } else if (selectedStatus === 'under-review') {
+                $('.arsol-pfw-show-if-request-status-is-under-review').css('display', '');
+            } else if (selectedStatus === 'approved') {
+                $('.arsol-pfw-show-if-request-status-is-approved').css('display', '');
             } else {
-                $('.arsol-pfw-hide-if-request-status-is-on-hold').css('display', '');
+                // For other statuses, hide all feedback metaboxes
+                $('.arsol-pfw-hide-if-request-status-is-on-hold, .arsol-pfw-hide-if-request-status-is-under-review, .arsol-pfw-hide-if-request-status-is-approved').css('display', '');
             }
         },
 
         updateFeedbackValidation: function() {
             var selectedStatus = $('#request_status').val() || '';
-            var $validationField = $('#arsol_request_feedback_validation');
+            var $onholdValidation = $('#arsol_request_onhold_feedback_validation');
             
+            // Only on-hold feedback is required
             if (selectedStatus === 'on-hold') {
-                $validationField.prop('required', true);
+                $onholdValidation.prop('required', true);
             } else {
-                $validationField.prop('required', false);
+                $onholdValidation.prop('required', false);
             }
         },
 
         validateRequestFeedback: function() {
             var selectedStatus = $('#request_status').val() || '';
             
+            // Only validate on-hold feedback as required
             if (selectedStatus === 'on-hold') {
                 var feedbackContent = '';
                 
                 // Get content from TinyMCE editor if available
-                if (typeof tinyMCE !== 'undefined' && tinyMCE.get('arsol_pfw_request_feedback')) {
-                    feedbackContent = tinyMCE.get('arsol_pfw_request_feedback').getContent();
+                if (typeof tinyMCE !== 'undefined' && tinyMCE.get('arsol_pfw_request_onhold_feedback')) {
+                    feedbackContent = tinyMCE.get('arsol_pfw_request_onhold_feedback').getContent();
                 } else {
                     // Fallback to textarea
-                    feedbackContent = $('#arsol_pfw_request_feedback').val();
+                    feedbackContent = $('#arsol_pfw_request_onhold_feedback').val();
                 }
                 
                 // Remove HTML tags and check if there's actual content
                 var textContent = feedbackContent.replace(/<[^>]*>/g, '').trim();
                 
                 if (!textContent) {
-                    alert('Feedback is required when request status is "On Hold".');
+                    alert('On-Hold feedback is required when request status is "On Hold".');
                     
                     // Focus on the editor
-                    if (typeof tinyMCE !== 'undefined' && tinyMCE.get('arsol_pfw_request_feedback')) {
-                        tinyMCE.get('arsol_pfw_request_feedback').focus();
+                    if (typeof tinyMCE !== 'undefined' && tinyMCE.get('arsol_pfw_request_onhold_feedback')) {
+                        tinyMCE.get('arsol_pfw_request_onhold_feedback').focus();
                     } else {
-                        $('#arsol_pfw_request_feedback').focus();
+                        $('#arsol_pfw_request_onhold_feedback').focus();
                     }
                     
                     return false;

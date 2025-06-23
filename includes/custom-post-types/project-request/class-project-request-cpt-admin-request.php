@@ -26,11 +26,29 @@ class Request {
             'default'
         );
         
-        // Add Request Feedback metabox
+        // Add Request Feedback metaboxes for different statuses
         add_meta_box(
-            'arsol_request_feedback_metabox',
-            __('Request Feedback', 'arsol-pfw'),
-            array($this, 'render_request_feedback_metabox'),
+            'arsol_request_onhold_feedback_metabox',
+            __('On-Hold Feedback', 'arsol-pfw'),
+            array($this, 'render_onhold_feedback_metabox'),
+            'arsol-pfw-request',
+            'normal',
+            'high'
+        );
+        
+        add_meta_box(
+            'arsol_request_underreview_feedback_metabox',
+            __('Under Review Feedback', 'arsol-pfw'),
+            array($this, 'render_underreview_feedback_metabox'),
+            'arsol-pfw-request',
+            'normal',
+            'high'
+        );
+        
+        add_meta_box(
+            'arsol_request_approved_feedback_metabox',
+            __('Approved Feedback', 'arsol-pfw'),
+            array($this, 'render_approved_feedback_metabox'),
             'arsol-pfw-request',
             'normal',
             'high'
@@ -81,19 +99,19 @@ class Request {
     }
 
     /**
-     * Render request feedback metabox
+     * Render on-hold feedback metabox
      */
-    public function render_request_feedback_metabox($post) {
+    public function render_onhold_feedback_metabox($post) {
         // Add nonce for security
-        wp_nonce_field('request_feedback_metabox', 'request_feedback_metabox_nonce');
+        wp_nonce_field('request_onhold_feedback_metabox', 'request_onhold_feedback_metabox_nonce');
 
         // Get current values
         $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
         $current_status = !empty($current_status) ? $current_status[0] : 'pending';
-        $feedback = get_post_meta($post->ID, '_arsol_pfw_request_feedback', true);
+        $feedback = get_post_meta($post->ID, '_arsol_pfw_request_onhold_feedback', true);
         
         // Determine visibility class
-        $visibility_class = $current_status === 'on-hold' ? 'arsol-pfw-show-if-request-status-is-on-hold' : 'arsol-pfw-hide-if-request-status-is-not-on-hold';
+        $visibility_class = $current_status === 'on-hold' ? 'arsol-pfw-show-if-request-status-is-on-hold' : 'arsol-pfw-hide-if-request-status-is-on-hold';
         ?>
         <div class="<?php echo esc_attr($visibility_class); ?>">
             <p class="description">
@@ -103,7 +121,7 @@ class Request {
             <div class="arsol-request-feedback-editor">
                 <?php
                 $editor_settings = array(
-                    'textarea_name' => 'arsol_pfw_request_feedback',
+                    'textarea_name' => 'arsol_pfw_request_onhold_feedback',
                     'textarea_rows' => 8,
                     'media_buttons' => false,
                     'teeny' => false,
@@ -117,23 +135,105 @@ class Request {
                     )
                 );
                 
-                wp_editor($feedback, 'arsol_pfw_request_feedback', $editor_settings);
+                wp_editor($feedback, 'arsol_pfw_request_onhold_feedback', $editor_settings);
                 ?>
             </div>
             
             <textarea 
-                id="arsol_request_feedback_validation" 
-                name="arsol_request_feedback_validation" 
+                id="arsol_request_onhold_feedback_validation" 
+                name="arsol_request_onhold_feedback_validation" 
                 style="display: none;" 
                 data-required-when-status="on-hold"
-                data-validation-message="<?php esc_attr_e('Feedback is required when request status is on-hold.', 'arsol-pfw'); ?>">
+                data-validation-message="<?php esc_attr_e('On-Hold feedback is required when request status is on-hold.', 'arsol-pfw'); ?>">
             </textarea>
         </div>
+        <?php
+    }
+
+    /**
+     * Render under review feedback metabox
+     */
+    public function render_underreview_feedback_metabox($post) {
+        // Add nonce for security
+        wp_nonce_field('request_underreview_feedback_metabox', 'request_underreview_feedback_metabox_nonce');
+
+        // Get current values
+        $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
+        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
+        $feedback = get_post_meta($post->ID, '_arsol_pfw_request_underreview_feedback', true);
         
-        <div class="arsol-pfw-hide-if-request-status-is-on-hold">
-            <p class="description" style="font-style: italic; color: #666;">
-                <?php _e('Request feedback is only available when the request status is "On Hold".', 'arsol-pfw'); ?>
+        // Determine visibility class
+        $visibility_class = $current_status === 'under-review' ? 'arsol-pfw-show-if-request-status-is-under-review' : 'arsol-pfw-hide-if-request-status-is-under-review';
+        ?>
+        <div class="<?php echo esc_attr($visibility_class); ?>">
+            <p class="description">
+                <?php _e('Provide feedback to the customer about the current review process and any additional information needed.', 'arsol-pfw'); ?>
             </p>
+            
+            <div class="arsol-request-feedback-editor">
+                <?php
+                $editor_settings = array(
+                    'textarea_name' => 'arsol_pfw_request_underreview_feedback',
+                    'textarea_rows' => 8,
+                    'media_buttons' => false,
+                    'teeny' => false,
+                    'quicktags' => array(
+                        'buttons' => 'strong,em,ul,ol,li,link,close'
+                    ),
+                    'tinymce' => array(
+                        'toolbar1' => 'bold,italic,bullist,numlist,link,unlink,undo,redo',
+                        'toolbar2' => '',
+                        'toolbar3' => ''
+                    )
+                );
+                
+                wp_editor($feedback, 'arsol_pfw_request_underreview_feedback', $editor_settings);
+                ?>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render approved feedback metabox
+     */
+    public function render_approved_feedback_metabox($post) {
+        // Add nonce for security
+        wp_nonce_field('request_approved_feedback_metabox', 'request_approved_feedback_metabox_nonce');
+
+        // Get current values
+        $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
+        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
+        $feedback = get_post_meta($post->ID, '_arsol_pfw_request_approved_feedback', true);
+        
+        // Determine visibility class
+        $visibility_class = $current_status === 'approved' ? 'arsol-pfw-show-if-request-status-is-approved' : 'arsol-pfw-hide-if-request-status-is-approved';
+        ?>
+        <div class="<?php echo esc_attr($visibility_class); ?>">
+            <p class="description">
+                <?php _e('Provide feedback to the customer about the approval and next steps in the process.', 'arsol-pfw'); ?>
+            </p>
+            
+            <div class="arsol-request-feedback-editor">
+                <?php
+                $editor_settings = array(
+                    'textarea_name' => 'arsol_pfw_request_approved_feedback',
+                    'textarea_rows' => 8,
+                    'media_buttons' => false,
+                    'teeny' => false,
+                    'quicktags' => array(
+                        'buttons' => 'strong,em,ul,ol,li,link,close'
+                    ),
+                    'tinymce' => array(
+                        'toolbar1' => 'bold,italic,bullist,numlist,link,unlink,undo,redo',
+                        'toolbar2' => '',
+                        'toolbar3' => ''
+                    )
+                );
+                
+                wp_editor($feedback, 'arsol_pfw_request_approved_feedback', $editor_settings);
+                ?>
+            </div>
         </div>
         <?php
     }
@@ -167,11 +267,29 @@ class Request {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status', false);
         }
         
-        // Save request feedback if feedback metabox nonce is present
-        if (isset($_POST['request_feedback_metabox_nonce']) && wp_verify_nonce($_POST['request_feedback_metabox_nonce'], 'request_feedback_metabox')) {
-            if (isset($_POST['arsol_pfw_request_feedback'])) {
-                $feedback = wp_kses_post($_POST['arsol_pfw_request_feedback']);
-                update_post_meta($post_id, '_arsol_pfw_request_feedback', $feedback);
+        // Save feedback for all three metaboxes
+        
+        // Save on-hold feedback
+        if (isset($_POST['request_onhold_feedback_metabox_nonce']) && wp_verify_nonce($_POST['request_onhold_feedback_metabox_nonce'], 'request_onhold_feedback_metabox')) {
+            if (isset($_POST['arsol_pfw_request_onhold_feedback'])) {
+                $feedback = wp_kses_post($_POST['arsol_pfw_request_onhold_feedback']);
+                update_post_meta($post_id, '_arsol_pfw_request_onhold_feedback', $feedback);
+            }
+        }
+        
+        // Save under review feedback
+        if (isset($_POST['request_underreview_feedback_metabox_nonce']) && wp_verify_nonce($_POST['request_underreview_feedback_metabox_nonce'], 'request_underreview_feedback_metabox')) {
+            if (isset($_POST['arsol_pfw_request_underreview_feedback'])) {
+                $feedback = wp_kses_post($_POST['arsol_pfw_request_underreview_feedback']);
+                update_post_meta($post_id, '_arsol_pfw_request_underreview_feedback', $feedback);
+            }
+        }
+        
+        // Save approved feedback
+        if (isset($_POST['request_approved_feedback_metabox_nonce']) && wp_verify_nonce($_POST['request_approved_feedback_metabox_nonce'], 'request_approved_feedback_metabox')) {
+            if (isset($_POST['arsol_pfw_request_approved_feedback'])) {
+                $feedback = wp_kses_post($_POST['arsol_pfw_request_approved_feedback']);
+                update_post_meta($post_id, '_arsol_pfw_request_approved_feedback', $feedback);
             }
         }
         
