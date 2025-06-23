@@ -1190,63 +1190,74 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     color: #333;
 }
 
-/* Summary rows using p and label structure with borders */
-.arsol-proposal-summary p.summary-row,
-.arsol-proposal-summary .summary-row {
-    margin-bottom: 0 !important;
-    padding: 8px 0;
-    border: solid #eee;
-    border-width: 1px 0 0 0;
-    display: block;
+/* Summary container with border */
+#budget-summary-template,
+#quotation-summary-template {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    background: #fafafa;
+    padding: 0;
+    margin-top: 10px;
 }
 
-.arsol-proposal-summary p.summary-row:last-child,
-.arsol-proposal-summary .summary-row:last-child {
-    margin-bottom: 0 !important;
+/* Summary rows using p and label structure */
+#budget-summary-template p.summary-row,
+#quotation-summary-template p.summary-row {
+    margin: 0 !important;
+    padding: 12px 15px;
     border-bottom: 1px solid #eee;
+    display: block;
+    background: #fff;
 }
 
-.arsol-proposal-summary p.summary-row label,
-.arsol-proposal-summary .summary-row label,
-.arsol-proposal-summary .summary-heading {
+#budget-summary-template p.summary-row:last-child,
+#quotation-summary-template p.summary-row:last-child {
+    border-bottom: none;
+    border-radius: 0 0 2px 2px;
+}
+
+#budget-summary-template p.summary-row:first-child,
+#quotation-summary-template p.summary-row:first-child {
+    border-radius: 2px 2px 0 0;
+}
+
+#budget-summary-template p.summary-row label,
+#quotation-summary-template p.summary-row label {
     display: block;
     font-weight: 600;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
     color: #333;
     font-size: 13px;
 }
 
-.arsol-proposal-summary p.summary-row .summary-content,
-.arsol-proposal-summary .summary-content {
+/* Content styling for summary sections */
+#budget-summary-template p.summary-row,
+#quotation-summary-template p.summary-row {
     color: #666;
     line-height: 1.4;
     font-size: 13px;
-    margin-left: 0;
 }
 
-.arsol-proposal-summary .summary-content > div,
-.arsol-proposal-summary .summary-content > span {
-    margin-bottom: 2px;
+#budget-summary-template p.summary-row span,
+#quotation-summary-template p.summary-row span {
     display: block;
+    margin-bottom: 2px;
 }
 
-.arsol-proposal-summary .summary-content em,
-.arsol-proposal-summary em {
+#budget-summary-template em,
+#quotation-summary-template em {
     font-style: italic;
     color: #666;
-}
-
-/* Support for both div and p structures */
-.arsol-proposal-summary p.summary-row {
-    margin-bottom: 0 !important;
 }
 
 /* Empty state styling */
 .summary-empty-state {
     text-align: center;
-    padding: 20px 15px;
+    padding: 30px 15px;
     color: #666;
     font-style: italic;
+    background: #fff;
+    border-radius: 2px;
 }
 
 .summary-empty-state p {
