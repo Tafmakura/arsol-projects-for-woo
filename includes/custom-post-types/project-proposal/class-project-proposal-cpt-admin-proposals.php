@@ -30,7 +30,6 @@ class Proposals {
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
         $new_columns['proposal_status'] = __('Status', 'arsol-pfw');
-        $new_columns['related_request'] = __('Related Request', 'arsol-pfw');
         $new_columns['author'] = $columns['author'];
         $new_columns['date'] = $columns['date'];
         
@@ -46,16 +45,6 @@ class Proposals {
                 $status = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'names'));
                 if (!empty($status) && !is_wp_error($status)) {
                     echo esc_html($status[0]);
-                }
-                break;
-                
-            case 'related_request':
-                $request_id = get_post_meta($post_id, '_arsol_pfw_proposal_request_id', true);
-                if ($request_id) {
-                    $request = get_post($request_id);
-                    if ($request) {
-                        echo '<a href="' . esc_url(get_edit_post_link($request_id)) . '">' . esc_html($request->post_title) . '</a>';
-                    }
                 }
                 break;
         }
@@ -110,27 +99,6 @@ class Proposals {
             echo '</select>';
 
             // Customer search functionality is now handled by global admin JS
-
-            // Related Request filter
-            $current_request = isset($_GET['related_request']) ? $_GET['related_request'] : '';
-            $requests = get_posts(array(
-                'post_type' => 'arsol-pfw-request',
-                'posts_per_page' => -1,
-                'orderby' => 'title',
-                'order' => 'ASC',
-                'post_status' => 'publish'
-            ));
-            echo '<select name="related_request" id="filter-by-related-request" class="select2-hidden-accessible enhanced" data-placeholder="' . esc_attr__('Filter by related request', 'arsol-pfw') . '" data-allow_clear="true">';
-            echo '<option value="">' . __('Filter by related request', 'arsol-pfw') . '</option>';
-            foreach ($requests as $request) {
-                printf(
-                    '<option value="%s" %s>%s</option>',
-                    esc_attr($request->ID),
-                    selected($current_request, $request->ID, false),
-                    esc_html($request->post_title)
-                );
-            }
-            echo '</select>';
         }
     }
 
@@ -155,17 +123,6 @@ class Proposals {
                     'terms'    => sanitize_text_field($_GET['proposal_status']),
                 ];
                 $query->set('tax_query', $tax_query);
-            }
-
-            // Filter by related request (meta)
-            if (!empty($_GET['related_request'])) {
-                $meta_query = $query->get('meta_query') ?: [];
-                $meta_query[] = [
-                    'key' => '_arsol_pfw_proposal_request_id',
-                    'value' => sanitize_text_field($_GET['related_request']),
-                    'compare' => '='
-                ];
-                $query->set('meta_query', $meta_query);
             }
         }
     }
