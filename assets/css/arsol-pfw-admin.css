@@ -1116,5 +1116,112 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 
 /* Conditional Visibility System */
 
+/* === ADMIN FILTER STYLING === */
+/* Fix filter dropdown display and spacing */
+.tablenav.top .actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tablenav.top .actions select {
+    min-width: 140px;
+    margin-right: 0;
+}
+
+/* Status filter dropdown styling */
+.status-filter-dropdown {
+    min-width: 140px !important;
+    max-width: 200px;
+}
+
+/* Customer filter styling */
+.wc-customer-search {
+    min-width: 200px !important;
+    max-width: 300px;
+}
+
+/* Enhanced select container fixes */
+.tablenav .select2-container {
+    min-width: 200px !important;
+    margin-right: 8px;
+}
+
+.tablenav .select2-container .select2-selection--single {
+    height: 32px;
+    line-height: 30px;
+}
+
+.tablenav .select2-container .select2-selection__rendered {
+    line-height: 30px;
+    padding-left: 8px;
+}
+
+.tablenav .select2-container .select2-selection__arrow {
+    height: 30px;
+}
+
+/* Project lead filter wrapper */
+.arsol-user-select2-wrapper {
+    display: inline-block;
+    min-width: 180px;
+    margin-right: 8px;
+}
+
+.arsol-user-select2 {
+    min-width: 180px !important;
+}
+
+/* Filter button styling */
+.tablenav .actions input[type="submit"] {
+    margin-left: 8px;
+}
+
+/* Responsive filter layout */
+@media screen and (max-width: 1200px) {
+    .tablenav.top .actions {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+    
+    .tablenav.top .actions select,
+    .tablenav .select2-container,
+    .arsol-user-select2-wrapper {
+        min-width: 120px;
+        margin-bottom: 4px;
+    }
+    
+    .wc-customer-search {
+        min-width: 160px !important;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .tablenav.top .actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .tablenav.top .actions select,
+    .tablenav .select2-container,
+    .arsol-user-select2-wrapper,
+    .wc-customer-search {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+    
+    .tablenav .actions input[type="submit"] {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+/* === END ADMIN FILTER STYLING === */
+
 
 

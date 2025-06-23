@@ -189,8 +189,8 @@ class Projects {
             echo '</div>';
 
             // Customer filter (WooCommerce native customer search)
-            $current_customer = isset($_GET['customer_id']) ? $_GET['customer_id'] : '';
-            echo '<select name="customer_id" class="wc-customer-search" data-placeholder="' . esc_attr__('Filter by registered customer', 'arsol-pfw') . '" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="' . esc_attr(wp_create_nonce('search-customers')) . '">';
+            $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
+            echo '<select name="customer" class="wc-customer-search" data-placeholder="' . esc_attr__('Filter by customer', 'arsol-pfw') . '" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="' . esc_attr(wp_create_nonce('search-customers')) . '">';
             
             // If there's a current customer selected, add it as an option
             if (!empty($current_customer)) {
