@@ -279,8 +279,6 @@ class Workflow_Handler {
     }
 
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
-        ob_start();
-
         // Get proposal ID first if not provided
         if (empty($proposal_id)) {
             if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce')) {
@@ -289,172 +287,238 @@ class Workflow_Handler {
             $proposal_id = intval($_GET['proposal_id']);
         }
 
-        // Foundational check: Prevent double-triggering by checking if conversion is already in progress
-        $conversion_lock_key = 'arsol_converting_proposal_' . $proposal_id;
-        if (get_transient($conversion_lock_key)) {
-            $error_message = __('Conversion already in progress. Please wait.', 'arsol-pfw');
-            if ($is_internal_call) {
-                if (function_exists('wc_add_notice')) {
-                    wc_add_notice($error_message, 'error');
-                }
-                $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
-                return;
-            } else {
-                wp_die($error_message);
+        $proposal_post = null;
+        
+        try {
+            // Get source details
+            $proposal_post = get_post($proposal_id);
+            if (!$proposal_post || $proposal_post->post_type !== 'arsol-pfw-proposal') {
+                throw new Exception(__('Invalid proposal.', 'arsol-pfw'));
             }
-        }
 
-        // Set conversion lock (expires in 30 seconds)
-        set_transient($conversion_lock_key, true, 30);
+            // Security validation
+            if (!$is_internal_call && (!current_user_can('edit_post', $proposal_id) || !current_user_can('publish_posts'))) {
+                throw new Exception(__('You do not have sufficient permissions to perform this action.', 'arsol-pfw'));
+            }
 
-        $can_convert = self::user_can_view_post(get_current_user_id(), $proposal_id);
-        if (!$is_internal_call) {
-            $can_convert = current_user_can('publish_posts');
-        }
+            if ($is_internal_call && !self::user_can_view_post(get_current_user_id(), $proposal_id)) {
+                throw new Exception(__('You do not have sufficient permissions to perform this action.', 'arsol-pfw'));
+            }
 
-        if (!$can_convert) {
-            delete_transient($conversion_lock_key);
-            wp_die(__('You do not have sufficient permissions to perform this action.', 'arsol-pfw'));
-        }
+            if ($proposal_post->post_status !== 'publish') {
+                throw new Exception(__('Only published proposals can be converted to projects.', 'arsol-pfw'));
+            }
 
-        $proposal_post = get_post($proposal_id);
+            // Prevent concurrent conversions
+            if ($this->is_workflow_in_progress($proposal_id)) {
+                throw new Exception(__('Conversion already in progress.', 'arsol-pfw'));
+            }
+            
+            // Start transaction with logging
+            $this->start_workflow_transaction($proposal_id, 'conversion', 'proposal_to_project');
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
+                "Starting conversion: Proposal #{$proposal_id} to Project");
+            
+            // Validation step
+            update_post_meta($proposal_id, '_arsol_conversion_step', 'validation');
 
-        if (!$proposal_post || $proposal_post->post_type !== 'arsol-pfw-proposal') {
-            delete_transient($conversion_lock_key);
-            wp_die(__('Invalid proposal.', 'arsol-pfw'));
-        }
+            // Server-side validation: Check proposal status
+            $proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'slugs'));
+            $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
 
-        if ($proposal_post->post_status !== 'publish') {
-            delete_transient($conversion_lock_key);
-            wp_die(__('Only published proposals can be converted to projects.', 'arsol-pfw'));
-        }
+            if ($current_proposal_status !== 'approved') {
+                throw new Exception(sprintf(
+                    __('This proposal cannot be converted. The status is "%s", must be "approved".', 'arsol-pfw'),
+                    $current_proposal_status ?: 'none'
+                ));
+            }
 
-        // Server-side validation: Check proposal status
-        $proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'slugs'));
-        $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
+            // Prepare conversion data for hooks
+            $conversion_data = array(
+                'proposal_id' => $proposal_id,
+                'proposal_post' => $proposal_post,
+                'is_internal_call' => $is_internal_call,
+                'user_id' => get_current_user_id(),
+                'conversion_method' => $is_internal_call ? 'customer_approval' : 'admin_conversion',
+                'timestamp' => current_time('timestamp'),
+                'proposal_status' => $current_proposal_status
+            );
 
-        if ($current_proposal_status !== 'approved') {
-            delete_transient($conversion_lock_key);
-            wp_die(sprintf(__('This proposal cannot be converted. The status is "%s", must be "approved".', 'arsol-pfw'), 
-                $current_proposal_status ?: 'none'));
-        }
+            /**
+             * Hook: arsol_before_project_conversion_validation
+             * Fired before any validation checks are performed
+             */
+            do_action('arsol_before_project_conversion_validation', $proposal_id, $conversion_data);
 
-        // Prepare conversion data for hooks
-        $conversion_data = array(
-            'proposal_id' => $proposal_id,
-            'proposal_post' => $proposal_post,
-            'is_internal_call' => $is_internal_call,
-            'user_id' => get_current_user_id(),
-            'conversion_method' => $is_internal_call ? 'customer_approval' : 'admin_conversion'
-        );
+            /**
+             * Hook: arsol_after_project_conversion_validated
+             * Fired after all validation checks pass, before project creation
+             */
+            do_action('arsol_after_project_conversion_validated', $proposal_id, $proposal_post, $conversion_data);
+            
+            // Creation step
+            update_post_meta($proposal_id, '_arsol_conversion_step', 'creation');
 
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
-            sprintf('Starting proposal to project conversion for proposal #%d via %s by user #%d', 
-                $proposal_id, $conversion_data['conversion_method'], get_current_user_id()));
+            // Create project args with filter for customization
+            $project_args = array(
+                'post_title'   => $proposal_post->post_title,
+                'post_content' => $proposal_post->post_content,
+                'post_status'  => 'publish',
+                'post_type'    => 'arsol-project',
+                'post_author'  => $proposal_post->post_author,
+            );
 
-        /**
-         * Hook: arsol_before_project_conversion_validation
-         * Fired before any validation checks are performed
-         * 
-         * @param int $proposal_id The proposal ID
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_before_project_conversion_validation', $proposal_id, $conversion_data);
+            /**
+             * Filter: arsol_project_conversion_args
+             * Allows modification of project creation arguments
+             */
+            $project_args = apply_filters('arsol_project_conversion_args', $project_args, $proposal_id, $proposal_post, $conversion_data);
 
-        /**
-         * Hook: arsol_after_project_conversion_validated
-         * Fired after all validation checks pass, before project creation
-         * 
-         * @param int $proposal_id The proposal ID
-         * @param WP_Post $proposal_post The proposal post object
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_after_project_conversion_validated', $proposal_id, $proposal_post, $conversion_data);
+            /**
+             * Hook: arsol_before_project_conversion_project_creation
+             * Fired immediately before the project post is created
+             */
+            do_action('arsol_before_project_conversion_project_creation', $project_args, $proposal_id, $conversion_data);
 
-        // Create project args with filter for customization
-        $project_args = array(
-            'post_title'   => $proposal_post->post_title,
-            'post_content' => $proposal_post->post_content,
-            'post_status'  => 'publish', // Projects are published immediately
-            'post_type'    => 'arsol-project',
-            'post_author'  => $proposal_post->post_author,
-        );
+            $new_project_id = wp_insert_post($project_args);
+            if (is_wp_error($new_project_id)) {
+                throw new Exception($new_project_id->get_error_message());
+            }
+            
+            // Record created entity
+            $this->record_transaction_entity($proposal_id, $new_project_id);
+            $conversion_data['new_project_id'] = $new_project_id;
 
-        /**
-         * Filter: arsol_project_conversion_args
-         * Allows modification of project creation arguments
-         * 
-         * @param array $project_args The project arguments
-         * @param int $proposal_id The proposal ID
-         * @param WP_Post $proposal_post The proposal post
-         * @param array $conversion_data Conversion context data
-         */
-        $project_args = apply_filters('arsol_project_conversion_args', $project_args, $proposal_id, $proposal_post, $conversion_data);
+            /**
+             * Hook: arsol_after_project_conversion_project_created
+             * Fired after the project is successfully created, before metadata copy
+             */
+            do_action('arsol_after_project_conversion_project_created', $new_project_id, $proposal_id, $proposal_post, $conversion_data);
+            
+            // Metadata copy step
+            update_post_meta($proposal_id, '_arsol_conversion_step', 'metadata_copy');
+            
+            // Copy metadata from proposal to project
+            $this->copy_proposal_metadata_to_project($proposal_id, $new_project_id);
 
-        /**
-         * Hook: arsol_before_project_conversion_project_creation
-         * Fired immediately before the project post is created
-         * 
-         * @param array $project_args The project arguments that will be used
-         * @param int $proposal_id The proposal ID
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_before_project_conversion_project_creation', $project_args, $proposal_id, $conversion_data);
+            // Order creation step  
+            update_post_meta($proposal_id, '_arsol_conversion_step', 'order_creation');
 
-        $new_project_id = wp_insert_post($project_args);
+            // Handle WooCommerce order creation
+            $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+            
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+                sprintf('Starting billing operations for proposal #%d (type: %s) → project #%d', 
+                    $proposal_id, $cost_proposal_type, $new_project_id));
 
-        if (is_wp_error($new_project_id)) {
-            delete_transient($conversion_lock_key);
+            try {
+                // Only create orders for quotation proposals
+                if ($cost_proposal_type === 'quotation') {
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+                        sprintf('Creating orders for quotation proposal %d', $proposal_id));
+                    
+                    // Create a biller instance and convert proposal to order
+                    $biller = new \Arsol_Projects_For_Woo\Woocommerce_Biller();
+                    $result = $biller->convert_proposal_to_order($proposal_id, $new_project_id);
+                    
+                    if (!$result['success']) {
+                        throw new Exception($result['message']);
+                    }
+                    
+                    // Store created order IDs and record them for rollback
+                    if (!empty($result['order_id'])) {
+                        update_post_meta($new_project_id, '_arsol_pfw_project_woocommerce_order_id', $result['order_id']);
+                        // Record order for potential rollback
+                        $this->record_transaction_entity($proposal_id, $result['order_id']);
+                    }
+                    
+                    if (!empty($result['subscription_id'])) {
+                        update_post_meta($new_project_id, '_arsol_pfw_project_woocommerce_subscription_id', $result['subscription_id']);
+                        // Record subscription for potential rollback
+                        $this->record_transaction_entity($proposal_id, $result['subscription_id']);
+                    }
+                    
+                    update_post_meta($new_project_id, '_arsol_pfw_project_order_creation_note', $result['message']);
+                    
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info',
+                        sprintf('Successfully created orders for project #%d: %s', $new_project_id, $result['message']));
+                    
+                } else {
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+                        sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $cost_proposal_type));
+                }
+                
+            } catch (Exception $e) {
+                // Log order creation error but don't fail the conversion
+                $error_message = $e->getMessage();
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('error',
+                    sprintf('Order creation failed for project #%d: %s', $new_project_id, $error_message));
+                
+                // Store error for debugging but continue with conversion
+                update_post_meta($new_project_id, '_arsol_pfw_project_order_creation_error', $error_message);
+            }
+
+            /**
+             * Hook: arsol_after_project_conversion_complete
+             * Fired after the conversion is complete, before cleanup
+             */
+            do_action('arsol_after_project_conversion_complete', $new_project_id, $proposal_id, $conversion_data);
+            
+            // Complete transaction
+            $this->complete_workflow_transaction($proposal_id);
+            
+            // Log success
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('success', 
+                "Conversion completed: Proposal #{$proposal_id} → Project #{$new_project_id}");
+            
+            // Set success notice
+            $this->set_conversion_success_notice('proposal', 'project', $proposal_id, $new_project_id, $proposal_post->post_title);
             
             /**
-             * Hook: arsol_project_conversion_project_creation_failed
-             * Fired when project creation fails
-             * 
-             * @param WP_Error $error The error object
-             * @param int $proposal_id The proposal ID
-             * @param array $project_args The project arguments that failed
-             * @param array $conversion_data Conversion context data
+             * Hook: arsol_before_project_conversion_redirect
+             * Fired just before redirecting to the new project
              */
-            do_action('arsol_project_conversion_project_creation_failed', $new_project_id, $proposal_id, $project_args, $conversion_data);
+            $redirect_url = $is_internal_call 
+                ? wc_get_account_endpoint_url('project-overview/' . $new_project_id)
+                : admin_url('post.php?post=' . $new_project_id . '&action=edit');
             
+            do_action('arsol_before_project_conversion_redirect', $new_project_id, $redirect_url, $conversion_data);
+
+            // Redirect
+            $this->safe_redirect($redirect_url);
+            
+        } catch (Exception $e) {
+            // Log error
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('error', 
+                "Conversion failed: Proposal #{$proposal_id} - " . $e->getMessage());
+            
+            // Rollback everything
+            $this->rollback_workflow_transaction($proposal_id, $e->getMessage());
+            
+            // Set failure notice
+            if ($proposal_post) {
+                $this->set_conversion_failure_notice('proposal', 'project', $proposal_id, $proposal_post->post_title, $e->getMessage());
+            }
+            
+            // Redirect based on call type
             if ($is_internal_call) {
+                if (function_exists('wc_add_notice')) {
+                    wc_add_notice($e->getMessage(), 'error');
+                }
                 $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
             } else {
-                wp_die($new_project_id->get_error_message());
+                $this->safe_redirect(admin_url('edit.php?post_type=arsol-pfw-proposal'));
             }
         }
+    }
 
-        /**
-         * Hook: arsol_after_project_conversion_project_created
-         * Fired immediately after project is created, before any metadata
-         * 
-         * @param int $project_id The new project ID
-         * @param int $proposal_id The original proposal ID
-         * @param WP_Post $proposal_post The proposal post object
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_after_project_conversion_project_created', $new_project_id, $proposal_id, $proposal_post, $conversion_data);
-
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
-            sprintf('Project #%d created successfully from proposal #%d', $new_project_id, $proposal_id));
-
-        // Set the project status to 'not-started'
-        wp_set_object_terms($new_project_id, 'not-started', 'arsol-project-status');
-
-        /**
-         * Hook: arsol_before_project_conversion_metadata_copy
-         * Fired before copying metadata from proposal to project
-         * 
-         * @param int $project_id The new project ID
-         * @param int $proposal_id The original proposal ID
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_before_project_conversion_metadata_copy', $new_project_id, $proposal_id, $conversion_data);
-
+    // Helper method to copy proposal metadata to project
+    private function copy_proposal_metadata_to_project($proposal_id, $project_id) {
         // ✅ PHASE 2: COMPREHENSIVE META KEY RESTRUCTURING
         
         // 1. Preserve proposal content in project meta
-        update_post_meta($new_project_id, '_arsol_pfw_project_proposal_details', $proposal_post->post_content);
+        $proposal_post = get_post($proposal_id);
+        update_post_meta($project_id, '_arsol_pfw_project_proposal_details', $proposal_post->post_content);
         
         // 2. Rename request data with project context
         $request_meta_mapping = array(
@@ -507,234 +571,32 @@ class Workflow_Handler {
         /**
          * Filter: arsol_project_conversion_meta_mapping
          * Allows modification of metadata mapping from proposal to project
-         * 
-         * @param array $meta_to_copy Array of proposal_key => project_key mappings
-         * @param int $project_id The new project ID
-         * @param int $proposal_id The original proposal ID
-         * @param string $cost_proposal_type The proposal type (budget/quotation/none)
-         * @param array $conversion_data Conversion context data
          */
-        $meta_to_copy = apply_filters('arsol_project_conversion_meta_mapping', $meta_to_copy, $new_project_id, $proposal_id, $cost_proposal_type, $conversion_data);
+        $meta_to_copy = apply_filters('arsol_project_conversion_meta_mapping', $meta_to_copy, $project_id, $proposal_id, $cost_proposal_type, array());
 
         // 7. Copy all meta data
         foreach ($meta_to_copy as $proposal_key => $project_key) {
             $value = get_post_meta($proposal_id, $proposal_key, true);
             if ($value) {
-                update_post_meta($new_project_id, $project_key, $value);
+                update_post_meta($project_id, $project_key, $value);
             }
         }
 
         // Store original proposal ID for reference
-        update_post_meta($new_project_id, '_arsol_pfw_project_proposal_id', $proposal_id);
+        update_post_meta($project_id, '_arsol_pfw_project_proposal_id', $proposal_id);
+
+        // Set the project status to 'not-started'
+        wp_set_object_terms($project_id, 'not-started', 'arsol-project-status');
 
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
             sprintf('Metadata copied from proposal #%d to project #%d (type: %s): %s', 
-                $proposal_id, $new_project_id, $cost_proposal_type, implode(', ', array_keys($meta_to_copy))));
+                $proposal_id, $project_id, $cost_proposal_type, implode(', ', array_keys($meta_to_copy))));
 
         /**
          * Hook: arsol_after_project_conversion_metadata_copied
          * Fired after all metadata is copied from proposal to project
-         * 
-         * @param int $project_id The new project ID
-         * @param int $proposal_id The original proposal ID
-         * @param array $meta_to_copy The metadata that was copied
-         * @param string $cost_proposal_type The proposal type
-         * @param array $conversion_data Conversion context data
          */
-        do_action('arsol_after_project_conversion_metadata_copied', $new_project_id, $proposal_id, $meta_to_copy, $cost_proposal_type, $conversion_data);
-
-        /**
-         * Hook: arsol_before_project_conversion_order_creation
-         * Fired before attempting to create orders from proposal
-         * 
-         * @param int $project_id The new project ID
-         * @param int $proposal_id The original proposal ID
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_before_project_conversion_order_creation', $new_project_id, $proposal_id, $conversion_data);
-
-        // Get proposal type (already retrieved above)
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
-            sprintf('Starting billing operations for proposal #%d (type: %s) → project #%d', 
-                $proposal_id, $cost_proposal_type, $new_project_id));
-        
-        $created_order_ids = array();
-        $conversion_successful = true;
-        $error_message = '';
-
-        try {
-            // Only create orders for quotation proposals
-            if ($cost_proposal_type === 'quotation') {
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
-                    sprintf('Creating orders for quotation proposal %d', $proposal_id));
-                
-                // Create a biller instance and convert proposal to order
-                $biller = new \Arsol_Projects_For_Woo\Woocommerce_Biller();
-                $result = $biller->convert_proposal_to_order($proposal_id, $new_project_id);
-                
-                if (!$result['success']) {
-                    throw new Exception($result['message']);
-                }
-                
-                // Store created order IDs for potential rollback
-                if (!empty($result['order_id'])) {
-                    $created_order_ids[] = $result['order_id'];
-                    update_post_meta($new_project_id, '_arsol_pfw_project_woocommerce_order_id', $result['order_id']);
-                }
-                
-                if (!empty($result['subscription_id'])) {
-                    $created_order_ids[] = $result['subscription_id'];
-                    update_post_meta($new_project_id, '_arsol_pfw_project_woocommerce_subscription_id', $result['subscription_id']);
-                }
-                
-                update_post_meta($new_project_id, '_arsol_pfw_project_order_creation_note', $result['message']);
-                
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info',
-                    sprintf('Successfully created orders for project #%d: %s', $new_project_id, $result['message']));
-                
-            } else {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
-                sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $cost_proposal_type));
-            }
-            
-        } catch (Exception $e) {
-            $conversion_successful = false;
-            $error_message = $e->getMessage();
-            
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('error',
-                sprintf('Order creation failed for project #%d: %s', $new_project_id, $error_message));
-            
-            // Store error for debugging
-            update_post_meta($new_project_id, '_arsol_pfw_project_order_creation_error', $error_message);
-        }
-
-        /**
-         * Hook: arsol_after_project_conversion_order_creation_attempt
-         * Fired after order creation attempt, before error checking
-         * 
-         * @param int $project_id The new project ID
-         * @param int $proposal_id The original proposal ID
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_after_project_conversion_order_creation_attempt', $new_project_id, $proposal_id, $conversion_data);
-
-        // Handle rollback if conversion failed
-        if (!$conversion_successful) {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('warning', 
-                sprintf('Initiating rollback for failed conversion of proposal #%d to project #%d: %s', 
-                    $proposal_id, $new_project_id, $error_message));
-
-            /**
-             * Hook: arsol_before_project_conversion_rollback
-             * Fired before rollback due to order creation failure
-             * 
-             * @param int $project_id The project ID that will be deleted
-             * @param int $proposal_id The original proposal ID
-             * @param array $order_creation_errors Array of error messages
-             * @param array $created_order_ids Array of order IDs to be deleted
-             * @param array $conversion_data Conversion context data
-             */
-            do_action('arsol_before_project_conversion_rollback', $new_project_id, $proposal_id, array($error_message), $created_order_ids, $conversion_data);
-            
-            // Rollback: Delete any created orders first
-            foreach ($created_order_ids as $order_id) {
-                $order = wc_get_order($order_id);
-                if ($order) {
-                    // Force delete the order (bypass trash)
-                    wp_delete_post($order_id, true);
-                    
-                    // Log the rollback for debugging
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info',
-                        sprintf('Rolled back order #%d due to conversion failure', $order_id));
-                }
-            }
-            
-            // Delete the project
-            wp_delete_post($new_project_id, true);
-            
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info',
-                sprintf('Project #%d deleted during rollback. Proposal #%d preserved.', $new_project_id, $proposal_id));
-            
-            // Clear the conversion lock
-            delete_transient($conversion_lock_key);
-            
-            /**
-             * Hook: arsol_after_project_conversion_rollback
-             * Fired after rollback is completed
-             * 
-             * @param int $proposal_id The original proposal ID (still exists)
-             * @param array $order_creation_errors Array of error messages
-             * @param array $conversion_data Conversion context data
-             */
-            do_action('arsol_after_project_conversion_rollback', $proposal_id, array($error_message), $conversion_data);
-            
-            $full_error_message = sprintf(
-                __('Failed to create orders from proposal. Error: %s', 'arsol-pfw'),
-                $error_message
-            );
-            
-            if ($is_internal_call) {
-                // For internal calls, add error notice and redirect back
-                if (function_exists('wc_add_notice')) {
-                    wc_add_notice($full_error_message, 'error');
-                }
-                $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
-                return;
-            } else {
-                // For admin calls, show error and stop
-                wp_die($full_error_message);
-            }
-        }
-
-        /**
-         * Hook: arsol_before_project_conversion_proposal_deletion
-         * Fired before the original proposal is deleted (conversion successful)
-         * 
-         * @param int $proposal_id The proposal ID that will be deleted
-         * @param int $project_id The new project ID
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_before_project_conversion_proposal_deletion', $proposal_id, $new_project_id, $conversion_data);
-
-        // If we get here, both project and orders were created successfully
-        // Now it's safe to delete the original proposal
-        wp_delete_post($proposal_id, true);
-
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
-            sprintf('Proposal #%d successfully converted to project #%d and deleted', $proposal_id, $new_project_id));
-
-        /**
-         * Hook: arsol_after_project_conversion_complete
-         * Fired after successful conversion completion (proposal deleted, project active)
-         * 
-         * @param int $project_id The new project ID
-         * @param int $proposal_id The original proposal ID (now deleted)
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_after_project_conversion_complete', $new_project_id, $proposal_id, $conversion_data);
-
-        // Clear the conversion lock
-        delete_transient($conversion_lock_key);
-
-        // Clean the output buffer and redirect
-        ob_end_clean();
-
-        /**
-         * Hook: arsol_before_project_conversion_redirect
-         * Fired before redirect after successful conversion
-         * 
-         * @param int $project_id The new project ID
-         * @param int $proposal_id The original proposal ID (deleted)
-         * @param array $conversion_data Conversion context data
-         */
-        do_action('arsol_before_project_conversion_redirect', $new_project_id, $proposal_id, $conversion_data);
-
-        // Redirect based on how the function was called
-        if ($is_internal_call) {
-            $this->safe_redirect(wc_get_account_endpoint_url('project-overview/' . $new_project_id));
-        } else {
-            $this->safe_redirect(admin_url('post.php?post=' . $new_project_id . '&action=edit'));
-        }
+        do_action('arsol_after_project_conversion_metadata_copied', $project_id, $proposal_id, $meta_to_copy, $cost_proposal_type, array());
     }
 
     public function customer_cancel_request() {
@@ -1148,12 +1010,46 @@ class Workflow_Handler {
             // Handle different entity types
             switch ($post->post_type) {
                 case 'shop_order':
-                case 'shop_subscription':
-                    // WooCommerce entities
-                    if (wp_delete_post($entity_id, true)) {
+                    // WooCommerce order - use proper WC deletion method
+                    $order = wc_get_order($entity_id);
+                    if ($order) {
+                        $order->delete(true); // Force delete
                         $deleted_count++;
                         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
-                            "Rollback: Deleted {$post->post_type} #{$entity_id}");
+                            "Rollback: Deleted shop_order #{$entity_id} using WooCommerce API");
+                    } else {
+                        // Fallback to direct deletion if WC object not found
+                        if (wp_delete_post($entity_id, true)) {
+                            $deleted_count++;
+                            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                                "Rollback: Deleted shop_order #{$entity_id} using WordPress API (fallback)");
+                        }
+                    }
+                    break;
+                case 'shop_subscription':
+                    // WooCommerce subscription - use proper WC deletion method
+                    if (function_exists('wcs_get_subscription')) {
+                        $subscription = wcs_get_subscription($entity_id);
+                        if ($subscription) {
+                            $subscription->delete(true); // Force delete
+                            $deleted_count++;
+                            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                                "Rollback: Deleted shop_subscription #{$entity_id} using WooCommerce Subscriptions API");
+                        } else {
+                            // Fallback to direct deletion if WCS object not found
+                            if (wp_delete_post($entity_id, true)) {
+                                $deleted_count++;
+                                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                                    "Rollback: Deleted shop_subscription #{$entity_id} using WordPress API (fallback)");
+                            }
+                        }
+                    } else {
+                        // WooCommerce Subscriptions not active, use direct deletion
+                        if (wp_delete_post($entity_id, true)) {
+                            $deleted_count++;
+                            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                                "Rollback: Deleted shop_subscription #{$entity_id} using WordPress API (no WCS)");
+                        }
                     }
                     break;
                 case 'arsol-project':
@@ -1162,6 +1058,14 @@ class Workflow_Handler {
                         $deleted_count++;
                         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
                             "Rollback: Deleted project #{$entity_id}");
+                    }
+                    break;
+                default:
+                    // Unknown entity type - try generic deletion
+                    if (wp_delete_post($entity_id, true)) {
+                        $deleted_count++;
+                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                            "Rollback: Deleted {$post->post_type} #{$entity_id}");
                     }
                     break;
             }

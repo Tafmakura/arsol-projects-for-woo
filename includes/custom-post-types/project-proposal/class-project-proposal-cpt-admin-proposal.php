@@ -335,9 +335,14 @@ class Proposal {
                     // Sanitize and redirect to conversion URL
                     $conversion_url = esc_url_raw($_POST['arsol_convert_after_save']);
                     
-                    // Use proper WordPress redirect instead of unreliable JavaScript
-                    wp_redirect($conversion_url);
-                    exit;
+                    // Add a small delay to ensure save is complete, then redirect
+                    add_action('admin_notices', function() use ($conversion_url) {
+                        echo '<script type="text/javascript">
+                            setTimeout(function() {
+                                window.location.href = "' . $conversion_url . '";
+                            }, 100);
+                        </script>';
+                    });
                 } else {
                     // Show error notice if not approved
                     add_action('admin_notices', function() use ($current_proposal_status) {
