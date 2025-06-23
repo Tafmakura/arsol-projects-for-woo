@@ -80,6 +80,10 @@ class Proposal {
             <!-- Main content area for any future proposal-specific content -->
         </div>
         
+        <p class="proposal-conversion-description">
+            <?php _e('This action will create a new project based on this proposal and permanently delete the original proposal. The proposal status must be set to "Approved" before conversion is allowed. Orders and invoices will be created for quotation proposals. This action cannot be undone.', 'arsol-pfw'); ?>
+        </p>
+        
         <div class="major-actions">
                 <?php if ($post->post_status === 'publish'): ?>
                     <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
