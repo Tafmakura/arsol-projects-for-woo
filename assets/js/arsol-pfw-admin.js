@@ -9,7 +9,8 @@ jQuery(document).ready(function($) {
             var select2_args = {
                 placeholder: placeholder,
                 allowClear: true,
-                width: 'resolve'
+                width: 'resolve',
+                minimumInputLength: 1
             };
             
             if (typeof $.fn.selectWoo !== 'undefined') {
