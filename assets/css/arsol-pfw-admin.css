@@ -1190,20 +1190,24 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     color: #333;
 }
 
-/* Summary rows styled like form fields with borders */
+/* Summary rows using p and label structure with borders */
+.arsol-proposal-summary p.summary-row,
 .arsol-proposal-summary .summary-row {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
     padding: 8px 0;
     border: solid #eee;
     border-width: 1px 0 0 0;
     display: block;
 }
 
+.arsol-proposal-summary p.summary-row:last-child,
 .arsol-proposal-summary .summary-row:last-child {
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
     border-bottom: 1px solid #eee;
 }
 
+.arsol-proposal-summary p.summary-row label,
+.arsol-proposal-summary .summary-row label,
 .arsol-proposal-summary .summary-heading {
     display: block;
     font-weight: 600;
@@ -1212,6 +1216,7 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     font-size: 13px;
 }
 
+.arsol-proposal-summary p.summary-row .summary-content,
 .arsol-proposal-summary .summary-content {
     color: #666;
     line-height: 1.4;
@@ -1219,13 +1224,21 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     margin-left: 0;
 }
 
-.arsol-proposal-summary .summary-content > div {
+.arsol-proposal-summary .summary-content > div,
+.arsol-proposal-summary .summary-content > span {
     margin-bottom: 2px;
+    display: block;
 }
 
-.arsol-proposal-summary .summary-content em {
+.arsol-proposal-summary .summary-content em,
+.arsol-proposal-summary em {
     font-style: italic;
     color: #666;
+}
+
+/* Support for both div and p structures */
+.arsol-proposal-summary p.summary-row {
+    margin-bottom: 0 !important;
 }
 
 /* Empty state styling */
