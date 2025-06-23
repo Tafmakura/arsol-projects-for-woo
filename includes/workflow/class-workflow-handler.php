@@ -86,9 +86,33 @@ class Workflow_Handler {
                 throw new Exception(__('You do not have sufficient permissions to perform this action.', 'arsol-pfw'));
             }
             
-            // Prevent concurrent conversions
+            // Prevent concurrent conversions and handle stuck workflows
             if ($this->is_workflow_in_progress($request_id)) {
-                throw new Exception(__('Conversion already in progress.', 'arsol-pfw'));
+                // Check if this is a stuck workflow (older than 5 minutes)
+                $workflow_started = get_post_meta($request_id, '_arsol_workflow_started', true);
+                $is_stuck = false;
+                
+                if ($workflow_started) {
+                    $started_time = strtotime($workflow_started);
+                    $current_time = current_time('timestamp');
+                    $age_minutes = ($current_time - $started_time) / 60;
+                    
+                    if ($age_minutes > 0.5) { // 30 seconds
+                        $is_stuck = true;
+                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+                            "Detected stuck workflow for request #{$request_id}, age: {$age_minutes} minutes. Auto-clearing...");
+                    }
+                }
+                
+                if ($is_stuck) {
+                    // Force clear the stuck workflow
+                    $this->force_clear_stuck_workflow($request_id);
+                    
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                        "Successfully cleared stuck workflow for request #{$request_id}. Proceeding with conversion...");
+                } else {
+                    throw new Exception(__('Conversion already in progress.', 'arsol-pfw'));
+                }
             }
             
             // Start transaction with logging
@@ -215,7 +239,7 @@ class Workflow_Handler {
             }
             
             // Redirect back
-            $this->safe_redirect(admin_url('edit.php?post_type=arsol-pfw-request'));
+            $this->safe_redirect(admin_url('post.php?post=' . $request_id . '&action=edit'));
         }
     }
 
@@ -311,9 +335,33 @@ class Workflow_Handler {
                 throw new Exception(__('Only published proposals can be converted to projects.', 'arsol-pfw'));
             }
 
-            // Prevent concurrent conversions
+            // Prevent concurrent conversions and handle stuck workflows
             if ($this->is_workflow_in_progress($proposal_id)) {
-                throw new Exception(__('Conversion already in progress.', 'arsol-pfw'));
+                // Check if this is a stuck workflow (older than 5 minutes)
+                $workflow_started = get_post_meta($proposal_id, '_arsol_workflow_started', true);
+                $is_stuck = false;
+                
+                if ($workflow_started) {
+                    $started_time = strtotime($workflow_started);
+                    $current_time = current_time('timestamp');
+                    $age_minutes = ($current_time - $started_time) / 60;
+                    
+                    if ($age_minutes > 0.5) { // 30 seconds
+                        $is_stuck = true;
+                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+                            "Detected stuck workflow for proposal #{$proposal_id}, age: {$age_minutes} minutes. Auto-clearing...");
+                    }
+                }
+                
+                if ($is_stuck) {
+                    // Force clear the stuck workflow
+                    $this->force_clear_stuck_workflow($proposal_id);
+                    
+                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                        "Successfully cleared stuck workflow for proposal #{$proposal_id}. Proceeding with conversion...");
+                } else {
+                    throw new Exception(__('Conversion already in progress.', 'arsol-pfw'));
+                }
             }
             
             // Start transaction with logging
@@ -509,7 +557,8 @@ class Workflow_Handler {
                 }
                 $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
             } else {
-                $this->safe_redirect(admin_url('edit.php?post_type=arsol-pfw-proposal'));
+                // Redirect back to the proposal edit page instead of listing page
+                $this->safe_redirect(admin_url('post.php?post=' . $proposal_id . '&action=edit'));
             }
         }
     }
@@ -1111,6 +1160,53 @@ class Workflow_Handler {
             
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
                 "Cleaned up stuck conversion: Post #{$post->ID}, Type: {$post->conversion_type}");
+        }
+        
+        return $cleaned;
+    }
+
+    /**
+     * Force clear stuck workflow for a specific post (public method for manual cleanup)
+     */
+    public function force_clear_stuck_workflow($post_id) {
+        $status = get_post_meta($post_id, '_arsol_workflow_status', true);
+        
+        if ($status === 'in_progress') {
+            // Force rollback the stuck transaction
+            $this->rollback_workflow_transaction($post_id, 'Manual cleanup - stuck workflow cleared by admin');
+            
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                "Manually cleared stuck workflow for post #{$post_id}");
+            
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Clear all stuck workflows regardless of age (emergency cleanup)
+     */
+    public static function emergency_cleanup_all_stuck_workflows() {
+        global $wpdb;
+        
+        // Find all stuck conversions regardless of age
+        $stuck_posts = $wpdb->get_results("
+            SELECT p.ID, pm1.meta_value as conversion_type
+            FROM {$wpdb->posts} p
+            INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id AND pm1.meta_key = '_arsol_workflow_status'
+            WHERE pm1.meta_value = 'in_progress'
+        ");
+        
+        $cleaned = 0;
+        foreach ($stuck_posts as $post) {
+            // Force rollback stuck conversion
+            $workflow_handler = new self();
+            $workflow_handler->rollback_workflow_transaction($post->ID, 'Emergency cleanup - all stuck workflows cleared');
+            $cleaned++;
+            
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+                "Emergency cleanup: Post #{$post->ID}, Type: {$post->conversion_type}");
         }
         
         return $cleaned;
