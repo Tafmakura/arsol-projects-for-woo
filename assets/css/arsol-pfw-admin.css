@@ -1151,16 +1151,7 @@ body.wp-admin .tablenav .actions .select2-container:not(.select2-container--open
     transition: none !important;
 }
 
-/* Hide elements during initialization to prevent flash of unstyled content */
-body.wp-admin .wc-customer-search:not(.enhanced),
-body.wp-admin .arsol-user-select2:not(.enhanced) {
-    visibility: hidden !important;
-}
-
-body.wp-admin .wc-customer-search.enhanced,
-body.wp-admin .arsol-user-select2.enhanced {
-    visibility: visible !important;
-}
+/* Removed problematic FOUC prevention that was hiding select fields on page load */
 
 /* Fix for proposals page specific issues */
 body.post-type-arsol-pfw-proposal .tablenav .actions {
