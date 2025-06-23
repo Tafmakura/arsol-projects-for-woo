@@ -23,7 +23,6 @@ class Woocommerce_Biller {
      */
     public function __construct() {
         $this->init_hooks();
-        $this->declare_hpos_compatibility();
     }
     
     /**
@@ -32,15 +31,6 @@ class Woocommerce_Biller {
     private function init_hooks() {
         // Note: Legacy hook removed in favor of direct exception-throwing calls
         // The conversion is now handled directly in the workflow with proper try-catch
-    }
-    
-    /**
-     * Declare HPOS compatibility
-     */
-    private function declare_hpos_compatibility() {
-        if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
-            \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', ARSOL_PROJECTS_PLUGIN_FILE, true);
-        }
     }
     
     // Note: handle_proposal_conversion method removed - now using direct exception-throwing calls
