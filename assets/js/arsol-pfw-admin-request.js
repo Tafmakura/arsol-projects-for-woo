@@ -114,19 +114,16 @@
         updateRequestStatusVisibility: function() {
             var selectedStatus = $('#request_status').val() || '';
             
-            // Hide all conditional elements first with inline display:none
-            $('.arsol-pfw-show-if-request-status-is-on-hold, .arsol-pfw-hide-if-request-status-is-on-hold, .arsol-pfw-show-if-request-status-is-under-review, .arsol-pfw-hide-if-request-status-is-under-review, .arsol-pfw-show-if-request-status-is-approved, .arsol-pfw-hide-if-request-status-is-approved').css('display', 'none');
+            // Hide all feedback metaboxes first
+            $('#arsol_request_onhold_feedback_metabox, #arsol_request_underreview_feedback_metabox, #arsol_request_approved_feedback_metabox').css('display', 'none');
             
-            // Show elements based on current status by removing inline display style
+            // Show the appropriate metabox based on current status
             if (selectedStatus === 'on-hold') {
-                $('.arsol-pfw-show-if-request-status-is-on-hold').css('display', '');
+                $('#arsol_request_onhold_feedback_metabox').css('display', '');
             } else if (selectedStatus === 'under-review') {
-                $('.arsol-pfw-show-if-request-status-is-under-review').css('display', '');
+                $('#arsol_request_underreview_feedback_metabox').css('display', '');
             } else if (selectedStatus === 'approved') {
-                $('.arsol-pfw-show-if-request-status-is-approved').css('display', '');
-            } else {
-                // For other statuses, hide all feedback metaboxes
-                $('.arsol-pfw-hide-if-request-status-is-on-hold, .arsol-pfw-hide-if-request-status-is-under-review, .arsol-pfw-hide-if-request-status-is-approved').css('display', '');
+                $('#arsol_request_approved_feedback_metabox').css('display', '');
             }
         },
 

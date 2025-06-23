@@ -33,7 +33,8 @@ class Request {
             array($this, 'render_onhold_feedback_metabox'),
             'arsol-pfw-request',
             'normal',
-            'high'
+            'high',
+            array('__back_compat_meta_box' => false, 'class' => 'arsol-pfw-show-if-request-status-is-on-hold')
         );
         
         add_meta_box(
@@ -42,7 +43,8 @@ class Request {
             array($this, 'render_underreview_feedback_metabox'),
             'arsol-pfw-request',
             'normal',
-            'high'
+            'high',
+            array('__back_compat_meta_box' => false, 'class' => 'arsol-pfw-show-if-request-status-is-under-review')
         );
         
         add_meta_box(
@@ -51,7 +53,8 @@ class Request {
             array($this, 'render_approved_feedback_metabox'),
             'arsol-pfw-request',
             'normal',
-            'high'
+            'high',
+            array('__back_compat_meta_box' => false, 'class' => 'arsol-pfw-show-if-request-status-is-approved')
         );
     }
 
@@ -106,14 +109,9 @@ class Request {
         wp_nonce_field('request_onhold_feedback_metabox', 'request_onhold_feedback_metabox_nonce');
 
         // Get current values
-        $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
-        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         $feedback = get_post_meta($post->ID, '_arsol_pfw_request_onhold_feedback', true);
-        
-        // Determine visibility class
-        $visibility_class = $current_status === 'on-hold' ? 'arsol-pfw-show-if-request-status-is-on-hold' : 'arsol-pfw-hide-if-request-status-is-on-hold';
         ?>
-        <div class="<?php echo esc_attr($visibility_class); ?>">
+        <div>
             <p class="description">
                 <?php _e('Provide feedback to the customer explaining why this request is on hold and what actions they need to take.', 'arsol-pfw'); ?>
             </p>
@@ -158,14 +156,9 @@ class Request {
         wp_nonce_field('request_underreview_feedback_metabox', 'request_underreview_feedback_metabox_nonce');
 
         // Get current values
-        $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
-        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         $feedback = get_post_meta($post->ID, '_arsol_pfw_request_underreview_feedback', true);
-        
-        // Determine visibility class
-        $visibility_class = $current_status === 'under-review' ? 'arsol-pfw-show-if-request-status-is-under-review' : 'arsol-pfw-hide-if-request-status-is-under-review';
         ?>
-        <div class="<?php echo esc_attr($visibility_class); ?>">
+        <div>
             <p class="description">
                 <?php _e('Provide feedback to the customer about the current review process and any additional information needed.', 'arsol-pfw'); ?>
             </p>
@@ -202,14 +195,9 @@ class Request {
         wp_nonce_field('request_approved_feedback_metabox', 'request_approved_feedback_metabox_nonce');
 
         // Get current values
-        $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
-        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         $feedback = get_post_meta($post->ID, '_arsol_pfw_request_approved_feedback', true);
-        
-        // Determine visibility class
-        $visibility_class = $current_status === 'approved' ? 'arsol-pfw-show-if-request-status-is-approved' : 'arsol-pfw-hide-if-request-status-is-approved';
         ?>
-        <div class="<?php echo esc_attr($visibility_class); ?>">
+        <div>
             <p class="description">
                 <?php _e('Provide feedback to the customer about the approval and next steps in the process.', 'arsol-pfw'); ?>
             </p>
