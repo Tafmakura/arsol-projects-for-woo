@@ -88,39 +88,7 @@ class Proposals {
                 
             case 'project_lead':
                 $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
-                if ($lead_id) {
-                    $lead_user = get_userdata($lead_id);
-                    if ($lead_user) {
-                        // Priority: display_name -> first/last name -> email
-                        $lead_display = '';
-                        
-                        if (!empty($lead_user->display_name)) {
-                            $lead_display = $lead_user->display_name;
-                        } elseif (!empty($lead_user->first_name) || !empty($lead_user->last_name)) {
-                            $lead_display = trim($lead_user->first_name . ' ' . $lead_user->last_name);
-                        } elseif (!empty($lead_user->user_email)) {
-                            $lead_display = $lead_user->user_email;
-                        } else {
-                            $lead_display = __('Unknown Lead', 'arsol-pfw');
-                        }
-                        
-                        // Make it a link to filter by this project lead
-                        $filter_url = add_query_arg(array(
-                            'post_type' => 'arsol-pfw-proposal',
-                            'project_lead' => $lead_user->ID
-                        ), admin_url('edit.php'));
-                        
-                        printf(
-                            '<a href="%s">%s</a>',
-                            esc_url($filter_url),
-                            esc_html($lead_display)
-                        );
-                    } else {
-                        echo '<span class="na">&ndash;</span>';
-                    }
-                } else {
-                    echo '<span class="na">&ndash;</span>';
-                }
+                echo \Arsol_Projects_For_Woo\Classes\Helper::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
                 break;
         }
     }
@@ -178,16 +146,24 @@ class Proposals {
                 }
             }
             
-            // Use WordPress native dropdown with Select2 class
+            // Use searchable select similar to customer field
             echo '<div class="arsol-user-select2-wrapper">';
-            wp_dropdown_users(array(
-                'name' => 'project_lead',
-                'class' => 'arsol-user-select2',
-                'selected' => $current_lead,
-                'include' => $valid_user_ids,
-                'show_option_none' => __('Filter by project lead', 'arsol-pfw'),
-                'option_none_value' => ''
-            ));
+            echo '<select class="arsol-project-lead-search" name="project_lead" id="filter-by-project-lead" data-placeholder="' . esc_attr__('Filter by project lead', 'arsol-pfw') . '" data-allow_clear="true" data-action="arsol_pfw_json_search_project_leads" data-security="' . esc_attr(wp_create_nonce('search-project-leads')) . '">';
+            
+            // If there's a current project lead selected, add it as an option
+            if (!empty($current_lead)) {
+                $project_lead_user = get_userdata($current_lead);
+                if ($project_lead_user) {
+                    printf(
+                        '<option value="%s" selected="selected">%s (#%s - %s)</option>',
+                        esc_attr($project_lead_user->ID),
+                        esc_html($project_lead_user->display_name),
+                        esc_html($project_lead_user->ID),
+                        esc_html($project_lead_user->user_email)
+                    );
+                }
+            }
+            echo '</select>';
             echo '</div>';
 
             // Customer filter (WooCommerce native customer search)

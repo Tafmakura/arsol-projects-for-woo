@@ -86,39 +86,7 @@ class Projects {
                 
             case 'project_lead':
                 $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
-                if ($lead_id) {
-                    $lead_user = get_userdata($lead_id);
-                    if ($lead_user) {
-                        // Priority: display_name -> first/last name -> email
-                        $lead_display = '';
-                        
-                        if (!empty($lead_user->display_name)) {
-                            $lead_display = $lead_user->display_name;
-                        } elseif (!empty($lead_user->first_name) || !empty($lead_user->last_name)) {
-                            $lead_display = trim($lead_user->first_name . ' ' . $lead_user->last_name);
-                        } elseif (!empty($lead_user->user_email)) {
-                            $lead_display = $lead_user->user_email;
-                        } else {
-                            $lead_display = __('Unknown Lead', 'arsol-pfw');
-                        }
-                        
-                        // Make it a link to filter by this project lead
-                        $filter_url = add_query_arg(array(
-                            'post_type' => 'arsol-project',
-                            'project_lead' => $lead_user->ID
-                        ), admin_url('edit.php'));
-                        
-                        printf(
-                            '<a href="%s">%s</a>',
-                            esc_url($filter_url),
-                            esc_html($lead_display)
-                        );
-                    } else {
-                        echo '<span class="na">&ndash;</span>';
-                    }
-                } else {
-                    echo '<span class="na">&ndash;</span>';
-                }
+                echo \Arsol_Projects_For_Woo\Classes\Helper::create_project_lead_filter_link($lead_id, 'arsol-project');
                 break;
         }
     }
@@ -146,45 +114,14 @@ class Projects {
                 echo '</select>';
             }
 
-            // Project Lead filter (WordPress native user dropdown)
+            // Project Lead filter
             $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
-            $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
-            
-            // Get users who can create projects based on Project Manager Roles setting
-            $project_lead_users = get_users(array(
-                'fields' => array('ID', 'display_name'),
-                'meta_query' => array(
-                    'relation' => 'OR',
-                    array(
-                        'key' => 'wp_capabilities',
-                        'value' => 'manage_projects',
-                        'compare' => 'LIKE'
-                    ),
-                    array(
-                        'key' => 'wp_capabilities', 
-                        'value' => 'create_projects',
-                        'compare' => 'LIKE'
-                    )
-                )
-            ));
-            
-            // Filter to only users who can actually create projects
-            $valid_user_ids = array();
-            foreach ($project_lead_users as $user) {
-                if ($admin_users_helper->can_user_create_projects($user->ID)) {
-                    $valid_user_ids[] = $user->ID;
-                }
-            }
-            
-            // Use WordPress native dropdown with Select2 class
             echo '<div class="arsol-user-select2-wrapper">';
-            wp_dropdown_users(array(
+            \Arsol_Projects_For_Woo\Classes\Helper::render_project_lead_search_field(array(
                 'name' => 'project_lead',
-                'class' => 'arsol-user-select2',
+                'id' => 'filter-by-project-lead',
                 'selected' => $current_lead,
-                'include' => $valid_user_ids,
-                'show_option_none' => __('Filter by project lead', 'arsol-pfw'),
-                'option_none_value' => ''
+                'placeholder' => __('Filter by project lead', 'arsol-pfw')
             ));
             echo '</div>';
 
