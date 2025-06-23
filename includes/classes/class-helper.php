@@ -24,74 +24,12 @@ class Helper {
      * Initialize hooks
      */
     private function init_hooks() {
-        // AJAX handler for project lead search
-        add_action('wp_ajax_arsol_pfw_json_search_project_leads', array($this, 'json_search_project_leads'));
-    }
-    
-    /**
-     * AJAX handler for searching project lead users
-     * Similar to WooCommerce's customer search functionality
-     *
-     * @return void
-     */
-    public function json_search_project_leads() {
-        // Check security
-        check_ajax_referer('search-project-leads', 'security');
-
-        // Check permissions
-        if (!current_user_can('edit_posts')) {
-            wp_die(-1);
-        }
-
-        $term = isset($_GET['term']) ? sanitize_text_field($_GET['term']) : '';
-        $exclude = isset($_GET['exclude']) ? array_map('intval', explode(',', $_GET['exclude'])) : array();
-
-        if (empty($term)) {
-            wp_die();
-        }
-
-        // Get users who can create projects
-        $project_lead_users = get_users(array(
-            'search' => '*' . $term . '*',
-            'search_columns' => array('user_login', 'user_email', 'user_nicename', 'display_name'),
-            'exclude' => $exclude,
-            'number' => 50, // Limit results
-            'meta_query' => array(
-                'relation' => 'OR',
-                array(
-                    'key' => 'wp_capabilities',
-                    'value' => 'manage_projects',
-                    'compare' => 'LIKE'
-                ),
-                array(
-                    'key' => 'wp_capabilities', 
-                    'value' => 'create_projects',
-                    'compare' => 'LIKE'
-                )
-            )
-        ));
-
-        $found_users = array();
-        $admin_users_helper = new \Arsol_Projects_For_Woo\Admin\Users();
-
-        // Filter to only users who can actually create projects
-        foreach ($project_lead_users as $user) {
-            if ($admin_users_helper->can_user_create_projects($user->ID)) {
-                $found_users[$user->ID] = sprintf(
-                    '%s (#%s - %s)',
-                    $user->display_name,
-                    $user->ID,
-                    $user->user_email
-                );
-            }
-        }
-
-        wp_send_json($found_users);
+        // Removed AJAX handler - using simple dropdown instead
     }
     
     /**
      * Render a project lead search select field
-     * Reusable method for all CPTs and admin areas
+     * Simple WordPress user dropdown with basic Select2 enhancement
      *
      * @param array $args {
      *     Array of arguments for the select field
@@ -114,35 +52,24 @@ class Helper {
         
         $args = wp_parse_args($args, $defaults);
         
-        $classes = 'arsol-project-lead-search';
+        // Get valid project lead user IDs
+        $valid_user_ids = self::get_project_lead_user_ids();
+        
+        $classes = 'arsol-user-select2';
         if (!empty($args['class'])) {
             $classes .= ' ' . esc_attr($args['class']);
         }
         
-        ?>
-        <select class="<?php echo esc_attr($classes); ?>" 
-                name="<?php echo esc_attr($args['name']); ?>" 
-                id="<?php echo esc_attr($args['id']); ?>" 
-                data-placeholder="<?php echo esc_attr($args['placeholder']); ?>" 
-                data-allow_clear="true" 
-                data-action="arsol_pfw_json_search_project_leads" 
-                data-security="<?php echo esc_attr(wp_create_nonce('search-project-leads')); ?>">
-            <?php if (!empty($args['selected'])): ?>
-                <?php 
-                $selected_user = get_userdata($args['selected']);
-                if ($selected_user) {
-                    printf(
-                        '<option value="%s" selected="selected">%s (#%s - %s)</option>',
-                        esc_attr($selected_user->ID),
-                        esc_html($selected_user->display_name),
-                        esc_html($selected_user->ID),
-                        esc_html($selected_user->user_email)
-                    );
-                }
-                ?>
-            <?php endif; ?>
-        </select>
-        <?php
+        // Use WordPress native dropdown
+        wp_dropdown_users(array(
+            'name' => $args['name'],
+            'id' => $args['id'],
+            'class' => $classes,
+            'selected' => $args['selected'],
+            'include' => $valid_user_ids,
+            'show_option_none' => $args['placeholder'],
+            'option_none_value' => ''
+        ));
     }
     
     /**
