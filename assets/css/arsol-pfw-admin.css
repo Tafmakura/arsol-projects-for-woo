@@ -16,6 +16,11 @@
     display: none !important;
 }
 
+/* Show Request Feedback in Screen Options */
+#screen-options-wrap label[for="arsol_request_feedback_metabox-hide"] {
+    display: block !important;
+}
+
 /* Project Actions Layout */
 .major-actions {
     padding-top: 10px;
@@ -1182,6 +1187,37 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 
 /* === END ADMIN FILTER STYLING === */
 
+/* Request Status Conditional Visibility */
+.arsol-pfw-show-if-request-status-is-on-hold {
+    display: block !important;
+}
+
+.arsol-pfw-hide-if-request-status-is-not-on-hold {
+    display: none !important;
+}
+
+.arsol-pfw-hide-if-request-status-is-on-hold {
+    display: none !important;
+}
+
+/* Default state - hide feedback editor until status is set to on-hold */
+#arsol_request_feedback_metabox .arsol-pfw-show-if-request-status-is-on-hold {
+    display: none;
+}
+
+#arsol_request_feedback_metabox .arsol-pfw-hide-if-request-status-is-on-hold {
+    display: block;
+}
+
+/* Request Feedback Editor Styling */
+.arsol-request-feedback-editor {
+    margin-top: 10px;
+}
+
+.arsol-request-feedback-editor .wp-editor-container {
+    border: 1px solid #ddd;
+}
+
 /* Proposal Summary Styling */
 .arsol-proposal-summary h4 {
     margin: 0 0 15px 0;
@@ -1199,8 +1235,6 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     border-top: 1px solid #eee;
     display: block;
 }
-
-
 
 #budget-summary-template p.summary-row span,
 #quotation-summary-template p.summary-row span {

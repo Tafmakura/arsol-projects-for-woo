@@ -25,6 +25,16 @@ class Request {
             'side',
             'default'
         );
+        
+        // Add Request Feedback metabox
+        add_meta_box(
+            'arsol_request_feedback_metabox',
+            __('Request Feedback', 'arsol-pfw'),
+            array($this, 'render_request_feedback_metabox'),
+            'arsol-pfw-request',
+            'normal',
+            'high'
+        );
     }
 
     /**
@@ -71,6 +81,64 @@ class Request {
     }
 
     /**
+     * Render request feedback metabox
+     */
+    public function render_request_feedback_metabox($post) {
+        // Add nonce for security
+        wp_nonce_field('request_feedback_metabox', 'request_feedback_metabox_nonce');
+
+        // Get current values
+        $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
+        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
+        $feedback = get_post_meta($post->ID, '_arsol_pfw_request_feedback', true);
+        
+        // Determine visibility class
+        $visibility_class = $current_status === 'on-hold' ? 'arsol-pfw-show-if-request-status-is-on-hold' : 'arsol-pfw-hide-if-request-status-is-not-on-hold';
+        ?>
+        <div class="<?php echo esc_attr($visibility_class); ?>">
+            <p class="description">
+                <?php _e('Provide feedback to the customer explaining why this request is on hold and what actions they need to take.', 'arsol-pfw'); ?>
+            </p>
+            
+            <div class="arsol-request-feedback-editor">
+                <?php
+                $editor_settings = array(
+                    'textarea_name' => 'arsol_pfw_request_feedback',
+                    'textarea_rows' => 8,
+                    'media_buttons' => false,
+                    'teeny' => false,
+                    'quicktags' => array(
+                        'buttons' => 'strong,em,ul,ol,li,link,close'
+                    ),
+                    'tinymce' => array(
+                        'toolbar1' => 'bold,italic,bullist,numlist,link,unlink,undo,redo',
+                        'toolbar2' => '',
+                        'toolbar3' => ''
+                    )
+                );
+                
+                wp_editor($feedback, 'arsol_pfw_request_feedback', $editor_settings);
+                ?>
+            </div>
+            
+            <textarea 
+                id="arsol_request_feedback_validation" 
+                name="arsol_request_feedback_validation" 
+                style="display: none;" 
+                data-required-when-status="on-hold"
+                data-validation-message="<?php esc_attr_e('Feedback is required when request status is on-hold.', 'arsol-pfw'); ?>">
+            </textarea>
+        </div>
+        
+        <div class="arsol-pfw-hide-if-request-status-is-on-hold">
+            <p class="description" style="font-style: italic; color: #666;">
+                <?php _e('Request feedback is only available when the request status is "On Hold".', 'arsol-pfw'); ?>
+            </p>
+        </div>
+        <?php
+    }
+
+    /**
      * Save request details
      */
     public function save_request_details($post_id) {
@@ -97,6 +165,14 @@ class Request {
         // Save request status from column 1
         if (isset($_POST['request_status'])) {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status', false);
+        }
+        
+        // Save request feedback if feedback metabox nonce is present
+        if (isset($_POST['request_feedback_metabox_nonce']) && wp_verify_nonce($_POST['request_feedback_metabox_nonce'], 'request_feedback_metabox')) {
+            if (isset($_POST['arsol_pfw_request_feedback'])) {
+                $feedback = wp_kses_post($_POST['arsol_pfw_request_feedback']);
+                update_post_meta($post_id, '_arsol_pfw_request_feedback', $feedback);
+            }
         }
         
         // Handle conversion after save (WordPress-native approach)
