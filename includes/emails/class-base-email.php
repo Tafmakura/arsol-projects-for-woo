@@ -119,4 +119,116 @@ abstract class Base_Email extends \WC_Email {
         
         return isset($icons[$type]) ? $icons[$type] : '📧';
     }
+    
+    /**
+     * Get status label for different post types
+     * 
+     * @param string $status
+     * @param string $post_type
+     * @return string
+     */
+    protected function get_status_label($status, $post_type) {
+        $labels = array();
+        
+        switch ($post_type) {
+            case 'arsol-pfw-request':
+                $labels = array(
+                    'pending-review' => 'Pending Review',
+                    'under-review' => 'Under Review',
+                    'on-hold' => 'On Hold',
+                    'approved' => 'Approved'
+                );
+                break;
+                
+            case 'arsol-pfw-proposal':
+                $labels = array(
+                    'processing' => 'Processing',
+                    'pending-approval' => 'Pending Approval',
+                    'approved' => 'Approved',
+                    'rejected' => 'Rejected'
+                );
+                break;
+                
+            case 'arsol-project':
+                $labels = array(
+                    'not-started' => 'Not Started',
+                    'in-progress' => 'In Progress',
+                    'on-hold' => 'On Hold',
+                    'completed' => 'Completed',
+                    'cancelled' => 'Cancelled'
+                );
+                break;
+        }
+        
+        return isset($labels[$status]) ? $labels[$status] : ucfirst(str_replace('-', ' ', $status));
+    }
+    
+    /**
+     * Replace email placeholders
+     * 
+     * @param string $content
+     * @param array $replacements
+     * @return string
+     */
+    protected function replace_placeholders($content, $replacements) {
+        foreach ($replacements as $placeholder => $value) {
+            $content = str_replace('{' . $placeholder . '}', $value, $content);
+        }
+        
+        return $content;
+    }
+    
+    /**
+     * Initialize settings form fields for WooCommerce email settings
+     */
+    public function init_form_fields() {
+        $this->form_fields = array(
+            'enabled' => array(
+                'title'   => 'Enable/Disable',
+                'type'    => 'checkbox',
+                'label'   => 'Enable this email notification',
+                'default' => 'yes'
+            ),
+            'subject' => array(
+                'title'       => 'Subject',
+                'type'        => 'text',
+                'description' => sprintf('This controls the email subject line. Leave blank to use the default subject: <code>%s</code>.', $this->get_default_subject()),
+                'placeholder' => $this->get_default_subject(),
+                'default'     => ''
+            ),
+            'heading' => array(
+                'title'       => 'Email Heading',
+                'type'        => 'text',
+                'description' => sprintf('This controls the main heading contained within the email notification. Leave blank to use the default heading: <code>%s</code>.', $this->get_default_heading()),
+                'placeholder' => $this->get_default_heading(),
+                'default'     => ''
+            ),
+            'email_type' => array(
+                'title'       => 'Email type',
+                'type'        => 'select',
+                'description' => 'Choose which format of email to send.',
+                'default'     => 'html',
+                'class'       => 'email_type wc-enhanced-select',
+                'options'     => $this->get_email_type_options()
+            )
+        );
+    }
+    
+    /**
+     * Get default subject for settings
+     * 
+     * @return string
+     */
+    public function get_default_subject() {
+        return $this->subject;
+    }
+    
+    /**
+     * Get default heading for settings
+     * 
+     * @return string
+     */
+    public function get_default_heading() {
+        return $this->heading;
+    }
 }

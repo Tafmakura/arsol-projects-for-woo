@@ -393,6 +393,15 @@ class Woocommerce_Mailer {
         );
         
         $settings[] = array(
+            'title' => 'Portal Base URL',
+            'desc' => 'Base URL for customer portal links in emails (e.g., https://yoursite.com/portal/)',
+            'id' => 'arsol_portal_base_url',
+            'type' => 'url',
+            'default' => home_url('/customer-portal/'),
+            'css' => 'min-width:400px;'
+        );
+        
+        $settings[] = array(
             'type' => 'sectionend',
             'id' => 'arsol_email_settings'
         );
