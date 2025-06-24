@@ -23,7 +23,7 @@ class WC_Email_Proposal_Ready extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'proposal_ready';
-        $this->title          = __( 'Customer Notification: Proposal Ready for Review', 'arsol-pfw' );
+        $this->title          = __( 'Project Customer: Proposal Ready for Review', 'arsol-pfw' );
         $this->description    = __( 'Customer notification when their proposal is ready for review.', 'arsol-pfw' );
         $this->template_html  = 'email-proposal-ready.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';

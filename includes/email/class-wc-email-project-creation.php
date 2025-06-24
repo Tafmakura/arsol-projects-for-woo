@@ -23,7 +23,7 @@ class WC_Email_Project_Creation extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'project_creation';
-        $this->title          = __( 'Customer Notification: Your Project Order Is Ready', 'arsol-pfw' );
+        $this->title          = __( 'Project Customer: Your Project Order Is Ready', 'arsol-pfw' );
         $this->description    = __( 'Customer notification when their project order is ready for payment.', 'arsol-pfw' );
         $this->template_html  = 'email-project-creation.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';

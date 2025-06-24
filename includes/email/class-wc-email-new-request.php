@@ -20,7 +20,7 @@ class WC_Email_New_Request extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'new_request';
-        $this->title          = __( 'Customer Notification: Request Submitted', 'arsol-pfw' );
+        $this->title          = __( 'Project Customer: Request Submitted', 'arsol-pfw' );
         $this->description    = __( 'Customer confirmation when their project request is submitted.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-new-request.php';

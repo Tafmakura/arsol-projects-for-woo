@@ -20,7 +20,7 @@ class WC_Email_Admin_New_Request extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'admin_new_request';
-        $this->title          = __( 'Shop Manager: New Request', 'arsol-pfw' );
+        $this->title          = __( 'New Project Request', 'arsol-pfw' );
         $this->description    = __( 'Shop manager notification when a new project request is submitted.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-admin-new-request.php';

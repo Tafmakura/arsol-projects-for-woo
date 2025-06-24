@@ -23,7 +23,7 @@ class WC_Email_Request_Status extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'request_status';
-        $this->title          = __( 'Customer Notification: Request Status Update', 'arsol-projects-for-woo' );
+        $this->title          = __( 'Project Customer: Request Status Update', 'arsol-projects-for-woo' );
         $this->description    = __( 'Customer notification when their request status changes.', 'arsol-projects-for-woo' );
         $this->template_html  = 'email-request-status.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
