@@ -23,7 +23,6 @@ class WC_Email_Lead_Proposal_Processing extends WC_Email {
         $this->description    = __( 'Lead notification when a proposal is being processed.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-lead-proposal-processing.php';
-        $this->template_plain = 'email-lead-proposal-processing.php';
         $this->placeholders   = array(
             '{proposal_id}' => '',
         );
@@ -101,20 +100,6 @@ class WC_Email_Lead_Proposal_Processing extends WC_Email {
      *
      * @return string
      */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'proposal_id'   => $this->object ? $this->object->ID : '',
-                'email_heading' => $this->get_heading(),
-                'sent_to_admin' => false,
-                'plain_text'    => true,
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
-    }
 
     /**
      * Initialize settings form fields.

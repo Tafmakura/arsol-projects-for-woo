@@ -23,14 +23,16 @@ class WC_Email_New_Request extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'new_request';
-        $this->title          = __( 'New Project Request', 'arsol-projects-for-woo' );
-        $this->description    = __( 'New project request emails are sent to shop managers when a new request is submitted.', 'arsol-projects-for-woo' );
-        $this->template_html  = 'emails/new-request.php';
-        $this->template_plain = 'emails/plain/new-request.php';
-        $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'templates/';
+        $this->title          = __( 'New Project Request', 'arsol-pfw' );
+        $this->description    = __( 'New project request emails are sent when a customer submits a new project request.', 'arsol-pfw' );
+        $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
+        $this->template_html  = 'email-new-request.php';
+        $this->placeholders   = array(
+            '{request_id}' => '',
+        );
 
         // Triggers for this email
-        add_action( 'arsol_pfw_new_request_notification', array( $this, 'trigger' ), 10, 1 );
+        add_action( 'arsol_new_request_notification', array( $this, 'trigger' ), 10, 1 );
 
         // Call parent constructor
         parent::__construct();
@@ -90,30 +92,10 @@ class WC_Email_New_Request extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'request'      => $this->object,
+                'request_id'    => $this->object ? $this->object->ID : '',
                 'email_heading' => $this->get_heading(),
-                'sent_to_admin' => true,
+                'sent_to_admin' => false,
                 'plain_text'    => false,
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
-    }
-
-    /**
-     * Get content plain.
-     *
-     * @return string
-     */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'request'      => $this->object,
-                'email_heading' => $this->get_heading(),
-                'sent_to_admin' => true,
-                'plain_text'    => true,
                 'email'         => $this,
             ),
             '',

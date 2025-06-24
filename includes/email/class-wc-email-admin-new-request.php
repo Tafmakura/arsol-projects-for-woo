@@ -23,7 +23,6 @@ class WC_Email_Admin_New_Request extends WC_Email {
         $this->description    = __( 'Admin notification when a new project request is submitted.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-admin-new-request.php';
-        $this->template_plain = 'email-admin-new-request.php';
         $this->placeholders   = array(
             '{request_id}' => '',
         );
@@ -89,26 +88,6 @@ class WC_Email_Admin_New_Request extends WC_Email {
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => true,
                 'plain_text'    => false,
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
-    }
-
-    /**
-     * Get content plain.
-     *
-     * @return string
-     */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'request_id'    => $this->object ? $this->object->ID : '',
-                'email_heading' => $this->get_heading(),
-                'sent_to_admin' => true,
-                'plain_text'    => true,
                 'email'         => $this,
             ),
             '',

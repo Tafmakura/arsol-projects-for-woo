@@ -23,14 +23,16 @@ class WC_Email_Proposal_Decision extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'proposal_decision';
-        $this->title          = __( 'Proposal Decision', 'arsol-projects-for-woo' );
-        $this->description    = __( 'Proposal decision emails are sent when a proposal is approved or rejected.', 'arsol-projects-for-woo' );
-        $this->template_html  = 'email-proposal-decision.php';
+        $this->title          = __( 'Proposal Decision', 'arsol-pfw' );
+        $this->description    = __( 'Proposal decision emails are sent when a proposal is approved or rejected.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
+        $this->template_html  = 'email-proposal-decision.php';
+        $this->placeholders   = array(
+            '{proposal_id}' => '',
+        );
 
         // Triggers for this email
-        add_action( 'arsol_proposal_approved', array( $this, 'trigger' ), 10, 3 );
-        add_action( 'arsol_proposal_rejected', array( $this, 'trigger' ), 10, 3 );
+        add_action( 'arsol_proposal_decision_notification', array( $this, 'trigger' ), 10, 1 );
 
         // Call parent constructor
         parent::__construct();
@@ -101,9 +103,7 @@ class WC_Email_Proposal_Decision extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'proposal'      => $this->object,
-                'decision'      => $this->placeholders['{decision}'] ?? '',
-                'customer_name' => $this->placeholders['{customer_name}'] ?? '',
+                'proposal_id'   => $this->object ? $this->object->ID : '',
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => false,

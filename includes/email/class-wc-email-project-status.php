@@ -23,7 +23,6 @@ class WC_Email_Project_Status extends WC_Email {
         $this->description    = __( 'Notification when a project status is updated.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-project-status.php';
-        $this->template_plain = 'email-project-status.php';
         $this->placeholders   = array(
             '{project_id}' => '',
         );
@@ -101,20 +100,6 @@ class WC_Email_Project_Status extends WC_Email {
      *
      * @return string
      */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'project_id'    => $this->object ? $this->object->ID : '',
-                'email_heading' => $this->get_heading(),
-                'sent_to_admin' => false,
-                'plain_text'    => true,
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
-    }
 
     /**
      * Initialize settings form fields.

@@ -27,7 +27,6 @@ class WC_Email_Admin_Proposal_Decision extends WC_Email {
         $this->description    = __( 'Admin notification when a proposal decision is made.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-admin-proposal-decision.php';
-        $this->template_plain = 'email-admin-proposal-decision.php';
         $this->placeholders   = array(
             '{proposal_id}' => '',
         );
@@ -93,26 +92,6 @@ class WC_Email_Admin_Proposal_Decision extends WC_Email {
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => true,
                 'plain_text'    => false,
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
-    }
-
-    /**
-     * Get content plain.
-     *
-     * @return string
-     */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'proposal_id'   => $this->object ? $this->object->ID : '',
-                'email_heading' => $this->get_heading(),
-                'sent_to_admin' => true,
-                'plain_text'    => true,
                 'email'         => $this,
             ),
             '',
