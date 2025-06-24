@@ -18,9 +18,9 @@ abstract class Base_Email extends \WC_Email {
      */
     public function __construct() {
         // Set default properties
-        $this->template_html = 'emails/' . $this->id . '.php';
-        $this->template_plain = 'emails/plain/' . $this->id . '.php';
-        $this->template_base = ARSOL_PFW_PLUGIN_DIR . 'templates/';
+        $this->template_html = 'templates/' . $this->id . '.php';
+        $this->template_plain = 'templates/plain/' . $this->id . '.php';
+        $this->template_base = ARSOL_PFW_PLUGIN_DIR . 'includes/emails/';
         
         // Call parent constructor
         parent::__construct();

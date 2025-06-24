@@ -138,7 +138,7 @@ class Woocommerce_Mailer {
      * @return string
      */
     public static function get_email_template_path($template_name) {
-        return ARSOL_PFW_PLUGIN_DIR . 'templates/emails/' . $template_name;
+        return ARSOL_PFW_PLUGIN_DIR . 'includes/emails/templates/' . $template_name;
     }
     
     /**
