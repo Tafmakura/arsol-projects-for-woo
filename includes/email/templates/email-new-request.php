@@ -10,45 +10,53 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$status_icon = isset($status_icon) ? $status_icon : '��';
-$color_scheme = isset($color_scheme) ? $color_scheme : array('background' => '#cce5ff', 'text' => '#0073aa', 'cta' => '#0073aa');
-?>
+do_action('woocommerce_email_header', $email_heading, $email); ?>
 
-<div style="background-color: <?php echo esc_attr($color_scheme['background']); ?>; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <h2 style="color: <?php echo esc_attr($color_scheme['text']); ?>; margin: 0 0 15px 0;">
-        <?php echo $status_icon; ?> <?php echo esc_html($email_heading); ?>
-    </h2>
-    
-    <p>Hello <?php echo esc_html($customer->first_name ?: $customer->display_name); ?>,</p>
-    
-    <p>Thank you for submitting your project request! We've received your request and our team will review it shortly.</p>
-    
-    <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
-        <h3 style="margin-top: 0;">Request Details:</h3>
-        <p><strong>Request ID:</strong> #<?php echo esc_html($request->ID); ?></p>
-        <p><strong>Title:</strong> <?php echo esc_html($request->post_title); ?></p>
-        <p><strong>Submitted:</strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($request->post_date))); ?></p>
-    </div>
-    
-    <p><strong>What happens next?</strong></p>
-    <ol>
-        <li>Our team will review your request (typically within 1-2 business days)</li>
-        <li>We'll contact you if we need any additional information</li>
-        <li>Once approved, we'll create a detailed proposal for your project</li>
-        <li>You can review and approve the proposal in your customer portal</li>
-    </ol>
-    
-    <div style="text-align: center; margin: 25px 0;">
-        <a href="<?php echo esc_url($portal_url); ?>" 
-           style="background-color: <?php echo esc_attr($color_scheme['cta']); ?>; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
-            View Request in Portal
-        </a>
-    </div>
-    
-    <p>You can track the progress of your request and view all communications in your customer portal at any time.</p>
-    
-    <p>If you have any questions, please don't hesitate to contact us.</p>
-    
-    <p>Best regards,<br>
-    The <?php echo esc_html(get_bloginfo('name')); ?> Team</p>
+<p><?php printf(__('Hello %s,', 'arsol-projects-for-woo'), esc_html($customer->first_name ?: $customer->display_name)); ?></p>
+
+<p><?php _e('Thank you for submitting your project request! We\'ve received your request and our team will review it shortly.', 'arsol-projects-for-woo'); ?></p>
+
+<h2><?php _e('Request Details', 'arsol-projects-for-woo'); ?></h2>
+
+<table class="td" cellspacing="0" cellpadding="6" style="width: 100%; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;" border="1">
+    <tbody>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Request ID:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;">#<?php echo esc_html($request->ID); ?></td>
+        </tr>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Title:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;"><?php echo esc_html($request->post_title); ?></td>
+        </tr>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Submitted:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;"><?php echo esc_html(date_i18n(get_option('date_format'), strtotime($request->post_date))); ?></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3><?php _e('What happens next?', 'arsol-projects-for-woo'); ?></h3>
+
+<ol>
+    <li><?php _e('Our team will review your request (typically within 1-2 business days)', 'arsol-projects-for-woo'); ?></li>
+    <li><?php _e('We\'ll contact you if we need any additional information', 'arsol-projects-for-woo'); ?></li>
+    <li><?php _e('Once approved, we\'ll create a detailed proposal for your project', 'arsol-projects-for-woo'); ?></li>
+    <li><?php _e('You can review and approve the proposal in your customer portal', 'arsol-projects-for-woo'); ?></li>
+</ol>
+
+<div style="text-align: center; margin: 25px 0;">
+    <a class="link" href="<?php echo esc_url($portal_url); ?>" style="background-color: #96588a; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+        <?php _e('View Request in Portal', 'arsol-projects-for-woo'); ?>
+    </a>
 </div>
+
+<p><?php _e('You can track the progress of your request and view all communications in your customer portal at any time.', 'arsol-projects-for-woo'); ?></p>
+
+<p><?php _e('If you have any questions, please don\'t hesitate to contact us.', 'arsol-projects-for-woo'); ?></p>
+
+<p>
+    <?php _e('Best regards,', 'arsol-projects-for-woo'); ?><br>
+    <?php printf(__('The %s Team', 'arsol-projects-for-woo'), esc_html(get_bloginfo('name'))); ?>
+</p>
+
+<?php do_action('woocommerce_email_footer', $email);

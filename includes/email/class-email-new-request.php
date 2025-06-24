@@ -120,19 +120,74 @@ class New_Request_Email extends Base_Email {
      * @return string
      */
     public function get_content() {
-        return wc_get_template_html(
+        // For preview mode, set up dummy data if needed
+        if (!$this->object) {
+            $this->setup_preview_data();
+        }
+        
+        // Debug logging
+        error_log('New Request Email - get_content called');
+        error_log('Template HTML: ' . $this->template_html);
+        error_log('Template Base: ' . $this->template_base);
+        error_log('Object: ' . print_r($this->object, true));
+        
+        $template_vars = array(
+            'request' => $this->object,
+            'customer' => get_user_by('id', $this->customer_id) ?: $this->get_dummy_customer(),
+            'portal_url' => $this->get_portal_url('project-view-request', $this->request_id ?: 123),
+            'email_heading' => $this->get_heading(),
+            'email' => $this,
+            'color_scheme' => $this->get_color_scheme('success'),
+            'status_icon' => $this->get_status_icon('success')
+        );
+        
+        error_log('Template vars: ' . print_r(array_keys($template_vars), true));
+        
+        $content = wc_get_template_html(
             $this->template_html,
-            array(
-                'request' => $this->object,
-                'customer' => get_user_by('id', $this->customer_id),
-                'portal_url' => $this->get_portal_url('project-view-request', $this->request_id),
-                'email_heading' => $this->get_heading(),
-                'email' => $this,
-                'color_scheme' => $this->get_color_scheme('success'),
-                'status_icon' => $this->get_status_icon('success')
-            ),
+            $template_vars,
             '',
             $this->template_base
+        );
+        
+        error_log('Generated content length: ' . strlen($content));
+        
+        return $content;
+    }
+    
+    /**
+     * Setup preview data for email preview
+     */
+    private function setup_preview_data() {
+        if (!$this->object) {
+            // Create dummy request object for preview
+            $this->object = (object) array(
+                'ID' => 123,
+                'post_title' => 'Sample Project Request',
+                'post_date' => current_time('mysql'),
+                'post_content' => 'This is a sample project request for preview purposes.'
+            );
+        }
+        
+        if (!$this->customer_id) {
+            $this->customer_id = 1; // Use admin user for preview
+        }
+        
+        if (!$this->request_id) {
+            $this->request_id = 123;
+        }
+    }
+    
+    /**
+     * Get dummy customer for preview
+     */
+    private function get_dummy_customer() {
+        return (object) array(
+            'ID' => 1,
+            'user_email' => 'customer@example.com',
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'display_name' => 'John Doe'
         );
     }
     
@@ -170,5 +225,16 @@ class New_Request_Email extends Base_Email {
             'default'     => '',
             'desc_tip'    => true
         );
+    }
+    
+    /**
+     * Admin options for WooCommerce email settings
+     */
+    public function admin_options() {
+        // Set up preview data for admin preview
+        $this->setup_preview_data();
+        
+        // Call parent admin_options
+        parent::admin_options();
     }
 }
