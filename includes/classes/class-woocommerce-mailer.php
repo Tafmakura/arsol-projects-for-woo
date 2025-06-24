@@ -8,8 +8,9 @@ if (!defined('ABSPATH')) {
 /**
  * WooCommerce Mailer Class
  * 
- * Extends WooCommerce's email functionality for proposal-related emails
- * Handles email templates, notifications, and email customization
+ * Complete email system for Arsol Projects for Woo
+ * Handles email registration, workflow triggers, templates, and WooCommerce integration
+ * Manages all email functionality including logging, settings, and event handling
  */
 class Woocommerce_Mailer {
     
@@ -28,7 +29,36 @@ class Woocommerce_Mailer {
         add_filter('woocommerce_email_classes', array($this, 'add_email_classes'));
         add_action('woocommerce_init', array($this, 'load_email_classes'));
         
-        // Email actions
+        // Setup all workflow email triggers
+        $this->setup_workflow_hooks();
+        
+        // Add email settings to WooCommerce
+        add_filter('woocommerce_email_settings', array($this, 'add_email_settings'));
+    }
+    
+    /**
+     * Setup workflow hooks for email triggers
+     */
+    private function setup_workflow_hooks() {
+        // Request workflow hooks
+        add_action('arsol_request_created', array($this, 'handle_request_created'), 10, 2);
+        add_action('arsol_request_status_changed', array($this, 'handle_request_status_changed'), 10, 3);
+        
+        // Proposal workflow hooks
+        add_action('arsol_proposal_processing_started', array($this, 'handle_proposal_processing'), 10, 3);
+        add_action('arsol_proposal_ready_for_review', array($this, 'handle_proposal_ready'), 10, 2);
+        add_action('arsol_proposal_approved', array($this, 'handle_proposal_approved'), 10, 2);
+        add_action('arsol_proposal_rejected', array($this, 'handle_proposal_rejected'), 10, 2);
+        
+        // Project workflow hooks
+        add_action('arsol_project_created', array($this, 'handle_project_created'), 10, 3);
+        add_action('arsol_project_status_changed', array($this, 'handle_project_status_changed'), 10, 3);
+        
+        // WooCommerce integration hooks
+        add_action('woocommerce_order_status_completed', array($this, 'handle_order_completed'), 10, 1);
+        add_action('woocommerce_subscription_status_active', array($this, 'handle_subscription_active'), 10, 1);
+        
+        // Legacy support maintained for backward compatibility
         add_action('arsol_proposal_status_changed', array($this, 'trigger_proposal_status_email'), 10, 3);
         add_action('arsol_new_proposal_created', array($this, 'trigger_new_proposal_email'), 10, 2);
     }
@@ -40,13 +70,26 @@ class Woocommerce_Mailer {
      * @return array
      */
     public function add_email_classes($email_classes) {
-        // Include email class files
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-proposal-status-email.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-new-proposal-email.php';
+        // Include base email class
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-base-email.php';
+        
+        // Include all email class files
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-new-request-email.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-request-status-email.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-proposal-processing-email.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-proposal-ready-email.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-proposal-decision-email.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-project-creation-email.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-project-status-email.php';
         
         // Add email classes
-        $email_classes['Arsol_Proposal_Status_Email'] = new \Arsol_Projects_For_Woo\Emails\Proposal_Status_Email();
-        $email_classes['Arsol_New_Proposal_Email'] = new \Arsol_Projects_For_Woo\Emails\New_Proposal_Email();
+        $email_classes['Arsol_New_Request_Email'] = new \Arsol_Projects_For_Woo\Emails\New_Request_Email();
+        $email_classes['Arsol_Request_Status_Email'] = new \Arsol_Projects_For_Woo\Emails\Request_Status_Email();
+        $email_classes['Arsol_Proposal_Processing_Email'] = new \Arsol_Projects_For_Woo\Emails\Proposal_Processing_Email();
+        $email_classes['Arsol_Proposal_Ready_Email'] = new \Arsol_Projects_For_Woo\Emails\Proposal_Ready_Email();
+        $email_classes['Arsol_Proposal_Decision_Email'] = new \Arsol_Projects_For_Woo\Emails\Proposal_Decision_Email();
+        $email_classes['Arsol_Project_Creation_Email'] = new \Arsol_Projects_For_Woo\Emails\Project_Creation_Email();
+        $email_classes['Arsol_Project_Status_Email'] = new \Arsol_Projects_For_Woo\Emails\Project_Status_Email();
         
         return $email_classes;
     }
@@ -169,6 +212,214 @@ class Woocommerce_Mailer {
         wc_get_template('emails/email-footer.php');
         
         return ob_get_clean();
+    }
+    
+    /**
+     * Handle request created event
+     * 
+     * @param int $request_id
+     * @param int $customer_id
+     */
+    public function handle_request_created($request_id, $customer_id) {
+        // This triggers the New_Request_Email class
+        do_action('arsol_new_request_created', $request_id, $customer_id);
+        
+        // Log the event if logging is enabled
+        $this->log_email_event('request_created', $request_id, array(
+            'customer_id' => $customer_id
+        ));
+    }
+    
+    /**
+     * Handle request status change
+     * 
+     * @param int $request_id
+     * @param string $old_status
+     * @param string $new_status
+     */
+    public function handle_request_status_changed($request_id, $old_status, $new_status) {
+        // Skip email for initial status
+        if ($old_status === 'pending-review' && $new_status === 'pending-review') {
+            return;
+        }
+        
+        $this->log_email_event('request_status_changed', $request_id, array(
+            'old_status' => $old_status,
+            'new_status' => $new_status
+        ));
+    }
+    
+    /**
+     * Handle proposal processing started
+     * 
+     * @param int $proposal_id
+     * @param int $customer_id
+     * @param int $project_lead_id
+     */
+    public function handle_proposal_processing($proposal_id, $customer_id, $project_lead_id) {
+        $this->log_email_event('proposal_processing_started', $proposal_id, array(
+            'customer_id' => $customer_id,
+            'project_lead_id' => $project_lead_id
+        ));
+    }
+    
+    /**
+     * Handle proposal ready for review
+     * 
+     * @param int $proposal_id
+     * @param int $customer_id
+     */
+    public function handle_proposal_ready($proposal_id, $customer_id) {
+        $this->log_email_event('proposal_ready', $proposal_id, array(
+            'customer_id' => $customer_id
+        ));
+    }
+    
+    /**
+     * Handle proposal approved
+     * 
+     * @param int $proposal_id
+     * @param int $customer_id
+     */
+    public function handle_proposal_approved($proposal_id, $customer_id) {
+        $this->log_email_event('proposal_approved', $proposal_id, array(
+            'customer_id' => $customer_id,
+            'decision' => 'approved'
+        ));
+    }
+    
+    /**
+     * Handle proposal rejected
+     * 
+     * @param int $proposal_id
+     * @param int $customer_id
+     */
+    public function handle_proposal_rejected($proposal_id, $customer_id) {
+        $this->log_email_event('proposal_rejected', $proposal_id, array(
+            'customer_id' => $customer_id,
+            'decision' => 'rejected'
+        ));
+    }
+    
+    /**
+     * Handle project created
+     * 
+     * @param int $project_id
+     * @param int $order_id
+     * @param int $customer_id
+     */
+    public function handle_project_created($project_id, $order_id, $customer_id) {
+        $this->log_email_event('project_created', $project_id, array(
+            'order_id' => $order_id,
+            'customer_id' => $customer_id
+        ));
+    }
+    
+    /**
+     * Handle project status change
+     * 
+     * @param int $project_id
+     * @param string $old_status
+     * @param string $new_status
+     */
+    public function handle_project_status_changed($project_id, $old_status, $new_status) {
+        $this->log_email_event('project_status_changed', $project_id, array(
+            'old_status' => $old_status,
+            'new_status' => $new_status
+        ));
+    }
+    
+    /**
+     * Handle WooCommerce order completed
+     * 
+     * @param int $order_id
+     */
+    public function handle_order_completed($order_id) {
+        $project_id = get_post_meta($order_id, '_arsol_pfw_project_id', true);
+        
+        if ($project_id) {
+            do_action('arsol_project_payment_completed', $project_id, $order_id);
+            
+            $this->log_email_event('order_completed', $order_id, array(
+                'project_id' => $project_id
+            ));
+        }
+    }
+    
+    /**
+     * Handle WooCommerce subscription active
+     * 
+     * @param \WC_Subscription $subscription
+     */
+    public function handle_subscription_active($subscription) {
+        $project_id = $subscription->get_meta('_arsol_pfw_project_id');
+        
+        if ($project_id) {
+            do_action('arsol_project_subscription_active', $project_id, $subscription->get_id());
+            
+            $this->log_email_event('subscription_active', $subscription->get_id(), array(
+                'project_id' => $project_id
+            ));
+        }
+    }
+    
+    /**
+     * Add email settings to WooCommerce
+     * 
+     * @param array $settings
+     * @return array
+     */
+    public function add_email_settings($settings) {
+        $settings[] = array(
+            'title' => 'Arsol Projects Email Settings',
+            'type' => 'title',
+            'id' => 'arsol_email_settings'
+        );
+        
+        $settings[] = array(
+            'title' => 'Enable Email Logging',
+            'desc' => 'Log all Arsol project emails for debugging',
+            'id' => 'arsol_email_logging_enabled',
+            'type' => 'checkbox',
+            'default' => 'no'
+        );
+        
+        $settings[] = array(
+            'title' => 'Test Email Recipient',
+            'desc' => 'Email address for testing Arsol emails',
+            'id' => 'arsol_test_email_recipient',
+            'type' => 'email',
+            'default' => get_option('admin_email')
+        );
+        
+        $settings[] = array(
+            'type' => 'sectionend',
+            'id' => 'arsol_email_settings'
+        );
+        
+        return $settings;
+    }
+    
+    /**
+     * Log email event
+     * 
+     * @param string $event
+     * @param int $object_id
+     * @param array $data
+     */
+    private function log_email_event($event, $object_id, $data = array()) {
+        if (get_option('arsol_email_logging_enabled') === 'yes') {
+            $log_data = array(
+                'timestamp' => current_time('mysql'),
+                'event' => $event,
+                'object_id' => $object_id,
+                'data' => $data,
+                'user_id' => get_current_user_id()
+            );
+            
+            error_log('Arsol Email Event: ' . json_encode($log_data));
+            do_action('arsol_email_event_logged', $log_data);
+        }
     }
     
     /**
