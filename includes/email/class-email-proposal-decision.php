@@ -40,6 +40,7 @@ class Proposal_Decision_Email extends Base_Email {
         
         $this->customer_email = false; // Only send to lead/admin
         $this->admin_email = true;
+        $this->project_lead_email = true;
         
         $this->heading = 'Proposal Decision Received';
         $this->subject = 'Proposal {decision}: {proposal_title} - #{proposal_id}';

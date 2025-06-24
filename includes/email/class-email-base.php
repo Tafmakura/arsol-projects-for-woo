@@ -294,4 +294,31 @@ abstract class Base_Email extends \WC_Email {
     public function get_default_heading() {
         return $this->heading;
     }
+    
+    /**
+     * Get recipient for display in WooCommerce email list
+     * 
+     * @return string
+     */
+    public function get_recipient() {
+        // If we have a custom recipient set, use it
+        if (!empty($this->recipient)) {
+            return $this->recipient;
+        }
+        
+        // Otherwise build recipient list based on email configuration
+        $recipients = array();
+        
+        if ($this->customer_email) {
+            $recipients[] = 'Customer';
+        }
+        if ($this->admin_email) {
+            $recipients[] = 'Admins';
+        }
+        if ($this->project_lead_email) {
+            $recipients[] = 'Project Lead';
+        }
+        
+        return implode(', ', $recipients);
+    }
 }

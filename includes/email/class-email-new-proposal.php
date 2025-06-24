@@ -22,6 +22,7 @@ class New_Proposal_Email extends Base_Email {
         
         $this->customer_email = false; // Internal only
         $this->admin_email = true;
+        $this->project_lead_email = true;
         
         $this->heading = 'New Project Proposal Created';
         $this->subject = 'New Proposal: {proposal_title} - #{proposal_id}';
