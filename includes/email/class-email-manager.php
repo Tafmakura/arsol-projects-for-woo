@@ -72,3 +72,4 @@ class Arsol_Email_Manager {
         return $email_classes;
     }
 } 
+ 

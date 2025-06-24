@@ -46,9 +46,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <p><?php printf(__('Hello %s,', 'arsol-projects-for-woo'), esc_html($customer->first_name ?: $customer->display_name)); ?></p>
 
 <p><?php echo $status_info['icon']; ?> <?php echo esc_html($status_info['message']); ?></p>
-
+    
 <h2><?php echo esc_html($status_info['title']); ?></h2>
-
+    
 <table class="td" cellspacing="0" cellpadding="6" style="width: 100%; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;" border="1">
     <tbody>
         <tr>
@@ -79,17 +79,17 @@ do_action('woocommerce_email_header', $email_heading, $email);
         </tr>
     </tbody>
 </table>
-
-<?php if ($new_status === 'in-progress'): ?>
+    
+    <?php if ($new_status === 'in-progress'): ?>
     <h3><?php _e('🎯 What\'s Happening Now', 'arsol-projects-for-woo'); ?></h3>
     <ul>
         <li><?php _e('Your dedicated project team is actively working on your requirements', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Regular progress updates will be shared in your portal', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('You can expect milestone updates as work progresses', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Your project lead will reach out if any input is needed', 'arsol-projects-for-woo'); ?></li>
-    </ul>
-    
-<?php elseif ($new_status === 'on-hold'): ?>
+            </ul>
+        
+    <?php elseif ($new_status === 'on-hold'): ?>
     <h3><?php _e('⏸️ Why Is My Project On Hold?', 'arsol-projects-for-woo'); ?></h3>
     <p><?php _e('Common reasons for project holds include:', 'arsol-projects-for-woo'); ?></p>
     <ul>
@@ -97,37 +97,37 @@ do_action('woocommerce_email_header', $email_heading, $email);
         <li><?php _e('External dependencies or third-party requirements', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Resource reallocation or technical considerations', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Changes to project scope or requirements', 'arsol-projects-for-woo'); ?></li>
-    </ul>
+            </ul>
     <p><strong><?php _e('Next Steps:', 'arsol-projects-for-woo'); ?></strong> <?php _e('Your project lead will contact you with specific details about the hold and what\'s needed to resume work.', 'arsol-projects-for-woo'); ?></p>
-    
-<?php elseif ($new_status === 'completed'): ?>
+        
+    <?php elseif ($new_status === 'completed'): ?>
     <h3><?php _e('🎊 Project Deliverables Ready!', 'arsol-projects-for-woo'); ?></h3>
     <ul>
         <li><?php _e('All project deliverables have been completed', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Final files and documentation are available in your portal', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Please review everything and confirm completion', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Our team is available for any questions or support', 'arsol-projects-for-woo'); ?></li>
-    </ul>
-    
-<?php elseif ($new_status === 'cancelled'): ?>
+            </ul>
+        
+    <?php elseif ($new_status === 'cancelled'): ?>
     <h3><?php _e('Project Cancellation', 'arsol-projects-for-woo'); ?></h3>
     <p><?php _e('If you have any questions about this status change or would like to discuss next steps, please don\'t hesitate to contact our team.', 'arsol-projects-for-woo'); ?></p>
-<?php endif; ?>
-
-<div style="text-align: center; margin: 25px 0;">
+    <?php endif; ?>
+    
+    <div style="text-align: center; margin: 25px 0;">
     <a class="link" href="<?php echo esc_url($portal_url); ?>" style="background-color: #96588a; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
         <?php _e('View Project Details', 'arsol-projects-for-woo'); ?>
-    </a>
-</div>
-
+        </a>
+    </div>
+    
 <p><?php _e('You can always access your project details, view progress updates, and communicate with your team through your customer portal.', 'arsol-projects-for-woo'); ?></p>
-
-<?php if ($new_status === 'completed'): ?>
+    
+    <?php if ($new_status === 'completed'): ?>
     <p><?php _e('Thank you for choosing us for your project. We hope you\'re pleased with the results!', 'arsol-projects-for-woo'); ?></p>
-<?php else: ?>
+    <?php else: ?>
     <p><?php _e('Thank you for your continued trust in our team. We\'re committed to delivering excellent results.', 'arsol-projects-for-woo'); ?></p>
-<?php endif; ?>
-
+    <?php endif; ?>
+    
 <p>
     <?php _e('Best regards,', 'arsol-projects-for-woo'); ?><br>
     <?php printf(__('The %s Team', 'arsol-projects-for-woo'), esc_html(get_bloginfo('name'))); ?>

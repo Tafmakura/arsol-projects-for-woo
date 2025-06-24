@@ -23,19 +23,19 @@ class WC_Email_Request_Status extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'request_status';
-        $this->title          = __( 'Request Status Update', 'arsol-projects-for-woo' );
-        $this->description    = __( 'Request status emails are sent when a request status changes.', 'arsol-projects-for-woo' );
+        $this->title          = __( 'Customer Notification: Request Status Update', 'arsol-projects-for-woo' );
+        $this->description    = __( 'Customer notification when their request status changes.', 'arsol-projects-for-woo' );
         $this->template_html  = 'email-request-status.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
 
         // Triggers for this email
-        add_action( 'arsol_request_status_changed', array( $this, 'trigger' ), 10, 3 );
+        add_action( 'arsol_request_status_changed', array( $this, 'trigger' ), 10, 4 );
 
         // Call parent constructor
         parent::__construct();
 
-        // Other settings
-        $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
+        // This email is sent to the customer who owns the request
+        $this->customer_email = true;
     }
 
     /**
@@ -62,11 +62,12 @@ class WC_Email_Request_Status extends WC_Email {
      * @param int    $request_id Request ID.
      * @param string $old_status Old status.
      * @param string $new_status New status.
+     * @param int    $customer_id Customer ID.
      */
-    public function trigger( $request_id, $old_status, $new_status ) {
+    public function trigger( $request_id, $old_status, $new_status, $customer_id ) {
         $this->setup_locale();
 
-        if ( $request_id ) {
+        if ( $request_id && $customer_id ) {
             $this->object = get_post( $request_id );
             
             if ( $this->object ) {
@@ -74,6 +75,12 @@ class WC_Email_Request_Status extends WC_Email {
                 $this->placeholders['{old_status}'] = $old_status;
                 $this->placeholders['{new_status}'] = $new_status;
                 $this->placeholders['{site_title}'] = $this->get_blogname();
+                
+                // Get customer email
+                $customer = get_user_by( 'id', $customer_id );
+                if ( $customer ) {
+                    $this->recipient = $customer->user_email;
+                }
             }
         }
 
@@ -116,14 +123,6 @@ class WC_Email_Request_Status extends WC_Email {
                 'type'    => 'checkbox',
                 'label'   => __( 'Enable this email notification', 'arsol-projects-for-woo' ),
                 'default' => 'yes',
-            ),
-            'recipient'  => array(
-                'title'       => __( 'Recipient(s)', 'arsol-projects-for-woo' ),
-                'type'        => 'text',
-                'description' => sprintf( __( 'Enter recipients (comma separated) for this email. Defaults to %s.', 'arsol-projects-for-woo' ), '<code>' . esc_attr( get_option( 'admin_email' ) ) . '</code>' ),
-                'placeholder' => '',
-                'default'     => '',
-                'desc_tip'    => true,
             ),
             'subject'    => array(
                 'title'       => __( 'Subject', 'arsol-projects-for-woo' ),

@@ -23,20 +23,23 @@ class WC_Email_Project_Creation extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'project_creation';
-        $this->title          = __( 'Your Project Order Is Ready', 'arsol-projects-for-woo' );
-        $this->description    = __( 'Project creation emails are sent to customers when their project order is ready.', 'arsol-projects-for-woo' );
+        $this->title          = __( 'Customer Notification: Your Project Order Is Ready', 'arsol-pfw' );
+        $this->description    = __( 'Customer notification when their project order is ready for payment.', 'arsol-pfw' );
         $this->template_html  = 'email-project-creation.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
-        $this->customer_email = true;
+        $this->placeholders   = array(
+            '{project_id}' => '',
+            '{order_id}' => '',
+        );
 
-        // Triggers for this email
-        add_action( 'arsol_project_order_ready', array( $this, 'trigger' ), 10, 2 );
+        // Listen to main workflow hook
+        add_action( 'arsol_project_created', array( $this, 'trigger' ), 10, 3 );
 
         // Call parent constructor
         parent::__construct();
 
-        // Other settings
-        $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
+        // This email is sent to the customer who owns the project
+        $this->customer_email = true;
     }
 
     /**

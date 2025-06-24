@@ -36,8 +36,6 @@ class WC_Email_Proposal_Processing extends WC_Email {
         // Call parent constructor
         parent::__construct();
 
-        // Default to admin email, but should be set to project lead
-        $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
     }
 
     /**

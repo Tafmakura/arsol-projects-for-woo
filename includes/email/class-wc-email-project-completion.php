@@ -20,7 +20,7 @@ class WC_Email_Project_Completion extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'project_completion';
-        $this->title          = __( 'Customer: Project Completed', 'arsol-pfw' );
+        $this->title          = __( 'Customer Notification: Project Completed', 'arsol-pfw' );
         $this->description    = __( 'Customer notification when their project is completed.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-project-completion.php';
