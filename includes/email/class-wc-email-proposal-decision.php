@@ -25,8 +25,8 @@ class WC_Email_Proposal_Decision extends WC_Email {
         $this->id             = 'proposal_decision';
         $this->title          = __( 'Proposal Decision', 'arsol-projects-for-woo' );
         $this->description    = __( 'Proposal decision emails are sent when a proposal is approved or rejected.', 'arsol-projects-for-woo' );
-        $this->template_html  = 'emails/email-proposal-decision.php';
-        $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
+        $this->template_html  = 'emails/proposal-decision.php';
+        $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'templates/';
 
         // Triggers for this email
         add_action( 'arsol_proposal_approved', array( $this, 'trigger' ), 10, 3 );
