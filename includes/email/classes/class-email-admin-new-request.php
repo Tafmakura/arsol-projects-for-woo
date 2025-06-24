@@ -23,7 +23,6 @@ class Arsol_Email_Admin_New_Request extends WC_Email {
         $this->title          = __('New Project Request (Admin)', 'arsol-projects-for-woo');
         $this->description    = __('Notification sent to shop managers when a new project request is submitted.', 'arsol-projects-for-woo');
         $this->template_html  = 'email-admin-new-request.php';
-        $this->template_plain = 'plain/email-admin-new-request.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         
         // Recipients - shop managers
@@ -84,6 +83,13 @@ class Arsol_Email_Admin_New_Request extends WC_Email {
     }
 
     /**
+     * Get content (used by WooCommerce for previews)
+     */
+    public function get_content() {
+        return $this->get_content_html();
+    }
+
+    /**
      * Get content html
      */
     public function get_content_html() {
@@ -105,18 +111,7 @@ class Arsol_Email_Admin_New_Request extends WC_Email {
      * Get content plain
      */
     public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'request'       => $this->object,
-                'customer'      => $this->get_customer(),
-                'email_heading' => $this->get_heading(),
-                'admin_url'     => $this->get_admin_url(),
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
+        return $this->get_content_html();
     }
 
     /**

@@ -23,7 +23,6 @@ class Arsol_Email_Lead_New_Proposal extends WC_Email {
         $this->title          = __('New Proposal Assignment (Project Lead)', 'arsol-projects-for-woo');
         $this->description    = __('Email sent to project leads when a new proposal is assigned to them.', 'arsol-projects-for-woo');
         $this->template_html  = 'email-new-proposal.php';
-        $this->template_plain = 'plain/email-new-proposal.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         
         // Call parent constructor
@@ -96,6 +95,13 @@ class Arsol_Email_Lead_New_Proposal extends WC_Email {
     }
 
     /**
+     * Get content (used by WooCommerce for previews)
+     */
+    public function get_content() {
+        return $this->get_content_html();
+    }
+
+    /**
      * Get content html
      */
     public function get_content_html() {
@@ -118,19 +124,7 @@ class Arsol_Email_Lead_New_Proposal extends WC_Email {
      * Get content plain
      */
     public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'proposal'      => $this->object,
-                'customer'      => $this->get_customer(),
-                'project_lead'  => $this->get_project_lead(),
-                'email_heading' => $this->get_heading(),
-                'admin_url'     => $this->get_admin_url(),
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
+        return $this->get_content_html();
     }
 
     /**

@@ -14,7 +14,6 @@ class Arsol_Email_Customer_Project_Status extends WC_Email {
         $this->title          = __('Project Status Update (Customer)', 'arsol-projects-for-woo');
         $this->description    = __('Email sent to customers when project status updates.', 'arsol-projects-for-woo');
         $this->template_html  = 'email-project-status.php';
-        $this->template_plain = 'plain/email-project-status.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         
         $this->customer_email = true;
@@ -72,6 +71,13 @@ class Arsol_Email_Customer_Project_Status extends WC_Email {
         $this->restore_locale();
     }
 
+    /**
+     * Get content (used by WooCommerce for previews)
+     */
+    public function get_content() {
+        return $this->get_content_html();
+    }
+
     public function get_content_html() {
         return wc_get_template_html(
             $this->template_html,
@@ -90,20 +96,7 @@ class Arsol_Email_Customer_Project_Status extends WC_Email {
     }
 
     public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'project'       => $this->object,
-                'customer'      => $this->get_customer(),
-                'project_lead'  => $this->get_project_lead(),
-                'status'        => $this->status,
-                'email_heading' => $this->get_heading(),
-                'portal_url'    => $this->get_portal_url(),
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
+        return $this->get_content_html();
     }
 
     public function init_form_fields() {

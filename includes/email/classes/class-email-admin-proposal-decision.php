@@ -19,7 +19,6 @@ class Arsol_Email_Admin_Proposal_Decision extends WC_Email {
         $this->title          = __('Proposal Decision Action Required (Admin)', 'arsol-projects-for-woo');
         $this->description    = __('Email sent to shop managers when approved proposals need conversion to projects/orders.', 'arsol-projects-for-woo');
         $this->template_html  = 'email-admin-proposal-decision.php';
-        $this->template_plain = 'plain/email-admin-proposal-decision.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         
         $this->recipient = $this->get_option('recipient', get_option('admin_email'));
@@ -71,6 +70,13 @@ class Arsol_Email_Admin_Proposal_Decision extends WC_Email {
         $this->restore_locale();
     }
 
+    /**
+     * Get content (used by WooCommerce for previews)
+     */
+    public function get_content() {
+        return $this->get_content_html();
+    }
+
     public function get_content_html() {
         return wc_get_template_html(
             $this->template_html,
@@ -88,19 +94,7 @@ class Arsol_Email_Admin_Proposal_Decision extends WC_Email {
     }
 
     public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'proposal'      => $this->object,
-                'customer'      => $this->get_customer(),
-                'decision'      => $this->decision,
-                'email_heading' => $this->get_heading(),
-                'admin_url'     => $this->get_admin_url(),
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
+        return $this->get_content_html();
     }
 
     public function init_form_fields() {

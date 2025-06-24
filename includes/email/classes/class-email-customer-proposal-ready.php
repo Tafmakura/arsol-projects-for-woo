@@ -23,7 +23,6 @@ class Arsol_Email_Customer_Proposal_Ready extends WC_Email {
         $this->title          = __('Proposal Ready for Review (Customer)', 'arsol-projects-for-woo');
         $this->description    = __('Email sent to customers when their project proposal is ready for review.', 'arsol-projects-for-woo');
         $this->template_html  = 'email-proposal-ready.php';
-        $this->template_plain = 'plain/email-proposal-ready.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         
         $this->customer_email = true;
@@ -97,6 +96,13 @@ class Arsol_Email_Customer_Proposal_Ready extends WC_Email {
     }
 
     /**
+     * Get content (used by WooCommerce for previews)
+     */
+    public function get_content() {
+        return $this->get_content_html();
+    }
+
+    /**
      * Get content html
      */
     public function get_content_html() {
@@ -119,19 +125,7 @@ class Arsol_Email_Customer_Proposal_Ready extends WC_Email {
      * Get content plain
      */
     public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'proposal'      => $this->object,
-                'customer'      => $this->get_customer(),
-                'project_lead'  => $this->get_project_lead(),
-                'email_heading' => $this->get_heading(),
-                'portal_url'    => $this->get_portal_url(),
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
+        return $this->get_content_html();
     }
 
     /**

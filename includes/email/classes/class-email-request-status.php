@@ -33,7 +33,6 @@ class Arsol_Email_Request_Status extends WC_Email {
         $this->title          = __('Request Status Update', 'arsol-projects-for-woo');
         $this->description    = __('Email sent when a request status changes.', 'arsol-projects-for-woo');
         $this->template_html  = 'email-request-status.php';
-        $this->template_plain = 'plain/email-request-status.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         
         $this->customer_email = true;
@@ -129,6 +128,13 @@ class Arsol_Email_Request_Status extends WC_Email {
     /**
      * Get content html
      */
+    /**
+     * Get content (used by WooCommerce for previews)
+     */
+    public function get_content() {
+        return $this->get_content_html();
+    }
+
     public function get_content_html() {
         return wc_get_template_html(
             $this->template_html,
@@ -151,21 +157,7 @@ class Arsol_Email_Request_Status extends WC_Email {
      * Get content plain
      */
     public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'request'       => $this->object,
-                'customer'      => $this->get_customer(),
-                'project_lead'  => $this->get_project_lead(),
-                'old_status'    => $this->old_status,
-                'new_status'    => $this->new_status,
-                'email_heading' => $this->get_heading(),
-                'portal_url'    => $this->get_portal_url(),
-                'email'         => $this,
-            ),
-            '',
-            $this->template_base
-        );
+        return $this->get_content_html();
     }
 
     /**
