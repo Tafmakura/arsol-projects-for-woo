@@ -125,12 +125,6 @@ class New_Request_Email extends Base_Email {
             $this->setup_preview_data();
         }
         
-        // Debug logging
-        error_log('New Request Email - get_content called');
-        error_log('Template HTML: ' . $this->template_html);
-        error_log('Template Base: ' . $this->template_base);
-        error_log('Object: ' . print_r($this->object, true));
-        
         $template_vars = array(
             'request' => $this->object,
             'customer' => get_user_by('id', $this->customer_id) ?: $this->get_dummy_customer(),
@@ -141,12 +135,8 @@ class New_Request_Email extends Base_Email {
             'status_icon' => $this->get_status_icon('success')
         );
         
-        error_log('Template vars: ' . print_r(array_keys($template_vars), true));
-        
         // Try absolute path first
         $template_file = $this->template_base . $this->template_html;
-        error_log('Full template path: ' . $template_file);
-        error_log('Template exists: ' . (file_exists($template_file) ? 'yes' : 'no'));
         
         if (file_exists($template_file)) {
             // Load template directly
@@ -163,8 +153,6 @@ class New_Request_Email extends Base_Email {
                 $this->template_base
             );
         }
-        
-        error_log('Generated content length: ' . strlen($content));
         
         return $content;
     }

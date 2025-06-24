@@ -29,7 +29,7 @@ class New_Proposal_Email extends Base_Email {
         $this->subject = 'New Proposal: {proposal_title} - #{proposal_id}';
         
         // Email templates
-        $this->template_html = 'emails/new-proposal.php';
+        $this->template_html = 'templates/email-new-proposal.php';
         
         // Triggers
         add_action('arsol_new_proposal_created', array($this, 'trigger'), 10, 3);

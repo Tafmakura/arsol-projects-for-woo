@@ -47,7 +47,7 @@ class Proposal_Decision_Email extends Base_Email {
         $this->subject = 'Proposal {decision}: {proposal_title} - #{proposal_id}';
         
         // Email templates
-        $this->template_html = 'emails/proposal-decision.php';
+        $this->template_html = 'templates/email-proposal-decision.php';
         
         // Triggers
         add_action('arsol_proposal_approved', array($this, 'trigger_approved'), 10, 2);

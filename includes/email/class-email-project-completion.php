@@ -29,7 +29,7 @@ class Project_Completion_Email extends Base_Email {
         $this->subject = '🎉 Project Complete: {project_title} - #{project_id}';
         
         // Email templates
-        $this->template_html = 'emails/project-completion.php';
+        $this->template_html = 'templates/email-project-completion.php';
         
         // Triggers
         add_action('arsol_project_completed', array($this, 'trigger'), 10, 2);
