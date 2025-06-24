@@ -20,8 +20,8 @@ class WC_Email_New_Request extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'new_request';
-        $this->title          = __( 'Project Customer: Request Submitted', 'arsol-pfw' );
-        $this->description    = __( 'Customer confirmation when their project request is submitted.', 'arsol-pfw' );
+        $this->title          = __( 'Project Customer: Request Submitted', 'arsol-projects-for-woo' );
+        $this->description    = __( 'Customer confirmation when their project request is submitted.', 'arsol-projects-for-woo' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-new-request.php';
         $this->placeholders   = array(
@@ -38,7 +38,7 @@ class WC_Email_New_Request extends WC_Email {
         $this->customer_email = true;
 
         // Set default recipient for display in settings (will be overridden dynamically)
-        $this->recipient = __( 'Customer', 'arsol-pfw' );
+        $this->recipient = __( 'Customer', 'arsol-projects-for-woo' );
     }
 
     /**
@@ -47,7 +47,7 @@ class WC_Email_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( 'Your Project Request Has Been Received #{request_id}', 'arsol-pfw' );
+        return __( 'Your Project Request Has Been Received #{request_id}', 'arsol-projects-for-woo' );
     }
 
     /**
@@ -56,7 +56,7 @@ class WC_Email_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Request Submitted Successfully', 'arsol-pfw' );
+        return __( 'Request Submitted Successfully', 'arsol-projects-for-woo' );
     }
 
     /**
@@ -112,31 +112,31 @@ class WC_Email_New_Request extends WC_Email {
     public function init_form_fields() {
         $this->form_fields = array(
             'enabled' => array(
-                'title'   => __( 'Enable/Disable', 'arsol-pfw' ),
+                'title'   => __( 'Enable/Disable', 'arsol-projects-for-woo' ),
                 'type'    => 'checkbox',
-                'label'   => __( 'Enable this email notification', 'arsol-pfw' ),
+                'label'   => __( 'Enable this email notification', 'arsol-projects-for-woo' ),
                 'default' => 'yes',
             ),
             'subject' => array(
-                'title'       => __( 'Subject', 'arsol-pfw' ),
+                'title'       => __( 'Subject', 'arsol-projects-for-woo' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-projects-for-woo' ), '<code>{request_id}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
             'heading' => array(
-                'title'       => __( 'Email heading', 'arsol-pfw' ),
+                'title'       => __( 'Email heading', 'arsol-projects-for-woo' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-projects-for-woo' ), '<code>{request_id}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),
             'email_type' => array(
-                'title'       => __( 'Email type', 'arsol-pfw' ),
+                'title'       => __( 'Email type', 'arsol-projects-for-woo' ),
                 'type'        => 'select',
-                'description' => __( 'Choose which format of email to send.', 'arsol-pfw' ),
+                'description' => __( 'Choose which format of email to send.', 'arsol-projects-for-woo' ),
                 'default'     => 'html',
                 'class'       => 'email_type wc-enhanced-select',
                 'options'     => $this->get_email_type_options(),
