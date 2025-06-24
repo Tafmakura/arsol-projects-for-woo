@@ -23,13 +23,17 @@ class WC_Email_Proposal_Processing extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'proposal_processing';
-        $this->title          = __( 'Proposal Processing Started', 'arsol-projects-for-woo' );
-        $this->description    = __( 'Proposal processing emails are sent when proposal work begins.', 'arsol-projects-for-woo' );
-        $this->template_html  = 'emails/email-proposal-processing.php';
+        $this->title          = __( 'Proposal Processing', 'arsol-pfw' );
+        $this->description    = __( 'Notification when a proposal is being processed.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
+        $this->template_html  = 'email-proposal-processing.php';
+        $this->template_plain = 'email-proposal-processing.php';
+        $this->placeholders   = array(
+            '{proposal_id}' => '',
+        );
 
         // Triggers for this email
-        add_action( 'arsol_proposal_processing_started', array( $this, 'trigger' ), 10, 3 );
+        add_action( 'arsol_proposal_processing_notification', array( $this, 'trigger' ), 10, 1 );
 
         // Call parent constructor
         parent::__construct();
@@ -44,7 +48,7 @@ class WC_Email_Proposal_Processing extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( '[{site_title}] We\'re Working on Your Proposal - #{proposal_id}', 'arsol-projects-for-woo' );
+        return __( 'Proposal Processing #{proposal_id}', 'arsol-pfw' );
     }
 
     /**
@@ -53,37 +57,20 @@ class WC_Email_Proposal_Processing extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'We\'re Working on Your Proposal', 'arsol-projects-for-woo' );
+        return __( 'Proposal Processing', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
      * @param int $proposal_id Proposal ID.
-     * @param int $customer_id Customer ID.
-     * @param int $project_lead_id Project lead ID.
      */
-    public function trigger( $proposal_id, $customer_id, $project_lead_id ) {
+    public function trigger( $proposal_id ) {
         $this->setup_locale();
 
-        if ( $proposal_id && $customer_id ) {
-            $this->object = get_post( $proposal_id );
-            $customer = get_user_by( 'id', $customer_id );
-            
-            if ( $this->object && $customer ) {
-                $this->recipient = $customer->user_email;
-                $this->placeholders['{proposal_id}'] = $proposal_id;
-                $this->placeholders['{customer_name}'] = $customer->display_name;
-                $this->placeholders['{site_title}'] = $this->get_blogname();
-                
-                // Add project lead info if available
-                if ( $project_lead_id ) {
-                    $project_lead = get_user_by( 'id', $project_lead_id );
-                    if ( $project_lead ) {
-                        $this->placeholders['{project_lead_name}'] = $project_lead->display_name;
-                    }
-                }
-            }
+        if ( $proposal_id ) {
+            $this->object                      = get_post( $proposal_id );
+            $this->placeholders['{proposal_id}'] = $proposal_id;
         }
 
         if ( $this->is_enabled() && $this->get_recipient() ) {
@@ -102,13 +89,31 @@ class WC_Email_Proposal_Processing extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'proposal'          => $this->object,
-                'customer_name'     => $this->placeholders['{customer_name}'] ?? '',
-                'project_lead_name' => $this->placeholders['{project_lead_name}'] ?? '',
-                'email_heading'     => $this->get_heading(),
-                'sent_to_admin'     => false,
-                'plain_text'        => false,
-                'email'             => $this,
+                'proposal_id'   => $this->object ? $this->object->ID : '',
+                'email_heading' => $this->get_heading(),
+                'sent_to_admin' => false,
+                'plain_text'    => false,
+                'email'         => $this,
+            ),
+            '',
+            $this->template_base
+        );
+    }
+
+    /**
+     * Get content plain.
+     *
+     * @return string
+     */
+    public function get_content_plain() {
+        return wc_get_template_html(
+            $this->template_plain,
+            array(
+                'proposal_id'   => $this->object ? $this->object->ID : '',
+                'email_heading' => $this->get_heading(),
+                'sent_to_admin' => false,
+                'plain_text'    => true,
+                'email'         => $this,
             ),
             '',
             $this->template_base
@@ -120,32 +125,40 @@ class WC_Email_Proposal_Processing extends WC_Email {
      */
     public function init_form_fields() {
         $this->form_fields = array(
-            'enabled'    => array(
-                'title'   => __( 'Enable/Disable', 'arsol-projects-for-woo' ),
+            'enabled' => array(
+                'title'   => __( 'Enable/Disable', 'arsol-pfw' ),
                 'type'    => 'checkbox',
-                'label'   => __( 'Enable this email notification', 'arsol-projects-for-woo' ),
+                'label'   => __( 'Enable this email notification', 'arsol-pfw' ),
                 'default' => 'yes',
             ),
-            'subject'    => array(
-                'title'       => __( 'Subject', 'arsol-projects-for-woo' ),
+            'recipient' => array(
+                'title'       => __( 'Recipient(s)', 'arsol-pfw' ),
+                'type'        => 'text',
+                'description' => sprintf( __( 'Enter recipients (comma separated) for this email. Defaults to %s.', 'arsol-pfw' ), '<code>' . esc_attr( get_option( 'admin_email' ) ) . '</code>' ),
+                'placeholder' => '',
+                'default'     => '',
+                'desc_tip'    => true,
+            ),
+            'subject' => array(
+                'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-projects-for-woo' ), '<code>{site_title}, {proposal_id}, {customer_name}, {project_lead_name}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
-            'heading'    => array(
-                'title'       => __( 'Email heading', 'arsol-projects-for-woo' ),
+            'heading' => array(
+                'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-projects-for-woo' ), '<code>{site_title}, {proposal_id}, {customer_name}, {project_lead_name}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),
             'email_type' => array(
-                'title'       => __( 'Email type', 'arsol-projects-for-woo' ),
+                'title'       => __( 'Email type', 'arsol-pfw' ),
                 'type'        => 'select',
-                'description' => __( 'Choose which format of email to send.', 'arsol-projects-for-woo' ),
+                'description' => __( 'Choose which format of email to send.', 'arsol-pfw' ),
                 'default'     => 'html',
                 'class'       => 'email_type wc-enhanced-select',
                 'options'     => $this->get_email_type_options(),
