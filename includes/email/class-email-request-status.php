@@ -35,7 +35,7 @@ class Request_Status_Email extends Base_Email {
      */
     public function __construct() {
         $this->id = 'arsol_request_status';
-        $this->title = 'Request Status Change';
+        $this->title = 'Project Request Status Change';
         $this->description = 'Email sent when a request status changes';
         
         $this->customer_email = true;

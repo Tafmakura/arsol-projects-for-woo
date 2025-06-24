@@ -35,7 +35,7 @@ class Proposal_Decision_Email extends Base_Email {
      */
     public function __construct() {
         $this->id = 'arsol_proposal_decision';
-        $this->title = 'Proposal Decision';
+        $this->title = 'Project Proposal Decision';
         $this->description = 'Email sent when proposal is approved or rejected';
         
         $this->customer_email = false; // Only send to lead/admin

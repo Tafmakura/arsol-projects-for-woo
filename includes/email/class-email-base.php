@@ -14,13 +14,27 @@ if (!defined('ABSPATH')) {
 abstract class Base_Email extends \WC_Email {
     
     /**
+     * Email properties
+     */
+    protected $customer_email = false;
+    protected $admin_email = false;
+    protected $template_base;
+    protected $request_id;
+    protected $customer_id;
+    protected $proposal_id;
+    protected $project_id;
+    protected $project_lead_id;
+    protected $order_id;
+    protected $find_replace = array();
+    
+    /**
      * Constructor
      */
     public function __construct() {
-        // Set default properties
+        // Set template paths
         $this->template_html = 'templates/' . $this->id . '.php';
         $this->template_plain = 'templates/plain/' . $this->id . '.php';
-        $this->template_base = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/';
+        $this->template_base = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/';
         
         // Call parent constructor
         parent::__construct();

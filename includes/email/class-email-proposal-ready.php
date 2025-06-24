@@ -29,7 +29,7 @@ class Proposal_Ready_Email extends Base_Email {
      */
     public function __construct() {
         $this->id = 'arsol_proposal_ready';
-        $this->title = 'Proposal Ready for Review';
+        $this->title = 'Project Proposal Ready for Review';
         $this->description = 'Email sent when proposal is ready for customer review';
         
         $this->customer_email = true;
