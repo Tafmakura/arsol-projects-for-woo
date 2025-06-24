@@ -48,7 +48,6 @@ class Proposal_Decision_Email extends Base_Email {
         
         // Email templates
         $this->template_html = 'emails/proposal-decision.php';
-        $this->template_plain = 'emails/plain/proposal-decision.php';
         
         // Triggers
         add_action('arsol_proposal_approved', array($this, 'trigger_approved'), 10, 2);
@@ -274,19 +273,4 @@ class Proposal_Decision_Email extends Base_Email {
      * 
      * @return string
      */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'proposal' => $this->object,
-                'customer' => get_user_by('id', $this->customer_id),
-                'decision' => $this->decision,
-                'admin_url' => $this->get_admin_url($this->proposal_id),
-                'email_heading' => $this->get_heading(),
-                'email' => $this
-            ),
-            '',
-            $this->template_base
-        );
-    }
 }

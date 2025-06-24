@@ -39,8 +39,7 @@ class Proposal_Ready_Email extends Base_Email {
         $this->subject = 'Your Proposal is Ready! Review Now - #{proposal_id}';
         
         // Email templates
-        $this->template_html = 'emails/proposal-ready.php';
-        $this->template_plain = 'emails/plain/proposal-ready.php';
+        $this->template_html = 'templates/email-proposal-ready.php';
         
         // Triggers
         add_action('arsol_proposal_ready_for_review', array($this, 'trigger'), 10, 2);
@@ -174,7 +173,6 @@ class Proposal_Ready_Email extends Base_Email {
                 'portal_url' => $this->get_portal_url('project-review-proposal', $this->proposal_id),
                 'email_heading' => $this->get_heading(),
                 'email' => $this,
-                'color_scheme' => $this->get_color_scheme('action_required'),
                 'status_icon' => $this->get_status_icon('action_required')
             ),
             '',
@@ -210,18 +208,4 @@ class Proposal_Ready_Email extends Base_Email {
      * 
      * @return string
      */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'proposal' => $this->object,
-                'customer' => get_user_by('id', $this->customer_id),
-                'portal_url' => $this->get_portal_url('project-review-proposal', $this->proposal_id),
-                'email_heading' => $this->get_heading(),
-                'email' => $this
-            ),
-            '',
-            $this->template_base
-        );
-    }
 }

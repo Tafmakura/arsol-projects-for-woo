@@ -40,8 +40,7 @@ class New_Request_Email extends Base_Email {
         $this->subject = 'Your Project Request Has Been Received - #{request_id}';
         
         // Email templates
-        $this->template_html = 'emails/new-request.php';
-        $this->template_plain = 'emails/plain/new-request.php';
+        $this->template_html = 'templates/email-new-request.php';
         
         // Triggers
         add_action('arsol_new_request_created', array($this, 'trigger'), 10, 2);
@@ -144,35 +143,14 @@ class New_Request_Email extends Base_Email {
      */
     public function get_admin_content() {
         return wc_get_template_html(
-            'emails/admin-new-request.php',
+            'templates/email-admin-new-request.php',
             array(
                 'request' => $this->object,
                 'customer' => get_user_by('id', $this->customer_id),
                 'admin_url' => $this->get_admin_url($this->request_id),
                 'email_heading' => $this->get_heading(),
                 'email' => $this,
-                'color_scheme' => $this->get_color_scheme('processing'),
                 'status_icon' => $this->get_status_icon('update')
-            ),
-            '',
-            $this->template_base
-        );
-    }
-    
-    /**
-     * Get plain text content
-     * 
-     * @return string
-     */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'request' => $this->object,
-                'customer' => get_user_by('id', $this->customer_id),
-                'portal_url' => $this->get_portal_url('project-view-request', $this->request_id),
-                'email_heading' => $this->get_heading(),
-                'email' => $this
             ),
             '',
             $this->template_base

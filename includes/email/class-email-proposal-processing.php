@@ -47,8 +47,7 @@ class Proposal_Processing_Email extends Base_Email {
         $this->subject = 'We\'re Working on Your Proposal: {proposal_title} - #{proposal_id}';
         
         // Email templates
-        $this->template_html = 'emails/proposal-processing.php';
-        $this->template_plain = 'emails/plain/proposal-processing.php';
+        $this->template_html = 'templates/email-proposal-processing.php';
         
         // Triggers
         add_action('arsol_proposal_processing_started', array($this, 'trigger'), 10, 3);
@@ -272,19 +271,4 @@ class Proposal_Processing_Email extends Base_Email {
      * 
      * @return string
      */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'proposal' => $this->object,
-                'customer' => get_user_by('id', $this->customer_id),
-                'project_lead' => $this->project_lead_id ? get_user_by('id', $this->project_lead_id) : null,
-                'portal_url' => $this->get_portal_url('project-view-proposal', $this->proposal_id),
-                'email_heading' => $this->get_heading(),
-                'email' => $this
-            ),
-            '',
-            $this->template_base
-        );
-    }
 }

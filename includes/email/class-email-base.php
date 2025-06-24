@@ -35,7 +35,6 @@ abstract class Base_Email extends \WC_Email {
     public function __construct() {
         // Set template paths
         $this->template_html = 'templates/' . $this->id . '.php';
-        $this->template_plain = 'templates/plain/' . $this->id . '.php';
         $this->template_base = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/';
         
         // Call parent constructor

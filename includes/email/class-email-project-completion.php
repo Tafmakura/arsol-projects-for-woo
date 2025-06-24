@@ -30,7 +30,6 @@ class Project_Completion_Email extends Base_Email {
         
         // Email templates
         $this->template_html = 'emails/project-completion.php';
-        $this->template_plain = 'emails/plain/project-completion.php';
         
         // Triggers
         add_action('arsol_project_completed', array($this, 'trigger'), 10, 2);

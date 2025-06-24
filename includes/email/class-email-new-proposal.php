@@ -30,7 +30,6 @@ class New_Proposal_Email extends Base_Email {
         
         // Email templates
         $this->template_html = 'emails/new-proposal.php';
-        $this->template_plain = 'emails/plain/new-proposal.php';
         
         // Triggers
         add_action('arsol_new_proposal_created', array($this, 'trigger'), 10, 3);
@@ -70,7 +69,32 @@ class New_Proposal_Email extends Base_Email {
     }
     
     public function get_content() {
-        return 'New proposal created.';
+        $proposal = $this->object;
+        $customer = get_user_by('id', $this->customer_id);
+        $project_lead_id = get_post_meta($this->proposal_id, '_arsol_pfw_proposal_project_lead_id', true);
+        $project_lead = $project_lead_id ? get_user_by('id', $project_lead_id) : null;
+
+        $content = '<h2>' . sprintf(__('New Project Proposal #%d', 'arsol-pfw'), $this->proposal_id) . '</h2>';
+        $content .= '<p>' . sprintf(__('A new proposal has been created for project: %s', 'arsol-pfw'), '<strong>' . esc_html($proposal->post_title) . '</strong>') . '</p>';
+        
+        $content .= '<h3>' . __('Details', 'arsol-pfw') . '</h3>';
+        $content .= '<ul>';
+        $content .= '<li><strong>' . __('Customer:', 'arsol-pfw') . '</strong> ' . esc_html($customer->display_name) . ' (' . esc_html($customer->user_email) . ')</li>';
+        $content .= '<li><strong>' . __('Created:', 'arsol-pfw') . '</strong> ' . esc_html(wp_date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($proposal->post_date))) . '</li>';
+        
+        if ($project_lead) {
+            $content .= '<li><strong>' . __('Assigned to:', 'arsol-pfw') . '</strong> ' . esc_html($project_lead->display_name) . '</li>';
+        }
+        $content .= '</ul>';
+        
+        $content .= '<h3>' . __('Next Steps', 'arsol-pfw') . '</h3>';
+        $content .= '<ul>';
+        $content .= '<li>' . __('Complete the proposal details', 'arsol-pfw') . '</li>';
+        $content .= '<li>' . __('Add pricing and timeline', 'arsol-pfw') . '</li>';
+        $content .= '<li>' . __('Send to customer for review', 'arsol-pfw') . '</li>';
+        $content .= '</ul>';
+        
+        return $content;
     }
     
     public function init_form_fields() {

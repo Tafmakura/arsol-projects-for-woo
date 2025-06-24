@@ -43,8 +43,7 @@ class Email_Setup {
             'Proposal_Decision_Email' => 'class-email-proposal-decision.php',
             'Project_Creation_Email' => 'class-email-project-creation.php',
             'Project_Status_Email' => 'class-email-project-status.php',
-            'Project_Completion_Email' => 'class-email-project-completion.php',
-            'Billing_Notification_Email' => 'class-email-billing-notification.php'
+            'Project_Completion_Email' => 'class-email-project-completion.php'
         );
     }
     

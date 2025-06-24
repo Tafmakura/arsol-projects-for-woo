@@ -47,8 +47,7 @@ class Project_Status_Email extends Base_Email {
         $this->subject = 'Project Update: {project_title} - {new_status}';
         
         // Email templates
-        $this->template_html = 'emails/project-status.php';
-        $this->template_plain = 'emails/plain/project-status.php';
+        $this->template_html = 'templates/email-project-status.php';
         
         // Triggers
         add_action('arsol_project_status_changed', array($this, 'trigger'), 10, 3);
@@ -344,21 +343,4 @@ class Project_Status_Email extends Base_Email {
      * 
      * @return string
      */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'project' => $this->object,
-                'customer' => get_user_by('id', get_post_meta($this->project_id, '_arsol_pfw_project_customer_id', true)),
-                'old_status' => $this->old_status,
-                'new_status' => $this->new_status,
-                'status_label' => $this->get_status_label($this->new_status, 'arsol-project'),
-                'portal_url' => $this->get_portal_url('project-view-project', $this->project_id),
-                'email_heading' => $this->get_heading(),
-                'email' => $this
-            ),
-            '',
-            $this->template_base
-        );
-    }
 }

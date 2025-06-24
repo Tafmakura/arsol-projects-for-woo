@@ -47,8 +47,7 @@ class Project_Creation_Email extends Base_Email {
         $this->subject = 'Your Order Is Ready! Complete Your Purchase - #{order_id}';
         
         // Email templates
-        $this->template_html = 'emails/project-creation.php';
-        $this->template_plain = 'emails/plain/project-creation.php';
+        $this->template_html = 'templates/email-project-creation.php';
         
         // Triggers
         add_action('arsol_project_created', array($this, 'trigger'), 10, 3);
@@ -292,22 +291,4 @@ class Project_Creation_Email extends Base_Email {
      * 
      * @return string
      */
-    public function get_content_plain() {
-        $order = wc_get_order($this->order_id);
-        
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'project' => $this->object,
-                'order' => $order,
-                'customer' => get_user_by('id', $this->customer_id),
-                'checkout_url' => $order->get_checkout_payment_url(),
-                'portal_url' => $this->get_portal_url('project-view-project', $this->project_id),
-                'email_heading' => $this->get_heading(),
-                'email' => $this
-            ),
-            '',
-            $this->template_base
-        );
-    }
 }

@@ -45,8 +45,7 @@ class Request_Status_Email extends Base_Email {
         $this->subject = 'Status Update: {request_title} - #{request_id}';
         
         // Email templates
-        $this->template_html = 'emails/request-status.php';
-        $this->template_plain = 'emails/plain/request-status.php';
+        $this->template_html = 'templates/email-request-status.php';
         
         // Triggers
         add_action('arsol_request_status_changed', array($this, 'trigger'), 10, 3);
@@ -278,21 +277,4 @@ class Request_Status_Email extends Base_Email {
      * 
      * @return string
      */
-    public function get_content_plain() {
-        return wc_get_template_html(
-            $this->template_plain,
-            array(
-                'request' => $this->object,
-                'customer' => get_user_by('id', $this->object->post_author),
-                'old_status' => $this->old_status,
-                'new_status' => $this->new_status,
-                'status_label' => $this->get_status_label($this->new_status, 'arsol-pfw-request'),
-                'portal_url' => $this->get_portal_url('project-view-request', $this->request_id),
-                'email_heading' => $this->get_heading(),
-                'email' => $this
-            ),
-            '',
-            $this->template_base
-        );
-    }
 }
