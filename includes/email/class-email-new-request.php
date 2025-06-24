@@ -39,13 +39,13 @@ class New_Request_Email extends Base_Email {
         $this->heading = 'New Project Request Submitted';
         $this->subject = 'Your Project Request Has Been Received - #{request_id}';
         
-        // Email templates
-        $this->template_html = 'templates/email-new-request.php';
-        
         // Triggers
         add_action('arsol_new_request_created', array($this, 'trigger'), 10, 2);
         
         parent::__construct();
+        
+        // Override template path to match our file naming convention
+        $this->template_html = 'templates/email-new-request.php';
     }
     
     /**
@@ -143,12 +143,26 @@ class New_Request_Email extends Base_Email {
         
         error_log('Template vars: ' . print_r(array_keys($template_vars), true));
         
-        $content = wc_get_template_html(
-            $this->template_html,
-            $template_vars,
-            '',
-            $this->template_base
-        );
+        // Try absolute path first
+        $template_file = $this->template_base . $this->template_html;
+        error_log('Full template path: ' . $template_file);
+        error_log('Template exists: ' . (file_exists($template_file) ? 'yes' : 'no'));
+        
+        if (file_exists($template_file)) {
+            // Load template directly
+            extract($template_vars);
+            ob_start();
+            include $template_file;
+            $content = ob_get_clean();
+        } else {
+            // Fallback to WooCommerce method
+            $content = wc_get_template_html(
+                $this->template_html,
+                $template_vars,
+                '',
+                $this->template_base
+            );
+        }
         
         error_log('Generated content length: ' . strlen($content));
         
