@@ -25,7 +25,7 @@ class WC_Email_Project_Creation extends WC_Email {
         $this->id             = 'project_creation';
         $this->title          = __( 'Your Project Order Is Ready', 'arsol-projects-for-woo' );
         $this->description    = __( 'Project creation emails are sent to customers when their project order is ready.', 'arsol-projects-for-woo' );
-        $this->template_html  = 'emails/email-project-creation.php';
+        $this->template_html  = 'email-project-creation.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->customer_email = true;
 

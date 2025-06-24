@@ -25,7 +25,7 @@ class WC_Email_Request_Status extends WC_Email {
         $this->id             = 'request_status';
         $this->title          = __( 'Request Status Update', 'arsol-projects-for-woo' );
         $this->description    = __( 'Request status emails are sent when a request status changes.', 'arsol-projects-for-woo' );
-        $this->template_html  = 'emails/email-request-status.php';
+        $this->template_html  = 'email-request-status.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
 
         // Triggers for this email

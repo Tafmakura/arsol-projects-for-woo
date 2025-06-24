@@ -25,7 +25,7 @@ class WC_Email_Proposal_Ready extends WC_Email {
         $this->id             = 'proposal_ready';
         $this->title          = __( 'Proposal Ready for Review', 'arsol-projects-for-woo' );
         $this->description    = __( 'Proposal ready emails are sent to customers when a proposal is ready for review.', 'arsol-projects-for-woo' );
-        $this->template_html  = 'emails/email-proposal-ready.php';
+        $this->template_html  = 'email-proposal-ready.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->customer_email = true;
 
