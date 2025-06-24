@@ -222,6 +222,107 @@ class Proposal_Decision_Email extends Base_Email {
      * 
      * @return string
      */
+    public function get_content() {
+        // For preview mode, set up dummy data if needed
+        if (!$this->object) {
+            $this->setup_preview_data();
+        }
+        
+        $email_type = ($this->decision ?: 'approved') === 'approved' ? 'success' : 'error';
+        
+        $template_vars = array(
+            'proposal' => $this->object,
+            'customer' => get_user_by('id', $this->customer_id) ?: $this->get_dummy_customer(),
+            'project_lead' => get_user_by('id', get_post_meta($this->proposal_id ?: 123, '_arsol_pfw_proposal_project_lead_id', true)) ?: $this->get_dummy_project_lead(),
+            'decision' => $this->decision ?: 'approved',
+            'admin_url' => $this->get_admin_url($this->proposal_id ?: 123),
+            'email_heading' => $this->get_heading(),
+            'email' => $this,
+            'color_scheme' => $this->get_color_scheme($email_type),
+            'status_icon' => $this->get_status_icon($email_type)
+        );
+        
+        // Try absolute path first
+        $template_file = $this->template_base . $this->template_html;
+        
+        if (file_exists($template_file)) {
+            // Load template directly
+            extract($template_vars);
+            ob_start();
+            include $template_file;
+            $content = ob_get_clean();
+        } else {
+            // Fallback to WooCommerce method
+            $content = wc_get_template_html(
+                $this->template_html,
+                $template_vars,
+                '',
+                $this->template_base
+            );
+        }
+        
+        return $content;
+    }
+    
+    /**
+     * Setup preview data for email preview
+     */
+    private function setup_preview_data() {
+        if (!$this->object) {
+            // Create dummy proposal object for preview
+            $this->object = (object) array(
+                'ID' => 123,
+                'post_title' => 'Sample Project Proposal',
+                'post_date' => current_time('mysql'),
+                'post_content' => 'This is a sample project proposal for preview purposes.',
+                'post_author' => 1
+            );
+        }
+        
+        if (!$this->proposal_id) {
+            $this->proposal_id = 123;
+        }
+        
+        if (!$this->customer_id) {
+            $this->customer_id = 1;
+        }
+        
+        if (!$this->decision) {
+            $this->decision = 'approved';
+        }
+    }
+    
+    /**
+     * Get dummy customer for preview
+     */
+    private function get_dummy_customer() {
+        return (object) array(
+            'ID' => 1,
+            'user_email' => 'customer@example.com',
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'display_name' => 'John Doe'
+        );
+    }
+    
+    /**
+     * Get dummy project lead for preview
+     */
+    private function get_dummy_project_lead() {
+        return (object) array(
+            'ID' => 2,
+            'user_email' => 'lead@example.com',
+            'first_name' => 'Jane',
+            'last_name' => 'Smith',
+            'display_name' => 'Jane Smith'
+        );
+    }
+    
+    /**
+     * Get email content for project leads
+     * 
+     * @return string
+     */
     public function get_project_lead_content() {
         $email_type = $this->decision === 'approved' ? 'success' : 'error';
         
@@ -297,17 +398,7 @@ class Proposal_Decision_Email extends Base_Email {
      */
     public function admin_options() {
         // Set up preview data for admin preview
-        if (!$this->object) {
-            $this->object = (object) array(
-                'ID' => 123,
-                'post_title' => 'Sample Proposal',
-                'post_date' => current_time('mysql'),
-                'post_content' => 'Sample content',
-                'post_author' => 1
-            );
-        }
-        if (!isset($this->proposal_id)) $this->proposal_id = 123;
-        if (!isset($this->customer_id)) $this->customer_id = 1;
+        $this->setup_preview_data();
         
         // Call parent admin_options
         parent::admin_options();
