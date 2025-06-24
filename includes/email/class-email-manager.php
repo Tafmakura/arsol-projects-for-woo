@@ -31,10 +31,16 @@ class Arsol_Email_Manager {
         // Include working email classes
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-new-request.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-decision.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-request-status.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-ready.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-creation.php';
 
         // Add to email classes
         $email_classes['WC_Email_New_Request'] = new WC_Email_New_Request();
         $email_classes['WC_Email_Proposal_Decision'] = new WC_Email_Proposal_Decision();
+        $email_classes['WC_Email_Request_Status'] = new WC_Email_Request_Status();
+        $email_classes['WC_Email_Proposal_Ready'] = new WC_Email_Proposal_Ready();
+        $email_classes['WC_Email_Project_Creation'] = new WC_Email_Project_Creation();
 
         return $email_classes;
     }
