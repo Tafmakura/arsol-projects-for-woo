@@ -42,21 +42,21 @@ do_action('woocommerce_email_header', $email_heading, $email); ?>
     <li><?php _e('We\'ll contact you if we need any additional information', 'arsol-projects-for-woo'); ?></li>
     <li><?php _e('Once approved, we\'ll create a detailed proposal for your project', 'arsol-projects-for-woo'); ?></li>
     <li><?php _e('You can review and approve the proposal in your customer portal', 'arsol-projects-for-woo'); ?></li>
-</ol>
-
-<div style="text-align: center; margin: 25px 0;">
+    </ol>
+    
+    <div style="text-align: center; margin: 25px 0;">
     <a class="link" href="<?php echo esc_url($portal_url); ?>" style="background-color: #96588a; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
         <?php _e('View Request in Portal', 'arsol-projects-for-woo'); ?>
-    </a>
-</div>
-
+        </a>
+    </div>
+    
 <p><?php _e('You can track the progress of your request and view all communications in your customer portal at any time.', 'arsol-projects-for-woo'); ?></p>
 
 <p><?php _e('If you have any questions, please don\'t hesitate to contact us.', 'arsol-projects-for-woo'); ?></p>
-
+    
 <p>
     <?php _e('Best regards,', 'arsol-projects-for-woo'); ?><br>
     <?php printf(__('The %s Team', 'arsol-projects-for-woo'), esc_html(get_bloginfo('name'))); ?>
 </p>
-
+    
 <?php do_action('woocommerce_email_footer', $email);

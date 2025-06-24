@@ -10,74 +10,84 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$status_icon = isset($status_icon) ? $status_icon : '📧';
-$color_scheme = isset($color_scheme) ? $color_scheme : array('background' => '#cce5ff', 'text' => '#0073aa', 'cta' => '#0073aa');
-?>
+do_action('woocommerce_email_header', $email_heading, $email); ?>
 
-<div style="background-color: <?php echo esc_attr($color_scheme['background']); ?>; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <h2 style="color: <?php echo esc_attr($color_scheme['text']); ?>; margin: 0 0 15px 0;">
-        <?php echo $status_icon; ?> <?php echo esc_html($email_heading); ?>
-    </h2>
+<p><?php printf(__('Hello %s,', 'arsol-projects-for-woo'), esc_html($customer->first_name ?: $customer->display_name)); ?></p>
+
+<p><?php _e('We wanted to update you on the status of your project request.', 'arsol-projects-for-woo'); ?></p>
+
+<h2><?php _e('Request Details', 'arsol-projects-for-woo'); ?></h2>
+
+<table class="td" cellspacing="0" cellpadding="6" style="width: 100%; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;" border="1">
+    <tbody>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Request ID:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;">#<?php echo esc_html($request->ID); ?></td>
+        </tr>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Title:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;"><?php echo esc_html($request->post_title); ?></td>
+        </tr>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Previous Status:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;"><?php echo esc_html($old_status ? ucfirst(str_replace('-', ' ', $old_status)) : 'N/A'); ?></td>
+        </tr>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('New Status:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;"><strong><?php echo esc_html($status_label); ?></strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<?php if ($new_status === 'under-review'): ?>
+    <h3><?php _e('What this means', 'arsol-projects-for-woo'); ?></h3>
+    <p><?php _e('Our team is now actively reviewing your request. We\'re evaluating the requirements and will contact you if we need any additional information.', 'arsol-projects-for-woo'); ?></p>
     
-    <p>Hello <?php echo esc_html($customer->first_name ?: $customer->display_name); ?>,</p>
+    <h3><?php _e('Next steps', 'arsol-projects-for-woo'); ?></h3>
+    <ul>
+        <li><?php _e('We\'ll complete our review within 2-3 business days', 'arsol-projects-for-woo'); ?></li>
+        <li><?php _e('You may receive follow-up questions from our team', 'arsol-projects-for-woo'); ?></li>
+        <li><?php _e('Once approved, we\'ll begin creating your detailed proposal', 'arsol-projects-for-woo'); ?></li>
+    </ul>
     
-    <p>We wanted to update you on the status of your project request.</p>
+<?php elseif ($new_status === 'on-hold'): ?>
+    <h3><?php _e('What this means', 'arsol-projects-for-woo'); ?></h3>
+    <p><?php _e('Your request has been temporarily placed on hold. This may be due to:', 'arsol-projects-for-woo'); ?></p>
+    <ul>
+        <li><?php _e('Additional information needed from you', 'arsol-projects-for-woo'); ?></li>
+        <li><?php _e('Current capacity constraints', 'arsol-projects-for-woo'); ?></li>
+        <li><?php _e('Technical clarifications required', 'arsol-projects-for-woo'); ?></li>
+    </ul>
     
-    <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
-        <h3 style="margin-top: 0;">Request Details:</h3>
-        <p><strong>Request ID:</strong> #<?php echo esc_html($request->ID); ?></p>
-        <p><strong>Title:</strong> <?php echo esc_html($request->post_title); ?></p>
-        <p><strong>Previous Status:</strong> <?php echo esc_html($old_status ? ucfirst(str_replace('-', ' ', $old_status)) : 'N/A'); ?></p>
-        <p><strong>New Status:</strong> <span style="color: <?php echo esc_attr($color_scheme['text']); ?>; font-weight: bold;"><?php echo esc_html($status_label); ?></span></p>
-    </div>
+    <h3><?php _e('Next steps', 'arsol-projects-for-woo'); ?></h3>
+    <p><?php _e('Our team will contact you directly with details about why your request is on hold and what steps are needed to proceed.', 'arsol-projects-for-woo'); ?></p>
     
-    <?php if ($new_status === 'under-review'): ?>
-        <p><strong>What this means:</strong></p>
-        <p>Our team is now actively reviewing your request. We're evaluating the requirements and will contact you if we need any additional information.</p>
-        
-        <p><strong>Next steps:</strong></p>
-        <ul>
-            <li>We'll complete our review within 2-3 business days</li>
-            <li>You may receive follow-up questions from our team</li>
-            <li>Once approved, we'll begin creating your detailed proposal</li>
-        </ul>
-        
-    <?php elseif ($new_status === 'on-hold'): ?>
-        <p><strong>What this means:</strong></p>
-        <p>Your request has been temporarily placed on hold. This may be due to:</p>
-        <ul>
-            <li>Additional information needed from you</li>
-            <li>Current capacity constraints</li>
-            <li>Technical clarifications required</li>
-        </ul>
-        
-        <p><strong>Next steps:</strong></p>
-        <p>Our team will contact you directly with details about why your request is on hold and what steps are needed to proceed.</p>
-        
-    <?php elseif ($new_status === 'approved'): ?>
-        <p><strong>🎉 Great news!</strong></p>
-        <p>Your request has been approved! Our team will now begin creating a detailed proposal for your project.</p>
-        
-        <p><strong>What happens next:</strong></p>
-        <ol>
-            <li>A project lead will be assigned to your request</li>
-            <li>We'll create a detailed proposal with scope, timeline, and pricing</li>
-            <li>You'll receive a notification when the proposal is ready for review</li>
-            <li>You can review and approve the proposal in your customer portal</li>
-        </ol>
-    <?php endif; ?>
+<?php elseif ($new_status === 'approved'): ?>
+    <h3><?php _e('🎉 Great news!', 'arsol-projects-for-woo'); ?></h3>
+    <p><?php _e('Your request has been approved! Our team will now begin creating a detailed proposal for your project.', 'arsol-projects-for-woo'); ?></p>
     
-    <div style="text-align: center; margin: 25px 0;">
-        <a href="<?php echo esc_url($portal_url); ?>" 
-           style="background-color: <?php echo esc_attr($color_scheme['cta']); ?>; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
-            View Request in Portal
-        </a>
-    </div>
-    
-    <p>You can always check the current status and view all communications in your customer portal.</p>
-    
-    <p>If you have any questions, please don't hesitate to contact us.</p>
-    
-    <p>Best regards,<br>
-    The <?php echo esc_html(get_bloginfo('name')); ?> Team</p>
+    <h3><?php _e('What happens next', 'arsol-projects-for-woo'); ?></h3>
+    <ol>
+        <li><?php _e('A project lead will be assigned to your request', 'arsol-projects-for-woo'); ?></li>
+        <li><?php _e('We\'ll create a detailed proposal with scope, timeline, and pricing', 'arsol-projects-for-woo'); ?></li>
+        <li><?php _e('You\'ll receive a notification when the proposal is ready for review', 'arsol-projects-for-woo'); ?></li>
+        <li><?php _e('You can review and approve the proposal in your customer portal', 'arsol-projects-for-woo'); ?></li>
+    </ol>
+<?php endif; ?>
+
+<div style="text-align: center; margin: 25px 0;">
+    <a class="link" href="<?php echo esc_url($portal_url); ?>" style="background-color: #96588a; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+        <?php _e('View Request in Portal', 'arsol-projects-for-woo'); ?>
+    </a>
 </div>
+
+<p><?php _e('You can always check the current status and view all communications in your customer portal.', 'arsol-projects-for-woo'); ?></p>
+
+<p><?php _e('If you have any questions, please don\'t hesitate to contact us.', 'arsol-projects-for-woo'); ?></p>
+
+<p>
+    <?php _e('Best regards,', 'arsol-projects-for-woo'); ?><br>
+    <?php printf(__('The %s Team', 'arsol-projects-for-woo'), esc_html(get_bloginfo('name'))); ?>
+</p>
+
+<?php do_action('woocommerce_email_footer', $email);

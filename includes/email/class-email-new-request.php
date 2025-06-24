@@ -126,13 +126,13 @@ class New_Request_Email extends Base_Email {
         }
         
         $template_vars = array(
-            'request' => $this->object,
+                'request' => $this->object,
             'customer' => get_user_by('id', $this->customer_id) ?: $this->get_dummy_customer(),
             'portal_url' => $this->get_portal_url('project-view-request', $this->request_id ?: 123),
-            'email_heading' => $this->get_heading(),
-            'email' => $this,
-            'color_scheme' => $this->get_color_scheme('success'),
-            'status_icon' => $this->get_status_icon('success')
+                'email_heading' => $this->get_heading(),
+                'email' => $this,
+                'color_scheme' => $this->get_color_scheme('success'),
+                'status_icon' => $this->get_status_icon('success')
         );
         
         // Try absolute path first
@@ -149,8 +149,8 @@ class New_Request_Email extends Base_Email {
             $content = wc_get_template_html(
                 $this->template_html,
                 $template_vars,
-                '',
-                $this->template_base
+            '',
+            $this->template_base
             );
         }
         
