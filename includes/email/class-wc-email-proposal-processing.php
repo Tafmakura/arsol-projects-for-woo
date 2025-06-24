@@ -36,6 +36,8 @@ class WC_Email_Proposal_Processing extends WC_Email {
         // Call parent constructor
         parent::__construct();
 
+        // Set default recipient for display in settings (will be overridden dynamically)
+        $this->recipient = __( 'Project Lead', 'arsol-pfw' );
     }
 
     /**

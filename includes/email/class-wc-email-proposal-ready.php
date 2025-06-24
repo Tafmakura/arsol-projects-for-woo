@@ -28,6 +28,9 @@ class WC_Email_Proposal_Ready extends WC_Email {
         $this->template_html  = 'email-proposal-ready.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->customer_email = true;
+
+        // Set default recipient for display in settings (will be overridden dynamically)
+        $this->recipient = __( 'Customer', 'arsol-pfw' );
         $this->placeholders   = array(
             '{proposal_id}' => '',
         );

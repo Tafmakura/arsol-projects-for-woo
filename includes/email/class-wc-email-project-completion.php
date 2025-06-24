@@ -36,6 +36,9 @@ class WC_Email_Project_Completion extends WC_Email {
 
         // This email is sent to the customer who owns the project
         $this->customer_email = true;
+
+        // Set default recipient for display in settings (will be overridden dynamically)
+        $this->recipient = __( 'Customer', 'arsol-pfw' );
     }
 
     /**

@@ -36,6 +36,9 @@ class WC_Email_New_Request extends WC_Email {
 
         // This email is sent to the customer who created the request
         $this->customer_email = true;
+
+        // Set default recipient for display in settings (will be overridden dynamically)
+        $this->recipient = __( 'Customer', 'arsol-pfw' );
     }
 
     /**
