@@ -98,7 +98,7 @@ class Setup {
         new Shortcodes();
         new Woocommerce();
         new Woocommerce_Subscriptions();
-        new Emails\Email_Setup();
+        new Arsol_Email_Setup();
         new Emails\Email_Woo_Admin_Settings();
         new Woocommerce_Biller();
         new Assets();

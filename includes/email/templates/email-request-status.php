@@ -38,8 +38,8 @@ do_action('woocommerce_email_header', $email_heading, $email); ?>
         </tr>
     </tbody>
 </table>
-
-<?php if ($new_status === 'under-review'): ?>
+    
+    <?php if ($new_status === 'under-review'): ?>
     <h3><?php _e('What this means', 'arsol-projects-for-woo'); ?></h3>
     <p><?php _e('Our team is now actively reviewing your request. We\'re evaluating the requirements and will contact you if we need any additional information.', 'arsol-projects-for-woo'); ?></p>
     
@@ -48,21 +48,21 @@ do_action('woocommerce_email_header', $email_heading, $email); ?>
         <li><?php _e('We\'ll complete our review within 2-3 business days', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('You may receive follow-up questions from our team', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Once approved, we\'ll begin creating your detailed proposal', 'arsol-projects-for-woo'); ?></li>
-    </ul>
-    
-<?php elseif ($new_status === 'on-hold'): ?>
+        </ul>
+        
+    <?php elseif ($new_status === 'on-hold'): ?>
     <h3><?php _e('What this means', 'arsol-projects-for-woo'); ?></h3>
     <p><?php _e('Your request has been temporarily placed on hold. This may be due to:', 'arsol-projects-for-woo'); ?></p>
     <ul>
         <li><?php _e('Additional information needed from you', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Current capacity constraints', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Technical clarifications required', 'arsol-projects-for-woo'); ?></li>
-    </ul>
-    
+        </ul>
+        
     <h3><?php _e('Next steps', 'arsol-projects-for-woo'); ?></h3>
     <p><?php _e('Our team will contact you directly with details about why your request is on hold and what steps are needed to proceed.', 'arsol-projects-for-woo'); ?></p>
-    
-<?php elseif ($new_status === 'approved'): ?>
+        
+    <?php elseif ($new_status === 'approved'): ?>
     <h3><?php _e('🎉 Great news!', 'arsol-projects-for-woo'); ?></h3>
     <p><?php _e('Your request has been approved! Our team will now begin creating a detailed proposal for your project.', 'arsol-projects-for-woo'); ?></p>
     
@@ -72,22 +72,22 @@ do_action('woocommerce_email_header', $email_heading, $email); ?>
         <li><?php _e('We\'ll create a detailed proposal with scope, timeline, and pricing', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('You\'ll receive a notification when the proposal is ready for review', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('You can review and approve the proposal in your customer portal', 'arsol-projects-for-woo'); ?></li>
-    </ol>
-<?php endif; ?>
-
-<div style="text-align: center; margin: 25px 0;">
+        </ol>
+    <?php endif; ?>
+    
+    <div style="text-align: center; margin: 25px 0;">
     <a class="link" href="<?php echo esc_url($portal_url); ?>" style="background-color: #96588a; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
         <?php _e('View Request in Portal', 'arsol-projects-for-woo'); ?>
-    </a>
-</div>
-
+        </a>
+    </div>
+    
 <p><?php _e('You can always check the current status and view all communications in your customer portal.', 'arsol-projects-for-woo'); ?></p>
 
 <p><?php _e('If you have any questions, please don\'t hesitate to contact us.', 'arsol-projects-for-woo'); ?></p>
-
+    
 <p>
     <?php _e('Best regards,', 'arsol-projects-for-woo'); ?><br>
     <?php printf(__('The %s Team', 'arsol-projects-for-woo'), esc_html(get_bloginfo('name'))); ?>
 </p>
-
+    
 <?php do_action('woocommerce_email_footer', $email);
