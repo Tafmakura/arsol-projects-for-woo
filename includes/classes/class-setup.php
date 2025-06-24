@@ -65,6 +65,7 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-subscriptions.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-logs.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-mailer.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-biller-invoice.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-endpoints.php';
@@ -96,6 +97,7 @@ class Setup {
         new Shortcodes();
         new Woocommerce();
         new Woocommerce_Subscriptions();
+        new Classes\Woocommerce_Mailer();
         new Woocommerce_Biller();
         new Assets();
         new Woocommerce\Frontend_Endpoints();

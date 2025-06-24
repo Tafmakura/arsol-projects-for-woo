@@ -18,19 +18,22 @@ class Woocommerce_Mailer {
      * Constructor
      */
     public function __construct() {
-        add_action('init', array($this, 'init'));
+        // Hook into WooCommerce email initialization
+        add_action('woocommerce_init', array($this, 'init'));
     }
     
     /**
      * Initialize the mailer
      */
     public function init() {
-        // Hook into WooCommerce email system
-        add_filter('woocommerce_email_classes', array($this, 'add_email_classes'));
-        add_action('woocommerce_init', array($this, 'load_email_classes'));
-        
-        // Setup all workflow email triggers
+        // Setup workflow hooks
         $this->setup_workflow_hooks();
+        
+        // Add email classes to WooCommerce
+        add_filter('woocommerce_email_classes', array($this, 'add_email_classes'));
+        
+        // Load email classes when needed
+        add_action('woocommerce_loaded', array($this, 'load_email_classes'));
         
         // Add email settings to WooCommerce
         add_filter('woocommerce_email_settings', array($this, 'add_email_settings'));
@@ -71,16 +74,16 @@ class Woocommerce_Mailer {
      */
     public function add_email_classes($email_classes) {
         // Include base email class
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-base-email.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/class-base-email.php';
         
         // Include all email class files
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-new-request-email.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-request-status-email.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-proposal-processing-email.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-proposal-ready-email.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-proposal-decision-email.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-project-creation-email.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/emails/class-project-status-email.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/class-new-request-email.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/class-request-status-email.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/class-proposal-processing-email.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/class-proposal-ready-email.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/class-proposal-decision-email.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/class-project-creation-email.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/class-project-status-email.php';
         
         // Add email classes
         $email_classes['Arsol_New_Request_Email'] = new \Arsol_Projects_For_Woo\Emails\New_Request_Email();
@@ -138,7 +141,7 @@ class Woocommerce_Mailer {
      * @return string
      */
     public static function get_email_template_path($template_name) {
-        return ARSOL_PFW_PLUGIN_DIR . 'includes/emails/templates/' . $template_name;
+        return ARSOL_PROJECTS_PLUGIN_DIR . 'includes/emails/templates/' . $template_name;
     }
     
     /**
