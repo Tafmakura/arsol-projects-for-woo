@@ -33,7 +33,7 @@ class New_Request_Email extends Base_Email {
         $this->description = 'Email sent when a new project request is submitted';
         
         $this->customer_email = false;
-        $this->admin_email = true;
+        $this->admin_email = false;
         $this->shop_manager_email = true;
         
         $this->heading = 'New Project Request Submitted';
@@ -84,40 +84,20 @@ class New_Request_Email extends Base_Email {
         );
         
         if ($this->is_enabled() && $this->get_recipient()) {
-            // Send to admins and shop managers only
-            $this->send_admin_and_shop_manager_email();
+            // Send to shop managers only
+            $this->send_shop_manager_email();
         }
         
         $this->restore_locale();
     }
     
     /**
-     * Send email to customer
+     * Send email to shop managers
      */
-    private function send_customer_email() {
-        $this->recipient = get_user_by('id', $this->customer_id)->user_email;
-        $this->heading = 'Your Project Request Has Been Received';
-        $this->subject = $this->replace_placeholders(
-            'Your Project Request Has Been Received - #{request_id}',
-            $this->find_replace
-        );
+    private function send_shop_manager_email() {
+        $shop_manager_emails = $this->get_shop_manager_emails();
         
-        $this->send(
-            $this->get_recipient(),
-            $this->get_subject(),
-            $this->get_content(),
-            $this->get_headers(),
-            $this->get_attachments()
-        );
-    }
-    
-    /**
-     * Send email to admins and shop managers
-     */
-    private function send_admin_and_shop_manager_email() {
-        $admin_and_manager_emails = $this->get_admin_and_shop_manager_emails();
-        
-        foreach ($admin_and_manager_emails as $email) {
+        foreach ($shop_manager_emails as $email) {
             $this->recipient = $email;
             $this->heading = 'New Project Request Submitted';
             $this->subject = $this->replace_placeholders(

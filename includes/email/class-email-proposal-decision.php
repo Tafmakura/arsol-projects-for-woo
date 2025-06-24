@@ -38,8 +38,8 @@ class Proposal_Decision_Email extends Base_Email {
         $this->title = 'Project Proposal Decision';
         $this->description = 'Email sent when proposal is approved or rejected';
         
-        $this->customer_email = false; // Only send to lead/admin
-        $this->admin_email = true;
+        $this->customer_email = false; // Only send to project lead
+        $this->admin_email = false;
         $this->shop_manager_email = false;
         $this->project_lead_email = true;
         

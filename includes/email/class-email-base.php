@@ -330,6 +330,21 @@ abstract class Base_Email extends \WC_Email {
     }
     
     /**
+     * Get shop manager email addresses only
+     * 
+     * @return array
+     */
+    protected function get_shop_manager_emails() {
+        // Get shop managers
+        $shop_managers = get_users(array(
+            'role' => 'shop_manager',
+            'fields' => 'user_email'
+        ));
+        
+        return $shop_managers;
+    }
+    
+    /**
      * Get admin and shop manager email addresses
      * 
      * @return array

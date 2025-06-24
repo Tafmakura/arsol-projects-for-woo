@@ -39,8 +39,8 @@ class Proposal_Processing_Email extends Base_Email {
         $this->description = 'Email sent when proposal processing begins';
         
         $this->customer_email = true;
-        $this->admin_email = true;
-        $this->shop_manager_email = true;
+        $this->admin_email = false;
+        $this->shop_manager_email = false;
         $this->project_lead_email = true;
         
         $this->heading = 'We\'re Working on Your Proposal';
