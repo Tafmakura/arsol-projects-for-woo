@@ -35,11 +35,12 @@ class Project_Creation_Email extends Base_Email {
      */
     public function __construct() {
         $this->id = 'arsol_project_creation';
-        $this->title = 'Your Order Is Ready';
+        $this->title = 'Your Project Order Is Ready';
         $this->description = 'Email sent when project is created and order is ready';
         
         $this->customer_email = true;
         $this->admin_email = true;
+        $this->project_lead_email = true;
         
         $this->heading = 'Your Order Is Ready!';
         $this->subject = 'Your Order Is Ready! Complete Your Purchase - #{order_id}';

@@ -40,6 +40,7 @@ class Proposal_Processing_Email extends Base_Email {
         
         $this->customer_email = true;
         $this->admin_email = true;
+        $this->project_lead_email = true;
         
         $this->heading = 'We\'re Working on Your Proposal';
         $this->subject = 'We\'re Working on Your Proposal: {proposal_title} - #{proposal_id}';

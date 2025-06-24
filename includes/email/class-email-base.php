@@ -203,6 +203,13 @@ abstract class Base_Email extends \WC_Email {
                 'label'   => 'Enable this email notification',
                 'default' => 'yes'
             ),
+            'recipient' => array(
+                'title'       => 'Recipient(s)',
+                'type'        => 'text',
+                'description' => $this->get_recipient_description(),
+                'default'     => $this->get_default_recipient(),
+                'css'         => 'width: 100%;'
+            ),
             'subject' => array(
                 'title'       => 'Subject',
                 'type'        => 'text',
@@ -226,6 +233,47 @@ abstract class Base_Email extends \WC_Email {
                 'options'     => $this->get_email_type_options()
             )
         );
+    }
+    
+    /**
+     * Get recipient description based on email configuration
+     * 
+     * @return string
+     */
+    protected function get_recipient_description() {
+        $recipients = array();
+        
+        if ($this->customer_email) {
+            $recipients[] = 'Customer';
+        }
+        if ($this->admin_email) {
+            $recipients[] = 'Admins';
+        }
+        if (property_exists($this, 'project_lead_email') && $this->project_lead_email) {
+            $recipients[] = 'Project Lead';
+        }
+        
+        if (empty($recipients)) {
+            return 'Enter recipients (one email per line or comma separated).';
+        }
+        
+        return 'Automatically sent to: ' . implode(', ', $recipients) . '. Additional recipients can be added below (one email per line or comma separated).';
+    }
+    
+    /**
+     * Get default recipient based on email configuration
+     * 
+     * @return string
+     */
+    protected function get_default_recipient() {
+        if ($this->customer_email) {
+            return '{customer_email}';
+        }
+        if ($this->admin_email) {
+            return get_option('admin_email');
+        }
+        
+        return '';
     }
     
     /**
