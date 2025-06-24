@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Email Manager Class
  * 
  * Manages role-based email distribution:
- * - Shop Manager emails (1)
+ * - Shop Manager emails (2)
  * - Project Lead emails (2)
  * - Customer emails (6)
  * 
@@ -35,7 +35,7 @@ class Arsol_Email_Manager {
      * @return array Modified email classes.
      */
     public static function add_emails( $email_classes ) {
-        // Include role-based email classes (9 total)
+        // Include role-based email classes (10 total)
         
         // Customer emails (6)
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-new-request.php';
@@ -45,8 +45,9 @@ class Arsol_Email_Manager {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-status.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-completion.php';
         
-        // Shop Manager emails (1)
+        // Shop Manager emails (2)
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-request.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-project.php';
         
         // Project Lead emails (2)
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-processing.php';
@@ -64,6 +65,7 @@ class Arsol_Email_Manager {
         
         // Shop Manager emails
         $email_classes['WC_Email_Admin_New_Request'] = new WC_Email_Admin_New_Request();
+        $email_classes['WC_Email_Admin_New_Project'] = new WC_Email_Admin_New_Project();
         
         // Project Lead emails
         $email_classes['WC_Email_Proposal_Processing'] = new WC_Email_Proposal_Processing();
