@@ -39,8 +39,9 @@ class Project_Creation_Email extends Base_Email {
         $this->description = 'Email sent when project is created and order is ready';
         
         $this->customer_email = true;
-        $this->admin_email = true;
-        $this->project_lead_email = true;
+        $this->admin_email = false;
+        $this->shop_manager_email = false;
+        $this->project_lead_email = false;
         
         $this->heading = 'Your Order Is Ready!';
         $this->subject = 'Your Order Is Ready! Complete Your Purchase - #{order_id}';

@@ -18,6 +18,7 @@ abstract class Base_Email extends \WC_Email {
      */
     protected $customer_email = false;
     protected $admin_email = false;
+    protected $shop_manager_email = false;
     protected $project_lead_email = false;
     public $template_base;
     protected $request_id;
@@ -250,6 +251,9 @@ abstract class Base_Email extends \WC_Email {
         if ($this->admin_email) {
             $recipients[] = 'Admins';
         }
+        if ($this->shop_manager_email) {
+            $recipients[] = 'Shop Managers';
+        }
         if (property_exists($this, 'project_lead_email') && $this->project_lead_email) {
             $recipients[] = 'Project Lead';
         }
@@ -315,10 +319,47 @@ abstract class Base_Email extends \WC_Email {
         if ($this->admin_email) {
             $recipients[] = 'Admins';
         }
+        if ($this->shop_manager_email) {
+            $recipients[] = 'Shop Managers';
+        }
         if ($this->project_lead_email) {
             $recipients[] = 'Project Lead';
         }
         
         return implode(', ', $recipients);
+    }
+    
+    /**
+     * Get admin and shop manager email addresses
+     * 
+     * @return array
+     */
+    protected function get_admin_and_shop_manager_emails() {
+        $emails = array();
+        
+        // Get users with specific project management capabilities
+        $admins = get_users(array(
+            'capability' => 'manage_arsol_projects',
+            'fields' => 'user_email'
+        ));
+        
+        if (empty($admins)) {
+            // Fallback to administrators
+            $admins = get_users(array(
+                'role' => 'administrator',
+                'fields' => 'user_email'
+            ));
+        }
+        
+        // Get shop managers
+        $shop_managers = get_users(array(
+            'role' => 'shop_manager',
+            'fields' => 'user_email'
+        ));
+        
+        // Combine and remove duplicates
+        $emails = array_unique(array_merge($admins, $shop_managers));
+        
+        return $emails;
     }
 }

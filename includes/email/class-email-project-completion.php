@@ -21,8 +21,9 @@ class Project_Completion_Email extends Base_Email {
         $this->description = 'Email sent when a project is completed';
         
         $this->customer_email = true;
-        $this->admin_email = true;
-        $this->project_lead_email = true;
+        $this->admin_email = false;
+        $this->shop_manager_email = false;
+        $this->project_lead_email = false;
         
         $this->heading = 'Project Completed Successfully!';
         $this->subject = '🎉 Project Complete: {project_title} - #{project_id}';

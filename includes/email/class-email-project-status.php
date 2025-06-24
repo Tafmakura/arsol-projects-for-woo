@@ -40,6 +40,7 @@ class Project_Status_Email extends Base_Email {
         
         $this->customer_email = true;
         $this->admin_email = true;
+        $this->shop_manager_email = false;
         $this->project_lead_email = true;
         
         $this->heading = 'Project Status Update';

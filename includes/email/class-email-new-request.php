@@ -32,8 +32,9 @@ class New_Request_Email extends Base_Email {
         $this->title = 'New Project Request';
         $this->description = 'Email sent when a new project request is submitted';
         
-        $this->customer_email = true;
+        $this->customer_email = false;
         $this->admin_email = true;
+        $this->shop_manager_email = true;
         
         $this->heading = 'New Project Request Submitted';
         $this->subject = 'Your Project Request Has Been Received - #{request_id}';
@@ -83,11 +84,8 @@ class New_Request_Email extends Base_Email {
         );
         
         if ($this->is_enabled() && $this->get_recipient()) {
-            // Send to customer
-            $this->send_customer_email();
-            
-            // Send to admins
-            $this->send_admin_email();
+            // Send to admins and shop managers only
+            $this->send_admin_and_shop_manager_email();
         }
         
         $this->restore_locale();
@@ -114,13 +112,13 @@ class New_Request_Email extends Base_Email {
     }
     
     /**
-     * Send email to admins
+     * Send email to admins and shop managers
      */
-    private function send_admin_email() {
-        $admin_emails = $this->get_admin_emails();
+    private function send_admin_and_shop_manager_email() {
+        $admin_and_manager_emails = $this->get_admin_and_shop_manager_emails();
         
-        foreach ($admin_emails as $admin_email) {
-            $this->recipient = $admin_email;
+        foreach ($admin_and_manager_emails as $email) {
+            $this->recipient = $email;
             $this->heading = 'New Project Request Submitted';
             $this->subject = $this->replace_placeholders(
                 'New Project Request: {request_title}',
@@ -135,31 +133,6 @@ class New_Request_Email extends Base_Email {
                 $this->get_attachments()
             );
         }
-    }
-    
-    /**
-     * Get admin email addresses
-     * 
-     * @return array
-     */
-    private function get_admin_emails() {
-        $admin_emails = array();
-        
-        // Get users with specific capabilities
-        $admins = get_users(array(
-            'capability' => 'manage_arsol_projects',
-            'fields' => 'user_email'
-        ));
-        
-        if (empty($admins)) {
-            // Fallback to administrators
-            $admins = get_users(array(
-                'role' => 'administrator',
-                'fields' => 'user_email'
-            ));
-        }
-        
-        return $admins;
     }
     
     /**
