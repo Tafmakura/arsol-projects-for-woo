@@ -1,6 +1,6 @@
 <?php
 /**
- * New Request Email
+ * Customer New Request Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -9,12 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-if ( ! class_exists( 'WC_Email' ) ) {
-    return;
-}
-
 /**
- * New Request Email Class
+ * Customer New Request Email Class
+ * Sent to customers when their project request is created
  */
 class WC_Email_New_Request extends WC_Email {
 
@@ -23,22 +20,22 @@ class WC_Email_New_Request extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'new_request';
-        $this->title          = __( 'New Project Request', 'arsol-pfw' );
-        $this->description    = __( 'New project request emails are sent when a customer submits a new project request.', 'arsol-pfw' );
+        $this->title          = __( 'Customer: Request Submitted', 'arsol-pfw' );
+        $this->description    = __( 'Customer confirmation when their project request is submitted.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-new-request.php';
         $this->placeholders   = array(
             '{request_id}' => '',
         );
 
-        // Triggers for this email
-        add_action( 'arsol_new_request_notification', array( $this, 'trigger' ), 10, 1 );
+        // Listen to main workflow hook
+        add_action( 'arsol_new_request_created', array( $this, 'trigger' ), 10, 2 );
 
         // Call parent constructor
         parent::__construct();
 
-        // Other settings
-        $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
+        // This email is sent to the customer who created the request
+        $this->customer_email = true;
     }
 
     /**
@@ -47,7 +44,7 @@ class WC_Email_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( '[{site_title}] New Project Request #{request_id}', 'arsol-projects-for-woo' );
+        return __( 'Your Project Request Has Been Received #{request_id}', 'arsol-pfw' );
     }
 
     /**
@@ -56,23 +53,26 @@ class WC_Email_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'New Project Request', 'arsol-projects-for-woo' );
+        return __( 'Request Submitted Successfully', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
      * @param int $request_id Request ID.
+     * @param int $customer_id Customer ID.
      */
-    public function trigger( $request_id ) {
+    public function trigger( $request_id, $customer_id ) {
         $this->setup_locale();
 
-        if ( $request_id ) {
+        if ( $request_id && $customer_id ) {
             $this->object = get_post( $request_id );
+            $this->placeholders['{request_id}'] = $request_id;
             
-            if ( $this->object ) {
-                $this->placeholders['{request_id}'] = $request_id;
-                $this->placeholders['{site_title}'] = $this->get_blogname();
+            // Get customer email
+            $customer = get_user_by( 'id', $customer_id );
+            if ( $customer ) {
+                $this->recipient = $customer->user_email;
             }
         }
 
@@ -92,7 +92,7 @@ class WC_Email_New_Request extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'request_id'    => $this->object ? $this->object->ID : '',
+                'request_id'    => $this->placeholders['{request_id}'],
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => false,
@@ -108,40 +108,32 @@ class WC_Email_New_Request extends WC_Email {
      */
     public function init_form_fields() {
         $this->form_fields = array(
-            'enabled'    => array(
-                'title'   => __( 'Enable/Disable', 'arsol-projects-for-woo' ),
+            'enabled' => array(
+                'title'   => __( 'Enable/Disable', 'arsol-pfw' ),
                 'type'    => 'checkbox',
-                'label'   => __( 'Enable this email notification', 'arsol-projects-for-woo' ),
+                'label'   => __( 'Enable this email notification', 'arsol-pfw' ),
                 'default' => 'yes',
             ),
-            'recipient'  => array(
-                'title'       => __( 'Recipient(s)', 'arsol-projects-for-woo' ),
-                'type'        => 'text',
-                'description' => sprintf( __( 'Enter recipients (comma separated) for this email. Defaults to %s.', 'arsol-projects-for-woo' ), '<code>' . esc_attr( get_option( 'admin_email' ) ) . '</code>' ),
-                'placeholder' => '',
-                'default'     => '',
-                'desc_tip'    => true,
-            ),
-            'subject'    => array(
-                'title'       => __( 'Subject', 'arsol-projects-for-woo' ),
+            'subject' => array(
+                'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-projects-for-woo' ), '<code>{site_title}, {request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
-            'heading'    => array(
-                'title'       => __( 'Email heading', 'arsol-projects-for-woo' ),
+            'heading' => array(
+                'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-projects-for-woo' ), '<code>{site_title}, {request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),
             'email_type' => array(
-                'title'       => __( 'Email type', 'arsol-projects-for-woo' ),
+                'title'       => __( 'Email type', 'arsol-pfw' ),
                 'type'        => 'select',
-                'description' => __( 'Choose which format of email to send.', 'arsol-projects-for-woo' ),
+                'description' => __( 'Choose which format of email to send.', 'arsol-pfw' ),
                 'default'     => 'html',
                 'class'       => 'email_type wc-enhanced-select',
                 'options'     => $this->get_email_type_options(),
@@ -149,4 +141,4 @@ class WC_Email_New_Request extends WC_Email {
             ),
         );
     }
-} 
+}

@@ -43,6 +43,17 @@ do_action('woocommerce_email_header', $email_heading, $email); ?>
     <h3><?php _e('What this means', 'arsol-projects-for-woo'); ?></h3>
     <p><?php _e('Our team is now actively reviewing your request. We\'re evaluating the requirements and will contact you if we need any additional information.', 'arsol-projects-for-woo'); ?></p>
     
+    <?php 
+    // Get under-review feedback from metabox
+    $under_review_feedback = get_post_meta($request->ID, '_arsol_pfw_under_review_feedback', true);
+    if (!empty($under_review_feedback)): 
+    ?>
+    <h3><?php _e('Review Notes', 'arsol-projects-for-woo'); ?></h3>
+    <blockquote style="border-left: 4px solid #96588a; padding: 15px; margin: 20px 0; background-color: #f9f9f9;">
+        <?php echo wp_kses_post(wpautop($under_review_feedback)); ?>
+    </blockquote>
+    <?php endif; ?>
+    
     <h3><?php _e('Next steps', 'arsol-projects-for-woo'); ?></h3>
     <ul>
         <li><?php _e('We\'ll complete our review within 2-3 business days', 'arsol-projects-for-woo'); ?></li>
@@ -52,15 +63,28 @@ do_action('woocommerce_email_header', $email_heading, $email); ?>
         
     <?php elseif ($new_status === 'on-hold'): ?>
     <h3><?php _e('What this means', 'arsol-projects-for-woo'); ?></h3>
-    <p><?php _e('Your request has been temporarily placed on hold. This may be due to:', 'arsol-projects-for-woo'); ?></p>
+    <p><?php _e('Your request has been temporarily placed on hold.', 'arsol-projects-for-woo'); ?></p>
+    
+    <?php 
+    // Get on-hold feedback from metabox
+    $on_hold_feedback = get_post_meta($request->ID, '_arsol_pfw_on_hold_feedback', true);
+    if (!empty($on_hold_feedback)): 
+    ?>
+    <h3><?php _e('Reason for Hold', 'arsol-projects-for-woo'); ?></h3>
+    <blockquote style="border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; background-color: #fff3cd;">
+        <?php echo wp_kses_post(wpautop($on_hold_feedback)); ?>
+    </blockquote>
+    <?php else: ?>
+    <p><?php _e('This may be due to:', 'arsol-projects-for-woo'); ?></p>
     <ul>
         <li><?php _e('Additional information needed from you', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Current capacity constraints', 'arsol-projects-for-woo'); ?></li>
         <li><?php _e('Technical clarifications required', 'arsol-projects-for-woo'); ?></li>
         </ul>
+    <?php endif; ?>
         
     <h3><?php _e('Next steps', 'arsol-projects-for-woo'); ?></h3>
-    <p><?php _e('Our team will contact you directly with details about why your request is on hold and what steps are needed to proceed.', 'arsol-projects-for-woo'); ?></p>
+    <p><?php _e('Our team will contact you directly with details about what steps are needed to proceed.', 'arsol-projects-for-woo'); ?></p>
         
     <?php elseif ($new_status === 'approved'): ?>
     <h3><?php _e('🎉 Great news!', 'arsol-projects-for-woo'); ?></h3>

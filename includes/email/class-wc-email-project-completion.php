@@ -1,6 +1,6 @@
 <?php
 /**
- * Project Completion Email
+ * Customer Project Completion Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -10,7 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Project Completion Email Class
+ * Customer Project Completion Email Class
+ * Sent to customers when their project is completed
  */
 class WC_Email_Project_Completion extends WC_Email {
 
@@ -19,22 +20,22 @@ class WC_Email_Project_Completion extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'project_completion';
-        $this->title          = __( 'Project Completion', 'arsol-pfw' );
-        $this->description    = __( 'Notification when a project is completed.', 'arsol-pfw' );
+        $this->title          = __( 'Customer: Project Completed', 'arsol-pfw' );
+        $this->description    = __( 'Customer notification when their project is completed.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-project-completion.php';
         $this->placeholders   = array(
             '{project_id}' => '',
         );
 
-        // Triggers for this email
-        add_action( 'arsol_project_completion_notification', array( $this, 'trigger' ), 10, 1 );
+        // Listen to main workflow hook
+        add_action( 'arsol_project_completed', array( $this, 'trigger' ), 10, 2 );
 
         // Call parent constructor
         parent::__construct();
 
-        // Other settings
-        $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
+        // This email is sent to the customer who owns the project
+        $this->customer_email = true;
     }
 
     /**
@@ -43,7 +44,7 @@ class WC_Email_Project_Completion extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( 'Project Completed #{project_id}', 'arsol-pfw' );
+        return __( 'Your Project is Complete! #{project_id}', 'arsol-pfw' );
     }
 
     /**
@@ -52,20 +53,27 @@ class WC_Email_Project_Completion extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Project Completion', 'arsol-pfw' );
+        return __( 'Project Completed Successfully!', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
      * @param int $project_id Project ID.
+     * @param int $customer_id Customer ID.
      */
-    public function trigger( $project_id ) {
+    public function trigger( $project_id, $customer_id ) {
         $this->setup_locale();
 
-        if ( $project_id ) {
-            $this->object                    = get_post( $project_id );
+        if ( $project_id && $customer_id ) {
+            $this->object = get_post( $project_id );
             $this->placeholders['{project_id}'] = $project_id;
+            
+            // Get customer email
+            $customer = get_user_by( 'id', $customer_id );
+            if ( $customer ) {
+                $this->recipient = $customer->user_email;
+            }
         }
 
         if ( $this->is_enabled() && $this->get_recipient() ) {
@@ -96,12 +104,6 @@ class WC_Email_Project_Completion extends WC_Email {
     }
 
     /**
-     * Get content plain.
-     *
-     * @return string
-     */
-
-    /**
      * Initialize settings form fields.
      */
     public function init_form_fields() {
@@ -111,14 +113,6 @@ class WC_Email_Project_Completion extends WC_Email {
                 'type'    => 'checkbox',
                 'label'   => __( 'Enable this email notification', 'arsol-pfw' ),
                 'default' => 'yes',
-            ),
-            'recipient' => array(
-                'title'       => __( 'Recipient(s)', 'arsol-pfw' ),
-                'type'        => 'text',
-                'description' => sprintf( __( 'Enter recipients (comma separated) for this email. Defaults to %s.', 'arsol-pfw' ), '<code>' . esc_attr( get_option( 'admin_email' ) ) . '</code>' ),
-                'placeholder' => '',
-                'default'     => '',
-                'desc_tip'    => true,
             ),
             'subject' => array(
                 'title'       => __( 'Subject', 'arsol-pfw' ),

@@ -1,6 +1,6 @@
 <?php
 /**
- * Admin New Request Email
+ * Shop Manager New Request Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -10,7 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Admin New Request Email Class
+ * Shop Manager New Request Email Class
+ * Sent to shop managers when a new project request is created
  */
 class WC_Email_Admin_New_Request extends WC_Email {
 
@@ -19,21 +20,22 @@ class WC_Email_Admin_New_Request extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'admin_new_request';
-        $this->title          = __( 'Admin New Request', 'arsol-pfw' );
-        $this->description    = __( 'Admin notification when a new project request is submitted.', 'arsol-pfw' );
+        $this->title          = __( 'Shop Manager: New Request', 'arsol-pfw' );
+        $this->description    = __( 'Shop manager notification when a new project request is submitted.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-admin-new-request.php';
         $this->placeholders   = array(
             '{request_id}' => '',
+            '{customer_id}' => '',
         );
 
-        // Triggers for this email
-        add_action( 'arsol_admin_new_request_notification', array( $this, 'trigger' ), 10, 1 );
+        // Listen to main workflow hook
+        add_action( 'arsol_new_request_created', array( $this, 'trigger' ), 10, 2 );
 
         // Call parent constructor
         parent::__construct();
 
-        // Other settings
+        // Target shop managers
         $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
     }
 
@@ -43,7 +45,7 @@ class WC_Email_Admin_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( 'New Project Request #{request_id}', 'arsol-pfw' );
+        return __( '[Shop Manager] New Project Request #{request_id}', 'arsol-pfw' );
     }
 
     /**
@@ -52,20 +54,22 @@ class WC_Email_Admin_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'New Project Request', 'arsol-pfw' );
+        return __( 'New Project Request Submitted', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
      * @param int $request_id Request ID.
+     * @param int $customer_id Customer ID.
      */
-    public function trigger( $request_id ) {
+    public function trigger( $request_id, $customer_id ) {
         $this->setup_locale();
 
         if ( $request_id ) {
-            $this->object                    = get_post( $request_id );
+            $this->object = get_post( $request_id );
             $this->placeholders['{request_id}'] = $request_id;
+            $this->placeholders['{customer_id}'] = $customer_id;
         }
 
         if ( $this->is_enabled() && $this->get_recipient() ) {
@@ -84,7 +88,8 @@ class WC_Email_Admin_New_Request extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'request_id'    => $this->object ? $this->object->ID : '',
+                'request_id'    => $this->placeholders['{request_id}'],
+                'customer_id'   => $this->placeholders['{customer_id}'],
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => true,
                 'plain_text'    => false,
@@ -109,7 +114,7 @@ class WC_Email_Admin_New_Request extends WC_Email {
             'recipient' => array(
                 'title'       => __( 'Recipient(s)', 'arsol-pfw' ),
                 'type'        => 'text',
-                'description' => sprintf( __( 'Enter recipients (comma separated) for this email. Defaults to %s.', 'arsol-pfw' ), '<code>' . esc_attr( get_option( 'admin_email' ) ) . '</code>' ),
+                'description' => sprintf( __( 'Enter shop manager emails (comma separated). Defaults to %s.', 'arsol-pfw' ), '<code>' . esc_attr( get_option( 'admin_email' ) ) . '</code>' ),
                 'placeholder' => '',
                 'default'     => '',
                 'desc_tip'    => true,
@@ -118,7 +123,7 @@ class WC_Email_Admin_New_Request extends WC_Email {
                 'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}, {customer_id}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
@@ -126,7 +131,7 @@ class WC_Email_Admin_New_Request extends WC_Email {
                 'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}, {customer_id}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),
@@ -141,4 +146,4 @@ class WC_Email_Admin_New_Request extends WC_Email {
             ),
         );
     }
-} 
+}

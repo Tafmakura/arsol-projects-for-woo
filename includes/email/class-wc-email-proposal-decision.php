@@ -1,6 +1,6 @@
 <?php
 /**
- * Proposal Decision Email
+ * Project Lead Proposal Decision Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -9,12 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-if ( ! class_exists( 'WC_Email' ) ) {
-    return;
-}
-
 /**
- * Proposal Decision Email Class
+ * Project Lead Proposal Decision Email Class
+ * Sent to project leads when a proposal decision is made
  */
 class WC_Email_Proposal_Decision extends WC_Email {
 
@@ -23,21 +20,23 @@ class WC_Email_Proposal_Decision extends WC_Email {
      */
     public function __construct() {
         $this->id             = 'proposal_decision';
-        $this->title          = __( 'Proposal Decision', 'arsol-pfw' );
-        $this->description    = __( 'Proposal decision emails are sent when a proposal is approved or rejected.', 'arsol-pfw' );
+        $this->title          = __( 'Project Lead: Proposal Decision', 'arsol-pfw' );
+        $this->description    = __( 'Project lead notification when a proposal decision is made.', 'arsol-pfw' );
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
         $this->template_html  = 'email-proposal-decision.php';
         $this->placeholders   = array(
             '{proposal_id}' => '',
+            '{old_status}' => '',
+            '{new_status}' => '',
         );
 
-        // Triggers for this email
-        add_action( 'arsol_proposal_decision_notification', array( $this, 'trigger' ), 10, 1 );
+        // Listen to main workflow hook
+        add_action( 'arsol_proposal_status_changed', array( $this, 'trigger' ), 10, 3 );
 
         // Call parent constructor
         parent::__construct();
 
-        // Other settings
+        // Default to admin email, but should be set to project lead
         $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
     }
 
@@ -47,7 +46,7 @@ class WC_Email_Proposal_Decision extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( '[{site_title}] Proposal {decision} - #{proposal_id}', 'arsol-projects-for-woo' );
+        return __( '[Project Lead] Proposal {new_status} #{proposal_id}', 'arsol-pfw' );
     }
 
     /**
@@ -56,33 +55,31 @@ class WC_Email_Proposal_Decision extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Proposal Decision', 'arsol-projects-for-woo' );
+        return __( 'Proposal Status Update', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
      * @param int    $proposal_id Proposal ID.
-     * @param int    $customer_id Customer ID.
-     * @param string $decision Decision (approved/rejected).
+     * @param string $old_status Old status.
+     * @param string $new_status New status.
      */
-    public function trigger( $proposal_id, $customer_id, $decision = '' ) {
+    public function trigger( $proposal_id, $old_status, $new_status ) {
         $this->setup_locale();
 
         if ( $proposal_id ) {
             $this->object = get_post( $proposal_id );
+            $this->placeholders['{proposal_id}'] = $proposal_id;
+            $this->placeholders['{old_status}'] = ucfirst( str_replace( '-', ' ', $old_status ) );
+            $this->placeholders['{new_status}'] = ucfirst( str_replace( '-', ' ', $new_status ) );
             
-            if ( $this->object ) {
-                $this->placeholders['{proposal_id}'] = $proposal_id;
-                $this->placeholders['{decision}'] = ucfirst( $decision );
-                $this->placeholders['{site_title}'] = $this->get_blogname();
-                
-                // Set recipient based on decision
-                if ( $customer_id ) {
-                    $customer = get_user_by( 'id', $customer_id );
-                    if ( $customer ) {
-                        $this->placeholders['{customer_name}'] = $customer->display_name;
-                    }
+            // Get project lead from proposal meta
+            $project_lead_id = get_post_meta( $proposal_id, 'project_lead_id', true );
+            if ( $project_lead_id ) {
+                $project_lead = get_user_by( 'id', $project_lead_id );
+                if ( $project_lead ) {
+                    $this->recipient = $project_lead->user_email;
                 }
             }
         }
@@ -103,7 +100,9 @@ class WC_Email_Proposal_Decision extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'proposal_id'   => $this->object ? $this->object->ID : '',
+                'proposal_id'   => $this->placeholders['{proposal_id}'],
+                'old_status'    => $this->placeholders['{old_status}'],
+                'new_status'    => $this->placeholders['{new_status}'],
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => false,
@@ -119,40 +118,32 @@ class WC_Email_Proposal_Decision extends WC_Email {
      */
     public function init_form_fields() {
         $this->form_fields = array(
-            'enabled'    => array(
-                'title'   => __( 'Enable/Disable', 'arsol-projects-for-woo' ),
+            'enabled' => array(
+                'title'   => __( 'Enable/Disable', 'arsol-pfw' ),
                 'type'    => 'checkbox',
-                'label'   => __( 'Enable this email notification', 'arsol-projects-for-woo' ),
+                'label'   => __( 'Enable this email notification', 'arsol-pfw' ),
                 'default' => 'yes',
             ),
-            'recipient'  => array(
-                'title'       => __( 'Recipient(s)', 'arsol-projects-for-woo' ),
-                'type'        => 'text',
-                'description' => sprintf( __( 'Enter recipients (comma separated) for this email. Defaults to %s.', 'arsol-projects-for-woo' ), '<code>' . esc_attr( get_option( 'admin_email' ) ) . '</code>' ),
-                'placeholder' => '',
-                'default'     => '',
-                'desc_tip'    => true,
-            ),
-            'subject'    => array(
-                'title'       => __( 'Subject', 'arsol-projects-for-woo' ),
+            'subject' => array(
+                'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-projects-for-woo' ), '<code>{site_title}, {proposal_id}, {decision}, {customer_name}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}, {old_status}, {new_status}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
-            'heading'    => array(
-                'title'       => __( 'Email heading', 'arsol-projects-for-woo' ),
+            'heading' => array(
+                'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-projects-for-woo' ), '<code>{site_title}, {proposal_id}, {decision}, {customer_name}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}, {old_status}, {new_status}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),
             'email_type' => array(
-                'title'       => __( 'Email type', 'arsol-projects-for-woo' ),
+                'title'       => __( 'Email type', 'arsol-pfw' ),
                 'type'        => 'select',
-                'description' => __( 'Choose which format of email to send.', 'arsol-projects-for-woo' ),
+                'description' => __( 'Choose which format of email to send.', 'arsol-pfw' ),
                 'default'     => 'html',
                 'class'       => 'email_type wc-enhanced-select',
                 'options'     => $this->get_email_type_options(),
@@ -160,4 +151,4 @@ class WC_Email_Proposal_Decision extends WC_Email {
             ),
         );
     }
-} 
+}

@@ -10,58 +10,67 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$status_icon = isset($status_icon) ? $status_icon : '🔧';
-$color_scheme = isset($color_scheme) ? $color_scheme : array('background' => '#cce5ff', 'text' => '#0073aa', 'cta' => '#0073aa');
+do_action('woocommerce_email_header', $email_heading, $email);
 ?>
 
-<div style="background-color: <?php echo esc_attr($color_scheme['background']); ?>; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <h2 style="color: <?php echo esc_attr($color_scheme['text']); ?>; margin: 0 0 15px 0;">
-        <?php echo $status_icon; ?> <?php echo esc_html($email_heading); ?>
-    </h2>
-    
-    <p>Hello <?php echo esc_html($customer->first_name ?: $customer->display_name); ?>,</p>
-    
-    <p>Great news! We've started working on your proposal and wanted to keep you informed of our progress.</p>
-    
-    <div style="background-color: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
-        <h3 style="margin-top: 0;">Proposal Details:</h3>
-        <p><strong>Proposal ID:</strong> #<?php echo esc_html($proposal->ID); ?></p>
-        <p><strong>Title:</strong> <?php echo esc_html($proposal->post_title); ?></p>
+<p><?php printf(__('Hello %s,', 'arsol-projects-for-woo'), esc_html($customer->first_name ?: $customer->display_name)); ?></p>
+
+<p><?php _e('Great news! We\'ve started working on your proposal and wanted to keep you informed of our progress.', 'arsol-projects-for-woo'); ?></p>
+
+<h2><?php _e('Proposal Details', 'arsol-projects-for-woo'); ?></h2>
+
+<table class="td" cellspacing="0" cellpadding="6" style="width: 100%; font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif;" border="1">
+    <tbody>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Proposal ID:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;">#<?php echo esc_html($proposal->ID); ?></td>
+        </tr>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Title:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;"><?php echo esc_html($proposal->post_title); ?></td>
+        </tr>
         <?php if ($project_lead): ?>
-        <p><strong>Project Lead:</strong> <?php echo esc_html($project_lead->first_name . ' ' . $project_lead->last_name); ?></p>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Project Lead:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;"><?php echo esc_html($project_lead->first_name . ' ' . $project_lead->last_name); ?></td>
+        </tr>
         <?php endif; ?>
-        <p><strong>Status:</strong> <span style="color: <?php echo esc_attr($color_scheme['text']); ?>; font-weight: bold;">In Progress</span></p>
-    </div>
-    
-    <p><strong>What we're working on:</strong></p>
-    <ul>
-        <li>Detailed project scope and requirements analysis</li>
-        <li>Resource allocation and timeline planning</li>
-        <li>Accurate pricing and cost estimation</li>
-        <li>Technical specifications and deliverables</li>
-    </ul>
-    
-    <p><strong>Timeline:</strong></p>
-    <p>We typically complete proposals within 3-5 business days. You'll receive a notification as soon as your proposal is ready for review.</p>
-    
-    <?php if ($project_lead): ?>
-    <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid <?php echo esc_attr($color_scheme['cta']); ?>; margin: 15px 0;">
-        <h4 style="margin-top: 0;">Your Project Lead</h4>
-        <p><strong><?php echo esc_html($project_lead->first_name . ' ' . $project_lead->last_name); ?></strong> has been assigned to your project and will be your primary point of contact throughout the proposal process.</p>
-    </div>
-    <?php endif; ?>
-    
-    <div style="text-align: center; margin: 25px 0;">
-        <a href="<?php echo esc_url($portal_url); ?>" 
-           style="background-color: <?php echo esc_attr($color_scheme['cta']); ?>; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
-            Track Progress in Portal
-        </a>
-    </div>
-    
-    <p>You can monitor the progress and view all updates in your customer portal. We'll keep you informed of any major milestones.</p>
-    
-    <p>If you have any questions or additional requirements, please don't hesitate to reach out.</p>
-    
-    <p>Best regards,<br>
-    The <?php echo esc_html(get_bloginfo('name')); ?> Team</p>
+        <tr>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Status:', 'arsol-projects-for-woo'); ?></th>
+            <td class="td" style="text-align:left;"><strong><?php _e('In Progress', 'arsol-projects-for-woo'); ?></strong></td>
+        </tr>
+    </tbody>
+</table>
+
+<h3><?php _e('What we\'re working on:', 'arsol-projects-for-woo'); ?></h3>
+<ul>
+    <li><?php _e('Detailed project scope and requirements analysis', 'arsol-projects-for-woo'); ?></li>
+    <li><?php _e('Resource allocation and timeline planning', 'arsol-projects-for-woo'); ?></li>
+    <li><?php _e('Accurate pricing and cost estimation', 'arsol-projects-for-woo'); ?></li>
+    <li><?php _e('Technical specifications and deliverables', 'arsol-projects-for-woo'); ?></li>
+</ul>
+
+<h3><?php _e('Timeline:', 'arsol-projects-for-woo'); ?></h3>
+<p><?php _e('We typically complete proposals within 3-5 business days. You\'ll receive a notification as soon as your proposal is ready for review.', 'arsol-projects-for-woo'); ?></p>
+
+<?php if ($project_lead): ?>
+<h3><?php _e('Your Project Lead', 'arsol-projects-for-woo'); ?></h3>
+<p><strong><?php echo esc_html($project_lead->first_name . ' ' . $project_lead->last_name); ?></strong> <?php _e('has been assigned to your project and will be your primary point of contact throughout the proposal process.', 'arsol-projects-for-woo'); ?></p>
+<?php endif; ?>
+
+<div style="text-align: center; margin: 25px 0;">
+    <a class="link" href="<?php echo esc_url($portal_url); ?>" style="background-color: #96588a; color: #ffffff; padding: 12px 25px; text-decoration: none; border-radius: 5px; display: inline-block; font-weight: bold;">
+        <?php _e('Track Progress in Portal', 'arsol-projects-for-woo'); ?>
+    </a>
 </div>
+
+<p><?php _e('You can monitor the progress and view all updates in your customer portal. We\'ll keep you informed of any major milestones.', 'arsol-projects-for-woo'); ?></p>
+
+<p><?php _e('If you have any questions or additional requirements, please don\'t hesitate to reach out.', 'arsol-projects-for-woo'); ?></p>
+
+<p>
+    <?php _e('Best regards,', 'arsol-projects-for-woo'); ?><br>
+    <?php printf(__('The %s Team', 'arsol-projects-for-woo'), esc_html(get_bloginfo('name'))); ?>
+</p>
+
+<?php do_action('woocommerce_email_footer', $email);
