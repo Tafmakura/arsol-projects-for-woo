@@ -68,33 +68,95 @@ class New_Proposal_Email extends Base_Email {
         $this->restore_locale();
     }
     
+    /**
+     * Get email content
+     * 
+     * @return string
+     */
     public function get_content() {
-        $proposal = $this->object;
-        $customer = get_user_by('id', $this->customer_id);
-        $project_lead_id = get_post_meta($this->proposal_id, '_arsol_pfw_proposal_project_lead_id', true);
-        $project_lead = $project_lead_id ? get_user_by('id', $project_lead_id) : null;
-
-        $content = '<h2>' . sprintf(__('New Project Proposal #%d', 'arsol-pfw'), $this->proposal_id) . '</h2>';
-        $content .= '<p>' . sprintf(__('A new proposal has been created for project: %s', 'arsol-pfw'), '<strong>' . esc_html($proposal->post_title) . '</strong>') . '</p>';
-        
-        $content .= '<h3>' . __('Details', 'arsol-pfw') . '</h3>';
-        $content .= '<ul>';
-        $content .= '<li><strong>' . __('Customer:', 'arsol-pfw') . '</strong> ' . esc_html($customer->display_name) . ' (' . esc_html($customer->user_email) . ')</li>';
-        $content .= '<li><strong>' . __('Created:', 'arsol-pfw') . '</strong> ' . esc_html(wp_date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($proposal->post_date))) . '</li>';
-        
-        if ($project_lead) {
-            $content .= '<li><strong>' . __('Assigned to:', 'arsol-pfw') . '</strong> ' . esc_html($project_lead->display_name) . '</li>';
+        // For preview mode, set up dummy data if needed
+        if (!$this->object) {
+            $this->setup_preview_data();
         }
-        $content .= '</ul>';
         
-        $content .= '<h3>' . __('Next Steps', 'arsol-pfw') . '</h3>';
-        $content .= '<ul>';
-        $content .= '<li>' . __('Complete the proposal details', 'arsol-pfw') . '</li>';
-        $content .= '<li>' . __('Add pricing and timeline', 'arsol-pfw') . '</li>';
-        $content .= '<li>' . __('Send to customer for review', 'arsol-pfw') . '</li>';
-        $content .= '</ul>';
+        $template_vars = array(
+            'proposal' => $this->object,
+            'customer' => get_user_by('id', $this->customer_id) ?: $this->get_dummy_customer(),
+            'portal_url' => $this->get_portal_url('project-view-proposal', $this->proposal_id ?: 123),
+            'email_heading' => $this->get_heading(),
+            'email' => $this,
+            'color_scheme' => $this->get_color_scheme('success'),
+            'status_icon' => $this->get_status_icon('success')
+        );
+        
+        // Try absolute path first
+        $template_file = $this->template_base . $this->template_html;
+        
+        if (file_exists($template_file)) {
+            // Load template directly
+            extract($template_vars);
+            ob_start();
+            include $template_file;
+            $content = ob_get_clean();
+        } else {
+            // Fallback to WooCommerce method
+            $content = wc_get_template_html(
+                $this->template_html,
+                $template_vars,
+                '',
+                $this->template_base
+            );
+        }
         
         return $content;
+    }
+    
+    /**
+     * Setup preview data for email preview
+     */
+    private function setup_preview_data() {
+        if (!$this->object) {
+            // Create dummy proposal object for preview
+            $this->object = (object) array(
+                'ID' => 123,
+                'post_title' => 'Sample Project Proposal',
+                'post_date' => current_time('mysql'),
+                'post_content' => 'This is a sample project proposal for preview purposes.',
+                'post_author' => 1
+            );
+        }
+        
+        if (!$this->proposal_id) {
+            $this->proposal_id = 123;
+        }
+        
+        if (!$this->customer_id) {
+            $this->customer_id = 1;
+        }
+    }
+    
+    /**
+     * Get dummy customer for preview
+     */
+    private function get_dummy_customer() {
+        return (object) array(
+            'ID' => 1,
+            'user_email' => 'customer@example.com',
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'display_name' => 'John Doe'
+        );
+    }
+    
+    /**
+     * Admin options for WooCommerce email settings
+     */
+    public function admin_options() {
+        // Set up preview data for admin preview
+        $this->setup_preview_data();
+        
+        // Call parent admin_options
+        parent::admin_options();
     }
     
     public function init_form_fields() {

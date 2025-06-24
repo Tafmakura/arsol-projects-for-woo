@@ -273,4 +273,43 @@ class Proposal_Decision_Email extends Base_Email {
      * 
      * @return string
      */
+    public function get_plain_text_content() {
+        // Implementation of get_plain_text_content method
+    }
+    
+    /**
+     * Initialize settings form fields
+     */
+    public function init_form_fields() {
+        parent::init_form_fields();
+        
+        $this->form_fields['recipient'] = array(
+            'title'       => 'Recipient(s)',
+            'type'        => 'text',
+            'description' => 'Enter recipients (comma separated) for admin notifications. Leave blank to send to all administrators.',
+            'default'     => '',
+            'desc_tip'    => true
+        );
+    }
+    
+    /**
+     * Admin options for WooCommerce email settings
+     */
+    public function admin_options() {
+        // Set up preview data for admin preview
+        if (!$this->object) {
+            $this->object = (object) array(
+                'ID' => 123,
+                'post_title' => 'Sample Proposal',
+                'post_date' => current_time('mysql'),
+                'post_content' => 'Sample content',
+                'post_author' => 1
+            );
+        }
+        if (!isset($this->proposal_id)) $this->proposal_id = 123;
+        if (!isset($this->customer_id)) $this->customer_id = 1;
+        
+        // Call parent admin_options
+        parent::admin_options();
+    }
 }
