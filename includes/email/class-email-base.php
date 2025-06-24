@@ -18,7 +18,7 @@ abstract class Base_Email extends \WC_Email {
      */
     protected $customer_email = false;
     protected $admin_email = false;
-    protected $template_base;
+    public $template_base;
     protected $request_id;
     protected $customer_id;
     protected $proposal_id;
