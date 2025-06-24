@@ -151,4 +151,20 @@ class WC_Email_Proposal_Decision extends WC_Email {
             ),
         );
     }
+
+    /**
+     * Get recipient for display in email settings.
+     * Returns display text for settings, actual email set dynamically in trigger.
+     *
+     * @return string
+     */
+    public function get_recipient() {
+        // If we're in admin settings context, show display text
+        if ( is_admin() && ! wp_doing_ajax() ) {
+            return __( 'Project Lead', 'arsol-pfw' );
+        }
+        // Otherwise return the actual recipient email (set dynamically in trigger)
+        return $this->recipient;
+    }
 }
+ 

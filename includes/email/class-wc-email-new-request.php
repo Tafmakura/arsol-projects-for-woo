@@ -145,4 +145,3 @@ class WC_Email_New_Request extends WC_Email {
         );
     }
 }
- 

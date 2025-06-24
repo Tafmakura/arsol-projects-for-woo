@@ -147,3 +147,4 @@ class WC_Email_Admin_New_Request extends WC_Email {
         );
     }
 }
+ 
