@@ -202,13 +202,15 @@ $all_proposal_statuses = get_terms(array(
         <label for="arsol_pfw_proposal_costing_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
         <?php if ($is_project_tied): ?>
             <!-- Locked cost type field for project-tied proposals -->
-            <select class="arsol-disabled-select" disabled>
-                <option selected><?php _e('Quotation', 'arsol-pfw'); ?></option>
+            <!-- IMPORTANT: Keep same ID for JavaScript conditional logic to work -->
+            <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select arsol-disabled-select" disabled>
+                <option value="quotation" selected><?php _e('Quotation', 'arsol-pfw'); ?></option>
             </select>
+            <!-- Hidden input ensures value is submitted -->
             <input type="hidden" name="arsol_pfw_proposal_costing_type" value="quotation">
         <?php else: ?>
             <!-- Regular cost type field -->
-            <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select" data-project-tied="<?php echo $is_project_tied ? 'true' : 'false'; ?>">
+            <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select">
                 <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
                 <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
                 <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
@@ -223,61 +225,3 @@ $all_proposal_statuses = get_terms(array(
         <input type="date" id="arsol_pfw_proposal_expiration_date" name="arsol_pfw_proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
     </p>
 </div>
-
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-    // Handle project-tied proposal cost type restrictions
-    var costTypeSelect = $('#arsol_pfw_proposal_costing_type');
-    
-    if (costTypeSelect.length && costTypeSelect.data('project-tied') === 'true') {
-        // For project-tied proposals, disable non-quotation options and force quotation
-        costTypeSelect.find('option[value!="quotation"]').prop('disabled', true);
-        costTypeSelect.val('quotation').trigger('change');
-        
-        // Apply the existing arsol-disabled-select styling
-        costTypeSelect.addClass('arsol-disabled-select');
-        costTypeSelect.prop('disabled', true);
-        
-        // Add hidden input to ensure quotation value is submitted
-        if (!$('input[name="arsol_pfw_proposal_costing_type"][type="hidden"]').length) {
-            costTypeSelect.after('<input type="hidden" name="arsol_pfw_proposal_costing_type" value="quotation">');
-        }
-    }
-});
-</script>
-
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-    // Handle project-tied proposal cost type restrictions
-    var costTypeSelect = $('#arsol_pfw_proposal_costing_type');
-    
-    // Check if this is a project-tied proposal by looking for URL parameter or checking if customer field is disabled
-    var isProjectTied = false;
-    
-    // Method 1: Check URL parameter
-    var urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has('parent_project')) {
-        isProjectTied = true;
-    }
-    
-    // Method 2: Check if customer field is disabled (indicates project-tied)
-    if ($('.wc-customer-user select.arsol-disabled-select').length > 0) {
-        isProjectTied = true;
-    }
-    
-    if (isProjectTied && costTypeSelect.length) {
-        // For project-tied proposals, disable non-quotation options and force quotation
-        costTypeSelect.find('option[value!="quotation"]').prop('disabled', true);
-        costTypeSelect.val('quotation').trigger('change');
-        
-        // Apply the existing arsol-disabled-select styling
-        costTypeSelect.addClass('arsol-disabled-select');
-        costTypeSelect.prop('disabled', true);
-        
-        // Add hidden input to ensure quotation value is submitted
-        if (!$('input[name="arsol_pfw_proposal_costing_type"][type="hidden"]').length) {
-            costTypeSelect.after('<input type="hidden" name="arsol_pfw_proposal_costing_type" value="quotation">');
-        }
-    }
-});
-</script>
