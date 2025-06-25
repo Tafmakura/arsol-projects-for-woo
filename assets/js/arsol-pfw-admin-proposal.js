@@ -1112,11 +1112,8 @@
             ArsolBudget.init();
         }
         
-        // Handle conversion confirmation for proposals
+        // Handle conversion confirmation for proposals and creation for projects
         $(document).on('click', '.arsol-confirm-conversion', function(e) {
-            // Only handle if we're on a proposal page
-            if (!$('#proposal_status').length) return;
-            
             e.preventDefault();
             
             var $button = $(this);
@@ -1147,10 +1144,17 @@
                 return false;
             }
             
-            // Step 3: Add conversion URL as hidden input and submit form
+            // Step 3: Determine if this is a proposal conversion or project creation
+            var hiddenInputName = 'arsol_convert_after_save'; // Default for proposals
+            if ($('#project_status').length || $button.closest('#project_details_meta_box').length) {
+                // This is a project page - use create instead of convert
+                hiddenInputName = 'arsol_create_after_save';
+            }
+            
+            // Add URL as hidden input and submit form
             $('<input>').attr({
                 type: 'hidden',
-                name: 'arsol_convert_after_save',
+                name: hiddenInputName,
                 value: url
             }).appendTo($form);
             
@@ -1171,7 +1175,17 @@
             var $convertBtn = $('.arsol-confirm-conversion');
             if ($convertBtn.length === 0) return;
             
-            // Check which page we're on and get the appropriate status
+            // Check if this is a project page - projects don't need status restrictions
+            if ($('#project_status').length || $convertBtn.closest('#project_details_meta_box').length) {
+                // Project page - always enable the "Create Proposal" button
+                $convertBtn.prop('disabled', false)
+                          .removeClass('disabled')
+                          .closest('span')
+                          .attr('title', 'Creates a new proposal based on this project.');
+                return;
+            }
+            
+            // For proposals and requests, check status requirements
             var selectedStatus = '';
             if ($('#proposal_status').length) {
                 // Proposal page
@@ -1200,7 +1214,7 @@
             }
         }
         
-        // Update button state when status changes
+        // Update button state when status changes (projects don't have restrictions)
         $(document).on('change', '#proposal_status, #request_status', updateConvertButtonState);
         
         // Update button state on page load

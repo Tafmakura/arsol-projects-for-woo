@@ -32,6 +32,11 @@ class Project {
     public function render_project_details_meta_box($post) {
         // Add nonce for security
         wp_nonce_field('project_details_meta_box', 'project_details_meta_box_nonce');
+        
+        // Prepare Create Proposal button data
+        $create_url = admin_url('post-new.php?post_type=arsol-pfw-proposal&parent_project=' . $post->ID);
+        $create_url = wp_nonce_url($create_url, 'arsol_create_proposal_nonce');
+        $confirm_message = esc_js(__('This will save the current project and create a new proposal based on this project. Continue?', 'arsol-projects-for-woo'));
         ?>
         <div class="project-details">
             <!-- Main content area for any future project-specific content -->
@@ -39,13 +44,19 @@ class Project {
         
         <div class="major-actions">
             <?php if ($post->post_status === 'publish'): ?>
-                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
+                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-projects-for-woo'); ?>">
             <?php else: ?>
-                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
+                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-projects-for-woo'); ?>">
             <?php endif; ?>
             
             <!-- Secondary Action Button -->
-            <input type="button" id="create-proposal" name="create_proposal" class="button button-secondary" value="<?php _e('Create Proposal', 'arsol-pfw'); ?>" style="margin-top: 10px; width: 100%;">
+            <input type="button" 
+                   id="create-proposal" 
+                   name="create_proposal" 
+                   class="button button-secondary arsol-confirm-conversion" 
+                   value="<?php _e('Create Proposal', 'arsol-projects-for-woo'); ?>" 
+                   data-url="<?php echo esc_url($create_url); ?>" 
+                   data-message="<?php echo $confirm_message; ?>">
         </div>
         <?php
     }
@@ -110,6 +121,14 @@ class Project {
         // Save project due date
         if (isset($_POST['project_due_date'])) {
             update_post_meta($post_id, '_arsol_pfw_project_due_date', sanitize_text_field($_POST['project_due_date']));
+        }
+        
+        // Handle create proposal after save
+        if (isset($_POST['arsol_create_after_save']) && !empty($_POST['arsol_create_after_save'])) {
+            // Direct PHP redirect to create new proposal
+            $create_url = esc_url_raw($_POST['arsol_create_after_save']);
+            wp_redirect($create_url);
+            exit;
         }
     }
 }

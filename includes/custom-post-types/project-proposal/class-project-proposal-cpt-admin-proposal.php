@@ -19,6 +19,10 @@ class Proposal {
         
         // Add admin notices for validation errors
         add_action('admin_notices', array($this, 'display_validation_errors'));
+        
+        // Handle parent_project parameter for new proposals
+        add_action('load-post-new.php', array($this, 'handle_new_proposal_from_project'));
+        add_action('admin_notices', array($this, 'display_creation_success_message'));
     }
 
     public function set_proposal_review_status($new_status, $old_status, $post) {
@@ -547,5 +551,81 @@ class Proposal {
         }
         
         return $errors;
+    }
+    
+    /**
+     * Handle creation of new proposal from project
+     */
+    public function handle_new_proposal_from_project() {
+        // Only handle proposal creation
+        if (!isset($_GET['post_type']) || $_GET['post_type'] !== 'arsol-pfw-proposal') {
+            return;
+        }
+        
+        // Check for parent_project parameter
+        if (!isset($_GET['parent_project']) || empty($_GET['parent_project'])) {
+            return;
+        }
+        
+        // Verify nonce
+        if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_create_proposal_nonce')) {
+            wp_die(__('Security check failed.', 'arsol-projects-for-woo'));
+        }
+        
+        $parent_project_id = intval($_GET['parent_project']);
+        
+        // Verify parent project exists and user can access it
+        $parent_project = get_post($parent_project_id);
+        if (!$parent_project || $parent_project->post_type !== 'arsol-project') {
+            wp_die(__('Invalid project.', 'arsol-projects-for-woo'));
+        }
+        
+        if (!current_user_can('edit_post', $parent_project_id)) {
+            wp_die(__('You do not have permission to create proposals from this project.', 'arsol-projects-for-woo'));
+        }
+        
+        // Store parent project info for success message
+        set_transient('arsol_proposal_created_from_project_' . get_current_user_id(), array(
+            'parent_project_id' => $parent_project_id,
+            'parent_project_title' => $parent_project->post_title
+        ), 300); // 5 minutes
+    }
+    
+    /**
+     * Display success message when proposal is created from project
+     */
+    public function display_creation_success_message() {
+        global $post;
+        
+        // Only show on proposal edit screen
+        if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
+            return;
+        }
+        
+        // Only show on new proposal creation (not existing proposals)
+        if ($post->post_status !== 'auto-draft') {
+            return;
+        }
+        
+        // Check for transient data
+        $creation_data = get_transient('arsol_proposal_created_from_project_' . get_current_user_id());
+        if (!$creation_data || !is_array($creation_data)) {
+            return;
+        }
+        
+        // Clear the transient
+        delete_transient('arsol_proposal_created_from_project_' . get_current_user_id());
+        
+        $parent_project_title = esc_html($creation_data['parent_project_title']);
+        $parent_project_id = intval($creation_data['parent_project_id']);
+        $parent_project_url = admin_url('post.php?post=' . $parent_project_id . '&action=edit');
+        
+        echo '<div class="notice notice-success is-dismissible">';
+        echo '<p>' . sprintf(
+            __('This proposal has been created based on project "%s". You can <a href="%s">return to the project</a> or continue editing this proposal.', 'arsol-projects-for-woo'),
+            $parent_project_title,
+            esc_url($parent_project_url)
+        ) . '</p>';
+        echo '</div>';
     }
 }

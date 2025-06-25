@@ -221,6 +221,8 @@ class Assets {
                     
                 } elseif ($screen->post_type === 'arsol-project') {
                     wp_enqueue_script('arsol-pfw-admin-active');
+                    // Also enqueue proposal script for Create Proposal button functionality
+                    wp_enqueue_script('arsol-pfw-admin-proposal');
                     
                 } elseif ($screen->post_type === 'arsol-pfw-request') {
                     wp_enqueue_script('arsol-pfw-admin-request');
