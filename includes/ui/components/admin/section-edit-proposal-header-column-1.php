@@ -31,9 +31,9 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
     if ($parent_project && $parent_project->post_type === 'arsol-project') {
         $is_project_tied = true;
         
-        // Get parent project data
-        $parent_customer_id = get_post_meta($parent_project_id, '_arsol_pfw_project_customer_id', true);
-        $parent_lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead_id', true);
+        // Get parent project data - CORRECT FIELDS
+        $parent_customer_id = $parent_project->post_author; // Customer is post_author, not meta
+        $parent_lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead', true); // Correct meta key
         
         $parent_project_data = array(
             'id' => $parent_project_id,
@@ -42,14 +42,10 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
             'lead_id' => $parent_lead_id
         );
         
-        // Override values with parent project data
-        if ($parent_customer_id) {
-            $customer_id = $parent_customer_id;
-            $customer = get_userdata($customer_id);
-        }
-        if ($parent_lead_id) {
-            $proposal_project_lead = $parent_lead_id;
-        }
+        // EXCLUSIVELY use parent project values - override completely
+        $customer_id = $parent_customer_id;
+        $customer = get_userdata($customer_id);
+        $proposal_project_lead = $parent_lead_id;
         $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
     }
 } 
@@ -61,9 +57,9 @@ elseif ($proposal_id > 0) {
         if ($parent_project && $parent_project->post_type === 'arsol-project') {
             $is_project_tied = true;
             
-            // Get parent project data
-            $parent_customer_id = get_post_meta($parent_project_id, '_arsol_pfw_project_customer_id', true);
-            $parent_lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead_id', true);
+            // Get parent project data - CORRECT FIELDS
+            $parent_customer_id = $parent_project->post_author; // Customer is post_author, not meta
+            $parent_lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead', true); // Correct meta key
             
             $parent_project_data = array(
                 'id' => $parent_project_id,
@@ -72,14 +68,10 @@ elseif ($proposal_id > 0) {
                 'lead_id' => $parent_lead_id
             );
             
-            // Override values with parent project data
-            if ($parent_customer_id) {
-                $customer_id = $parent_customer_id;
-                $customer = get_userdata($customer_id);
-            }
-            if ($parent_lead_id) {
-                $proposal_project_lead = $parent_lead_id;
-            }
+            // EXCLUSIVELY use parent project values - override completely
+            $customer_id = $parent_customer_id;
+            $customer = get_userdata($customer_id);
+            $proposal_project_lead = $parent_lead_id;
             $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
         }
     }

@@ -738,9 +738,9 @@ class Proposal {
             return false;
         }
         
-        // Get parent project's customer and lead data
-        $customer_id = get_post_meta($parent_project_id, '_arsol_pfw_project_customer_id', true);
-        $lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead_id', true);
+        // Get parent project data for locked fields
+        $customer_id = $parent_project->post_author; // Customer is post_author, not meta
+        $lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead', true); // Correct meta key
         
         return array(
             'id' => $parent_project_id,
