@@ -131,13 +131,13 @@ class Proposal {
             if ($is_project_tied && $parent_project_data) {
                 // Show View Project button for project-tied proposals
                 $view_url = admin_url('post.php?post=' . $parent_project_data['id'] . '&action=edit');
-                $confirm_message = esc_js(__('This will save the current proposal and return to the parent project. Continue?', 'arsol-projects-for-woo'));
                 ?>
-                <input type="button" 
-                       class="button button-secondary arsol-view-project" 
-                       value="<?php _e('View Project', 'arsol-projects-for-woo'); ?>" 
-                       data-url="<?php echo esc_url($view_url); ?>" 
-                       data-message="<?php echo $confirm_message; ?>" />
+                <a href="<?php echo esc_url($view_url); ?>" 
+                   class="button button-secondary" 
+                   target="_blank" 
+                   rel="noopener noreferrer">
+                    <?php _e('View Project', 'arsol-projects-for-woo'); ?> ↗
+                </a>
                 <?php
             } else {
                 // Show Convert to Project button for regular proposals
@@ -435,10 +435,6 @@ class Proposal {
             }
         }
         
-        // Handle view project after save
-        if (isset($_POST['arsol_view_after_save']) && !empty($_POST['arsol_view_after_save'])) {
-            wp_redirect(esc_url_raw($_POST['arsol_view_after_save']));
-            exit;
         }
     }
     

@@ -1200,25 +1200,6 @@
             return false;
         });
         
-        // Handle view project button for project-tied proposals
-        $(document).on('click', '.arsol-view-project', function(e) {
-            e.preventDefault();
-            
-            var $button = $(this);
-            var url = $button.data('url');
-            var message = $button.data('message');
-            
-            // Use shared validation function
-            if (!ArsolProposal.validateFormAndConfirm(message)) {
-                return false;
-            }
-            
-            // Use shared submission function for view project redirect
-            ArsolProposal.submitFormWithRedirect('arsol_view_after_save', url);
-            
-            return false;
-        });
-        
         // Dynamic convert button enablement based on status selection
         // This overrides PHP logic but keeps it as backup for server-side validation
         function updateConvertButtonState() {
