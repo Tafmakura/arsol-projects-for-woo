@@ -19,11 +19,11 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
 $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
 $proposal_project_lead = get_post_meta($proposal_id, '_arsol_pfw_proposal_project_lead', true);
 
-// Check for project-tied proposal - simple URL parameter check
+// Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;
 $parent_project_data = false;
 
-// Check URL parameter first (for new proposals)
+// ALWAYS check URL parameter first (for new proposals)
 if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
     $parent_project_id = intval($_GET['parent_project']);
     $parent_project = get_post($parent_project_id);
@@ -199,18 +199,27 @@ $all_proposal_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="arsol_pfw_proposal_costing_type"><?php _e("Cost Proposal Type:", "arsol-pfw"); ?></label>
+        <label for="arsol_pfw_proposal_costing_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
         <?php if ($is_project_tied): ?>
             <!-- Locked cost type field for project-tied proposals -->
             <select class="arsol-disabled-select" disabled>
-                <option selected><?php _e("Quotation", "arsol-pfw"); ?></option>
+                <option selected><?php _e('Quotation', 'arsol-pfw'); ?></option>
             </select>
             <input type="hidden" name="arsol_pfw_proposal_costing_type" value="quotation">
         <?php else: ?>
             <!-- Regular cost type field -->
             <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select">
-                <option value="none" <?php selected($cost_proposal_type, "none"); ?>><?php _e("None", "arsol-pfw"); ?></option>
-                <option value="budget" <?php selected($cost_proposal_type, "budget"); ?>><?php _e("Budget", "arsol-pfw"); ?></option>
-                <option value="quotation" <?php selected($cost_proposal_type, "quotation"); ?>><?php _e("Quotation", "arsol-pfw"); ?></option>
+                <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
+                <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
+                <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
             </select>
         <?php endif; ?>
+    </p>
+</div>
+
+<div class="form-field-row">
+    <p class="form-field form-field-half">
+        <label for="arsol_pfw_proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="arsol_pfw_proposal_expiration_date" name="arsol_pfw_proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
+    </p>
+</div>
