@@ -43,6 +43,9 @@ class Project {
             <?php else: ?>
                 <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
             <?php endif; ?>
+            
+            <!-- Secondary Action Button -->
+            <input type="button" id="create-proposal" name="create_proposal" class="button button-secondary" value="<?php _e('Create Proposal', 'arsol-pfw'); ?>" style="margin-top: 10px; width: 100%;">
         </div>
         <?php
     }
