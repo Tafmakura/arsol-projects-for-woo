@@ -54,6 +54,19 @@ if ($has_request_data) {
                 <?php printf(__('Proposal #%d details', 'arsol-pfw'), $proposal_id); ?>
             </h2>
 
+            <?php
+            // Check if this is a project-tied proposal
+            $admin_proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
+            if ($admin_proposal->is_project_tied_proposal($proposal_id)) {
+                $parent_project_data = $admin_proposal->get_parent_project_data($proposal_id);
+                if ($parent_project_data) {
+                    echo '<p class="order_number">';
+                    printf(__('For Project: %s', 'arsol-projects-for-woo'), esc_html($parent_project_data['title']));
+                    echo '</p>';
+                }
+            }
+            ?>
+
             <div class="project_data_column_container <?php echo esc_attr($container_class); ?>">
                 <div class="project_data_column">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>

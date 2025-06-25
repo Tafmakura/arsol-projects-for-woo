@@ -29,7 +29,8 @@ class Proposals {
         // Add columns in desired order
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
-        $new_columns['customer'] = __('Customer', 'arsol-pfw');
+        $new_columns['customer'] = __('Customer', 'arsol-pfw');        $new_columns['project'] = __('Project', 'arsol-pfw');
+        $new_columns['project'] = __('Project', 'arsol-pfw');
         $new_columns['proposal_status'] = __('Status', 'arsol-pfw');
         $new_columns['project_lead'] = __('Project Lead', 'arsol-pfw');
         $new_columns['date'] = $columns['date'];
@@ -53,6 +54,24 @@ class Proposals {
                 $post = get_post($post_id);
                 if ($post && $post->post_author) {
                     echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($post->post_author, 'arsol-pfw-proposal');
+                } else {
+                    echo '<span class="na">&ndash;</span>';
+                }
+                break;
+            
+            case 'project':
+                $parent_project_id = get_post_meta($post_id, '_arsol_parent_project_id', true);
+                if ($parent_project_id) {
+                    echo '#' . $parent_project_id;
+                } else {
+                    echo '<span class="na">&ndash;</span>';
+                }
+                break;
+                
+            case 'project':
+                $parent_project_id = get_post_meta($post_id, '_arsol_parent_project_id', true);
+                if ($parent_project_id) {
+                    echo '#' . $parent_project_id;
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }

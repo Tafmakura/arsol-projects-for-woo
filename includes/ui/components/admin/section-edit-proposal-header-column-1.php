@@ -19,6 +19,22 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
 $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
 $proposal_project_lead = get_post_meta($proposal_id, '_arsol_pfw_proposal_project_lead', true);
 
+// Check if this is a project-tied proposal
+$admin_proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
+$is_project_tied = $admin_proposal->is_project_tied_proposal($proposal_id);
+$parent_project_data = false;
+
+if ($is_project_tied) {
+    $parent_project_data = $admin_proposal->get_parent_project_data($proposal_id);
+    // Override values with parent project data for project-tied proposals
+    if ($parent_project_data) {
+        $customer_id = $parent_project_data['customer_id'];
+        $customer = get_userdata($customer_id);
+        $proposal_project_lead = $parent_project_data['lead_id'];
+        $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
+    }
+}
+
 // Get status terms
 $proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'slugs'));
 $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : 'processing';
@@ -54,22 +70,41 @@ $all_proposal_statuses = get_terms(array(
                 </a>
             <?php endif; ?>
         </label>
-        <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>" required>
-            <?php if ($post->post_author): ?>
-                <?php 
-                                $customer_user = get_userdata($post->post_author);
-                if ($customer_user) {
-                    $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer_user);
-                    
-                    printf(
-                        '<option value="%s" selected="selected">%s</option>',
-                        esc_attr($customer_user->ID),
-                        esc_html($customer_display)
-                    );
-                }
-                ?>
-            <?php endif; ?>
-        </select>
+        
+        <?php if ($is_project_tied && $customer): ?>
+            <!-- Locked customer field for project-tied proposals -->
+            <select class="arsol-disabled-select" disabled>
+                <option selected><?php echo esc_html(\Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer)); ?></option>
+            </select>
+            <input type="hidden" name="post_author_override" value="<?php echo esc_attr($customer_id); ?>">
+        <?php else: ?>
+            <!-- Regular customer search field -->
+                    <?php if ($is_project_tied && $customer): ?>
+            <!-- Locked customer field for project-tied proposals -->
+            <select class="arsol-disabled-select" disabled>
+                <option selected><?php echo esc_html(\Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer)); ?></option>
+            </select>
+            <input type="hidden" name="post_author_override" value="<?php echo esc_attr($customer_id); ?>">
+        <?php else: ?>
+            <!-- Regular customer search field -->
+            <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>" required>
+                <?php if ($post->post_author): ?>
+                    <?php 
+                                    $customer_user = get_userdata($post->post_author);
+                    if ($customer_user) {
+                        $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer_user);
+                        
+                        printf(
+                            '<option value="%s" selected="selected">%s</option>',
+                            esc_attr($customer_user->ID),
+                            esc_html($customer_display)
+                        );
+                    }
+                    ?>
+                <?php endif; ?>
+            </select>
+        <?php endif; ?>
+        <?php endif; ?>
     </p>
 </div>
 

@@ -10,6 +10,10 @@ class Project {
         add_action('add_meta_boxes', array($this, 'add_project_details_meta_box'));
         // Save project data
         add_action('save_post_arsol-project', array($this, 'save_project_details'));
+        // Prevent project deletion if tied proposals exist
+        add_action('before_delete_post', array($this, 'prevent_project_deletion_with_proposals'));
+        // Prevent project deletion if tied proposals exist
+        add_action('before_delete_post', array($this, 'prevent_project_deletion_with_proposals'));
     }
 
     /**
@@ -131,4 +135,58 @@ class Project {
             exit;
         }
     }
+
+    /**
+     * Prevent project deletion if tied proposals exist
+     */
+    public function prevent_project_deletion_with_proposals($post_id) {
+        if (get_post_type($post_id) !== 'arsol-project') {
+            return;
+        }
+        
+        // Check for tied proposals
+        $tied_proposals = get_posts(array(
+            'post_type' => 'arsol-pfw-proposal',
+            'meta_key' => '_arsol_parent_project_id',
+            'meta_value' => $post_id,
+            'post_status' => 'any',
+            'numberposts' => 1,
+            'fields' => 'ids'
+        ));
+        
+        if (!empty($tied_proposals)) {
+            wp_die(
+                __('Cannot delete project with tied proposals. Please delete or untie proposals first.', 'arsol-projects-for-woo'),
+                __('Project Deletion Prevented', 'arsol-projects-for-woo'),
+                array('back_link' => true)
+            );
+        }
+    }
 }
+    
+    /**
+     * Prevent project deletion if tied proposals exist
+     */
+    public function prevent_project_deletion_with_proposals($post_id) {
+        if (get_post_type($post_id) !== "arsol-project") {
+            return;
+        }
+        
+        // Check for tied proposals
+        $tied_proposals = get_posts(array(
+            "post_type" => "arsol-pfw-proposal",
+            "meta_key" => "_arsol_parent_project_id",
+            "meta_value" => $post_id,
+            "post_status" => "any",
+            "numberposts" => 1,
+            "fields" => "ids"
+        ));
+        
+        if (!empty($tied_proposals)) {
+            wp_die(
+                __("Cannot delete project with tied proposals. Please delete or untie proposals first.", "arsol-projects-for-woo"),
+                __("Project Deletion Prevented", "arsol-projects-for-woo"),
+                array("back_link" => true)
+            );
+        }
+    }

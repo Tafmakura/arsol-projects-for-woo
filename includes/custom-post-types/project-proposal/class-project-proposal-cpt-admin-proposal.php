@@ -96,34 +96,56 @@ class Proposal {
                 <?php endif; ?>
             
             <?php
-            // Check proposal status for conversion eligibility
-            $proposal_status_terms = wp_get_object_terms($post->ID, 'arsol-proposal-status', array('fields' => 'slugs'));
-            $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
+            // Check if this is a project-tied proposal
+            $is_project_tied = $this->is_project_tied_proposal($post->ID);
             
-            $is_not_published = $post->post_status !== 'publish';
-            $is_not_approved = $current_proposal_status !== 'approved';
-            $is_disabled = $is_not_published || $is_not_approved;
-            
-            $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
-            $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
-            $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Orders and subscriptions will be created if the Quotation costing is selected.', 'arsol-pfw'));
-            
-            if ($is_not_published) {
-                $tooltip_text = __('The proposal must be published before it can be converted.', 'arsol-pfw');
-            } elseif ($is_not_approved) {
-                $tooltip_text = sprintf(__('The proposal status must be "Approved" before it can be converted. Current status: "%s".', 'arsol-pfw'), $current_proposal_status);
+            if ($is_project_tied) {
+                // Show View Project button for project-tied proposals
+                $parent_project_data = $this->get_parent_project_data($post->ID);
+                if ($parent_project_data) {
+                    $view_url = admin_url('post.php?post=' . $parent_project_data['id'] . '&action=edit');
+                    $confirm_message = esc_js(__('This will save the current proposal and return to the parent project. Continue?', 'arsol-projects-for-woo'));
+                    ?>
+                    <input type="button" 
+                           class="button button-secondary arsol-view-project" 
+                           value="<?php _e('View Project', 'arsol-projects-for-woo'); ?>" 
+                           data-url="<?php echo esc_url($view_url); ?>" 
+                           data-message="<?php echo $confirm_message; ?>" />
+                    <?php
+                }
             } else {
-                $tooltip_text = __('Converts this proposal into a new project.', 'arsol-pfw');
+                // Show Convert to Project button for regular proposals
+                // Check proposal status for conversion eligibility
+                $proposal_status_terms = wp_get_object_terms($post->ID, 'arsol-proposal-status', array('fields' => 'slugs'));
+                $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
+                
+                $is_not_published = $post->post_status !== 'publish';
+                $is_not_approved = $current_proposal_status !== 'approved';
+                $is_disabled = $is_not_published || $is_not_approved;
+                
+                $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
+                $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_project_nonce');
+                $confirm_message = esc_js(__('Are you sure you want to convert this proposal to a project? This will create a new project and delete the original proposal. Orders and subscriptions will be created if the Quotation costing is selected.', 'arsol-pfw'));
+                
+                if ($is_not_published) {
+                    $tooltip_text = __('The proposal must be published before it can be converted.', 'arsol-pfw');
+                } elseif ($is_not_approved) {
+                    $tooltip_text = sprintf(__('The proposal status must be "Approved" before it can be converted. Current status: "%s".', 'arsol-pfw'), $current_proposal_status);
+                } else {
+                    $tooltip_text = __('Converts this proposal into a new project.', 'arsol-pfw');
+                }
+                ?>
+                <span title="<?php echo esc_attr($tooltip_text); ?>">
+                    <input type="button" 
+                           class="button button-secondary arsol-confirm-conversion" 
+                           value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
+                           data-url="<?php echo esc_url($convert_url); ?>" 
+                           data-message="<?php echo $confirm_message; ?>"
+                           <?php disabled($is_disabled, true); ?> />
+                </span>
+                <?php
             }
             ?>
-            <span title="<?php echo esc_attr($tooltip_text); ?>">
-                <input type="button" 
-                       class="button button-secondary arsol-confirm-conversion" 
-                       value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
-                       data-url="<?php echo esc_url($convert_url); ?>" 
-                       data-message="<?php echo $confirm_message; ?>"
-                       <?php disabled($is_disabled, true); ?> />
-            </span>
         </div>
         <?php
     }
@@ -331,29 +353,28 @@ class Proposal {
             update_post_meta($post_id, '_arsol_pfw_proposal_notes', wp_kses_post($_POST['arsol_pfw_proposal_notes']));
         }
         
-        // Handle conversion after save (WordPress-native approach)
-        if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
-            // Only proceed if save was successful (no validation errors)
-            if (empty($this->validation_errors)) {
-                // Check if proposal is in approved status for conversion
-                $proposal_status_terms = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'slugs'));
-                $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
+        // Handle parent project ID for project-tied proposals
+        // Check if this is a new proposal created from a project
+        if (get_post_status($post_id) === 'auto-draft' || (get_post_status($post_id) === 'draft' && !get_post_meta($post_id, '_arsol_parent_project_id', true))) {
+            $creation_data = get_transient('arsol_proposal_created_from_project_' . get_current_user_id());
+            if ($creation_data && is_array($creation_data) && isset($creation_data['parent_project_id'])) {
+                update_post_meta($post_id, '_arsol_parent_project_id', intval($creation_data['parent_project_id']));
                 
-                if ($current_proposal_status === 'approved') {
-                    // Direct PHP redirect - same approach as request to proposal conversion
-                    $conversion_url = esc_url_raw($_POST['arsol_convert_after_save']);
-                    wp_redirect($conversion_url);
-                    exit;
-                } else {
-                    // Show error notice if not approved
-                    add_action('admin_notices', function() use ($current_proposal_status) {
-                        $status_display = $current_proposal_status ?: 'none';
-                        echo '<div class="notice notice-error is-dismissible">
-                            <p>' . sprintf(__('Cannot convert proposal. Status is "%s", must be "approved".', 'arsol-pfw'), $status_display) . '</p>
-                        </div>';
-                    });
+                // Set default title if not already set
+                $current_title = get_the_title($post_id);
+                if (empty($current_title) || $current_title === 'Auto Draft') {
+                    wp_update_post(array(
+                        'ID' => $post_id,
+                        'post_title' => $creation_data['default_title']
+                    ));
                 }
             }
+        }
+        
+        // Handle view project after save
+        if (isset($_POST['arsol_view_after_save']) && !empty($_POST['arsol_view_after_save'])) {
+            wp_redirect(esc_url_raw($_POST['arsol_view_after_save']));
+            exit;
         }
     }
     
@@ -584,10 +605,11 @@ class Proposal {
             wp_die(__('You do not have permission to create proposals from this project.', 'arsol-projects-for-woo'));
         }
         
-        // Store parent project info for success message
+        // Store parent project info for success message and proposal creation
         set_transient('arsol_proposal_created_from_project_' . get_current_user_id(), array(
             'parent_project_id' => $parent_project_id,
-            'parent_project_title' => $parent_project->post_title
+            'parent_project_title' => $parent_project->post_title,
+            'default_title' => 'Proposal for ' . $parent_project->post_title
         ), 300); // 5 minutes
     }
     
@@ -627,5 +649,44 @@ class Proposal {
             esc_url($parent_project_url)
         ) . '</p>';
         echo '</div>';
+    }
+    
+    /**
+     * Check if proposal is project-tied
+     * @param int $post_id Proposal post ID
+     * @return bool True if proposal is tied to a project
+     */
+    public function is_project_tied_proposal($post_id) {
+        $parent_project_id = get_post_meta($post_id, '_arsol_parent_project_id', true);
+        return !empty($parent_project_id) && is_numeric($parent_project_id);
+    }
+    
+    /**
+     * Get parent project data for project-tied proposal
+     * @param int $post_id Proposal post ID
+     * @return array|false Parent project data or false if not project-tied
+     */
+    public function get_parent_project_data($post_id) {
+        if (!$this->is_project_tied_proposal($post_id)) {
+            return false;
+        }
+        
+        $parent_project_id = get_post_meta($post_id, '_arsol_parent_project_id', true);
+        $parent_project = get_post($parent_project_id);
+        
+        if (!$parent_project || $parent_project->post_type !== 'arsol-project') {
+            return false;
+        }
+        
+        // Get parent project's customer and lead data
+        $customer_id = get_post_meta($parent_project_id, '_arsol_pfw_project_customer_id', true);
+        $lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead_id', true);
+        
+        return array(
+            'id' => $parent_project_id,
+            'title' => $parent_project->post_title,
+            'customer_id' => $customer_id,
+            'lead_id' => $lead_id
+        );
     }
 }
