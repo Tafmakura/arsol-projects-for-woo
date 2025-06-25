@@ -349,7 +349,7 @@ class Proposal {
             // Save recurring budget details
             if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_details'])) {
                 update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_details', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_details']));
-        }
+            }
 
             // Save billing cycle if recurring budget is set
             $recurring_budget_value = $_POST['arsol_pfw_proposal_budget_recurring_amount'] ?? null;
@@ -433,8 +433,6 @@ class Proposal {
                     ));
                 }
             }
-        }
-        
         }
     }
     
