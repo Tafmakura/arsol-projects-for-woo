@@ -30,7 +30,7 @@ $delivery_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_delivery_date'
 $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_date', true);
 $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
 
-// Check for project-tied proposal - simple URL parameter check
+// Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;
 $parent_project_data = false;
 
@@ -78,7 +78,15 @@ if ($has_request_data) {
     $container_class .= ' has-col-2';
 }
 ?>
-            
+
+<div id="arsol-pfw-project-proposal-data" class="arsol-pfw-project postbox ">
+    <div id="proposal_metabox" class="panel-wrap woocommerce">
+        <div id="order_data" class="panel woocommerce">
+            <h2>
+                <?php printf(__('Proposal #%d details', 'arsol-pfw'), $proposal_id); ?>
+            </h2>
+
+            <?php
             // Display project relationship if this is a project-tied proposal
             if ($is_project_tied && $parent_project_data) {
                 echo '<p class="order_number">';
@@ -91,7 +99,7 @@ if ($has_request_data) {
                 <div class="project_data_column">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
-                                        <?php
+                    <?php
                     // Load the general settings template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header-column-1.php';
                     if (file_exists($template_path)) {
@@ -125,7 +133,7 @@ if ($has_request_data) {
                 <?php else: ?>
                 <div class="project_data_column">
                     <h3><?php _e('Project Proposal Summary', 'arsol-pfw'); ?></h3>
-                        <?php
+                    <?php
                     // Load the review status & actions template
                     $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header-column-3.php';
                     if (file_exists($template_path)) {
@@ -140,4 +148,3 @@ if ($has_request_data) {
         </div>
     </div>
 </div>
-
