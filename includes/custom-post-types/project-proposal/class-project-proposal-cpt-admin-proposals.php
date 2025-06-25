@@ -60,7 +60,7 @@ class Proposals {
                 break;
             
             case 'project':
-                $parent_project_id = get_post_meta($post_id, '_arsol_parent_project_id', true);
+                $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
                 if ($parent_project_id) {
                     echo '#' . $parent_project_id;
                 } else {
@@ -69,7 +69,7 @@ class Proposals {
                 break;
                 
             case 'project':
-                $parent_project_id = get_post_meta($post_id, '_arsol_parent_project_id', true);
+                $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
                 if ($parent_project_id) {
                     echo '#' . $parent_project_id;
                 } else {

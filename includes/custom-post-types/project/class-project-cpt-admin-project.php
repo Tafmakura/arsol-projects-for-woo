@@ -145,7 +145,7 @@ class Project {
         // Check for tied proposals
         $tied_proposals = get_posts(array(
             'post_type' => 'arsol-pfw-proposal',
-            'meta_key' => '_arsol_parent_project_id',
+            'meta_key' => '_arsol_pfw_parent_project_id',
             'meta_value' => $post_id,
             'post_status' => 'any',
             'numberposts' => 1,

@@ -115,7 +115,7 @@ class Proposal {
             } 
             // Fallback to meta data check (for existing proposals)
             elseif ($post->ID > 0) {
-                $parent_project_id = get_post_meta($post->ID, '_arsol_parent_project_id', true);
+                $parent_project_id = get_post_meta($post->ID, '_arsol_pfw_parent_project_id', true);
                 if (!empty($parent_project_id)) {
                     $parent_project = get_post($parent_project_id);
                     if ($parent_project && $parent_project->post_type === 'arsol-project') {
@@ -235,6 +235,7 @@ class Proposal {
         }
         
         // Save all meta data normally (no temporary data needed)
+        update_post_meta($post_id, '_arsol_pfw_proposal_costing_type', $cost_proposal_type);
 
         // Handle project-tied proposal meta keys
         // Check if this is a new proposal created from a project (URL parameter)
@@ -243,23 +244,13 @@ class Proposal {
             $parent_project = get_post($parent_project_id);
             
             if ($parent_project && $parent_project->post_type === "arsol-project") {
-                // Save parent project ID
-                update_post_meta($post_id, "_arsol_parent_project_id", $parent_project_id);
+                // Save parent project ID with proper naming convention
+                update_post_meta($post_id, "_arsol_pfw_parent_project_id", $parent_project_id);
                 
                 // Mark as project-tied proposal
-                update_post_meta($post_id, "_arsol_is_project_tied_proposal", 1);
+                update_post_meta($post_id, "_arsol_pfw_is_project_tied_proposal", 1);
             }
         }
-        
-        // Save custom title for project-tied proposals
-        if (isset($_POST["custom_proposal_title"]) && !empty($_POST["custom_proposal_title"])) {
-            $custom_title = sanitize_text_field($_POST["custom_proposal_title"]);
-            wp_update_post(array(
-                "ID" => $post_id,
-                "post_title" => $custom_title
-            ));
-        }        update_post_meta($post_id, '_arsol_pfw_proposal_costing_type', $cost_proposal_type);
-
         // Handle project-tied proposal meta keys
         // Check if this is a new proposal created from a project (URL parameter)
         if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
@@ -267,11 +258,11 @@ class Proposal {
             $parent_project = get_post($parent_project_id);
             
             if ($parent_project && $parent_project->post_type === 'arsol-project') {
-                // Save parent project ID
-                update_post_meta($post_id, '_arsol_parent_project_id', $parent_project_id);
+                // Save parent project ID with proper naming convention
+                update_post_meta($post_id, '_arsol_pfw_parent_project_id', $parent_project_id);
                 
                 // Mark as project-tied proposal
-                update_post_meta($post_id, '_arsol_is_project_tied_proposal', 1);
+                update_post_meta($post_id, '_arsol_pfw_is_project_tied_proposal', 1);
             }
         }
         
@@ -358,7 +349,7 @@ class Proposal {
             // Save recurring budget details
             if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_details'])) {
                 update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_details', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_details']));
-        }
+            }
 
             // Save billing cycle if recurring budget is set
             $recurring_budget_value = $_POST['arsol_pfw_proposal_budget_recurring_amount'] ?? null;
@@ -428,10 +419,10 @@ class Proposal {
         
         // Handle parent project ID for project-tied proposals
         // Check if this is a new proposal created from a project
-        if (get_post_status($post_id) === 'auto-draft' || (get_post_status($post_id) === 'draft' && !get_post_meta($post_id, '_arsol_parent_project_id', true))) {
+        if (get_post_status($post_id) === 'auto-draft' || (get_post_status($post_id) === 'draft' && !get_post_meta($post_id, '_arsol_pfw_parent_project_id', true))) {
             $creation_data = get_transient('arsol_proposal_created_from_project_' . get_current_user_id());
             if ($creation_data && is_array($creation_data) && isset($creation_data['parent_project_id'])) {
-                update_post_meta($post_id, '_arsol_parent_project_id', intval($creation_data['parent_project_id']));
+                update_post_meta($post_id, '_arsol_pfw_parent_project_id', intval($creation_data['parent_project_id']));
                 
                 // Set default title if not already set
                 $current_title = get_the_title($post_id);
@@ -730,7 +721,7 @@ class Proposal {
      * @return bool True if proposal is tied to a project
      */
     public function is_project_tied_proposal($post_id) {
-        $parent_project_id = get_post_meta($post_id, '_arsol_parent_project_id', true);
+        $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
         return !empty($parent_project_id) && is_numeric($parent_project_id);
     }
     
@@ -744,7 +735,7 @@ class Proposal {
             return false;
         }
         
-        $parent_project_id = get_post_meta($post_id, '_arsol_parent_project_id', true);
+        $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
         $parent_project = get_post($parent_project_id);
         
         if (!$parent_project || $parent_project->post_type !== 'arsol-project') {

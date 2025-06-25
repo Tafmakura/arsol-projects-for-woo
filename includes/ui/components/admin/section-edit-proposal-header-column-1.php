@@ -55,7 +55,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
 } 
 // Fallback to meta data check (for existing proposals)
 elseif ($proposal_id > 0) {
-    $parent_project_id = get_post_meta($proposal_id, '_arsol_parent_project_id', true);
+    $parent_project_id = get_post_meta($proposal_id, '_arsol_pfw_parent_project_id', true);
     if (!empty($parent_project_id)) {
         $parent_project = get_post($parent_project_id);
         if ($parent_project && $parent_project->post_type === 'arsol-project') {
@@ -95,16 +95,6 @@ $all_proposal_statuses = get_terms(array(
     'hide_empty' => false,
 ));
 ?>
-
-<?php if ($is_project_tied && $parent_project_data): ?>
-<div class="form-field-row">
-    <p class="form-field form-field-wide">
-        <label for="custom_proposal_title"><?php _e('Proposal Title:', 'arsol-pfw'); ?></label>
-        <input type="text" id="custom_proposal_title" name="custom_proposal_title" value="<?php echo esc_attr($post->post_title); ?>" class="widefat" placeholder="<?php printf(__('Proposal for %s', 'arsol-projects-for-woo'), esc_attr($parent_project_data['title'])); ?>">
-        <span class="description"><?php printf(__('Custom title for this proposal. Default: "Proposal for %s"', 'arsol-projects-for-woo'), esc_html($parent_project_data['title'])); ?></span>
-    </p>
-</div>
-<?php endif; ?>
 
 <div class="form-field-row">
     <p class="form-field form-field-half">
@@ -162,7 +152,7 @@ $all_proposal_statuses = get_terms(array(
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="proposal_project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
-        <?php if ($is_project_tied && $proposal_project_lead): ?>
+        <?php if ($is_project_tied): ?>
             <!-- Locked project lead field for project-tied proposals -->
             <?php 
             $lead_user = get_userdata($proposal_project_lead);
@@ -171,6 +161,12 @@ $all_proposal_statuses = get_terms(array(
                     <option selected><?php echo esc_html($lead_user->display_name . ' (' . $lead_user->user_email . ')'); ?></option>
                 </select>
                 <input type="hidden" name="proposal_project_lead" value="<?php echo esc_attr($proposal_project_lead); ?>">
+            <?php else: ?>
+                <!-- No project lead assigned to parent project -->
+                <select class="arsol-disabled-select" disabled>
+                    <option selected><?php _e('No project lead assigned', 'arsol-pfw'); ?></option>
+                </select>
+                <input type="hidden" name="proposal_project_lead" value="">
             <?php endif; ?>
         <?php else: ?>
             <!-- Regular project lead search field -->
@@ -204,20 +200,11 @@ $all_proposal_statuses = get_terms(array(
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="arsol_pfw_proposal_costing_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
-        <?php if ($is_project_tied): ?>
-            <!-- Locked cost type field for project-tied proposals -->
-            <select class="arsol-disabled-select" disabled>
-                <option selected><?php _e('Quotation', 'arsol-pfw'); ?></option>
-            </select>
-            <input type="hidden" name="arsol_pfw_proposal_costing_type" value="quotation">
-        <?php else: ?>
-            <!-- Regular cost type field -->
-            <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select">
-                <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
-                <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
-                <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
-            </select>
-        <?php endif; ?>
+        <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select" <?php echo $is_project_tied ? 'data-project-tied="true"' : ''; ?>>
+            <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
+            <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
+            <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
+        </select>
     </p>
 </div>
 
@@ -227,3 +214,36 @@ $all_proposal_statuses = get_terms(array(
         <input type="date" id="arsol_pfw_proposal_expiration_date" name="arsol_pfw_proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
     </p>
 </div>
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+    // Handle project-tied proposal cost type restrictions
+    var costTypeSelect = $('#arsol_pfw_proposal_costing_type');
+    
+    if (costTypeSelect.data('project-tied') === true) {
+        // For project-tied proposals, only allow quotation
+        costTypeSelect.find('option[value!="quotation"]').prop('disabled', true);
+        costTypeSelect.val('quotation').trigger('change');
+        
+        // Make the field appear locked but still functional
+        costTypeSelect.addClass('arsol-project-tied-locked');
+    }
+});
+</script>
+
+<style>
+.arsol-disabled-select {
+    background-color: #f7f7f7;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.arsol-project-tied-locked {
+    background-color: #f7f7f7;
+    color: #666;
+}
+
+.arsol-project-tied-locked option:disabled {
+    color: #ccc;
+}
+</style>
