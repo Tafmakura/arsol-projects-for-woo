@@ -9,12 +9,28 @@
             this.updateRequiredFields();
         },
 
+        // Shared price formatting utility to eliminate redundancy
+        formatPrice: function(price, currencySymbol) {
+            // Auto-detect currency symbol based on available vars if not provided
+            if (!currencySymbol) {
+                if (typeof arsol_proposal_quotation_vars !== 'undefined' && arsol_proposal_quotation_vars.currency_symbol) {
+                    currencySymbol = arsol_proposal_quotation_vars.currency_symbol;
+                } else if (typeof arsol_budget_vars !== 'undefined' && arsol_budget_vars.currency_symbol) {
+                    currencySymbol = arsol_budget_vars.currency_symbol;
+                } else {
+                    currencySymbol = '$'; // fallback
+                }
+            }
+            var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
+        },
+
         bindEvents: function() {
             // Initial toggle on page load
             this.toggleCostProposalSections();
             this.updateConditionalVisibility();
 
-            // Toggle when dropdown changes
+            // Toggle when dropdown changes - works for both enabled and disabled selects
             $('#arsol_pfw_proposal_costing_type').on('change', function() {
                 ArsolProposal.toggleCostProposalSections();
                 ArsolProposal.updateRequiredFields();
@@ -24,6 +40,12 @@
                     ArsolProposalQuotation.updateQuotationFieldRequirements();
                 }
             });
+
+            // For project-tied proposals with disabled selects, trigger change event manually
+            // This ensures conditional logic works even with disabled fields
+            if ($('#arsol_pfw_proposal_costing_type').prop('disabled')) {
+                $('#arsol_pfw_proposal_costing_type').trigger('change');
+            }
 
             // Update required fields on input changes
             $(document).on('input change', 'select[name="post_author_override"], input[name="arsol_pfw_proposal_budget_onetime_amount"], input[name="arsol_pfw_proposal_budget_onetime_amount_details"]', function() {
@@ -37,6 +59,8 @@
         },
 
         toggleCostProposalSections: function() {
+            // This function works with both enabled and disabled selects
+            // as it only reads the value, not the disabled state
             var selectedType = $('#arsol_pfw_proposal_costing_type').val();
             
             $('#arsol_budget_estimates_metabox').hide();
@@ -104,6 +128,50 @@
             
             // Note: WordPress backend validation will handle actual validation
             // This just provides visual feedback to users
+        },
+
+        // Shared form validation function to eliminate redundancy
+        validateFormAndConfirm: function(message) {
+            var $form = $('#post');
+            
+            // Step 1: HTML5 Validation (same as WordPress update/publish buttons)
+            if ($form.length && $form[0].checkValidity) {
+                if (!$form[0].checkValidity()) {
+                    // Focus on first invalid field (WordPress behavior)
+                    var $firstInvalid = $form.find(':invalid').first();
+                    if ($firstInvalid.length) {
+                        $firstInvalid.focus();
+                        // Trigger validation display
+                        $form[0].reportValidity();
+                    }
+                    return false;
+                }
+            }
+            
+            // Step 2: Show confirmation dialog
+            if (!confirm(message)) {
+                return false;
+            }
+            
+            return true;
+        },
+
+        // Shared form submission function to eliminate redundancy
+        submitFormWithRedirect: function(hiddenInputName, url) {
+            var $form = $('#post');
+            
+            // Add URL as hidden input
+            $('<input>').attr({
+                type: 'hidden',
+                name: hiddenInputName,
+                value: url
+            }).appendTo($form);
+            
+            // Trigger pre-save cleanup (same as form submission)
+            this.presaveCleanup();
+            
+            // Submit form normally (WordPress will handle save and redirect)
+            $form.submit();
         },
 
         // Pre-save cleanup function - runs all cleanup tasks before saving
@@ -178,6 +246,7 @@
 
         /**
          * Update conditional visibility based on cost proposal type
+         * This function works with both enabled and disabled selects
          */
         updateConditionalVisibility: function() {
             const costType = $('#arsol_pfw_proposal_costing_type').val();
@@ -221,17 +290,11 @@
             $('.js-billing-input').on('change', this.updateBudgetTotals.bind(this));
         },
 
-        formatPrice: function(price) {
-            var currencySymbol = arsol_budget_vars.currency_symbol || '$';
-            var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
-        },
-
         updateBudgetTotals: function() {
             // Update one-time budget - target first amount input for one-time budget
             var oneTimeAmount = parseFloat($('.js-amount-input').first().val()) || 0;
-            $('.budget-total-display').html(this.formatPrice(oneTimeAmount));
-            $('#budget-onetime-total-display').html(this.formatPrice(oneTimeAmount));
+            $('.budget-total-display').html(ArsolProposal.formatPrice(oneTimeAmount));
+            $('#budget-onetime-total-display').html(ArsolProposal.formatPrice(oneTimeAmount));
             
             // Update recurring budget - target recurring amount input specifically
             var recurringAmount = parseFloat($('.recurring-budget-amount-input').val()) || 0;
@@ -242,9 +305,9 @@
             var intervalText = interval > 1 ? interval : '';
             var billingText = '/' + intervalText + periodDisplay;
             
-            $('.recurring-budget-total-display').html(this.formatPrice(recurringAmount));
+            $('.recurring-budget-total-display').html(ArsolProposal.formatPrice(recurringAmount));
             $('#budget-recurring-period').text(billingText);
-            $('#budget-recurring-total-display').html(this.formatPrice(recurringAmount));
+            $('#budget-recurring-total-display').html(ArsolProposal.formatPrice(recurringAmount));
             
             // Update summary if it exists
             this.updateSummary();
@@ -868,7 +931,7 @@
                 price = isNaN(price) ? 0 : price;
                 var subtotal = quantity * price;
                 
-                $(this).find('.arsol-subtotal-column').html(ArsolProposalQuotation.formatPrice(subtotal));
+                $(this).find('.arsol-subtotal-column').html(ArsolProposal.formatPrice(subtotal));
                 
                 // Debug logging for subscription detection
                 console.log('Product row check:', {
@@ -896,7 +959,7 @@
                     var intervalText = interval > 1 ? interval : '';
                     var billingText = '/' + intervalText + periodText;
                     
-                    $(this).find('.arsol-subtotal-column').html(ArsolProposalQuotation.formatPrice(subtotal) + ' ' + billingText);
+                    $(this).find('.arsol-subtotal-column').html(ArsolProposal.formatPrice(subtotal) + ' ' + billingText);
                     
                     // Add to recurring totals
                     ArsolProposalQuotation.updateRecurringTotals(recurringTotals, interval, period, subtotal);
@@ -912,7 +975,7 @@
             // Calculate one-time fee totals
             $('#onetime-fee-lines-body tr.arsol-line-item').each(function() {
                 var amount = parseFloat($(this).find('.arsol-amount-input').val()) || 0;
-                $(this).find('.arsol-subtotal-column').html(ArsolProposalQuotation.formatPrice(amount));
+                $(this).find('.arsol-subtotal-column').html(ArsolProposal.formatPrice(amount));
                 oneTimeTotal += amount;
                 onetimeFeeSubtotal += amount;
             });
@@ -927,7 +990,7 @@
                 var intervalText = interval > 1 ? interval : '';
                 var billingText = '/' + intervalText + periodText;
                 
-                $(this).find('.arsol-subtotal-column').html(ArsolProposalQuotation.formatPrice(amount) + ' ' + billingText);
+                $(this).find('.arsol-subtotal-column').html(ArsolProposal.formatPrice(amount) + ' ' + billingText);
                 
                 ArsolProposalQuotation.updateRecurringTotals(recurringTotals, interval, period, amount);
                 ArsolProposalQuotation.updateRecurringTotals(recurringFeeRecurringTotals, interval, period, amount);
@@ -937,15 +1000,15 @@
             // Calculate shipping totals
             $('#shipping-lines-body tr.arsol-line-item').each(function() {
                 var amount = parseFloat($(this).find('.arsol-amount-input').val()) || 0;
-                $(this).find('.arsol-subtotal-column').html(ArsolProposalQuotation.formatPrice(amount));
+                $(this).find('.arsol-subtotal-column').html(ArsolProposal.formatPrice(amount));
                 oneTimeTotal += amount;
                 shippingSubtotal += amount;
             });
 
             // Update section subtotals
-            $('#product-subtotal-display').html(ArsolProposalQuotation.formatPrice(productSubtotal));
-            $('#onetime-fee-subtotal-display').html(ArsolProposalQuotation.formatPrice(onetimeFeeSubtotal));
-            $('#shipping-subtotal-display').html(ArsolProposalQuotation.formatPrice(shippingSubtotal));
+            $('#product-subtotal-display').html(ArsolProposal.formatPrice(productSubtotal));
+            $('#onetime-fee-subtotal-display').html(ArsolProposal.formatPrice(onetimeFeeSubtotal));
+            $('#shipping-subtotal-display').html(ArsolProposal.formatPrice(shippingSubtotal));
 
             // Calculate average monthly totals separately for each section
             var constants = arsol_proposal_quotation_vars.calculation_constants;
@@ -978,20 +1041,20 @@
 
             // Update section recurring displays
             if (hasProductRecurring) {
-                $('#product-avg-monthly-display').html(ArsolProposalQuotation.formatPrice(productAverageMonthlyTotal) + ' /mo');
+                $('#product-avg-monthly-display').html(ArsolProposal.formatPrice(productAverageMonthlyTotal) + ' /mo');
             } else {
-                $('#product-avg-monthly-display').html(ArsolProposalQuotation.formatPrice(0));
+                $('#product-avg-monthly-display').html(ArsolProposal.formatPrice(0));
             }
             
             if (hasRecurringFees) {
-                $('#recurring-fee-avg-monthly-display').html(ArsolProposalQuotation.formatPrice(recurringFeeAverageMonthlyTotal) + ' /mo');
+                $('#recurring-fee-avg-monthly-display').html(ArsolProposal.formatPrice(recurringFeeAverageMonthlyTotal) + ' /mo');
             } else {
-                $('#recurring-fee-avg-monthly-display').html(ArsolProposalQuotation.formatPrice(0));
+                $('#recurring-fee-avg-monthly-display').html(ArsolProposal.formatPrice(0));
             }
 
             // Update main totals
-            $('#one-time-total-display').html(ArsolProposalQuotation.formatPrice(oneTimeTotal));
-            $('#average-monthly-total-display').html(ArsolProposalQuotation.formatPrice(averageYearlyTotal) + (hasRecurring ? ' /yr' : ''));
+            $('#one-time-total-display').html(ArsolProposal.formatPrice(oneTimeTotal));
+            $('#average-monthly-total-display').html(ArsolProposal.formatPrice(averageYearlyTotal) + (hasRecurring ? ' /yr' : ''));
 
             // Update hidden inputs for form submission
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
@@ -1090,11 +1153,6 @@
             $('#quotation-empty-state').toggle(!hasQuotationData);
         },
 
-        formatPrice: function(price) {
-            var currencySymbol = arsol_proposal_quotation_vars.currency_symbol;
-            var formattedPrice = Number(price).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            return '<span class="woocommerce-Price-amount amount"><bdi><span class="woocommerce-Price-currencySymbol">' + currencySymbol + '</span>' + formattedPrice + '</bdi></span>';
-        }
     };
 
     // Initialize when DOM is ready
@@ -1124,47 +1182,20 @@
                 return false;
             }
             
-            // Step 1: HTML5 Validation (same as WordPress update/publish buttons)
-            var $form = $('#post');
-            if ($form.length && $form[0].checkValidity) {
-                if (!$form[0].checkValidity()) {
-                    // Focus on first invalid field (WordPress behavior)
-                    var $firstInvalid = $form.find(':invalid').first();
-                    if ($firstInvalid.length) {
-                        $firstInvalid.focus();
-                        // Trigger validation display
-                        $form[0].reportValidity();
-                    }
-                    return false;
-                }
-            }
-            
-            // Step 2: Show confirmation dialog
-            if (!confirm(message)) {
+            // Use shared validation function
+            if (!ArsolProposal.validateFormAndConfirm(message)) {
                 return false;
             }
             
-            // Step 3: Determine if this is a proposal conversion or project creation
+            // Determine if this is a proposal conversion or project creation
             var hiddenInputName = 'arsol_convert_after_save'; // Default for proposals
             if ($('#project_status').length || $button.closest('#project_details_meta_box').length) {
                 // This is a project page - use create instead of convert
                 hiddenInputName = 'arsol_create_after_save';
             }
             
-            // Add URL as hidden input and submit form
-            $('<input>').attr({
-                type: 'hidden',
-                name: hiddenInputName,
-                value: url
-            }).appendTo($form);
-            
-            // Trigger pre-save cleanup (same as form submission)
-            if (typeof ArsolProposal !== 'undefined' && ArsolProposal.presaveCleanup) {
-                ArsolProposal.presaveCleanup();
-            }
-            
-            // Submit form normally (WordPress will handle save and redirect)
-            $form.submit();
+            // Use shared submission function
+            ArsolProposal.submitFormWithRedirect(hiddenInputName, url);
             
             return false;
         });
@@ -1177,40 +1208,13 @@
             var url = $button.data('url');
             var message = $button.data('message');
             
-            // Step 1: HTML5 Validation (same as WordPress update/publish buttons)
-            var $form = $('#post');
-            if ($form.length && $form[0].checkValidity) {
-                if (!$form[0].checkValidity()) {
-                    // Focus on first invalid field (WordPress behavior)
-                    var $firstInvalid = $form.find(':invalid').first();
-                    if ($firstInvalid.length) {
-                        $firstInvalid.focus();
-                        // Trigger validation display
-                        $form[0].reportValidity();
-                    }
-                    return false;
-                }
-            }
-            
-            // Step 2: Show confirmation dialog
-            if (!confirm(message)) {
+            // Use shared validation function
+            if (!ArsolProposal.validateFormAndConfirm(message)) {
                 return false;
             }
             
-            // Step 3: Add URL as hidden input for redirect after save
-            $('<input>').attr({
-                type: 'hidden',
-                name: 'arsol_view_after_save',
-                value: url
-            }).appendTo($form);
-            
-            // Trigger pre-save cleanup (same as form submission)
-            if (typeof ArsolProposal !== 'undefined' && ArsolProposal.presaveCleanup) {
-                ArsolProposal.presaveCleanup();
-            }
-            
-            // Submit form normally (WordPress will handle save and redirect)
-            $form.submit();
+            // Use shared submission function for view project redirect
+            ArsolProposal.submitFormWithRedirect('arsol_view_after_save', url);
             
             return false;
         });
