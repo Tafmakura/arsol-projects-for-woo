@@ -79,18 +79,10 @@ $all_proposal_statuses = get_terms(array(
             <input type="hidden" name="post_author_override" value="<?php echo esc_attr($customer_id); ?>">
         <?php else: ?>
             <!-- Regular customer search field -->
-                    <?php if ($is_project_tied && $customer): ?>
-            <!-- Locked customer field for project-tied proposals -->
-            <select class="arsol-disabled-select" disabled>
-                <option selected><?php echo esc_html(\Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer)); ?></option>
-            </select>
-            <input type="hidden" name="post_author_override" value="<?php echo esc_attr($customer_id); ?>">
-        <?php else: ?>
-            <!-- Regular customer search field -->
             <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>" required>
                 <?php if ($post->post_author): ?>
                     <?php 
-                                    $customer_user = get_userdata($post->post_author);
+                    $customer_user = get_userdata($post->post_author);
                     if ($customer_user) {
                         $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer_user);
                         
@@ -104,22 +96,34 @@ $all_proposal_statuses = get_terms(array(
                 <?php endif; ?>
             </select>
         <?php endif; ?>
-        <?php endif; ?>
     </p>
 </div>
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="proposal_project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
-        <?php
-        // Use the Admin Users class method for project lead search field
-        \Arsol_Projects_For_Woo\Admin\Users::render_project_lead_search_field(array(
-            'name' => 'proposal_project_lead',
-            'id' => 'proposal_project_lead',
-            'selected' => $proposal_project_lead,
-            'placeholder' => __('Search for project lead...', 'arsol-pfw')
-        ));
-        ?>
+        
+        <?php if ($is_project_tied && $proposal_project_lead): ?>
+            <!-- Locked project lead field for project-tied proposals -->
+            <?php
+            $lead_user = get_userdata($proposal_project_lead);
+            $lead_display = $lead_user ? $lead_user->display_name . ' (' . $lead_user->user_email . ')' : 'Unknown User';
+            ?>
+            <select class="arsol-disabled-select" disabled>
+                <option selected><?php echo esc_html($lead_display); ?></option>
+            </select>
+            <input type="hidden" name="proposal_project_lead" value="<?php echo esc_attr($proposal_project_lead); ?>">
+        <?php else: ?>
+            <!-- Regular project lead search field -->
+            <?php
+            \Arsol_Projects_For_Woo\Admin\Users::render_project_lead_search_field(array(
+                'name' => 'proposal_project_lead',
+                'id' => 'proposal_project_lead',
+                'selected' => $proposal_project_lead,
+                'placeholder' => __('Search for project lead...', 'arsol-pfw')
+            ));
+            ?>
+        <?php endif; ?>
     </p>
 </div>
 
@@ -141,11 +145,21 @@ $all_proposal_statuses = get_terms(array(
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="arsol_pfw_proposal_costing_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
-                        <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select">
-                    <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
-                    <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
-                    <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
-                </select>
+        
+        <?php if ($is_project_tied): ?>
+            <!-- Locked cost type field for project-tied proposals -->
+            <select class="arsol-disabled-select" disabled>
+                <option selected><?php _e('Quotation', 'arsol-pfw'); ?></option>
+            </select>
+            <input type="hidden" name="arsol_pfw_proposal_costing_type" value="quotation">
+        <?php else: ?>
+            <!-- Regular cost type field -->
+            <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select">
+                <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
+                <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
+                <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
+            </select>
+        <?php endif; ?>
     </p>
 </div>
 
