@@ -30,6 +30,38 @@ $delivery_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_delivery_date'
 $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_date', true);
 $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
 
+// Check for project-tied proposal - simple URL parameter check
+$is_project_tied = false;
+$parent_project_data = false;
+
+// Check URL parameter first (for new proposals)
+if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
+    $parent_project_id = intval($_GET['parent_project']);
+    $parent_project = get_post($parent_project_id);
+    
+    if ($parent_project && $parent_project->post_type === 'arsol-project') {
+        $is_project_tied = true;
+        $parent_project_data = array(
+            'id' => $parent_project_id,
+            'title' => $parent_project->post_title
+        );
+    }
+} 
+// Fallback to meta data check (for existing proposals)
+elseif ($proposal_id > 0) {
+    $parent_project_id = get_post_meta($proposal_id, '_arsol_parent_project_id', true);
+    if (!empty($parent_project_id)) {
+        $parent_project = get_post($parent_project_id);
+        if ($parent_project && $parent_project->post_type === 'arsol-project') {
+            $is_project_tied = true;
+            $parent_project_data = array(
+                'id' => $parent_project_id,
+                'title' => $parent_project->post_title
+            );
+        }
+    }
+}
+
 // Check if has original request data
 $has_request_data = false;
 $original_request_id = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_id', true);
@@ -55,15 +87,43 @@ if ($has_request_data) {
             </h2>
 
             <?php
-            // Check if this is a project-tied proposal
-            $admin_proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
-            if ($admin_proposal->is_project_tied_proposal($proposal_id)) {
-                $parent_project_data = $admin_proposal->get_parent_project_data($proposal_id);
-                if ($parent_project_data) {
-                    echo '<p class="order_number">';
-                    printf(__('For Project: %s', 'arsol-projects-for-woo'), esc_html($parent_project_data['title']));
-                    echo '</p>';
+            // Check for project-tied proposal - simple URL parameter check
+            $is_project_tied = false;
+            $parent_project_data = false;
+            
+            // Check URL parameter first (for new proposals)
+            if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
+                $parent_project_id = intval($_GET['parent_project']);
+                $parent_project = get_post($parent_project_id);
+                
+                if ($parent_project && $parent_project->post_type === 'arsol-project') {
+                    $is_project_tied = true;
+                    $parent_project_data = array(
+                        'id' => $parent_project_id,
+                        'title' => $parent_project->post_title
+                    );
                 }
+            } 
+            // Fallback to meta data check (for existing proposals)
+            elseif ($proposal_id > 0) {
+                $parent_project_id = get_post_meta($proposal_id, '_arsol_parent_project_id', true);
+                if (!empty($parent_project_id)) {
+                    $parent_project = get_post($parent_project_id);
+                    if ($parent_project && $parent_project->post_type === 'arsol-project') {
+                        $is_project_tied = true;
+                        $parent_project_data = array(
+                            'id' => $parent_project_id,
+                            'title' => $parent_project->post_title
+                        );
+                    }
+                }
+            }
+            
+            // Display project relationship if this is a project-tied proposal
+            if ($is_project_tied && $parent_project_data) {
+                echo '<p class="order_number">';
+                printf(__('For Project: %s', 'arsol-projects-for-woo'), esc_html($parent_project_data['title']));
+                echo '</p>';
             }
             ?>
 

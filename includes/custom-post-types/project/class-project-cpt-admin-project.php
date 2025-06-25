@@ -131,7 +131,7 @@ class Project {
             $create_url = esc_url_raw($_POST['arsol_create_after_save']);
             wp_redirect($create_url);
             exit;
-        }
+    }
     }
 
     /**

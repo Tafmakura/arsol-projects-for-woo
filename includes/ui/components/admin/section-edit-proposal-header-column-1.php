@@ -19,19 +19,69 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
 $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
 $proposal_project_lead = get_post_meta($proposal_id, '_arsol_pfw_proposal_project_lead', true);
 
-// Check if this is a project-tied proposal
-$admin_proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
-$is_project_tied = $admin_proposal->is_project_tied_proposal($proposal_id);
+// Check for project-tied proposal - simple URL parameter check
+$is_project_tied = false;
 $parent_project_data = false;
 
-if ($is_project_tied) {
-    $parent_project_data = $admin_proposal->get_parent_project_data($proposal_id);
-    // Override values with parent project data for project-tied proposals
-    if ($parent_project_data) {
-        $customer_id = $parent_project_data['customer_id'];
-        $customer = get_userdata($customer_id);
-        $proposal_project_lead = $parent_project_data['lead_id'];
+// Check URL parameter first (for new proposals)
+if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
+    $parent_project_id = intval($_GET['parent_project']);
+    $parent_project = get_post($parent_project_id);
+    
+    if ($parent_project && $parent_project->post_type === 'arsol-project') {
+        $is_project_tied = true;
+        
+        // Get parent project data
+        $parent_customer_id = get_post_meta($parent_project_id, '_arsol_pfw_project_customer_id', true);
+        $parent_lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead_id', true);
+        
+        $parent_project_data = array(
+            'id' => $parent_project_id,
+            'title' => $parent_project->post_title,
+            'customer_id' => $parent_customer_id,
+            'lead_id' => $parent_lead_id
+        );
+        
+        // Override values with parent project data
+        if ($parent_customer_id) {
+            $customer_id = $parent_customer_id;
+            $customer = get_userdata($customer_id);
+        }
+        if ($parent_lead_id) {
+            $proposal_project_lead = $parent_lead_id;
+        }
         $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
+    }
+} 
+// Fallback to meta data check (for existing proposals)
+elseif ($proposal_id > 0) {
+    $parent_project_id = get_post_meta($proposal_id, '_arsol_parent_project_id', true);
+    if (!empty($parent_project_id)) {
+        $parent_project = get_post($parent_project_id);
+        if ($parent_project && $parent_project->post_type === 'arsol-project') {
+            $is_project_tied = true;
+            
+            // Get parent project data
+            $parent_customer_id = get_post_meta($parent_project_id, '_arsol_pfw_project_customer_id', true);
+            $parent_lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead_id', true);
+            
+            $parent_project_data = array(
+                'id' => $parent_project_id,
+                'title' => $parent_project->post_title,
+                'customer_id' => $parent_customer_id,
+                'lead_id' => $parent_lead_id
+            );
+            
+            // Override values with parent project data
+            if ($parent_customer_id) {
+                $customer_id = $parent_customer_id;
+                $customer = get_userdata($customer_id);
+            }
+            if ($parent_lead_id) {
+                $proposal_project_lead = $parent_lead_id;
+            }
+            $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
+        }
     }
 }
 
@@ -45,6 +95,16 @@ $all_proposal_statuses = get_terms(array(
     'hide_empty' => false,
 ));
 ?>
+
+<?php if ($is_project_tied && $parent_project_data): ?>
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
+        <label for="custom_proposal_title"><?php _e('Proposal Title:', 'arsol-pfw'); ?></label>
+        <input type="text" id="custom_proposal_title" name="custom_proposal_title" value="<?php echo esc_attr($post->post_title); ?>" class="widefat" placeholder="<?php printf(__('Proposal for %s', 'arsol-projects-for-woo'), esc_attr($parent_project_data['title'])); ?>">
+        <span class="description"><?php printf(__('Custom title for this proposal. Default: "Proposal for %s"', 'arsol-projects-for-woo'), esc_html($parent_project_data['title'])); ?></span>
+    </p>
+</div>
+<?php endif; ?>
 
 <div class="form-field-row">
     <p class="form-field form-field-half">
@@ -102,17 +162,16 @@ $all_proposal_statuses = get_terms(array(
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="proposal_project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
-        
         <?php if ($is_project_tied && $proposal_project_lead): ?>
             <!-- Locked project lead field for project-tied proposals -->
-            <?php
+            <?php 
             $lead_user = get_userdata($proposal_project_lead);
-            $lead_display = $lead_user ? $lead_user->display_name . ' (' . $lead_user->user_email . ')' : 'Unknown User';
-            ?>
-            <select class="arsol-disabled-select" disabled>
-                <option selected><?php echo esc_html($lead_display); ?></option>
-            </select>
-            <input type="hidden" name="proposal_project_lead" value="<?php echo esc_attr($proposal_project_lead); ?>">
+            if ($lead_user): ?>
+                <select class="arsol-disabled-select" disabled>
+                    <option selected><?php echo esc_html($lead_user->display_name . ' (' . $lead_user->user_email . ')'); ?></option>
+                </select>
+                <input type="hidden" name="proposal_project_lead" value="<?php echo esc_attr($proposal_project_lead); ?>">
+            <?php endif; ?>
         <?php else: ?>
             <!-- Regular project lead search field -->
             <?php
@@ -145,7 +204,6 @@ $all_proposal_statuses = get_terms(array(
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="arsol_pfw_proposal_costing_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
-        
         <?php if ($is_project_tied): ?>
             <!-- Locked cost type field for project-tied proposals -->
             <select class="arsol-disabled-select" disabled>
@@ -168,4 +226,4 @@ $all_proposal_statuses = get_terms(array(
         <label for="arsol_pfw_proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="arsol_pfw_proposal_expiration_date" name="arsol_pfw_proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
     </p>
-</div> 
+</div>
