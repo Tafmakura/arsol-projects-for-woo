@@ -199,51 +199,18 @@ $all_proposal_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="arsol_pfw_proposal_costing_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
-        <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select" <?php echo $is_project_tied ? 'data-project-tied="true"' : ''; ?>>
-            <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
-            <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
-            <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
-        </select>
-    </p>
-</div>
-
-<div class="form-field-row">
-    <p class="form-field form-field-half">
-        <label for="arsol_pfw_proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="arsol_pfw_proposal_expiration_date" name="arsol_pfw_proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
-    </p>
-</div>
-
-<script type="text/javascript">
-jQuery(document).ready(function($) {
-    // Handle project-tied proposal cost type restrictions
-    var costTypeSelect = $('#arsol_pfw_proposal_costing_type');
-    
-    if (costTypeSelect.data('project-tied') === true) {
-        // For project-tied proposals, only allow quotation
-        costTypeSelect.find('option[value!="quotation"]').prop('disabled', true);
-        costTypeSelect.val('quotation').trigger('change');
-        
-        // Make the field appear locked but still functional
-        costTypeSelect.addClass('arsol-project-tied-locked');
-    }
-});
-</script>
-
-<style>
-.arsol-disabled-select {
-    background-color: #f7f7f7;
-    color: #666;
-    cursor: not-allowed;
-}
-
-.arsol-project-tied-locked {
-    background-color: #f7f7f7;
-    color: #666;
-}
-
-.arsol-project-tied-locked option:disabled {
-    color: #ccc;
-}
-</style>
+        <label for="arsol_pfw_proposal_costing_type"><?php _e("Cost Proposal Type:", "arsol-pfw"); ?></label>
+        <?php if ($is_project_tied): ?>
+            <!-- Locked cost type field for project-tied proposals -->
+            <select class="arsol-disabled-select" disabled>
+                <option selected><?php _e("Quotation", "arsol-pfw"); ?></option>
+            </select>
+            <input type="hidden" name="arsol_pfw_proposal_costing_type" value="quotation">
+        <?php else: ?>
+            <!-- Regular cost type field -->
+            <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select">
+                <option value="none" <?php selected($cost_proposal_type, "none"); ?>><?php _e("None", "arsol-pfw"); ?></option>
+                <option value="budget" <?php selected($cost_proposal_type, "budget"); ?>><?php _e("Budget", "arsol-pfw"); ?></option>
+                <option value="quotation" <?php selected($cost_proposal_type, "quotation"); ?>><?php _e("Quotation", "arsol-pfw"); ?></option>
+            </select>
+        <?php endif; ?>

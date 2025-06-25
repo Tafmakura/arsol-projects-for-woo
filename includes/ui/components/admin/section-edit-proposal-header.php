@@ -78,46 +78,6 @@ if ($has_request_data) {
     $container_class .= ' has-col-2';
 }
 ?>
-
-<div id="arsol-pfw-project-proposal-data" class="arsol-pfw-project postbox ">
-    <div id="proposal_metabox" class="panel-wrap woocommerce">
-        <div id="order_data" class="panel woocommerce">
-            <h2>
-                <?php printf(__('Proposal #%d details', 'arsol-pfw'), $proposal_id); ?>
-            </h2>
-
-            <?php
-            // Check for project-tied proposal - simple URL parameter check
-            $is_project_tied = false;
-            $parent_project_data = false;
-            
-            // Check URL parameter first (for new proposals)
-            if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
-                $parent_project_id = intval($_GET['parent_project']);
-                $parent_project = get_post($parent_project_id);
-                
-                if ($parent_project && $parent_project->post_type === 'arsol-project') {
-                    $is_project_tied = true;
-                    $parent_project_data = array(
-                        'id' => $parent_project_id,
-                        'title' => $parent_project->post_title
-                    );
-                }
-            } 
-            // Fallback to meta data check (for existing proposals)
-            elseif ($proposal_id > 0) {
-                $parent_project_id = get_post_meta($proposal_id, '_arsol_pfw_parent_project_id', true);
-                if (!empty($parent_project_id)) {
-                    $parent_project = get_post($parent_project_id);
-                    if ($parent_project && $parent_project->post_type === 'arsol-project') {
-                        $is_project_tied = true;
-                        $parent_project_data = array(
-                            'id' => $parent_project_id,
-                            'title' => $parent_project->post_title
-                        );
-                    }
-                }
-            }
             
             // Display project relationship if this is a project-tied proposal
             if ($is_project_tied && $parent_project_data) {
