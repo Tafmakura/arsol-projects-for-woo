@@ -1,0 +1,72 @@
+# Arsol Projects for WooCommerce - Complete Shortcode Reference
+
+## Overview
+
+This plugin provides a comprehensive set of shortcodes for displaying project content, listings, and forms. All shortcodes use the **arsol_pfw_** naming convention and are **context-aware**.
+
+## Naming Convention
+
+- **Shortcodes**: Use `arsol_pfw_*` prefix (e.g., `[arsol_pfw_project_form]`)
+- **Post Types**: `arsol-project`, `arsol-pfw-proposal`, `arsol-pfw-request`
+- **Frontend Names**: Always include "Project" (e.g., "Project Form", "Project Request Form")
+
+---
+
+## Content Shortcodes
+
+### `[arsol_pfw_project_content_active]`
+Displays active project content.
+
+### `[arsol_pfw_project_content_proposal]`
+Displays project proposal content.
+
+### `[arsol_pfw_project_content_request]`
+Displays project request content.
+
+---
+
+## Listing Shortcodes
+
+### `[arsol_pfw_projects_listing_active]`
+Lists active projects with context-aware behavior and dynamic URL parameters.
+
+### `[arsol_pfw_projects_listing_proposals]`
+Lists project proposals with filtering options.
+
+### `[arsol_pfw_projects_listing_requests]`
+Lists project requests with search capabilities.
+
+---
+
+## Form Shortcodes
+
+### `[arsol_pfw_project_form]`
+Displays the **Project Form** for creating projects.
+
+### `[arsol_pfw_project_request_form]`
+Displays the **Project Request Form** for creating/editing requests.
+
+---
+
+## Context-Aware Behavior
+
+- **My Account**: Work natively using URL context
+- **Public Pages**: Show public content with optional customer filtering
+- **Dynamic Parameters**: Support URL-based parameter overrides
+
+## Examples
+
+```php
+// Public project gallery with customer filter
+[arsol_pfw_projects_listing_active customer_id="123"]
+
+// Dynamic filtering via URL
+[arsol_pfw_projects_listing_active]
+// URL: /projects/?category=web-dev&search=wordpress
+
+// Project forms
+[arsol_pfw_project_form]
+[arsol_pfw_project_request_form]
+```
+
+*For complete documentation, see the full reference guide.* 

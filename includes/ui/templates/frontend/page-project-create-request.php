@@ -13,7 +13,5 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-\Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-    'request_project_form',
-    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-request.php'
-);
+// Use shortcode for form rendering
+echo do_shortcode('[arsol_pfw_project_request_form]');

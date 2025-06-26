@@ -8,9 +8,5 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Show edit form for pending-review requests
-\Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-    'project_request_edit_form',
-    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-request.php',
-    ['is_edit' => true, 'post' => $post]
-); 
+// Show edit form for pending-review requests using shortcode
+echo do_shortcode('[arsol_pfw_project_request_form is_edit="true" post_id="' . $post->ID . '"]'); 

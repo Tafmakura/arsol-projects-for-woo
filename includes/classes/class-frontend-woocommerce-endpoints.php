@@ -263,10 +263,8 @@ class Frontend_Endpoints {
             return;
         }
 
-        Frontend_Template_Overrides::render_template(
-            'create_project_request_form',
-            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create-request.php'
-        );
+        // Use shortcode for form rendering
+        echo do_shortcode('[arsol_pfw_project_request_form]');
     }
     
     /**

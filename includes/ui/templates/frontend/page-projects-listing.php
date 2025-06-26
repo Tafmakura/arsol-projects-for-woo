@@ -52,14 +52,14 @@ include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-pro
             if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_proposal_listings')) {
                 echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('project_proposal_listings');
             } else {
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-proposals.php';
+                echo do_shortcode('[arsol_pfw_projects_listing_proposals]');
             }
             break;
         case 'requests':
             if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_requests_listings')) {
                 echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('project_requests_listings');
             } else {
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-requests.php';
+                echo do_shortcode('[arsol_pfw_projects_listing_requests]');
             }
             break;
         case 'active':
@@ -67,7 +67,7 @@ include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-pro
             if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('projects_listing')) {
                 echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('projects_listing');
             } else {
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-projects-listing-active.php';
+                echo do_shortcode('[arsol_pfw_projects_listing_active]');
             }
             break;
     }

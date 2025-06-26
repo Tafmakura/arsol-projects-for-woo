@@ -98,10 +98,20 @@ if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_ov
             ?>
             
             <?php
-            if (file_exists($content_template)) {
-                include $content_template;
-            } else {
-                echo '<p>' . esc_html__('Content template not found.', 'arsol-pfw') . '</p>';
+            // Use shortcodes for content rendering instead of template includes
+            switch ($project_type) {
+                case 'active':
+                    echo do_shortcode('[arsol_pfw_project_content_active project_id="' . $project_id . '"]');
+                    break;
+                case 'proposal':
+                    echo do_shortcode('[arsol_pfw_project_content_proposal project_id="' . $project_id . '"]');
+                    break;
+                case 'request':
+                    echo do_shortcode('[arsol_pfw_project_content_request project_id="' . $project_id . '"]');
+                    break;
+                default:
+                    echo do_shortcode('[arsol_pfw_project_content_active project_id="' . $project_id . '"]');
+                    break;
             }
             ?>
             

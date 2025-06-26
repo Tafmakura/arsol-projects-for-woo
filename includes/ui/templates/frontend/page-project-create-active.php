@@ -23,7 +23,5 @@ if (!$can_create) {
     exit;
 }
 
-\Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-    'create_project_form',
-    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-active.php'
-);
+// Use shortcode for form rendering
+echo do_shortcode('[arsol_pfw_project_form]');

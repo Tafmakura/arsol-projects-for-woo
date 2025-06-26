@@ -23,11 +23,7 @@ $default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_d
     <p><?php esc_html_e('You can make changes to your request while it\'s on hold. Any updates will be reviewed when we resume processing.', 'arsol-pfw'); ?></p>
     
     <?php
-    // Show edit form for on-hold requests
-    \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-        'project_request_edit_form',
-        ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-request.php',
-        ['is_edit' => true, 'post' => $post]
-    );
+    // Show edit form for on-hold requests using shortcode
+    echo do_shortcode('[arsol_pfw_project_request_form is_edit="true" post_id="' . $post->ID . '"]');
     ?>
 </div>
