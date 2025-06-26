@@ -12,6 +12,33 @@ if (!defined('ABSPATH')) {
 
 $is_edit = isset($is_edit) && $is_edit;
 
+// Check for parent project parameter
+$parent_project_id = 0;
+$parent_project_title = '';
+
+if (!$is_edit && isset($_GET['parent_project'])) {
+    $parent_project_id = absint($_GET['parent_project']);
+    if ($parent_project_id) {
+        $parent_project = get_post($parent_project_id);
+        if ($parent_project && $parent_project->post_type === 'arsol-project') {
+            $parent_project_title = $parent_project->post_title;
+        } else {
+            $parent_project_id = 0; // Invalid parent project
+        }
+    }
+}
+
+// If editing, check if this is a project-tied request
+if ($is_edit) {
+    $parent_project_id = get_post_meta($post->ID, '_arsol_pfw_parent_project_id', true);
+    if ($parent_project_id) {
+        $parent_project = get_post($parent_project_id);
+        if ($parent_project && $parent_project->post_type === 'arsol-project') {
+            $parent_project_title = $parent_project->post_title;
+        }
+    }
+}
+
 // If editing, populate fields from the post object
 if ($is_edit) {
     $title = $post->post_title;
@@ -32,6 +59,16 @@ if ($is_edit) {
 $currency_code = get_woocommerce_currency();
 $currency_symbol = get_woocommerce_currency_symbol($currency_code);
 
+// Determine form title
+$form_title = '';
+if ($is_edit) {
+    $form_title = __('Edit Your Project Request', 'arsol-pfw');
+} elseif ($parent_project_id && $parent_project_title) {
+    $form_title = sprintf(__('Request Proposal for %s', 'arsol-pfw'), $parent_project_title);
+} else {
+    $form_title = __('Submit a Project Request', 'arsol-pfw');
+}
+
 $button_text = $is_edit ? __('Update Request', 'arsol-pfw') : __('Submit Request', 'arsol-pfw');
 $form_action = $is_edit ? 'arsol_edit_request' : 'arsol_create_request';
 
@@ -50,12 +87,15 @@ if (!$is_edit) {
 
 <div class="arsol-project-request">
     <form method="post" id="arsol-request-edit-form" class="arsol-request-form" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-        <h4><?php echo $is_edit ? esc_html__('Edit Your Project Request', 'arsol-pfw') : esc_html__('Submit a Project Request', 'arsol-pfw'); ?></h4>
+        <h4><?php echo esc_html($form_title); ?></h4>
         
         <input type="hidden" name="action" value="<?php echo esc_attr($form_action); ?>">
         <?php wp_nonce_field($form_action, 'arsol_request_nonce'); ?>
         <?php if ($is_edit) : ?>
             <input type="hidden" name="request_id" value="<?php echo esc_attr($post->ID); ?>">
+        <?php endif; ?>
+        <?php if ($parent_project_id) : ?>
+            <input type="hidden" name="parent_project_id" value="<?php echo esc_attr($parent_project_id); ?>">
         <?php endif; ?>
 
         <div class="form-row">

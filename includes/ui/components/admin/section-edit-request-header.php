@@ -36,6 +36,19 @@ $all_statuses = get_terms(array(
     'hide_empty' => false,
 ));
 
+// Check for parent project
+$parent_project_id = get_post_meta($request_id, '_arsol_pfw_parent_project_id', true);
+$parent_project_data = null;
+if ($parent_project_id) {
+    $parent_project = get_post($parent_project_id);
+    if ($parent_project && $parent_project->post_type === 'arsol-project') {
+        $parent_project_data = array(
+            'id' => $parent_project_id,
+            'title' => $parent_project->post_title
+        );
+    }
+}
+
 // Requests always show both columns
 $container_class = 'arsol-header-grid';
 ?>
@@ -49,6 +62,15 @@ $container_class = 'arsol-header-grid';
             <p class="order_number">
                 <?php _e('Title:', 'arsol-pfw'); ?> <?php echo esc_html($post->post_title); ?>
             </p>
+            
+            <?php
+            // Show parent project if this is a project-tied request
+            if ($parent_project_data) {
+                echo '<p class="order_number">';
+                printf(__('Parent Project: %s', 'arsol-pfw'), esc_html($parent_project_data['title']));
+                echo '</p>';
+            }
+            ?>
 
             <div class="project_data_column_container <?php echo esc_attr($container_class); ?>">
                 <div class="project_data_column">

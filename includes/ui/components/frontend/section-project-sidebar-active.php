@@ -79,6 +79,17 @@ do_action('arsol_pfw_sidebar_fields_end', 'active', $sidebar_data);
 ?>
 
 <?php
+// Add Request Proposal button
+$request_proposal_url = wc_get_account_endpoint_url('project-request') . '?parent_project=' . $project_id;
+?>
+
+<div class="arsol-pfw-project-action">
+    <a href="<?php echo esc_url($request_proposal_url); ?>" class="brxe-button bricks-button button-primary">
+        <?php esc_html_e('Request Proposal', 'arsol-pfw'); ?>
+    </a>
+</div>
+
+<?php
 /**
  * Hook: arsol_pfw_sidebar_after
  * 

@@ -876,6 +876,22 @@ class Workflow_Handler {
     }
 
     private function update_request_meta($post_id, $data) {
+        // Save parent project if provided
+        if (isset($data['parent_project_id']) && !empty($data['parent_project_id'])) {
+            $parent_project_id = absint($data['parent_project_id']);
+            if ($parent_project_id) {
+                // Validate parent project exists
+                $parent_project = get_post($parent_project_id);
+                if ($parent_project && $parent_project->post_type === 'arsol-project') {
+                    // Save parent project ID
+                    update_post_meta($post_id, '_arsol_pfw_parent_project_id', $parent_project_id);
+                    
+                    // Mark as project-tied request
+                    update_post_meta($post_id, '_arsol_pfw_is_project_tied_request', 1);
+                }
+            }
+        }
+        
         if (isset($data['request_budget'])) {
             $amount = wc_clean(wp_unslash($data['request_budget']));
             // Remove commas and other non-numeric characters except decimal point
