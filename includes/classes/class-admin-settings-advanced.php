@@ -23,6 +23,9 @@ class Settings_Advanced {
         
         // Add AJAX handler for cleanup
         add_action('wp_ajax_arsol_cleanup_conversions', array($this, 'handle_cleanup_ajax'));
+        
+        // Add AJAX handler for reset defaults
+        add_action('wp_ajax_arsol_reset_defaults', array($this, 'handle_reset_defaults_ajax'));
     }
 
     public function init_translations() {
@@ -155,11 +158,28 @@ class Settings_Advanced {
             'arsol_projects_advanced_settings',
             'arsol_projects_conversion_management_section'
         );
+
+        // Reset Defaults Section
+        add_settings_section(
+            'arsol_projects_reset_defaults_section',
+            __('Reset Defaults', 'arsol-pfw'),
+            array($this, 'render_reset_defaults_description'),
+            'arsol_projects_advanced_settings'
+        );
+
+        add_settings_field(
+            'reset_defaults',
+            __('Reset Plugin Defaults', 'arsol-pfw'),
+            array($this, 'render_reset_defaults_field'),
+            'arsol_projects_advanced_settings',
+            'arsol_projects_reset_defaults_section'
+        );
     }
 
     public function render_default_messages_description() {
-        echo '<p>' . esc_html__('Configure default messages that appear in different sections of your project workflow. These messages support Markdown syntax for rich text formatting. Leave fields empty to use the plugin\'s built-in defaults.', 'arsol-pfw') . '</p>';
+        echo '<p>' . esc_html__('Configure default messages that appear in different sections of your project workflow. Each field shows the plugin\'s built-in default as a placeholder - leave fields empty to use these defaults, or add your own custom content to override them.', 'arsol-pfw') . '</p>';
         echo '<p><strong>' . esc_html__('Markdown Reference:', 'arsol-pfw') . '</strong> ' . esc_html__('Use **bold**, *italic*, [links](URL), `code`, - list item, > quote and other Markdown syntax for formatting.', 'arsol-pfw') . '</p>';
+        echo '<p><em>' . esc_html__('Tip: Empty fields will automatically display the built-in defaults. Only customize the messages you want to change.', 'arsol-pfw') . '</em></p>';
     }
 
     public function render_conversion_management_description() {
@@ -226,6 +246,26 @@ class Settings_Advanced {
         ));
     }
 
+    /**
+     * Handle AJAX reset defaults request
+     */
+    public function handle_reset_defaults_ajax() {
+        if (!wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !current_user_can('manage_options')) {
+            wp_send_json_error('Security check failed');
+        }
+        
+        // Force reset defaults by deleting the initialization flag
+        delete_option(\Arsol_Projects_For_Woo\Admin\Setup_Defaults::DEFAULTS_INITIALIZED_KEY);
+        
+        // Trigger re-initialization
+        do_action('arsol_pfw_plugin_activated');
+        
+        wp_send_json_success(array(
+            'reset' => 1,
+            'message' => __('Plugin defaults have been reset successfully.', 'arsol-pfw')
+        ));
+    }
+
     public function render_template_overrides_description() {
         echo '<p>' . esc_html__('Use these settings to override the default plugin templates with your own shortcodes. This allows for custom layouts and designs for various components without needing to edit plugin files directly. Enter the shortcode you wish to use for each template override.', 'arsol-pfw') . '</p>';
         echo '<p><strong>' . esc_html__('Important:', 'arsol-pfw') . '</strong> ' . esc_html__('Template overrides are placed inside existing wrapper elements to preserve page structure and styling. Your shortcode content will appear within the appropriate container divs.', 'arsol-pfw') . '</p>';
@@ -236,17 +276,58 @@ class Settings_Advanced {
         $value = isset($settings[$args['id']]) ? $settings[$args['id']] : '';
         $rows = isset($args['rows']) ? $args['rows'] : 8;
         $cols = isset($args['cols']) ? $args['cols'] : 80;
+        
+        // Get hardcoded default for placeholder
+        $hardcoded_defaults = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_hardcoded_defaults();
+        $placeholder_text = isset($hardcoded_defaults[$args['id']]) ? $hardcoded_defaults[$args['id']] : __('Enter your markdown content here...', 'arsol-pfw');
         ?>
-        <textarea id="<?php echo esc_attr($args['id']); ?>"
-                  name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
-                  rows="<?php echo esc_attr($rows); ?>"
-                  cols="<?php echo esc_attr($cols); ?>"
-                  class="large-text code"
-                  style="font-family: Consolas, Monaco, 'Courier New', monospace; font-size: 13px; line-height: 1.4;"
-                  placeholder="<?php esc_attr_e('Enter your markdown content here...', 'arsol-pfw'); ?>"><?php echo esc_textarea($value); ?></textarea>
+        <div style="position: relative;">
+            <textarea id="<?php echo esc_attr($args['id']); ?>"
+                      name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
+                      rows="<?php echo esc_attr($rows); ?>"
+                      cols="<?php echo esc_attr($cols); ?>"
+                      class="large-text code"
+                      style="font-family: Consolas, Monaco, 'Courier New', monospace; font-size: 13px; line-height: 1.4;"
+                      placeholder="<?php echo esc_attr($placeholder_text); ?>"><?php echo esc_textarea($value); ?></textarea>
+            
+            <?php if (isset($hardcoded_defaults[$args['id']])) : ?>
+                <button type="button" 
+                        class="button button-secondary" 
+                        style="margin-top: 5px;"
+                        onclick="loadDefaultContent('<?php echo esc_js($args['id']); ?>')">
+                    <?php _e('Load Default Content', 'arsol-pfw'); ?>
+                </button>
+            <?php endif; ?>
+        </div>
         
         <?php if (!empty($args['description'])) : ?>
             <p class="description"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
+        
+        <?php if (empty($value) && !empty($placeholder_text)) : ?>
+            <p class="description" style="margin-top: 8px; padding: 8px; background: #f9f9f9; border-left: 4px solid #00a0d2;">
+                <strong><?php _e('Default Preview:', 'arsol-pfw'); ?></strong><br>
+                <small style="color: #666;"><?php _e('This is what will be displayed when the field is empty. You can customize it above.', 'arsol-pfw'); ?></small>
+            </p>
+        <?php endif; ?>
+        
+        <?php
+        // Add JavaScript for loading defaults (only once)
+        static $script_added = false;
+        if (!$script_added) :
+            $script_added = true;
+            ?>
+            <script type="text/javascript">
+            var arsolDefaultContent = <?php echo json_encode($hardcoded_defaults); ?>;
+            
+            function loadDefaultContent(fieldId) {
+                if (arsolDefaultContent[fieldId]) {
+                    if (confirm('<?php esc_js_e('Load the default content? This will replace any existing content in this field.', 'arsol-pfw'); ?>')) {
+                        document.getElementById(fieldId).value = arsolDefaultContent[fieldId];
+                    }
+                }
+            }
+            </script>
         <?php endif; ?>
         <?php
     }
@@ -270,28 +351,76 @@ class Settings_Advanced {
     }
 
     /**
-     * Get a default message by key
+     * Get a default message by key - UPDATED for two-layer system
      * 
      * @param string $key The message key
-     * @return string The message content (empty if not set)
+     * @return string The effective message content (user setting or hardcoded default)
      */
     public static function get_default_message($key) {
-        $settings = get_option('arsol_projects_advanced_settings', []);
-        return isset($settings[$key]) ? $settings[$key] : '';
+        return \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message($key);
     }
 
     /**
-     * Get all default messages
+     * Get all default messages - UPDATED for two-layer system
      * 
-     * @return array All default messages
+     * @return array All effective default messages
      */
     public static function get_all_default_messages() {
-        $settings = get_option('arsol_projects_advanced_settings', []);
+        $effective_messages = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_all_effective_default_messages();
+        
         return [
-            'project_request_on_hold' => isset($settings['project_request_on_hold_message']) ? $settings['project_request_on_hold_message'] : '',
-            'project_request_under_review' => isset($settings['project_request_under_review_message']) ? $settings['project_request_under_review_message'] : '',
-            'project_overview' => isset($settings['project_overview_message']) ? $settings['project_overview_message'] : '',
-            'project_proposals' => isset($settings['project_proposals_message']) ? $settings['project_proposals_message'] : ''
+            'project_request_on_hold' => $effective_messages['project_request_on_hold_message'] ?? '',
+            'project_request_under_review' => $effective_messages['project_request_under_review_message'] ?? '',
+            'project_overview' => $effective_messages['project_overview_message'] ?? '',
+            'project_proposals' => $effective_messages['project_proposals_message'] ?? ''
         ];
+    }
+
+    public function render_reset_defaults_description() {
+        echo '<p>' . esc_html__('Use this section to reset all plugin defaults to their initial values.', 'arsol-pfw') . '</p>';
+    }
+
+    public function render_reset_defaults_field() {
+        ?>
+        <button type="button" id="reset-defaults" class="button">
+            <?php esc_html_e('Reset Plugin Defaults', 'arsol-pfw'); ?>
+        </button>
+        <p class="description">
+            <?php esc_html_e('This action cannot be undone.', 'arsol-pfw'); ?>
+        </p>
+        
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('#reset-defaults').on('click', function() {
+                if (confirm('<?php esc_js_e('Reset plugin defaults?', 'arsol-pfw'); ?>')) {
+                    const button = $(this);
+                    button.prop('disabled', true).text('<?php esc_js_e('Resetting...', 'arsol-pfw'); ?>');
+                    
+                    $.ajax({
+                        url: ajaxurl,
+                        type: 'POST',
+                        data: {
+                            action: 'arsol_reset_defaults',
+                            nonce: '<?php echo wp_create_nonce('arsol_admin'); ?>'
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                alert('<?php esc_js_e('Reset completed:', 'arsol-pfw'); ?> ' + response.data.reset + ' <?php esc_js_e('defaults reset', 'arsol-pfw'); ?>');
+                            } else {
+                                alert('<?php esc_js_e('Reset failed:', 'arsol-pfw'); ?> ' + response.data);
+                            }
+                            button.prop('disabled', false).text('<?php esc_js_e('Reset Plugin Defaults', 'arsol-pfw'); ?>');
+                            location.reload();
+                        },
+                        error: function() {
+                            alert('<?php esc_js_e('Ajax request failed.', 'arsol-pfw'); ?>');
+                            button.prop('disabled', false).text('<?php esc_js_e('Reset Plugin Defaults', 'arsol-pfw'); ?>');
+                        }
+                    });
+                }
+            });
+        });
+        </script>
+        <?php
     }
 }
