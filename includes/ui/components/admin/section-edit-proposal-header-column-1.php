@@ -195,7 +195,7 @@ $all_proposal_statuses = get_terms(array(
         <?php if ($is_project_tied): ?>
             <!-- Locked cost type field for project-tied proposals -->
             <!-- IMPORTANT: Keep same ID for JavaScript conditional logic to work -->
-            <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select arsol-disabled-select" disabled>
+            <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="arsol-disabled-select" disabled>
                 <option value="quotation" selected><?php _e('Quotation', 'arsol-pfw'); ?></option>
             </select>
             <!-- Hidden input ensures value is submitted -->
