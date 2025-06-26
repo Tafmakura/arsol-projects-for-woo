@@ -1184,7 +1184,7 @@
             
             // Use shared validation function
             if (!ArsolProposal.validateFormAndConfirm(message)) {
-                return false;
+                    return false;
             }
             
             // Determine if this is a proposal conversion or project creation

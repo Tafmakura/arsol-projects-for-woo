@@ -43,9 +43,9 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
         );
         
         // EXCLUSIVELY use parent project values - override completely
-        $customer_id = $parent_customer_id;
-        $customer = get_userdata($customer_id);
-        $proposal_project_lead = $parent_lead_id;
+            $customer_id = $parent_customer_id;
+            $customer = get_userdata($customer_id);
+            $proposal_project_lead = $parent_lead_id;
         $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
     }
 } 
@@ -69,9 +69,9 @@ elseif ($proposal_id > 0) {
             );
             
             // EXCLUSIVELY use parent project values - override completely
-            $customer_id = $parent_customer_id;
-            $customer = get_userdata($customer_id);
-            $proposal_project_lead = $parent_lead_id;
+                $customer_id = $parent_customer_id;
+                $customer = get_userdata($customer_id);
+                $proposal_project_lead = $parent_lead_id;
             $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
         }
     }
@@ -221,9 +221,9 @@ $all_proposal_statuses = get_terms(array(
 <?php if ($is_project_tied && $parent_project_data): ?>
     <!-- Hidden input to ensure parent project ID is always saved -->
     <input type="hidden" name="parent_project_id" value="<?php echo esc_attr($parent_project_data['id']); ?>">
-    
-    <script type="text/javascript">
-    jQuery(document).ready(function($) {
+
+<script type="text/javascript">
+jQuery(document).ready(function($) {
         // Preserve parent_project URL parameter during form submission
         var parentProjectId = <?php echo json_encode($parent_project_data['id']); ?>;
         
@@ -247,6 +247,6 @@ $all_proposal_statuses = get_terms(array(
                 window.history.replaceState({}, '', currentUrl + separator + 'parent_project=' + parentProjectId);
             }
         });
-    });
-    </script>
+});
+</script>
 <?php endif; ?>
