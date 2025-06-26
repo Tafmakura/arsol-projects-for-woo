@@ -42,7 +42,7 @@ class Setup {
             'search_items'      => __('Search Projects', 'arsol-pfw'),
             'not_found'         => __('No projects found', 'arsol-pfw'),
             'not_found_in_trash'=> __('No projects found in trash', 'arsol-pfw'),
-            'menu_name'         => __('Arsol Projects for Woo', 'arsol-pfw'),
+            'menu_name'         => __('Projects', 'arsol-pfw'),
             'all_items'         => __('All Projects', 'arsol-pfw'),
         );
 
@@ -62,7 +62,7 @@ class Setup {
             'show_in_menu'       => true,
             'show_in_nav_menus'  => true,
             'show_in_admin_bar'  => true,
-            'menu_position'      => 5,
+            'menu_position'      => 55,
             'menu_icon'          => 'dashicons-clipboard',
             'capability_type'    => array('arsol_project', 'arsol_projects'),
             'map_meta_cap'       => true,
