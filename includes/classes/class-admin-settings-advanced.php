@@ -28,14 +28,6 @@ class Settings_Advanced {
     public function init_translations() {
         // Initialize default message fields
         $this->default_message_fields = [
-            'project_request_on_hold_message' => [
-                'title' => __('Project Request (On-Hold)', 'arsol-pfw'),
-                'description' => __('Default message displayed when a project request is put on hold.', 'arsol-pfw')
-            ],
-            'project_request_under_review_message' => [
-                'title' => __('Project Request (Under Review)', 'arsol-pfw'),
-                'description' => __('Default message displayed when a project request is under review.', 'arsol-pfw')
-            ],
             'project_overview_message' => [
                 'title' => __('Active Project (Empty)', 'arsol-pfw'),
                 'description' => __('Placeholder message for projects when they don\'t have project content.', 'arsol-pfw')
@@ -43,6 +35,14 @@ class Settings_Advanced {
             'project_proposals_message' => [
                 'title' => __('Project Proposal (Empty)', 'arsol-pfw'),
                 'description' => __('Placeholder message for project proposals when they don\'t have content.', 'arsol-pfw')
+            ],
+            'project_request_on_hold_message' => [
+                'title' => __('Project Request (On-Hold)', 'arsol-pfw'),
+                'description' => __('Default message displayed when a project request is put on hold.', 'arsol-pfw')
+            ],
+            'project_request_under_review_message' => [
+                'title' => __('Project Request (Under Review)', 'arsol-pfw'),
+                'description' => __('Default message displayed when a project request is under review.', 'arsol-pfw')
             ]
         ];
         
