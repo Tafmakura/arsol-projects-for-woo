@@ -14,6 +14,7 @@ if (!defined('ABSPATH')) {
 
 class Settings_Advanced {
 
+    private $default_message_fields = [];
     private $shortcode_fields = [];
 
     public function __construct() {
@@ -25,6 +26,26 @@ class Settings_Advanced {
     }
 
     public function init_translations() {
+        // Initialize default message fields
+        $this->default_message_fields = [
+            'project_request_on_hold_message' => [
+                'title' => __('Project Request (On-Hold)', 'arsol-pfw'),
+                'description' => __('Default message displayed when a project request is put on hold.', 'arsol-pfw')
+            ],
+            'project_request_under_review_message' => [
+                'title' => __('Project Request (Under Review)', 'arsol-pfw'),
+                'description' => __('Default message displayed when a project request is under review.', 'arsol-pfw')
+            ],
+            'project_overview_message' => [
+                'title' => __('Project Overview', 'arsol-pfw'),
+                'description' => __('Default introductory content for project overview pages.', 'arsol-pfw')
+            ],
+            'project_proposals_message' => [
+                'title' => __('Project Proposals', 'arsol-pfw'),
+                'description' => __('Default messaging and instructions for project proposal sections.', 'arsol-pfw')
+            ]
+        ];
+        
         $this->shortcode_fields = [
             'project_overview_active_shortcode' => [
                 'title' => __('Active Project Overview', 'arsol-pfw'),
@@ -72,6 +93,30 @@ class Settings_Advanced {
     public function register_settings() {
         register_setting('arsol_projects_advanced_settings', 'arsol_projects_advanced_settings');
 
+        // Default Messages Section
+        add_settings_section(
+            'arsol_projects_default_messages_section',
+            __('Default Messages', 'arsol-pfw'),
+            array($this, 'render_default_messages_description'),
+            'arsol_projects_advanced_settings'
+        );
+
+        foreach ($this->default_message_fields as $id => $field_data) {
+            add_settings_field(
+                $id,
+                $field_data['title'],
+                array($this, 'render_textarea_field'),
+                'arsol_projects_advanced_settings',
+                'arsol_projects_default_messages_section',
+                [
+                    'id' => $id,
+                    'description' => $field_data['description'],
+                    'rows' => 5,
+                    'class' => 'large-text'
+                ]
+            );
+        }
+
         // Template Overrides Section
         add_settings_section(
             'arsol_projects_template_overrides_section',
@@ -110,6 +155,11 @@ class Settings_Advanced {
             'arsol_projects_advanced_settings',
             'arsol_projects_conversion_management_section'
         );
+    }
+
+    public function render_default_messages_description() {
+        echo '<p>' . esc_html__('Configure default messages that appear in different sections of your project workflow. These messages support Markdown formatting for rich text content. Leave fields empty to use the plugin\'s built-in defaults.', 'arsol-pfw') . '</p>';
+        echo '<p><strong>' . esc_html__('Markdown Support:', 'arsol-pfw') . '</strong> ' . esc_html__('You can use **bold**, *italic*, [links](URL), bullet points, and other Markdown syntax.', 'arsol-pfw') . '</p>';
     }
 
     public function render_conversion_management_description() {
@@ -181,6 +231,23 @@ class Settings_Advanced {
         echo '<p><strong>' . esc_html__('Important:', 'arsol-pfw') . '</strong> ' . esc_html__('Template overrides are placed inside existing wrapper elements to preserve page structure and styling. Your shortcode content will appear within the appropriate container divs.', 'arsol-pfw') . '</p>';
     }
 
+    public function render_textarea_field($args) {
+        $settings = get_option('arsol_projects_advanced_settings');
+        $value = isset($settings[$args['id']]) ? $settings[$args['id']] : '';
+        $rows = isset($args['rows']) ? $args['rows'] : 5;
+        $class = isset($args['class']) ? $args['class'] : 'large-text';
+        ?>
+        <textarea id="<?php echo esc_attr($args['id']); ?>"
+                  name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
+                  rows="<?php echo esc_attr($rows); ?>"
+                  class="<?php echo esc_attr($class); ?>"
+                  placeholder="<?php esc_attr_e('Enter your default message here (Markdown supported)...', 'arsol-pfw'); ?>"><?php echo esc_textarea($value); ?></textarea>
+        <?php if (!empty($args['description'])) : ?>
+            <p class="description"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
+        <?php
+    }
+
     public function render_text_field($args) {
         $settings = get_option('arsol_projects_advanced_settings');
         $value = isset($settings[$args['id']]) ? $settings[$args['id']] : '';
@@ -197,5 +264,31 @@ class Settings_Advanced {
             <p class="description"><?php echo esc_html($args['description']); ?></p>
         <?php endif; ?>
         <?php
+    }
+
+    /**
+     * Get a default message by key
+     * 
+     * @param string $key The message key
+     * @return string The message content (empty if not set)
+     */
+    public static function get_default_message($key) {
+        $settings = get_option('arsol_projects_advanced_settings', []);
+        return isset($settings[$key]) ? $settings[$key] : '';
+    }
+
+    /**
+     * Get all default messages
+     * 
+     * @return array All default messages
+     */
+    public static function get_all_default_messages() {
+        $settings = get_option('arsol_projects_advanced_settings', []);
+        return [
+            'project_request_on_hold' => isset($settings['project_request_on_hold_message']) ? $settings['project_request_on_hold_message'] : '',
+            'project_request_under_review' => isset($settings['project_request_under_review_message']) ? $settings['project_request_under_review_message'] : '',
+            'project_overview' => isset($settings['project_overview_message']) ? $settings['project_overview_message'] : '',
+            'project_proposals' => isset($settings['project_proposals_message']) ? $settings['project_proposals_message'] : ''
+        ];
     }
 }
