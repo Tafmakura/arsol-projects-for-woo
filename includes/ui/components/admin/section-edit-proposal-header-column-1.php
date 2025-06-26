@@ -147,14 +147,7 @@ $all_proposal_statuses = get_terms(array(
         <?php if ($is_project_tied): ?>
             <!-- Locked project lead field for project-tied proposals -->
             <?php 
-            // DEBUG: Add temporary debugging
-            echo '<!-- DEBUG: Project Lead Debug -->';
-            echo '<!-- proposal_project_lead: ' . var_export($proposal_project_lead, true) . ' -->';
-            echo '<!-- parent_lead_id: ' . var_export($parent_lead_id, true) . ' -->';
-            
             $lead_user = get_userdata($proposal_project_lead);
-            echo '<!-- lead_user: ' . var_export($lead_user, true) . ' -->';
-            
             if ($lead_user): ?>
                 <select class="arsol-disabled-select" disabled>
                     <option selected><?php echo esc_html($lead_user->display_name . ' (' . $lead_user->user_email . ')'); ?></option>
@@ -224,3 +217,36 @@ $all_proposal_statuses = get_terms(array(
         <input type="date" id="arsol_pfw_proposal_expiration_date" name="arsol_pfw_proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
     </p>
 </div>
+
+<?php if ($is_project_tied && $parent_project_data): ?>
+    <!-- Hidden input to ensure parent project ID is always saved -->
+    <input type="hidden" name="parent_project_id" value="<?php echo esc_attr($parent_project_data['id']); ?>">
+    
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        // Preserve parent_project URL parameter during form submission
+        var parentProjectId = <?php echo json_encode($parent_project_data['id']); ?>;
+        
+        // Add parent_project parameter to form action URL
+        var $form = $('#post');
+        if ($form.length && parentProjectId) {
+            var currentAction = $form.attr('action') || '';
+            var separator = currentAction.indexOf('?') !== -1 ? '&' : '?';
+            
+            // Only add parameter if it's not already present
+            if (currentAction.indexOf('parent_project=') === -1) {
+                $form.attr('action', currentAction + separator + 'parent_project=' + parentProjectId);
+            }
+        }
+        
+        // Also preserve parameter when clicking update/publish buttons
+        $('#publish, #save-post').on('click', function() {
+            var currentUrl = window.location.href;
+            if (currentUrl.indexOf('parent_project=') === -1) {
+                var separator = currentUrl.indexOf('?') !== -1 ? '&' : '?';
+                window.history.replaceState({}, '', currentUrl + separator + 'parent_project=' + parentProjectId);
+            }
+        });
+    });
+    </script>
+<?php endif; ?>

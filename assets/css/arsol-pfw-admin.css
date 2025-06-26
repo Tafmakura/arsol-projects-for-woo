@@ -116,14 +116,84 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 
 /* === END INLINE STYLES CONSOLIDATION === */
 
-/* Disabled customer dropdown styling */
+/* === CONSOLIDATED DISABLED FIELD STYLING === */
+/* All disabled fields should have consistent styling */
+.arsol-disabled-select,
 .wc-customer-user select:disabled,
-.arsol-disabled-select {
-    background-color: #f7f7f7;
-    color: #666;
-    cursor: not-allowed;
+select:disabled.arsol-disabled-select,
+input:disabled.arsol-disabled-input,
+.arsol-disabled-field {
+    background-color: #f7f7f7 !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
     opacity: 0.8;
     font-size: 13px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 3px;
+    box-shadow: none !important;
+    outline: none !important;
+    min-height: 30px;
+    line-height: 1.4;
+    padding: 2px 8px;
+    font-family: inherit;
+    font-weight: 400;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0;
+    vertical-align: top;
+}
+
+/* Disabled select fields need dropdown arrow styling */
+.arsol-disabled-select,
+select:disabled.arsol-disabled-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23666' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 8px center !important;
+    background-size: 12px !important;
+    padding-right: 30px !important;
+}
+
+/* Remove focus states for disabled fields */
+.arsol-disabled-select:focus,
+.wc-customer-user select:disabled:focus,
+select:disabled.arsol-disabled-select:focus,
+input:disabled.arsol-disabled-input:focus,
+.arsol-disabled-field:focus {
+    box-shadow: none !important;
+    border-color: #ddd !important;
+    outline: none !important;
+}
+
+/* Ensure disabled option text is consistent */
+.arsol-disabled-select option,
+select:disabled.arsol-disabled-select option {
+    color: #666 !important;
+    background-color: #f7f7f7 !important;
+}
+
+/* Prevent Select2 interference with disabled fields */
+.select2-container .arsol-disabled-select,
+.select2-container select:disabled.arsol-disabled-select {
+    display: none !important;
+}
+
+/* Form field specific disabled styling */
+.form-field .arsol-disabled-select,
+.form-field select:disabled.arsol-disabled-select,
+.form-field input:disabled.arsol-disabled-input,
+.wc-customer-user .arsol-disabled-select {
+    height: auto !important;
+}
+
+/* Ensure consistent spacing in form fields */
+.form-field-wide .arsol-disabled-select,
+.form-field-wide select:disabled.arsol-disabled-select,
+.form-field-wide input:disabled.arsol-disabled-input {
+    margin: 0;
+    vertical-align: top;
 }
 
 .arsol-pfw-budget-display label {
@@ -1246,6 +1316,33 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 #arsol_request_onhold_feedback_metabox,
 #arsol_request_underreview_feedback_metabox {
     display: none !important;
+}
+
+/* Match WooCommerce enhanced select dimensions exactly */
+.form-field .arsol-disabled-select,
+.wc-customer-user .arsol-disabled-select {
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 30px !important;
+    font-family: inherit;
+    font-weight: 400;
+}
+
+/* Ensure consistent spacing with other form fields */
+.form-field-wide .arsol-disabled-select {
+    margin: 0;
+    vertical-align: top;
+}
+
+/* Ensure disabled fields don't interfere with Select2 styling */
+.select2-container .arsol-disabled-select {
+    display: none !important;
+}
+
+#arsol_request_onhold_feedback_metabox,
+#arsol_request_onhold_feedback_metabox .postbox-header {
+    display: none;
 }
 
 

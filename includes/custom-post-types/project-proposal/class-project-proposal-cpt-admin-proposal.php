@@ -237,24 +237,20 @@ class Proposal {
         // Save all meta data normally (no temporary data needed)
         update_post_meta($post_id, '_arsol_pfw_proposal_costing_type', $cost_proposal_type);
 
-        // Handle project-tied proposal meta keys
-        // Check if this is a new proposal created from a project (URL parameter)
-        if (isset($_GET["parent_project"]) && !empty($_GET["parent_project"])) {
-            $parent_project_id = intval($_GET["parent_project"]);
-            $parent_project = get_post($parent_project_id);
-            
-            if ($parent_project && $parent_project->post_type === "arsol-project") {
-                // Save parent project ID with proper naming convention
-                update_post_meta($post_id, "_arsol_pfw_parent_project_id", $parent_project_id);
-                
-                // Mark as project-tied proposal
-                update_post_meta($post_id, "_arsol_pfw_is_project_tied_proposal", 1);
-            }
+        // Handle project-tied proposal meta keys - CONSOLIDATED LOGIC
+        $parent_project_id = null;
+        
+        // Priority 1: Hidden input from form (for existing project-tied proposals)
+        if (isset($_POST['parent_project_id']) && !empty($_POST['parent_project_id'])) {
+            $parent_project_id = intval($_POST['parent_project_id']);
         }
-        // Handle project-tied proposal meta keys
-        // Check if this is a new proposal created from a project (URL parameter)
-        if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
+        // Priority 2: URL parameter (for new proposals created from project)
+        elseif (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
             $parent_project_id = intval($_GET['parent_project']);
+        }
+        
+        // If we have a parent project ID, validate and save it
+        if ($parent_project_id) {
             $parent_project = get_post($parent_project_id);
             
             if ($parent_project && $parent_project->post_type === 'arsol-project') {
