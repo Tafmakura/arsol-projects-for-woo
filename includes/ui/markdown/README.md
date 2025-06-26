@@ -7,11 +7,11 @@ This directory contains markdown files that provide default content for various 
 ```
 includes/ui/markdown/
 ├── frontend/
-│   ├── content-active-empty.md      # Active Project (Empty)
-│   ├── content-proposal-empty.md     # Project Proposal (Empty)
-│   ├── content-request-on-hold.md    # Project Request (On-Hold)
+│   ├── content-active-empty.md         # Active Project (Empty)
+│   ├── content-proposal-empty.md       # Project Proposal (Empty)
+│   ├── content-request-on-hold.md      # Project Request (On-Hold)
 │   └── content-request-under-review.md # Project Request (Under Review)
-└── README.md                          # This documentation
+└── README.md                            # This documentation
 ```
 
 ## File Mappings
@@ -23,90 +23,87 @@ Each markdown file corresponds to a specific default message setting:
 - `content-request-on-hold.md` → **Project Request (On-Hold)** - Shown when requests are on hold
 - `content-request-under-review.md` → **Project Request (Under Review)** - Shown when requests are under review
 
+## Two-Layer System
+
+The plugin uses a simple two-layer system:
+
+1. **Markdown files** - Professional default content (part of plugin)
+2. **Database overrides** - User customizations when set
+
+### Loading Priority:
+```
+User Database Setting → Markdown File → Hardcoded Fallback
+```
+
 ## How It Works
 
-1. **File-based defaults**: The plugin loads default content from these markdown files
+1. **File-based defaults**: The plugin loads default content from markdown files
 2. **Admin interface**: Administrators can see these defaults as placeholders in the settings
 3. **User customization**: Admin can override defaults by entering custom content in the settings
-4. **Fallback system**: If files don't exist, hardcoded fallbacks are used
-5. **Frontend display**: Empty database fields automatically show markdown content as placeholders
+4. **Template simplification**: All hardcoded text has been moved to markdown files
+5. **Single point of control**: All template content is managed through markdown files
+6. **Frontend display**: Empty database fields automatically show markdown content
 
-## Editing Content
+## Content Management
 
-To customize the default messages:
+### For Developers (File-based)
+- Edit the markdown files directly for default content
+- All content is version controlled with git
+- No hardcoded text in PHP templates
+- Clean separation of content, structure, and logic
 
-1. **For developers**: Edit the markdown files directly
-2. **For administrators**: Use the WordPress admin interface at Advanced Settings → Default Messages
-3. **Version control**: File changes are tracked in git, database changes are not
+### For Administrators (Database-based)
+- Use WordPress admin interface: **Advanced Settings → Default Messages**
+- Override any default by entering custom content
+- Leave fields empty to use file-based defaults
+- Use "Load Default Content" buttons to copy file content for editing
+
+## Template Structure
+
+Templates now contain only HTML structure and PHP logic:
+
+```php
+// Get content from file system or database override
+$default_message = Setup_Defaults::get_effective_default_message('key');
+
+// Display with HTML structure
+echo wp_kses_post(wpautop($default_message));
+```
+
+## Fallback System
+
+Since markdown files are **part of the plugin**, they should always exist. The fallback system is simple:
+
+1. **User setting** - If admin has customized the message
+2. **Markdown file** - Default content from file (should always work)
+3. **Hardcoded text** - Minimal fallback only if file is missing/corrupted
 
 ## Benefits
 
-- ✅ Easy content management through files
-- ✅ Version control with git  
-- ✅ Professional defaults with rich markdown formatting
-- ✅ Clean separation of content from code
-- ✅ No database pollution
-- ✅ User-friendly admin interface
+- ✅ **Single point of control** - All content in markdown files
+- ✅ **Template simplification** - No hardcoded text in PHP templates
+- ✅ **Simple architecture** - No unnecessary fallback complexity
+- ✅ **Easy content management** - Edit files or use admin interface
+- ✅ **Version control** - File changes tracked in git
+- ✅ **Professional defaults** - Rich markdown formatting
+- ✅ **Clean separation** - Content separated from code and structure
+- ✅ **No database pollution** - Files don't clutter database
+- ✅ **User-friendly** - Admin interface with placeholders and load buttons
 
-## Directory Structure
+## Debug Information
 
-```
-includes/ui/markdown/
-├── frontend/
-│   ├── content-project-empty.md      # Active Project (Empty)
-│   ├── content-proposal-empty.md     # Project Proposal (Empty)
-│   ├── content-request-on-hold.md    # Project Request (On-Hold)
-│   └── content-request-under-review.md # Project Request (Under Review)
-└── README.md
-```
+For administrators, debug information is available:
 
-## How It Works
-
-### Two-Layer System
-1. **Layer 1 (Hardcoded)**: Markdown files provide professional defaults
-2. **Layer 2 (Database)**: User customizations override defaults when present
-
-### File Loading
-- Files are loaded via `Setup_Defaults::get_hardcoded_defaults()`
-- If a file doesn't exist, fallback text is used
-- Content is cached and only loaded when needed
-
-### Admin Interface
-- Empty database fields automatically show markdown content as placeholders
-- "Load Default Content" buttons copy markdown into editable fields
-- Users can customize any or all messages
-
-## Editing Guidelines
-
-### Markdown Features Supported
-- **Bold text**: `**bold**`
-- *Italic text*: `*italic*`
-- [Links](URL): `[text](URL)`
-- `Code`: `` `code` ``
-- Lists: `- item` or `1. item`
-- Quotes: `> quote`
-- Headers: `## Header`
-
-### Best Practices
-1. **Keep it professional** - These are customer-facing messages
-2. **Use clear language** - Avoid technical jargon
-3. **Include next steps** - Tell users what to expect
-4. **Brand consistency** - Match your company's tone
-5. **Contact information** - Provide ways to get help
-
-### File Naming Convention
-- `content-{context}-{state}.md`
-- Use lowercase with hyphens
-- Be descriptive but concise
-
-## Testing
-
-You can test if files are loading correctly by calling:
 ```php
 $debug = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::debug_markdown_files();
-var_dump($debug);
 ```
 
-## Version Control
+This shows the status of all markdown files and effective content being used.
 
-These files are part of the plugin and should be version controlled. Updates to these files will automatically appear for all users on plugin update, unless they have customized the specific message in the admin interface. 
+## File Reliability
+
+Since these markdown files are distributed with the plugin:
+- Files should always exist after plugin installation
+- Files are version controlled and tested
+- No need for complex fallback file systems
+- Simple and reliable architecture 

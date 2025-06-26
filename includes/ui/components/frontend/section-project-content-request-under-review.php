@@ -12,70 +12,14 @@ if (!defined('ABSPATH')) {
 $default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_request_under_review_message');
 ?>
 
-<div class="arsol-pfw-under-review-content">
-    <?php if (!empty($default_message)) : ?>
-        <div class="arsol-pfw-default-message">
-            <?php echo wp_kses_post(wpautop($default_message)); ?>
-        </div>
-    <?php else : ?>
-        <div class="arsol-pfw-under-review-header">
-            <h1><?php esc_html_e('Your Project Request is Under Review', 'arsol-pfw'); ?></h1>
-            <p class="arsol-pfw-under-review-description"><?php printf(esc_html__('Your project request "%s" is currently being reviewed by our team. We\'re carefully evaluating all the details to provide you with the best possible proposal.', 'arsol-pfw'), '<strong>' . esc_html($post->post_title) . '</strong>'); ?></p>
-        </div>
+<div class="arsol-pfw-request-content arsol-pfw-under-review-content">
+    <div class="arsol-pfw-default-message arsol-pfw-under-review-message">
+        <?php echo wp_kses_post(wpautop($default_message)); ?>
+    </div>
 
-        <div class="arsol-pfw-review-progress">
-            <h2><?php esc_html_e('Review Progress', 'arsol-pfw'); ?></h2>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: 60%;"></div>
-            </div>
-            <p class="progress-text"><?php esc_html_e('Review in progress... 60% complete', 'arsol-pfw'); ?></p>
-        </div>
-
-        <div class="arsol-pfw-review-info">
-            <h2><?php esc_html_e('What we\'re reviewing', 'arsol-pfw'); ?></h2>
-            <div class="review-checklist">
-                <div class="checklist-item completed">
-                    <span class="checkmark">✓</span>
-                    <span class="item-text"><?php esc_html_e('Project requirements and scope', 'arsol-pfw'); ?></span>
-                </div>
-                <div class="checklist-item completed">
-                    <span class="checkmark">✓</span>
-                    <span class="item-text"><?php esc_html_e('Budget and timeline feasibility', 'arsol-pfw'); ?></span>
-                </div>
-                <div class="checklist-item active">
-                    <span class="checkmark">⏳</span>
-                    <span class="item-text"><?php esc_html_e('Resource allocation and team assignment', 'arsol-pfw'); ?></span>
-                </div>
-                <div class="checklist-item">
-                    <span class="checkmark">○</span>
-                    <span class="item-text"><?php esc_html_e('Technical specifications and approach', 'arsol-pfw'); ?></span>
-                </div>
-                <div class="checklist-item">
-                    <span class="checkmark">○</span>
-                    <span class="item-text"><?php esc_html_e('Final approval and proposal preparation', 'arsol-pfw'); ?></span>
-                </div>
-            </div>
-        </div>
-
-        <div class="arsol-pfw-review-timeline">
-            <h2><?php esc_html_e('Expected Timeline', 'arsol-pfw'); ?></h2>
-            <ul>
-                <li><?php esc_html_e('Review completion: 3-5 business days', 'arsol-pfw'); ?></li>
-                <li><?php esc_html_e('Decision notification: Within 24 hours of review completion', 'arsol-pfw'); ?></li>
-                <li><?php esc_html_e('If approved, proposal creation begins immediately', 'arsol-pfw'); ?></li>
-            </ul>
-        </div>
-
-        <div class="arsol-pfw-contact-info">
-            <h3><?php esc_html_e('Questions about the review process?', 'arsol-pfw'); ?></h3>
-            <p><?php esc_html_e('Contact our review team at reviews@example.com or call (555) 123-4567', 'arsol-pfw'); ?></p>
-            <p><strong><?php esc_html_e('Review reference:', 'arsol-pfw'); ?></strong> #<?php echo esc_html($post->ID); ?>-REV</p>
-        </div>
-    <?php endif; ?>
-
-    <div class="arsol-pfw-review-details">
+    <div class="arsol-pfw-request-details arsol-pfw-review-details">
         <h2><?php esc_html_e('Your Request Details', 'arsol-pfw'); ?></h2>
-        <div class="arsol-pfw-request-summary">
+        <div class="arsol-pfw-request-summary arsol-pfw-review-summary">
             <p><?php echo wp_kses_post($post->post_content); ?></p>
             
             <?php

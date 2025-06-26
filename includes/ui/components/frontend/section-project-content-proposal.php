@@ -21,11 +21,7 @@ $default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_d
                 <div class="arsol-pfw-project-overview-empty">
                     <div class="arsol-pfw-empty-state">
                         <div class="arsol-pfw-empty-state__content">
-                            <?php if (!empty($default_message)) : ?>
-                                <?php echo wp_kses_post(wpautop($default_message)); ?>
-                            <?php else : ?>
-                                <p><?php esc_html_e('No proposal content has been added yet. Please check back later for updates.', 'arsol-pfw'); ?></p>
-                            <?php endif; ?>
+                            <?php echo wp_kses_post(wpautop($default_message)); ?>
                         </div>
                     </div>
                 </div>

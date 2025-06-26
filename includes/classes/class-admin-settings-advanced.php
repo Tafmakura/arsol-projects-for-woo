@@ -26,9 +26,6 @@ class Settings_Advanced {
         
         // Add AJAX handler for reset defaults
         add_action('wp_ajax_arsol_reset_defaults', array($this, 'handle_reset_defaults_ajax'));
-        
-        // Add admin scripts
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
     }
 
     public function init_translations() {
@@ -284,15 +281,6 @@ class Settings_Advanced {
         $hardcoded_defaults = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_hardcoded_defaults();
         $placeholder_text = isset($hardcoded_defaults[$args['id']]) ? $hardcoded_defaults[$args['id']] : __('Enter your markdown content here...', 'arsol-pfw');
         ?>
-        <?php if (isset($hardcoded_defaults[$args['id']])) : ?>
-            <button type="button" 
-                    class="button button-secondary" 
-                    style="margin-bottom: 5px;"
-                    onclick="loadDefaultContent('<?php echo esc_js($args['id']); ?>')">
-                <?php _e('Load Default Content', 'arsol-pfw'); ?>
-            </button>
-        <?php endif; ?>
-        
         <textarea id="<?php echo esc_attr($args['id']); ?>"
                   name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
                   rows="<?php echo esc_attr($rows); ?>"
@@ -397,37 +385,5 @@ class Settings_Advanced {
         });
         </script>
         <?php
-    }
-
-    /**
-     * Enqueue admin scripts
-     */
-    public function enqueue_admin_scripts($hook) {
-        // Only load on our settings page
-        if (strpos($hook, 'arsol-projects-settings') !== false) {
-            // Ensure jQuery is loaded
-            wp_enqueue_script('jquery');
-            
-            // Get hardcoded defaults for JavaScript
-            $hardcoded_defaults = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_hardcoded_defaults();
-            
-            // Add inline script with proper escaping
-            $script = '
-                window.arsolDefaultContent = ' . wp_json_encode($hardcoded_defaults) . ';
-                
-                window.loadDefaultContent = function(fieldId) {
-                    if (window.arsolDefaultContent && window.arsolDefaultContent[fieldId]) {
-                        if (confirm(' . wp_json_encode(__('Load the default content? This will replace any existing content in this field.', 'arsol-pfw')) . ')) {
-                            var field = document.getElementById(fieldId);
-                            if (field) {
-                                field.value = window.arsolDefaultContent[fieldId];
-                            }
-                        }
-                    }
-                };
-            ';
-            
-            wp_add_inline_script('jquery', $script);
-        }
     }
 }

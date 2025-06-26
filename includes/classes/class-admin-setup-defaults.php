@@ -97,25 +97,38 @@ class Setup_Defaults {
         $defaults = array();
         
         foreach ($file_mappings as $key => $filename) {
-            $file_path = $markdown_dir . $filename;
-            
-            if (file_exists($file_path)) {
-                $content = file_get_contents($file_path);
-                // Remove any trailing whitespace but preserve intentional formatting
-                $defaults[$key] = rtrim($content);
-            } else {
-                // Fallback if file doesn't exist
-                $defaults[$key] = self::get_fallback_default($key);
-            }
+            $defaults[$key] = self::load_markdown_content($key, $filename);
         }
         
         return $defaults;
     }
 
     /**
-     * Get fallback defaults if markdown files don't exist
+     * Load markdown content with simple fallback to hardcoded text
+     * Since markdown files are part of the plugin, they should always exist
      */
-    private static function get_fallback_default($key) {
+    public static function load_markdown_content($key, $filename) {
+        $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
+        $file_path = $markdown_dir . $filename;
+        
+        // Try to load the markdown file
+        if (file_exists($file_path)) {
+            $content = file_get_contents($file_path);
+            if ($content !== false) {
+                return rtrim($content);
+            }
+        }
+        
+        // Fallback to hardcoded text only if file doesn't exist or can't be read
+        // This should rarely happen since files are part of the plugin
+        return self::get_hardcoded_fallback($key);
+    }
+
+    /**
+     * Hardcoded fallbacks as absolute last resort
+     * These are minimal and should rarely be used
+     */
+    private static function get_hardcoded_fallback($key) {
         $fallbacks = array(
             'project_overview_message' => __('This project is currently in progress. Content and details will be added as the project develops.', 'arsol-pfw'),
             'project_proposals_message' => __('No proposal content has been added yet. Please check back later for updates.', 'arsol-pfw'),
@@ -124,6 +137,13 @@ class Setup_Defaults {
         );
         
         return isset($fallbacks[$key]) ? $fallbacks[$key] : '';
+    }
+
+    /**
+     * Get fallback default (DEPRECATED - use load_markdown_content instead)
+     */
+    private static function get_fallback_default($key) {
+        return self::get_hardcoded_fallback($key);
     }
 
     /**
@@ -439,13 +459,15 @@ class Setup_Defaults {
         
         foreach ($file_mappings as $key => $filename) {
             $file_path = $markdown_dir . $filename;
+            
             $debug_info['files'][$key] = array(
                 'filename' => $filename,
                 'path' => $file_path,
                 'exists' => file_exists($file_path),
                 'readable' => is_readable($file_path),
                 'size' => file_exists($file_path) ? filesize($file_path) : 0,
-                'preview' => file_exists($file_path) ? substr(file_get_contents($file_path), 0, 100) . '...' : 'File not found'
+                'preview' => file_exists($file_path) ? substr(file_get_contents($file_path), 0, 100) . '...' : 'File not found',
+                'effective_content' => self::load_markdown_content($key, $filename)
             );
         }
         
