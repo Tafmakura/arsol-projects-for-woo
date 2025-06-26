@@ -30,19 +30,19 @@ class Settings_Advanced {
         $this->default_message_fields = [
             'project_request_on_hold_message' => [
                 'title' => __('Project Request (On-Hold)', 'arsol-pfw'),
-                'description' => __('Default message displayed when a project request is put on hold. Use rich text formatting to style your message.', 'arsol-pfw')
+                'description' => __('Default message displayed when a project request is put on hold. Supports markdown formatting.', 'arsol-pfw')
             ],
             'project_request_under_review_message' => [
                 'title' => __('Project Request (Under Review)', 'arsol-pfw'),
-                'description' => __('Default message displayed when a project request is under review. Use rich text formatting to style your message.', 'arsol-pfw')
+                'description' => __('Default message displayed when a project request is under review. Supports markdown formatting.', 'arsol-pfw')
             ],
             'project_overview_message' => [
                 'title' => __('Project Overview', 'arsol-pfw'),
-                'description' => __('Default introductory content for project overview pages. Use rich text formatting to create engaging content.', 'arsol-pfw')
+                'description' => __('Default introductory content for project overview pages. Supports markdown formatting.', 'arsol-pfw')
             ],
             'project_proposals_message' => [
                 'title' => __('Project Proposals', 'arsol-pfw'),
-                'description' => __('Default messaging and instructions for project proposal sections. Use rich text formatting to create clear instructions.', 'arsol-pfw')
+                'description' => __('Default messaging and instructions for project proposal sections. Supports markdown formatting.', 'arsol-pfw')
             ]
         ];
         
@@ -111,7 +111,8 @@ class Settings_Advanced {
                 [
                     'id' => $id,
                     'description' => $field_data['description'],
-                    'rows' => 8
+                    'rows' => 10,
+                    'cols' => 80
                 ]
             );
         }
@@ -157,8 +158,8 @@ class Settings_Advanced {
     }
 
     public function render_default_messages_description() {
-        echo '<p>' . esc_html__('Configure default messages that appear in different sections of your project workflow. These messages use the WordPress visual editor for rich text formatting. Leave fields empty to use the plugin\'s built-in defaults.', 'arsol-pfw') . '</p>';
-        echo '<p><strong>' . esc_html__('Editor Features:', 'arsol-pfw') . '</strong> ' . esc_html__('Use the Visual tab for rich formatting or the Text tab for HTML markup. Supports bold, italic, lists, links, and other formatting options.', 'arsol-pfw') . '</p>';
+        echo '<p>' . esc_html__('Configure default messages that appear in different sections of your project workflow. These messages support Markdown syntax for rich text formatting. Leave fields empty to use the plugin\'s built-in defaults.', 'arsol-pfw') . '</p>';
+        echo '<p><strong>' . esc_html__('Markdown Features:', 'arsol-pfw') . '</strong> ' . esc_html__('Use **bold**, *italic*, [links](URL), code blocks, lists, and other Markdown syntax for formatting. Each textarea includes a quick reference below.', 'arsol-pfw') . '</p>';
     }
 
     public function render_conversion_management_description() {
@@ -234,26 +235,24 @@ class Settings_Advanced {
         $settings = get_option('arsol_projects_advanced_settings');
         $value = isset($settings[$args['id']]) ? $settings[$args['id']] : '';
         $rows = isset($args['rows']) ? $args['rows'] : 8;
+        $cols = isset($args['cols']) ? $args['cols'] : 80;
         ?>
         <?php if (!empty($args['description'])) : ?>
             <p class="description"><?php echo esc_html($args['description']); ?></p>
         <?php endif; ?>
         
-        <?php
-        wp_editor(
-            $value,
-            $args['id'],
-            array(
-                'textarea_name' => 'arsol_projects_advanced_settings[' . $args['id'] . ']',
-                'textarea_rows' => $rows,
-                'media_buttons' => false,
-                'tinymce' => array(
-                    'toolbar1' => 'bold,italic,underline,bullist,numlist,link,unlink',
-                    'toolbar2' => ''
-                ),
-            )
-        );
-        ?>
+        <textarea id="<?php echo esc_attr($args['id']); ?>"
+                  name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
+                  rows="<?php echo esc_attr($rows); ?>"
+                  cols="<?php echo esc_attr($cols); ?>"
+                  class="large-text code"
+                  style="font-family: Consolas, Monaco, 'Courier New', monospace; font-size: 13px; line-height: 1.4;"
+                  placeholder="<?php esc_attr_e('Enter your markdown content here...', 'arsol-pfw'); ?>"><?php echo esc_textarea($value); ?></textarea>
+        
+        <p class="description" style="margin-top: 5px;">
+            <strong><?php _e('Markdown Reference:', 'arsol-pfw'); ?></strong>
+            <?php _e('**bold** *italic* [link](url) `code` - list item > quote', 'arsol-pfw'); ?>
+        </p>
         <?php
     }
 
