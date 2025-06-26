@@ -1,6 +1,52 @@
-# Markdown Default Messages
+# Markdown Content Files
 
-This directory contains markdown files that define the default content for various sections of the Arsol Projects for WooCommerce plugin.
+This directory contains markdown files that provide default content for various sections of the Arsol Projects for WooCommerce plugin.
+
+## File Structure
+
+```
+includes/ui/markdown/
+├── frontend/
+│   ├── content-active-empty.md      # Active Project (Empty)
+│   ├── content-proposal-empty.md     # Project Proposal (Empty)
+│   ├── content-request-on-hold.md    # Project Request (On-Hold)
+│   └── content-request-under-review.md # Project Request (Under Review)
+└── README.md                          # This documentation
+```
+
+## File Mappings
+
+Each markdown file corresponds to a specific default message setting:
+
+- `content-active-empty.md` → **Active Project (Empty)** - Shown when active projects have no content
+- `content-proposal-empty.md` → **Project Proposal (Empty)** - Shown when proposals have no content  
+- `content-request-on-hold.md` → **Project Request (On-Hold)** - Shown when requests are on hold
+- `content-request-under-review.md` → **Project Request (Under Review)** - Shown when requests are under review
+
+## How It Works
+
+1. **File-based defaults**: The plugin loads default content from these markdown files
+2. **Admin interface**: Administrators can see these defaults as placeholders in the settings
+3. **User customization**: Admin can override defaults by entering custom content in the settings
+4. **Fallback system**: If files don't exist, hardcoded fallbacks are used
+5. **Frontend display**: Empty database fields automatically show markdown content as placeholders
+
+## Editing Content
+
+To customize the default messages:
+
+1. **For developers**: Edit the markdown files directly
+2. **For administrators**: Use the WordPress admin interface at Advanced Settings → Default Messages
+3. **Version control**: File changes are tracked in git, database changes are not
+
+## Benefits
+
+- ✅ Easy content management through files
+- ✅ Version control with git  
+- ✅ Professional defaults with rich markdown formatting
+- ✅ Clean separation of content from code
+- ✅ No database pollution
+- ✅ User-friendly admin interface
 
 ## Directory Structure
 

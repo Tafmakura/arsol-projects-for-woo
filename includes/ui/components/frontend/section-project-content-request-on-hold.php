@@ -7,36 +7,45 @@
 if (!defined('ABSPATH')) {
     exit;
 }
+
+// Get the default message for on-hold requests
+$default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_request_on_hold_message');
 ?>
 
 <div class="arsol-pfw-on-hold-content">
-    <div class="arsol-pfw-on-hold-header">
-        <h1><?php esc_html_e('Your Project Request is On Hold', 'arsol-pfw'); ?></h1>
-        <p class="arsol-pfw-on-hold-description"><?php printf(esc_html__('Your project request "%s" has been temporarily placed on hold. You can still make changes to your request while we work on resolving any issues.', 'arsol-pfw'), '<strong>' . esc_html($post->post_title) . '</strong>'); ?></p>
-    </div>
+    <?php if (!empty($default_message)) : ?>
+        <div class="arsol-pfw-default-message">
+            <?php echo wp_kses_post(wpautop($default_message)); ?>
+        </div>
+    <?php else : ?>
+        <div class="arsol-pfw-on-hold-header">
+            <h1><?php esc_html_e('Your Project Request is On Hold', 'arsol-pfw'); ?></h1>
+            <p class="arsol-pfw-on-hold-description"><?php printf(esc_html__('Your project request "%s" has been temporarily placed on hold. You can still make changes to your request while we work on resolving any issues.', 'arsol-pfw'), '<strong>' . esc_html($post->post_title) . '</strong>'); ?></p>
+        </div>
 
-    <div class="arsol-pfw-on-hold-info">
-        <h2><?php esc_html_e('Why is my request on hold?', 'arsol-pfw'); ?></h2>
-        <ul>
-            <li><?php esc_html_e('We may need additional information or clarification', 'arsol-pfw'); ?></li>
-            <li><?php esc_html_e('Resource availability or scheduling conflicts', 'arsol-pfw'); ?></li>
-            <li><?php esc_html_e('Budget or scope adjustments may be needed', 'arsol-pfw'); ?></li>
-            <li><?php esc_html_e('Technical requirements need further evaluation', 'arsol-pfw'); ?></li>
-        </ul>
-        
-        <h2><?php esc_html_e('What can you do?', 'arsol-pfw'); ?></h2>
-        <ul>
-            <li><?php esc_html_e('Update your request details below if needed', 'arsol-pfw'); ?></li>
-            <li><?php esc_html_e('Contact our support team for more information', 'arsol-pfw'); ?></li>
-            <li><?php esc_html_e('Wait for our team to reach out with next steps', 'arsol-pfw'); ?></li>
-        </ul>
-    </div>
+        <div class="arsol-pfw-on-hold-info">
+            <h2><?php esc_html_e('Why is my request on hold?', 'arsol-pfw'); ?></h2>
+            <ul>
+                <li><?php esc_html_e('We may need additional information or clarification', 'arsol-pfw'); ?></li>
+                <li><?php esc_html_e('Resource availability or scheduling conflicts', 'arsol-pfw'); ?></li>
+                <li><?php esc_html_e('Budget or scope adjustments may be needed', 'arsol-pfw'); ?></li>
+                <li><?php esc_html_e('Technical requirements need further evaluation', 'arsol-pfw'); ?></li>
+            </ul>
+            
+            <h2><?php esc_html_e('What can you do?', 'arsol-pfw'); ?></h2>
+            <ul>
+                <li><?php esc_html_e('Update your request details below if needed', 'arsol-pfw'); ?></li>
+                <li><?php esc_html_e('Contact our support team for more information', 'arsol-pfw'); ?></li>
+                <li><?php esc_html_e('Wait for our team to reach out with next steps', 'arsol-pfw'); ?></li>
+            </ul>
+        </div>
 
-    <div class="arsol-pfw-contact-info">
-        <h3><?php esc_html_e('Need immediate assistance?', 'arsol-pfw'); ?></h3>
-        <p><?php esc_html_e('Contact our team at support@example.com or call (555) 123-4567', 'arsol-pfw'); ?></p>
-        <p><strong><?php esc_html_e('Expected response time:', 'arsol-pfw'); ?></strong> <?php esc_html_e('Within 2-3 business days', 'arsol-pfw'); ?></p>
-    </div>
+        <div class="arsol-pfw-contact-info">
+            <h3><?php esc_html_e('Need immediate assistance?', 'arsol-pfw'); ?></h3>
+            <p><?php esc_html_e('Contact our team at support@example.com or call (555) 123-4567', 'arsol-pfw'); ?></p>
+            <p><strong><?php esc_html_e('Expected response time:', 'arsol-pfw'); ?></strong> <?php esc_html_e('Within 2-3 business days', 'arsol-pfw'); ?></p>
+        </div>
+    <?php endif; ?>
 </div>
 
 <div class="arsol-pfw-on-hold-form-section">

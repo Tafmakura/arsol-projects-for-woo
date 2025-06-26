@@ -424,7 +424,7 @@ class Setup_Defaults {
         $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
         
         $file_mappings = array(
-            'project_overview_message' => 'content-project-empty.md',
+            'project_overview_message' => 'content-active-empty.md',
             'project_proposals_message' => 'content-proposal-empty.md',
             'project_request_on_hold_message' => 'content-request-on-hold.md',
             'project_request_under_review_message' => 'content-request-under-review.md'
