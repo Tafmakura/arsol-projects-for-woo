@@ -30,19 +30,19 @@ class Settings_Advanced {
         $this->default_message_fields = [
             'project_request_on_hold_message' => [
                 'title' => __('Project Request (On-Hold)', 'arsol-pfw'),
-                'description' => __('Default message displayed when a project request is put on hold. Supports markdown formatting.', 'arsol-pfw')
+                'description' => __('Default message displayed when a project request is put on hold.', 'arsol-pfw')
             ],
             'project_request_under_review_message' => [
                 'title' => __('Project Request (Under Review)', 'arsol-pfw'),
-                'description' => __('Default message displayed when a project request is under review. Supports markdown formatting.', 'arsol-pfw')
+                'description' => __('Default message displayed when a project request is under review.', 'arsol-pfw')
             ],
             'project_overview_message' => [
                 'title' => __('Project Overview', 'arsol-pfw'),
-                'description' => __('Default introductory content for project overview pages. Supports markdown formatting.', 'arsol-pfw')
+                'description' => __('Default introductory content for project overview pages.', 'arsol-pfw')
             ],
             'project_proposals_message' => [
                 'title' => __('Project Proposals', 'arsol-pfw'),
-                'description' => __('Default messaging and instructions for project proposal sections. Supports markdown formatting.', 'arsol-pfw')
+                'description' => __('Default messaging and instructions for project proposal sections.', 'arsol-pfw')
             ]
         ];
         
@@ -159,7 +159,7 @@ class Settings_Advanced {
 
     public function render_default_messages_description() {
         echo '<p>' . esc_html__('Configure default messages that appear in different sections of your project workflow. These messages support Markdown syntax for rich text formatting. Leave fields empty to use the plugin\'s built-in defaults.', 'arsol-pfw') . '</p>';
-        echo '<p><strong>' . esc_html__('Markdown Features:', 'arsol-pfw') . '</strong> ' . esc_html__('Use **bold**, *italic*, [links](URL), code blocks, lists, and other Markdown syntax for formatting. Each textarea includes a quick reference below.', 'arsol-pfw') . '</p>';
+        echo '<p><strong>' . esc_html__('Markdown Reference:', 'arsol-pfw') . '</strong> ' . esc_html__('Use **bold**, *italic*, [links](URL), `code`, - list item, > quote and other Markdown syntax for formatting.', 'arsol-pfw') . '</p>';
     }
 
     public function render_conversion_management_description() {
@@ -248,11 +248,6 @@ class Settings_Advanced {
                   class="large-text code"
                   style="font-family: Consolas, Monaco, 'Courier New', monospace; font-size: 13px; line-height: 1.4;"
                   placeholder="<?php esc_attr_e('Enter your markdown content here...', 'arsol-pfw'); ?>"><?php echo esc_textarea($value); ?></textarea>
-        
-        <p class="description" style="margin-top: 5px;">
-            <strong><?php _e('Markdown Reference:', 'arsol-pfw'); ?></strong>
-            <?php _e('**bold** *italic* [link](url) `code` - list item > quote', 'arsol-pfw'); ?>
-        </p>
         <?php
     }
 
