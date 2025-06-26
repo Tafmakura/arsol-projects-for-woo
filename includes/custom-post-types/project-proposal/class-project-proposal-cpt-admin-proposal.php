@@ -84,8 +84,46 @@ class Proposal {
             <!-- Main content area for any future proposal-specific content -->
         </div>
         
+        <?php
+        // Check for project-tied proposal first to determine message
+        $is_project_tied = false;
+        $parent_project_data = false;
+        
+        // Check URL parameter first (for new proposals)
+        if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
+            $parent_project_id = intval($_GET['parent_project']);
+            $parent_project = get_post($parent_project_id);
+            
+            if ($parent_project && $parent_project->post_type === 'arsol-project') {
+                $is_project_tied = true;
+                $parent_project_data = array(
+                    'id' => $parent_project_id,
+                    'title' => $parent_project->post_title
+                );
+            }
+        } 
+        // Fallback to meta data check (for existing proposals)
+        elseif ($post->ID > 0) {
+            $parent_project_id = get_post_meta($post->ID, '_arsol_pfw_parent_project_id', true);
+            if (!empty($parent_project_id)) {
+                $parent_project = get_post($parent_project_id);
+                if ($parent_project && $parent_project->post_type === 'arsol-project') {
+                    $is_project_tied = true;
+                    $parent_project_data = array(
+                        'id' => $parent_project_id,
+                        'title' => $parent_project->post_title
+                    );
+                }
+            }
+        }
+        ?>
+        
         <p class="proposal-conversion-description">
-            <?php _e('This action will create a new project based on this proposal and permanently delete the original proposal. The proposal status must be set to "Approved" before conversion. Orders and invoices will be created for quotation proposals. This action cannot be undone.', 'arsol-pfw'); ?>
+            <?php if ($is_project_tied): ?>
+                <?php _e('This proposal is tied to a parent project. The Customer, Project Lead, and Cost Proposal Type fields are automatically set from the parent project and cannot be modified. Changes to these values must be made in the parent project.', 'arsol-pfw'); ?>
+            <?php else: ?>
+                <?php _e('This action will create a new project based on this proposal and permanently delete the original proposal. The proposal status must be set to "Approved" before conversion. Orders and invoices will be created for quotation proposals. This action cannot be undone.', 'arsol-pfw'); ?>
+            <?php endif; ?>
         </p>
         
         <div class="major-actions">
@@ -96,38 +134,7 @@ class Proposal {
                 <?php endif; ?>
             
             <?php
-            // Check for project-tied proposal - URL parameter OR meta data
-            $is_project_tied = false;
-            $parent_project_data = false;
-            
-            // Check URL parameter first (for new proposals)
-            if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
-                $parent_project_id = intval($_GET['parent_project']);
-                $parent_project = get_post($parent_project_id);
-                
-                if ($parent_project && $parent_project->post_type === 'arsol-project') {
-                    $is_project_tied = true;
-                    $parent_project_data = array(
-                        'id' => $parent_project_id,
-                        'title' => $parent_project->post_title
-                    );
-                }
-            } 
-            // Fallback to meta data check (for existing proposals)
-            elseif ($post->ID > 0) {
-                $parent_project_id = get_post_meta($post->ID, '_arsol_pfw_parent_project_id', true);
-                if (!empty($parent_project_id)) {
-                    $parent_project = get_post($parent_project_id);
-                    if ($parent_project && $parent_project->post_type === 'arsol-project') {
-                        $is_project_tied = true;
-                        $parent_project_data = array(
-                            'id' => $parent_project_id,
-                            'title' => $parent_project->post_title
-                        );
-                    }
-                }
-            }
-            
+            // Use the project-tied data we already determined above
             if ($is_project_tied && $parent_project_data) {
                 // Show View Project button for project-tied proposals
                 $view_url = admin_url('post.php?post=' . $parent_project_data['id'] . '&action=edit');
