@@ -37,12 +37,12 @@ class Settings_Advanced {
                 'description' => __('Default message displayed when a project request is under review.', 'arsol-pfw')
             ],
             'project_overview_message' => [
-                'title' => __('Project Overview', 'arsol-pfw'),
-                'description' => __('Default introductory content for project overview pages.', 'arsol-pfw')
+                'title' => __('Active Project (Empty)', 'arsol-pfw'),
+                'description' => __('Placeholder message for projects when they don\'t have project content.', 'arsol-pfw')
             ],
             'project_proposals_message' => [
-                'title' => __('Project Proposals', 'arsol-pfw'),
-                'description' => __('Default messaging and instructions for project proposal sections.', 'arsol-pfw')
+                'title' => __('Project Proposal (Empty)', 'arsol-pfw'),
+                'description' => __('Placeholder message for project proposals when they don\'t have content.', 'arsol-pfw')
             ]
         ];
         
