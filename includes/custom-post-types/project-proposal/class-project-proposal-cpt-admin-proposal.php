@@ -136,7 +136,7 @@ class Proposal {
                    class="button button-secondary" 
                    target="_blank" 
                    rel="noopener noreferrer">
-                    <?php _e('View Project', 'arsol-projects-for-woo'); ?> ↗
+                    <?php _e('View Project', 'arsol-projects-for-woo'); ?>
                 </a>
                 <?php
             } else {

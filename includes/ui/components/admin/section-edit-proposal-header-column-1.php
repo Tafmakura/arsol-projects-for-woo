@@ -147,7 +147,14 @@ $all_proposal_statuses = get_terms(array(
         <?php if ($is_project_tied): ?>
             <!-- Locked project lead field for project-tied proposals -->
             <?php 
+            // DEBUG: Add temporary debugging
+            echo '<!-- DEBUG: Project Lead Debug -->';
+            echo '<!-- proposal_project_lead: ' . var_export($proposal_project_lead, true) . ' -->';
+            echo '<!-- parent_lead_id: ' . var_export($parent_lead_id, true) . ' -->';
+            
             $lead_user = get_userdata($proposal_project_lead);
+            echo '<!-- lead_user: ' . var_export($lead_user, true) . ' -->';
+            
             if ($lead_user): ?>
                 <select class="arsol-disabled-select" disabled>
                     <option selected><?php echo esc_html($lead_user->display_name . ' (' . $lead_user->user_email . ')'); ?></option>
