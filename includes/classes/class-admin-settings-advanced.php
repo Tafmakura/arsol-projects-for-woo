@@ -281,34 +281,25 @@ class Settings_Advanced {
         $hardcoded_defaults = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_hardcoded_defaults();
         $placeholder_text = isset($hardcoded_defaults[$args['id']]) ? $hardcoded_defaults[$args['id']] : __('Enter your markdown content here...', 'arsol-pfw');
         ?>
-        <div style="position: relative;">
-            <textarea id="<?php echo esc_attr($args['id']); ?>"
-                      name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
-                      rows="<?php echo esc_attr($rows); ?>"
-                      cols="<?php echo esc_attr($cols); ?>"
-                      class="large-text code"
-                      style="font-family: Consolas, Monaco, 'Courier New', monospace; font-size: 13px; line-height: 1.4;"
-                      placeholder="<?php echo esc_attr($placeholder_text); ?>"><?php echo esc_textarea($value); ?></textarea>
-            
-            <?php if (isset($hardcoded_defaults[$args['id']])) : ?>
-                <button type="button" 
-                        class="button button-secondary" 
-                        style="margin-top: 5px;"
-                        onclick="loadDefaultContent('<?php echo esc_js($args['id']); ?>')">
-                    <?php _e('Load Default Content', 'arsol-pfw'); ?>
-                </button>
-            <?php endif; ?>
-        </div>
+        <?php if (isset($hardcoded_defaults[$args['id']])) : ?>
+            <button type="button" 
+                    class="button button-secondary" 
+                    style="margin-bottom: 5px;"
+                    onclick="loadDefaultContent('<?php echo esc_js($args['id']); ?>')">
+                <?php _e('Load Default Content', 'arsol-pfw'); ?>
+            </button>
+        <?php endif; ?>
+        
+        <textarea id="<?php echo esc_attr($args['id']); ?>"
+                  name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
+                  rows="<?php echo esc_attr($rows); ?>"
+                  cols="<?php echo esc_attr($cols); ?>"
+                  class="large-text code"
+                  style="font-family: Consolas, Monaco, 'Courier New', monospace; font-size: 13px; line-height: 1.4;"
+                  placeholder="<?php echo esc_attr($placeholder_text); ?>"><?php echo esc_textarea($value); ?></textarea>
         
         <?php if (!empty($args['description'])) : ?>
             <p class="description"><?php echo esc_html($args['description']); ?></p>
-        <?php endif; ?>
-        
-        <?php if (empty($value) && !empty($placeholder_text)) : ?>
-            <p class="description" style="margin-top: 8px; padding: 8px; background: #f9f9f9; border-left: 4px solid #00a0d2;">
-                <strong><?php _e('Default Preview:', 'arsol-pfw'); ?></strong><br>
-                <small style="color: #666;"><?php _e('This is what will be displayed when the field is empty. You can customize it above.', 'arsol-pfw'); ?></small>
-            </p>
         <?php endif; ?>
         
         <?php
