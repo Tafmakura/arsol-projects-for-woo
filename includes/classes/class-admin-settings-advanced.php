@@ -237,10 +237,6 @@ class Settings_Advanced {
         $rows = isset($args['rows']) ? $args['rows'] : 8;
         $cols = isset($args['cols']) ? $args['cols'] : 80;
         ?>
-        <?php if (!empty($args['description'])) : ?>
-            <p class="description"><?php echo esc_html($args['description']); ?></p>
-        <?php endif; ?>
-        
         <textarea id="<?php echo esc_attr($args['id']); ?>"
                   name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
                   rows="<?php echo esc_attr($rows); ?>"
@@ -248,6 +244,10 @@ class Settings_Advanced {
                   class="large-text code"
                   style="font-family: Consolas, Monaco, 'Courier New', monospace; font-size: 13px; line-height: 1.4;"
                   placeholder="<?php esc_attr_e('Enter your markdown content here...', 'arsol-pfw'); ?>"><?php echo esc_textarea($value); ?></textarea>
+        
+        <?php if (!empty($args['description'])) : ?>
+            <p class="description"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
         <?php
     }
 
