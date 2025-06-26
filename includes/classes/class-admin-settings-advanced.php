@@ -52,43 +52,53 @@ class Settings_Advanced {
         $this->shortcode_fields = [
             'project_overview_active_shortcode' => [
                 'title' => __('Active Project Overview', 'arsol-pfw'),
-                				'description' => __('Overrides the overview section for active projects. Default: [arsol_pfw_project_content_active]', 'arsol-pfw')
+                'description' => __('Overrides the overview section for active projects.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_content_active]'
             ],
             'project_overview_proposal_shortcode' => [
                 'title' => __('Project Proposal Overview', 'arsol-pfw'),
-                				'description' => __('Overrides the overview section for project proposals. Default: [arsol_pfw_project_content_proposal]', 'arsol-pfw')
+                'description' => __('Overrides the overview section for project proposals.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_content_proposal]'
             ],
             'project_overview_request_shortcode' => [
                 'title' => __('Project Request Overview', 'arsol-pfw'),
-                				'description' => __('Overrides the overview section for project requests. Default: [arsol_pfw_project_content_request]', 'arsol-pfw')
+                'description' => __('Overrides the overview section for project requests.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_content_request]'
             ],
             'create_project_form_shortcode' => [
                 'title' => __('Project Form', 'arsol-pfw'),
-                'description' => __('Overrides the Project Form for creating new projects. Default: [arsol_pfw_project_form]', 'arsol-pfw')
+                'description' => __('Overrides the Project Form for creating new projects.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_form]'
             ],
             'create_request_form_shortcode' => [
                 'title' => __('Project Request Form', 'arsol-pfw'),
-                'description' => __('Overrides the Project Request Form for requesting new projects. Default: [arsol_pfw_project_request_form]', 'arsol-pfw')
+                'description' => __('Overrides the Project Request Form for requesting new projects.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_request_form]'
             ],
             'edit_request_form_shortcode' => [
                 'title' => __('Edit Project Request Form', 'arsol-pfw'),
-                'description' => __('Overrides the Project Request Form for editing a pending project request. Default: [arsol_pfw_project_request_form is_edit="true"]', 'arsol-pfw')
+                'description' => __('Overrides the Project Request Form for editing a pending project request.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_request_form is_edit="true"]'
             ],
             'active_projects_listing_shortcode' => [
                 'title' => __('Active Projects Listing', 'arsol-pfw'),
-                'description' => __('Overrides the display of all active projects for a user. Default: [arsol_pfw_projects_listing_active]', 'arsol-pfw')
+                'description' => __('Overrides the display of all active projects for a user.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_projects_listing_active]'
             ],
             'proposals_listing_shortcode' => [
                 'title' => __('Project Proposals Listing', 'arsol-pfw'),
-                'description' => __('Overrides the display of all project proposals for a user. Default: [arsol_pfw_projects_listing_proposals]', 'arsol-pfw')
+                'description' => __('Overrides the display of all project proposals for a user.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_projects_listing_proposals]'
             ],
             'requests_listing_shortcode' => [
                 'title' => __('Project Requests Listing', 'arsol-pfw'),
-                'description' => __('Overrides the display of all project requests for a user. Default: [arsol_pfw_projects_listing_requests]', 'arsol-pfw')
+                'description' => __('Overrides the display of all project requests for a user.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_projects_listing_requests]'
             ],
             'access_denied_shortcode' => [
                 'title' => __('Access Denied Notice', 'arsol-pfw'),
-                'description' => __('Overrides denied access notice.', 'arsol-pfw')
+                'description' => __('Overrides denied access notice.', 'arsol-pfw'),
+                'placeholder' => __('Enter custom shortcode or HTML', 'arsol-pfw')
             ],
         ];
     }
@@ -138,7 +148,8 @@ class Settings_Advanced {
                 [
                     'id' => $id,
                     'pattern' => '^\\[[a-zA-Z0-9\\s_-]+\\]$',
-                    'description' => $field_data['description']
+                    'description' => $field_data['description'],
+                    'placeholder' => $field_data['placeholder']
                 ]
             );
         }
@@ -267,10 +278,10 @@ class Settings_Advanced {
     }
 
     public function render_template_overrides_description() {
-        echo '<p>' . esc_html__('Use these settings to override the default plugin templates with your own shortcodes. The plugin now uses its own internal shortcodes for all content rendering, which you can see listed as "Default:" in each field description below.', 'arsol-pfw') . '</p>';
+        echo '<p>' . esc_html__('Use these settings to override the default plugin templates with your own shortcodes. The plugin now uses its own internal shortcodes for all content rendering, which you can see as placeholders in each input field below.', 'arsol-pfw') . '</p>';
         echo '<p>' . esc_html__('This allows for custom layouts and designs for various components without needing to edit plugin files directly. You can either use the default shortcodes as-is, or replace them with your own custom shortcodes (like Gravity Forms, Elementor widgets, etc.).', 'arsol-pfw') . '</p>';
         echo '<p><strong>' . esc_html__('Important:', 'arsol-pfw') . '</strong> ' . esc_html__('Template overrides are placed inside existing wrapper elements to preserve page structure and styling. Your shortcode content will appear within the appropriate container divs.', 'arsol-pfw') . '</p>';
-        echo '<p><em>' . esc_html__('Tip: Leave fields empty to use the default shortcodes, or enter your own shortcodes to customize specific areas.', 'arsol-pfw') . '</em></p>';
+        echo '<p><em>' . esc_html__('Tip: Leave fields empty to use the default shortcodes shown as placeholders, or enter your own shortcodes to customize specific areas.', 'arsol-pfw') . '</em></p>';
     }
 
     public function render_textarea_field($args) {
@@ -301,6 +312,7 @@ class Settings_Advanced {
         $settings = get_option('arsol_projects_advanced_settings');
         $value = isset($settings[$args['id']]) ? $settings[$args['id']] : '';
         $pattern = isset($args['pattern']) ? $args['pattern'] : '.*';
+        $placeholder = isset($args['placeholder']) ? $args['placeholder'] : '';
         ?>
         <input type="text"
                id="<?php echo esc_attr($args['id']); ?>"
@@ -308,6 +320,7 @@ class Settings_Advanced {
                value="<?php echo esc_attr($value); ?>"
                class="regular-text"
                pattern="<?php echo esc_attr($pattern); ?>"
+               placeholder="<?php echo esc_attr($placeholder); ?>"
                title="<?php esc_attr_e('Shortcode must be in the format [shortcode_name]', 'arsol-pfw'); ?>">
         <?php if (!empty($args['description'])) : ?>
             <p class="description"><?php echo esc_html($args['description']); ?></p>
