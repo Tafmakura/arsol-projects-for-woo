@@ -62,7 +62,7 @@ class Setup {
             'show_in_menu'       => true,
             'show_in_nav_menus'  => true,
             'show_in_admin_bar'  => true,
-            'menu_position'      => 57,
+            'menu_position'      => 56.5,
             'menu_icon'          => 'dashicons-clipboard',
             'capability_type'    => array('arsol_project', 'arsol_projects'),
             'map_meta_cap'       => true,
