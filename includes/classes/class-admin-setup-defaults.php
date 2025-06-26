@@ -81,65 +81,49 @@ class Setup_Defaults {
     }
 
     /**
-     * Get hardcoded default messages (Layer 1)
+     * Get hardcoded default messages (Layer 1) - UPDATED to load from files
      * These are always available as fallbacks
      */
     public static function get_hardcoded_defaults() {
-        return array(
-            'project_overview_message' => __('## Project In Progress
-
-This project is currently **active** and in development. 
-
-### What to Expect:
-- Regular updates as work progresses
-- Detailed documentation will be added
-- Timeline and milestones will be shared
-
-> *We\'ll keep you informed throughout the process.*', 'arsol-pfw'),
-
-            'project_proposals_message' => __('## Proposal Pending
-
-No proposal content has been added yet.
-
-### Next Steps:
-- Our team is preparing your custom proposal
-- You\'ll receive detailed information soon
-- **Estimated delivery:** Within 2-3 business days
-
-> *Thank you for your patience while we craft the perfect solution for you.*', 'arsol-pfw'),
-
-            'project_request_on_hold_message' => __('## Request On Hold
-
-Your project request is currently **on hold**.
-
-### What This Means:
-- We\'ve received your request
-- Currently reviewing requirements
-- Will contact you when ready to proceed
-
-### Contact Information:
-- Email: [support@yoursite.com](mailto:support@yoursite.com)
-- Phone: *Available during business hours*
-
-> *We appreciate your understanding and will be in touch soon.*', 'arsol-pfw'),
-
-            'project_request_under_review_message' => __('## Under Review
-
-Your project request is being **carefully reviewed** by our team.
-
-### Review Process:
-1. **Technical feasibility** assessment
-2. **Resource allocation** planning  
-3. **Timeline estimation**
-4. **Budget preparation**
-
-### What\'s Next:
-- You\'ll hear from us within **24-48 hours**
-- We may contact you for additional details
-- A detailed proposal will follow
-
-> *Thank you for choosing us for your project needs.*', 'arsol-pfw')
+        $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
+        
+        $file_mappings = array(
+            'project_overview_message' => 'content-active-empty.md',
+            'project_proposals_message' => 'content-proposal-empty.md',
+            'project_request_on_hold_message' => 'content-request-on-hold.md',
+            'project_request_under_review_message' => 'content-request-under-review.md'
         );
+        
+        $defaults = array();
+        
+        foreach ($file_mappings as $key => $filename) {
+            $file_path = $markdown_dir . $filename;
+            
+            if (file_exists($file_path)) {
+                $content = file_get_contents($file_path);
+                // Remove any trailing whitespace but preserve intentional formatting
+                $defaults[$key] = rtrim($content);
+            } else {
+                // Fallback if file doesn't exist
+                $defaults[$key] = self::get_fallback_default($key);
+            }
+        }
+        
+        return $defaults;
+    }
+
+    /**
+     * Get fallback defaults if markdown files don't exist
+     */
+    private static function get_fallback_default($key) {
+        $fallbacks = array(
+            'project_overview_message' => __('This project is currently in progress. Content and details will be added as the project develops.', 'arsol-pfw'),
+            'project_proposals_message' => __('No proposal content has been added yet. Please check back later for updates.', 'arsol-pfw'),
+            'project_request_on_hold_message' => __('Your project request is currently on hold. We will contact you when we can proceed with your request.', 'arsol-pfw'),
+            'project_request_under_review_message' => __('Your project request is under review. We will get back to you shortly with next steps.', 'arsol-pfw')
+        );
+        
+        return isset($fallbacks[$key]) ? $fallbacks[$key] : '';
     }
 
     /**
@@ -426,5 +410,45 @@ Your project request is being **carefully reviewed** by our team.
      */
     public static function get_defaults_version() {
         return get_option(self::DEFAULTS_INITIALIZED_KEY, '0.0.0');
+    }
+
+    /**
+     * Debug method to check if markdown files exist and are readable
+     * Only available for administrators
+     */
+    public static function debug_markdown_files() {
+        if (!current_user_can('manage_options')) {
+            return array('error' => 'Permission denied');
+        }
+
+        $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
+        
+        $file_mappings = array(
+            'project_overview_message' => 'content-project-empty.md',
+            'project_proposals_message' => 'content-proposal-empty.md',
+            'project_request_on_hold_message' => 'content-request-on-hold.md',
+            'project_request_under_review_message' => 'content-request-under-review.md'
+        );
+        
+        $debug_info = array(
+            'markdown_dir' => $markdown_dir,
+            'dir_exists' => is_dir($markdown_dir),
+            'dir_readable' => is_readable($markdown_dir),
+            'files' => array()
+        );
+        
+        foreach ($file_mappings as $key => $filename) {
+            $file_path = $markdown_dir . $filename;
+            $debug_info['files'][$key] = array(
+                'filename' => $filename,
+                'path' => $file_path,
+                'exists' => file_exists($file_path),
+                'readable' => is_readable($file_path),
+                'size' => file_exists($file_path) ? filesize($file_path) : 0,
+                'preview' => file_exists($file_path) ? substr(file_get_contents($file_path), 0, 100) . '...' : 'File not found'
+            );
+        }
+        
+        return $debug_info;
     }
 } 
