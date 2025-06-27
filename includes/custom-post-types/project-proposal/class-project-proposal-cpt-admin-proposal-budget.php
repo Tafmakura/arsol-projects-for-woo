@@ -167,9 +167,9 @@ class Proposal_Budget {
             $notes_content = get_post_meta($post->ID, '_arsol_pfw_proposal_notes', true);
             wp_editor(
                 $notes_content,
-                'arsol_proposal_notes_budget',
+                    'arsol_proposal_notes_budget',
                 array(
-                    'textarea_name' => 'arsol_pfw_proposal_notes',
+                        'textarea_name' => 'arsol_pfw_proposal_notes',
                     'textarea_rows' => 8,
                     'media_buttons' => false,
                     'tinymce' => array(
@@ -179,6 +179,7 @@ class Proposal_Budget {
                 )
             );
             ?>
+        </div>
         </div>
         <?php
     }
