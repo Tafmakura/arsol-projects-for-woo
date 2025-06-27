@@ -141,9 +141,6 @@ if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_ov
                 <div class="project-sidebar-card card">
                     <?php
                     if (file_exists($sidebar_template)) {
-                        // Make variables available to sidebar template
-                        $sidebar_vars = compact('project_id', 'project_type', 'type');
-                        extract($sidebar_vars, EXTR_SKIP);
                         include $sidebar_template;
                     } else {
                         echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
