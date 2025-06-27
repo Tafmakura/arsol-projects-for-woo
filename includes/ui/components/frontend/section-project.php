@@ -140,6 +140,8 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             <div class="project-sidebar-card card">
                 <?php
                 if (file_exists($sidebar_template)) {
+
+                    echo 'dfgdfgdfgdfg';
                     include $sidebar_template;
                 } else {
                     echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
