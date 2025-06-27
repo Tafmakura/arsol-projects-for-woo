@@ -1,7 +1,7 @@
 <?php
 /**
  * Project Sidebar - Proposals
- * 
+ *
  * @package Arsol_Projects_For_Woo
  * @version 2.0.0
  */
@@ -23,8 +23,8 @@ $current_status = !empty($status_terms) ? $status_terms[0] : 'processing';
 ?>
 
 <div class="project-sidebar sidebar-proposal">
-    <?php
-    /**
+<?php
+/**
      * Sidebar metadata section
      */
     do_action('arsol_pfw_sidebar_meta', $post_type, $current_status, $post_id);
@@ -39,4 +39,4 @@ $current_status = !empty($status_terms) ? $status_terms[0] : 'processing';
      */
     do_action('arsol_pfw_sidebar_actions', $post_type, $current_status, $post_id);
     ?>
-</div>
+    </div>

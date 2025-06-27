@@ -18,7 +18,7 @@ $status_terms = wp_get_object_terms($post_id, 'arsol-project-status', array('fie
 $current_status = !empty($status_terms) ? $status_terms[0] : 'active';
 
 // Debug: uncomment to see what status is detected
-// error_log("Project $post_id status: " . $current_status . " (terms: " . print_r($status_terms, true) . ")");
+// error_log("Active project $post_id status: " . $current_status . " (terms: " . print_r($status_terms, true) . ")");
 
 ?>
 

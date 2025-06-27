@@ -260,7 +260,7 @@ class Frontend_Template_Sidebar_Fields {
         if (!empty($fields)) {
             echo '<div class="form-fields">';
             foreach ($fields as $field_key => $field) {
-                $this->render_form_field($field_key, $field);
+            $this->render_form_field($field_key, $field);
             }
             echo '</div>';
         }
@@ -343,7 +343,7 @@ class Frontend_Template_Sidebar_Fields {
                 foreach ($options as $value => $option_label) {
                     echo '<label class="radio-option">';
                     echo '<input type="radio" name="' . esc_attr($field_key) . '" value="' . esc_attr($value) . '"';
-                    if ($required) echo ' required';
+                if ($required) echo ' required';
                     echo '> ';
                     echo esc_html($option_label);
                     echo '</label>';
