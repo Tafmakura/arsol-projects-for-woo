@@ -16,12 +16,6 @@
     display: none !important;
 }
 
-/* Show Request Feedback Metaboxes in Screen Options */
-#screen-options-wrap label[for="arsol_request_onhold_feedback_metabox-hide"],
-#screen-options-wrap label[for="arsol_request_underreview_feedback_metabox-hide"] {
-    display: block !important;
-}
-
 /* Project Actions Layout */
 .major-actions {
     padding-top: 10px;
@@ -1242,9 +1236,9 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     display: none !important;
 }
 
-/* Proposal Feedback Sections - Hidden by default to prevent FOUC */
-#arsol_proposal_processing_feedback_section,
-#arsol_proposal_pending_approval_feedback_section {
+/* Request Feedback Sections - Hidden by default to prevent FOUC */
+#arsol_request_onhold_feedback_section,
+#arsol_request_underreview_feedback_section {
     display: none !important;
 }
 
@@ -1263,6 +1257,18 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 #arsol_request_onhold_feedback_metabox,
 #arsol_request_onhold_feedback_metabox .postbox-header {
     display: none;
+}
+
+/* Request Feedback Sections - Hidden by default to prevent FOUC */
+#arsol_request_onhold_feedback_section,
+#arsol_request_underreview_feedback_section {
+    display: none !important;
+}
+
+/* Proposal Feedback Sections - Hidden by default to prevent FOUC */
+#arsol_proposal_processing_feedback_section,
+#arsol_proposal_pending_approval_feedback_section {
+    display: none !important;
 }
 
 
