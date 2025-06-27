@@ -4,18 +4,6 @@
 
 /* === INLINE STYLES CONSOLIDATION === */
 
-/* Proposal Metabox Initial Hide */
-#arsol_budget_estimates_metabox,
-#arsol_proposal_quotation_metabox {
-    display: none;
-}
-
-/* Hide Budget and Quotation from Screen Options */
-#screen-options-wrap label[for="arsol_budget_estimates_metabox-hide"],
-#screen-options-wrap label[for="arsol_proposal_quotation_metabox-hide"] {
-    display: none !important;
-}
-
 /* Project Actions Layout */
 .major-actions {
     padding-top: 10px;
@@ -587,10 +575,10 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
         width: 100px;
     }
     
-    #arsol_proposal_quotation_metabox #product-line-items th:nth-child(4),
-    #arsol_proposal_quotation_metabox #product-line-items td:nth-child(4),
-    #arsol_proposal_quotation_metabox #product-line-items th:nth-child(5),
-    #arsol_proposal_quotation_metabox #product-line-items td:nth-child(5) {
+    #arsol_proposal_quotation_section #product-line-items th:nth-child(4),
+    #arsol_proposal_quotation_section #product-line-items td:nth-child(4),
+    #arsol_proposal_quotation_section #product-line-items th:nth-child(5),
+    #arsol_proposal_quotation_section #product-line-items td:nth-child(5) {
         width: 90px;
     }
 }
@@ -662,15 +650,15 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 }
 
 /* === PRODUCT SECTION SPECIFIC === */
-#arsol_proposal_quotation_metabox #product-line-items th:nth-child(3),
-#arsol_proposal_quotation_metabox #product-line-items td:nth-child(3) {
+#arsol_proposal_quotation_section #product-line-items th:nth-child(3),
+#arsol_proposal_quotation_section #product-line-items td:nth-child(3) {
     width: 80px; /* Quantity */
 }
 
-#arsol_proposal_quotation_metabox #product-line-items th:nth-child(4),
-#arsol_proposal_quotation_metabox #product-line-items td:nth-child(4),
-#arsol_proposal_quotation_metabox #product-line-items th:nth-child(5),
-#arsol_proposal_quotation_metabox #product-line-items td:nth-child(5) {
+#arsol_proposal_quotation_section #product-line-items th:nth-child(4),
+#arsol_proposal_quotation_section #product-line-items td:nth-child(4),
+#arsol_proposal_quotation_section #product-line-items th:nth-child(5),
+#arsol_proposal_quotation_section #product-line-items td:nth-child(5) {
     width: 100px; /* Price columns */
 }
 
@@ -1268,6 +1256,12 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
 /* Proposal Feedback Sections - Hidden by default to prevent FOUC */
 #arsol_proposal_processing_feedback_section,
 #arsol_proposal_pending_approval_feedback_section {
+    display: none !important;
+}
+
+/* Budget and Quotation Sections - Hidden by default to prevent FOUC */
+#arsol_proposal_budget_section,
+#arsol_proposal_quotation_section {
     display: none !important;
 }
 

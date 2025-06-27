@@ -107,8 +107,8 @@ class Setup {
 
         // Initialize admin classes
         if (is_admin()) {
-            new Admin\Settings_General();
-            new Admin\Settings_Advanced();
+        new Admin\Settings_General();
+        new Admin\Settings_Advanced();
             new Admin\Settings_Tools();
             new Admin\Setup_Defaults();
         }

@@ -9,7 +9,8 @@ if (!defined('ABSPATH')) {
 
 class Proposal_Quotation {
     public function __construct() {
-        add_action('add_meta_boxes', array($this, 'add_quotation_meta_box'));
+        // Metabox registration moved to hook-based approach in main proposal class
+        // add_action('add_meta_boxes', array($this, 'add_quotation_meta_box'));
         add_action('save_post', array($this, 'save_quotation_meta_box'));
         // Custom product search for products with prices only
         add_action('wp_ajax_arsol_search_products_with_price', array($this, 'ajax_search_products_with_price'));

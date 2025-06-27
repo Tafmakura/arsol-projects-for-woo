@@ -87,6 +87,34 @@ class Proposal {
                 </div>
             </div>
         </div>
+        
+        <!-- Budget Section -->
+        <div id="arsol_proposal_budget_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-cost-type-is-budget" style="display: none;">
+            <div class="panel-wrap woocommerce">
+                <div class="panel woocommerce">
+                    <h2><?php _e('Budget', 'arsol-pfw'); ?></h2>
+                    <div class="project_data_column_container">
+                        <div class="project_data_column">
+                            <?php $this->render_budget_content($post); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quotation Section -->
+        <div id="arsol_proposal_quotation_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-cost-type-is-quotation" style="display: none;">
+            <div class="panel-wrap woocommerce">
+                <div class="panel woocommerce">
+                    <h2><?php _e('Quotation', 'arsol-pfw'); ?></h2>
+                    <div class="project_data_column_container">
+                        <div class="project_data_column">
+                            <?php $this->render_quotation_content($post); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <?php
     }
 
@@ -166,6 +194,24 @@ class Proposal {
             </div>
         </div>
         <?php
+    }
+
+    /**
+     * Render budget content
+     */
+    public function render_budget_content($post) {
+        // Include the budget metabox content
+        $budget_instance = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Budget();
+        $budget_instance->render_budget_estimates_meta_box($post);
+    }
+
+    /**
+     * Render quotation content
+     */
+    public function render_quotation_content($post) {
+        // Include the quotation metabox content
+        $quotation_instance = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Quotation();
+        $quotation_instance->render_quotation_meta_box($post);
     }
 
     /**
