@@ -139,6 +139,7 @@ if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_ov
             
             <div class="project-sidebar-wrapper">
                 <div class="project-sidebar-card card">
+                    ddfgfgdfgfdfgdfgdfg
                     <?php
                     if (file_exists($sidebar_template)) {
                         include $sidebar_template;
