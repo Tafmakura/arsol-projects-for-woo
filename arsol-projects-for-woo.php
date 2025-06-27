@@ -73,6 +73,9 @@ require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-templa
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-actions.php';
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-fields.php';
 
+// Atomic Design Loader
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-atomic-design-loader.php';
+
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');
 

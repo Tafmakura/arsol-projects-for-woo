@@ -136,17 +136,36 @@ error_log("Project template - ID: $project_id, CPT: '$current_post_type', Type: 
             <div class="project-sidebar-wrapper">
                 <div class="project-sidebar-card card">
                     <?php
-                    // Include appropriate sidebar template based on current post type
-                    if ($project_type === 'active') {
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-active.php';
-                    } elseif ($project_type === 'proposal') {
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-proposal.php';
-                    } elseif ($project_type === 'request') {
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-request.php';
-                    } else {
-                        // Fallback
-                        echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
+                    // Get status label for display
+                    $status_label = '';
+                    if (!empty($current_status)) {
+                        $taxonomy_name = '';
+                        switch ($current_post_type) {
+                            case 'arsol-project':
+                                $taxonomy_name = 'arsol-project-status';
+                                break;
+                            case 'arsol-pfw-proposal':
+                                $taxonomy_name = 'arsol-proposal-status';
+                                break;
+                            case 'arsol-pfw-request':
+                                $taxonomy_name = 'arsol-request-status';
+                                break;
+                        }
+                        
+                        if ($taxonomy_name) {
+                            $status_term = get_term_by('slug', $current_status, $taxonomy_name);
+                            $status_label = $status_term ? $status_term->name : ucfirst(str_replace('-', ' ', $current_status));
+                        }
                     }
+                    
+                    // Use atomic ProjectSidebar organism
+                    arsol_load_organism('ProjectSidebar.php', [
+                        'post_id' => $project_id,
+                        'post_type' => $current_post_type,
+                        'status' => $current_status,
+                        'status_label' => $status_label,
+                        'css_class' => 'project-sidebar-' . $project_type
+                    ]);
                     ?>
                 </div>
             </div>
