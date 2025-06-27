@@ -104,7 +104,14 @@ class Settings_Advanced {
     }
 
     public function register_settings() {
-        register_setting('arsol_projects_advanced_settings', 'arsol_projects_advanced_settings');
+        register_setting(
+            'arsol_projects_advanced_settings', 
+            'arsol_projects_advanced_settings',
+            array(
+                'sanitize_callback' => array($this, 'sanitize_settings'),
+                'default' => array()
+            )
+        );
 
         // Default Messages Section
         add_settings_section(
@@ -185,6 +192,50 @@ class Settings_Advanced {
             'arsol_projects_advanced_settings',
             'arsol_projects_reset_defaults_section'
         );
+    }
+
+    /**
+     * Sanitize settings before saving
+     *
+     * @param array $input Raw input data
+     * @return array Sanitized data
+     */
+    public function sanitize_settings($input) {
+        $sanitized = array();
+        
+        if (!is_array($input)) {
+            return $sanitized;
+        }
+        
+        // Sanitize default message fields (allow HTML and markdown)
+        $message_fields = array_keys($this->default_message_fields);
+        foreach ($message_fields as $field) {
+            if (isset($input[$field])) {
+                // Allow basic HTML and markdown - sanitize but preserve formatting
+                $sanitized[$field] = wp_kses_post($input[$field]);
+            }
+        }
+        
+        // Sanitize shortcode fields (must be valid shortcodes)
+        $shortcode_fields = array_keys($this->shortcode_fields);
+        foreach ($shortcode_fields as $field) {
+            if (isset($input[$field])) {
+                $value = sanitize_text_field($input[$field]);
+                // Validate shortcode format if not empty
+                if (!empty($value) && !preg_match('/^\[[\w\s_-]+(\s+[^]]+)?\]$/', $value)) {
+                    // Invalid shortcode format - skip saving
+                    add_settings_error(
+                        'arsol_projects_advanced_settings',
+                        $field,
+                        sprintf(__('Invalid shortcode format for %s. Please use format: [shortcode_name]', 'arsol-pfw'), $field)
+                    );
+                } else {
+                    $sanitized[$field] = $value;
+                }
+            }
+        }
+        
+        return $sanitized;
     }
 
     public function render_default_messages_description() {

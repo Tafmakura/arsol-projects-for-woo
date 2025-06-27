@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
         <?php
         settings_fields('arsol_projects_advanced_settings');
         do_settings_sections('arsol_projects_advanced_settings');
-        submit_button();
+        submit_button(__('Save', 'arsol-pfw'));
         ?>
     </form>
 </div> 
