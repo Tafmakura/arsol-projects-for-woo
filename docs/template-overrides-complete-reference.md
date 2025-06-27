@@ -195,9 +195,9 @@ Leverage WooCommerce data in your overrides:
 | `form-project-create-active.php` | Create Project Form | `[arsol_project_create_form]` |
 | `form-project-request-create.php` | Create Request Form | `[arsol_project_request_form]` |
 | `form-project-request-edit.php` | Edit Request Form | `[arsol_project_request_form is_edit="true"]` |
-| `section-projects-listing-active.php` | Active Projects Listing | `[arsol_projects_listing_active]` |
-| `section-projects-listing-proposals.php` | Proposals Listing | `[arsol_projects_listing_proposals]` |
-| `section-projects-listing-requests.php` | Requests Listing | `[arsol_projects_listing_requests]` |
+| `projects-listing-active.php` | Active Projects Listing | `[arsol_projects_listing_active]` |
+| `projects-listing-proposals.php` | Proposals Listing | `[arsol_projects_listing_proposals]` |
+| `projects-listing-requests.php` | Requests Listing | `[arsol_projects_listing_requests]` |
 | `page-access-denied.php` | Access Denied | Custom HTML/shortcode |
 
 ### Context Integration Points
