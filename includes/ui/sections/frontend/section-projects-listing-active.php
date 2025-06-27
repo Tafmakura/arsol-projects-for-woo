@@ -12,7 +12,6 @@ if (!defined('ABSPATH')) {
 
 // The following variables are passed from the master template:
 // $query, $paged, $total_pages, $wp_button_class, $current_tab
-$query = $query ?? null; if ($query === null) { echo "<div class="woocommerce-info"><p>No data available.</p></div>"; return; }
 
 // Safety checks for required variables
 $query = $query ?? null;
