@@ -47,7 +47,7 @@ if ($current_post_type === 'arsol-project') {
 $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
 
 // Debug: uncomment to see what's detected
-error_log("Project template - ID: $project_id, CPT: $current_post_type, Type: $project_type, Status: $current_status");
+// error_log("Project template - ID: $project_id, CPT: $current_post_type, Type: $project_type, Status: $current_status");
 ?>
 
     <?php

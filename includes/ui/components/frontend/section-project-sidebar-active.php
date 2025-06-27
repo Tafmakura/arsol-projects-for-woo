@@ -24,7 +24,7 @@ if (isset($current_status)) {
 }
 
 // Debug: uncomment to see what status is detected
-error_log("Active project sidebar - Post: $post_id, Status: $status");
+// error_log("Active project sidebar - Post: $post_id, Status: $status");
 
 ?>
 

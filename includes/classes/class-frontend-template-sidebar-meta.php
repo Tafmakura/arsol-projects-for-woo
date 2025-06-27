@@ -110,7 +110,7 @@ class Frontend_Template_Sidebar_Meta {
         // Status
         $metadata['status'] = array(
             'label' => __('Status', 'arsol-pfw'),
-            'value' => $this->format_status_display($actual_status),
+            'value' => $this->format_status_display($actual_status, $post_id),
             'type' => 'badge',
             'class' => 'status-badge status-' . sanitize_html_class($actual_status)
         );
@@ -180,7 +180,7 @@ class Frontend_Template_Sidebar_Meta {
         // Status
         $metadata['status'] = array(
             'label' => __('Status', 'arsol-pfw'),
-            'value' => $this->format_status_display($actual_status),
+            'value' => $this->format_status_display($actual_status, $post_id),
             'type' => 'badge',
             'class' => 'status-badge status-' . sanitize_html_class($actual_status)
         );
@@ -272,7 +272,7 @@ class Frontend_Template_Sidebar_Meta {
         // Status
         $metadata['status'] = array(
             'label' => __('Status', 'arsol-pfw'),
-            'value' => $this->format_status_display($actual_status),
+            'value' => $this->format_status_display($actual_status, $post_id),
             'type' => 'badge',
             'class' => 'status-badge status-' . sanitize_html_class($actual_status)
         );
@@ -431,35 +431,42 @@ class Frontend_Template_Sidebar_Meta {
      * Format status display for readable output
      *
      * @param string $status The status slug
+     * @param int $post_id Optional post ID to determine the correct taxonomy
      * @return string Formatted status
      */
-    private function format_status_display($status) {
-        // Convert status slugs to readable format
-        $status_labels = array(
-            // Request statuses
-            'pending' => __('Pending', 'arsol-pfw'),
-            'pending-review' => __('Pending Review', 'arsol-pfw'),
-            'under-review' => __('Under Review', 'arsol-pfw'),
-            'on-hold' => __('On Hold', 'arsol-pfw'),
-            'approved' => __('Approved', 'arsol-pfw'),
-            'rejected' => __('Rejected', 'arsol-pfw'),
-            
-            // Proposal statuses
-            'draft' => __('Draft', 'arsol-pfw'),
-            'processing' => __('Processing', 'arsol-pfw'),
-            'pending-approval' => __('Pending Approval', 'arsol-pfw'),
-            'sent' => __('Sent', 'arsol-pfw'),
-            'accepted' => __('Accepted', 'arsol-pfw'),
-            'expired' => __('Expired', 'arsol-pfw'),
-            
-            // Project statuses
-            'active' => __('Active', 'arsol-pfw'),
-            'completed' => __('Completed', 'arsol-pfw'),
-            'cancelled' => __('Cancelled', 'arsol-pfw'),
-            'not-started' => __('Not Started', 'arsol-pfw'),
-            'in-progress' => __('In Progress', 'arsol-pfw')
-        );
+    private function format_status_display($status, $post_id = null) {
+        if (empty($status)) {
+            return '';
+        }
 
-        return isset($status_labels[$status]) ? $status_labels[$status] : ucfirst(str_replace('-', ' ', $status));
+        // If we have a post ID, determine the correct taxonomy first
+        if ($post_id) {
+            $wp_post_type = get_post_type($post_id);
+            $taxonomy_map = array(
+                'arsol-project' => 'arsol-project-status',
+                'arsol-pfw-proposal' => 'arsol-proposal-status', 
+                'arsol-pfw-request' => 'arsol-request-status'
+            );
+            
+            if (isset($taxonomy_map[$wp_post_type])) {
+                $term = get_term_by('slug', $status, $taxonomy_map[$wp_post_type]);
+                if ($term && !is_wp_error($term)) {
+                    return $term->name;
+                }
+            }
+        }
+
+        // Fallback: try to get the term from all possible taxonomies
+        $taxonomies = array('arsol-project-status', 'arsol-proposal-status', 'arsol-request-status');
+        
+        foreach ($taxonomies as $taxonomy) {
+            $term = get_term_by('slug', $status, $taxonomy);
+            if ($term && !is_wp_error($term)) {
+                return $term->name;
+            }
+        }
+        
+        // Final fallback to formatted slug if term not found
+        return ucfirst(str_replace('-', ' ', $status));
     }
 } 
