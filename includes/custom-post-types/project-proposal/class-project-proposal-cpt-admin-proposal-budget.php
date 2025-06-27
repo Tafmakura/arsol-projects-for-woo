@@ -6,8 +6,7 @@ if (!defined('ABSPATH')) exit;
 class Proposal_Budget {
 
     public function __construct() {
-        // Metabox registration moved to hook-based approach in main proposal class
-        // add_action('add_meta_boxes', array($this, 'add_budget_estimates_meta_box'));
+        add_action('add_meta_boxes', array($this, 'add_budget_estimates_meta_box'));
     }
 
     public function add_budget_estimates_meta_box() {
