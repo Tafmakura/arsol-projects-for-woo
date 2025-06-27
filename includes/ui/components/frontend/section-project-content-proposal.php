@@ -54,7 +54,7 @@ if (empty($display_message)) {
                     </div>
                 </div>
             <?php else : ?>
-                <?php echo wp_kses_post($post->post_content); ?>
+            <?php echo wp_kses_post($post->post_content); ?>
             <?php endif; ?>
         </div>
     </div>
