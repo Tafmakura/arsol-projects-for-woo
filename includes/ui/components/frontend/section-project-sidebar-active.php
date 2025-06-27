@@ -20,11 +20,11 @@ if (isset($current_status)) {
     $status = $current_status;
 } else {
     $status_terms = wp_get_object_terms($post_id, 'arsol-project-status', array('fields' => 'slugs'));
-    $status = !empty($status_terms) ? $status_terms[0] : 'active';
+    $status = !empty($status_terms) ? $status_terms[0] : 'not-started';
 }
 
 // Debug: uncomment to see what status is detected
-// error_log("Active project sidebar - Post: $post_id, Status: $status");
+error_log("Active project sidebar - Post: $post_id, Status: $status");
 
 ?>
 

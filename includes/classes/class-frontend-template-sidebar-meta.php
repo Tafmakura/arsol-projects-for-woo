@@ -414,7 +414,7 @@ class Frontend_Template_Sidebar_Meta {
             // Return default status based on post type
             switch ($wp_post_type) {
                 case 'arsol-project':
-                    return 'active';
+                    return 'not-started';
                 case 'arsol-pfw-proposal':
                     return 'processing';
                 case 'arsol-pfw-request':
