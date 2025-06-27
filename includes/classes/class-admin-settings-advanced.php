@@ -21,9 +21,6 @@ class Settings_Advanced {
         add_action('init', array($this, 'init_translations'));
         add_action('admin_init', array($this, 'register_settings'));
         
-        // Add AJAX handler for cleanup
-        add_action('wp_ajax_arsol_cleanup_conversions', array($this, 'handle_cleanup_ajax'));
-        
         // Add AJAX handler for reset defaults
         add_action('wp_ajax_arsol_reset_defaults', array($this, 'handle_reset_defaults_ajax'));
     }
@@ -161,22 +158,6 @@ class Settings_Advanced {
             );
         }
 
-        // Conversion Management Section
-        add_settings_section(
-            'arsol_projects_conversion_management_section',
-            __('Conversion Management', 'arsol-pfw'),
-            array($this, 'render_conversion_management_description'),
-            'arsol_projects_advanced_settings'
-        );
-
-        add_settings_field(
-            'conversion_cleanup',
-            __('Maintenance', 'arsol-pfw'),
-            array($this, 'render_conversion_cleanup_field'),
-            'arsol_projects_advanced_settings',
-            'arsol_projects_conversion_management_section'
-        );
-
         // Reset Defaults Section
         add_settings_section(
             'arsol_projects_reset_defaults_section',
@@ -242,90 +223,6 @@ class Settings_Advanced {
         echo '<p>' . esc_html__('Configure default messages that appear in different sections of your project workflow. Each field shows the plugin\'s built-in default as a placeholder - leave fields empty to use these defaults, or add your own custom content to override them.', 'arsol-pfw') . '</p>';
         echo '<p><strong>' . esc_html__('Markdown Reference:', 'arsol-pfw') . '</strong> ' . esc_html__('Use **bold**, *italic*, [links](URL), `code`, - list item, > quote and other Markdown syntax for formatting.', 'arsol-pfw') . '</p>';
         echo '<p><em>' . esc_html__('Tip: Empty fields will automatically display the built-in defaults. Only customize the messages you want to change.', 'arsol-pfw') . '</em></p>';
-    }
-
-    public function render_conversion_management_description() {
-        echo '<p>' . esc_html__('Manage the conversion system that handles transforming requests to proposals and proposals to projects. The system includes automatic rollback capabilities and cleanup functionality.', 'arsol-pfw') . '</p>';
-    }
-
-    public function render_conversion_cleanup_field() {
-        ?>
-        <button type="button" id="cleanup-conversions" class="button">
-            <?php esc_html_e('Clean Up Stuck Conversions', 'arsol-pfw'); ?>
-        </button>
-        <p class="description">
-            <?php esc_html_e('Remove conversion data for processes stuck for more than 30 minutes.', 'arsol-pfw'); ?>
-        </p>
-        
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            $('#cleanup-conversions').on('click', function() {
-                if (confirm('<?php esc_js_e('Clean up stuck conversions?', 'arsol-pfw'); ?>')) {
-                    const button = $(this);
-                    button.prop('disabled', true).text('<?php esc_js_e('Cleaning...', 'arsol-pfw'); ?>');
-                    
-                    $.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        data: {
-                            action: 'arsol_cleanup_conversions',
-                            nonce: '<?php echo wp_create_nonce('arsol_admin'); ?>'
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                alert('<?php esc_js_e('Cleanup completed:', 'arsol-pfw'); ?> ' + response.data.cleaned + ' <?php esc_js_e('conversions cleaned', 'arsol-pfw'); ?>');
-                            } else {
-                                alert('<?php esc_js_e('Cleanup failed:', 'arsol-pfw'); ?> ' + response.data);
-                            }
-                            button.prop('disabled', false).text('<?php esc_js_e('Clean Up Stuck Conversions', 'arsol-pfw'); ?>');
-                            location.reload();
-                        },
-                        error: function() {
-                            alert('<?php esc_js_e('Ajax request failed.', 'arsol-pfw'); ?>');
-                            button.prop('disabled', false).text('<?php esc_js_e('Clean Up Stuck Conversions', 'arsol-pfw'); ?>');
-                        }
-                    });
-                }
-            });
-        });
-        </script>
-        <?php
-    }
-
-    /**
-     * Handle AJAX cleanup request
-     */
-    public function handle_cleanup_ajax() {
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !current_user_can('manage_options')) {
-            wp_send_json_error('Security check failed');
-        }
-        
-        $cleaned = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::cleanup_stuck_workflows(30);
-        
-        wp_send_json_success(array(
-            'cleaned' => $cleaned,
-            'message' => sprintf(__('%d stuck conversions cleaned up.', 'arsol-pfw'), $cleaned)
-        ));
-    }
-
-    /**
-     * Handle AJAX reset defaults request
-     */
-    public function handle_reset_defaults_ajax() {
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !current_user_can('manage_options')) {
-            wp_send_json_error('Security check failed');
-        }
-        
-        // Force reset defaults by deleting the initialization flag
-        delete_option(\Arsol_Projects_For_Woo\Admin\Setup_Defaults::DEFAULTS_INITIALIZED_KEY);
-        
-        // Trigger re-initialization
-        do_action('arsol_pfw_plugin_activated');
-        
-        wp_send_json_success(array(
-            'reset' => 1,
-            'message' => __('Plugin defaults have been reset successfully.', 'arsol-pfw')
-        ));
     }
 
     public function render_template_overrides_description() {
@@ -451,5 +348,25 @@ class Settings_Advanced {
         });
         </script>
         <?php
+    }
+
+    /**
+     * Handle AJAX reset defaults request
+     */
+    public function handle_reset_defaults_ajax() {
+        if (!wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !current_user_can('manage_options')) {
+            wp_send_json_error('Security check failed');
+        }
+        
+        // Force reset defaults by deleting the initialization flag
+        delete_option(\Arsol_Projects_For_Woo\Admin\Setup_Defaults::DEFAULTS_INITIALIZED_KEY);
+        
+        // Trigger re-initialization
+        do_action('arsol_pfw_plugin_activated');
+        
+        wp_send_json_success(array(
+            'reset' => 1,
+            'message' => __('Plugin defaults have been reset successfully.', 'arsol-pfw')
+        ));
     }
 }
