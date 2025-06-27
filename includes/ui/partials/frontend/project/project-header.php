@@ -1,131 +1,152 @@
 <?php
 /**
- * Reusable Project Header
+ * Unified Project Header
  * 
- * A flexible header component that can be used across different project-related pages.
+ * A single project header that automatically adapts based on available variables.
  * 
- * Required Variables:
- * @var string $header_type - Type of header: 'project-item' or 'project-page'
+ * Dashboard Mode (when $project_id, $project_title, $current_tab are available):
+ * @var int $project_id - The project ID
+ * @var string $project_title - The project title
+ * @var string $current_tab - Current active tab (overview, orders, subscriptions)
  * 
- * For 'project-item' type (individual projects/proposals/requests):
+ * Individual Item Mode (when $post_id, $post_type are available):
  * @var int $post_id - The post ID
  * @var string $post_type - The post type (arsol-project, arsol-pfw-proposal, arsol-pfw-request)
  * @var string $status - Current status slug (optional)
  * @var string $status_label - Current status label (optional)
- * @var string $page_title_override - Override the default page title (optional)
  * 
- * For 'project-page' type (project-related pages):
+ * Page Mode (when $page_title is available):
  * @var string $page_title - Main page title
  * @var string $page_subtitle - Page subtitle (optional)
  * @var int $project_id - Related project ID (optional)
  * @var string $project_title - Related project title (optional)
- * @var array $breadcrumbs - Custom breadcrumb array (optional)
- * @var array $actions - Array of action buttons (optional)
  */
 
 if (!defined('ABSPATH')) exit;
 
-// Validate required variables
-if (empty($header_type)) {
-    return;
+// Auto-detect mode based on available variables
+$is_dashboard = !empty($project_id) && !empty($project_title) && !empty($current_tab);
+$is_individual_item = !empty($post_id) && !empty($post_type);
+$is_page_mode = !empty($page_title) && !$is_dashboard && !$is_individual_item;
+
+// Dashboard Mode: Project dashboard with navigation tabs
+if ($is_dashboard) {
+    // Build tabs array
+    $tabs = array(
+        'overview' => array('label' => __('Overview', 'arsol-pfw'), 'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)),
+        'orders' => array('label' => __('Orders', 'woocommerce'), 'url' => wc_get_account_endpoint_url('project-orders/' . $project_id))
+    );
+    
+    // Only add subscriptions tab if WooCommerce Subscriptions is active
+    if (class_exists('WC_Subscriptions')) {
+        $tabs['subscriptions'] = array('label' => __('Subscriptions', 'woocommerce-subscriptions'), 'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id));
+    }
+    ?>
+    <div class="arsol-project-intro">
+        <p>
+            <?php 
+            // Create intro text based on available features
+            if (class_exists('WC_Subscriptions')) {
+                // Full intro with subscriptions
+                echo sprintf(
+                    esc_html__('This is your %s project dashboard. The %s tab shows project details, the %s tab displays your project %s, and the %s tab displays all your project %s.', 'arsol-pfw'),
+                    '<strong>' . esc_html($project_title) . '</strong>',
+                    '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
+                    '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
+                    esc_html__('orders', 'woocommerce'),
+                    '<strong>' . esc_html__('Subscriptions', 'woocommerce-subscriptions') . '</strong>',
+                    esc_html__('subscriptions', 'woocommerce-subscriptions')
+                );
+            } else {
+                // Simplified intro without subscriptions
+                echo sprintf(
+                    esc_html__('This is your %s project dashboard. The %s tab shows project details and the %s tab displays your project %s.', 'arsol-pfw'),
+                    '<strong>' . esc_html($project_title) . '</strong>',
+                    '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
+                    '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
+                    esc_html__('orders', 'woocommerce')
+                );
+            }
+            ?>
+        </p>
+    </div>
+    <div class="arsol-project-navigation">
+        <div class="arsol-button-container">
+            <div class="arsol-button-groups">
+                <?php foreach ($tabs as $tab_id => $tab_data) : ?>
+                    <button class="arsol-btn-secondary arsol-project-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
+                            onclick="window.location.href='<?php echo esc_url($tab_data['url']); ?>'">
+                        <?php echo esc_html($tab_data['label']); ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+    <?php
+    return; // Exit early for dashboard
 }
 
-// Set default values
-$header_class = 'arsol-project-header';
-$show_breadcrumbs = true;
-$show_actions = true;
+// Individual Item Mode or Page Mode: Standard header with breadcrumbs and title
+$post = null;
+$main_title = '';
+$subtitle = '';
 
-if ($header_type === 'project-item') {
-    // Individual project/proposal/request header
-    if (empty($post_id)) {
-        return;
-    }
-    
+if ($is_individual_item) {
+    // Individual project/proposal/request
     $post = get_post($post_id);
     if (!$post) {
         return;
     }
     
-    // Determine page title based on post type
-    if (!empty($page_title_override)) {
-        $page_title = $page_title_override;
-    } else {
-        switch ($post_type) {
-            case 'arsol-project':
-                $page_title = __('Project Overview', 'arsol-pfw');
-                break;
-            case 'arsol-pfw-proposal':
-                $page_title = __('Proposal Details', 'arsol-pfw');
-                break;
-            case 'arsol-pfw-request':
-                $page_title = __('Request Details', 'arsol-pfw');
-                break;
-            default:
-                $page_title = __('Project Overview', 'arsol-pfw');
-                break;
-        }
-    }
-    
     $main_title = $post->post_title;
-    $subtitle = $page_title;
-    $header_class .= ' project-item-header';
     
-} elseif ($header_type === 'project-page') {
-    // Project-related page header
-    if (empty($page_title)) {
-        return;
+    // Determine subtitle based on post type
+    switch ($post_type) {
+        case 'arsol-project':
+            $subtitle = __('Project Overview', 'arsol-pfw');
+            break;
+        case 'arsol-pfw-proposal':
+            $subtitle = __('Proposal Details', 'arsol-pfw');
+            break;
+        case 'arsol-pfw-request':
+            $subtitle = __('Request Details', 'arsol-pfw');
+            break;
+        default:
+            $subtitle = __('Project Overview', 'arsol-pfw');
+            break;
     }
-    
+} elseif ($is_page_mode) {
+    // Page mode
     $main_title = $page_title;
     $subtitle = $page_subtitle ?? '';
-    $header_class .= ' project-page-header';
-    
-} else {
-    // Invalid header type
-    return;
 }
 
+if (empty($main_title)) {
+    return; // No valid content to display
+}
 ?>
 
-<div class="<?php echo esc_attr($header_class); ?>">
+<div class="arsol-project-header">
     <div class="project-header-content">
-        <?php if ($show_breadcrumbs): ?>
-            <div class="project-breadcrumb">
-                <?php if (!empty($breadcrumbs) && is_array($breadcrumbs)): ?>
-                    <?php foreach ($breadcrumbs as $index => $breadcrumb): ?>
-                        <?php if ($index > 0): ?>
-                            <span class="breadcrumb-separator">/</span>
-                        <?php endif; ?>
-                        <?php if (!empty($breadcrumb['url'])): ?>
-                            <a href="<?php echo esc_url($breadcrumb['url']); ?>">
-                                <?php echo esc_html($breadcrumb['label']); ?>
-                            </a>
-                        <?php else: ?>
-                            <span><?php echo esc_html($breadcrumb['label']); ?></span>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <!-- Default breadcrumb: Back to Projects -->
-                    <a href="<?php echo esc_url(wc_get_account_endpoint_url('projects')); ?>">
-                        <?php _e('← Back to Projects', 'arsol-pfw'); ?>
-                    </a>
-                    
-                    <?php if ($header_type === 'project-page' && !empty($project_id) && !empty($project_title)): ?>
-                        <span class="breadcrumb-separator">/</span>
-                        <a href="<?php echo esc_url(wc_get_account_endpoint_url('project-overview') . '/' . $project_id); ?>">
-                            <?php echo esc_html($project_title); ?>
-                        </a>
-                    <?php endif; ?>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
+        <div class="project-breadcrumb">
+            <a href="<?php echo esc_url(wc_get_account_endpoint_url('projects')); ?>">
+                <?php _e('← Back to Projects', 'arsol-pfw'); ?>
+            </a>
+            
+            <?php if ($is_page_mode && !empty($project_id) && !empty($project_title)): ?>
+                <span class="breadcrumb-separator">/</span>
+                <a href="<?php echo esc_url(wc_get_account_endpoint_url('project-overview') . '/' . $project_id); ?>">
+                    <?php echo esc_html($project_title); ?>
+                </a>
+            <?php endif; ?>
+        </div>
         
         <h1 class="project-title"><?php echo esc_html($main_title); ?></h1>
         <?php if (!empty($subtitle)): ?>
             <p class="project-subtitle"><?php echo esc_html($subtitle); ?></p>
         <?php endif; ?>
         
-        <?php if ($header_type === 'project-item' && !empty($status) && !empty($status_label)): ?>
+        <?php if ($is_individual_item && !empty($status) && !empty($status_label)): ?>
             <div class="project-header-status">
                 <?php 
                 // Include status badge component
@@ -137,56 +158,41 @@ if ($header_type === 'project-item') {
         <?php endif; ?>
     </div>
     
-    <?php if ($show_actions): ?>
-        <div class="project-header-actions">
-            <?php if (!empty($actions) && is_array($actions)): ?>
-                <?php foreach ($actions as $action): ?>
-                    <?php if (!empty($action['url']) && !empty($action['label'])): ?>
-                        <?php
-                        $url = $action['url'];
-                        $label = $action['label'];
-                        $type = $action['type'] ?? 'secondary';
-                        $icon = $action['icon'] ?? '';
-                        $confirm_message = $action['confirm_message'] ?? '';
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
-                        ?>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            <?php elseif ($header_type === 'project-item'): ?>
-                <?php
-                // Default actions based on post type
-                switch ($post_type) {
-                    case 'arsol-project':
-                        $url = wc_get_account_endpoint_url('project-create') . '?edit=' . $post_id;
-                        $label = __('Edit Project', 'arsol-pfw');
-                        $type = 'secondary';
-                        $icon = 'dashicons-edit';
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
-                        break;
-                        
-                    case 'arsol-pfw-proposal':
-                        $url = wc_get_account_endpoint_url('project-create') . '?edit_proposal=' . $post_id;
-                        $label = __('Edit Proposal', 'arsol-pfw');
-                        $type = 'secondary';
-                        $icon = 'dashicons-edit';
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
-                        break;
-                        
-                    case 'arsol-pfw-request':
-                        $url = wc_get_account_endpoint_url('project-create') . '?from_request=' . $post_id;
-                        $label = __('Convert to Project', 'arsol-pfw');
-                        $type = 'primary';
-                        $icon = 'dashicons-arrow-right-alt';
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
-                        break;
-                }
-                ?>
-            <?php elseif ($header_type === 'project-page' && !empty($project_id)): ?>
-                <!-- Default action for project pages: View Project -->
-                <a href="<?php echo esc_url(wc_get_account_endpoint_url('project-overview') . '/' . $project_id); ?>" class="button button-secondary">
-                    <?php _e('View Project', 'arsol-pfw'); ?>
-                </a>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-</div> 
+    <div class="project-header-actions">
+        <?php if ($is_individual_item): ?>
+            <?php
+            // Default actions based on post type
+            switch ($post_type) {
+                case 'arsol-project':
+                    $url = wc_get_account_endpoint_url('project-create') . '?edit=' . $post_id;
+                    $label = __('Edit Project', 'arsol-pfw');
+                    $type = 'secondary';
+                    $icon = 'dashicons-edit';
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
+                    break;
+                    
+                case 'arsol-pfw-proposal':
+                    $url = wc_get_account_endpoint_url('project-create') . '?edit_proposal=' . $post_id;
+                    $label = __('Edit Proposal', 'arsol-pfw');
+                    $type = 'secondary';
+                    $icon = 'dashicons-edit';
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
+                    break;
+                    
+                case 'arsol-pfw-request':
+                    $url = wc_get_account_endpoint_url('project-create') . '?from_request=' . $post_id;
+                    $label = __('Convert to Project', 'arsol-pfw');
+                    $type = 'primary';
+                    $icon = 'dashicons-arrow-right-alt';
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
+                    break;
+            }
+            ?>
+        <?php elseif ($is_page_mode && !empty($project_id)): ?>
+            <!-- Default action for project pages: View Project -->
+            <a href="<?php echo esc_url(wc_get_account_endpoint_url('project-overview') . '/' . $project_id); ?>" class="button button-secondary">
+                <?php _e('View Project', 'arsol-pfw'); ?>
+            </a>
+        <?php endif; ?>
+    </div>
+</div>

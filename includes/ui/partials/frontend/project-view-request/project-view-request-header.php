@@ -8,8 +8,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-// Set variables for the reusable header component
-$header_type = 'project-item';
+// Set variables for the unified header component
 $post_id = $request_id;
 $post_type = 'arsol-pfw-request';
 
@@ -18,5 +17,5 @@ if (empty($request_title) && !empty($request_id)) {
     $request_title = get_the_title($request_id);
 }
 
-// Include the reusable project header
+// Include the unified project header
 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';

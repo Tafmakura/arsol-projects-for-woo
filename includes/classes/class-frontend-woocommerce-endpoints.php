@@ -384,7 +384,7 @@ class Frontend_Endpoints {
         }
         
         return true;
-    }
+        }
 
     /**
      * Get project data for API response
@@ -408,7 +408,7 @@ class Frontend_Endpoints {
             'author' => $project->post_author
         ];
     }
-
+    
     /**
      * Check if a user can view a project
      *
