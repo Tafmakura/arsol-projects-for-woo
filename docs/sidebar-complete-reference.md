@@ -8,7 +8,7 @@ The sidebar system consists of three main components:
 
 1. **Metadata Display** - Shows project information (budget, dates, status, etc.)
 2. **Unified Form** - Single form with filterable fields for user input
-3. **Secondary Actions** - Action buttons and links that don't require form input
+3. **Actions** - Direct action hooks for outputting buttons and links
 
 ## Architecture
 
@@ -25,7 +25,7 @@ All sidebar templates use the same simple structure:
     // Form section
     do_action('arsol_pfw_sidebar_form', $post_type, $current_status, $post_id);
     
-    // Secondary actions section
+    // Actions section
     do_action('arsol_pfw_sidebar_actions', $post_type, $current_status, $post_id);
     ?>
 </div>
@@ -35,7 +35,7 @@ All sidebar templates use the same simple structure:
 
 - **`Frontend_Template_Sidebar_Meta`** - Handles metadata display
 - **`Frontend_Template_Sidebar_Fields`** - Handles unified form with filterable fields
-- **`Frontend_Template_Sidebar_Actions`** - Handles secondary actions/buttons
+- **`Frontend_Template_Sidebar_Actions`** - Handles actions using direct action hooks
 
 ## 1. Metadata System
 
@@ -255,81 +255,155 @@ add_action('arsol_pfw_process_sidebar_form', function($post_id, $post_type, $cur
 }, 10, 4);
 ```
 
-## 3. Secondary Actions System
+## 3. Actions System
 
 ### Hook: `arsol_pfw_sidebar_actions`
 
-Displays secondary action buttons and links.
+Displays the actions container and calls `arsol_pfw_add_sidebar_actions`.
 
 **Parameters:**
 - `$post_type` (string) - Post type: 'active', 'proposal', 'request'
 - `$current_status` (string) - Current status slug
 - `$post_id` (int) - Post ID
 
-### Filter: `arsol_pfw_sidebar_actions`
+### Hook: `arsol_pfw_add_sidebar_actions`
 
-Filters the secondary actions array before display.
+This is where you add your custom action buttons by echoing HTML directly.
 
 **Parameters:**
-- `$actions` (array) - Array of action items
 - `$post_type` (string) - Post type
 - `$current_status` (string) - Current status
 - `$post_id` (int) - Post ID
 
-### Action Item Structure
-
-```php
-$actions['action_key'] = array(
-    'label' => __('Action Label', 'arsol-pfw'),
-    'url' => 'https://example.com/action',
-    'class' => 'button secondary-button',
-    'icon' => 'dashicons-download',
-    'confirm' => __('Are you sure?', 'arsol-pfw'),
-    'target' => '_blank',
-    'show_if' => array('status' => array('active', 'completed'))
-);
-```
-
-### Action Item Properties
-
-| Property | Required | Description | Example |
-|----------|----------|-------------|---------|
-| `label` | Yes | Button text | `"Download Files"` |
-| `url` | Yes | Action URL | `get_permalink($post_id)` |
-| `class` | No | CSS classes | `"button button-primary"` |
-| `icon` | No | Dashicons class | `"dashicons-download"` |
-| `confirm` | No | Confirmation message | `"Are you sure?"` |
-| `target` | No | Link target | `"_blank"` |
-| `show_if` | No | Conditional display | `array('status' => array('active'))` |
-
 ### Example: Adding Custom Actions
 
 ```php
-add_filter('arsol_pfw_sidebar_actions', function($actions, $post_type, $status, $post_id) {
+add_action('arsol_pfw_add_sidebar_actions', function($post_type, $status, $post_id) {
     if ($post_type === 'active' && $status === 'completed') {
-        $actions['generate_invoice'] = array(
-            'label' => __('Generate Invoice', 'my-plugin'),
-            'url' => wp_nonce_url(
-                add_query_arg(array('action' => 'generate_invoice', 'project_id' => $post_id)),
-                'generate_invoice_' . $post_id
-            ),
-            'class' => 'button button-primary',
-            'icon' => 'dashicons-media-spreadsheet',
-            'confirm' => __('Generate invoice for this project?', 'my-plugin')
+        $invoice_url = wp_nonce_url(
+            add_query_arg(array('action' => 'generate_invoice', 'project_id' => $post_id)),
+            'generate_invoice_' . $post_id
         );
+        
+        echo '<div class="action-item action-generate-invoice">';
+        echo '<a href="' . esc_url($invoice_url) . '" class="button button-primary" ';
+        echo 'onclick="return confirm(\'' . esc_js__('Generate invoice for this project?', 'my-plugin') . '\')">';
+        echo '<span class="dashicons dashicons-media-spreadsheet"></span> ';
+        echo esc_html__('Generate Invoice', 'my-plugin');
+        echo '</a>';
+        echo '</div>';
     }
-    return $actions;
-}, 10, 4);
+    
+    // Add custom client portal link for active projects
+    if ($post_type === 'active') {
+        echo '<div class="action-item action-client-portal">';
+        echo '<a href="' . esc_url(home_url('/client-portal/?project=' . $post_id)) . '" class="button secondary-button" target="_blank">';
+        echo '<span class="dashicons dashicons-admin-users"></span> ';
+        echo esc_html__('Client Portal', 'my-plugin');
+        echo '</a>';
+        echo '</div>';
+    }
+}, 10, 3);
+```
+
+### Example: Conditional Actions by Status
+
+```php
+add_action('arsol_pfw_add_sidebar_actions', function($post_type, $status, $post_id) {
+    if ($post_type === 'proposal') {
+        // Show different actions based on status
+        switch ($status) {
+            case 'draft':
+                echo '<div class="action-item">';
+                echo '<a href="' . esc_url(get_edit_post_link($post_id)) . '" class="button button-primary">';
+                echo esc_html__('Continue Editing', 'my-plugin');
+                echo '</a>';
+                echo '</div>';
+                break;
+                
+            case 'sent':
+                echo '<div class="action-item">';
+                echo '<a href="#" class="button secondary-button" id="send-reminder">';
+                echo esc_html__('Send Reminder', 'my-plugin');
+                echo '</a>';
+                echo '</div>';
+                break;
+                
+            case 'accepted':
+                $project_url = wp_nonce_url(
+                    add_query_arg(array('action' => 'create_project_from_proposal', 'proposal_id' => $post_id)),
+                    'create_project_' . $post_id
+                );
+                
+                echo '<div class="action-item">';
+                echo '<a href="' . esc_url($project_url) . '" class="button button-primary">';
+                echo esc_html__('Create Project', 'my-plugin');
+                echo '</a>';
+                echo '</div>';
+                break;
+        }
+    }
+}, 15, 3);
+```
+
+### Example: Adding JavaScript-Powered Actions
+
+```php
+add_action('arsol_pfw_add_sidebar_actions', function($post_type, $status, $post_id) {
+    if ($post_type === 'request' && $status === 'pending') {
+        // Quick approval buttons with AJAX
+        echo '<div class="action-item action-quick-approve">';
+        echo '<button type="button" class="button button-primary quick-approve-btn" data-post-id="' . esc_attr($post_id) . '">';
+        echo esc_html__('Quick Approve', 'my-plugin');
+        echo '</button>';
+        echo '</div>';
+        
+        echo '<div class="action-item action-quick-reject">';
+        echo '<button type="button" class="button button-secondary quick-reject-btn" data-post-id="' . esc_attr($post_id) . '">';
+        echo esc_html__('Quick Reject', 'my-plugin');
+        echo '</button>';
+        echo '</div>';
+        
+        // Add the JavaScript inline
+        echo '<script>
+        jQuery(document).ready(function($) {
+            $(".quick-approve-btn").click(function() {
+                var postId = $(this).data("post-id");
+                // Your AJAX call here
+                console.log("Quick approve for post:", postId);
+            });
+            
+            $(".quick-reject-btn").click(function() {
+                var postId = $(this).data("post-id");
+                // Your AJAX call here
+                console.log("Quick reject for post:", postId);
+            });
+        });
+        </script>';
+    }
+}, 20, 3);
 ```
 
 ## Status-Based Conditional Display
 
-All three systems support conditional display based on current status using the `show_if` parameter:
+All systems support conditional display based on current status. For actions, use simple PHP conditionals:
 
 ```php
-'show_if' => array(
-    'status' => array('active', 'completed', 'on-hold')
-)
+add_action('arsol_pfw_add_sidebar_actions', function($post_type, $status, $post_id) {
+    // Only show for specific statuses
+    if (in_array($status, array('active', 'completed', 'on-hold'))) {
+        echo '<div class="action-item">';
+        echo '<a href="#" class="button">My Action</a>';
+        echo '</div>';
+    }
+    
+    // Different actions for different statuses
+    if ($status === 'active') {
+        // Active project actions
+    } elseif ($status === 'completed') {
+        // Completed project actions
+    }
+}, 10, 3);
 ```
 
 ### Available Statuses
@@ -355,116 +429,17 @@ All three systems support conditional display based on current status using the 
 - `rejected` - Rejected requests
 - `on-hold` - Temporarily paused
 
-## Complete Examples
-
-### Adding a Complete Custom Sidebar Section
-
-```php
-// Add custom metadata
-add_filter('arsol_pfw_sidebar_metadata', function($metadata, $post_type, $status, $post_id) {
-    if ($post_type === 'active') {
-        $metadata['project_manager'] = array(
-            'label' => __('Project Manager', 'my-plugin'),
-            'value' => get_post_meta($post_id, '_project_manager', true),
-            'type' => 'text'
-        );
-        
-        $metadata['completion_percentage'] = array(
-            'label' => __('Completion', 'my-plugin'),
-            'value' => get_post_meta($post_id, '_completion_percentage', true),
-            'type' => 'text',
-            'suffix' => '%',
-            'show_if' => array('status' => array('active'))
-        );
-    }
-    return $metadata;
-}, 10, 4);
-
-// Add custom form fields
-add_filter('arsol_pfw_form_fields', function($fields, $post_type, $status, $post_id) {
-    if ($post_type === 'active' && $status === 'active') {
-        $fields['completion_update'] = array(
-            'type' => 'select',
-            'label' => __('Update Completion', 'my-plugin'),
-            'options' => array(
-                '' => __('No change', 'my-plugin'),
-                '25' => __('25% Complete', 'my-plugin'),
-                '50' => __('50% Complete', 'my-plugin'),
-                '75' => __('75% Complete', 'my-plugin'),
-                '100' => __('100% Complete', 'my-plugin')
-            )
-        );
-        
-        $fields['progress_notes'] = array(
-            'type' => 'textarea',
-            'label' => __('Progress Notes', 'my-plugin'),
-            'placeholder' => __('Describe recent progress...', 'my-plugin'),
-            'rows' => 3
-        );
-    }
-    return $fields;
-}, 10, 4);
-
-// Customize submit button
-add_filter('arsol_pfw_submit_button', function($button, $post_type, $status, $post_id) {
-    if ($post_type === 'active' && $status === 'active') {
-        return array(
-            'label' => __('Update Progress', 'my-plugin'),
-            'class' => 'button button-primary'
-        );
-    }
-    return $button;
-}, 10, 4);
-
-// Add custom actions
-add_filter('arsol_pfw_sidebar_actions', function($actions, $post_type, $status, $post_id) {
-    if ($post_type === 'active') {
-        $actions['project_timeline'] = array(
-            'label' => __('View Timeline', 'my-plugin'),
-            'url' => add_query_arg(array('view' => 'timeline'), get_permalink($post_id)),
-            'class' => 'button secondary-button',
-            'icon' => 'dashicons-calendar-alt'
-        );
-        
-        $actions['client_portal'] = array(
-            'label' => __('Client Portal', 'my-plugin'),
-            'url' => home_url('/client-portal/?project=' . $post_id),
-            'class' => 'button secondary-button',
-            'icon' => 'dashicons-admin-users',
-            'target' => '_blank'
-        );
-    }
-    return $actions;
-}, 10, 4);
-
-// Process form submissions
-add_action('arsol_pfw_process_sidebar_form', function($post_id, $post_type, $current_status, $form_data) {
-    if ($post_type === 'active' && !empty($form_data['completion_update'])) {
-        $completion = intval($form_data['completion_update']);
-        update_post_meta($post_id, '_completion_percentage', $completion);
-        
-        if (!empty($form_data['progress_notes'])) {
-            update_post_meta($post_id, '_progress_notes', sanitize_textarea_field($form_data['progress_notes']));
-        }
-        
-        // If 100% complete, change status
-        if ($completion === 100) {
-            wp_set_post_terms($post_id, 'completed', 'arsol-project-status');
-        }
-    }
-}, 10, 4);
-```
-
 ## Best Practices
 
 1. **Always Escape Output** - Use `esc_html()`, `esc_attr()`, `esc_url()` appropriately
 2. **Sanitize Input** - Use `sanitize_text_field()`, `sanitize_textarea_field()` for form data
 3. **Use Nonces** - Include nonces in action URLs for security
 4. **Check Permissions** - Verify user capabilities before processing actions
-5. **Conditional Display** - Use `show_if` to show/hide based on status
+5. **Conditional Display** - Use PHP conditionals for status-based display
 6. **Consistent Styling** - Use WordPress button classes for consistent UI
 7. **Internationalization** - Wrap all text strings in `__()` for translation
 8. **Error Handling** - Check for empty values and provide fallbacks
+9. **Wrap Actions in Divs** - Use `.action-item` class for consistent styling
 
 ## CSS Classes
 
@@ -488,6 +463,23 @@ The system provides CSS classes for styling:
 ### Actions
 - `.sidebar-actions` - Actions container
 - `.action-item` - Individual action wrapper
-- `.action-{key}` - Specific action by key
+- `.action-{key}` - Specific action by key (if using consistent naming)
+
+## Action Hooks Summary
+
+### Metadata System
+- `arsol_pfw_sidebar_meta` - Displays metadata container
+- Filter: `arsol_pfw_sidebar_metadata` - Filters metadata array
+
+### Form System  
+- `arsol_pfw_sidebar_form` - Displays form container
+- Filter: `arsol_pfw_form_fields` - Filters form fields array
+- Filter: `arsol_pfw_submit_button` - Filters submit button config
+- Filter: `arsol_pfw_has_form_fields` - Controls form display
+- `arsol_pfw_process_sidebar_form` - Processes form submissions
+
+### Actions System
+- `arsol_pfw_sidebar_actions` - Displays actions container  
+- `arsol_pfw_add_sidebar_actions` - **This is where you add your buttons**
 
 This system provides maximum flexibility while maintaining WordPress/WooCommerce standards and best practices.
