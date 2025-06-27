@@ -42,6 +42,9 @@ class Frontend_Template_Sidebar_Meta {
             return;
         }
 
+        // Debug: uncomment to see what parameters are passed
+        // error_log("Meta display - Post: $post_id, Type: $post_type, Status: $status");
+
         $metadata = $this->get_default_metadata($post_type, $status, $post_id);
 
         /**

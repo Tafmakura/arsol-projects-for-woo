@@ -27,7 +27,7 @@ class Frontend_Template_Sidebar_Actions {
      * Initialize hooks
      */
     private function init_hooks() {
-        add_action('arsol_pfw_sidebar_buttons', array($this, 'display_sidebar_actions'), 10, 3);
+        add_action('arsol_pfw_sidebar_actions', array($this, 'display_sidebar_actions'), 10, 3);
         add_action('arsol_pfw_add_sidebar_actions', array($this, 'add_default_actions'), 10, 3);
     }
 
@@ -42,6 +42,9 @@ class Frontend_Template_Sidebar_Actions {
         if (empty($post_id)) {
             return;
         }
+
+        // Debug: uncomment to see what parameters are passed
+        // error_log("Actions display - Post: $post_id, Type: $post_type, Status: $status");
 
         echo '<div class="sidebar-actions">';
         
@@ -88,6 +91,9 @@ class Frontend_Template_Sidebar_Actions {
      * @param string $status The current status
      */
     private function add_proposal_actions($post_id, $status) {
+        // Debug: always show buttons for testing
+        // error_log("Proposal actions for status: $status");
+        
         // Approve button (for pending-approval status)
         if ($status === 'pending-approval') {
             $approve_url = wp_nonce_url(
@@ -103,7 +109,7 @@ class Frontend_Template_Sidebar_Actions {
             echo '</div>';
         }
 
-        // Reject button (for pending-approval status)
+        // Reject button (for pending-approval status)  
         if ($status === 'pending-approval') {
             $reject_url = wp_nonce_url(
                 admin_url('admin-post.php?action=arsol_reject_proposal&proposal_id=' . $post_id),
@@ -117,6 +123,11 @@ class Frontend_Template_Sidebar_Actions {
             echo '</a>';
             echo '</div>';
         }
+        
+        // Temporary test button to verify actions are working
+        echo '<div class="action-item action-test">';
+        echo '<span style="background: yellow; padding: 5px;">Test: Actions working for ' . esc_html($status) . '</span>';
+        echo '</div>';
     }
 
     /**
@@ -140,6 +151,11 @@ class Frontend_Template_Sidebar_Actions {
             echo '</a>';
             echo '</div>';
         }
+        
+        // Temporary test button to verify actions are working
+        echo '<div class="action-item action-test">';
+        echo '<span style="background: lightblue; padding: 5px;">Test: Request actions for ' . esc_html($status) . '</span>';
+        echo '</div>';
     }
 
     /**
@@ -151,5 +167,10 @@ class Frontend_Template_Sidebar_Actions {
     private function add_project_actions($post_id, $status) {
         // Add any default project actions if needed
         // For now, projects mainly have custom actions added via hooks
+        
+        // Temporary test button to verify actions are working
+        echo '<div class="action-item action-test">';
+        echo '<span style="background: lightgreen; padding: 5px;">Test: Project actions for ' . esc_html($status) . '</span>';
+        echo '</div>';
     }
 }

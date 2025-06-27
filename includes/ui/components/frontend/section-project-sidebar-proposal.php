@@ -17,6 +17,9 @@ $post_type = 'proposal';
 $status_terms = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'slugs'));
 $current_status = !empty($status_terms) ? $status_terms[0] : 'processing';
 
+// Debug: uncomment to see what status is detected
+// error_log("Proposal $post_id status: " . $current_status . " (terms: " . print_r($status_terms, true) . ")");
+
 ?>
 
 <div class="project-sidebar sidebar-proposal">
