@@ -13,6 +13,19 @@ if (!defined('ABSPATH')) {
 // The following variables are passed from the master template:
 // $query, $paged, $total_pages, $wp_button_class, $current_tab
 
+// Safety checks for required variables
+$query = $query ?? null;
+$paged = $paged ?? 1;
+$total_pages = $total_pages ?? 1;
+$wp_button_class = $wp_button_class ?? '';
+$current_tab = $current_tab ?? 'proposals';
+
+// Only proceed if we have a valid query
+if ($query === null) {
+    echo '<div class="woocommerce-info"><p>' . __('No proposals data available.', 'arsol-pfw') . '</p></div>';
+    return;
+}
+
 $has_items = $query->have_posts();
 do_action('arsol_projects_before_user_proposals', $has_items);
 ?>

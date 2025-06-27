@@ -13,12 +13,16 @@ if (!defined('ABSPATH')) {
 }
 
 // Variables passed from the endpoint handler
+// $current_tab, $query, $paged, $total_pages, $wp_button_class, $user_id should be available
 $current_tab = $current_tab ?? 'active';
+
+// Prepare variables for templates
+$template_vars = compact('current_tab', 'query', 'paged', 'total_pages', 'wp_button_class', 'user_id');
 
 // --- Header Section ---
 wc_get_template(
     'partials/projects/projects-header.php',
-    compact('current_tab'),
+    $template_vars,
     'arsol-pfw/',
     ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/'
 );
@@ -26,7 +30,7 @@ wc_get_template(
 // --- Content Section ---
 wc_get_template(
     'partials/projects/projects-content.php',
-    compact('current_tab'),
+    $template_vars,
     'arsol-pfw/',
     ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/'
 ); 
