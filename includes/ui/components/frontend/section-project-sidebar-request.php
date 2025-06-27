@@ -9,8 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get request ID from global $post or passed variable
-$request_id = isset($post) ? $post->ID : (isset($request_id) ? $request_id : 0);
+// Get request ID from global $post, passed variable, or project_id parameter
+$request_id = isset($post) ? $post->ID : (isset($request_id) ? $request_id : (isset($project_id) ? $project_id : 0));
 
 // Prepare comprehensive data for efficient hook usage
 $sidebar_data = compact('request_id');

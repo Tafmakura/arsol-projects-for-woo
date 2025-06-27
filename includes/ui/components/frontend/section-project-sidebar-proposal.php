@@ -9,8 +9,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get proposal ID from global $post or passed variable
-$proposal_id = isset($post) ? $post->ID : (isset($proposal_id) ? $proposal_id : 0);
+// Get proposal ID from global $post, passed variable, or project_id parameter  
+$proposal_id = isset($post) ? $post->ID : (isset($proposal_id) ? $proposal_id : (isset($project_id) ? $project_id : 0));
 
 // Prepare comprehensive data for efficient hook usage
 $sidebar_data = compact('proposal_id');
