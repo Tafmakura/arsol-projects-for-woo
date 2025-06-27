@@ -3,30 +3,40 @@
  * Projects Listing Content
  * 
  * Main content area for projects listing page.
- * Variables: $current_tab, $projects (optional)
+ * Variables: $current_tab (optional)
  */
 
 if (!defined('ABSPATH')) exit;
 
-$current_tab = $current_tab ?? 'active';
+// Get current tab from URL parameter or use passed variable
+$current_tab = $current_tab ?? (isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'active');
 
 ?>
 
-<div class="arsol-projects-content">
+<div class="woocommerce-MyAccount-content">
     <?php
-    // Include appropriate listing based on current tab
     switch ($current_tab) {
-        case 'active':
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-projects-listing-active.php';
-            break;
         case 'proposals':
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-projects-listing-proposals.php';
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_proposal_listings')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('project_proposal_listings');
+            } else {
+                echo do_shortcode('[arsol_pfw_projects_listing_proposals]');
+            }
             break;
         case 'requests':
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-projects-listing-requests.php';
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_requests_listings')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('project_requests_listings');
+            } else {
+                echo do_shortcode('[arsol_pfw_projects_listing_requests]');
+            }
             break;
+        case 'active':
         default:
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-projects-listing-active.php';
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('projects_listing')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('projects_listing');
+            } else {
+                echo do_shortcode('[arsol_pfw_projects_listing_active]');
+            }
             break;
     }
     ?>
