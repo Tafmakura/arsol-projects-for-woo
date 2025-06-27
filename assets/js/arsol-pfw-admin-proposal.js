@@ -7,6 +7,7 @@
         init: function() {
             this.bindEvents();
             this.updateRequiredFields();
+            this.updateProposalStatusVisibility();
         },
 
         // Shared price formatting utility to eliminate redundancy
@@ -39,6 +40,11 @@
                 if (typeof ArsolProposalQuotation !== 'undefined') {
                     ArsolProposalQuotation.updateQuotationFieldRequirements();
                 }
+            });
+
+            // Handle proposal status changes for feedback metabox visibility
+            $(document).on('change', '#proposal_status', function() {
+                ArsolProposal.updateProposalStatusVisibility();
             });
 
             // For project-tied proposals with disabled selects, trigger change event manually
@@ -273,6 +279,22 @@
                 $('.arsol-pfw-hide-if-proposal-cost-type-is-budget').css('display', 'none');
             } else if (costType === 'quotation') {
                 $('.arsol-pfw-hide-if-proposal-cost-type-is-quotation').css('display', 'none');
+            }
+        },
+
+        updateProposalStatusVisibility: function() {
+            var selectedStatus = $('#proposal_status').val() || '';
+            
+            // Hide all feedback metaboxes first
+            $('#arsol_proposal_processing_feedback_metabox, #arsol_proposal_pending_approval_feedback_metabox').each(function() {
+                this.style.setProperty('display', 'none', 'important');
+            });
+            
+            // Show the appropriate metabox based on current status
+            if (selectedStatus === 'processing') {
+                $('#arsol_proposal_processing_feedback_metabox')[0].style.setProperty('display', 'block', 'important');
+            } else if (selectedStatus === 'pending-approval') {
+                $('#arsol_proposal_pending_approval_feedback_metabox')[0].style.setProperty('display', 'block', 'important');
             }
         }
     };

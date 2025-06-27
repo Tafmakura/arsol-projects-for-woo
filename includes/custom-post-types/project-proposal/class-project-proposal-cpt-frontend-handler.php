@@ -48,14 +48,32 @@ class Frontend_Handler {
         $status_message = '';
         switch ($status) {
             case 'processing':
+                // Get custom feedback first, then fall back to settings defaults
+                $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_processing_feedback', true);
+                $processing_message = !empty($custom_feedback) 
+                    ? $custom_feedback 
+                    : \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposal_processing_message');
                 $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-info">
-                    <p><strong>Status:</strong> Your proposal is currently being processed. We are preparing the details and will have it ready for your review soon.</p>
+                    <div class="arsol-pfw-empty-state">
+                        <div class="arsol-pfw-empty-state__content">
+                            ' . wp_kses_post(wpautop($processing_message)) . '
+                        </div>
+                    </div>
                 </div>';
                 break;
                 
             case 'pending-approval':
+                // Get custom feedback first, then fall back to settings defaults
+                $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_pending_approval_feedback', true);
+                $pending_approval_message = !empty($custom_feedback) 
+                    ? $custom_feedback 
+                    : \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposal_pending_approval_message');
                 $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-warning">
-                    <p><strong>Status:</strong> Your proposal is ready and pending your approval. Please review the details below and let us know if you approve.</p>
+                    <div class="arsol-pfw-empty-state">
+                        <div class="arsol-pfw-empty-state__content">
+                            ' . wp_kses_post(wpautop($pending_approval_message)) . '
+                        </div>
+                    </div>
                 </div>';
                 break;
                 

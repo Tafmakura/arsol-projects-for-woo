@@ -90,6 +90,8 @@ class Setup_Defaults {
         $file_mappings = array(
             'project_overview_message' => 'content-active-empty.md',
             'project_proposals_message' => 'content-proposal-empty.md',
+            'project_proposal_processing_message' => 'content-proposal-processing.md',
+            'project_proposal_pending_approval_message' => 'content-proposal-pending-approval.md',
             'project_request_on_hold_message' => 'content-request-on-hold.md',
             'project_request_under_review_message' => 'content-request-under-review.md'
         );
@@ -132,6 +134,8 @@ class Setup_Defaults {
         $fallbacks = array(
             'project_overview_message' => __('This project is currently in progress. Content and details will be added as the project develops.', 'arsol-pfw'),
             'project_proposals_message' => __('No proposal content has been added yet. Please check back later for updates.', 'arsol-pfw'),
+            'project_proposal_processing_message' => __('Your proposal is currently being processed. We are preparing the details and will have it ready for your review soon.', 'arsol-pfw'),
+            'project_proposal_pending_approval_message' => __('Your proposal is ready and pending your approval. Please review the details below and let us know if you approve.', 'arsol-pfw'),
             'project_request_on_hold_message' => __('Your project request is currently on hold. We will contact you when we can proceed with your request.', 'arsol-pfw'),
             'project_request_under_review_message' => __('Your project request is under review. We will get back to you shortly with next steps.', 'arsol-pfw')
         );
@@ -450,6 +454,8 @@ class Setup_Defaults {
         $file_mappings = array(
             'project_overview_message' => 'content-active-empty.md',
             'project_proposals_message' => 'content-proposal-empty.md',
+            'project_proposal_processing_message' => 'content-proposal-processing.md',
+            'project_proposal_pending_approval_message' => 'content-proposal-pending-approval.md',
             'project_request_on_hold_message' => 'content-request-on-hold.md',
             'project_request_under_review_message' => 'content-request-under-review.md'
         );

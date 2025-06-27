@@ -9,8 +9,36 @@ $proposal_timeline = get_post_meta($post->ID, '_arsol_pfw_proposal_timeline', tr
 $related_request_id = get_post_meta($post->ID, '_arsol_pfw_proposal_request_id', true);
 $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
-// Get the default message for empty proposals
-$default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposals_message');
+// Get proposal status to determine which message to show
+$status_terms = get_the_terms($post->ID, 'arsol-proposal-status');
+$status = $status_terms && !is_wp_error($status_terms) ? $status_terms[0]->slug : 'processing';
+
+// Determine the message to display with proper hierarchy: Custom Feedback → Settings Defaults → Plugin Defaults
+$display_message = '';
+
+// 1. First priority: Custom feedback from metabox (if available)
+if ($status === 'processing') {
+    $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_processing_feedback', true);
+    if (!empty($custom_feedback)) {
+        $display_message = $custom_feedback;
+    }
+} elseif ($status === 'pending-approval') {
+    $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_pending_approval_feedback', true);
+    if (!empty($custom_feedback)) {
+        $display_message = $custom_feedback;
+    }
+}
+
+// 2. Second priority: Settings defaults (if no custom feedback)
+if (empty($display_message)) {
+    if ($status === 'processing') {
+        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposal_processing_message');
+    } elseif ($status === 'pending-approval') {
+        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposal_pending_approval_message');
+    } else {
+        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposals_message');
+    }
+}
 ?>
 
 <div class="project-overview-wrapper">
@@ -21,7 +49,7 @@ $default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_d
                 <div class="arsol-pfw-project-overview-empty">
                     <div class="arsol-pfw-empty-state">
                         <div class="arsol-pfw-empty-state__content">
-                            <?php echo wp_kses_post(wpautop($default_message)); ?>
+                            <?php echo wp_kses_post(wpautop($display_message)); ?>
                         </div>
                     </div>
                 </div>

@@ -44,6 +44,27 @@ class Proposal {
             'side',
             'default'
         );
+        
+        // Add Proposal Feedback metaboxes for different statuses
+        add_meta_box(
+            'arsol_proposal_processing_feedback_metabox',
+            __('Customer Feedback', 'arsol-pfw'),
+            array($this, 'render_processing_feedback_metabox'),
+            'arsol-pfw-proposal',
+            'normal',
+            'high',
+            array('__back_compat_meta_box' => false, 'class' => 'arsol-pfw-show-if-proposal-status-is-processing')
+        );
+        
+        add_meta_box(
+            'arsol_proposal_pending_approval_feedback_metabox',
+            __('Customer Feedback', 'arsol-pfw'),
+            array($this, 'render_pending_approval_feedback_metabox'),
+            'arsol-pfw-proposal',
+            'normal',
+            'high',
+            array('__back_compat_meta_box' => false, 'class' => 'arsol-pfw-show-if-proposal-status-is-pending-approval')
+        );
     }
 
     /**
@@ -179,6 +200,84 @@ class Proposal {
                 <?php
             }
             ?>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render processing feedback metabox
+     */
+    public function render_processing_feedback_metabox($post) {
+        // Add nonce for security
+        wp_nonce_field('proposal_processing_feedback_metabox', 'proposal_processing_feedback_metabox_nonce');
+
+        // Get current values
+        $feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_processing_feedback', true);
+        ?>
+        <div>
+            <p class="description">
+                <?php _e('Provide feedback to the customer about the current processing status and any updates on proposal development.', 'arsol-pfw'); ?>
+            </p>
+            
+            <div class="arsol-request-feedback-editor">
+                <?php
+                $editor_settings = array(
+                    'textarea_name' => 'arsol_pfw_proposal_processing_feedback',
+                    'textarea_rows' => 8,
+                    'media_buttons' => false,
+                    'teeny' => false,
+                    'quicktags' => array(
+                        'buttons' => 'strong,em,ul,ol,li,link,close'
+                    ),
+                    'tinymce' => array(
+                        'toolbar1' => 'bold,italic,bullist,numlist,link,unlink,undo,redo',
+                        'toolbar2' => '',
+                        'toolbar3' => ''
+                    )
+                );
+                
+                wp_editor($feedback, 'arsol_pfw_proposal_processing_feedback', $editor_settings);
+                ?>
+            </div>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render pending approval feedback metabox
+     */
+    public function render_pending_approval_feedback_metabox($post) {
+        // Add nonce for security
+        wp_nonce_field('proposal_pending_approval_feedback_metabox', 'proposal_pending_approval_feedback_metabox_nonce');
+
+        // Get current values
+        $feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_pending_approval_feedback', true);
+        ?>
+        <div>
+            <p class="description">
+                <?php _e('Provide feedback to the customer about the proposal details and any specific points they should consider during their review.', 'arsol-pfw'); ?>
+            </p>
+            
+            <div class="arsol-request-feedback-editor">
+                <?php
+                $editor_settings = array(
+                    'textarea_name' => 'arsol_pfw_proposal_pending_approval_feedback',
+                    'textarea_rows' => 8,
+                    'media_buttons' => false,
+                    'teeny' => false,
+                    'quicktags' => array(
+                        'buttons' => 'strong,em,ul,ol,li,link,close'
+                    ),
+                    'tinymce' => array(
+                        'toolbar1' => 'bold,italic,bullist,numlist,link,unlink,undo,redo',
+                        'toolbar2' => '',
+                        'toolbar3' => ''
+                    )
+                );
+                
+                wp_editor($feedback, 'arsol_pfw_proposal_pending_approval_feedback', $editor_settings);
+                ?>
+            </div>
         </div>
         <?php
     }
@@ -435,6 +534,24 @@ class Proposal {
                         'post_title' => $creation_data['default_title']
                     ));
                 }
+            }
+        }
+
+        // Save feedback for proposal metaboxes
+        
+        // Save processing feedback
+        if (isset($_POST['proposal_processing_feedback_metabox_nonce']) && wp_verify_nonce($_POST['proposal_processing_feedback_metabox_nonce'], 'proposal_processing_feedback_metabox')) {
+            if (isset($_POST['arsol_pfw_proposal_processing_feedback'])) {
+                $feedback = wp_kses_post($_POST['arsol_pfw_proposal_processing_feedback']);
+                update_post_meta($post_id, '_arsol_pfw_proposal_processing_feedback', $feedback);
+            }
+        }
+        
+        // Save pending approval feedback
+        if (isset($_POST['proposal_pending_approval_feedback_metabox_nonce']) && wp_verify_nonce($_POST['proposal_pending_approval_feedback_metabox_nonce'], 'proposal_pending_approval_feedback_metabox')) {
+            if (isset($_POST['arsol_pfw_proposal_pending_approval_feedback'])) {
+                $feedback = wp_kses_post($_POST['arsol_pfw_proposal_pending_approval_feedback']);
+                update_post_meta($post_id, '_arsol_pfw_proposal_pending_approval_feedback', $feedback);
             }
         }
     }

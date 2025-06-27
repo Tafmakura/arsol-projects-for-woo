@@ -20,6 +20,32 @@ Displays active project content.
 ### `[arsol_pfw_project_content_proposal]`
 Displays project proposal content.
 
+### `[arsol_pfw_project_content_proposal_processing]`
+Displays processing message for project proposals regardless of content.
+
+**Parameters:**
+- `title` - Custom title (default: "Proposal Status")
+- `message` - Custom processing message (default: uses configured processing message)
+
+**Example:**
+```php
+[arsol_pfw_project_content_proposal_processing]
+[arsol_pfw_project_content_proposal_processing title="Working on Your Proposal" message="Our team is crafting your custom proposal..."]
+```
+
+### `[arsol_pfw_project_content_proposal_pending_approval]`
+Displays pending approval message for project proposals regardless of content.
+
+**Parameters:**
+- `title` - Custom title (default: "Proposal Status")
+- `message` - Custom pending approval message (default: uses configured pending approval message)
+
+**Example:**
+```php
+[arsol_pfw_project_content_proposal_pending_approval]
+[arsol_pfw_project_content_proposal_pending_approval title="Ready for Review" message="Your proposal is ready for your review and approval..."]
+```
+
 ### `[arsol_pfw_project_content_request]`
 Displays project request content.
 

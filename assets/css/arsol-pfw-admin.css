@@ -1242,7 +1242,29 @@ body.post-type-arsol-pfw-proposal .status-filter-dropdown {
     display: none !important;
 }
 
+/* Proposal Feedback Metaboxes - Hidden by default to prevent FOUC */
+#arsol_proposal_processing_feedback_metabox,
+#arsol_proposal_pending_approval_feedback_metabox {
+    display: none !important;
+}
 
+/* Proposal Status Conditional Visibility */
+.arsol-pfw-show-if-proposal-status-is-processing,
+.arsol-pfw-show-if-proposal-status-is-pending-approval {
+    display: block !important;
+}
+
+.arsol-pfw-hide-if-proposal-status-is-not-processing,
+.arsol-pfw-hide-if-proposal-status-is-processing,
+.arsol-pfw-hide-if-proposal-status-is-pending-approval {
+    display: none !important;
+}
+
+/* Show Proposal Feedback Metaboxes in Screen Options */
+#screen-options-wrap label[for="arsol_proposal_processing_feedback_metabox-hide"],
+#screen-options-wrap label[for="arsol_proposal_pending_approval_feedback_metabox-hide"] {
+    display: block !important;
+}
 
 #arsol_request_onhold_feedback_metabox,
 #arsol_request_onhold_feedback_metabox .postbox-header {

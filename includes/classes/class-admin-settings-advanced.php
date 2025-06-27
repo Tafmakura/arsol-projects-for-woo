@@ -33,6 +33,14 @@ class Settings_Advanced {
                 'title' => __('Project Proposal (Empty)', 'arsol-pfw'),
                 'description' => __('Placeholder message for project proposals when they don\'t have content.', 'arsol-pfw')
             ],
+            'project_proposal_processing_message' => [
+                'title' => __('Project Proposal (Processing)', 'arsol-pfw'),
+                'description' => __('Default message displayed when a project proposal is being processed.', 'arsol-pfw')
+            ],
+            'project_proposal_pending_approval_message' => [
+                'title' => __('Project Proposal (Pending Approval)', 'arsol-pfw'),
+                'description' => __('Default message displayed when a project proposal is pending customer approval.', 'arsol-pfw')
+            ],
             'project_request_on_hold_message' => [
                 'title' => __('Project Request (On-Hold)', 'arsol-pfw'),
                 'description' => __('Default message displayed when a project request is put on hold.', 'arsol-pfw')
@@ -53,6 +61,16 @@ class Settings_Advanced {
                 'title' => __('Project Proposal Overview', 'arsol-pfw'),
                 'description' => __('Overrides the overview section for project proposals.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_content_proposal]'
+            ],
+            'project_proposal_processing_shortcode' => [
+                'title' => __('Project Proposal (Processing)', 'arsol-pfw'),
+                'description' => __('Overrides the content display for proposals in processing status.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_content_proposal_processing]'
+            ],
+            'project_proposal_pending_approval_shortcode' => [
+                'title' => __('Project Proposal (Pending Approval)', 'arsol-pfw'),
+                'description' => __('Overrides the content display for proposals in pending approval status.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_content_proposal_pending_approval]'
             ],
             'project_overview_request_shortcode' => [
                 'title' => __('Project Request Overview', 'arsol-pfw'),
@@ -191,7 +209,7 @@ class Settings_Advanced {
                         $field,
                         sprintf(__('Invalid shortcode format for %s. Please use format: [shortcode_name]', 'arsol-pfw'), $field)
                     );
-                } else {
+                            } else {
                     $sanitized[$field] = $value;
                 }
             }
@@ -279,7 +297,9 @@ class Settings_Advanced {
             'project_request_on_hold' => $effective_messages['project_request_on_hold_message'] ?? '',
             'project_request_under_review' => $effective_messages['project_request_under_review_message'] ?? '',
             'project_overview' => $effective_messages['project_overview_message'] ?? '',
-            'project_proposals' => $effective_messages['project_proposals_message'] ?? ''
+            'project_proposals' => $effective_messages['project_proposals_message'] ?? '',
+            'project_proposal_processing' => $effective_messages['project_proposal_processing_message'] ?? '',
+            'project_proposal_pending_approval' => $effective_messages['project_proposal_pending_approval_message'] ?? ''
         ];
     }
 }
