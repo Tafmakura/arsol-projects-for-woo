@@ -99,38 +99,55 @@ class Frontend_Template_Sidebar_Meta {
      * @return array Array of metadata items
      */
     private function get_project_metadata($post_id, $status) {
-        return array(
-            'status' => array(
-                'label' => __('Status', 'arsol-pfw'),
-                'value' => $this->format_status_display($status),
-                'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($status)
-            ),
-            'budget' => array(
-                'label' => __('Budget', 'arsol-pfw'),
-                'value' => get_post_meta($post_id, 'project_budget', true),
-                'type' => 'currency',
-                'show_if' => array('status' => array('active', 'completed'))
-            ),
-            'start_date' => array(
+        $metadata = array();
+        
+        // Customer
+        $post = get_post($post_id);
+        if ($post && $post->post_author) {
+            $customer = get_userdata($post->post_author);
+            if ($customer) {
+                $metadata['customer'] = array(
+                    'label' => __('Customer', 'arsol-pfw'),
+                    'value' => $customer->display_name,
+                    'type' => 'text'
+                );
+            }
+        }
+        
+        // Project Lead
+        $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
+        if (!empty($lead_id)) {
+            $lead = get_userdata($lead_id);
+            if ($lead) {
+                $metadata['project_lead'] = array(
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
+                );
+            }
+        }
+        
+        // Start Date
+        $start_date = get_post_meta($post_id, '_arsol_pfw_project_start_date', true);
+        if (!empty($start_date)) {
+            $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
-                'value' => get_post_meta($post_id, 'project_start_date', true),
-                'type' => 'date',
-                'format' => 'F j, Y'
-            ),
-            'deadline' => array(
-                'label' => __('Deadline', 'arsol-pfw'),
-                'value' => get_post_meta($post_id, 'project_deadline', true),
-                'type' => 'date',
-                'format' => 'F j, Y',
-                'class' => 'deadline-date'
-            ),
-            'client' => array(
-                'label' => __('Client', 'arsol-pfw'),
-                'value' => get_post_meta($post_id, 'client_name', true),
-                'type' => 'text'
-            )
-        );
+                'value' => $start_date,
+                'type' => 'date'
+            );
+        }
+        
+        // Due Date
+        $due_date = get_post_meta($post_id, '_arsol_pfw_project_due_date', true);
+        if (!empty($due_date)) {
+            $metadata['due_date'] = array(
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
+                'type' => 'date'
+            );
+        }
+        
+        return $metadata;
     }
 
     /**
@@ -141,39 +158,77 @@ class Frontend_Template_Sidebar_Meta {
      * @return array Array of metadata items
      */
     private function get_proposal_metadata($post_id, $status) {
-        return array(
-            'status' => array(
-                'label' => __('Status', 'arsol-pfw'),
-                'value' => $this->format_status_display($status),
-                'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($status)
-            ),
-            'budget' => array(
-                'label' => __('Proposed Budget', 'arsol-pfw'),
-                'value' => get_post_meta($post_id, 'proposal_budget', true),
-                'type' => 'currency'
-            ),
-            'timeline' => array(
-                'label' => __('Timeline', 'arsol-pfw'),
-                'value' => get_post_meta($post_id, 'proposal_timeline', true),
-                'type' => 'text',
-                'suffix' => __('weeks', 'arsol-pfw')
-            ),
-            'submitted_date' => array(
-                'label' => __('Submitted', 'arsol-pfw'),
-                'value' => get_the_date('Y-m-d H:i:s', $post_id),
-                'type' => 'date',
-                'format' => 'F j, Y'
-            ),
-            'expires_date' => array(
-                'label' => __('Expires', 'arsol-pfw'),
-                'value' => get_post_meta($post_id, 'proposal_expiry_date', true),
-                'type' => 'date',
-                'format' => 'F j, Y',
-                'class' => 'expiry-date',
-                'show_if' => array('status' => array('sent', 'pending-approval'))
-            )
-        );
+        $metadata = array();
+        
+        // Customer
+        $post = get_post($post_id);
+        if ($post && $post->post_author) {
+            $customer = get_userdata($post->post_author);
+            if ($customer) {
+                $metadata['customer'] = array(
+                    'label' => __('Customer', 'arsol-pfw'),
+                    'value' => $customer->display_name,
+                    'type' => 'text'
+                );
+            }
+        }
+        
+        // Project Lead
+        $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
+        if (!empty($lead_id)) {
+            $lead = get_userdata($lead_id);
+            if ($lead) {
+                $metadata['project_lead'] = array(
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
+                );
+            }
+        }
+        
+        // Budget
+        $budget = get_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
+        if (!empty($budget)) {
+            if (is_array($budget) && isset($budget['amount'])) {
+                $metadata['budget'] = array(
+                    'label' => __('Budget', 'arsol-pfw'),
+                    'value' => wc_price($budget['amount'], array('currency' => $budget['currency'] ?? get_woocommerce_currency())),
+                    'type' => 'currency'
+                );
+            }
+        }
+        
+        // Start Date
+        $start_date = get_post_meta($post_id, '_arsol_pfw_proposal_start_date', true);
+        if (!empty($start_date)) {
+            $metadata['start_date'] = array(
+                'label' => __('Start Date', 'arsol-pfw'),
+                'value' => $start_date,
+                'type' => 'date'
+            );
+        }
+        
+        // Delivery Date
+        $delivery_date = get_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', true);
+        if (!empty($delivery_date)) {
+            $metadata['delivery_date'] = array(
+                'label' => __('Delivery Date', 'arsol-pfw'),
+                'value' => $delivery_date,
+                'type' => 'date'
+            );
+        }
+        
+        // Expiration Date
+        $expiration_date = get_post_meta($post_id, '_arsol_pfw_proposal_expiration_date', true);
+        if (!empty($expiration_date)) {
+            $metadata['expiration_date'] = array(
+                'label' => __('Expiration Date', 'arsol-pfw'),
+                'value' => $expiration_date,
+                'type' => 'date'
+            );
+        }
+        
+        return $metadata;
     }
 
     /**
@@ -184,36 +239,41 @@ class Frontend_Template_Sidebar_Meta {
      * @return array Array of metadata items
      */
     private function get_request_metadata($post_id, $status) {
-        return array(
-            'status' => array(
-                'label' => __('Status', 'arsol-pfw'),
-                'value' => $this->format_status_display($status),
-                'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($status)
-            ),
-            'budget_range' => array(
-                'label' => __('Budget Range', 'arsol-pfw'),
-                'value' => get_post_meta($post_id, 'request_budget_range', true),
-                'type' => 'currency_array'
-            ),
-            'requested_date' => array(
-                'label' => __('Requested', 'arsol-pfw'),
-                'value' => get_the_date('Y-m-d H:i:s', $post_id),
-                'type' => 'date',
-                'format' => 'F j, Y'
-            ),
-            'urgency' => array(
-                'label' => __('Urgency', 'arsol-pfw'),
-                'value' => get_post_meta($post_id, 'request_urgency', true),
-                'type' => 'badge',
-                'class' => 'urgency-badge'
-            ),
-            'category' => array(
-                'label' => __('Category', 'arsol-pfw'),
-                'value' => $this->get_request_categories($post_id),
-                'type' => 'list'
-            )
-        );
+        $metadata = array();
+        
+        // Budget
+        $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
+        if (!empty($budget)) {
+            if (is_array($budget) && isset($budget['amount'])) {
+                $metadata['budget'] = array(
+                    'label' => __('Budget', 'arsol-pfw'),
+                    'value' => wc_price($budget['amount'], array('currency' => $budget['currency'] ?? get_woocommerce_currency())),
+                    'type' => 'currency'
+                );
+            }
+        }
+        
+        // Start Date
+        $start_date = get_post_meta($post_id, '_arsol_pfw_request_start_date', true);
+        if (!empty($start_date)) {
+            $metadata['start_date'] = array(
+                'label' => __('Requested Start Date', 'arsol-pfw'),
+                'value' => $start_date,
+                'type' => 'date'
+            );
+        }
+        
+        // Delivery Date
+        $delivery_date = get_post_meta($post_id, '_arsol_pfw_request_delivery_date', true);
+        if (!empty($delivery_date)) {
+            $metadata['delivery_date'] = array(
+                'label' => __('Requested Delivery Date', 'arsol-pfw'),
+                'value' => $delivery_date,
+                'type' => 'date'
+            );
+        }
+        
+        return $metadata;
     }
 
     /**
@@ -251,121 +311,44 @@ class Frontend_Template_Sidebar_Meta {
             return;
         }
 
-        $label = $meta['label'] ?? '';
-        $value = $meta['value'] ?? '';
-        $type = $meta['type'] ?? 'text';
-        $class = isset($meta['class']) ? ' class="' . esc_attr($meta['class']) . '"' : '';
-
-        echo '<div class="metadata-item metadata-' . esc_attr($key) . $class . '">';
-        
-        if (!empty($label)) {
-            echo '<label class="metadata-label">' . esc_html($label) . ':</label>';
+        $classes = array('metadata-item', 'metadata-' . $key);
+        if (!empty($meta['class'])) {
+            $classes[] = $meta['class'];
         }
-        
-        echo '<div class="metadata-value">';
-        echo $this->format_metadata_value($value, $type, $meta);
-        echo '</div>';
-        
+
+        echo '<div class="' . esc_attr(implode(' ', $classes)) . '">';
+        echo '<strong>' . esc_html($meta['label']) . ':</strong> ';
+        echo $this->format_metadata_value($meta['value'], $meta['type'], $meta);
         echo '</div>';
     }
 
     /**
      * Format metadata value based on type
      *
-     * @param mixed $value The value to format
+     * @param mixed $value The raw value
      * @param string $type The value type
-     * @param array $meta The full metadata configuration
+     * @param array $meta The metadata configuration
      * @return string Formatted value
      */
     private function format_metadata_value($value, $type, $meta) {
         switch ($type) {
             case 'currency':
-                if (empty($value)) return '—';
-                return function_exists('wc_price') ? wc_price($value) : '$' . number_format($value, 2);
-
-            case 'currency_array':
-                if (empty($value) || !is_array($value)) return '—';
-                $min = $value['min'] ?? 0;
-                $max = $value['max'] ?? 0;
-                if ($min && $max) {
-                    $formatted_min = function_exists('wc_price') ? wc_price($min) : '$' . number_format($min, 2);
-                    $formatted_max = function_exists('wc_price') ? wc_price($max) : '$' . number_format($max, 2);
-                    return $formatted_min . ' - ' . $formatted_max;
-                }
-                return '—';
-
+                return wp_kses_post($value);
+                
             case 'date':
-                if (empty($value)) return '—';
-                $format = $meta['format'] ?? 'F j, Y';
-                $timestamp = is_numeric($value) ? $value : strtotime($value);
-                return $timestamp ? date_i18n($format, $timestamp) : '—';
-
+                if (!empty($value)) {
+                    $format = isset($meta['format']) ? $meta['format'] : get_option('date_format');
+                    return esc_html(date_i18n($format, strtotime($value)));
+                }
+                return '';
+                
             case 'badge':
-                $badge_class = isset($meta['class']) ? $meta['class'] : 'default-badge';
+                $badge_class = isset($meta['class']) ? $meta['class'] : 'badge';
                 return '<span class="' . esc_attr($badge_class) . '">' . esc_html($value) . '</span>';
-
-            case 'link':
-                if (empty($value)) return '—';
-                $url = $meta['url'] ?? '#';
-                $target = isset($meta['target']) ? ' target="' . esc_attr($meta['target']) . '"' : '';
-                return '<a href="' . esc_url($url) . '"' . $target . '>' . esc_html($value) . '</a>';
-
-            case 'list':
-                if (empty($value)) return '—';
-                if (!is_array($value)) return esc_html($value);
-                return '<ul><li>' . implode('</li><li>', array_map('esc_html', $value)) . '</li></ul>';
-
+                
             case 'text':
             default:
-                if (empty($value)) return '—';
-                $formatted = esc_html($value);
-                if (isset($meta['suffix'])) {
-                    $formatted .= ' ' . esc_html($meta['suffix']);
-                }
-                return $formatted;
+                return esc_html($value);
         }
-    }
-
-    /**
-     * Format status display
-     *
-     * @param string $status The status slug
-     * @return string Formatted status
-     */
-    private function format_status_display($status) {
-        $statuses = array(
-            'active' => __('Active', 'arsol-pfw'),
-            'completed' => __('Completed', 'arsol-pfw'),
-            'on-hold' => __('On Hold', 'arsol-pfw'),
-            'cancelled' => __('Cancelled', 'arsol-pfw'),
-            'draft' => __('Draft', 'arsol-pfw'),
-            'sent' => __('Sent', 'arsol-pfw'),
-            'pending-approval' => __('Pending Approval', 'arsol-pfw'),
-            'accepted' => __('Accepted', 'arsol-pfw'),
-            'rejected' => __('Rejected', 'arsol-pfw'),
-            'expired' => __('Expired', 'arsol-pfw'),
-            'pending' => __('Pending', 'arsol-pfw'),
-            'under-review' => __('Under Review', 'arsol-pfw'),
-            'approved' => __('Approved', 'arsol-pfw')
-        );
-
-        return $statuses[$status] ?? ucfirst(str_replace(array('-', '_'), ' ', $status));
-    }
-
-    /**
-     * Get request categories
-     *
-     * @param int $post_id The post ID
-     * @return array Array of category names
-     */
-    private function get_request_categories($post_id) {
-        $terms = get_the_terms($post_id, 'arsol-request-category');
-        if (is_wp_error($terms) || empty($terms)) {
-            return array();
-        }
-
-        return array_map(function($term) {
-            return $term->name;
-        }, $terms);
     }
 } 

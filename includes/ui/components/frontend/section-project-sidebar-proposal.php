@@ -12,7 +12,10 @@ if (!defined('ABSPATH')) {
 
 $post_id = get_the_ID();
 $post_type = 'proposal';
-$current_status = 'sent'; // Or get from taxonomy
+
+// Get actual proposal status from taxonomy
+$status_terms = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'slugs'));
+$current_status = !empty($status_terms) ? $status_terms[0] : 'processing';
 
 ?>
 
