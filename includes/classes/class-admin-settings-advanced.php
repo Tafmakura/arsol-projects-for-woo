@@ -98,7 +98,7 @@ class Settings_Advanced {
             'access_denied_shortcode' => [
                 'title' => __('Access Denied Notice', 'arsol-pfw'),
                 'description' => __('Overrides denied access notice.', 'arsol-pfw'),
-                'placeholder' => __('Enter custom shortcode or HTML', 'arsol-pfw')
+                'placeholder' => '[arsol_pfw_access_denied]'
             ],
         ];
     }

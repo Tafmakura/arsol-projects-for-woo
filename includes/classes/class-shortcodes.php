@@ -55,6 +55,7 @@ class Shortcodes {
 		add_shortcode('arsol_pfw_projects_listing_requests', array($this, 'projects_listing_requests_shortcode'));
 		add_shortcode('arsol_pfw_project_form', array($this, 'project_create_form_shortcode'));
 		add_shortcode('arsol_pfw_project_request_form', array($this, 'project_request_form_shortcode'));
+		add_shortcode('arsol_pfw_access_denied', array($this, 'access_denied_shortcode'));
 	}
 
 	/**
@@ -1321,6 +1322,28 @@ class Shortcodes {
 		// Load the request form template
 		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-request.php';
 
+		return ob_get_clean();
+	}
+
+	/**
+	 * Access denied shortcode
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function access_denied_shortcode($atts) {
+		$atts = shortcode_atts(array(
+			'title' => __('Access Denied', 'arsol-pfw'),
+			'message' => __('You do not have permission to access this feature. Please contact an administrator if you believe this is an error.', 'arsol-pfw'),
+		), $atts, 'arsol_pfw_access_denied');
+
+		ob_start();
+		?>
+		<div class="arsol-no-permission">
+			<h3><?php echo esc_html($atts['title']); ?></h3>
+			<p><?php echo esc_html($atts['message']); ?></p>
+		</div>
+		<?php
 		return ob_get_clean();
 	}
 }

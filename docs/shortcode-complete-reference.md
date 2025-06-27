@@ -48,6 +48,23 @@ Displays the **Project Request Form** for creating/editing requests.
 
 ---
 
+## Utility Shortcodes
+
+### `[arsol_pfw_access_denied]`
+Displays access denied notice with customizable title and message.
+
+**Parameters:**
+- `title` - Custom title (default: "Access Denied")
+- `message` - Custom message (default: standard access denied text)
+
+**Example:**
+```php
+[arsol_pfw_access_denied]
+[arsol_pfw_access_denied title="Restricted Area" message="This content is for members only."]
+```
+
+---
+
 ## Context-Aware Behavior
 
 - **My Account**: Work natively using URL context
