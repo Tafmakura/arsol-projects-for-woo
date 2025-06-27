@@ -59,46 +59,44 @@ $wrapper_data = compact('project_id', 'project_type', 'type', 'content_template'
 ?>
 
 <?php
-// Check if there's a project overview override for this project type
-if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_override($project_type)) {
-    echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_project_overview_override($project_type);
-} else {
-    // Use default template with preserved structure
-    ?>
+/**
+ * Hook: arsol_pfw_project_wrapper_before
+ * 
+ * @param string $project_type Project type: 'active', 'proposal', 'request'
+ * @param array $data Wrapper data
+ */
+do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
+?>
+
+<div class="project-overview-wrapper">
     <?php
     /**
-     * Hook: arsol_pfw_project_wrapper_before
+     * Hook: arsol_pfw_project_wrapper_start
      * 
      * @param string $project_type Project type: 'active', 'proposal', 'request'
      * @param array $data Wrapper data
      */
-    do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
+    do_action('arsol_pfw_project_wrapper_start', $project_type, $wrapper_data);
     ?>
     
-    <div class="project-overview-wrapper">
+    <div class="project-content">
         <?php
         /**
-         * Hook: arsol_pfw_project_wrapper_start
+         * Hook: arsol_pfw_project_content_before
          * 
          * @param string $project_type Project type: 'active', 'proposal', 'request'
          * @param array $data Wrapper data
          */
-        do_action('arsol_pfw_project_wrapper_start', $project_type, $wrapper_data);
+        do_action('arsol_pfw_project_content_before', $project_type, $wrapper_data);
         ?>
         
-        <div class="project-content">
-            <?php
-            /**
-             * Hook: arsol_pfw_project_content_before
-             * 
-             * @param string $project_type Project type: 'active', 'proposal', 'request'
-             * @param array $data Wrapper data
-             */
-            do_action('arsol_pfw_project_content_before', $project_type, $wrapper_data);
-            ?>
-            
-            <?php
-            // Use shortcodes for content rendering instead of template includes
+        <?php
+        // Check if there's a project overview override for this project type (CONTENT ONLY)
+        if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_override($project_type)) {
+            // Use the override shortcode for content only
+            echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_project_overview_override($project_type);
+        } else {
+            // Use default shortcodes for content rendering
             switch ($project_type) {
                 case 'active':
                     echo do_shortcode('[arsol_pfw_project_content_active project_id="' . $project_id . '"]');
@@ -113,76 +111,72 @@ if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_ov
                     echo do_shortcode('[arsol_pfw_project_content_active project_id="' . $project_id . '"]');
                     break;
             }
-            ?>
-            
-            <?php
-            /**
-             * Hook: arsol_pfw_project_content_after
-             * 
-             * @param string $project_type Project type: 'active', 'proposal', 'request'
-             * @param array $data Wrapper data
-             */
-            do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
-            ?>
-        </div>
-        
-        <div class="project-sidebar">
-            <?php
-            /**
-             * Hook: arsol_pfw_project_sidebar_wrapper_before
-             * 
-             * @param string $project_type Project type: 'active', 'proposal', 'request'
-             * @param array $data Wrapper data
-             */
-            do_action('arsol_pfw_project_sidebar_wrapper_before', $project_type, $wrapper_data);
-            ?>
-            
-            <div class="project-sidebar-wrapper">
-                <div class="project-sidebar-card card">
-                  
-                    <?php
-                    if (file_exists($sidebar_template)) {
-
-                        echo 'sdfsdf';
-                        include $sidebar_template;
-                    } else {
-                        echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
-                    }
-                    ?>
-                </div>
-            </div>
-            
-            <?php
-            /**
-             * Hook: arsol_pfw_project_sidebar_wrapper_after
-             * 
-             * @param string $project_type Project type: 'active', 'proposal', 'request'
-             * @param array $data Wrapper data
-             */
-            do_action('arsol_pfw_project_sidebar_wrapper_after', $project_type, $wrapper_data);
-            ?>
-        </div>
+        }
+        ?>
         
         <?php
         /**
-         * Hook: arsol_pfw_project_wrapper_end
+         * Hook: arsol_pfw_project_content_after
          * 
          * @param string $project_type Project type: 'active', 'proposal', 'request'
          * @param array $data Wrapper data
          */
-        do_action('arsol_pfw_project_wrapper_end', $project_type, $wrapper_data);
+        do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
+        ?>
+    </div>
+    
+    <div class="project-sidebar">
+        <?php
+        /**
+         * Hook: arsol_pfw_project_sidebar_wrapper_before
+         * 
+         * @param string $project_type Project type: 'active', 'proposal', 'request'
+         * @param array $data Wrapper data
+         */
+        do_action('arsol_pfw_project_sidebar_wrapper_before', $project_type, $wrapper_data);
+        ?>
+        
+        <div class="project-sidebar-wrapper">
+            <div class="project-sidebar-card card">
+                <?php
+                if (file_exists($sidebar_template)) {
+                    include $sidebar_template;
+                } else {
+                    echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
+                }
+                ?>
+            </div>
+        </div>
+        
+        <?php
+        /**
+         * Hook: arsol_pfw_project_sidebar_wrapper_after
+         * 
+         * @param string $project_type Project type: 'active', 'proposal', 'request'
+         * @param array $data Wrapper data
+         */
+        do_action('arsol_pfw_project_sidebar_wrapper_after', $project_type, $wrapper_data);
         ?>
     </div>
     
     <?php
     /**
-     * Hook: arsol_pfw_project_wrapper_after
+     * Hook: arsol_pfw_project_wrapper_end
      * 
      * @param string $project_type Project type: 'active', 'proposal', 'request'
      * @param array $data Wrapper data
      */
-    do_action('arsol_pfw_project_wrapper_after', $project_type, $wrapper_data);
+    do_action('arsol_pfw_project_wrapper_end', $project_type, $wrapper_data);
     ?>
-    <?php
-}
+</div>
+
+<?php
+/**
+ * Hook: arsol_pfw_project_wrapper_after
+ * 
+ * @param string $project_type Project type: 'active', 'proposal', 'request'
+ * @param array $data Wrapper data
+ */
+do_action('arsol_pfw_project_wrapper_after', $project_type, $wrapper_data);
+?>
 ?> 
