@@ -76,7 +76,7 @@ The plugin uses these shortcodes internally. You can reference them when creatin
 [arsol_pfw_projects_listing_requests]
 
 // Forms
-[arsol_pfw_project_form]
+[arsol_pfw_project_create_form]
 [arsol_pfw_project_request_form]
 ```
 

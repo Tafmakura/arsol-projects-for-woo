@@ -55,7 +55,7 @@ class Shortcodes {
 		add_shortcode('arsol_pfw_projects_listing_active', array($this, 'projects_listing_active_shortcode'));
 		add_shortcode('arsol_pfw_projects_listing_proposals', array($this, 'projects_listing_proposals_shortcode'));
 		add_shortcode('arsol_pfw_projects_listing_requests', array($this, 'projects_listing_requests_shortcode'));
-		add_shortcode('arsol_pfw_project_form', array($this, 'project_create_form_shortcode'));
+		add_shortcode('arsol_pfw_project_create_form', array($this, 'project_create_form_shortcode'));
 		add_shortcode('arsol_pfw_project_request_form', array($this, 'project_request_form_shortcode'));
 		add_shortcode('arsol_pfw_access_denied', array($this, 'access_denied_shortcode'));
 	}

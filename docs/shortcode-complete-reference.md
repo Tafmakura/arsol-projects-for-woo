@@ -6,7 +6,7 @@ This plugin provides a comprehensive set of shortcodes for displaying project co
 
 ## Naming Convention
 
-- **Shortcodes**: Use `arsol_pfw_*` prefix (e.g., `[arsol_pfw_project_form]`)
+- **Shortcodes**: Use `arsol_pfw_*` prefix (e.g., `[arsol_pfw_project_create_form]`)
 - **Post Types**: `arsol-project`, `arsol-pfw-proposal`, `arsol-pfw-request`
 - **Frontend Names**: Always include "Project" (e.g., "Project Form", "Project Request Form")
 
@@ -66,7 +66,7 @@ Lists project requests with search capabilities.
 
 ## Form Shortcodes
 
-### `[arsol_pfw_project_form]`
+### `[arsol_pfw_project_create_form]`
 Displays the **Project Form** for creating projects.
 
 ### `[arsol_pfw_project_request_form]`
@@ -108,7 +108,7 @@ Displays access denied notice with customizable title and message.
 // URL: /projects/?category=web-dev&search=wordpress
 
 // Project forms
-[arsol_pfw_project_form]
+[arsol_pfw_project_create_form]
 [arsol_pfw_project_request_form]
 ```
 

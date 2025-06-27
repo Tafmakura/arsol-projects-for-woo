@@ -80,7 +80,7 @@ class Settings_Advanced {
             'create_project_form_shortcode' => [
                 'title' => __('Project Form', 'arsol-pfw'),
                 'description' => __('Overrides the Project Form for creating new projects.', 'arsol-pfw'),
-                'placeholder' => '[arsol_pfw_project_form]'
+                'placeholder' => '[arsol_pfw_project_create_form]'
             ],
             'create_request_form_shortcode' => [
                 'title' => __('Project Request Form', 'arsol-pfw'),

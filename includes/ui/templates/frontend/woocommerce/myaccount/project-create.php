@@ -13,15 +13,5 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Check if user can create projects
-$user_id = get_current_user_id();
-$can_create = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id);
-
-if (!$can_create) {
-    wc_add_notice(__('You do not have permission to create projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw'), 'error');
-    wp_safe_redirect(wc_get_account_endpoint_url('projects'));
-    exit;
-}
-
 // Use shortcode for form rendering
-echo do_shortcode('[arsol_pfw_project_form]');
+echo do_shortcode('[arsol_pfw_project_create_form]');

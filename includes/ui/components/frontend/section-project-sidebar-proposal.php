@@ -32,10 +32,10 @@ if (isset($current_status)) {
 <?php
 /**
      * Sidebar metadata section
-     */
+ */
     do_action('arsol_pfw_sidebar_meta', $post_type, $status, $post_id);
     
-    /**
+/**
      * Sidebar form section (unified form with filterable fields)
      */
     do_action('arsol_pfw_sidebar_form', $post_type, $status, $post_id);
@@ -45,4 +45,4 @@ if (isset($current_status)) {
      */
     do_action('arsol_pfw_sidebar_actions', $post_type, $status, $post_id);
     ?>
-</div>
+    </div>
