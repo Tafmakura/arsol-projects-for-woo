@@ -543,4 +543,4 @@ class Proposal_Quotation {
 
         wp_send_json_success($data);
     }
-}
+}?>
