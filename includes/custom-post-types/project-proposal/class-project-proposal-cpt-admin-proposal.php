@@ -52,7 +52,7 @@ class Proposal {
             array($this, 'render_processing_feedback_metabox'),
             'arsol-pfw-proposal',
             'normal',
-            'high',
+            'core',
             array('__back_compat_meta_box' => false, 'class' => 'arsol-pfw-show-if-proposal-status-is-processing')
         );
         
@@ -62,7 +62,7 @@ class Proposal {
             array($this, 'render_pending_approval_feedback_metabox'),
             'arsol-pfw-proposal',
             'normal',
-            'high',
+            'core',
             array('__back_compat_meta_box' => false, 'class' => 'arsol-pfw-show-if-proposal-status-is-pending-approval')
         );
     }
