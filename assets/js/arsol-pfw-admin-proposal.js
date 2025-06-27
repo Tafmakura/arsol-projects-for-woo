@@ -285,16 +285,16 @@
         updateProposalStatusVisibility: function() {
             var selectedStatus = $('#proposal_status').val() || '';
             
-            // Hide all feedback metaboxes first
-            $('#arsol_proposal_processing_feedback_metabox, #arsol_proposal_pending_approval_feedback_metabox').each(function() {
+            // Hide all feedback sections first
+            $('#arsol_proposal_processing_feedback_section, #arsol_proposal_pending_approval_feedback_section').each(function() {
                 this.style.setProperty('display', 'none', 'important');
             });
             
-            // Show the appropriate metabox based on current status
+            // Show the appropriate section based on current status
             if (selectedStatus === 'processing') {
-                $('#arsol_proposal_processing_feedback_metabox')[0].style.setProperty('display', 'block', 'important');
+                $('#arsol_proposal_processing_feedback_section')[0].style.setProperty('display', 'block', 'important');
             } else if (selectedStatus === 'pending-approval') {
-                $('#arsol_proposal_pending_approval_feedback_metabox')[0].style.setProperty('display', 'block', 'important');
+                $('#arsol_proposal_pending_approval_feedback_section')[0].style.setProperty('display', 'block', 'important');
             }
         }
     };
