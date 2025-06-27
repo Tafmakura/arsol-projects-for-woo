@@ -12,23 +12,42 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get the type from GET parameters or default to 'overview'
-$type = isset($_GET['type']) ? sanitize_text_field($_GET['type']) : 'overview';
+// Get the actual current post instead of relying on passed project data
+global $post;
+$current_post = get_post();
 
-// Default to overview if type is not valid
-$valid_types = array('overview', 'proposal', 'request');
-if (!in_array($type, $valid_types)) {
-    $type = 'overview';
+if (!$current_post) {
+    echo '<p>' . esc_html__('Post not found.', 'arsol-pfw') . '</p>';
+    return;
 }
 
-// Get project ID from the project data
-$project_id = isset($project['id']) ? $project['id'] : 0;
+$project_id = $current_post->ID;
+$current_post_type = get_post_type($project_id);
 
-// Determine project type based on the type parameter
-$project_type = $type === 'proposal' ? 'proposal' : ($type === 'request' ? 'request' : 'active');
+// Determine project type and get actual status from taxonomy
+if ($current_post_type === 'arsol-project') {
+    $project_type = 'active';
+    $status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+    $current_status = !empty($status_terms) ? $status_terms[0] : 'active';
+} elseif ($current_post_type === 'arsol-pfw-proposal') {
+    $project_type = 'proposal';
+    $status_terms = wp_get_object_terms($project_id, 'arsol-proposal-status', array('fields' => 'slugs'));
+    $current_status = !empty($status_terms) ? $status_terms[0] : 'processing';
+} elseif ($current_post_type === 'arsol-pfw-request') {
+    $project_type = 'request';
+    $status_terms = wp_get_object_terms($project_id, 'arsol-request-status', array('fields' => 'slugs'));
+    $current_status = !empty($status_terms) ? $status_terms[0] : 'pending-review';
+} else {
+    // Fallback for unknown post types
+    $project_type = 'active';
+    $current_status = 'active';
+}
 
 // Prepare comprehensive data for efficient hook usage
-$wrapper_data = compact('project_id', 'project_type', 'type');
+$wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
+
+// Debug: uncomment to see what's detected
+// error_log("Project template - ID: $project_id, CPT: $current_post_type, Type: $project_type, Status: $current_status");
 ?>
 
     <?php
@@ -112,48 +131,15 @@ $wrapper_data = compact('project_id', 'project_type', 'type');
             <div class="project-sidebar-wrapper">
                 <div class="project-sidebar-card card">
                     <?php
-                // Determine current status and post type for conditional sidebar display
-                global $post;
-                $current_post_type = get_post_type($project_id);
-                $current_status = '';
-                
-                // Get status based on post type
-                if ($current_post_type === 'arsol-project') {
-                    $status_terms = wp_get_post_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
-                    $current_status = !empty($status_terms) ? $status_terms[0] : 'active';
-                    $sidebar_type = 'active';
-                } elseif ($current_post_type === 'arsol-pfw-proposal') {
-                    $status_terms = wp_get_post_terms($project_id, 'arsol-proposal-status', array('fields' => 'slugs'));
-                    $current_status = !empty($status_terms) ? $status_terms[0] : 'processing';
-                    $sidebar_type = 'proposal';
-                } elseif ($current_post_type === 'arsol-pfw-request') {
-                    $status_terms = wp_get_post_terms($project_id, 'arsol-request-status', array('fields' => 'slugs'));
-                    $current_status = !empty($status_terms) ? $status_terms[0] : 'pending-review';
-                    $sidebar_type = 'request';
-                } else {
-                    // Fallback to active project
-                    $sidebar_type = 'active';
-                    $current_status = 'active';
-                }
-                
-                // Include appropriate sidebar template based on type and status
-                if ($sidebar_type === 'active') {
-                    // Always use the main active sidebar for projects regardless of status
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-active.php';
-                    
-                } elseif ($sidebar_type === 'proposal') {
-                    // Use proposal sidebar
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-proposal.php';
-                    
-                } elseif ($sidebar_type === 'request') {
-                    // Use main request sidebar
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-request.php';
-                    
-                    // Include status-specific request sidebar additions (these contain conditional logic already)
-                    // Note: The main request sidebar already includes these conditionally, but keeping for clarity
-                    
+                    // Include appropriate sidebar template based on current post type
+                    if ($project_type === 'active') {
+                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-active.php';
+                    } elseif ($project_type === 'proposal') {
+                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-proposal.php';
+                    } elseif ($project_type === 'request') {
+                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-request.php';
                     } else {
-                    // Fallback
+                        // Fallback
                         echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
                     }
                     ?>
@@ -190,5 +176,3 @@ $wrapper_data = compact('project_id', 'project_type', 'type');
      * @param array $data Wrapper data
      */
     do_action('arsol_pfw_project_wrapper_after', $project_type, $wrapper_data);
-    ?>
-?> 
