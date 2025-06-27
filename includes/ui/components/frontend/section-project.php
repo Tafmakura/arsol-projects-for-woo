@@ -29,6 +29,7 @@ if ($current_post_type === 'arsol-project') {
     $project_type = 'active';
     $status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
     $current_status = !empty($status_terms) ? $status_terms[0] : '';
+    error_log("ARSOL DEBUG: Active project - Status: '$current_status', Terms: " . print_r($status_terms, true));
 } elseif ($current_post_type === 'arsol-pfw-proposal') {
     $project_type = 'proposal';
     $status_terms = wp_get_object_terms($project_id, 'arsol-proposal-status', array('fields' => 'slugs'));
@@ -47,7 +48,8 @@ if ($current_post_type === 'arsol-project') {
 $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
 
 // Debug: uncomment to see what's detected
-error_log("Project template - ID: $project_id, CPT: $current_post_type, Type: $project_type, Status: '$current_status'");
+error_log("Project template - ID: $project_id, CPT: '$current_post_type', Type: $project_type, Status: '$current_status'");
+error_log("Project template - Status terms found: " . print_r($status_terms, true));
 ?>
 
     <?php
