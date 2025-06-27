@@ -6,41 +6,27 @@ if (!defined('ABSPATH')) exit;
 class Proposal_Budget {
 
     public function __construct() {
-        // Add budget section via hook (after header)
-        add_action('edit_form_after_title', array($this, 'render_budget_section'), 20);
+        add_action('add_meta_boxes', array($this, 'add_budget_estimates_meta_box'));
     }
 
-    /**
-     * Render budget section (via hook)
-     */
-    public function render_budget_section() {
+    public function add_budget_estimates_meta_box() {
+        // We only add this metabox on the proposal post type screen.
         global $post;
-        
-        // Only show for proposals on the edit screen
-        if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
+        if (get_post_type($post) !== 'arsol-pfw-proposal') {
             return;
         }
 
-        ?>
-        <div id="arsol_budget_estimates_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-cost-type-is-budget" style="display: none;">
-            <div class="panel-wrap woocommerce">
-                <div class="panel woocommerce">
-                    <h2><?php _e('Budget', 'arsol-pfw'); ?></h2>
-                    <div class="project_data_column_container">
-                        <div class="project_data_column">
-                            <?php $this->render_budget_content($post); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php
+        add_meta_box(
+            'arsol_budget_estimates_metabox',
+            __('Budget', 'arsol-pfw'),
+            array($this, 'render_budget_estimates_meta_box'),
+            'arsol-pfw-proposal',
+            'normal',
+            'high'
+        );
     }
 
-    /**
-     * Render budget content
-     */
-    public function render_budget_content($post) {
+    public function render_budget_estimates_meta_box($post) {
         wp_nonce_field('arsol_proposal_budget_save', 'arsol_proposal_budget_nonce');
         
         // Get current values

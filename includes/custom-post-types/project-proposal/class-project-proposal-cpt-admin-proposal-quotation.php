@@ -9,8 +9,7 @@ if (!defined('ABSPATH')) {
 
 class Proposal_Quotation {
     public function __construct() {
-        // Add quotation section via hook (after header)
-        add_action('edit_form_after_title', array($this, 'render_quotation_section'), 20);
+        add_action('add_meta_boxes', array($this, 'add_quotation_meta_box'));
         add_action('save_post', array($this, 'save_quotation_meta_box'));
         // Custom product search for products with prices only
         add_action('wp_ajax_arsol_search_products_with_price', array($this, 'ajax_search_products_with_price'));
@@ -18,37 +17,18 @@ class Proposal_Quotation {
         add_action('admin_footer', array($this, 'render_js_templates_in_footer'));
     }
 
-    /**
-     * Render quotation section (via hook)
-     */
-    public function render_quotation_section() {
-        global $post;
-        
-        // Only show for proposals on the edit screen
-        if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
-            return;
-        }
-        
-        ?>
-        <div id="arsol_proposal_quotation_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-cost-type-is-quotation" style="display: none;">
-            <div class="panel-wrap woocommerce">
-                <div class="panel woocommerce">
-                    <h2><?php _e('Quotation', 'arsol-pfw'); ?></h2>
-                    <div class="project_data_column_container">
-                        <div class="project_data_column">
-                            <?php $this->render_quotation_content($post); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php
+    public function add_quotation_meta_box() {
+        add_meta_box(
+            'arsol_proposal_quotation_metabox',
+            __('Quotation', 'arsol-pfw'),
+            array($this, 'render_quotation_meta_box'),
+            'arsol-pfw-proposal',
+            'normal',
+            'high'
+        );
     }
 
-    /**
-     * Render quotation content
-     */
-    public function render_quotation_content($post) {
+    public function render_quotation_meta_box($post) {
         wp_nonce_field('arsol_proposal_quotation_save', 'arsol_proposal_quotation_nonce');
         ?>
         <div id="proposal_quotation_builder">

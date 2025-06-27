@@ -69,13 +69,13 @@
             // as it only reads the value, not the disabled state
             var selectedType = $('#arsol_pfw_proposal_costing_type').val();
             
-            $('#arsol_budget_estimates_section').hide();
-            $('#arsol_proposal_quotation_section').hide();
+            $('#arsol_budget_estimates_metabox').hide();
+            $('#arsol_proposal_quotation_metabox').hide();
 
             if (selectedType === 'budget') {
-                $('#arsol_budget_estimates_section').show();
+                $('#arsol_budget_estimates_metabox').show();
             } else if (selectedType === 'quotation') {
-                $('#arsol_proposal_quotation_section').show();
+                $('#arsol_proposal_quotation_metabox').show();
             }
             
             // Update proposal summary based on type
