@@ -3,20 +3,12 @@
  * Projects Listing Content
  * 
  * Main content area for projects listing page.
- * Variables: $current_tab, $query, $paged, $total_pages, $wp_button_class, $user_id
+ * Variables: $current_tab, $projects (optional)
  */
 
 if (!defined('ABSPATH')) exit;
 
-// Extract variables passed from wc_get_template
 $current_tab = $current_tab ?? 'active';
-
-// Ensure all variables are available for sections
-$query = $query ?? null;
-$paged = $paged ?? 1;
-$total_pages = $total_pages ?? 1;
-$wp_button_class = $wp_button_class ?? '';
-$user_id = $user_id ?? get_current_user_id();
 
 ?>
 

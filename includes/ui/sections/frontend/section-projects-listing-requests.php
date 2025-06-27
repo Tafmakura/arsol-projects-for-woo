@@ -12,31 +12,6 @@ if (!defined('ABSPATH')) {
 
 // The following variables are passed from the master template:
 // $query, $paged, $total_pages, $wp_button_class, $current_tab
-$query = $query ?? null; if ($query === null) { echo "<div class="woocommerce-info"><p>No data available.</p></div>"; return; }
-// Safety checks for required variables
-$query = $query ?? null;
-$paged = $paged ?? 1;
-$total_pages = $total_pages ?? 1;
-$wp_button_class = $wp_button_class ?? "";
-$current_tab = $current_tab ?? "requests";
-
-// Only proceed if we have a valid query
-if ($query === null) {
-    echo "<div class="woocommerce-info"><p>" . __("No requests data available.", "arsol-pfw") . "</p></div>";
-    return;
-}
-// Safety checks for required variables
-$query = $query ?? null;
-$paged = $paged ?? 1;
-$total_pages = $total_pages ?? 1;
-$wp_button_class = $wp_button_class ?? '';
-$current_tab = $current_tab ?? 'requests';
-
-// Only proceed if we have a valid query
-if ($query === null) {
-    echo '<div class="woocommerce-info"><p>' . __('No requests data available.', 'arsol-pfw') . '</p></div>';
-    return;
-}
 
 $has_items = $query->have_posts();
 do_action('arsol_projects_before_user_requests', $has_items);
