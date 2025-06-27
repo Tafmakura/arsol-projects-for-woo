@@ -101,6 +101,14 @@ class Frontend_Template_Sidebar_Meta {
     private function get_project_metadata($post_id, $status) {
         $metadata = array();
         
+        // Status
+        $metadata['status'] = array(
+            'label' => __('Status', 'arsol-pfw'),
+            'value' => $this->format_status_display($status),
+            'type' => 'badge',
+            'class' => 'status-badge status-' . sanitize_html_class($status)
+        );
+        
         // Customer
         $post = get_post($post_id);
         if ($post && $post->post_author) {
@@ -159,6 +167,14 @@ class Frontend_Template_Sidebar_Meta {
      */
     private function get_proposal_metadata($post_id, $status) {
         $metadata = array();
+        
+        // Status
+        $metadata['status'] = array(
+            'label' => __('Status', 'arsol-pfw'),
+            'value' => $this->format_status_display($status),
+            'type' => 'badge',
+            'class' => 'status-badge status-' . sanitize_html_class($status)
+        );
         
         // Customer
         $post = get_post($post_id);
@@ -240,6 +256,14 @@ class Frontend_Template_Sidebar_Meta {
      */
     private function get_request_metadata($post_id, $status) {
         $metadata = array();
+        
+        // Status
+        $metadata['status'] = array(
+            'label' => __('Status', 'arsol-pfw'),
+            'value' => $this->format_status_display($status),
+            'type' => 'badge',
+            'class' => 'status-badge status-' . sanitize_html_class($status)
+        );
         
         // Budget
         $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
@@ -350,5 +374,35 @@ class Frontend_Template_Sidebar_Meta {
             default:
                 return esc_html($value);
         }
+    }
+
+    /**
+     * Format status display for readable output
+     *
+     * @param string $status The status slug
+     * @return string Formatted status
+     */
+    private function format_status_display($status) {
+        // Convert status slugs to readable format
+        $status_labels = array(
+            // Request statuses
+            'pending-review' => __('Pending Review', 'arsol-pfw'),
+            'under-review' => __('Under Review', 'arsol-pfw'),
+            'on-hold' => __('On Hold', 'arsol-pfw'),
+            'approved' => __('Approved', 'arsol-pfw'),
+            'rejected' => __('Rejected', 'arsol-pfw'),
+            
+            // Proposal statuses
+            'processing' => __('Processing', 'arsol-pfw'),
+            'pending-approval' => __('Pending Approval', 'arsol-pfw'),
+            'expired' => __('Expired', 'arsol-pfw'),
+            
+            // Project statuses
+            'active' => __('Active', 'arsol-pfw'),
+            'completed' => __('Completed', 'arsol-pfw'),
+            'cancelled' => __('Cancelled', 'arsol-pfw')
+        );
+
+        return isset($status_labels[$status]) ? $status_labels[$status] : ucfirst(str_replace('-', ' ', $status));
     }
 } 

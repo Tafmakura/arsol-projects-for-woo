@@ -120,16 +120,8 @@ class Frontend_Template_Sidebar_Fields {
     private function get_project_fields($post_id, $status) {
         $fields = array();
 
-        // Status update form for active projects
-        if (in_array($status, array('active', 'on-hold'))) {
-            $fields['new_status'] = array(
-                'type' => 'select',
-                'label' => __('Change Status To:', 'arsol-pfw'),
-                'options' => $this->get_project_status_options($status),
-                'required' => true,
-                'show_if' => array('status' => array('active', 'on-hold'))
-            );
-        }
+        // No status change fields for customers on frontend
+        // Status is now displayed as metadata instead
 
         return $fields;
     }
@@ -144,24 +136,9 @@ class Frontend_Template_Sidebar_Fields {
     private function get_proposal_fields($post_id, $status) {
         $fields = array();
 
-        // Quick approval fields for pending-approval proposals
-        if ($status === 'pending-approval') {
-            $fields['agree_terms'] = array(
-                'type' => 'checkbox',
-                'label' => __('I agree to the terms and conditions', 'arsol-pfw'),
-                'required' => true,
-                'show_if' => array('status' => array('pending-approval'))
-            );
-
-            $fields['approval_notes'] = array(
-                'type' => 'textarea',
-                'label' => __('Notes (Optional):', 'arsol-pfw'),
-                'placeholder' => __('Add any notes about your decision...', 'arsol-pfw'),
-                'rows' => 3,
-                'required' => false,
-                'show_if' => array('status' => array('pending-approval'))
-            );
-        }
+        // No status change fields for customers on frontend
+        // Customers use action buttons (approve/reject) instead of forms
+        // Status is now displayed as metadata instead
 
         return $fields;
     }
@@ -176,28 +153,9 @@ class Frontend_Template_Sidebar_Fields {
     private function get_request_fields($post_id, $status) {
         $fields = array();
 
-        // Request approval form for pending requests
-        if (in_array($status, array('pending', 'under-review'))) {
-            $fields['approval_decision'] = array(
-                'type' => 'radio',
-                'label' => __('Decision:', 'arsol-pfw'),
-                'options' => array(
-                    'approve' => __('Approve Request', 'arsol-pfw'),
-                    'request_changes' => __('Request Changes', 'arsol-pfw')
-                ),
-                'required' => true,
-                'show_if' => array('status' => array('pending', 'under-review'))
-            );
-
-            $fields['decision_notes'] = array(
-                'type' => 'textarea',
-                'label' => __('Notes:', 'arsol-pfw'),
-                'placeholder' => __('Add notes about your decision...', 'arsol-pfw'),
-                'rows' => 4,
-                'required' => false,
-                'show_if' => array('status' => array('pending', 'under-review'))
-            );
-        }
+        // No status change fields for customers on frontend
+        // Customers use action buttons (cancel) instead of forms
+        // Status is now displayed as metadata instead
 
         return $fields;
     }
