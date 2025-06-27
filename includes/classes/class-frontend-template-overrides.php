@@ -70,7 +70,7 @@ class Frontend_Template_Overrides {
      */
     public static function render_template($template_type, $default_template_path, $template_args = []) {
         // Get the advanced settings
-        $advanced_settings = get_option('arsol_projects_advanced_settings', []);
+        $advanced_settings = get_option('arsol_projects_templates_settings', []);
         
         // Check if there's a shortcode override for this template type
         $template_map = self::get_template_map();
@@ -160,7 +160,7 @@ class Frontend_Template_Overrides {
      * @return bool True if override exists, false otherwise
      */
     public static function has_template_override($template_type) {
-        $advanced_settings = get_option('arsol_projects_advanced_settings', []);
+        $advanced_settings = get_option('arsol_projects_templates_settings', []);
         $template_map = self::get_template_map();
         $setting_key = isset($template_map[$template_type]) ? $template_map[$template_type] : '';
         
@@ -180,7 +180,7 @@ class Frontend_Template_Overrides {
      * @return string The rendered shortcode or empty string if none
      */
     public static function get_template_override($template_type) {
-        $advanced_settings = get_option('arsol_projects_advanced_settings', []);
+        $advanced_settings = get_option('arsol_projects_templates_settings', []);
         $template_map = self::get_template_map();
         $setting_key = isset($template_map[$template_type]) ? $template_map[$template_type] : '';
         
@@ -203,7 +203,7 @@ class Frontend_Template_Overrides {
      * @return array Array of active overrides with template type as key and shortcode as value
      */
     public static function get_active_overrides() {
-        $advanced_settings = get_option('arsol_projects_advanced_settings', []);
+        $advanced_settings = get_option('arsol_projects_templates_settings', []);
         $active_overrides = [];
         $template_map = self::get_template_map();
         
@@ -225,7 +225,7 @@ class Frontend_Template_Overrides {
      * @return array Debug information about template overrides
      */
     public static function debug_overrides() {
-        $advanced_settings = get_option('arsol_projects_advanced_settings', []);
+        $advanced_settings = get_option('arsol_projects_templates_settings', []);
         $template_map = self::get_template_map();
         $debug_info = [
             'settings_exist' => !empty($advanced_settings),

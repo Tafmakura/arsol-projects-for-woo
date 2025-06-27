@@ -147,36 +147,40 @@ class Setup_Defaults {
     }
 
     /**
-     * Get effective default message (Layer 1 + Layer 2)
-     * Returns user setting if exists, otherwise hardcoded default
+     * Get effective default message (user setting or hardcoded fallback)
+     * 
+     * @param string $key The message key
+     * @return string The effective message content
      */
     public static function get_effective_default_message($key) {
-        $user_settings = get_option('arsol_projects_advanced_settings', array());
-        
-        // If user has set a custom value (even empty string), use it
-        if (isset($user_settings[$key])) {
+        // Check user setting first
+        $user_settings = get_option('arsol_projects_templates_settings', array());
+        if (!empty($user_settings[$key])) {
             return $user_settings[$key];
         }
         
-        // Otherwise fall back to hardcoded default
+        // Fall back to hardcoded default
         $hardcoded_defaults = self::get_hardcoded_defaults();
         return isset($hardcoded_defaults[$key]) ? $hardcoded_defaults[$key] : '';
     }
 
     /**
      * Get all effective default messages
+     * 
+     * @return array All effective default messages
      */
     public static function get_all_effective_default_messages() {
+        $user_settings = get_option('arsol_projects_templates_settings', array());
         $hardcoded_defaults = self::get_hardcoded_defaults();
-        $user_settings = get_option('arsol_projects_advanced_settings', array());
         
-        $effective_defaults = array();
-        foreach ($hardcoded_defaults as $key => $hardcoded_value) {
-            // Use user setting if exists, otherwise hardcoded default
-            $effective_defaults[$key] = isset($user_settings[$key]) ? $user_settings[$key] : $hardcoded_value;
+        $effective_messages = array();
+        
+        // For each hardcoded default, use user setting if available, otherwise use hardcoded
+        foreach ($hardcoded_defaults as $key => $default_value) {
+            $effective_messages[$key] = !empty($user_settings[$key]) ? $user_settings[$key] : $default_value;
         }
         
-        return $effective_defaults;
+        return $effective_messages;
     }
 
     /**
@@ -189,7 +193,7 @@ class Setup_Defaults {
         // This keeps the database clean and allows proper empty state detection
         
         // Only initialize if there are legacy values that need migration
-        $current_settings = get_option('arsol_projects_advanced_settings', array());
+        $current_settings = get_option('arsol_projects_templates_settings', array());
         
         // Check if we have old-style pre-populated defaults that need to be cleared
         $hardcoded_defaults = self::get_hardcoded_defaults();
@@ -204,7 +208,7 @@ class Setup_Defaults {
         }
         
         if ($needs_cleanup) {
-            update_option('arsol_projects_advanced_settings', $current_settings);
+            update_option('arsol_projects_templates_settings', $current_settings);
         }
     }
 
@@ -472,5 +476,19 @@ class Setup_Defaults {
         }
         
         return $debug_info;
+    }
+
+    /**
+     * Initialize default advanced settings if they don't exist
+     */
+    private function initialize_default_advanced_settings() {
+        $current_settings = get_option('arsol_projects_templates_settings', array());
+        
+        // We don't set defaults for advanced settings anymore - 
+        // they're handled by the two-layer system (user setting + hardcoded fallback)
+        // This just ensures the option exists
+        if (false === get_option('arsol_projects_templates_settings')) {
+            update_option('arsol_projects_templates_settings', $current_settings);
+        }
     }
 } 

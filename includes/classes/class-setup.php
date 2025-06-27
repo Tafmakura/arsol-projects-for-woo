@@ -70,11 +70,11 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-endpoints.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-checkout.php';
+        // Admin Settings Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-advanced.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-tools.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-integrations.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-debugging.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup-defaults.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-overrides.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
@@ -104,11 +104,16 @@ class Setup {
         new Assets();
         new Woocommerce\Frontend_Endpoints();
         new Frontend_Woocommerce_Checkout();
-        new Admin\Settings_General();
-        new Admin\Settings_Advanced();
-        new Admin\Settings_Tools();
+
+        // Initialize admin classes
+        if (is_admin()) {
+            new Admin\Settings_General();
+            new Admin\Settings_Advanced();
+            new Admin\Settings_Tools();
+            new Admin\Setup_Defaults();
+        }
+        
         new Admin\Settings_Integrations();
-        new Admin\Settings_Debugging();
         new Admin\Setup();
         new Admin\Users();
 

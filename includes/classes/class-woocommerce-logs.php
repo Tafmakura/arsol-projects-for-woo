@@ -150,22 +150,6 @@ class Woocommerce_Logs {
     }
     
     /**
-     * Get all available debug options
-     * 
-     * @return array Debug options with labels
-     */
-    public static function get_available_debug_options() {
-        return array(
-            'enable_request_to_proposal_conversion_logs' => __('Request → Proposal Conversion', 'arsol-pfw'),
-            'enable_proposal_to_project_conversion_logs' => __('Proposal → Project Conversion', 'arsol-pfw'), 
-            'enable_woocommerce_billing_logs' => __('WooCommerce Billing Operations', 'arsol-pfw'),
-            'enable_checkout_logs' => __('Checkout Process', 'arsol-pfw'),
-            'enable_general_logs' => __('General Operations', 'arsol-pfw'),
-            'enable_workflow_logs' => __('Workflow & Transaction System', 'arsol-pfw'),
-        );
-    }
-    
-    /**
      * Clear all logs for this plugin
      */
     public static function clear_logs() {

@@ -147,24 +147,20 @@ class Setup {
             <h1><?php _e('Arsol Projects for Woo', 'arsol-pfw'); ?></h1>
             <h2 class="nav-tab-wrapper">
                 <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php _e('General', 'arsol-pfw'); ?></a>
-                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=advanced" class="nav-tab <?php echo $active_tab == 'advanced' ? 'nav-tab-active' : ''; ?>"><?php _e('Advanced', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=templates" class="nav-tab <?php echo $active_tab == 'templates' ? 'nav-tab-active' : ''; ?>"><?php _e('Templates', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=tools" class="nav-tab <?php echo $active_tab == 'tools' ? 'nav-tab-active' : ''; ?>"><?php _e('Tools', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=integrations" class="nav-tab <?php echo $active_tab == 'integrations' ? 'nav-tab-active' : ''; ?>"><?php _e('Integrations', 'arsol-pfw'); ?></a>
-                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=debugging" class="nav-tab <?php echo $active_tab == 'debugging' ? 'nav-tab-active' : ''; ?>"><?php _e('Debugging', 'arsol-pfw'); ?></a>
             </h2>
             <?php
             switch ($active_tab) {
-                case 'advanced':
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-advanced.php';
+                case 'templates':
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-templates.php';
                     break;
                 case 'tools':
                     include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-tools.php';
                     break;
                 case 'integrations':
                     include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-integrations.php';
-                    break;
-                case 'debugging':
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-debugging.php';
                     break;
                 default:
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-general.php';

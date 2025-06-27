@@ -20,9 +20,6 @@ class Settings_Advanced {
     public function __construct() {
         add_action('init', array($this, 'init_translations'));
         add_action('admin_init', array($this, 'register_settings'));
-        
-        // Add AJAX handler for reset defaults
-        add_action('wp_ajax_arsol_reset_defaults', array($this, 'handle_reset_defaults_ajax'));
     }
 
     public function init_translations() {
@@ -102,8 +99,8 @@ class Settings_Advanced {
 
     public function register_settings() {
         register_setting(
-            'arsol_projects_advanced_settings', 
-            'arsol_projects_advanced_settings',
+            'arsol_projects_templates_settings', 
+            'arsol_projects_templates_settings',
             array(
                 'sanitize_callback' => array($this, 'sanitize_settings'),
                 'default' => array()
@@ -115,7 +112,7 @@ class Settings_Advanced {
             'arsol_projects_default_messages_section',
             __('Default Messages', 'arsol-pfw'),
             array($this, 'render_default_messages_description'),
-            'arsol_projects_advanced_settings'
+            'arsol_projects_templates_settings'
         );
 
         foreach ($this->default_message_fields as $id => $field_data) {
@@ -123,7 +120,7 @@ class Settings_Advanced {
                 $id,
                 $field_data['title'],
                 array($this, 'render_textarea_field'),
-                'arsol_projects_advanced_settings',
+                'arsol_projects_templates_settings',
                 'arsol_projects_default_messages_section',
                 [
                     'id' => $id,
@@ -139,7 +136,7 @@ class Settings_Advanced {
             'arsol_projects_template_overrides_section',
             __('Template Overrides', 'arsol-pfw'),
             array($this, 'render_template_overrides_description'),
-            'arsol_projects_advanced_settings'
+            'arsol_projects_templates_settings'
         );
 
         foreach ($this->shortcode_fields as $id => $field_data) {
@@ -147,7 +144,7 @@ class Settings_Advanced {
                 $id,
                 $field_data['title'],
                 array($this, 'render_text_field'),
-                'arsol_projects_advanced_settings',
+                'arsol_projects_templates_settings',
                 'arsol_projects_template_overrides_section',
                 [
                     'id' => $id,
@@ -157,22 +154,6 @@ class Settings_Advanced {
                 ]
             );
         }
-
-        // Reset Defaults Section
-        add_settings_section(
-            'arsol_projects_reset_defaults_section',
-            __('Reset Defaults', 'arsol-pfw'),
-            array($this, 'render_reset_defaults_description'),
-            'arsol_projects_advanced_settings'
-        );
-
-        add_settings_field(
-            'reset_defaults',
-            __('Reset Plugin Defaults', 'arsol-pfw'),
-            array($this, 'render_reset_defaults_field'),
-            'arsol_projects_advanced_settings',
-            'arsol_projects_reset_defaults_section'
-        );
     }
 
     /**
@@ -206,7 +187,7 @@ class Settings_Advanced {
                 if (!empty($value) && !preg_match('/^\[[\w\s_-]+(\s+[^]]+)?\]$/', $value)) {
                     // Invalid shortcode format - skip saving
                     add_settings_error(
-                        'arsol_projects_advanced_settings',
+                        'arsol_projects_templates_settings',
                         $field,
                         sprintf(__('Invalid shortcode format for %s. Please use format: [shortcode_name]', 'arsol-pfw'), $field)
                     );
@@ -233,7 +214,7 @@ class Settings_Advanced {
     }
 
     public function render_textarea_field($args) {
-        $settings = get_option('arsol_projects_advanced_settings');
+        $settings = get_option('arsol_projects_templates_settings');
         $value = isset($settings[$args['id']]) ? $settings[$args['id']] : '';
         $rows = isset($args['rows']) ? $args['rows'] : 8;
         $cols = isset($args['cols']) ? $args['cols'] : 80;
@@ -243,7 +224,7 @@ class Settings_Advanced {
         $placeholder_text = isset($hardcoded_defaults[$args['id']]) ? $hardcoded_defaults[$args['id']] : __('Enter your markdown content here...', 'arsol-pfw');
         ?>
         <textarea id="<?php echo esc_attr($args['id']); ?>"
-                  name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
+                  name="arsol_projects_templates_settings[<?php echo esc_attr($args['id']); ?>]"
                   rows="<?php echo esc_attr($rows); ?>"
                   cols="<?php echo esc_attr($cols); ?>"
                   class="large-text code"
@@ -257,14 +238,14 @@ class Settings_Advanced {
     }
 
     public function render_text_field($args) {
-        $settings = get_option('arsol_projects_advanced_settings');
+        $settings = get_option('arsol_projects_templates_settings');
         $value = isset($settings[$args['id']]) ? $settings[$args['id']] : '';
         $pattern = isset($args['pattern']) ? $args['pattern'] : '.*';
         $placeholder = isset($args['placeholder']) ? $args['placeholder'] : '';
         ?>
         <input type="text"
                id="<?php echo esc_attr($args['id']); ?>"
-               name="arsol_projects_advanced_settings[<?php echo esc_attr($args['id']); ?>]"
+               name="arsol_projects_templates_settings[<?php echo esc_attr($args['id']); ?>]"
                value="<?php echo esc_attr($value); ?>"
                class="regular-text"
                pattern="<?php echo esc_attr($pattern); ?>"
@@ -300,73 +281,5 @@ class Settings_Advanced {
             'project_overview' => $effective_messages['project_overview_message'] ?? '',
             'project_proposals' => $effective_messages['project_proposals_message'] ?? ''
         ];
-    }
-
-    public function render_reset_defaults_description() {
-        echo '<p>' . esc_html__('Use this section to reset all plugin defaults to their initial values.', 'arsol-pfw') . '</p>';
-    }
-
-    public function render_reset_defaults_field() {
-        ?>
-        <button type="button" id="reset-defaults" class="button">
-            <?php esc_html_e('Reset Plugin Defaults', 'arsol-pfw'); ?>
-        </button>
-        <p class="description">
-            <?php esc_html_e('This action cannot be undone.', 'arsol-pfw'); ?>
-        </p>
-        
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            $('#reset-defaults').on('click', function() {
-                if (confirm('<?php esc_js_e('Reset plugin defaults?', 'arsol-pfw'); ?>')) {
-                    const button = $(this);
-                    button.prop('disabled', true).text('<?php esc_js_e('Resetting...', 'arsol-pfw'); ?>');
-                    
-                    $.ajax({
-                        url: ajaxurl,
-                        type: 'POST',
-                        data: {
-                            action: 'arsol_reset_defaults',
-                            nonce: '<?php echo wp_create_nonce('arsol_admin'); ?>'
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                alert('<?php esc_js_e('Reset completed:', 'arsol-pfw'); ?> ' + response.data.reset + ' <?php esc_js_e('defaults reset', 'arsol-pfw'); ?>');
-                            } else {
-                                alert('<?php esc_js_e('Reset failed:', 'arsol-pfw'); ?> ' + response.data);
-                            }
-                            button.prop('disabled', false).text('<?php esc_js_e('Reset Plugin Defaults', 'arsol-pfw'); ?>');
-                            location.reload();
-                        },
-                        error: function() {
-                            alert('<?php esc_js_e('Ajax request failed.', 'arsol-pfw'); ?>');
-                            button.prop('disabled', false).text('<?php esc_js_e('Reset Plugin Defaults', 'arsol-pfw'); ?>');
-                        }
-                    });
-                }
-            });
-        });
-        </script>
-        <?php
-    }
-
-    /**
-     * Handle AJAX reset defaults request
-     */
-    public function handle_reset_defaults_ajax() {
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !current_user_can('manage_options')) {
-            wp_send_json_error('Security check failed');
-        }
-        
-        // Force reset defaults by deleting the initialization flag
-        delete_option(\Arsol_Projects_For_Woo\Admin\Setup_Defaults::DEFAULTS_INITIALIZED_KEY);
-        
-        // Trigger re-initialization
-        do_action('arsol_pfw_plugin_activated');
-        
-        wp_send_json_success(array(
-            'reset' => 1,
-            'message' => __('Plugin defaults have been reset successfully.', 'arsol-pfw')
-        ));
     }
 }
