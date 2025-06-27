@@ -192,7 +192,7 @@ class Frontend_Endpoints {
             : '';
 
         // Load the single master template and pass all necessary data
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-projects-listing.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/projects.php';
     }
     
     /**
@@ -242,11 +242,11 @@ class Frontend_Endpoints {
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
         
         if (!$admin_users->can_user_create_projects($user_id)) {
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-access-denied.php';
+            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
             return;
         }
         
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-create-active.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-create.php';
     }
     
     /**
@@ -259,12 +259,12 @@ class Frontend_Endpoints {
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
 
         if (!$admin_users->can_user_request_projects($user_id)) {
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-access-denied.php';
+            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
             return;
         }
 
-        // Use shortcode for form rendering
-        echo do_shortcode('[arsol_pfw_project_request_form]');
+        // Use the project request template
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-request.php';
     }
     
     /**
@@ -301,8 +301,8 @@ class Frontend_Endpoints {
             exit;
         }
 
-        // Include the master project overview template
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-proposal.php';
+        // Include the new project view proposal template
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php';
     }
     
     /**
@@ -339,8 +339,8 @@ class Frontend_Endpoints {
             exit;
         }
 
-        // Include the master project overview template
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php';
+        // Include the new project view request template
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-request.php';
     }
     
     /**
@@ -356,16 +356,29 @@ class Frontend_Endpoints {
         
         // Check if project exists and user has access
         if (!$project_id || !$this->user_can_view_project($user_id, $project_id)) {
-            // Use the access denied template for a consistent look and feel
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-access-denied.php';
+            // Use the new no-access template for consistency
+            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
             return;
         }
 
         // Project data, available to all included parts of the page
         $project = $this->get_project_data($project_id);
 
-        // Load the main project template, which now handles the entire page structure
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-active.php';
+        // Load the appropriate template based on the tab/endpoint
+        switch ($tab) {
+            case 'overview':
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
+                break;
+            case 'orders':
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-orders.php';
+                break;
+            case 'subscriptions':
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-subscriptions.php';
+                break;
+            default:
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
+                break;
+        }
     }
     
     /**

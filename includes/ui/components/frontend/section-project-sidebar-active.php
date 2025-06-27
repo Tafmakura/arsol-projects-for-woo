@@ -1,7 +1,7 @@
 <?php
 /**
  * Project Sidebar - Active Projects
- * 
+ *
  * @package Arsol_Projects_For_Woo
  * @version 2.0.0
  */
@@ -29,8 +29,8 @@ if (isset($current_status)) {
 ?>
 
 <div class="project-sidebar sidebar-active">
-    <?php
-    /**
+<?php
+/**
      * Sidebar metadata section
      */
     do_action('arsol_pfw_sidebar_meta', $post_type, $status, $post_id);

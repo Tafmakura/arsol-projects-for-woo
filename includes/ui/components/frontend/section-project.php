@@ -24,6 +24,10 @@ if (!$current_post) {
 $project_id = $current_post->ID;
 $current_post_type = get_post_type($project_id);
 
+// Initialize variables
+$status_terms = array();
+$current_status = '';
+
 // Determine project type and get actual status from taxonomy
 if ($current_post_type === 'arsol-project') {
     $project_type = 'active';
@@ -49,7 +53,6 @@ $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'curr
 
 // Debug: uncomment to see what's detected
 error_log("Project template - ID: $project_id, CPT: '$current_post_type', Type: $project_type, Status: '$current_status'");
-error_log("Project template - Status terms found: " . print_r($status_terms, true));
 ?>
 
     <?php
