@@ -43,8 +43,16 @@ global $post;
 $post = $request;
 setup_postdata($post);
 
-// Include the project template which will load the appropriate content
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project.php';
+// Get current user
+$user_id = get_current_user_id();
+
+// --- Header Section ---
+wc_get_template(
+    'partials/project-view-request/project-view-request-header.php',
+    compact('request_id', 'request', 'user_id'),
+    'arsol-pfw/',
+    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/'
+);
 
 // Reset post data
 wp_reset_postdata();

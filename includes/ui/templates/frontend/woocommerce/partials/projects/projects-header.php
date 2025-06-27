@@ -17,8 +17,8 @@ $current_tab = $current_tab ?? 'active';
         <h1 class="projects-title"><?php _e('My Projects', 'arsol-pfw'); ?></h1>
         
         <?php 
-        // Include navigation tabs component
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/projects-navigation.php';
+        // Include navigation tabs section
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-projects-navigation.php';
         ?>
     </div>
     

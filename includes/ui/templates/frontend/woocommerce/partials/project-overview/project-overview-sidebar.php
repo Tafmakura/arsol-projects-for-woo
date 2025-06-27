@@ -33,7 +33,7 @@ if (!empty($css_class)) {
     <?php if (!empty($status) && !empty($status_label)): ?>
     <div class="arsol-sidebar-section arsol-sidebar-status">
         <h4 class="arsol-sidebar-title"><?php _e('Status', 'arsol-pfw'); ?></h4>
-        <?php 
+    <?php 
         // Include status badge component
         $show_icon = true;
         $css_class = 'sidebar-status-badge';
@@ -101,7 +101,7 @@ if (!empty($css_class)) {
             <h4 class="arsol-sidebar-title"><?php echo esc_html($title); ?></h4>
             <div class="arsol-meta-fields">
                 <?php foreach ($meta_values as $field_key => $field_data): ?>
-                    <?php
+    <?php 
                     // Set up variables for meta field component
                     $label = $field_data['label'];
                     $value = $field_data['value'];
@@ -190,7 +190,7 @@ if (!empty($css_class)) {
             
             // Render action buttons
             foreach ($actions as $action_key => $action_data): ?>
-                <?php
+    <?php 
                 // Set up variables for action button component
                 $url = $action_data['url'];
                 $label = $action_data['label'];

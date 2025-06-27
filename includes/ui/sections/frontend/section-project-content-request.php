@@ -17,13 +17,13 @@ do_action('arsol_projects_before_request_state', $post->ID);
 <div class="project-overview-wrapper">
     <div class="project-content">
         <?php if ($current_status === 'pending-review') : ?>
-            <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request-pending-review.php'; ?>
+            <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-content-request-pending-review.php'; ?>
         <?php elseif ($current_status === 'on-hold') : ?>
-            <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request-on-hold.php'; ?>
+            <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-content-request-on-hold.php'; ?>
         <?php elseif ($current_status === 'under-review') : ?>
-            <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request-under-review.php'; ?>
+            <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-content-request-under-review.php'; ?>
         <?php elseif ($current_status === 'approved') : ?>
-            <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request-approved.php'; ?>
+            <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-content-request-approved.php'; ?>
         <?php else : ?>
             <div class="arsol-pfw-project-overview-empty">
                 <div class="arsol-pfw-empty-state">
