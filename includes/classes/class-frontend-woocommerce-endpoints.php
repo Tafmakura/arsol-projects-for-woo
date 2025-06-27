@@ -202,7 +202,15 @@ class Frontend_Endpoints {
      */
     public function project_overview_endpoint_content() {
         $project_id = absint(get_query_var('project-overview'));
-        $this->render_project_page($project_id, 'overview');
+        
+        if (!$this->validate_project_access($project_id)) {
+            return;
+        }
+        
+        // Project data, available to the template
+        $project = $this->get_project_data($project_id);
+        
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
     }
     
     /**
@@ -212,7 +220,15 @@ class Frontend_Endpoints {
      */
     public function project_orders_endpoint_content() {
         $project_id = absint(get_query_var('project-orders'));
-        $this->render_project_page($project_id, 'orders');
+        
+        if (!$this->validate_project_access($project_id)) {
+            return;
+        }
+        
+        // Project data, available to the template
+        $project = $this->get_project_data($project_id);
+        
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-orders.php';
     }
     
     /**
@@ -229,7 +245,15 @@ class Frontend_Endpoints {
         }
         
         $project_id = absint(get_query_var('project-subscriptions'));
-        $this->render_project_page($project_id, 'subscriptions');
+        
+        if (!$this->validate_project_access($project_id)) {
+            return;
+        }
+        
+        // Project data, available to the template
+        $project = $this->get_project_data($project_id);
+        
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-subscriptions.php';
     }
     
     /**
@@ -344,43 +368,47 @@ class Frontend_Endpoints {
     }
     
     /**
-     * Helper method to render a project page
+     * Validate project access for the current user
      *
      * @param int $project_id Project ID
-     * @param string $tab Current tab (overview, orders, subscriptions)
-     * @return void
+     * @return bool Whether the user can access the project
      */
-    private function render_project_page($project_id, $tab) {
-        // Get current user ID
+    private function validate_project_access($project_id) {
         $user_id = get_current_user_id();
         
         // Check if project exists and user has access
         if (!$project_id || !$this->user_can_view_project($user_id, $project_id)) {
-            // Use the new no-access template for consistency
+            // Use the no-access template for consistency
             include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
-            return;
+            return false;
         }
-
-        // Project data, available to all included parts of the page
-        $project = $this->get_project_data($project_id);
-
-        // Load the appropriate template based on the tab/endpoint
-        switch ($tab) {
-            case 'overview':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
-                break;
-            case 'orders':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-orders.php';
-                break;
-            case 'subscriptions':
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-subscriptions.php';
-                break;
-            default:
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
-                break;
-        }
+        
+        return true;
     }
-    
+
+    /**
+     * Get project data for API response
+     * 
+     * @param int $project_id Project post ID
+     * @return array Project data
+     */
+    private function get_project_data($project_id) {
+        $project = get_post($project_id);
+        if (!$project || $project->post_type !== 'arsol-project') {
+            return null;
+        }
+
+        return [
+            'id' => $project->ID,
+            'title' => $project->post_title,
+            'content' => $project->post_content,
+            'date' => $project->post_date,
+            'modified' => $project->post_modified,
+            'status' => $project->post_status,
+            'author' => $project->post_author
+        ];
+    }
+
     /**
      * Check if a user can view a project
      *
@@ -409,28 +437,5 @@ class Frontend_Endpoints {
         }
 
         return false;
-    }
-
-    /**
-     * Get project data for API response
-     * 
-     * @param int $project_id Project post ID
-     * @return array Project data
-     */
-    private function get_project_data($project_id) {
-        $project = get_post($project_id);
-        if (!$project || $project->post_type !== 'arsol-project') {
-            return null;
-        }
-
-        return [
-            'id' => $project->ID,
-            'title' => $project->post_title,
-            'content' => $project->post_content,
-            'date' => $project->post_date,
-            'modified' => $project->post_modified,
-            'status' => $project->post_status,
-            'author' => $project->post_author
-        ];
     }
 } 

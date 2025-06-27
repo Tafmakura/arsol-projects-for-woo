@@ -1,23 +1,22 @@
 <?php
 /**
- * Main Project Page Template
+ * Project Overview endpoint template
  *
- * This template provides the main structure for a single project page,
- * including the header, navigation, and the main content area. It acts
- * as a frame for the different project sections like overview, orders, etc.
+ * Handles /my-account/project-overview/{project_id}/ endpoint
  *
  * @package Arsol_Projects_For_Woo
- * @version 1.0.2
+ * @version 1.1.0
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// The following variables are passed from the render_project_page function:
-// $project, $project_id, $tab
-$project_title = get_the_title($project_id);
-$current_tab = $tab;
+// The following variables are passed from the endpoint function:
+// $project
+$project_id = $project['id'];
+$project_title = $project['title'];
+$current_tab = 'overview';
 
 // --- Render Page Navigation ---
 $tabs = array(
@@ -72,34 +71,10 @@ if (class_exists('WC_Subscriptions')) {
 </div>
 <?php
 // --- Render Page Content ---
-switch ($tab) {
-    case 'orders':
-        \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-            'project_orders',
-            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-listing-orders.php',
-            compact('project')
-        );
-        break;
-    case 'subscriptions':
-        // Only render subscriptions if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
-            \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-                'project_subscriptions',
-                ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-listing-subscriptions.php',
-                compact('project')
-            );
-        } else {
-            // Redirect to overview if subscriptions plugin is not active
-            wp_safe_redirect(wc_get_account_endpoint_url('project-overview/' . $project_id));
-            exit;
-        }
-        break;
-    default:
-        \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
-            'project_content',
-            ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project.php',
-            compact('project')
-        );
-        break;
-}
-?> 
+// Always render overview content for this template
+\Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+    'project_content',
+    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project.php',
+    compact('project')
+);
+?>
