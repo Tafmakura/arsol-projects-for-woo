@@ -1,30 +1,77 @@
 <?php
 /**
- * Project View Proposal endpoint template
- * 
- * Handles /my-account/project-view-proposal/{proposal_id}/ endpoint
+ * Single Project Proposal Template
+ *
+ * This template displays a single project proposal with its details and actions.
  *
  * @package Arsol_Projects_For_Woo
- * @version 1.1.0
+ * @version 1.0.0
  */
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// Variables should be available from endpoint handler
-// $proposal_id should be available
+// Get the proposal ID from query vars
+global $wp;
+$proposal_id = absint($wp->query_vars['project-view-proposal']);
 
-// Validate proposal exists and user has access (done in endpoint handler)
-$proposal = get_post($proposal_id);
-
-if (!$proposal || $proposal->post_type !== 'arsol-pfw-proposal') {
-    echo '<p>' . esc_html__('Proposal not found.', 'arsol-pfw') . '</p>';
-    return;
+// Validate proposal ID
+if (!$proposal_id) {
+    wc_add_notice(__('Invalid proposal ID.', 'arsol-pfw'), 'error');
+    wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+    exit;
 }
 
-// Set project_id for template compatibility
-$project_id = $proposal_id;
+// Get and validate proposal
+$proposal = get_post($proposal_id);
+if (!$proposal || $proposal->post_type !== 'arsol-pfw-proposal') {
+    wc_add_notice(__('Proposal not found.', 'arsol-pfw'), 'error');
+    wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+    exit;
+}
 
-// Load the proposal template
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-proposal.php'; 
+// Get proposal status
+$post_status = get_post_status($proposal->ID);
+$status = '';
+if ($post_status === 'draft') {
+    $status = __('Draft', 'arsol-pfw');
+} else {
+    $proposal_status_terms = wp_get_post_terms($proposal->ID, 'arsol-proposal-status', array('fields' => 'names'));
+    if (!is_wp_error($proposal_status_terms) && !empty($proposal_status_terms)) {
+        $status = $proposal_status_terms[0];
+    } else {
+        $status = __('Published', 'arsol-pfw');
+    }
+}
+
+// Set type for template loading
+$_GET['type'] = 'proposal';
+
+// Set up the global post object
+global $post;
+$post = $proposal;
+setup_postdata($post);
+
+// Include the project template which will load the appropriate content
+include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project.php';
+
+// Reset post data
+wp_reset_postdata();
+
+?>
+<section class="arsol-project-section">
+    <h2><?php _e('Notes', 'arsol-pfw'); ?></h2>
+    <div class="arsol-project-section-content">
+        <?php
+        $notes = get_post_meta($proposal_id, '_arsol_pfw_proposal_notes', true);
+        if (!empty($notes)) :
+            echo wpautop(wp_kses_post($notes));
+        endif;
+        ?>
+    </div>
+</section>
+
+<?php
+// Action hook for adding custom content after the proposal details
+do_action('arsol_after_project_proposal_details', $proposal_id);

@@ -26,13 +26,13 @@ $project_type = get_post_type($project_id);
 
 switch ($project_type) {
     case 'arsol-project':
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-active.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
         break;
     case 'arsol-pfw-proposal':
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-proposal.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php';
         break;
     case 'arsol-pfw-request':
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-project-request.php';
+        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-request.php';
         break;
     default:
         echo '<p>' . esc_html__('Unknown project type.', 'arsol-pfw') . '</p>';

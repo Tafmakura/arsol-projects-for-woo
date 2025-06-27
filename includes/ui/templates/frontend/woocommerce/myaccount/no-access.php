@@ -12,5 +12,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Load the existing access denied template
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/page-access-denied.php'; 
+// Display access denied message directly
+echo '<div class="woocommerce-info">';
+echo '<p>' . esc_html__('You do not have permission to access this content.', 'arsol-pfw') . '</p>';
+echo '</div>'; 
