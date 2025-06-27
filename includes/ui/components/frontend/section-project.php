@@ -28,26 +28,26 @@ $current_post_type = get_post_type($project_id);
 if ($current_post_type === 'arsol-project') {
     $project_type = 'active';
     $status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
-    $current_status = !empty($status_terms) ? $status_terms[0] : 'not-started';
+    $current_status = !empty($status_terms) ? $status_terms[0] : '';
 } elseif ($current_post_type === 'arsol-pfw-proposal') {
     $project_type = 'proposal';
     $status_terms = wp_get_object_terms($project_id, 'arsol-proposal-status', array('fields' => 'slugs'));
-    $current_status = !empty($status_terms) ? $status_terms[0] : 'processing';
+    $current_status = !empty($status_terms) ? $status_terms[0] : '';
 } elseif ($current_post_type === 'arsol-pfw-request') {
     $project_type = 'request';
     $status_terms = wp_get_object_terms($project_id, 'arsol-request-status', array('fields' => 'slugs'));
-    $current_status = !empty($status_terms) ? $status_terms[0] : 'pending-review';
+    $current_status = !empty($status_terms) ? $status_terms[0] : '';
 } else {
     // Fallback for unknown post types
     $project_type = 'active';
-    $current_status = 'not-started';
+    $current_status = '';
 }
 
 // Prepare comprehensive data for efficient hook usage
 $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
 
 // Debug: uncomment to see what's detected
-// error_log("Project template - ID: $project_id, CPT: $current_post_type, Type: $project_type, Status: $current_status");
+error_log("Project template - ID: $project_id, CPT: $current_post_type, Type: $project_type, Status: '$current_status'");
 ?>
 
     <?php

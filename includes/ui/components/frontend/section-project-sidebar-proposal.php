@@ -20,7 +20,7 @@ if (isset($current_status)) {
     $status = $current_status;
 } else {
     $status_terms = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'slugs'));
-    $status = !empty($status_terms) ? $status_terms[0] : 'processing';
+    $status = !empty($status_terms) ? $status_terms[0] : '';
 }
 
 // Debug: uncomment to see what status is detected

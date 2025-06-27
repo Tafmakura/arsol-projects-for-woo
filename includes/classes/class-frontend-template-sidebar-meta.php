@@ -107,13 +107,15 @@ class Frontend_Template_Sidebar_Meta {
         // Get actual taxonomy status instead of using passed status
         $actual_status = $this->get_taxonomy_status($post_id);
         
-        // Status
-        $metadata['status'] = array(
-            'label' => __('Status', 'arsol-pfw'),
-            'value' => $this->format_status_display($actual_status, $post_id),
-            'type' => 'badge',
-            'class' => 'status-badge status-' . sanitize_html_class($actual_status)
-        );
+        // Only add status if we have an actual status
+        if (!empty($actual_status)) {
+            $metadata['status'] = array(
+                'label' => __('Status', 'arsol-pfw'),
+                'value' => $this->format_status_display($actual_status, $post_id),
+                'type' => 'badge',
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+            );
+        }
         
         // Customer
         $post = get_post($post_id);
@@ -177,13 +179,15 @@ class Frontend_Template_Sidebar_Meta {
         // Get actual taxonomy status instead of using passed status
         $actual_status = $this->get_taxonomy_status($post_id);
         
-        // Status
-        $metadata['status'] = array(
-            'label' => __('Status', 'arsol-pfw'),
-            'value' => $this->format_status_display($actual_status, $post_id),
-            'type' => 'badge',
-            'class' => 'status-badge status-' . sanitize_html_class($actual_status)
-        );
+        // Only add status if we have an actual status
+        if (!empty($actual_status)) {
+            $metadata['status'] = array(
+                'label' => __('Status', 'arsol-pfw'),
+                'value' => $this->format_status_display($actual_status, $post_id),
+                'type' => 'badge',
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+            );
+        }
         
         // Customer
         $post = get_post($post_id);
@@ -269,13 +273,15 @@ class Frontend_Template_Sidebar_Meta {
         // Get actual taxonomy status instead of using passed status
         $actual_status = $this->get_taxonomy_status($post_id);
         
-        // Status
-        $metadata['status'] = array(
-            'label' => __('Status', 'arsol-pfw'),
-            'value' => $this->format_status_display($actual_status, $post_id),
-            'type' => 'badge',
-            'class' => 'status-badge status-' . sanitize_html_class($actual_status)
-        );
+        // Only add status if we have an actual status
+        if (!empty($actual_status)) {
+            $metadata['status'] = array(
+                'label' => __('Status', 'arsol-pfw'),
+                'value' => $this->format_status_display($actual_status, $post_id),
+                'type' => 'badge',
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+            );
+        }
         
         // Budget
         $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
@@ -392,7 +398,7 @@ class Frontend_Template_Sidebar_Meta {
      * Get taxonomy status for a post
      *
      * @param int $post_id The post ID  
-     * @return string The status slug
+     * @return string The status slug or empty string if not found
      */
     private function get_taxonomy_status($post_id) {
         // Get the actual WordPress post type to determine the correct taxonomy
@@ -405,26 +411,27 @@ class Frontend_Template_Sidebar_Meta {
         );
         
         if (!isset($taxonomy_map[$wp_post_type])) {
+            error_log("ARSOL DEBUG: Unknown post type '$wp_post_type' for post $post_id");
             return '';
         }
         
-        $terms = wp_get_object_terms($post_id, $taxonomy_map[$wp_post_type], array('fields' => 'slugs'));
+        $taxonomy = $taxonomy_map[$wp_post_type];
+        $terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
         
-        if (is_wp_error($terms) || empty($terms)) {
-            // Return default status based on post type
-            switch ($wp_post_type) {
-                case 'arsol-project':
-                    return 'not-started';
-                case 'arsol-pfw-proposal':
-                    return 'processing';
-                case 'arsol-pfw-request':
-                    return 'pending-review';
-                default:
-                    return '';
-            }
+        if (is_wp_error($terms)) {
+            error_log("ARSOL DEBUG: Error getting terms for post $post_id, taxonomy $taxonomy: " . $terms->get_error_message());
+            return '';
         }
         
-        return $terms[0];
+        if (empty($terms)) {
+            error_log("ARSOL DEBUG: No terms found for post $post_id in taxonomy $taxonomy");
+            return '';
+        }
+        
+        $status = $terms[0];
+        error_log("ARSOL DEBUG: Found status '$status' for post $post_id (type: $wp_post_type, taxonomy: $taxonomy)");
+        
+        return $status;
     }
 
     /**
