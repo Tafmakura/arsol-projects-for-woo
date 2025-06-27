@@ -52,6 +52,9 @@ define('ARSOL_PROJECT_META_KEY', 'arsol-pfw/parent-project-id');
 use Arsol_Projects_For_Woo\Setup;
 use Arsol_Projects_For_Woo\Workflow\Workflow_Handler;
 use Arsol_Projects_For_Woo\Admin\Setup_Defaults;
+use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Meta;
+use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Actions;
+use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Fields;
 
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
@@ -64,6 +67,11 @@ require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup-def
 
 // Include the workflow handler class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-workflow-handler.php';
+
+// Include the frontend sidebar classes
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-meta.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-actions.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-fields.php';
 
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');
@@ -107,6 +115,10 @@ function arsol_projects_init() {
     new Workflow_Handler();
     // Instantiate the Setup_Defaults class
     new Setup_Defaults();
+    // Instantiate the Frontend Sidebar classes
+    new Frontend_Template_Sidebar_Meta();
+    new Frontend_Template_Sidebar_Actions();
+    new Frontend_Template_Sidebar_Fields();
 }
 add_action('plugins_loaded', 'arsol_projects_init');
 
