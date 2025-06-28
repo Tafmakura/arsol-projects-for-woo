@@ -40,7 +40,10 @@ class Frontend_Template_Sidebar_Buttons {
      * @param int $post_id The post ID
      */
     public function display_project_buttons($status, $post_id) {
+        error_log("ARSOL DEBUG: Active project buttons called - Status: '$status', Post ID: $post_id");
+        
         if (empty($post_id)) {
+            error_log("ARSOL DEBUG: Active project buttons - Empty post ID, returning");
             return;
         }
 
@@ -72,7 +75,10 @@ class Frontend_Template_Sidebar_Buttons {
      * @param int $post_id The post ID
      */
     public function display_request_buttons($status, $post_id) {
+        error_log("ARSOL DEBUG: Request buttons called - Status: '$status', Post ID: $post_id");
+        
         if (empty($post_id)) {
+            error_log("ARSOL DEBUG: Request buttons - Empty post ID, returning");
             return;
         }
 
@@ -172,6 +178,13 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $status The current status
      */
     private function add_request_buttons($post_id, $status) {
+        error_log("ARSOL DEBUG: add_request_buttons called - Status: '$status', Post ID: $post_id");
+        
+        // Test button - always show to verify hook is working
+        echo '<div class="button-item button-test">';
+        echo '<button class="button button-secondary">TEST: Request Status is "' . esc_html($status) . '"</button>';
+        echo '</div>';
+        
         switch ($status) {
             case 'pending-review':
                 $this->add_pending_review_buttons($post_id);
@@ -185,6 +198,15 @@ class Frontend_Template_Sidebar_Buttons {
             case 'approved':
                 $this->add_approved_buttons($post_id);
                 break;
+            default:
+                echo '<div class="button-item button-no-status">';
+                if (empty($status)) {
+                    echo '<button class="button button-warning">No Status Set</button>';
+                } else {
+                    echo '<button class="button button-warning">Unknown Status: ' . esc_html($status) . '</button>';
+                }
+                echo '</div>';
+                break;
         }
     }
 
@@ -195,8 +217,77 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $status The current status
      */
     private function add_project_buttons($post_id, $status) {
-        // Project buttons can be added via hooks
-        // Example: add_action('arsol_pfw_project_sidebar_buttons', 'my_custom_project_buttons', 20, 2);
+        error_log("ARSOL DEBUG: add_project_buttons called - Status: '$status', Post ID: $post_id");
+        
+        // Test button - always show to verify hook is working
+        echo '<div class="button-item button-test">';
+        echo '<button class="button button-secondary">TEST: Project Status is "' . esc_html($status) . '"</button>';
+        echo '</div>';
+        
+        // If no status is set, provide buttons to set initial status
+        if (empty($status)) {
+            echo '<div class="button-item button-no-status">';
+            echo '<p style="margin-bottom: 10px;"><strong>No status set for this project.</strong></p>';
+            
+            // Button to set to not-started
+            $set_not_started_url = wp_nonce_url(
+                admin_url('admin-post.php?action=arsol_set_project_status&project_id=' . $post_id . '&status=not-started'),
+                'arsol_set_project_status_nonce'
+            );
+            echo '<a href="' . esc_url($set_not_started_url) . '" class="button button-primary" style="margin-right: 10px;">Set to Not Started</a>';
+            
+            // Button to set to in-progress
+            $set_in_progress_url = wp_nonce_url(
+                admin_url('admin-post.php?action=arsol_set_project_status&project_id=' . $post_id . '&status=in-progress'),
+                'arsol_set_project_status_nonce'
+            );
+            echo '<a href="' . esc_url($set_in_progress_url) . '" class="button button-secondary">Set to In Progress</a>';
+            echo '</div>';
+            return;
+        }
+        
+        // Show different buttons based on project status
+        switch ($status) {
+            case 'not-started':
+                echo '<div class="button-item button-not-started">';
+                echo '<button class="button button-primary">Start Project</button>';
+                echo '</div>';
+                break;
+                
+            case 'in-progress':
+                echo '<div class="button-item button-in-progress">';
+                echo '<button class="button button-primary">Mark as Complete</button>';
+                echo '<button class="button button-secondary" style="margin-left: 10px;">Put on Hold</button>';
+                echo '</div>';
+                break;
+                
+            case 'on-hold':
+                echo '<div class="button-item button-on-hold">';
+                echo '<button class="button button-primary">Resume Project</button>';
+                echo '<button class="button button-secondary" style="margin-left: 10px;">Cancel Project</button>';
+                echo '</div>';
+                break;
+                
+            case 'completed':
+                echo '<div class="button-item button-completed">';
+                echo '<button class="button button-success">Project Completed</button>';
+                echo '<a href="/my-account/projects/" class="button button-secondary" style="margin-left: 10px;">View All Projects</a>';
+                echo '</div>';
+                break;
+                
+            case 'cancelled':
+                echo '<div class="button-item button-cancelled">';
+                echo '<button class="button button-secondary">Project Cancelled</button>';
+                echo '<a href="/contact-us/" class="button button-primary" style="margin-left: 10px;">Contact Support</a>';
+                echo '</div>';
+                break;
+                
+            default:
+                echo '<div class="button-item button-unknown">';
+                echo '<button class="button button-warning">Unknown Status: ' . esc_html($status) . '</button>';
+                echo '</div>';
+                break;
+        }
     }
 
     /**

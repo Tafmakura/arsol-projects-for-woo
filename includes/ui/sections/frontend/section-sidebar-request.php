@@ -19,6 +19,9 @@ $post_type = $project_type;
 $status = $current_status;
 $cpt = 'arsol-pfw-request';
 
+error_log("ARSOL DEBUG: Request sidebar - Post ID: $post_id, Post Type: $post_type, Status: '$status', CPT: $cpt");
+error_log("ARSOL DEBUG: Request sidebar - Original project_id: $project_id, project_type: $project_type, current_status: '$current_status'");
+
 ?>
 
 <div class="project-sidebar sidebar-request">
