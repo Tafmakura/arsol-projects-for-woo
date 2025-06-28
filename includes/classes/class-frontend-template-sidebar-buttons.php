@@ -88,8 +88,16 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $status The current status
      */
     private function add_proposal_buttons($post_id, $status) {
-        // Approve button (for pending-approval status)
+        error_log("ARSOL DEBUG: add_proposal_buttons called - Status: '$status', Post ID: $post_id");
+        
+        // Test button - always show to verify hook is working
+        echo '<div class="button-item button-test">';
+        echo '<button class="button button-secondary">TEST: Status is "' . esc_html($status) . '"</button>';
+        echo '</div>';
+        
+        // Show approve/reject buttons for pending-approval status
         if ($status === 'pending-approval') {
+            error_log("ARSOL DEBUG: Adding approve/reject buttons for pending-approval status");
             $approve_url = wp_nonce_url(
                 admin_url('admin-post.php?action=arsol_approve_proposal&proposal_id=' . $post_id),
                 'arsol_approve_proposal_nonce'
@@ -101,10 +109,7 @@ class Frontend_Template_Sidebar_Buttons {
             echo esc_html__('Approve Proposal', 'arsol-pfw');
             echo '</a>';
             echo '</div>';
-        }
 
-        // Reject button (for pending-approval status)  
-        if ($status === 'pending-approval') {
             $reject_url = wp_nonce_url(
                 admin_url('admin-post.php?action=arsol_reject_proposal&proposal_id=' . $post_id),
                 'arsol_reject_proposal_nonce'
@@ -115,6 +120,31 @@ class Frontend_Template_Sidebar_Buttons {
             echo 'onclick="return confirm(\'' . esc_js__('Are you sure you want to reject this proposal?', 'arsol-pfw') . '\')">';
             echo esc_html__('Reject Proposal', 'arsol-pfw');
             echo '</a>';
+            echo '</div>';
+        }
+        
+        // Show different buttons for other statuses (for testing)
+        if ($status === 'processing') {
+            echo '<div class="button-item button-processing">';
+            echo '<button class="button button-primary">Processing Status Button</button>';
+            echo '</div>';
+        }
+        
+        if ($status === 'approved') {
+            echo '<div class="button-item button-approved">';
+            echo '<button class="button button-success">View Project</button>';
+            echo '</div>';
+        }
+        
+        if ($status === 'rejected') {
+            echo '<div class="button-item button-rejected">';
+            echo '<button class="button button-secondary">Request Revision</button>';
+            echo '</div>';
+        }
+        
+        if (empty($status)) {
+            echo '<div class="button-item button-no-status">';
+            echo '<button class="button button-warning">No Status Set</button>';
             echo '</div>';
         }
     }

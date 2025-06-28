@@ -16,6 +16,10 @@ $cpt = 'proposal'; // Internal CPT identifier
 // Get current status
 $status_terms = wp_get_post_terms($post_id, 'arsol-proposal-status');
 $status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0]->slug : '';
+
+error_log("ARSOL DEBUG: Proposal sidebar - Post ID: $post_id, Status terms: " . print_r($status_terms, true) . ", Final status: '$status'");
+
+error_log("ARSOL DEBUG: Proposal sidebar - Post ID: $post_id, Status terms: " . print_r($status_terms, true) . ", Final status: '$status'");
 ?>
 
 <div class="arsol-pfw-project-sidebar">
