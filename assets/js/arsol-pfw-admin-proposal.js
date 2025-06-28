@@ -1179,20 +1179,23 @@
 
     // Initialize when DOM is ready
     $(document).ready(function() {
-        // Initialize all systems
-        ArsolProposal.init();
-        
-        // Initialize quotation system if it exists
-        if ($('#proposal_quotation_builder').length > 0) {
-            ArsolProposalQuotation.init();
+        // Only initialize on proposal admin pages
+        if ($('body').hasClass('post-type-arsol-pfw-proposal') || $('#proposal_details').length > 0) {
+            // Initialize all systems
+            ArsolProposal.init();
+            
+            // Initialize quotation system if it exists
+            if ($('#proposal_quotation_builder').length > 0) {
+                ArsolProposalQuotation.init();
+            }
+            
+            // Initialize budget system if it exists
+            if ($('#proposal_budget_builder').length > 0) {
+                ArsolBudget.init();
+            }
         }
         
-        // Initialize budget system if it exists
-        if ($('#proposal_budget_builder').length > 0) {
-            ArsolBudget.init();
-        }
-        
-        // Handle conversion confirmation for proposals and creation for projects
+        // Handle conversion confirmation for proposals and creation for projects (global)
         $(document).on('click', '.arsol-confirm-conversion', function(e) {
             e.preventDefault();
             
@@ -1204,20 +1207,30 @@
                 return false;
             }
             
-            // Use shared validation function
-            if (!ArsolProposal.validateFormAndConfirm(message)) {
+            // Check if we're on a proposal page for validation
+            if ($('body').hasClass('post-type-arsol-pfw-proposal') || $('#proposal_details').length > 0) {
+                // Use shared validation function
+                if (!ArsolProposal.validateFormAndConfirm(message)) {
+                        return false;
+                }
+                
+                // Use shared submission function
+                ArsolProposal.submitFormWithRedirect('arsol_convert_after_save', url);
+            } else {
+                // Non-proposal page, use basic confirmation and redirect
+                if (!confirm(message)) {
                     return false;
+                }
+                
+                var $form = $('#post');
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'arsol_convert_after_save',
+                    value: url
+                }).appendTo($form);
+                
+                $form.submit();
             }
-            
-            // Determine if this is a proposal conversion or project creation
-            var hiddenInputName = 'arsol_convert_after_save'; // Default for proposals
-            if ($('#project_status').length || $button.closest('#project_details_meta_box').length) {
-                // This is a project page - use create instead of convert
-                hiddenInputName = 'arsol_create_after_save';
-            }
-            
-            // Use shared submission function
-            ArsolProposal.submitFormWithRedirect(hiddenInputName, url);
             
             return false;
         });
