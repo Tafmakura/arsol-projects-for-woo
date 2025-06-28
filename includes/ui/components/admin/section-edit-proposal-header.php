@@ -122,7 +122,7 @@ if ($has_request_data) {
             // Display project relationship if this is a project-tied proposal
             if ($is_project_tied && $parent_project_data) {
                 echo '<p class="order_number">';
-                printf(__('Parent Project: %s', 'arsol-projects-for-woo'), esc_html($parent_project_data['title']));
+                printf(__('Parent Project: %s', 'arsol-pfw'), esc_html($parent_project_data['title']));
                 echo '</p>';
             }
             ?>

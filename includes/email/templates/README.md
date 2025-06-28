@@ -124,7 +124,7 @@ add_filter('arsol_email_template_vars', function($vars, $email_id) {
 
 ### Template Override
 To override templates in your theme:
-1. Create directory: `your-theme/arsol-projects-for-woo/emails/`
+1. Create directory: `your-theme/arsol-pfw/emails/`
 2. Copy template file to this directory
 3. Modify as needed - the plugin will use your version
 

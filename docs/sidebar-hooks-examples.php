@@ -33,11 +33,11 @@ function add_project_progress_bar($type, $data) {
         $progress = max(0, min(100, intval($progress))); // Ensure 0-100 range
         ?>
         <div class="project-progress-section">
-            <p><strong><?php _e('Progress:', 'your-textdomain'); ?></strong></p>
+            <p><strong><?php _e('Progress:', 'arsol-pfw'); ?></strong></p>
             <div class="progress-bar-container" style="background: #f1f1f1; border-radius: 4px; height: 20px; overflow: hidden;">
                 <div class="progress-bar-fill" style="background: #2196F3; height: 100%; width: <?php echo $progress; ?>%; transition: width 0.3s ease;"></div>
             </div>
-            <small style="color: #666;"><?php echo $progress; ?>% <?php _e('Complete', 'your-textdomain'); ?></small>
+            <small style="color: #666;"><?php echo $progress; ?>% <?php _e('Complete', 'arsol-pfw'); ?></small>
         </div>
         <?php
     }
@@ -118,10 +118,10 @@ function add_active_project_tools($data) {
     $edit_url = get_edit_post_link($project_id);
     ?>
     <div class="active-project-tools">
-        <h4><?php _e('Quick Actions', 'your-textdomain'); ?></h4>
+        <h4><?php _e('Quick Actions', 'arsol-pfw'); ?></h4>
         <?php if ($edit_url) : ?>
             <a href="<?php echo esc_url($edit_url); ?>" class="button button-small">
-                <?php _e('Edit Project', 'your-textdomain'); ?>
+                <?php _e('Edit Project', 'arsol-pfw'); ?>
             </a>
         <?php endif; ?>
     </div>
@@ -131,16 +131,16 @@ function add_active_project_tools($data) {
 function add_proposal_actions($data) {
     $proposal_id = $data['proposal_id'];
     echo '<div class="proposal-actions">';
-    echo '<h4>' . __('Proposal Actions', 'your-textdomain') . '</h4>';
-    echo '<p><small>' . sprintf(__('Proposal ID: %d', 'your-textdomain'), $proposal_id) . '</small></p>';
+    echo '<h4>' . __('Proposal Actions', 'arsol-pfw') . '</h4>';
+    echo '<p><small>' . sprintf(__('Proposal ID: %d', 'arsol-pfw'), $proposal_id) . '</small></p>';
     echo '</div>';
 }
 
 function add_request_status($data) {
     $request_id = $data['request_id'];
     echo '<div class="request-status">';
-    echo '<h4>' . __('Request Status', 'your-textdomain') . '</h4>';
-    echo '<p><small>' . sprintf(__('Request ID: %d', 'your-textdomain'), $request_id) . '</small></p>';
+    echo '<h4>' . __('Request Status', 'arsol-pfw') . '</h4>';
+    echo '<p><small>' . sprintf(__('Request ID: %d', 'arsol-pfw'), $request_id) . '</small></p>';
     echo '</div>';
 }
 
@@ -173,7 +173,7 @@ function add_enhanced_active_info($type, $data) {
         ];
         $color = $priority_colors[$priority] ?? '#666';
         
-        echo '<p><strong>' . __('Priority:', 'your-textdomain') . '</strong> ';
+        echo '<p><strong>' . __('Priority:', 'arsol-pfw') . '</strong> ';
         echo '<span style="background: ' . $color . '; color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px;">';
         echo esc_html(strtoupper($priority));
         echo '</span></p>';
@@ -181,13 +181,13 @@ function add_enhanced_active_info($type, $data) {
     
     // Client information
     if ($client) {
-        echo '<p><strong>' . __('Client:', 'your-textdomain') . '</strong> ' . esc_html($client) . '</p>';
+        echo '<p><strong>' . __('Client:', 'arsol-pfw') . '</strong> ' . esc_html($client) . '</p>';
     }
     
     // Team members
     if ($team_members && is_array($team_members)) {
         echo '<div class="team-members">';
-        echo '<p><strong>' . __('Team Members:', 'your-textdomain') . '</strong></p>';
+        echo '<p><strong>' . __('Team Members:', 'arsol-pfw') . '</strong></p>';
         echo '<ul style="margin: 0; padding-left: 20px;">';
         foreach ($team_members as $user_id) {
             $user = get_userdata($user_id);
@@ -206,8 +206,8 @@ function add_enhanced_active_info($type, $data) {
         $duration_days = round(($end - $start) / DAY_IN_SECONDS);
         
         if ($duration_days > 0) {
-            echo '<p><strong>' . __('Duration:', 'your-textdomain') . '</strong> ';
-            echo sprintf(_n('%d day', '%d days', $duration_days, 'your-textdomain'), $duration_days);
+            echo '<p><strong>' . __('Duration:', 'arsol-pfw') . '</strong> ';
+            echo sprintf(_n('%d day', '%d days', $duration_days, 'arsol-pfw'), $duration_days);
             echo '</p>';
         }
     }
@@ -280,8 +280,8 @@ function add_role_specific_content($type, $data) {
         
         if ($post_id) {
             echo '<div class="admin-info" style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 8px; margin-bottom: 10px; border-radius: 3px; font-size: 12px;">';
-            echo '<strong>' . __('Admin Info:', 'your-textdomain') . '</strong> ';
-            echo sprintf(__('%s ID: %d', 'your-textdomain'), ucfirst($type), $post_id);
+            echo '<strong>' . __('Admin Info:', 'arsol-pfw') . '</strong> ';
+            echo sprintf(__('%s ID: %d', 'arsol-pfw'), ucfirst($type), $post_id);
             echo '</div>';
         }
     }
@@ -315,15 +315,15 @@ function add_time_tracking_widget($type, $data) {
         $total_cost = $hourly_rate ? $total_hours * floatval($hourly_rate) : 0;
         
         echo '<div class="time-tracking-widget" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">';
-        echo '<h4 style="margin: 0 0 8px 0; font-size: 14px;">' . __('Time Tracking', 'your-textdomain') . '</h4>';
+        echo '<h4 style="margin: 0 0 8px 0; font-size: 14px;">' . __('Time Tracking', 'arsol-pfw') . '</h4>';
         echo '<p style="margin: 5px 0;">';
-        echo '<strong>' . __('Time Spent:', 'your-textdomain') . '</strong> ';
-        echo number_format($total_hours, 1) . ' ' . __('hours', 'your-textdomain');
+        echo '<strong>' . __('Time Spent:', 'arsol-pfw') . '</strong> ';
+        echo number_format($total_hours, 1) . ' ' . __('hours', 'arsol-pfw');
         echo '</p>';
         
         if ($total_cost > 0) {
             echo '<p style="margin: 5px 0;">';
-            echo '<strong>' . __('Cost:', 'your-textdomain') . '</strong> ';
+            echo '<strong>' . __('Cost:', 'arsol-pfw') . '</strong> ';
             echo wc_price($total_cost);
             echo '</p>';
         }
@@ -348,9 +348,9 @@ function add_custom_fields_optimized($type, $data) {
     $meta = get_post_meta($project_id);
     
     $custom_fields = [
-        '_project_category' => __('Category', 'your-textdomain'),
-        '_project_complexity' => __('Complexity', 'your-textdomain'),
-        '_project_estimated_hours' => __('Est. Hours', 'your-textdomain'),
+        '_project_category' => __('Category', 'arsol-pfw'),
+        '_project_complexity' => __('Complexity', 'arsol-pfw'),
+        '_project_estimated_hours' => __('Est. Hours', 'arsol-pfw'),
     ];
     
     $has_custom_fields = false;
@@ -363,7 +363,7 @@ function add_custom_fields_optimized($type, $data) {
     
     if ($has_custom_fields) {
         echo '<div class="custom-fields-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">';
-        echo '<h4 style="margin: 0 0 8px 0; font-size: 14px;">' . __('Additional Info', 'your-textdomain') . '</h4>';
+        echo '<h4 style="margin: 0 0 8px 0; font-size: 14px;">' . __('Additional Info', 'arsol-pfw') . '</h4>';
         
         foreach ($custom_fields as $key => $label) {
             $value = $meta[$key][0] ?? '';
@@ -373,7 +373,7 @@ function add_custom_fields_optimized($type, $data) {
                 
                 // Special formatting for estimated hours
                 if ($key === '_project_estimated_hours') {
-                    echo number_format(floatval($value), 1) . ' ' . __('hours', 'your-textdomain');
+                    echo number_format(floatval($value), 1) . ' ' . __('hours', 'arsol-pfw');
                 } else {
                     echo esc_html($value);
                 }
@@ -418,7 +418,7 @@ function add_universal_attachments($type, $data) {
     
     if ($attachments && is_array($attachments)) {
         echo '<div class="attachments-section" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">';
-        echo '<h4 style="margin: 0 0 8px 0; font-size: 14px;">' . __('Attachments', 'your-textdomain') . '</h4>';
+        echo '<h4 style="margin: 0 0 8px 0; font-size: 14px;">' . __('Attachments', 'arsol-pfw') . '</h4>';
         echo '<ul style="margin: 0; padding: 0; list-style: none;">';
         
         foreach ($attachments as $attachment_id) {

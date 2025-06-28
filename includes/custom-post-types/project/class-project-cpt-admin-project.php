@@ -38,7 +38,7 @@ class Project {
         // Prepare Create Proposal button data
         $create_url = admin_url('post-new.php?post_type=arsol-pfw-proposal&parent_project=' . $post->ID);
         $create_url = wp_nonce_url($create_url, 'arsol_create_proposal_nonce');
-        $confirm_message = esc_js(__('This will save the current project and create a new proposal based on this project. Continue?', 'arsol-projects-for-woo'));
+        $confirm_message = esc_js(__('This will save the current project and create a new proposal based on this project. Continue?', 'arsol-pfw'));
         ?>
         <div class="project-details">
             <!-- Main content area for any future project-specific content -->
@@ -46,9 +46,9 @@ class Project {
         
         <div class="major-actions">
             <?php if ($post->post_status === 'publish'): ?>
-                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-projects-for-woo'); ?>">
+                <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
             <?php else: ?>
-                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-projects-for-woo'); ?>">
+                <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
             <?php endif; ?>
             
             <!-- Secondary Action Button -->
@@ -56,7 +56,7 @@ class Project {
                    id="create-proposal" 
                    name="create_proposal" 
                    class="button button-secondary arsol-confirm-conversion" 
-                   value="<?php _e('Create Proposal', 'arsol-projects-for-woo'); ?>" 
+                   value="<?php _e('Create Proposal', 'arsol-pfw'); ?>" 
                    data-url="<?php echo esc_url($create_url); ?>" 
                    data-message="<?php echo $confirm_message; ?>">
         </div>
@@ -154,8 +154,8 @@ class Project {
         
         if (!empty($tied_proposals)) {
             wp_die(
-                __('Cannot delete project with tied proposals. Please delete or untie proposals first.', 'arsol-projects-for-woo'),
-                __('Project Deletion Prevented', 'arsol-projects-for-woo'),
+                __('Cannot delete project with tied proposals. Please delete or untie proposals first.', 'arsol-pfw'),
+                __('Project Deletion Prevented', 'arsol-pfw'),
                 array('back_link' => true)
             );
         }

@@ -9,7 +9,7 @@
         // Initialize checkout field interactions
         if ($('form.woocommerce-checkout').length) {
             // Add custom validation or behavior for the project field
-            $('select[name="arsol-projects-for-woo/project"]').on('change', function() {
+            $('select[name="arsol-pfw/project"]').on('change', function() {
                 console.log('Project selected:', $(this).val());
                 // Additional validation logic here if needed
             });

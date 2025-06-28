@@ -74,7 +74,7 @@ User Request → Template → Setup_Defaults::get_effective_default_message()
 ## File Structure
 
 ```
-arsol-projects-for-woo/
+arsol-pfw/
 ├── includes/
 │   ├── classes/
 │   │   ├── class-admin-settings-advanced.php    # Admin interface

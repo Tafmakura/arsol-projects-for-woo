@@ -455,7 +455,7 @@ jQuery(document).ready(function($) {
 // Project relationship display
 if ($is_project_tied && $parent_project_data) {
     echo '<p class="order_number">';
-    printf(__('Parent Project: %s', 'arsol-projects-for-woo'), esc_html($parent_project_data['title']));
+    printf(__('Parent Project: %s', 'arsol-pfw'), esc_html($parent_project_data['title']));
     echo '</p>';
 }
 ```

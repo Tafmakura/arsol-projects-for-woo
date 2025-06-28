@@ -265,7 +265,7 @@ class Proposal {
                    class="button button-secondary" 
                    target="_blank" 
                    rel="noopener noreferrer">
-                    <?php _e('View Project', 'arsol-projects-for-woo'); ?>
+                    <?php _e('View Project', 'arsol-pfw'); ?>
                 </a>
                 <?php
             } else {
@@ -791,7 +791,7 @@ class Proposal {
         
         // Verify nonce
         if (!isset($_GET['_wpnonce']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_create_proposal_nonce')) {
-            wp_die(__('Security check failed.', 'arsol-projects-for-woo'));
+            wp_die(__('Security check failed.', 'arsol-pfw'));
         }
         
         $parent_project_id = intval($_GET['parent_project']);
@@ -799,11 +799,11 @@ class Proposal {
         // Verify parent project exists and user can access it
         $parent_project = get_post($parent_project_id);
         if (!$parent_project || $parent_project->post_type !== 'arsol-pfw-project') {
-            wp_die(__('Invalid project.', 'arsol-projects-for-woo'));
+            wp_die(__('Invalid project.', 'arsol-pfw'));
         }
         
         if (!current_user_can('edit_post', $parent_project_id)) {
-            wp_die(__('You do not have permission to create proposals from this project.', 'arsol-projects-for-woo'));
+            wp_die(__('You do not have permission to create proposals from this project.', 'arsol-pfw'));
         }
         
         // Store parent project info for success message and proposal creation
@@ -845,8 +845,7 @@ class Proposal {
         
         echo '<div class="notice notice-success is-dismissible">';
         echo '<p>' . sprintf(
-            __('This proposal has been created based on project "%s". You can <a href="%s">return to the project</a> or continue editing this proposal.', 'arsol-projects-for-woo'),
-            $parent_project_title,
+            __('Proposal successfully created from project. <a href="%s">View proposal</a> or continue editing this proposal.', 'arsol-pfw'),
             esc_url($parent_project_url)
         ) . '</p>';
         echo '</div>';

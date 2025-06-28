@@ -33,11 +33,11 @@ This document outlines the complete implementation strategy for project-tied pro
 #### Header Display Pattern
 ```php
 // Location: includes/ui/components/admin/section-edit-proposal-header.php
-<h2><?php printf(__('Proposal #%d details', 'arsol-projects-for-woo'), $proposal_id); ?></h2>
+<h2><?php printf(__('Proposal #%d details', 'arsol-pfw'), $proposal_id); ?></h2>
 
 <?php if ($is_project_tied): ?>
     <p class="order_number">
-        <?php printf(__('For Project: %s', 'arsol-projects-for-woo'), esc_html($parent_project->post_title)); ?>
+        <?php printf(__('For Project: %s', 'arsol-pfw'), esc_html($parent_project->post_title)); ?>
     </p>
 <?php endif; ?>
 ```
@@ -80,7 +80,7 @@ This document outlines the complete implementation strategy for project-tied pro
 <input type="button" class="button button-secondary arsol-view-project" 
        data-url="<?php echo esc_url($view_project_url); ?>" 
        data-message="<?php echo esc_attr($confirm_message); ?>" 
-       value="<?php esc_attr_e('View Project', 'arsol-projects-for-woo'); ?>">
+       value="<?php esc_attr_e('View Project', 'arsol-pfw'); ?>">
 ```
 
 #### JavaScript Behavior
@@ -120,7 +120,7 @@ public function prevent_project_deletion_with_proposals($post_id) {
     ));
     
     if (!empty($tied_proposals)) {
-        wp_die(__('Cannot delete project with tied proposals.', 'arsol-projects-for-woo'));
+        wp_die(__('Cannot delete project with tied proposals.', 'arsol-pfw'));
     }
 }
 ```
@@ -160,7 +160,7 @@ if ($is_project_tied) {
 ```php
 // In proposal list table class
 public function add_project_column($columns) {
-    $columns['project'] = __('Project', 'arsol-projects-for-woo');
+    $columns['project'] = __('Project', 'arsol-pfw');
     return $columns;
 }
 

@@ -4,7 +4,7 @@
 
 ### **1. Removed Sidebar Fields Class**
 - ✅ **Deleted**: `includes/classes/class-frontend-template-sidebar-fields.php`
-- ✅ **Removed from main plugin**: Removed import and instantiation from `arsol-projects-for-woo.php`
+- ✅ **Removed from main plugin**: Removed import and instantiation from `arsol-pfw.php`
 - ✅ **Cleaned up**: Removed all form-related logic from sidebar templates
 
 ### **2. Implemented Object-Oriented Variable Architecture**
