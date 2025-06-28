@@ -144,7 +144,7 @@ class Setup {
             'show_in_menu'      => false,        // Hide from menus
         );
 
-        register_taxonomy('arsol-request-status', 'arsol-pfw-request', $args);
+        register_taxonomy('arsol-pfw-request-status', 'arsol-pfw-request', $args);
     }
 
     /**
@@ -159,8 +159,8 @@ class Setup {
         );
 
         foreach ($default_statuses as $slug => $name) {
-            if (!term_exists($slug, 'arsol-request-status')) {
-                wp_insert_term($name, 'arsol-request-status', array('slug' => $slug));
+            if (!term_exists($slug, 'arsol-pfw-request-status')) {
+                wp_insert_term($name, 'arsol-pfw-request-status', array('slug' => $slug));
             }
         }
     }
@@ -208,7 +208,7 @@ class Setup {
      * Protect core request status terms from deletion
      */
     public function protect_core_request_statuses($term_id, $taxonomy) {
-        if ($taxonomy === 'arsol-request-status') {
+        if ($taxonomy === 'arsol-pfw-request-status') {
             $term = get_term($term_id);
             $protected_slugs = array('on-hold', 'approved');
             

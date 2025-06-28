@@ -140,7 +140,7 @@ class Setup {
             'meta_box_cb'       => false,
         );
 
-        register_taxonomy('arsol-proposal-status', 'arsol-pfw-proposal', $args);
+        register_taxonomy('arsol-pfw-proposal-status', 'arsol-pfw-proposal', $args);
     }
 
     /**
@@ -155,8 +155,8 @@ class Setup {
         );
 
         foreach ($default_statuses as $slug => $name) {
-            if (!term_exists($slug, 'arsol-proposal-status')) {
-                wp_insert_term($name, 'arsol-proposal-status', array('slug' => $slug));
+            if (!term_exists($slug, 'arsol-pfw-proposal-status')) {
+                wp_insert_term($name, 'arsol-pfw-proposal-status', array('slug' => $slug));
             }
         }
     }
@@ -290,7 +290,7 @@ class Setup {
         
         // Save proposal status
         if (isset($_POST['proposal_status'])) {
-            wp_set_object_terms($post_id, sanitize_text_field($_POST['proposal_status']), 'arsol-proposal-status', false);
+            wp_set_object_terms($post_id, sanitize_text_field($_POST['proposal_status']), 'arsol-pfw-proposal-status', false);
         }
         
         // Save project lead

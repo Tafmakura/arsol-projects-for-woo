@@ -124,7 +124,7 @@ class Workflow_Handler {
             update_post_meta($request_id, '_arsol_conversion_step', 'validation');
 
         // Server-side validation of the request status
-        $current_status = wp_get_object_terms($request_id, 'arsol-request-status', array('fields' => 'slugs'));
+        $current_status = wp_get_object_terms($request_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
         if (empty($current_status) || $current_status[0] !== 'approved') {
                 throw new Exception(sprintf(
                     __('This request cannot be converted. The status is "%s", must be "approved".', 'arsol-pfw'),
@@ -282,7 +282,7 @@ class Workflow_Handler {
         }
         
         // 4. Set proposal status to pending-approval
-        wp_set_object_terms($proposal_id, 'pending-approval', 'arsol-proposal-status');
+        wp_set_object_terms($proposal_id, 'pending-approval', 'arsol-pfw-proposal-status');
         
         // 5. Copy custom fields and taxonomies
         $custom_fields = get_post_meta($request_id);
@@ -373,7 +373,7 @@ class Workflow_Handler {
             update_post_meta($proposal_id, '_arsol_conversion_step', 'validation');
 
             // Server-side validation: Check proposal status
-            $proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'slugs'));
+            $proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
             $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
 
             if ($current_proposal_status !== 'approved') {
@@ -673,7 +673,7 @@ class Workflow_Handler {
         $proposal_id = intval($_GET['proposal_id']);
         if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
             // Set the proposal status to 'approved' before conversion
-            wp_set_object_terms($proposal_id, 'approved', 'arsol-proposal-status');
+            wp_set_object_terms($proposal_id, 'approved', 'arsol-pfw-proposal-status');
             
             // Re-use the conversion logic
             $this->convert_proposal_to_project($proposal_id, true);
@@ -689,7 +689,7 @@ class Workflow_Handler {
 
         $proposal_id = intval($_GET['proposal_id']);
         if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
-            wp_set_object_terms($proposal_id, 'rejected', 'arsol-proposal-status');
+            wp_set_object_terms($proposal_id, 'rejected', 'arsol-pfw-proposal-status');
             $this->safe_redirect(wp_get_referer());
         } else {
             wp_die(__('You do not have permission to reject this proposal.', 'arsol-pfw'));
@@ -790,7 +790,7 @@ class Workflow_Handler {
          */
         do_action('arsol_before_request_creation_status_assignment', $post_id, 'pending-review', $creation_data);
 
-        wp_set_object_terms($post_id, 'pending-review', 'arsol-request-status');
+        wp_set_object_terms($post_id, 'pending-review', 'arsol-pfw-request-status');
 
         /**
          * Hook: arsol_after_request_creation_status_assigned

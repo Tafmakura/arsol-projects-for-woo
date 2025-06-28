@@ -78,12 +78,12 @@ elseif ($proposal_id > 0) {
 }
 
 // Get status terms
-$proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-proposal-status', array('fields' => 'slugs'));
+$proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
 $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : 'processing';
 
 // Get all available statuses
 $all_proposal_statuses = get_terms(array(
-    'taxonomy' => 'arsol-proposal-status',
+    'taxonomy' => 'arsol-pfw-proposal-status',
     'hide_empty' => false,
 ));
 ?>

@@ -28,7 +28,7 @@ class Proposal {
     public function set_proposal_review_status($new_status, $old_status, $post) {
         if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
             // Set the review status to 'pending-approval'
-            wp_set_object_terms($post->ID, 'pending-approval', 'arsol-proposal-status');
+            wp_set_object_terms($post->ID, 'pending-approval', 'arsol-pfw-proposal-status');
         }
     }
 
@@ -271,7 +271,7 @@ class Proposal {
             } else {
                 // Show Convert to Project button for regular proposals
             // Check proposal status for conversion eligibility
-            $proposal_status_terms = wp_get_object_terms($post->ID, 'arsol-proposal-status', array('fields' => 'slugs'));
+            $proposal_status_terms = wp_get_object_terms($post->ID, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
             $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
             
             $is_not_published = $post->post_status !== 'publish';
@@ -577,6 +577,7 @@ class Proposal {
                 update_post_meta($post_id, '_arsol_pfw_proposal_pending_approval_feedback', $feedback);
             }
         }
+
     }
     
     /**

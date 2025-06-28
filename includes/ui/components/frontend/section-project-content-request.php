@@ -8,7 +8,7 @@ $request_budget = get_post_meta($post->ID, '_arsol_pfw_request_budget', true);
 $request_timeline = get_post_meta($post->ID, '_arsol_pfw_request_timeline', true);
 $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
-$status_terms = wp_get_post_terms($post->ID, 'arsol-request-status', ['fields' => 'slugs']);
+$status_terms = wp_get_post_terms($post->ID, 'arsol-pfw-request-status', ['fields' => 'slugs']);
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
 
 do_action('arsol_projects_before_request_state', $post->ID);

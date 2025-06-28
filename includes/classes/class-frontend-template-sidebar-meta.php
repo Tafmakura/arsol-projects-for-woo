@@ -454,8 +454,8 @@ class Frontend_Template_Sidebar_Meta {
         
         $taxonomy_map = array(
             'arsol-pfw-project' => 'arsol-pfw-project-status',
-            'arsol-pfw-proposal' => 'arsol-proposal-status', 
-            'arsol-pfw-request' => 'arsol-request-status'
+            'arsol-pfw-proposal' => 'arsol-pfw-proposal-status', 
+            'arsol-pfw-request' => 'arsol-pfw-request-status'
         );
         
         if (!isset($taxonomy_map[$wp_post_type])) {
@@ -499,8 +499,8 @@ class Frontend_Template_Sidebar_Meta {
             $wp_post_type = get_post_type($post_id);
             $taxonomy_map = array(
                 'arsol-pfw-project' => 'arsol-pfw-project-status',
-                'arsol-pfw-proposal' => 'arsol-proposal-status', 
-                'arsol-pfw-request' => 'arsol-request-status'
+                'arsol-pfw-proposal' => 'arsol-pfw-proposal-status', 
+                'arsol-pfw-request' => 'arsol-pfw-request-status'
             );
             
             if (isset($taxonomy_map[$wp_post_type])) {
@@ -512,7 +512,7 @@ class Frontend_Template_Sidebar_Meta {
         }
 
         // Fallback: try to get the term from all possible taxonomies
-        $taxonomies = array('arsol-pfw-project-status', 'arsol-proposal-status', 'arsol-request-status');
+        $taxonomies = array('arsol-pfw-project-status', 'arsol-pfw-proposal-status', 'arsol-pfw-request-status');
         
         foreach ($taxonomies as $taxonomy) {
             $term = get_term_by('slug', $status, $taxonomy);

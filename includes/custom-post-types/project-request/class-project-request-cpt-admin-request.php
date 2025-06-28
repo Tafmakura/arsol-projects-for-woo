@@ -38,7 +38,7 @@ class Request {
         wp_nonce_field('request_details_meta_box', 'request_details_meta_box_nonce');
 
         // Get current values
-        $current_status = wp_get_object_terms($post->ID, 'arsol-request-status', array('fields' => 'slugs'));
+        $current_status = wp_get_object_terms($post->ID, 'arsol-pfw-request-status', array('fields' => 'slugs'));
         $current_status = !empty($current_status) ? $current_status[0] : 'pending';
         ?>
         <p class="request-conversion-description">
@@ -226,7 +226,7 @@ class Request {
 
         // Save request status from column 1
         if (isset($_POST['request_status'])) {
-            wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-request-status', false);
+            wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-pfw-request-status', false);
         }
         
         // Save feedback for all three metaboxes
@@ -250,7 +250,7 @@ class Request {
         // Handle conversion after save (WordPress-native approach)
         if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
             // Check if request is in approved status for conversion
-            $current_status = wp_get_object_terms($post_id, 'arsol-request-status', array('fields' => 'slugs'));
+            $current_status = wp_get_object_terms($post_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
             $current_status = !empty($current_status) ? $current_status[0] : '';
             
             if ($current_status === 'approved') {

@@ -314,7 +314,7 @@ class Setup_Defaults {
      * Initialize default request statuses
      */
     private function initialize_request_statuses() {
-        $taxonomy = 'arsol-request-status';
+        $taxonomy = 'arsol-pfw-request-status';
         
         $default_statuses = array(
             'pending' => array(
@@ -362,7 +362,7 @@ class Setup_Defaults {
      * Initialize default proposal statuses
      */
     private function initialize_proposal_statuses() {
-        $taxonomy = 'arsol-proposal-status';
+        $taxonomy = 'arsol-pfw-proposal-status';
         
         $default_statuses = array(
             'draft' => array(

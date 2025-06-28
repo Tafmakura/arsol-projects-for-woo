@@ -41,7 +41,7 @@ class Frontend_Handler {
         }
 
         // Get proposal status
-        $status_terms = get_the_terms($post->ID, 'arsol-proposal-status');
+        $status_terms = get_the_terms($post->ID, 'arsol-pfw-proposal-status');
         $status = $status_terms && !is_wp_error($status_terms) ? $status_terms[0]->slug : 'processing';
 
         // Display status-specific messages in content section
@@ -238,7 +238,7 @@ class Frontend_Handler {
         do_action('arsol_before_proposal_creation_status_assignment', $proposal_id, 'processing', $creation_data);
 
         // Set default proposal status
-        wp_set_object_terms($proposal_id, 'processing', 'arsol-proposal-status');
+        wp_set_object_terms($proposal_id, 'processing', 'arsol-pfw-proposal-status');
 
         /**
          * Hook: arsol_after_proposal_creation_status_assigned

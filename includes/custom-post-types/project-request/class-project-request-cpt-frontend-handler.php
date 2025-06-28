@@ -41,7 +41,7 @@ class Frontend_Handler {
         }
 
         // Get request status
-        $status_terms = get_the_terms($post->ID, 'arsol-request-status');
+        $status_terms = get_the_terms($post->ID, 'arsol-pfw-request-status');
         $status = $status_terms && !is_wp_error($status_terms) ? $status_terms[0]->slug : 'pending-review';
 
         // Display status-specific messages in content section
@@ -127,7 +127,7 @@ class Frontend_Handler {
         
         if (!is_wp_error($request_id)) {
             // Set default request status to 'pending-review'
-            wp_set_object_terms($request_id, 'pending-review', 'arsol-request-status');
+            wp_set_object_terms($request_id, 'pending-review', 'arsol-pfw-request-status');
             
             // Save additional request meta
             if (!empty($budget)) {

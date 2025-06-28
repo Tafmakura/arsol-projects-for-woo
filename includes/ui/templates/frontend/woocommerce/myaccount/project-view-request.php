@@ -53,7 +53,7 @@ $current_status = '';
 
 // Set project type for hook compatibility - use actual CPT slug
 $project_type = $request_post->post_type; // 'arsol-pfw-request'
-$status_terms = wp_get_object_terms($project_id, 'arsol-request-status', array('fields' => 'slugs'));
+$status_terms = wp_get_object_terms($project_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
 
 // Prepare comprehensive data for efficient hook usage

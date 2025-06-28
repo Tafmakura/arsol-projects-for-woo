@@ -361,7 +361,7 @@ class Frontend_Endpoints {
         $current_tab = 'proposal';
 
         // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_proposal_id, 'arsol-proposal-status', array('fields' => 'slugs'));
+        $statuses = wp_get_object_terms($project_proposal_id, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
         $current_status = !empty($statuses) ? $statuses[0] : '';
 
         // Prepare comprehensive data for efficient hook usage
@@ -412,7 +412,7 @@ class Frontend_Endpoints {
         $current_tab = 'request';
 
         // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_request_id, 'arsol-request-status', array('fields' => 'slugs'));
+        $statuses = wp_get_object_terms($project_request_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
         $current_status = !empty($statuses) ? $statuses[0] : '';
 
         // Prepare comprehensive data for efficient hook usage

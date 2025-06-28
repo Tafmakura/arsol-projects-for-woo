@@ -10,7 +10,7 @@ $related_request_id = get_post_meta($post->ID, '_arsol_pfw_proposal_request_id',
 $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
 // Get proposal status to determine which message to show
-$status_terms = get_the_terms($post->ID, 'arsol-proposal-status');
+$status_terms = get_the_terms($post->ID, 'arsol-pfw-proposal-status');
 $status = $status_terms && !is_wp_error($status_terms) ? $status_terms[0]->slug : 'processing';
 
 // Determine the message to display with proper hierarchy: Custom Feedback → Settings Defaults → Plugin Defaults

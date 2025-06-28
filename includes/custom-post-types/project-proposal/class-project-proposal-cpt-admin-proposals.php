@@ -44,7 +44,7 @@ class Proposals {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'proposal_status':
-                $status = wp_get_object_terms($post_id, 'arsol-proposal-status', array('fields' => 'names'));
+                $status = wp_get_object_terms($post_id, 'arsol-pfw-proposal-status', array('fields' => 'names'));
                 if (!empty($status) && !is_wp_error($status)) {
                     echo esc_html($status[0]);
                 }
@@ -92,7 +92,7 @@ class Proposals {
         if ($typenow === 'arsol-pfw-proposal') {
             // Status filter
             $current_status = isset($_GET['proposal_status']) ? $_GET['proposal_status'] : '';
-            $statuses = get_terms('arsol-proposal-status', array('hide_empty' => false));
+            $statuses = get_terms('arsol-pfw-proposal-status', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
                 echo '<select name="proposal_status" id="filter-by-proposal-status" class="postform status-filter-dropdown">';
                 echo '<option value="">' . __('All Statuses', 'arsol-pfw') . '</option>';
@@ -168,7 +168,7 @@ class Proposals {
             if (!empty($_GET['proposal_status'])) {
                 $tax_query = $query->get('tax_query') ?: [];
                 $tax_query[] = [
-                    'taxonomy' => 'arsol-proposal-status',
+                    'taxonomy' => 'arsol-pfw-proposal-status',
                     'field'    => 'slug',
                     'terms'    => sanitize_text_field($_GET['proposal_status']),
                 ];
@@ -206,7 +206,7 @@ class Proposals {
         $status = $valid_actions[$doaction];
         
         foreach ($post_ids as $post_id) {
-            wp_set_object_terms($post_id, $status, 'arsol-proposal-status', false);
+            wp_set_object_terms($post_id, $status, 'arsol-pfw-proposal-status', false);
         }
 
         $redirect_to = add_query_arg('bulk_proposals_updated', count($post_ids), $redirect_to);
