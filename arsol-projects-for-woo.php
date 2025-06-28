@@ -70,7 +70,7 @@ require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-workflow-handl
 
 // Include the frontend sidebar classes
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-meta.php';
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-actions.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-buttons.php';
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-fields.php';
 
 // Register activation hook
