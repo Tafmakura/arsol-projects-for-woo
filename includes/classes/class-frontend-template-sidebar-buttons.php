@@ -95,6 +95,28 @@ class Frontend_Template_Sidebar_Buttons {
         echo '<button class="button button-secondary">TEST: Status is "' . esc_html($status) . '"</button>';
         echo '</div>';
         
+        // If no status is set, provide buttons to set initial status
+        if (empty($status)) {
+            echo '<div class="button-item button-no-status">';
+            echo '<p style="margin-bottom: 10px;"><strong>No status set for this proposal.</strong></p>';
+            
+            // Button to set to pending-approval
+            $set_pending_url = wp_nonce_url(
+                admin_url('admin-post.php?action=arsol_set_proposal_status&proposal_id=' . $post_id . '&status=pending-approval'),
+                'arsol_set_proposal_status_nonce'
+            );
+            echo '<a href="' . esc_url($set_pending_url) . '" class="button button-primary" style="margin-right: 10px;">Set to Pending Approval</a>';
+            
+            // Button to set to processing
+            $set_processing_url = wp_nonce_url(
+                admin_url('admin-post.php?action=arsol_set_proposal_status&proposal_id=' . $post_id . '&status=processing'),
+                'arsol_set_proposal_status_nonce'
+            );
+            echo '<a href="' . esc_url($set_processing_url) . '" class="button button-secondary">Set to Processing</a>';
+            echo '</div>';
+            return;
+        }
+        
         // Show approve/reject buttons for pending-approval status
         if ($status === 'pending-approval') {
             error_log("ARSOL DEBUG: Adding approve/reject buttons for pending-approval status");
@@ -126,25 +148,19 @@ class Frontend_Template_Sidebar_Buttons {
         // Show different buttons for other statuses (for testing)
         if ($status === 'processing') {
             echo '<div class="button-item button-processing">';
-            echo '<button class="button button-primary">Processing Status Button</button>';
+            echo '<button class="button button-primary">Proposal is Processing</button>';
             echo '</div>';
         }
         
         if ($status === 'approved') {
             echo '<div class="button-item button-approved">';
-            echo '<button class="button button-success">View Project</button>';
+            echo '<a href="/my-account/projects/" class="button button-success">View Created Project</a>';
             echo '</div>';
         }
         
         if ($status === 'rejected') {
             echo '<div class="button-item button-rejected">';
             echo '<button class="button button-secondary">Request Revision</button>';
-            echo '</div>';
-        }
-        
-        if (empty($status)) {
-            echo '<div class="button-item button-no-status">';
-            echo '<button class="button button-warning">No Status Set</button>';
             echo '</div>';
         }
     }
