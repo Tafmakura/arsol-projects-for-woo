@@ -18,13 +18,16 @@ if (!$project_id) {
     return;
 }
 
+// Initialize pagination variables with defaults
+$per_page = isset($per_page) ? $per_page : 10;
+
 // Get paginated orders for the project.
 $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 $orders = wc_get_orders(array(
     'meta_key' => ARSOL_PROJECT_META_KEY,
     'meta_value' => $project_id,
     'limit' => $per_page,
-    'offset' => ($current_page - 1) * $per_page,
+    'offset' => ($paged - 1) * $per_page,
     'customer' => get_current_user_id(),
     'orderby' => 'date',
     'order' => 'DESC'
