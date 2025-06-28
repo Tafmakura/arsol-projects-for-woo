@@ -71,7 +71,7 @@ class Users {
             __('Project Users', 'arsol-pfw'),
             __('Users', 'arsol-pfw'),
             'manage_options',
-            'arsol-project-users',
+            'arsol-pfw-project-users',
             array($this, 'render_admin_page')
         );
     }
@@ -472,7 +472,7 @@ class Users {
         
         $args = wp_parse_args($args, $defaults);
         
-        $classes = 'arsol-project-lead-search';
+        $classes = 'arsol-pfw-project-lead-search';
         if (!empty($args['class'])) {
             $classes .= ' ' . esc_attr($args['class']);
         }

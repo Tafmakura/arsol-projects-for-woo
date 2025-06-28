@@ -282,7 +282,7 @@ class Frontend_Woocommerce_Checkout {
             // Show read-only project information
             $project = get_post($pre_assigned_project);
             if ($project) {
-                echo '<div id="arsol-project-checkout-field">';
+                echo '<div id="arsol-pfw-project-checkout-field">';
                 echo '<p class="form-row form-row-wide">';
                 echo '<label for="arsol_project_readonly"><strong>' . esc_html__('Project', 'arsol-pfw') . '</strong></label>';
                 echo '<input type="text" id="arsol_project_readonly" value="' . esc_attr($project->post_title) . '" readonly disabled />';
@@ -319,7 +319,7 @@ class Frontend_Woocommerce_Checkout {
             'options'       => $options,
         );
 
-        echo '<div id="arsol-project-checkout-field">';
+        echo '<div id="arsol-pfw-project-checkout-field">';
         woocommerce_form_field(
             'arsol_project_id',
             $field_args,

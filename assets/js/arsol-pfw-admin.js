@@ -22,7 +22,7 @@ jQuery(document).ready(function($) {
     }
 
     function initProjectLeadAjaxSearch() {
-        $('.arsol-project-lead-search').filter(':not(.enhanced)').each(function() {
+        $('.arsol-pfw-project-lead-search').filter(':not(.enhanced)').each(function() {
             var $this = $(this);
             
             var select2_args = {
@@ -142,8 +142,8 @@ jQuery(document).ready(function($) {
                     mutation.addedNodes.forEach(function(node) {
                         if (node.nodeType === 1) {
                             var $node = $(node);
-                            if ($node.is('.wc-enhanced-select, .wc-customer-search, .arsol-user-select2, .arsol-project-lead-search') || 
-                                $node.find('.wc-enhanced-select, .wc-customer-search, .arsol-user-select2, .arsol-project-lead-search').length) {
+                            if ($node.is('.wc-enhanced-select, .wc-customer-search, .arsol-user-select2, .arsol-pfw-project-lead-search') || 
+                                $node.find('.wc-enhanced-select, .wc-customer-search, .arsol-user-select2, .arsol-pfw-project-lead-search').length) {
                                 shouldReinit = true;
                             }
                         }
