@@ -126,8 +126,6 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $status The current status
      */
     private function add_request_buttons($post_id, $status) {
-        echo '<div class="arsol-pfw-project-button">';
-        echo '<button type="button" class="brxe-button bricks-button button-primary" style="background: red; color: white; padding: 10px;">';
         switch ($status) {
             case 'pending-review':
                 $this->add_pending_review_buttons($post_id);

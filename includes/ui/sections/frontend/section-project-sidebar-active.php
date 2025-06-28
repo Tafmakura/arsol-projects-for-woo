@@ -19,8 +19,8 @@ $status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0
 ?>
 
 <div class="arsol-pfw-project-sidebar">
-    <?php
-    /**
+<?php
+/**
      * Hook: arsol_pfw_project_sidebar_before
      * 
      * @param string $status The current status
@@ -52,7 +52,7 @@ $status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0
          * 
          * @param string $status The current status
          * @param int $post_id The post ID
-         */
+     */
         do_action('arsol_pfw_project_sidebar_form', $status, $post_id);
         ?>
     </div>
@@ -66,7 +66,7 @@ $status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0
          * 
          * @param string $status The current status
          * @param int $post_id The post ID
-         */
+     */
         do_action('arsol_pfw_project_sidebar_buttons', $status, $post_id);
         ?>
     </div>

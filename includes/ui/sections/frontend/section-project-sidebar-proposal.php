@@ -56,11 +56,6 @@ $status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0
          * @param string $cpt Custom post type
          */
         do_action('arsol_pfw_proposal_sidebar_form', $post_type, $status, $post_id, $cpt);
-        
-        /**
-         * Generic sidebar form section (backward compatibility)
-         */
-        do_action('arsol_pfw_sidebar_form', $post_type, $status, $post_id);
         ?>
     </div>
 
@@ -89,4 +84,4 @@ $status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0
      */
     do_action('arsol_pfw_proposal_sidebar_after', $post_type, $status, $post_id, $cpt);
     ?>
-</div>
+    </div>

@@ -60,11 +60,6 @@ $cpt = 'arsol-pfw-request';
      * @param string $cpt Custom post type
      */
     do_action('arsol_pfw_request_sidebar_form', $post_type, $status, $post_id, $cpt);
-    
-    /**
-     * Generic sidebar form section (unified form with filterable fields) (backward compatibility)
-     */
-    do_action('arsol_pfw_sidebar_form', $post_type, $status, $post_id);
     ?>
     
     <?php

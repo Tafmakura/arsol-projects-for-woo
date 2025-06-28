@@ -31,7 +31,7 @@ $current_status = !empty($status_terms) && !is_wp_error($status_terms) ? $status
 ?>
 
 <div class="project-sidebar">
-    <?php
+    <?php 
     /**
      * Hook: arsol_pfw_{$internal_post_type}_sidebar_meta
      * 
@@ -43,8 +43,8 @@ $current_status = !empty($status_terms) && !is_wp_error($status_terms) ? $status
      */
     do_action("arsol_pfw_{$internal_post_type}_sidebar_meta", $current_status, $post_id);
     ?>
-
-    <?php
+    
+    <?php 
     /**
      * Hook: arsol_pfw_{$internal_post_type}_sidebar_buttons
      * 
