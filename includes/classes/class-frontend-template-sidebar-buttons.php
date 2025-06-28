@@ -45,6 +45,7 @@ class Frontend_Template_Sidebar_Buttons {
         }
 
         echo '<div class="sidebar-buttons">';
+        echo '<p style="background: yellow; padding: 5px;">DEBUG: Project buttons called - Status: ' . esc_html($status) . '</p>';
         $this->add_project_buttons($post_id, $status);
         echo '</div>';
     }
@@ -61,6 +62,7 @@ class Frontend_Template_Sidebar_Buttons {
         }
 
         echo '<div class="sidebar-buttons">';
+        echo '<p style="background: lightblue; padding: 5px;">DEBUG: Proposal buttons called - Status: ' . esc_html($status) . '</p>';
         $this->add_proposal_buttons($post_id, $status);
         echo '</div>';
     }
@@ -77,6 +79,7 @@ class Frontend_Template_Sidebar_Buttons {
         }
 
         echo '<div class="sidebar-buttons">';
+        echo '<p style="background: lightgreen; padding: 5px;">DEBUG: Request buttons called - Status: ' . esc_html($status) . '</p>';
         $this->add_request_buttons($post_id, $status);
         echo '</div>';
     }
@@ -88,6 +91,13 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $status The current status
      */
     private function add_proposal_buttons($post_id, $status) {
+        // Temporary test button to verify hooks are working
+        echo '<div class="arsol-pfw-project-button">';
+        echo '<button type="button" class="brxe-button bricks-button button-primary" style="background: blue; color: white; padding: 10px;">';
+        echo 'TEST: Proposal Buttons Working - Status: ' . esc_html($status);
+        echo '</button>';
+        echo '</div>';
+        
         // Debug: always show buttons for testing
         // error_log("Proposal buttons for status: $status");
         
@@ -129,6 +139,13 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $status The current status
      */
     private function add_request_buttons($post_id, $status) {
+        // Temporary test button to verify hooks are working
+        echo '<div class="arsol-pfw-project-button">';
+        echo '<button type="button" class="brxe-button bricks-button button-primary" style="background: red; color: white; padding: 10px;">';
+        echo 'TEST: Request Buttons Working - Status: ' . esc_html($status);
+        echo '</button>';
+        echo '</div>';
+        
         switch ($status) {
             case 'pending-review':
                 $this->add_pending_review_buttons($post_id);
@@ -152,6 +169,13 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $status The current status
      */
     private function add_project_buttons($post_id, $status) {
+        // Temporary test button to verify hooks are working
+        echo '<div class="arsol-pfw-project-button">';
+        echo '<button type="button" class="brxe-button bricks-button button-primary" style="background: green; color: white; padding: 10px;">';
+        echo 'TEST: Project Buttons Working - Status: ' . esc_html($status);
+        echo '</button>';
+        echo '</div>';
+        
         // Project buttons can be added via hooks
         // Example: add_action('arsol_pfw_project_sidebar_buttons', 'my_custom_project_buttons', 20, 2);
     }
