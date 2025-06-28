@@ -13,14 +13,13 @@ if (!defined('ABSPATH')) {
 }
 
 // Variables passed from the endpoint class:
-// $project, $project_id, $project_title, $current_tab, $current_post, $current_post_type,
-// $project_type, $status_terms, $current_status, $wrapper_data
+// $project (WP_Post object), $project_id, $current_tab, $statuses, $current_status, $wrapper_data
 
 // Include unified project header
 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
 
 // Basic validation
-if (!$current_post) {
+if (!$project) {
     echo '<p>' . esc_html__('Project not found.', 'arsol-pfw') . '</p>';
     return;
 }
@@ -130,3 +129,4 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
  */
 do_action('arsol_pfw_project_wrapper_after', $project_type, $wrapper_data);
 ?>
+ 

@@ -12,11 +12,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// The following variables are passed from the endpoint function:
-// $project
-$project_id = $project['id'];
-$project_title = $project['title'];
-$current_tab = 'orders';
+// Variables passed from the endpoint class:
+// $project (WP_Post object), $project_id, $current_tab, $statuses, $current_status, $wrapper_data
 
 // Include unified project header
 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';

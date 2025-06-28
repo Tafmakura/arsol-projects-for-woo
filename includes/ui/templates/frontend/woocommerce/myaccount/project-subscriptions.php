@@ -35,3 +35,4 @@ include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/proje
     compact('project')
 );
 ?>
+ 

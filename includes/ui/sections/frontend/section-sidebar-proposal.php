@@ -20,8 +20,8 @@ error_log("ARSOL DEBUG: Proposal sidebar - Using variables from parent: project_
 
 // If no status from parent, try to get it directly
 if (empty($status)) {
-    $status_terms = wp_get_post_terms($post_id, 'arsol-proposal-status');
-    $status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0]->slug : '';
+$status_terms = wp_get_post_terms($post_id, 'arsol-proposal-status');
+$status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0]->slug : '';
     error_log("ARSOL DEBUG: Proposal sidebar - Fallback status detection: '$status'");
 }
 

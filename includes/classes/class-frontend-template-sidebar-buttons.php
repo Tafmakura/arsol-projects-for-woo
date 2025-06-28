@@ -164,8 +164,8 @@ class Frontend_Template_Sidebar_Buttons {
         if ($status === 'approved') {
             echo '<div class="button-item button-approved">';
             echo '<a href="/my-account/projects/" class="button button-success">View Created Project</a>';
-            echo '</div>';
-        }
+        echo '</div>';
+    }
         
         if ($status === 'rejected') {
             echo '<div class="button-item button-rejected">';
