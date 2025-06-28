@@ -19,14 +19,14 @@ $post_type = get_post_type($post_id);
 // Determine the internal post type for our system
 $internal_post_type = 'project'; // Default for projects
 if ($post_type === 'arsol_proposal') {
-    $internal_post_type = 'project-proposal';
+    $internal_post_type = 'project_proposal';
 } elseif ($post_type === 'arsol_request') {
-    $internal_post_type = 'project-request';
+    $internal_post_type = 'project_request';
 }
 
 // Get current status
 $status_terms = wp_get_post_terms($post_id, $internal_post_type === 'project' ? 'arsol-project-status' : 
-    ($internal_post_type === 'project-proposal' ? 'arsol-proposal-status' : 'arsol-request-status'));
+    ($internal_post_type === 'project_proposal' ? 'arsol-proposal-status' : 'arsol-request-status'));
 $current_status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0]->slug : '';
 ?>
 
