@@ -41,7 +41,7 @@ $parent_project_id = get_post_meta($request_id, '_arsol_pfw_parent_project_id', 
 $parent_project_data = null;
 if ($parent_project_id) {
     $parent_project = get_post($parent_project_id);
-    if ($parent_project && $parent_project->post_type === 'arsol-project') {
+    if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
         $parent_project_data = array(
             'id' => $parent_project_id,
             'title' => $parent_project->post_title

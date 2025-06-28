@@ -60,7 +60,7 @@ class Setup {
         // Check if parent menu exists
         global $menu, $submenu;
         
-        $parent_slug = 'edit.php?post_type=arsol-project';
+        $parent_slug = 'edit.php?post_type=arsol-pfw-project';
         
         // Debug logging
         if (function_exists('error_log')) {

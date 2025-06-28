@@ -5,21 +5,21 @@ if (!defined('ABSPATH')) {
 
 global $post;
 
-if (!$post || $post->post_type !== 'arsol-project') {
+if (!$post || $post->post_type !== 'arsol-pfw-project') {
     return;
 }
 
 $project_id = $post->ID;
 $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
-$project_status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+        $project_status_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
 $project_status = !empty($project_status_terms) ? $project_status_terms[0] : 'not-started';
 $project_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
 $start_date = get_post_meta($project_id, '_arsol_pfw_project_start_date', true);
 $due_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
 
 $all_statuses = get_terms(array(
-    'taxonomy' => 'arsol-project-status',
+                'taxonomy' => 'arsol-pfw-project-status',
     'hide_empty' => false,
 ));
 ?>
@@ -29,7 +29,7 @@ $all_statuses = get_terms(array(
         <label for="post_author_override">
             <?php _e('Customer:', 'arsol-pfw'); ?>
             <?php if ($customer): ?>
-                <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-project&author=' . $customer_id); ?>">
+                <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-project&author=' . $customer_id); ?>">
                     <?php _e('View other projects →', 'arsol-pfw'); ?>
                 </a>
                 <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">

@@ -28,7 +28,7 @@ class Frontend_Template_Overrides {
      * Map of template types to their corresponding advanced settings keys
      */
     private static $template_map = [
-        'arsol-project' => 'arsol_pfw_project_overview',
+        'arsol-pfw-project' => 'arsol_pfw_project_overview',
         'arsol-pfw-proposal' => 'arsol_pfw_proposal_overview',
         'arsol-pfw-request' => 'arsol_pfw_request_overview',
         'arsol-pfw-project-form' => 'arsol_pfw_project_form',

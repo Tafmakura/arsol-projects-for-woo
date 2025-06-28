@@ -297,7 +297,7 @@ class Woocommerce {
      */
     private function get_projects($user_id = null) {
         $args = [
-            'post_type' => 'arsol-project',
+            'post_type' => 'arsol-pfw-project',
             'numberposts' => -1,
             'orderby' => 'title',
             'order' => 'ASC'
@@ -404,7 +404,7 @@ class Woocommerce {
             } else {
                 // Verify this is a valid project before saving
                 $project = get_post($project_id);
-                if ($project && $project->post_type === 'arsol-project') {
+                if ($project && $project->post_type === 'arsol-pfw-project') {
                     // Use centralized save method for consistency
                     self::save_project_to_order($order, (int)$project_id);
                 }
@@ -937,7 +937,7 @@ class Woocommerce {
      * @param string $post_type Post type for the filter URL
      * @return string HTML link or fallback display
      */
-    public static function create_customer_filter_link($user, $post_type = 'arsol-project') {
+    public static function create_customer_filter_link($user, $post_type = 'arsol-pfw-project') {
         if (is_numeric($user)) {
             $user = get_userdata($user);
         }

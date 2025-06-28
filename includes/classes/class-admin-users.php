@@ -561,7 +561,7 @@ class Users {
      * @param string $post_type Post type for the filter URL
      * @return string HTML link or fallback display
      */
-    public static function create_project_lead_filter_link($user_id, $post_type = 'arsol-project') {
+    public static function create_project_lead_filter_link($user_id, $post_type = 'arsol-pfw-project') {
         if (empty($user_id)) {
             return '<span class="na">&ndash;</span>';
         }

@@ -9,7 +9,7 @@ class Project {
         // Add meta boxes for single project admin screen
         add_action('add_meta_boxes', array($this, 'add_project_details_meta_box'));
         // Save project data
-        add_action('save_post_arsol-project', array($this, 'save_project_details'));
+        add_action('save_post_arsol-pfw-project', array($this, 'save_project_details'));
         // Prevent project deletion if tied proposals exist
         add_action('before_delete_post', array($this, 'prevent_project_deletion_with_proposals'));
     }
@@ -22,7 +22,7 @@ class Project {
             'project_details_meta_box',
             __('Project Actions', 'arsol-pfw'),
             array($this, 'render_project_details_meta_box'),
-            'arsol-project',
+            'arsol-pfw-project',
             'side',
             'default'
         );
@@ -92,7 +92,7 @@ class Project {
             $new_status = sanitize_text_field($_POST['project_status']);
             
             // Get the status before this save
-            $current_status_terms = wp_get_object_terms($post_id, 'arsol-project-status', array('fields' => 'slugs'));
+            $current_status_terms = wp_get_object_terms($post_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
             $old_status = !empty($current_status_terms) ? $current_status_terms[0] : 'not-started';
 
             // Set start date on the first transition to 'in-progress'
@@ -102,7 +102,7 @@ class Project {
                 }
             }
             
-            wp_set_object_terms($post_id, $new_status, 'arsol-project-status', false);
+            wp_set_object_terms($post_id, $new_status, 'arsol-pfw-project-status', false);
         }
 
         // Set default start date if not already set
@@ -131,14 +131,14 @@ class Project {
             $create_url = esc_url_raw($_POST['arsol_create_after_save']);
             wp_redirect($create_url);
             exit;
-    }
+        }
     }
 
     /**
      * Prevent project deletion if tied proposals exist
      */
     public function prevent_project_deletion_with_proposals($post_id) {
-        if (get_post_type($post_id) !== 'arsol-project') {
+        if (get_post_type($post_id) !== 'arsol-pfw-project') {
             return;
         }
         

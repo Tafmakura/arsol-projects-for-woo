@@ -25,7 +25,7 @@ $post = $post_obj;
 setup_postdata($post);
 
 // Get project details
-$status_terms = wp_get_post_terms($project['id'], 'arsol-project-status', array('fields' => 'names'));
+$status_terms = wp_get_post_terms($project['id'], 'arsol-pfw-project-status', array('fields' => 'names'));
 $status = !empty($status_terms) ? $status_terms[0] : 'N/A';
 $start_date = get_post_meta($project['id'], '_arsol_pfw_project_start_date', true);
 $due_date = get_post_meta($project['id'], '_arsol_pfw_project_due_date', true);

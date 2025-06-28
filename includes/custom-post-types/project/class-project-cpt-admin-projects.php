@@ -7,15 +7,15 @@ if (!defined('ABSPATH')) exit;
 class Projects {
     public function __construct() {
         // Add custom columns to projects table
-        add_filter('manage_arsol-project_posts_columns', array($this, 'add_custom_columns'));
-        add_action('manage_arsol-project_posts_custom_column', array($this, 'render_custom_column'), 10, 2);
+        add_filter('manage_arsol-pfw-project_posts_columns', array($this, 'add_custom_columns'));
+        add_action('manage_arsol-pfw-project_posts_custom_column', array($this, 'render_custom_column'), 10, 2);
         // Add filters to projects table
         add_action('restrict_manage_posts', array($this, 'add_filters'));
         // Filtering logic for projects table
         add_action('pre_get_posts', array($this, 'filter_projects_by_date_range'));
         // Handle bulk actions
-        add_filter('bulk_actions-edit-arsol-project', array($this, 'register_bulk_actions'));
-        add_filter('handle_bulk_actions-edit-arsol-project', array($this, 'handle_bulk_actions'), 10, 3);
+        add_filter('bulk_actions-edit-arsol-pfw-project', array($this, 'register_bulk_actions'));
+        add_filter('handle_bulk_actions-edit-arsol-pfw-project', array($this, 'handle_bulk_actions'), 10, 3);
     }
 
     /**
@@ -41,7 +41,7 @@ class Projects {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'project_status':
-                $status = wp_get_object_terms($post_id, 'arsol-project-status', array('fields' => 'names'));
+                $status = wp_get_object_terms($post_id, 'arsol-pfw-project-status', array('fields' => 'names'));
                 if (!empty($status) && !is_wp_error($status)) {
                     echo esc_html($status[0]);
                 }
@@ -50,7 +50,7 @@ class Projects {
             case 'customer':
                 $post = get_post($post_id);
                 if ($post && $post->post_author) {
-                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($post->post_author, 'arsol-project');
+                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($post->post_author, 'arsol-pfw-project');
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
@@ -58,7 +58,7 @@ class Projects {
                 
             case 'project_lead':
                 $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
-                echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-project');
+                echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
                 break;
         }
     }
@@ -68,10 +68,10 @@ class Projects {
      */
     public function add_filters() {
         global $typenow;
-        if ($typenow === 'arsol-project') {
+        if ($typenow === 'arsol-pfw-project') {
             // Status filter (standard dropdown)
             $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
-            $statuses = get_terms('arsol-project-status', array('hide_empty' => false));
+            $statuses = get_terms('arsol-pfw-project-status', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
                 echo '<select name="project_status" id="filter-by-project-status" class="postform status-filter-dropdown">';
                 echo '<option value="">' . __('All Statuses', 'arsol-pfw') . '</option>';
@@ -126,7 +126,7 @@ class Projects {
     public function filter_projects_by_date_range($query) {
         global $pagenow, $typenow;
 
-        if ($pagenow === 'edit.php' && $typenow === 'arsol-project' && $query->is_main_query()) {
+        if ($pagenow === 'edit.php' && $typenow === 'arsol-pfw-project' && $query->is_main_query()) {
             // Filter by project lead (meta)
             if (!empty($_GET['project_lead'])) {
                 $meta_query = $query->get('meta_query') ?: [];
@@ -147,7 +147,7 @@ class Projects {
             if (!empty($_GET['project_status'])) {
                 $tax_query = $query->get('tax_query') ?: [];
                 $tax_query[] = [
-                    'taxonomy' => 'arsol-project-status',
+                    'taxonomy' => 'arsol-pfw-project-status',
                     'field'    => 'slug',
                     'terms'    => sanitize_text_field($_GET['project_status']),
                 ];

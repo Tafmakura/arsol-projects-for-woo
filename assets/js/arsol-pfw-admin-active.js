@@ -65,7 +65,7 @@
     // Initialize when DOM is ready
     $(document).ready(function() {
         // Only initialize on project admin pages
-        if ($('body').hasClass('post-type-arsol-project') || $('#project_details_meta_box').length > 0) {
+        if ($('body').hasClass('post-type-arsol-pfw-project') || $('#project_details_meta_box').length > 0) {
             ArsolActiveProject.init();
         }
     });

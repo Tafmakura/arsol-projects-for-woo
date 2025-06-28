@@ -89,7 +89,7 @@ class Frontend_Handler {
             'post_title'    => $title,
             'post_content'  => $description,
             'post_status'   => 'publish',
-            'post_type'     => 'arsol-project',
+            'post_type'     => 'arsol-pfw-project',
             'post_author'   => $user_id
         );
 
@@ -151,7 +151,7 @@ class Frontend_Handler {
         do_action('arsol_before_project_creation_status_assignment', $project_id, 'not-started', $creation_data);
 
         // Set default project status
-        wp_set_object_terms($project_id, 'not-started', 'arsol-project-status');
+        wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-status');
 
         /**
          * Hook: arsol_after_project_creation_status_assigned

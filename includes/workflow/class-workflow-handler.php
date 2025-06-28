@@ -414,7 +414,7 @@ class Workflow_Handler {
             'post_title'   => $proposal_post->post_title,
             'post_content' => $proposal_post->post_content,
                 'post_status'  => 'publish',
-            'post_type'    => 'arsol-project',
+            'post_type'    => 'arsol-pfw-project',
             'post_author'  => $proposal_post->post_author,
         );
 
@@ -638,7 +638,7 @@ class Workflow_Handler {
         update_post_meta($project_id, '_arsol_pfw_project_proposal_id', $proposal_id);
 
         // Set the project status to 'not-started'
-        wp_set_object_terms($project_id, 'not-started', 'arsol-project-status');
+        wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-status');
 
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
             sprintf('Metadata copied from proposal #%d to project #%d (type: %s): %s', 
@@ -882,7 +882,7 @@ class Workflow_Handler {
             if ($parent_project_id) {
                 // Validate parent project exists
                 $parent_project = get_post($parent_project_id);
-                if ($parent_project && $parent_project->post_type === 'arsol-project') {
+                if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
                     // Save parent project ID
                     update_post_meta($post_id, '_arsol_pfw_parent_project_id', $parent_project_id);
                     
@@ -1120,7 +1120,7 @@ class Workflow_Handler {
                         }
                     }
                     break;
-                case 'arsol-project':
+                case 'arsol-pfw-project':
                     // Project entity
                     if (wp_delete_post($entity_id, true)) {
                         $deleted_count++;

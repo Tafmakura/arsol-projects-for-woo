@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 
 global $post;
 
-if (!$post || $post->post_type !== 'arsol-project') {
+if (!$post || $post->post_type !== 'arsol-pfw-project') {
     return;
 }
 

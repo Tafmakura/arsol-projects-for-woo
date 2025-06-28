@@ -531,7 +531,7 @@ class Settings_General {
         $settings = get_option('arsol_projects_settings', array());
         
         switch ($post_type) {
-            case 'arsol-project':
+            case 'arsol-pfw-project':
                 return isset($settings['enable_project_comments']) && $settings['enable_project_comments'];
             case 'arsol-pfw-request':
                 return isset($settings['enable_project_request_comments']) && $settings['enable_project_request_comments'];
@@ -550,7 +550,7 @@ class Settings_General {
      * @return array Modified supports array
      */
     public static function filter_post_type_supports($supports, $post_type) {
-        if (in_array($post_type, array('arsol-project', 'arsol-pfw-request', 'arsol-pfw-proposal'))) {
+        if (in_array($post_type, array('arsol-pfw-project', 'arsol-pfw-request', 'arsol-pfw-proposal'))) {
             if (!self::is_comments_enabled_for_post_type($post_type)) {
                 $supports = array_diff($supports, array('comments'));
             }

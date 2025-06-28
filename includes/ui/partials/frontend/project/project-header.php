@@ -102,7 +102,7 @@ if ($is_individual_item) {
     
     // Determine subtitle based on post type
     switch ($post_type) {
-        case 'arsol-project':
+        case 'arsol-pfw-project':
             $subtitle = __('Project Overview', 'arsol-pfw');
             break;
         case 'arsol-pfw-proposal':
@@ -163,7 +163,7 @@ if (empty($main_title)) {
             <?php
             // Default actions based on post type
             switch ($post_type) {
-                case 'arsol-project':
+                case 'arsol-pfw-project':
                     $url = wc_get_account_endpoint_url('project-create') . '?edit=' . $post_id;
                     $label = __('Edit Project', 'arsol-pfw');
                     $type = 'secondary';

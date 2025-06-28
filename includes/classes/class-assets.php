@@ -219,7 +219,7 @@ class Assets {
                         )
                     ));
                     
-                } elseif ($screen->post_type === 'arsol-project') {
+                } elseif ($screen->post_type === 'arsol-pfw-project') {
                     wp_enqueue_script('arsol-pfw-admin-active');
                     // Also enqueue proposal script for Create Proposal button functionality
                     wp_enqueue_script('arsol-pfw-admin-proposal');
@@ -253,7 +253,7 @@ class Assets {
      */
     private function is_order_or_project_screen($screen) {
         // Check for post type screens
-        if (in_array($screen->post_type, array('shop_order', 'arsol-project'))) {
+        if (in_array($screen->post_type, array('shop_order', 'arsol-pfw-project'))) {
             return true;
         }
         

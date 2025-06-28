@@ -169,11 +169,11 @@ class Frontend_Endpoints {
                 break;
             case 'active':
             default:
-                $args['post_type'] = 'arsol-project';
+                $args['post_type'] = 'arsol-pfw-project';
                 $args['post_status'] = 'publish';
                 $args['tax_query'] = array(
                     array(
-                        'taxonomy' => 'arsol-project-status',
+                        'taxonomy' => 'arsol-pfw-project-status',
                         'field'    => 'slug',
                         'terms'    => array('completed'),
                         'operator' => 'NOT IN',
@@ -212,7 +212,7 @@ class Frontend_Endpoints {
         $current_tab = 'overview';
         
         // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
         $current_status = !empty($statuses) ? $statuses[0] : '';
         
         // Prepare comprehensive data for efficient hook usage
@@ -241,7 +241,7 @@ class Frontend_Endpoints {
         $current_tab = 'orders';
         
         // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
         $current_status = !empty($statuses) ? $statuses[0] : '';
         
         // Prepare comprehensive data for efficient hook usage
@@ -277,7 +277,7 @@ class Frontend_Endpoints {
         $current_tab = 'subscriptions';
         
         // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
         $current_status = !empty($statuses) ? $statuses[0] : '';
         
         // Prepare comprehensive data for efficient hook usage
@@ -452,7 +452,7 @@ class Frontend_Endpoints {
      */
     private function get_project_data($project_id) {
         $project = get_post($project_id);
-        if (!$project || $project->post_type !== 'arsol-project') {
+        if (!$project || $project->post_type !== 'arsol-pfw-project') {
             return null;
         }
 

@@ -139,7 +139,7 @@ class Frontend_Woocommerce_Checkout {
      */
     private function get_projects($user_id = null) {
         $args = [
-            'post_type' => 'arsol-project',
+            'post_type' => 'arsol-pfw-project',
             'numberposts' => -1,
             'orderby' => 'title',
             'order' => 'ASC'

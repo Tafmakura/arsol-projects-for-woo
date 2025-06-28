@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 // Get the current post
 global $post;
 
-if (!$post || $post->post_type !== 'arsol-project') {
+    if (!$post || $post->post_type !== 'arsol-pfw-project') {
     return;
 }
 
@@ -24,7 +24,7 @@ if (!$post || $post->post_type !== 'arsol-project') {
 $project_id = $post->ID;
 $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
-$project_status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+        $project_status_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
 $project_status = !empty($project_status_terms) ? $project_status_terms[0] : 'not-started';
 $project_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
 $start_date = get_post_meta($project_id, '_arsol_pfw_project_start_date', true);
@@ -32,7 +32,7 @@ $due_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
 
 // Get all project statuses
 $all_statuses = get_terms(array(
-    'taxonomy' => 'arsol-project-status',
+                'taxonomy' => 'arsol-pfw-project-status',
     'hide_empty' => false,
 ));
 

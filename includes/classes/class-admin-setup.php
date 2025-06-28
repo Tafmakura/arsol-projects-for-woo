@@ -36,7 +36,7 @@ class Setup {
      * Setup admin menus in the correct order
      */
     public function setup_admin_menus() {
-        $parent_slug = 'edit.php?post_type=arsol-project';
+        $parent_slug = 'edit.php?post_type=arsol-pfw-project';
         
         // 1. Project Requests
         add_submenu_page(
@@ -66,7 +66,7 @@ class Setup {
             __('Projects', 'arsol-pfw'),
             __('Projects', 'arsol-pfw'),
             'edit_posts',
-            'edit.php?post_type=arsol-project',
+            'edit.php?post_type=arsol-pfw-project',
             '',
             3
         );
@@ -77,7 +77,7 @@ class Setup {
             __('Project Statuses', 'arsol-pfw'),
             __('Project Statuses', 'arsol-pfw'),
             'manage_categories',
-            'edit-tags.php?taxonomy=arsol-project-status&post_type=arsol-project',
+            'edit-tags.php?taxonomy=arsol-pfw-project-status&post_type=arsol-pfw-project',
             '',
             4
         );
@@ -99,7 +99,7 @@ class Setup {
      */
     public function cleanup_admin_menus() {
         global $submenu;
-        $parent_slug = 'edit.php?post_type=arsol-project';
+        $parent_slug = 'edit.php?post_type=arsol-pfw-project';
         
         if (isset($submenu[$parent_slug])) {
             // Store our settings menu before cleanup
@@ -133,8 +133,8 @@ class Setup {
         remove_submenu_page('edit.php?post_type=arsol-pfw-proposal', 'edit-tags.php?taxonomy=arsol-proposal-status&post_type=arsol-pfw-proposal');
         
         // Also remove from main project menu if they appear there
-        remove_submenu_page('edit.php?post_type=arsol-project', 'edit-tags.php?taxonomy=arsol-request-status');
-        remove_submenu_page('edit.php?post_type=arsol-project', 'edit-tags.php?taxonomy=arsol-proposal-status');
+        remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-request-status');
+        remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-proposal-status');
     }
     
     /**
@@ -146,10 +146,10 @@ class Setup {
         <div class="wrap">
             <h1><?php _e('Arsol Projects for Woo', 'arsol-pfw'); ?></h1>
             <h2 class="nav-tab-wrapper">
-                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php _e('General', 'arsol-pfw'); ?></a>
-                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=templates" class="nav-tab <?php echo $active_tab == 'templates' ? 'nav-tab-active' : ''; ?>"><?php _e('Templates', 'arsol-pfw'); ?></a>
-                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=tools" class="nav-tab <?php echo $active_tab == 'tools' ? 'nav-tab-active' : ''; ?>"><?php _e('Tools', 'arsol-pfw'); ?></a>
-                <a href="?post_type=arsol-project&page=arsol-projects-settings&tab=integrations" class="nav-tab <?php echo $active_tab == 'integrations' ? 'nav-tab-active' : ''; ?>"><?php _e('Integrations', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php _e('General', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=templates" class="nav-tab <?php echo $active_tab == 'templates' ? 'nav-tab-active' : ''; ?>"><?php _e('Templates', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=tools" class="nav-tab <?php echo $active_tab == 'tools' ? 'nav-tab-active' : ''; ?>"><?php _e('Tools', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=integrations" class="nav-tab <?php echo $active_tab == 'integrations' ? 'nav-tab-active' : ''; ?>"><?php _e('Integrations', 'arsol-pfw'); ?></a>
             </h2>
             <?php
             switch ($active_tab) {

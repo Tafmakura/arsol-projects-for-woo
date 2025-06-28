@@ -85,7 +85,7 @@ class Shortcodes {
 		
 		// Single post context
 		global $post;
-		if ($post && in_array($post->post_type, ['arsol-project', 'arsol-pfw-proposal', 'arsol-pfw-request'])) {
+		        if ($post && in_array($post->post_type, ['arsol-pfw-project', 'arsol-pfw-proposal', 'arsol-pfw-request'])) {
 			return 'single_post';
 		}
 		
@@ -486,7 +486,7 @@ class Shortcodes {
 		
 		// Get user's projects - using author parameter instead of meta query
 		$args = array(
-			'post_type' => 'arsol-project',
+			'post_type' => 'arsol-pfw-project',
 			'posts_per_page' => $per_page,
 			'paged' => $current_page,
 			'orderby' => 'title',
@@ -529,7 +529,7 @@ class Shortcodes {
 
 		// Get user's projects count
 		$args = array(
-			'post_type' => 'arsol-project',
+			'post_type' => 'arsol-pfw-project',
 			'posts_per_page' => -1,
 			'fields' => 'ids',
 			'post_status' => 'publish',
@@ -554,7 +554,7 @@ class Shortcodes {
 	public function projects_count_shortcode($atts) {
 		// Get total projects count
 		$args = array(
-			'post_type' => 'arsol-project',
+			'post_type' => 'arsol-pfw-project',
 			'posts_per_page' => -1,
 			'fields' => 'ids',
 			'post_status' => 'publish'
@@ -581,7 +581,7 @@ class Shortcodes {
 
 		$user_id = get_current_user_id();
 		return get_posts([
-			'post_type'      => 'arsol-project',
+			'post_type'      => 'arsol-pfw-project',
 			'post_status'    => 'publish',
 			'author'         => $user_id,
 			'posts_per_page' => -1,
@@ -665,7 +665,7 @@ class Shortcodes {
 			'project_id' => 0,
 		), $atts, 'arsol_pfw_project_overview');
 
-		$project_id = $this->resolve_project_id($atts['project_id'], 'arsol-project');
+		$project_id = $this->resolve_project_id($atts['project_id'], 'arsol-pfw-project');
 		
 		if (!$project_id) {
 			return '<p>' . $this->get_context_error_message('project') . '</p>';
@@ -920,7 +920,7 @@ class Shortcodes {
 
 		// Build query args
 		$query_args = array(
-			'post_type' => 'arsol-project',
+			'post_type' => 'arsol-pfw-project',
 			'post_status' => 'publish',
 			'author' => $current_user_id,
 			'posts_per_page' => $per_page,
@@ -998,7 +998,7 @@ class Shortcodes {
 
 		// Build query args for public projects
 		$query_args = array(
-			'post_type' => 'arsol-project',
+			'post_type' => 'arsol-pfw-project',
 			'post_status' => 'publish',
 			'posts_per_page' => $per_page,
 			'paged' => $paged,

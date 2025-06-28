@@ -150,7 +150,7 @@ class Admin_Capabilities {
         }
 
         $project = get_post($project_id);
-        if (!$project || $project->post_type !== 'arsol-project') {
+        if (!$project || $project->post_type !== 'arsol-pfw-project') {
             return false;
         }
 
