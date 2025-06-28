@@ -27,61 +27,58 @@ class Frontend_Template_Sidebar_Actions {
      * Initialize hooks
      */
     private function init_hooks() {
-        add_action('arsol_pfw_sidebar_actions', array($this, 'display_sidebar_actions'), 10, 3);
-        add_action('arsol_pfw_add_sidebar_actions', array($this, 'add_default_actions'), 10, 3);
+        // CPT-specific action hooks
+        add_action('arsol_pfw_project_sidebar_actions', array($this, 'display_project_actions'), 10, 2);
+        add_action('arsol_pfw_project_proposal_sidebar_actions', array($this, 'display_proposal_actions'), 10, 2);
+        add_action('arsol_pfw_project_request_sidebar_actions', array($this, 'display_request_actions'), 10, 2);
     }
 
     /**
-     * Display sidebar actions
+     * Display project actions
      *
-     * @param string $post_type The post type (active, proposal, request)
      * @param string $status The current status
      * @param int $post_id The post ID
      */
-    public function display_sidebar_actions($post_type, $status, $post_id) {
+    public function display_project_actions($status, $post_id) {
         if (empty($post_id)) {
             return;
         }
 
-        // Debug: uncomment to see what parameters are passed
-        // error_log("Actions display - Post: $post_id, Type: $post_type, Status: $status");
-
         echo '<div class="sidebar-actions">';
-        
-        /**
-         * Hook: arsol_pfw_add_sidebar_actions
-         * 
-         * Developers can hook into this to add their own action buttons.
-         * Simply echo the HTML for buttons/links directly.
-         * 
-         * @param string $post_type The post type
-         * @param string $status The current status  
-         * @param int $post_id The post ID
-         */
-        do_action('arsol_pfw_add_sidebar_actions', $post_type, $status, $post_id);
-        
+        $this->add_project_actions($post_id, $status);
         echo '</div>';
     }
 
     /**
-     * Add default actions based on post type and status
+     * Display proposal actions
      *
-     * @param string $post_type The post type
      * @param string $status The current status
      * @param int $post_id The post ID
      */
-    public function add_default_actions($post_type, $status, $post_id) {
-        switch ($post_type) {
-            case 'proposal':
-                $this->add_proposal_actions($post_id, $status);
-                break;
-            case 'request':
-                $this->add_request_actions($post_id, $status);
-                break;
-            case 'active':
-                $this->add_project_actions($post_id, $status);
-                break;
+    public function display_proposal_actions($status, $post_id) {
+        if (empty($post_id)) {
+            return;
         }
+
+        echo '<div class="sidebar-actions">';
+        $this->add_proposal_actions($post_id, $status);
+        echo '</div>';
+    }
+
+    /**
+     * Display request actions
+     *
+     * @param string $status The current status
+     * @param int $post_id The post ID
+     */
+    public function display_request_actions($status, $post_id) {
+        if (empty($post_id)) {
+            return;
+        }
+
+        echo '<div class="sidebar-actions">';
+        $this->add_request_actions($post_id, $status);
+        echo '</div>';
     }
 
     /**
@@ -137,25 +134,20 @@ class Frontend_Template_Sidebar_Actions {
      * @param string $status The current status
      */
     private function add_request_actions($post_id, $status) {
-        // Cancel button (for pending-review and under-review)
-        if (in_array($status, array('pending-review', 'under-review'))) {
-            $cancel_url = wp_nonce_url(
-                admin_url('admin-post.php?action=arsol_cancel_request&request_id=' . $post_id),
-                'arsol_cancel_request_nonce'
-            );
-            
-            echo '<div class="action-item action-cancel">';
-            echo '<a href="' . esc_url($cancel_url) . '" class="button button-link-delete" ';
-            echo 'onclick="return confirm(\'' . esc_js__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw') . '\')">';
-            echo esc_html__('Cancel Request', 'arsol-pfw');
-            echo '</a>';
-            echo '</div>';
+        switch ($status) {
+            case 'pending-review':
+                $this->add_pending_review_actions($post_id);
+                break;
+            case 'under-review':
+                $this->add_under_review_actions($post_id);
+                break;
+            case 'on-hold':
+                $this->add_on_hold_actions($post_id);
+                break;
+            case 'approved':
+                $this->add_approved_actions($post_id);
+                break;
         }
-        
-        // Temporary test button to verify actions are working
-        echo '<div class="action-item action-test">';
-        echo '<span style="background: lightblue; padding: 5px;">Test: Request actions for ' . esc_html($status) . '</span>';
-        echo '</div>';
     }
 
     /**
@@ -165,12 +157,114 @@ class Frontend_Template_Sidebar_Actions {
      * @param string $status The current status
      */
     private function add_project_actions($post_id, $status) {
-        // Add any default project actions if needed
-        // For now, projects mainly have custom actions added via hooks
-        
-        // Temporary test button to verify actions are working
-        echo '<div class="action-item action-test">';
-        echo '<span style="background: lightgreen; padding: 5px;">Test: Project actions for ' . esc_html($status) . '</span>';
+        // Project actions can be added via hooks
+        // Example: add_action('arsol_pfw_project_sidebar_actions', 'my_custom_project_actions', 20, 2);
+    }
+
+    /**
+     * Add actions for pending-review status
+     *
+     * @param int $post_id The post ID
+     */
+    private function add_pending_review_actions($post_id) {
+        // Update Request button (form submit)
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<button type="submit" form="arsol-request-edit-form" class="brxe-button bricks-button button-primary request-action-btn">';
+        echo esc_html__('Update Request', 'arsol-pfw');
+        echo '</button>';
+        echo '</div>';
+
+        // Cancel Request button
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<button type="button" class="brxe-button bricks-button sm outline bricks-color-primary cancel-request-btn" ';
+        echo 'data-confirm-text="' . esc_attr__('Are you sure you want to cancel this request?', 'arsol-pfw') . '">';
+        echo esc_html__('Cancel Request', 'arsol-pfw');
+        echo '</button>';
+        echo '</div>';
+    }
+
+    /**
+     * Add actions for under-review status
+     *
+     * @param int $post_id The post ID
+     */
+    private function add_under_review_actions($post_id) {
+        // Contact Review Team
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<a href="/contact-us/" class="brxe-button bricks-button sm outline bricks-color-primary">';
+        echo esc_html__('Contact Review Team', 'arsol-pfw');
+        echo '</a>';
+        echo '</div>';
+
+        // Review Process FAQ
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<a href="/faq/" class="brxe-button bricks-button sm outline bricks-color-secondary">';
+        echo esc_html__('Review Process FAQ', 'arsol-pfw');
+        echo '</a>';
+        echo '</div>';
+    }
+
+    /**
+     * Add actions for on-hold status
+     *
+     * @param int $post_id The post ID
+     */
+    private function add_on_hold_actions($post_id) {
+        // Update Request button (form submit)
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<button type="submit" form="arsol-request-edit-form" class="brxe-button bricks-button button-primary request-action-btn">';
+        echo esc_html__('Update Request', 'arsol-pfw');
+        echo '</button>';
+        echo '</div>';
+
+        // Cancel Request button
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<button type="button" class="brxe-button bricks-button sm outline bricks-color-primary cancel-request-btn" ';
+        echo 'data-confirm-text="' . esc_attr__('Are you sure you want to cancel this request?', 'arsol-pfw') . '">';
+        echo esc_html__('Cancel Request', 'arsol-pfw');
+        echo '</button>';
+        echo '</div>';
+
+        // Contact Support
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<a href="/contact-us/" class="brxe-button bricks-button sm outline bricks-color-primary">';
+        echo esc_html__('Contact Support', 'arsol-pfw');
+        echo '</a>';
+        echo '</div>';
+
+        // View Our Services
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<a href="/services/" class="brxe-button bricks-button sm outline bricks-color-primary">';
+        echo esc_html__('View Our Services', 'arsol-pfw');
+        echo '</a>';
+        echo '</div>';
+    }
+
+    /**
+     * Add actions for approved status
+     *
+     * @param int $post_id The post ID
+     */
+    private function add_approved_actions($post_id) {
+        // View All Projects
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<a href="/projects/" class="brxe-button bricks-button button-primary">';
+        echo esc_html__('View All Projects', 'arsol-pfw');
+        echo '</a>';
+        echo '</div>';
+
+        // Contact Project Team
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<a href="/contact-us/" class="brxe-button bricks-button sm outline bricks-color-primary">';
+        echo esc_html__('Contact Project Team', 'arsol-pfw');
+        echo '</a>';
+        echo '</div>';
+
+        // Print Approval Details
+        echo '<div class="arsol-pfw-project-action">';
+        echo '<button type="button" class="brxe-button bricks-button sm outline bricks-color-secondary" onclick="window.print()">';
+        echo esc_html__('Print Approval Details', 'arsol-pfw');
+        echo '</button>';
         echo '</div>';
     }
 }

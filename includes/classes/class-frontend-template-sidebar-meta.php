@@ -27,36 +27,72 @@ class Frontend_Template_Sidebar_Meta {
      * Initialize hooks
      */
     private function init_hooks() {
-        add_action('arsol_pfw_sidebar_meta', array($this, 'display_sidebar_meta'), 10, 3);
+        // CPT-specific meta hooks
+        add_action('arsol_pfw_project_sidebar_meta', array($this, 'display_project_meta'), 10, 2);
+        add_action('arsol_pfw_project_proposal_sidebar_meta', array($this, 'display_proposal_meta'), 10, 2);
+        add_action('arsol_pfw_project_request_sidebar_meta', array($this, 'display_request_meta'), 10, 2);
     }
 
     /**
-     * Display sidebar metadata
+     * Display project metadata
      *
-     * @param string $post_type The post type (active, proposal, request)
      * @param string $status The current status
      * @param int $post_id The post ID
      */
-    public function display_sidebar_meta($post_type, $status, $post_id) {
+    public function display_project_meta($status, $post_id) {
         if (empty($post_id)) {
             return;
         }
 
-        // Debug: uncomment to see what parameters are passed
-        // error_log("Meta display - Post: $post_id, Type: $post_type, Status: $status");
+        $metadata = $this->get_project_metadata($post_id, $status);
+        $metadata = apply_filters('arsol_pfw_project_sidebar_metadata', $metadata, $status, $post_id);
+        
+        $this->render_metadata($metadata, 'active', $status, $post_id);
+    }
 
-        $metadata = $this->get_default_metadata($post_type, $status, $post_id);
+    /**
+     * Display proposal metadata
+     *
+     * @param string $status The current status
+     * @param int $post_id The post ID
+     */
+    public function display_proposal_meta($status, $post_id) {
+        if (empty($post_id)) {
+            return;
+        }
 
-        /**
-         * Filter sidebar metadata
-         *
-         * @param array $metadata Array of metadata items
-         * @param string $post_type The post type
-         * @param string $status The current status
-         * @param int $post_id The post ID
-         */
-        $metadata = apply_filters('arsol_pfw_sidebar_metadata', $metadata, $post_type, $status, $post_id);
+        $metadata = $this->get_proposal_metadata($post_id, $status);
+        $metadata = apply_filters('arsol_pfw_proposal_sidebar_metadata', $metadata, $status, $post_id);
+        
+        $this->render_metadata($metadata, 'proposal', $status, $post_id);
+    }
 
+    /**
+     * Display request metadata
+     *
+     * @param string $status The current status
+     * @param int $post_id The post ID
+     */
+    public function display_request_meta($status, $post_id) {
+        if (empty($post_id)) {
+            return;
+        }
+
+        $metadata = $this->get_request_metadata($post_id, $status);
+        $metadata = apply_filters('arsol_pfw_request_sidebar_metadata', $metadata, $status, $post_id);
+        
+        $this->render_metadata($metadata, 'request', $status, $post_id);
+    }
+
+    /**
+     * Render metadata array
+     *
+     * @param array $metadata Array of metadata items
+     * @param string $post_type The post type
+     * @param string $status The current status
+     * @param int $post_id The post ID
+     */
+    private function render_metadata($metadata, $post_type, $status, $post_id) {
         if (empty($metadata)) {
             return;
         }
@@ -276,11 +312,23 @@ class Frontend_Template_Sidebar_Meta {
         // Only add status if we have an actual status
         if (!empty($actual_status)) {
             $metadata['status'] = array(
-                'label' => __('Status', 'arsol-pfw'),
+                'label' => __('Request Status', 'arsol-pfw'),
                 'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
                 'class' => 'status-badge status-' . sanitize_html_class($actual_status)
             );
+            
+            // Add status-specific descriptions
+            $status_description = $this->get_request_status_description($actual_status);
+            if (!empty($status_description)) {
+                $metadata['status_description'] = array(
+                    'label' => '',
+                    'value' => $status_description,
+                    'type' => 'text',
+                    'class' => 'status-description'
+                );
+            }
+            
         }
         
         // Budget
@@ -475,5 +523,23 @@ class Frontend_Template_Sidebar_Meta {
         
         // Final fallback to formatted slug if term not found
         return ucfirst(str_replace('-', ' ', $status));
+    }
+
+    /**
+     * Get request status description
+     *
+     * @param string $status The status slug
+     * @return string Status description
+     */
+    private function get_request_status_description($status) {
+        $descriptions = array(
+            'pending-review' => __('Your request is being reviewed by our team', 'arsol-pfw'),
+            'under-review' => __('Being evaluated by our team', 'arsol-pfw'),
+            'on-hold' => __('Temporarily paused - still editable', 'arsol-pfw'),
+            'approved' => __('Congratulations! Moving to proposal stage', 'arsol-pfw'),
+            'rejected' => __('Request has been declined', 'arsol-pfw'),
+        );
+
+        return isset($descriptions[$status]) ? $descriptions[$status] : '';
     }
 } 
