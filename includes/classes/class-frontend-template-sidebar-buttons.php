@@ -133,7 +133,7 @@ class Frontend_Template_Sidebar_Buttons {
             
             echo '<div class="button-item button-approve">';
             echo '<a href="' . esc_url($approve_url) . '" class="button button-primary" ';
-            echo 'onclick="return confirm(\'' . \esc_js__('Are you sure you want to approve this proposal? This will create a project and may generate WooCommerce orders.', 'arsol-pfw') . '\')">';
+            echo 'onclick="return confirm(\'' . \esc_js(\__('Are you sure you want to approve this proposal? This will create a project and may generate WooCommerce orders.', 'arsol-pfw')) . '\')">';
             echo \esc_html__('Approve Proposal', 'arsol-pfw');
             echo '</a>';
             echo '</div>';
@@ -145,7 +145,7 @@ class Frontend_Template_Sidebar_Buttons {
             
             echo '<div class="button-item button-reject">';
             echo '<a href="' . esc_url($reject_url) . '" class="button button-secondary" ';
-            echo 'onclick="return confirm(\'' . \esc_js__('Are you sure you want to reject this proposal?', 'arsol-pfw') . '\')">';
+            echo 'onclick="return confirm(\'' . \esc_js(\__('Are you sure you want to reject this proposal?', 'arsol-pfw')) . '\')">';
             echo \esc_html__('Reject Proposal', 'arsol-pfw');
             echo '</a>';
             echo '</div>';
