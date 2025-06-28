@@ -133,8 +133,8 @@ class Frontend_Template_Sidebar_Buttons {
             
             echo '<div class="button-item button-approve">';
             echo '<a href="' . esc_url($approve_url) . '" class="button button-primary" ';
-            echo 'onclick="return confirm(\'' . esc_js__('Are you sure you want to approve this proposal? This will create a project and may generate WooCommerce orders.', 'arsol-pfw') . '\')">';
-            echo esc_html__('Approve Proposal', 'arsol-pfw');
+            echo 'onclick="return confirm(\'' . \esc_js__('Are you sure you want to approve this proposal? This will create a project and may generate WooCommerce orders.', 'arsol-pfw') . '\')">';
+            echo \esc_html__('Approve Proposal', 'arsol-pfw');
             echo '</a>';
             echo '</div>';
 
@@ -145,8 +145,8 @@ class Frontend_Template_Sidebar_Buttons {
             
             echo '<div class="button-item button-reject">';
             echo '<a href="' . esc_url($reject_url) . '" class="button button-secondary" ';
-            echo 'onclick="return confirm(\'' . esc_js__('Are you sure you want to reject this proposal?', 'arsol-pfw') . '\')">';
-            echo esc_html__('Reject Proposal', 'arsol-pfw');
+            echo 'onclick="return confirm(\'' . \esc_js__('Are you sure you want to reject this proposal?', 'arsol-pfw') . '\')">';
+            echo \esc_html__('Reject Proposal', 'arsol-pfw');
             echo '</a>';
             echo '</div>';
         }
@@ -299,15 +299,15 @@ class Frontend_Template_Sidebar_Buttons {
         // Update Request button (form submit)
         echo '<div class="arsol-pfw-project-button">';
         echo '<button type="submit" form="arsol-request-edit-form" class="brxe-button bricks-button button-primary request-button-btn">';
-        echo esc_html__('Update Request', 'arsol-pfw');
+        echo \esc_html__('Update Request', 'arsol-pfw');
         echo '</button>';
         echo '</div>';
 
         // Cancel Request button
         echo '<div class="arsol-pfw-project-button">';
         echo '<button type="button" class="brxe-button bricks-button sm outline bricks-color-primary cancel-request-btn" ';
-        echo 'data-confirm-text="' . esc_attr__('Are you sure you want to cancel this request?', 'arsol-pfw') . '">';
-        echo esc_html__('Cancel Request', 'arsol-pfw');
+        echo 'data-confirm-text="' . \esc_attr__('Are you sure you want to cancel this request?', 'arsol-pfw') . '">';
+        echo \esc_html__('Cancel Request', 'arsol-pfw');
         echo '</button>';
         echo '</div>';
     }
@@ -321,14 +321,14 @@ class Frontend_Template_Sidebar_Buttons {
         // Contact Review Team
         echo '<div class="arsol-pfw-project-button">';
         echo '<a href="/contact-us/" class="brxe-button bricks-button sm outline bricks-color-primary">';
-        echo esc_html__('Contact Review Team', 'arsol-pfw');
+        echo \esc_html__('Contact Review Team', 'arsol-pfw');
         echo '</a>';
         echo '</div>';
 
         // Review Process FAQ
         echo '<div class="arsol-pfw-project-button">';
         echo '<a href="/faq/" class="brxe-button bricks-button sm outline bricks-color-secondary">';
-        echo esc_html__('Review Process FAQ', 'arsol-pfw');
+        echo \esc_html__('Review Process FAQ', 'arsol-pfw');
         echo '</a>';
         echo '</div>';
     }
@@ -342,29 +342,29 @@ class Frontend_Template_Sidebar_Buttons {
         // Update Request button (form submit)
         echo '<div class="arsol-pfw-project-button">';
         echo '<button type="submit" form="arsol-request-edit-form" class="brxe-button bricks-button button-primary request-button-btn">';
-        echo esc_html__('Update Request', 'arsol-pfw');
+        echo \esc_html__('Update Request', 'arsol-pfw');
         echo '</button>';
         echo '</div>';
 
         // Cancel Request button
         echo '<div class="arsol-pfw-project-button">';
         echo '<button type="button" class="brxe-button bricks-button sm outline bricks-color-primary cancel-request-btn" ';
-        echo 'data-confirm-text="' . esc_attr__('Are you sure you want to cancel this request?', 'arsol-pfw') . '">';
-        echo esc_html__('Cancel Request', 'arsol-pfw');
+        echo 'data-confirm-text="' . \esc_attr__('Are you sure you want to cancel this request?', 'arsol-pfw') . '">';
+        echo \esc_html__('Cancel Request', 'arsol-pfw');
         echo '</button>';
         echo '</div>';
 
         // Contact Support
         echo '<div class="arsol-pfw-project-button">';
         echo '<a href="/contact-us/" class="brxe-button bricks-button sm outline bricks-color-primary">';
-        echo esc_html__('Contact Support', 'arsol-pfw');
+        echo \esc_html__('Contact Support', 'arsol-pfw');
         echo '</a>';
         echo '</div>';
 
         // View Our Services
         echo '<div class="arsol-pfw-project-button">';
         echo '<a href="/services/" class="brxe-button bricks-button sm outline bricks-color-primary">';
-        echo esc_html__('View Our Services', 'arsol-pfw');
+        echo \esc_html__('View Our Services', 'arsol-pfw');
         echo '</a>';
         echo '</div>';
     }
@@ -378,21 +378,21 @@ class Frontend_Template_Sidebar_Buttons {
         // View All Projects
         echo '<div class="arsol-pfw-project-button">';
         echo '<a href="/projects/" class="brxe-button bricks-button button-primary">';
-        echo esc_html__('View All Projects', 'arsol-pfw');
+        echo \esc_html__('View All Projects', 'arsol-pfw');
         echo '</a>';
         echo '</div>';
 
         // Contact Project Team
         echo '<div class="arsol-pfw-project-button">';
         echo '<a href="/contact-us/" class="brxe-button bricks-button sm outline bricks-color-primary">';
-        echo esc_html__('Contact Project Team', 'arsol-pfw');
+        echo \esc_html__('Contact Project Team', 'arsol-pfw');
         echo '</a>';
         echo '</div>';
 
         // Print Approval Details
         echo '<div class="arsol-pfw-project-button">';
         echo '<button type="button" class="brxe-button bricks-button sm outline bricks-color-secondary" onclick="window.print()">';
-        echo esc_html__('Print Approval Details', 'arsol-pfw');
+        echo \esc_html__('Print Approval Details', 'arsol-pfw');
         echo '</button>';
         echo '</div>';
     }
