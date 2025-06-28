@@ -678,10 +678,7 @@ class Shortcodes {
 
 		ob_start();
 		
-		// Set up project data for template
-		$project = array('id' => $project_id);
-		
-		// Set up global post object
+		// Set up global post object (same pattern as proposal and request shortcodes)
 		global $post;
 		$original_post = $post;
 		$post_obj = get_post($project_id);

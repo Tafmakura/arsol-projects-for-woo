@@ -10,25 +10,17 @@
 
 defined('ABSPATH') || exit;
 
-// The $project variable is passed from the render_project_page function
-if (!isset($project)) {
+// The global $post is set up by the shortcode (same pattern as proposal and request templates)
+if (!isset($post) || !$post) {
     echo '<p>' . esc_html__('Project not found.', 'arsol-pfw') . '</p>';
     return;
 }
 
-global $post;
-$post_obj = get_post($project->ID);
-if (!$post_obj) {
-    return;
-}
-$post = $post_obj;
-setup_postdata($post);
-
-// Get project details
-$status_terms = wp_get_post_terms($project->ID, 'arsol-pfw-project-status', array('fields' => 'names'));
+// Get project details using global $post (consistent with other templates)
+$status_terms = wp_get_post_terms($post->ID, 'arsol-pfw-project-status', array('fields' => 'names'));
 $status = !empty($status_terms) ? $status_terms[0] : 'N/A';
-$start_date = get_post_meta($project->ID, '_arsol_pfw_project_start_date', true);
-$due_date = get_post_meta($project->ID, '_arsol_pfw_project_due_date', true);
+$start_date = get_post_meta($post->ID, '_arsol_pfw_project_start_date', true);
+$due_date = get_post_meta($post->ID, '_arsol_pfw_project_due_date', true);
 ?>
 
 <div class="project-content-wrapper">
@@ -41,8 +33,4 @@ $due_date = get_post_meta($project->ID, '_arsol_pfw_project_due_date', true);
             <?php endif; ?>
         </div>
     </div>
-</div>
-
-<?php 
-wp_reset_postdata();
-?> 
+</div> 
