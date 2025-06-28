@@ -803,7 +803,7 @@ class Shortcodes {
 
 		ob_start();
 		?>
-		<div class="project-overview-wrapper">
+		<div class="project-content-wrapper">
 			<div class="project-content">
 				<h3 class="project-title"><?php echo esc_html($title); ?></h3>
 				<div class="project-description">

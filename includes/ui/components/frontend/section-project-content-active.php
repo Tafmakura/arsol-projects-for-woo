@@ -31,7 +31,7 @@ $start_date = get_post_meta($project['id'], '_arsol_pfw_project_start_date', tru
 $due_date = get_post_meta($project['id'], '_arsol_pfw_project_due_date', true);
 ?>
 
-<div class="project-overview-wrapper">
+<div class="project-content-wrapper">
     <div class="project-content">
         <div class="project-description">
             <?php if (empty(get_the_content())) : ?>

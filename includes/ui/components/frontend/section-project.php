@@ -65,7 +65,7 @@ error_log("Project template - ID: $project_id, CPT: '$current_post_type', Type: 
     do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
     ?>
     
-    <div class="project-overview-wrapper">
+    <div class="project-content-wrapper">
         <?php
         /**
          * Hook: arsol_pfw_project_wrapper_start

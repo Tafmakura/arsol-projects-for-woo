@@ -41,7 +41,7 @@ if (empty($display_message)) {
 }
 ?>
 
-<div class="project-overview-wrapper">
+<div class="project-content-wrapper">
     <div class="project-content">
         <h3 class="project-title"><?php echo esc_html($post->post_title); ?></h3>
         <div class="project-description">

@@ -14,7 +14,7 @@ $current_status = !empty($status_terms) ? $status_terms[0] : '';
 do_action('arsol_projects_before_request_state', $post->ID);
 ?>
 
-<div class="project-overview-wrapper">
+<div class="project-content-wrapper">
     <div class="project-content">
         <?php if ($current_status === 'pending-review') : ?>
             <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request-pending-review.php'; ?>

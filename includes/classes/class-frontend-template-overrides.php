@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
  * 
  * Template overrides are placed INSIDE existing wrapper structures to preserve
  * page layout and styling. For example, when overriding 'project_overview',
- * the shortcode content is placed inside the <div class="project-overview-wrapper">
+ * the shortcode content is placed inside the <div class="project-content-wrapper">
  * rather than replacing the entire wrapper.
  */
 class Frontend_Template_Overrides {

@@ -94,19 +94,19 @@
     }
 }
 
-/* Add styles for the project overview layout with sidebar */
-.project-overview-wrapper {
+/* Add styles for the project content layout with sidebar */
+.project-content-wrapper {
     display: flex;
     flex-wrap: wrap; /* Allows columns to wrap on smaller screens */
     gap: 20px; /* Adds space between columns */
 }
 
-.project-overview-wrapper h1,
-.project-overview-wrapper h2,
-.project-overview-wrapper h3,
-.project-overview-wrapper h4,
-.project-overview-wrapper h5,
-.project-overview-wrapper h6 {
+.project-content-wrapper h1,
+.project-content-wrapper h2,
+.project-content-wrapper h3,
+.project-content-wrapper h4,
+.project-content-wrapper h5,
+.project-content-wrapper h6 {
     margin-bottom: 0.4em;
 }
 
@@ -135,7 +135,7 @@
 
 /* Responsive adjustment: Stack columns on smaller screens */
 @media (max-width: 768px) {
-    .project-overview-wrapper {
+    .project-content-wrapper {
         flex-direction: column; /* Stack items vertically */
         gap: 15px; /* Adjust gap for stacked layout */
     }
