@@ -37,20 +37,21 @@ do_action('arsol_projects_before_user_proposals', $has_items);
                         $proposal_status_terms = wp_get_post_terms($proposal_id, 'arsol-pfw-proposal-status', array('fields' => 'names'));
                         if (!is_wp_error($proposal_status_terms) && !empty($proposal_status_terms)) {
                             $status = $proposal_status_terms[0];
-                        } else {
-                            $status = __('Published', 'arsol-pfw');
                         }
+                        // No fallback - if no taxonomy status found, leave empty
                     }
                     $view_url = wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id);
                     $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
                 ?>
                     <tr class="woocommerce-projects-table__row">
                         <td class="woocommerce-projects-table__cell woocommerce-projects-table__cell-project-info" data-title="<?php _e('Proposal', 'arsol-pfw'); ?>">
-                            <div class="project-title-status-wrapper">
+                            <div class="project-info">
                                 <a href="<?php echo esc_url($view_url); ?>" class="project-title-link">
                                     <?php the_title(); ?>
                                 </a>
-                                <span class="project-status"><?php echo esc_html($status); ?></span>
+                                <?php if (!empty($status)) : ?>
+                                    <span class="project-status"><?php echo esc_html($status); ?></span>
+                                <?php endif; ?>
                             </div>
                             <div class="project-excerpt">
                                 <?php echo esc_html($excerpt); ?>

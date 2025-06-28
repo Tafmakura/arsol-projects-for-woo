@@ -142,7 +142,7 @@
         validateRequestFeedback: function() {
             var selectedStatus = $('#request_status').val() || '';
             
-            // Only validate on-hold feedback as required
+            // Validate on-hold feedback as required
             if (selectedStatus === 'on-hold') {
                 var feedbackContent = '';
                 
@@ -165,6 +165,36 @@
                         tinyMCE.get('arsol_pfw_request_onhold_feedback').focus();
                     } else {
                         $('#arsol_pfw_request_onhold_feedback').focus();
+                    }
+                    
+                    return false;
+                }
+            }
+            
+            // Validate under-review feedback (optional but if provided should not be empty)
+            if (selectedStatus === 'under-review') {
+                var underReviewContent = '';
+                
+                // Get content from TinyMCE editor if available
+                if (typeof tinyMCE !== 'undefined' && tinyMCE.get('arsol_pfw_request_underreview_feedback')) {
+                    underReviewContent = tinyMCE.get('arsol_pfw_request_underreview_feedback').getContent();
+                } else {
+                    // Fallback to textarea
+                    underReviewContent = $('#arsol_pfw_request_underreview_feedback').val();
+                }
+                
+                // Check if content was started but is essentially empty
+                var underReviewTextContent = underReviewContent.replace(/<[^>]*>/g, '').trim();
+                
+                // If editor has some content but it's essentially empty, warn user
+                if (underReviewContent && underReviewContent.length > 10 && !underReviewTextContent) {
+                    alert('Under Review feedback appears to be empty. Please provide meaningful feedback or clear the field.');
+                    
+                    // Focus on the editor
+                    if (typeof tinyMCE !== 'undefined' && tinyMCE.get('arsol_pfw_request_underreview_feedback')) {
+                        tinyMCE.get('arsol_pfw_request_underreview_feedback').focus();
+                    } else {
+                        $('#arsol_pfw_request_underreview_feedback').focus();
                     }
                     
                     return false;
