@@ -133,7 +133,7 @@ if ($override) {
 ### 🔧 Key Technical Details
 
 #### CPT Slugs Used
-- `arsol-project` (main projects)
+- `arsol-pfw-project` (main projects)
 - `arsol-pfw-proposal` (proposals)
 - `arsol-pfw-request` (requests)
 

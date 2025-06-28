@@ -94,10 +94,10 @@ class Frontend_Template_Overrides {
     }
 
     /**
-     * Check if a specific project overview type should be overridden
-     *
-     * @param string $project_type The project type (CPT slug: arsol-project, arsol-pfw-proposal, arsol-pfw-request)
-     * @return bool True if override exists, false otherwise
+     * Checks if the given project type supports overrides
+     * 
+     * @param string $project_type The project type (CPT slug: arsol-pfw-project, arsol-pfw-proposal, arsol-pfw-request)
+     * @return bool
      */
     public static function has_project_overview_override($project_type = 'active') {
         
@@ -334,4 +334,11 @@ class Frontend_Template_Overrides {
         $override = self::get_shortcode_override($default_shortcode);
         return do_shortcode($override ?: $default_shortcode);
     }
+
+    /**
+     * Get the WooCommerce endpoint for the given project type
+     * 
+     * @param string $project_type The project type (CPT slug: arsol-pfw-project, arsol-pfw-proposal, arsol-pfw-request)
+     * @return string|null
+     */
 } 

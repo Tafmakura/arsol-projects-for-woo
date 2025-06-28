@@ -65,7 +65,7 @@ if (!$is_edit && isset($_GET['parent_project'])) {
     $parent_project_id = absint($_GET['parent_project']);
     if ($parent_project_id) {
         $parent_project = get_post($parent_project_id);
-        if ($parent_project && $parent_project->post_type === 'arsol-project') {
+        if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
             $parent_project_title = $parent_project->post_title;
         } else {
             $parent_project_id = 0; // Invalid parent project
@@ -78,7 +78,7 @@ if ($is_edit) {
     $parent_project_id = get_post_meta($post->ID, '_arsol_pfw_parent_project_id', true);
     if ($parent_project_id) {
         $parent_project = get_post($parent_project_id);
-        if ($parent_project && $parent_project->post_type === 'arsol-project') {
+        if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
             $parent_project_title = $parent_project->post_title;
         }
     }
@@ -143,7 +143,7 @@ $parent_project_id = get_post_meta($request_id, '_arsol_pfw_parent_project_id', 
 $parent_project_data = null;
 if ($parent_project_id) {
     $parent_project = get_post($parent_project_id);
-    if ($parent_project && $parent_project->post_type === 'arsol-project') {
+    if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
         $parent_project_data = array(
             'id' => $parent_project_id,
             'title' => $parent_project->post_title
@@ -170,7 +170,7 @@ if ($parent_project_data) {
 - **Meta Key**: `_arsol_pfw_parent_project_id`
 - **Meta Value**: Integer (parent project post ID)
 - **Post Type**: `arsol-pfw-request`
-- **Validation**: Must reference existing `arsol-project` post
+- **Validation**: Must reference existing `arsol-pfw-project` post
 
 ### URL Structure
 - **Endpoint**: WooCommerce account endpoint `project-request`

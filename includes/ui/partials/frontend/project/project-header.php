@@ -11,7 +11,7 @@
  * 
  * Individual Item Mode (when $post_id, $post_type are available):
  * @var int $post_id - The post ID
- * @var string $post_type - The post type (arsol-project, arsol-pfw-proposal, arsol-pfw-request)
+ * @var string $post_type - The post type (arsol-pfw-project, arsol-pfw-proposal, arsol-pfw-request)
  * @var string $status - Current status slug (optional)
  * @var string $status_label - Current status label (optional)
  * 
@@ -74,7 +74,7 @@ if ($is_dashboard) {
         <div class="arsol-button-container">
             <div class="arsol-button-groups">
                 <?php foreach ($tabs as $tab_id => $tab_data) : ?>
-                    <button class="arsol-btn-secondary arsol-project-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
+                    <button class="arsol-btn-secondary arsol-pfw-project-btn <?php echo $current_tab === $tab_id ? 'active' : ''; ?>" 
                             onclick="window.location.href='<?php echo esc_url($tab_data['url']); ?>'">
                         <?php echo esc_html($tab_data['label']); ?>
                     </button>

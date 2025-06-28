@@ -216,7 +216,7 @@ class Proposal {
             $parent_project_id = intval($_GET['parent_project']);
             $parent_project = get_post($parent_project_id);
             
-            if ($parent_project && $parent_project->post_type === 'arsol-project') {
+            if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
                 $is_project_tied = true;
                 $parent_project_data = array(
                     'id' => $parent_project_id,
@@ -229,7 +229,7 @@ class Proposal {
             $parent_project_id = get_post_meta($post->ID, '_arsol_pfw_parent_project_id', true);
             if (!empty($parent_project_id)) {
                 $parent_project = get_post($parent_project_id);
-                if ($parent_project && $parent_project->post_type === 'arsol-project') {
+                if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
                     $is_project_tied = true;
                     $parent_project_data = array(
                         'id' => $parent_project_id,
@@ -382,7 +382,7 @@ class Proposal {
         if ($parent_project_id) {
             $parent_project = get_post($parent_project_id);
             
-            if ($parent_project && $parent_project->post_type === 'arsol-project') {
+            if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
                 // Save parent project ID with proper naming convention
                 update_post_meta($post_id, '_arsol_pfw_parent_project_id', $parent_project_id);
                 
@@ -798,7 +798,7 @@ class Proposal {
         
         // Verify parent project exists and user can access it
         $parent_project = get_post($parent_project_id);
-        if (!$parent_project || $parent_project->post_type !== 'arsol-project') {
+        if (!$parent_project || $parent_project->post_type !== 'arsol-pfw-project') {
             wp_die(__('Invalid project.', 'arsol-projects-for-woo'));
         }
         
@@ -875,7 +875,7 @@ class Proposal {
         $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
         $parent_project = get_post($parent_project_id);
         
-        if (!$parent_project || $parent_project->post_type !== 'arsol-project') {
+        if (!$parent_project || $parent_project->post_type !== 'arsol-pfw-project') {
             return false;
         }
         

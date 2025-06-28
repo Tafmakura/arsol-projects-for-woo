@@ -25,7 +25,7 @@ if (!$project) {
 }
 
 // Set project type for hook compatibility - use actual CPT slug
-$project_type = $project->post_type; // 'arsol-project'
+$project_type = $project->post_type; // 'arsol-pfw-project'
 
 // --- Render Project Overview Content ---
 ?>

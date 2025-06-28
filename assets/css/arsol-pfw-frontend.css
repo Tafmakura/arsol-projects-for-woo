@@ -14,24 +14,22 @@
 }
 
 /* Project navigation styling */
-.arsol-project-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.arsol-pfw-project-header {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
     margin-bottom: 20px;
+    padding: 20px;
 }
 
-.arsol-project-header h2 {
-    margin: 0;
+.arsol-pfw-project-header h2 {
+    margin: 0 0 10px 0;
+    color: #333;
 }
 
-.arsol-project-navigation {
-    margin-bottom: var(--space-s) !important;
-    border-top: 1px solid var(--edging-primary);
-    border-bottom: 1px solid var(--edging-primary);
-    padding-top: 15px;
-    padding-bottom: 15px;
-    margin-top: var(--space-s) !important;
+.arsol-pfw-project-navigation {
+    margin: 20px 0;
+    border-bottom: 1px solid #ddd;
 }
 
 /* Button-based navigation */
@@ -103,7 +101,7 @@
 
 .project-content-wrapper h1,
 .project-content-wrapper h2,
-.project-content-wrapper h3,
+.project-wrapper h3,
 .project-content-wrapper h4,
 .project-content-wrapper h5,
 .project-content-wrapper h6 {
@@ -336,48 +334,30 @@
 }
 
 /* Project Form Styling */
-.arsol-project-meta-row {
+.arsol-pfw-project-meta-row {
     display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 15px;
 }
 
-.arsol-project-field-col {
+.arsol-pfw-project-field-col {
     flex: 1;
+    min-width: 0;
 }
 
-.arsol-budget-col {
-    flex: 0 0 200px;
+/* Form styling for project forms */
+.arsol-pfw-project-form .form-row,
+.arsol-pfw-project-form .woocommerce-form-row {
+    margin-bottom: 20px;
 }
 
-.arsol-budget-input {
-    width: 100%;
+.arsol-pfw-project-meta-row {
+    margin-bottom: 15px;
 }
 
-.arsol-money-input {
-    text-align: right;
-}
-
-.arsol-project-form .form-row,
-.arsol-project-form .woocommerce-form-row {
-    margin-bottom: 1rem;
-}
-
-@media (max-width: 768px) {
-    .arsol-project-meta-row {
-        flex-direction: column;
-        gap: 0;
-    }
-    
-    .arsol-project-field-col {
-        margin-bottom: 1rem;
-    }
-    
-    .arsol-budget-col,
-    .arsol-budget-input {
-        flex: 1;
-        width: 100%;
-    }
+.arsol-pfw-project-field-col {
+    flex: 1;
 }
 
 /* ===== SIMPLIFIED TEMPLATE STYLES ===== */

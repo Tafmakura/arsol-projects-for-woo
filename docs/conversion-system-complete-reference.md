@@ -260,7 +260,7 @@ do_action('arsol_project_conversion_project_creation_failed', $error, $conversio
 **Default Project Arguments:**
 ```php
 $project_args = array(
-    'post_type' => 'arsol-project',
+    'post_type' => 'arsol-pfw-project',
     'post_status' => 'not-started',
     'post_title' => $proposal_post->post_title,
     'post_content' => $proposal_post->post_content,
@@ -413,7 +413,7 @@ private function rollback_proposal_to_project($source_id) {
     foreach ($created_ids as $entity_id) {
         $post = get_post($entity_id);
         
-        if ($post && $post->post_type === 'arsol-project') {
+        if ($post && $post->post_type === 'arsol-pfw-project') {
             // Delete associated WooCommerce order if exists
             $order_id = get_post_meta($entity_id, '_arsol_pfw_project_woocommerce_order_id', true);
             if ($order_id) {
@@ -712,7 +712,7 @@ add_action('arsol_after_project_conversion_validated', function($conversion_data
     }
     
     // Check lead availability
-    $lead_workload = count_user_posts($project_lead, 'arsol-project', 'publish');
+    $lead_workload = count_user_posts($project_lead, 'arsol-pfw-project', 'publish');
     if ($lead_workload >= 5) {
         throw new Exception(
             sprintf(__('Project lead is at capacity (%d projects). Please reassign.', 'arsol-pfw'), $lead_workload)

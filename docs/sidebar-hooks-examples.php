@@ -232,7 +232,7 @@ function add_project_wrapper_classes($project_type, $wrapper_data) {
     $status = '';
     
     if ($project_type === 'active') {
-        $status_terms = wp_get_post_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+        $status_terms = wp_get_post_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
         $status = !empty($status_terms) ? $status_terms[0] : '';
     }
     

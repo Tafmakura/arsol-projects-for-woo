@@ -68,7 +68,7 @@ $tabs = array(
 );
 ?>
 
-<div class="arsol-project-navigation">
+<div class="arsol-pfw-project-navigation">
     <div class="arsol-button-container">
         <div class="arsol-button-groups">
             <?php foreach ($tabs as $tab_id => $tab) : ?>

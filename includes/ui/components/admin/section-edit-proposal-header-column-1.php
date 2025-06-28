@@ -28,7 +28,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
     $parent_project_id = intval($_GET['parent_project']);
     $parent_project = get_post($parent_project_id);
     
-    if ($parent_project && $parent_project->post_type === 'arsol-project') {
+    if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
         $is_project_tied = true;
         
         // Get parent project data - CORRECT FIELDS
@@ -54,7 +54,7 @@ elseif ($proposal_id > 0) {
     $parent_project_id = get_post_meta($proposal_id, '_arsol_pfw_parent_project_id', true);
     if (!empty($parent_project_id)) {
         $parent_project = get_post($parent_project_id);
-        if ($parent_project && $parent_project->post_type === 'arsol-project') {
+        if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
             $is_project_tied = true;
             
             // Get parent project data - CORRECT FIELDS

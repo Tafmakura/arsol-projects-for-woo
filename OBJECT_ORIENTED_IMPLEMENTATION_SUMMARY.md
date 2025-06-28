@@ -22,7 +22,7 @@ public function project_overview_endpoint_content() {
     $current_tab = 'overview';
     
     // Status handling with contextual naming
-    $statuses = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+    $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
     $current_status = !empty($statuses) ? $statuses[0] : '';
     
     // Debug with object properties
@@ -63,7 +63,7 @@ error_log("Project: {$project->ID}, Title: '{$project->post_title}', Type: {$pro
 ### **3. Contextual Variable Naming**
 
 #### **Context-Specific ID Variables**
-- `$project_id` - For active projects (arsol-project)
+- `$project_id` - For active projects (arsol-pfw-project)
 - `$project_proposal_id` - For proposals (arsol-pfw-proposal)  
 - `$project_request_id` - For requests (arsol-pfw-request)
 
@@ -146,7 +146,7 @@ $current_post_type = get_post_type($project_id);
 
 // Template usage
 echo esc_html($project_title);
-if ($current_post_type === 'arsol-project') {
+if ($current_post_type === 'arsol-pfw-project') {
 ```
 
 ### **After (Object-Oriented)**
@@ -156,7 +156,7 @@ $project = get_post($project_id);
 
 // Template usage
 echo esc_html($project->post_title);
-if ($project->post_type === 'arsol-project') {
+if ($project->post_type === 'arsol-pfw-project') {
 ```
 
 ## **Next Steps**
