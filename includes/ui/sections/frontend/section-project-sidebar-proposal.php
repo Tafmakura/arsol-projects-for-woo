@@ -94,8 +94,4 @@ $cpt = 'arsol-pfw-proposal';
      */
     do_action('arsol_pfw_proposal_sidebar_after', $post_type, $status, $post_id, $cpt);
     ?>
-    
-    <div class="arsol-pfw-sidebar-section arsol-pfw-sidebar-buttons">
-        <?php
-        /**
 </div>
