@@ -10,8 +10,8 @@
 
 defined('ABSPATH') || exit;
 
-// The $project variable is passed from the page template
-$project_id = isset($project['id']) ? $project['id'] : 0;
+// The $project variable is passed from the page template as a WP_Post object
+$project_id = isset($project->ID) ? $project->ID : 0;
 
 if (!$project_id) {
     echo '<p>' . esc_html__('Project ID not found.', 'arsol-pfw') . '</p>';

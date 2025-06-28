@@ -11,7 +11,7 @@
 defined('ABSPATH') || exit;
 
 // The $project variable is passed from the page template
-$project_id = isset($project['id']) ? $project['id'] : 0;
+$project_id = isset($project->ID) ? $project->ID : 0;
 
 if (!class_exists('WC_Subscriptions') || !$project_id) {
     if (!$project_id) {

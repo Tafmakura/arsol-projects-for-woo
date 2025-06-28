@@ -37,8 +37,8 @@ $project = array(
     'title' => $request_post->post_title
 );
 
-$project_id = $project['id'];
-$project_title = $project['title'];
+$project_id = $project->ID;
+$project_title = $project->post_title;
 $current_tab = 'request';
 
 

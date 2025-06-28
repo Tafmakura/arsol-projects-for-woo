@@ -20,8 +20,8 @@ if (!class_exists('WC_Subscriptions')) {
 
 // The following variables are passed from the endpoint function:
 // $project
-$project_id = $project['id'];
-$project_title = $project['title'];
+$project_id = $project->ID;
+$project_title = $project->post_title;
 $current_tab = 'subscriptions';
 
 // Include unified project header
