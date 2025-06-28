@@ -28,17 +28,20 @@ class Frontend_Template_Overrides {
      * Map of template types to their corresponding advanced settings keys
      */
     private static $template_map = [
-        'project_overview_active' => 'project_overview_active_shortcode',
-        'project_overview_proposal' => 'project_overview_proposal_shortcode',
-        'project_overview_request' => 'project_overview_request_shortcode',
-        'create_project_form' => 'create_project_form_shortcode',
-        'create_project_request_form' => 'create_project_request_form_shortcode',
-        'project_request_edit_form' => 'project_request_edit_form_shortcode',
-        'projects_listing' => 'projects_listing_shortcode',
-        'project_proposal_listings' => 'project_proposal_listings_shortcode',
-        'project_requests_listings' => 'project_requests_listings_shortcode',
-        'access_denied' => 'access_denied_shortcode',
+        'arsol-project' => 'arsol_pfw_project_overview',
+        'arsol-pfw-proposal' => 'arsol_pfw_proposal_overview',
+        'arsol-pfw-request' => 'arsol_pfw_request_overview',
+        'arsol-pfw-project-form' => 'arsol_pfw_project_form',
+        'arsol-pfw-request-form' => 'arsol_pfw_request_form',
+        'arsol-pfw-proposal-form' => 'arsol_pfw_proposal_form',
+        'arsol-pfw-projects-list' => 'arsol_pfw_projects_list',
+        'arsol-pfw-proposal-list' => 'arsol_pfw_proposal_list',
+        'arsol-pfw-requests-list' => 'arsol_pfw_requests_list',
+        'arsol-pfw-no-access' => 'arsol_pfw_no_access',
     ];
+
+    /**
+    }
 
     /**
      * Get template map with conditional subscription support
@@ -93,23 +96,23 @@ class Frontend_Template_Overrides {
     /**
      * Check if a specific project overview type should be overridden
      *
-     * @param string $project_type The project type ('active', 'proposal', 'request')
+     * @param string $project_type The project type (CPT slug: arsol-project, arsol-pfw-proposal, arsol-pfw-request)
      * @return bool True if override exists, false otherwise
      */
     public static function has_project_overview_override($project_type = 'active') {
-        $template_type = 'project_overview_' . $project_type;
-        return self::has_template_override($template_type);
+        
+        return self::has_template_override($project_type);
     }
 
     /**
      * Get the project overview shortcode override for a specific project type
      *
-     * @param string $project_type The project type ('active', 'proposal', 'request')
+     * @param string $project_type The project type (CPT slug: arsol-project, arsol-pfw-proposal, arsol-pfw-request)
      * @return string The rendered shortcode or empty string if none
      */
     public static function get_project_overview_override($project_type = 'active') {
-        $template_type = 'project_overview_' . $project_type;
-        return self::get_template_override($template_type);
+        
+        return self::get_template_override($project_type);
     }
 
     /**

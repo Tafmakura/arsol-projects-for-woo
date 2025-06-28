@@ -796,7 +796,7 @@ class Shortcodes {
 		// Get the processing message
 		$processing_message = !empty($atts['message']) 
 			? $atts['message'] 
-			: \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposal_processing_message');
+			: \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
 
 		// Get the title
 		$title = !empty($atts['title']) ? $atts['title'] : __('Proposal Status', 'arsol-pfw');
@@ -837,7 +837,7 @@ class Shortcodes {
 		// Get the pending approval message
 		$pending_approval_message = !empty($atts['message']) 
 			? $atts['message'] 
-			: \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposal_pending_approval_message');
+			: \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
 
 		// Get the title
 		$title = !empty($atts['title']) ? $atts['title'] : __('Proposal Status', 'arsol-pfw');

@@ -25,89 +25,71 @@ class Settings_Advanced {
     public function init_translations() {
         // Initialize default message fields
         $this->default_message_fields = [
-            'project_overview_message' => [
-                'title' => __('Active Project (Empty)', 'arsol-pfw'),
-                'description' => __('Placeholder message for projects when they don\'t have project content.', 'arsol-pfw')
+            'arsol_pfw_project_default_empty_content' => [
+                'title' => __('Project (Empty Content)', 'arsol-pfw'),
+                'description' => __('Default message displayed when a project has no content or orders.', 'arsol-pfw')
             ],
-            'project_proposals_message' => [
-                'title' => __('Project Proposal (Empty)', 'arsol-pfw'),
-                'description' => __('Placeholder message for project proposals when they don\'t have content.', 'arsol-pfw')
+            'arsol_pfw_proposal_default_empty_content' => [
+                'title' => __('Proposal (Empty Content)', 'arsol-pfw'),
+                'description' => __('Default message displayed when a proposal has no content.', 'arsol-pfw')
             ],
-            'project_proposal_processing_message' => [
-                'title' => __('Project Proposal (Processing)', 'arsol-pfw'),
-                'description' => __('Default message displayed when a project proposal is being processed.', 'arsol-pfw')
+            'arsol_pfw_request_default_on_hold_content' => [
+                'title' => __('Request (On Hold)', 'arsol-pfw'),
+                'description' => __('Default message displayed when a project request is on hold.', 'arsol-pfw')
             ],
-            'project_proposal_pending_approval_message' => [
-                'title' => __('Project Proposal (Pending Approval)', 'arsol-pfw'),
-                'description' => __('Default message displayed when a project proposal is pending customer approval.', 'arsol-pfw')
-            ],
-            'project_request_on_hold_message' => [
-                'title' => __('Project Request (On-Hold)', 'arsol-pfw'),
-                'description' => __('Default message displayed when a project request is put on hold.', 'arsol-pfw')
-            ],
-            'project_request_under_review_message' => [
-                'title' => __('Project Request (Under Review)', 'arsol-pfw'),
+            'arsol_pfw_request_default_under_review_content' => [
+                'title' => __('Request (Under Review)', 'arsol-pfw'),
                 'description' => __('Default message displayed when a project request is under review.', 'arsol-pfw')
             ]
         ];
         
         $this->shortcode_fields = [
-            'project_overview_active_shortcode' => [
+            'arsol_pfw_project_overview' => [
                 'title' => __('Active Project Overview', 'arsol-pfw'),
                 'description' => __('Overrides the overview section for active projects.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_content_active]'
             ],
-            'project_overview_proposal_shortcode' => [
+            'arsol_pfw_proposal_overview' => [
                 'title' => __('Project Proposal Overview', 'arsol-pfw'),
                 'description' => __('Overrides the overview section for project proposals.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_content_proposal]'
             ],
-            'project_proposal_processing_shortcode' => [
-                'title' => __('Project Proposal (Processing)', 'arsol-pfw'),
-                'description' => __('Overrides the content display for proposals in processing status.', 'arsol-pfw'),
-                'placeholder' => '[arsol_pfw_project_content_proposal_processing]'
-            ],
-            'project_proposal_pending_approval_shortcode' => [
-                'title' => __('Project Proposal (Pending Approval)', 'arsol-pfw'),
-                'description' => __('Overrides the content display for proposals in pending approval status.', 'arsol-pfw'),
-                'placeholder' => '[arsol_pfw_project_content_proposal_pending_approval]'
-            ],
-            'project_overview_request_shortcode' => [
+            'arsol_pfw_request_overview' => [
                 'title' => __('Project Request Overview', 'arsol-pfw'),
                 'description' => __('Overrides the overview section for project requests.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_content_request]'
             ],
-            'create_project_form_shortcode' => [
-                'title' => __('Project Form', 'arsol-pfw'),
-                'description' => __('Overrides the Project Form for creating new projects.', 'arsol-pfw'),
+            'arsol_pfw_project_form' => [
+                'title' => __('Create Project Form', 'arsol-pfw'),
+                'description' => __('Overrides the Create Project Form for creating new projects.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_create_form]'
             ],
-            'create_request_form_shortcode' => [
-                'title' => __('Project Request Form', 'arsol-pfw'),
-                'description' => __('Overrides the Project Request Form for requesting new projects.', 'arsol-pfw'),
+            'arsol_pfw_request_form' => [
+                'title' => __('Request Project Form', 'arsol-pfw'),
+                'description' => __('Overrides the Request Project Form for requesting new projects.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_request_form]'
             ],
-            'edit_request_form_shortcode' => [
-                'title' => __('Edit Project Request Form', 'arsol-pfw'),
-                'description' => __('Overrides the Project Request Form for editing a pending project request.', 'arsol-pfw'),
+            'arsol_pfw_proposal_form' => [
+                'title' => __('Request Project Form (Edit)', 'arsol-pfw'),
+                'description' => __('Overrides the Request Project Form for editing a pending project request.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_request_form is_edit="true"]'
             ],
-            'active_projects_listing_shortcode' => [
+            'arsol_pfw_projects_list' => [
                 'title' => __('Active Projects Listing', 'arsol-pfw'),
                 'description' => __('Overrides the display of all active projects for a user.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_projects_listing_active]'
             ],
-            'proposals_listing_shortcode' => [
+            'arsol_pfw_proposal_list' => [
                 'title' => __('Project Proposals Listing', 'arsol-pfw'),
                 'description' => __('Overrides the display of all project proposals for a user.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_projects_listing_proposals]'
             ],
-            'requests_listing_shortcode' => [
+            'arsol_pfw_requests_list' => [
                 'title' => __('Project Requests Listing', 'arsol-pfw'),
                 'description' => __('Overrides the display of all project requests for a user.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_projects_listing_requests]'
             ],
-            'access_denied_shortcode' => [
+            'arsol_pfw_no_access' => [
                 'title' => __('Access Denied Notice', 'arsol-pfw'),
                 'description' => __('Overrides denied access notice.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_access_denied]'
@@ -294,12 +276,10 @@ class Settings_Advanced {
         $effective_messages = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_all_effective_default_messages();
         
         return [
-            'project_request_on_hold' => $effective_messages['project_request_on_hold_message'] ?? '',
-            'project_request_under_review' => $effective_messages['project_request_under_review_message'] ?? '',
-            'project_overview' => $effective_messages['project_overview_message'] ?? '',
-            'project_proposals' => $effective_messages['project_proposals_message'] ?? '',
-            'project_proposal_processing' => $effective_messages['project_proposal_processing_message'] ?? '',
-            'project_proposal_pending_approval' => $effective_messages['project_proposal_pending_approval_message'] ?? ''
+            'project_request_on_hold' => $effective_messages['arsol_pfw_request_default_on_hold_content'] ?? '',
+            'project_request_under_review' => $effective_messages['arsol_pfw_request_default_under_review_content'] ?? '',
+            'project_overview' => $effective_messages['arsol_pfw_project_default_empty_content'] ?? '',
+            'project_proposals' => $effective_messages['arsol_pfw_proposal_default_empty_content'] ?? '',
         ];
     }
 }

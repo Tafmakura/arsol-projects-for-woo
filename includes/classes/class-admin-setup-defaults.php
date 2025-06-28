@@ -28,6 +28,16 @@ class Setup_Defaults {
     const DEFAULTS_VERSION = '1.0.0';
 
     /**
+     * File map for hardcoded default messages
+     */
+    private static $file_map = [
+        'arsol_pfw_project_default_empty_content' => 'content-active-empty.md',
+        'arsol_pfw_proposal_default_empty_content' => 'content-proposal-empty.md',
+        'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
+        'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md'
+    ];
+
+    /**
      * Constructor
      */
     public function __construct() {
@@ -88,12 +98,12 @@ class Setup_Defaults {
         $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
         
         $file_mappings = array(
-            'project_overview_message' => 'content-active-empty.md',
-            'project_proposals_message' => 'content-proposal-empty.md',
-            'project_proposal_processing_message' => 'content-proposal-processing.md',
-            'project_proposal_pending_approval_message' => 'content-proposal-pending-approval.md',
-            'project_request_on_hold_message' => 'content-request-on-hold.md',
-            'project_request_under_review_message' => 'content-request-under-review.md'
+            'arsol_pfw_project_default_empty_content' => 'content-active-empty.md',
+            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-empty.md',
+            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-processing.md',
+            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-pending-approval.md',
+            'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
+            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md'
         );
         
         $defaults = array();
@@ -132,12 +142,12 @@ class Setup_Defaults {
      */
     private static function get_hardcoded_fallback($key) {
         $fallbacks = array(
-            'project_overview_message' => __('This project is currently in progress. Content and details will be added as the project develops.', 'arsol-pfw'),
-            'project_proposals_message' => __('No proposal content has been added yet. Please check back later for updates.', 'arsol-pfw'),
-            'project_proposal_processing_message' => __('Your proposal is currently being processed. We are preparing the details and will have it ready for your review soon.', 'arsol-pfw'),
-            'project_proposal_pending_approval_message' => __('Your proposal is ready and pending your approval. Please review the details below and let us know if you approve.', 'arsol-pfw'),
-            'project_request_on_hold_message' => __('Your project request is currently on hold. We will contact you when we can proceed with your request.', 'arsol-pfw'),
-            'project_request_under_review_message' => __('Your project request is under review. We will get back to you shortly with next steps.', 'arsol-pfw')
+            'arsol_pfw_project_default_empty_content' => __('This project is currently in progress. Content and details will be added as the project develops.', 'arsol-pfw'),
+            'arsol_pfw_proposal_default_empty_content' => __('No proposal content has been added yet. Please check back later for updates.', 'arsol-pfw'),
+            'arsol_pfw_proposal_default_empty_content' => __('Your proposal is currently being processed. We are preparing the details and will have it ready for your review soon.', 'arsol-pfw'),
+            'arsol_pfw_proposal_default_empty_content' => __('Your proposal is ready and pending your approval. Please review the details below and let us know if you approve.', 'arsol-pfw'),
+            'arsol_pfw_request_default_on_hold_content' => __('Your project request is currently on hold. We will contact you when we can proceed with your request.', 'arsol-pfw'),
+            'arsol_pfw_request_default_under_review_content' => __('Your project request is under review. We will get back to you shortly with next steps.', 'arsol-pfw')
         );
         
         return isset($fallbacks[$key]) ? $fallbacks[$key] : '';
@@ -452,12 +462,12 @@ class Setup_Defaults {
         $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
         
         $file_mappings = array(
-            'project_overview_message' => 'content-active-empty.md',
-            'project_proposals_message' => 'content-proposal-empty.md',
-            'project_proposal_processing_message' => 'content-proposal-processing.md',
-            'project_proposal_pending_approval_message' => 'content-proposal-pending-approval.md',
-            'project_request_on_hold_message' => 'content-request-on-hold.md',
-            'project_request_under_review_message' => 'content-request-under-review.md'
+            'arsol_pfw_project_default_empty_content' => 'content-active-empty.md',
+            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-empty.md',
+            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-processing.md',
+            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-pending-approval.md',
+            'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
+            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md'
         );
         
         $debug_info = array(

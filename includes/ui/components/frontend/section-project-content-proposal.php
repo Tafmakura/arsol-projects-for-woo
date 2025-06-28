@@ -32,11 +32,11 @@ if ($status === 'processing') {
 // 2. Second priority: Settings defaults (if no custom feedback)
 if (empty($display_message)) {
     if ($status === 'processing') {
-        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposal_processing_message');
+        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
     } elseif ($status === 'pending-approval') {
-        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposal_pending_approval_message');
+        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
     } else {
-        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_proposals_message');
+        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
     }
 }
 ?>

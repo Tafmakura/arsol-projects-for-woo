@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Get the default message for under-review requests
-$default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_request_under_review_message');
+$default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_request_default_under_review_content');
 ?>
 
 <div class="arsol-pfw-request-content arsol-pfw-under-review-content">

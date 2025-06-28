@@ -92,25 +92,25 @@ $tabs = array(
     <?php
     switch ($current_tab) {
         case 'proposals':
-            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_proposal_listings')) {
-                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('project_proposal_listings');
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('arsol-pfw-proposal-list')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('arsol-pfw-proposal-list');
             } else {
-                echo do_shortcode('[arsol_pfw_projects_listing_proposals]');
+                echo do_shortcode('[arsol_pfw_arsol-pfw-projects-list_proposals]');
             }
             break;
         case 'requests':
-            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('project_requests_listings')) {
-                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('project_requests_listings');
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('arsol-pfw-requests-list')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('arsol-pfw-requests-list');
             } else {
-                echo do_shortcode('[arsol_pfw_projects_listing_requests]');
+                echo do_shortcode('[arsol_pfw_arsol-pfw-projects-list_requests]');
             }
             break;
         case 'active':
         default:
-            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('projects_listing')) {
-                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('projects_listing');
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('arsol-pfw-projects-list')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('arsol-pfw-projects-list');
             } else {
-                echo do_shortcode('[arsol_pfw_projects_listing_active]');
+                echo do_shortcode('[arsol_pfw_arsol-pfw-projects-list_active]');
             }
             break;
     }

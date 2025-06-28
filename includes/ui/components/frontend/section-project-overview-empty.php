@@ -11,7 +11,7 @@
 defined('ABSPATH') || exit;
 
 // Get the default message for active projects (empty content)
-$default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('project_overview_message');
+$default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_project_default_empty_content');
 
 do_action('arsol_projects_before_empty_state', $project_id);
 
