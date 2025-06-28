@@ -138,11 +138,11 @@ error_log("Project template - ID: $project_id, CPT: '$current_post_type', Type: 
                     <?php
                     // Include appropriate sidebar template based on current post type
                     if ($project_type === 'active') {
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-active.php';
+                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-sidebar-active.php';
                     } elseif ($project_type === 'proposal') {
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-proposal.php';
+                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-sidebar-proposal.php';
                     } elseif ($project_type === 'request') {
-                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-sidebar-request.php';
+                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-sidebar-request.php';
                     } else {
                         // Fallback
                         echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
