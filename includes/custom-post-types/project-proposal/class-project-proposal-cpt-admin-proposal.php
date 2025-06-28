@@ -577,7 +577,35 @@ class Proposal {
                 update_post_meta($post_id, '_arsol_pfw_proposal_pending_approval_feedback', $feedback);
             }
         }
-
+        
+        // Handle conversion after save (WordPress-native approach)
+        if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
+            // Check if proposal is in approved status for conversion
+            $current_status = wp_get_object_terms($post_id, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
+            $current_status = !empty($current_status) ? $current_status[0] : '';
+            
+            if ($current_status === 'approved') {
+                // Sanitize and redirect to conversion URL
+                $conversion_url = esc_url_raw($_POST['arsol_convert_after_save']);
+                
+                // Add a small delay to ensure save is complete, then redirect
+                add_action('admin_notices', function() use ($conversion_url) {
+                    echo '<script type="text/javascript">
+                        setTimeout(function() {
+                            window.location.href = "' . $conversion_url . '";
+                        }, 100);
+                    </script>';
+                });
+            } else {
+                // Show error notice if not approved
+                add_action('admin_notices', function() use ($current_status) {
+                    $status_display = $current_status ?: 'none';
+                    echo '<div class="notice notice-error is-dismissible">
+                        <p>' . sprintf(__('Cannot convert proposal. Status is "%s", must be "approved".', 'arsol-pfw'), $status_display) . '</p>
+                    </div>';
+                });
+            }
+        }
     }
     
     /**
