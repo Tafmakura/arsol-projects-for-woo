@@ -210,7 +210,6 @@ class Frontend_Endpoints {
         // Get the project object - templates use object properties directly
         $project = get_post($project_id);
         $current_tab = 'overview';
-        $project_type = 'active'; // For hook compatibility
         
         // Status handling with contextual naming
         $statuses = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
@@ -240,7 +239,6 @@ class Frontend_Endpoints {
         // Get the project object - templates use object properties directly
         $project = get_post($project_id);
         $current_tab = 'orders';
-        $project_type = 'active'; // For hook compatibility
         
         // Status handling with contextual naming
         $statuses = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
@@ -277,7 +275,6 @@ class Frontend_Endpoints {
         // Get the project object - templates use object properties directly
         $project = get_post($project_id);
         $current_tab = 'subscriptions';
-        $project_type = 'active'; // For hook compatibility
         
         // Status handling with contextual naming
         $statuses = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));

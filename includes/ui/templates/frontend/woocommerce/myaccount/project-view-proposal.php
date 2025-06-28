@@ -24,8 +24,8 @@ if (!$project_proposal) {
     return;
 }
 
-// Set project type for hook compatibility
-$project_type = 'proposal';
+// Set project type for hook compatibility - use actual CPT slug
+$project_type = $project_proposal->post_type; // 'arsol-pfw-proposal'
 
 // --- Render Project Proposal Content ---
 ?>
