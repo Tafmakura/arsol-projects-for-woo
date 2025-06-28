@@ -251,4 +251,87 @@ class Frontend_Template_Overrides {
         
         return $debug_info;
     }
+
+    /**
+     * Get shortcode override with validation
+     *
+     * @param string $default_shortcode The shortcode to check for override (e.g., '[arsol_pfw_projects_list]')
+     * @return string|false The override shortcode if valid, or false if no valid override exists
+     */
+    public static function get_shortcode_override($default_shortcode) {
+        // Extract shortcode name from the default shortcode
+        preg_match('/^\[([^\s\]]+)/', $default_shortcode, $matches);
+        $shortcode_name = isset($matches[1]) ? $matches[1] : '';
+        
+        if (empty($shortcode_name)) {
+            return false;
+        }
+        
+        // Check if this is a valid plugin shortcode (must start with arsol_pfw_)
+        if (strpos($shortcode_name, 'arsol_pfw_') !== 0) {
+            return false;
+        }
+        
+        // The setting key is the same as the shortcode name
+        $advanced_settings = get_option('arsol_projects_templates_settings', []);
+        
+        // Check if there's an override in the settings
+        if (isset($advanced_settings[$shortcode_name])) {
+            $override_shortcode = trim($advanced_settings[$shortcode_name]);
+            
+            // Validate that the override shortcode is registered in WordPress
+            if (!empty($override_shortcode) && self::is_registered_shortcode($override_shortcode)) {
+                return $override_shortcode;
+            } else {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
+                    preg_match('/^\[([^\s\]]+)/', $override_shortcode, $debug_matches);
+                    $override_name = isset($debug_matches[1]) ? $debug_matches[1] : 'unknown';
+                    error_log("Arsol Projects: Override shortcode '{$override_name}' is not registered in WordPress");
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Map shortcode names to their corresponding admin setting keys
+     *
+     * @return array Mapping of shortcode names to setting keys
+     */
+
+    /**
+     * Check if shortcode is properly formatted and registered in WordPress
+     *
+     * @param string $shortcode The shortcode to validate
+     * @return bool True if shortcode is registered
+     */
+    private static function is_registered_shortcode($shortcode) {
+        // Basic format validation
+        if (!preg_match('/^\[[\w\s_-]+.*\]$/', $shortcode)) {
+            return false;
+        }
+        
+        // Extract shortcode name
+        preg_match('/^\[([^\s\]]+)/', $shortcode, $matches);
+        $shortcode_name = isset($matches[1]) ? $matches[1] : '';
+        
+        if (empty($shortcode_name)) {
+            return false;
+        }
+        
+        // Use WordPress native function to check if shortcode exists
+        return shortcode_exists($shortcode_name);
+    }
+
+    /**
+     * Render shortcode with override check
+     *
+     * @param string $default_shortcode The default shortcode to render
+     * @return string The rendered shortcode output
+     */
+    public static function render_with_override($default_shortcode) {
+        $override = self::get_shortcode_override($default_shortcode);
+        return do_shortcode($override ?: $default_shortcode);
+    }
 } 

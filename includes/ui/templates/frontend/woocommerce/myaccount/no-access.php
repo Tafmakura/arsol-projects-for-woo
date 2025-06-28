@@ -12,7 +12,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Display access denied message directly
-echo '<div class="woocommerce-info">';
-echo '<p>' . esc_html__('You do not have permission to access this content.', 'arsol-pfw') . '</p>';
-echo '</div>'; 
+// Check for shortcode override using the new system
+$override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_no_access]');
+if ($override) {
+    echo do_shortcode($override);
+} else {
+    echo do_shortcode('[arsol_pfw_no_access]');
+} 

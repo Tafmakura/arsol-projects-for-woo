@@ -99,13 +99,12 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         ?>
         
         <?php
-        // Check if there's a project overview override for this project type (CONTENT ONLY)
-        if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_project_overview_override($project_type)) {
-            // Use the override shortcode for content only
-            echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_project_overview_override($project_type);
+        // Check for shortcode override using the new system
+        $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_overview]');
+        if ($override) {
+            echo do_shortcode($override . ' project_id="' . $project_id . '"');
         } else {
-            // Use default shortcode for content rendering
-            echo do_shortcode('[arsol_pfw_project_content_request project_id="' . $project_id . '"]');
+            echo do_shortcode('[arsol_pfw_request_overview project_id="' . $project_id . '"]');
         }
         ?>
         
