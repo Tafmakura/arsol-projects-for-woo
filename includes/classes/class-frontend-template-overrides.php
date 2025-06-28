@@ -107,7 +107,7 @@ class Frontend_Template_Overrides {
     /**
      * Get the project overview shortcode override for a specific project type
      *
-     * @param string $project_type The project type (CPT slug: arsol-project, arsol-pfw-proposal, arsol-pfw-request)
+     * @param string $project_type The project type (CPT slug: arsol-pfw-project, arsol-pfw-proposal, arsol-pfw-request)
      * @return string The rendered shortcode or empty string if none
      */
     public static function get_project_overview_override($project_type = 'active') {

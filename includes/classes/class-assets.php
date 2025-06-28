@@ -149,7 +149,7 @@ class Assets {
         // Define post types that should load admin assets
         $allowed_post_types = array(
             'shop_order', 
-            'arsol-project', 
+            'arsol-pfw-project', 
             'arsol-pfw-request', 
             'arsol-pfw-proposal'
         );

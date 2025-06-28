@@ -7,7 +7,7 @@ This plugin provides a comprehensive set of shortcodes for displaying project co
 ## Naming Convention
 
 - **Shortcodes**: Use `arsol_pfw_*` prefix (e.g., `[arsol_pfw_project_create_form]`)
-- **Post Types**: `arsol-project`, `arsol-pfw-proposal`, `arsol-pfw-request`
+- **Post Types**: `arsol-pfw-project`, `arsol-pfw-proposal`, `arsol-pfw-request`
 - **Frontend Names**: Always include "Project" (e.g., "Project Form", "Project Request Form")
 
 ---

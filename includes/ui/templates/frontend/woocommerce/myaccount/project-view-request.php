@@ -25,18 +25,14 @@ if (!$request_id) {
 
 // Get and validate request
 $request_post = get_post($request_id);
-if (!$request_post || $project_request->post_type !== 'arsol-pfw-request') {
+if (!$request_post || $request_post->post_type !== 'arsol-pfw-request') {
     wc_add_notice(__('Request not found.', 'arsol-pfw'), 'error');
     wp_safe_redirect(wc_get_account_endpoint_url('projects'));
     exit;
 }
 
-// Set up project data for consistency with project-overview.php
-$project = array(
-    'id' => $request_id,
-    'title' => $request_post->post_title
-);
-
+// Set up project data consistently as WP_Post object (like other templates)
+$project = $request_post;
 $project_id = $project->ID;
 $project_title = $project->post_title;
 $current_tab = 'request';
@@ -56,7 +52,7 @@ $status_terms = array();
 $current_status = '';
 
 // Set project type for hook compatibility - use actual CPT slug
-$project_type = $project_request->post_type; // 'arsol-pfw-request'
+$project_type = $request_post->post_type; // 'arsol-pfw-request'
 $status_terms = wp_get_object_terms($project_id, 'arsol-request-status', array('fields' => 'slugs'));
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
 

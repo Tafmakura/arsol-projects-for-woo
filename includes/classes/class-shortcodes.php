@@ -957,7 +957,7 @@ class Shortcodes {
 		if ($params['category']) {
 			$query_args['tax_query'] = array(
 				array(
-					'taxonomy' => 'arsol-project-category',
+					'taxonomy' => 'arsol-pfw-project-category',
 					'field' => 'slug',
 					'terms' => $params['category']
 				)
@@ -1048,7 +1048,7 @@ class Shortcodes {
 		if ($params['category']) {
 			$query_args['tax_query'] = array(
 				array(
-					'taxonomy' => 'arsol-project-category',
+					'taxonomy' => 'arsol-pfw-project-category',
 					'field' => 'slug',
 					'terms' => $params['category']
 				)

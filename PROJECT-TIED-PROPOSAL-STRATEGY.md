@@ -109,7 +109,7 @@ if (isset($_POST['arsol_view_after_save']) && !empty($_POST['arsol_view_after_sa
 ```php
 // In project deletion hook
 public function prevent_project_deletion_with_proposals($post_id) {
-    if (get_post_type($post_id) !== 'arsol-project') return;
+    if (get_post_type($post_id) !== 'arsol-pfw-project') return;
     
     $tied_proposals = get_posts(array(
         'post_type' => 'arsol-pfw-proposal',
