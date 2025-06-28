@@ -17,7 +17,7 @@ $has_items = $query->have_posts();
 do_action('arsol_projects_before_user_proposals', $has_items);
 ?>
 
-<div class="arsol-project-proposals">
+<div class="arsol-pfw-project-proposals">
     <?php if ($has_items) : ?>
         <table class="woocommerce-projects-table shop_table shop_table_responsive">
             <thead>

@@ -25,8 +25,8 @@ $currency_code = get_woocommerce_currency();
 $currency_symbol = get_woocommerce_currency_symbol($currency_code);
 ?>
 
-<div class="arsol-project-create">
-    <form method="post" class="arsol-project-form">
+<div class="arsol-pfw-project-create">
+    <form method="post" class="arsol-pfw-project-form">
         <h4><?php _e('Create New Project', 'arsol-pfw'); ?></h4>
         <?php wp_nonce_field('create_project', 'create_project_nonce'); ?>
         
@@ -39,8 +39,8 @@ $currency_symbol = get_woocommerce_currency_symbol($currency_code);
         </div>
         
         <!-- Three column row for Budget, Start Date, and Delivery Date -->
-        <div class="form-row form-row-wide arsol-project-meta-row">
-            <div class="arsol-project-field-col arsol-budget-col">
+        <div class="form-row form-row-wide arsol-pfw-project-meta-row">
+            <div class="arsol-pfw-project-field-col arsol-budget-col">
                 <label for="project_budget"><?php echo sprintf(__('Budget (%s)', 'arsol-pfw'), $currency_code); ?> <span class="required">*</span></label>
                 <input type="text" 
                        id="project_budget" 
@@ -50,7 +50,7 @@ $currency_symbol = get_woocommerce_currency_symbol($currency_code);
                        required>
             </div>
             
-            <div class="arsol-project-field-col arsol-date-col">
+            <div class="arsol-pfw-project-field-col arsol-date-col">
                 <label for="project_start_date"><?php _e('Start Date', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="project_start_date" 
@@ -58,7 +58,7 @@ $currency_symbol = get_woocommerce_currency_symbol($currency_code);
                        class="arsol-date-input">
             </div>
             
-            <div class="arsol-project-field-col arsol-date-col">
+            <div class="arsol-pfw-project-field-col arsol-date-col">
                 <label for="project_delivery_date"><?php _e('Delivery Date', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="project_delivery_date" 

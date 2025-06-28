@@ -42,7 +42,7 @@ if ($is_dashboard) {
         $tabs['subscriptions'] = array('label' => __('Subscriptions', 'woocommerce-subscriptions'), 'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id));
     }
     ?>
-    <div class="arsol-project-intro">
+    <div class="arsol-pfw-project-intro">
         <p>
             <?php 
             // Create intro text based on available features
@@ -70,7 +70,7 @@ if ($is_dashboard) {
             ?>
         </p>
     </div>
-    <div class="arsol-project-navigation">
+    <div class="arsol-pfw-project-navigation">
         <div class="arsol-button-container">
             <div class="arsol-button-groups">
                 <?php foreach ($tabs as $tab_id => $tab_data) : ?>
@@ -126,7 +126,7 @@ if (empty($main_title)) {
 }
 ?>
 
-<div class="arsol-project-header">
+<div class="arsol-pfw-project-header">
     <div class="project-header-content">
         <div class="project-breadcrumb">
             <a href="<?php echo esc_url(wc_get_account_endpoint_url('projects')); ?>">

@@ -14,7 +14,7 @@ if (empty($post_id) || empty($post_type)) {
 
 ?>
 
-<div class="arsol-project-overview-content">
+<div class="arsol-pfw-project-overview-content">
     <?php
     // Include appropriate content based on project type
     switch ($project_type) {
