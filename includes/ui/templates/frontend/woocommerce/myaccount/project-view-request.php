@@ -41,8 +41,6 @@ $project_id = $project['id'];
 $project_title = $project['title'];
 $current_tab = 'request';
 
-// Include unified project header
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
 
 // --- Get Project Data ---
 $current_post = get_post($project_id);
