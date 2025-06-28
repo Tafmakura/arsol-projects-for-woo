@@ -135,7 +135,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             <div class="project-sidebar-card card">
                 <?php
                 // Include request sidebar template
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-sidebar-request.php';
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-sidebar-request.php';
                 ?>
             </div>
         </div>
