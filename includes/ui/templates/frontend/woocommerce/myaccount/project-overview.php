@@ -98,24 +98,9 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_project_overview_override($project_type);
         } else {
             // Use default shortcodes for content rendering
-            switch ($project_type) {
-                case 'active':
-                    echo do_shortcode('[arsol_pfw_project_content_active project_id="' . $project_id . '"]');
-                    break;
-                case 'proposal':
-                    echo do_shortcode('[arsol_pfw_project_content_proposal project_id="' . $project_id . '"]');
-                    break;
-                case 'request':
-                    echo do_shortcode('[arsol_pfw_project_content_request project_id="' . $project_id . '"]');
-                    break;
-                default:
-                    echo do_shortcode('[arsol_pfw_project_content_active project_id="' . $project_id . '"]');
-                    break;
-            }
+            echo do_shortcode('[arsol_pfw_project_content_active project_id="' . $project_id . '"]');           
         }
-        ?>
-        
-        <?php
+
         /**
          * Hook: arsol_pfw_project_content_after
          * 
@@ -140,17 +125,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         <div class="project-sidebar-wrapper">
             <div class="project-sidebar-card card">
                 <?php
-                // Include appropriate sidebar template based on current post type
-                if ($project_type === 'active') {
                     include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-sidebar-active.php';
-                } elseif ($project_type === 'proposal') {
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-sidebar-proposal.php';
-                } elseif ($project_type === 'request') {
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-sidebar-request.php';
-                } else {
-                    // Fallback
-                    echo '<p>' . esc_html__('Sidebar template not found.', 'arsol-pfw') . '</p>';
-                }
                 ?>
             </div>
         </div>
