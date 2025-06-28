@@ -116,9 +116,6 @@ function arsol_projects_init() {
     // Instantiate the Frontend Sidebar classes
     new Frontend_Template_Sidebar_Meta();
     new Frontend_Template_Sidebar_Buttons();
-
-    // Initialize frontend template handlers
-    new Frontend_Template_Sidebar_Buttons();
 }
 add_action('plugins_loaded', 'arsol_projects_init');
 
