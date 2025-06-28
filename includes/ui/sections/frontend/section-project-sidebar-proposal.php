@@ -36,19 +36,18 @@ $cpt = 'arsol-pfw-proposal';
     
     <?php
     /**
-     * Hook: arsol_pfw_proposal_sidebar_meta
+     * Hook: arsol_pfw_project_proposal_sidebar_meta
      * 
      * @param string $post_type Project type: 'proposal'
      * @param string $status Current status
      * @param int $post_id Post ID
      * @param string $cpt Custom post type
      */
-    do_action('arsol_pfw_proposal_sidebar_meta', $post_type, $status, $post_id, $cpt);
+    do_action('arsol_pfw_project_proposal_sidebar_meta', $status, $post_id);
     
     /**
      * Generic sidebar metadata section (backward compatibility)
      */
-    do_action('arsol_pfw_sidebar_meta', $post_type, $status, $post_id);
     ?>
     
     <?php
@@ -70,19 +69,18 @@ $cpt = 'arsol-pfw-proposal';
     
     <?php
     /**
-     * Hook: arsol_pfw_proposal_sidebar_actions
+     * Hook: arsol_pfw_project_proposal_sidebar_buttons
      * 
      * @param string $post_type Project type: 'proposal'
      * @param string $status Current status
      * @param int $post_id Post ID
      * @param string $cpt Custom post type
      */
-    do_action('arsol_pfw_proposal_sidebar_actions', $post_type, $status, $post_id, $cpt);
+    do_action('arsol_pfw_project_proposal_sidebar_buttons', $status, $post_id);
     
     /**
      * Generic sidebar secondary actions section (backward compatibility)
      */
-    do_action('arsol_pfw_sidebar_actions', $post_type, $status, $post_id);
     ?>
     
     <?php
@@ -96,4 +94,8 @@ $cpt = 'arsol-pfw-proposal';
      */
     do_action('arsol_pfw_proposal_sidebar_after', $post_type, $status, $post_id, $cpt);
     ?>
+    
+    <div class="arsol-pfw-sidebar-section arsol-pfw-sidebar-buttons">
+        <?php
+        /**
 </div>

@@ -1,99 +1,83 @@
 <?php
 /**
- * Project Sidebar - Active Projects
- *
- * @package Arsol_Projects_For_Woo
- * @version 2.0.0
+ * Project Sidebar Template: Active Status
+ * Shows project metadata, forms, and action buttons for active projects
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
-// Variables provided by parent template (project-overview.php):
-// $project_id, $project_title, $current_post, $current_post_type, 
-// $project_type, $current_status, $wrapper_data
+// Get project data
+$post_id = get_queried_object_id();
+$post_type = get_post_type($post_id);
+$cpt = 'project'; // Internal CPT identifier
 
-$post_id = $project_id;
-$post_type = $project_type;
-$status = $current_status;
-$cpt = 'arsol-project';
-
+// Get current status
+$status_terms = wp_get_post_terms($post_id, 'arsol-project-status');
+$status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0]->slug : '';
 ?>
 
-<div class="project-sidebar sidebar-active">
+<div class="arsol-pfw-project-sidebar">
     <?php
     /**
      * Hook: arsol_pfw_project_sidebar_before
      * 
-     * @param string $post_type Project type: 'active'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
+     * @param string $status The current status
+     * @param int $post_id The post ID
      */
-    do_action('arsol_pfw_project_sidebar_before', $post_type, $status, $post_id, $cpt);
+    do_action('arsol_pfw_project_sidebar_before', $status, $post_id);
     ?>
-    
-    <?php
-    /**
-     * Hook: arsol_pfw_project_sidebar_meta
-     * 
-     * @param string $post_type Project type: 'active'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
-     */
-    do_action('arsol_pfw_project_sidebar_meta', $post_type, $status, $post_id, $cpt);
-    
-    /**
-     * Generic sidebar metadata section (backward compatibility)
-     */
-    do_action('arsol_pfw_sidebar_meta', $post_type, $status, $post_id);
-    ?>
-    
-    <?php
-    /**
-     * Hook: arsol_pfw_project_sidebar_form
-     * 
-     * @param string $post_type Project type: 'active'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
-     */
-    do_action('arsol_pfw_project_sidebar_form', $post_type, $status, $post_id, $cpt);
-    
-    /**
-     * Generic sidebar form section (unified form with filterable fields) (backward compatibility)
-     */
-    do_action('arsol_pfw_sidebar_form', $post_type, $status, $post_id);
-    ?>
-    
-    <?php
-    /**
-     * Hook: arsol_pfw_project_sidebar_actions
-     * 
-     * @param string $post_type Project type: 'active'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
-     */
-    do_action('arsol_pfw_project_sidebar_actions', $post_type, $status, $post_id, $cpt);
-    
-    /**
-     * Generic sidebar secondary actions section (backward compatibility)
-     */
-    do_action('arsol_pfw_sidebar_actions', $post_type, $status, $post_id);
-    ?>
-    
+
+    <div class="arsol-pfw-sidebar-section arsol-pfw-sidebar-meta">
+        <?php
+        /**
+         * Hook: arsol_pfw_project_sidebar_meta
+         * 
+         * Display sidebar metadata (status, dates, budget, etc.)
+         * 
+         * @param string $status The current status
+         * @param int $post_id The post ID
+         */
+        do_action('arsol_pfw_project_sidebar_meta', $status, $post_id);
+        ?>
+    </div>
+
+    <div class="arsol-pfw-sidebar-section arsol-pfw-sidebar-form">
+        <?php
+        /**
+         * Hook: arsol_pfw_project_sidebar_form
+         * 
+         * Display sidebar forms (if any)
+         * 
+         * @param string $status The current status
+         * @param int $post_id The post ID
+         */
+        do_action('arsol_pfw_project_sidebar_form', $status, $post_id);
+        ?>
+    </div>
+
+    <div class="arsol-pfw-sidebar-section arsol-pfw-sidebar-buttons">
+        <?php
+        /**
+         * Hook: arsol_pfw_project_sidebar_buttons
+         * 
+         * Display sidebar action buttons
+         * 
+         * @param string $status The current status
+         * @param int $post_id The post ID
+         */
+        do_action('arsol_pfw_project_sidebar_buttons', $status, $post_id);
+        ?>
+    </div>
+
     <?php
     /**
      * Hook: arsol_pfw_project_sidebar_after
      * 
-     * @param string $post_type Project type: 'active'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
+     * @param string $status The current status
+     * @param int $post_id The post ID
      */
-    do_action('arsol_pfw_project_sidebar_after', $post_type, $status, $post_id, $cpt);
+    do_action('arsol_pfw_project_sidebar_after', $status, $post_id);
     ?>
 </div>

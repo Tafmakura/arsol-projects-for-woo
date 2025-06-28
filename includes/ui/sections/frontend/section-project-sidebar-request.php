@@ -36,19 +36,18 @@ $cpt = 'arsol-pfw-request';
     
     <?php
     /**
-     * Hook: arsol_pfw_request_sidebar_meta
+     * Hook: arsol_pfw_project_request_sidebar_meta
      * 
      * @param string $post_type Project type: 'request'
      * @param string $status Current status
      * @param int $post_id Post ID
      * @param string $cpt Custom post type
      */
-    do_action('arsol_pfw_request_sidebar_meta', $post_type, $status, $post_id, $cpt);
+    do_action('arsol_pfw_project_request_sidebar_meta', $status, $post_id);
     
     /**
      * Generic sidebar metadata section (backward compatibility)
      */
-    do_action('arsol_pfw_sidebar_meta', $post_type, $status, $post_id);
     ?>
     
     <?php
@@ -70,19 +69,18 @@ $cpt = 'arsol-pfw-request';
     
     <?php
     /**
-     * Hook: arsol_pfw_request_sidebar_actions
+     * Hook: arsol_pfw_project_request_sidebar_buttons
      * 
      * @param string $post_type Project type: 'request'
      * @param string $status Current status
      * @param int $post_id Post ID
      * @param string $cpt Custom post type
      */
-    do_action('arsol_pfw_request_sidebar_actions', $post_type, $status, $post_id, $cpt);
+    do_action('arsol_pfw_project_request_sidebar_buttons', $status, $post_id);
     
     /**
      * Generic sidebar secondary actions section (backward compatibility)
      */
-    do_action('arsol_pfw_sidebar_actions', $post_type, $status, $post_id);
     ?>
     
     <?php
