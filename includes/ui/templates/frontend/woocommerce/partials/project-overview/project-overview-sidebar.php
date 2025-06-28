@@ -46,7 +46,7 @@ $current_status = !empty($status_terms) && !is_wp_error($status_terms) ? $status
 
     <?php
     /**
-     * Hook: arsol_pfw_{$internal_post_type}_sidebar_actions
+     * Hook: arsol_pfw_{$internal_post_type}_sidebar_buttons
      * 
      * Display sidebar action buttons
      * Classes hook into this with conditional logic based on status.
@@ -54,6 +54,6 @@ $current_status = !empty($status_terms) && !is_wp_error($status_terms) ? $status
      * @param string $current_status The current status
      * @param int $post_id The post ID
      */
-    do_action("arsol_pfw_{$internal_post_type}_sidebar_actions", $current_status, $post_id);
+    do_action("arsol_pfw_{$internal_post_type}_sidebar_buttons", $current_status, $post_id);
     ?>
 </div> 

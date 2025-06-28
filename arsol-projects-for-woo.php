@@ -53,7 +53,7 @@ use Arsol_Projects_For_Woo\Setup;
 use Arsol_Projects_For_Woo\Workflow\Workflow_Handler;
 use Arsol_Projects_For_Woo\Admin\Setup_Defaults;
 use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Meta;
-use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Actions;
+use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Buttons;
 use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Fields;
 
 // Include the Setup class
@@ -117,7 +117,7 @@ function arsol_projects_init() {
     new Setup_Defaults();
     // Instantiate the Frontend Sidebar classes
     new Frontend_Template_Sidebar_Meta();
-    new Frontend_Template_Sidebar_Actions();
+    new Frontend_Template_Sidebar_Buttons();
     new Frontend_Template_Sidebar_Fields();
 }
 add_action('plugins_loaded', 'arsol_projects_init');
