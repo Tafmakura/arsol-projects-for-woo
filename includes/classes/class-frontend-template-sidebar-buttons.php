@@ -36,54 +36,57 @@ class Frontend_Template_Sidebar_Buttons {
     /**
      * Display project buttons
      *
-     * @param string $status The current status
-     * @param int $post_id The post ID
+     * @param string $current_status The current status
+     * @param int $project_id The project ID
      */
-    public function display_project_buttons($status, $post_id) {
-        error_log("ARSOL DEBUG: Active project buttons called - Status: '$status', Post ID: $post_id");
+    public function display_project_buttons($current_status, $project_id) {
+        error_log("ARSOL DEBUG: Project buttons - Status: '$current_status', Project ID: $project_id");
         
-        if (empty($post_id)) {
-            error_log("ARSOL DEBUG: Active project buttons - Empty post ID, returning");
+        if (empty($project_id)) {
+            error_log("ARSOL DEBUG: Project buttons - Empty project ID, returning");
             return;
         }
 
         echo '<div class="sidebar-buttons">';
-        $this->add_project_buttons($post_id, $status);
+        $this->add_project_buttons($project_id, $current_status);
         echo '</div>';
     }
 
     /**
      * Display proposal buttons
      *
-     * @param string $status The current status
-     * @param int $post_id The post ID
+     * @param string $current_status The current status
+     * @param int $project_proposal_id The proposal ID
      */
-    public function display_proposal_buttons($status, $post_id) {
-        if (empty($post_id)) {
+    public function display_proposal_buttons($current_status, $project_proposal_id) {
+        error_log("ARSOL DEBUG: Proposal buttons - Status: '$current_status', Proposal ID: $project_proposal_id");
+        
+        if (empty($project_proposal_id)) {
+            error_log("ARSOL DEBUG: Proposal buttons - Empty proposal ID, returning");
             return;
         }
 
         echo '<div class="sidebar-buttons">';
-        $this->add_proposal_buttons($post_id, $status);
+        $this->add_proposal_buttons($project_proposal_id, $current_status);
         echo '</div>';
     }
 
     /**
      * Display request buttons
      *
-     * @param string $status The current status
-     * @param int $post_id The post ID
+     * @param string $current_status The current status
+     * @param int $project_request_id The request ID
      */
-    public function display_request_buttons($status, $post_id) {
-        error_log("ARSOL DEBUG: Request buttons called - Status: '$status', Post ID: $post_id");
+    public function display_request_buttons($current_status, $project_request_id) {
+        error_log("ARSOL DEBUG: Request buttons - Status: '$current_status', Request ID: $project_request_id");
         
-        if (empty($post_id)) {
-            error_log("ARSOL DEBUG: Request buttons - Empty post ID, returning");
+        if (empty($project_request_id)) {
+            error_log("ARSOL DEBUG: Request buttons - Empty request ID, returning");
             return;
         }
 
         echo '<div class="sidebar-buttons">';
-        $this->add_request_buttons($post_id, $status);
+        $this->add_request_buttons($project_request_id, $current_status);
         echo '</div>';
     }
 

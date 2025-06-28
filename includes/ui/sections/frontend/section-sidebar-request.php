@@ -2,6 +2,9 @@
 /**
  * Project Sidebar - Requests
  *
+ * Variables passed from endpoint class:
+ * $project_request_id, $project_request (WP_Post object), $current_tab, $statuses, $current_status, $wrapper_data
+ * 
  * @package Arsol_Projects_For_Woo
  * @version 2.0.0
  */
@@ -10,18 +13,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-// Variables provided by parent template (project-overview.php):
-// $project_id, $project_title, $current_post, $current_post_type, 
-// $project_type, $current_status, $wrapper_data
-
-$post_id = $project_id;
-$post_type = $project_type;
-$status = $current_status;
-$cpt = 'arsol-pfw-request';
-
-error_log("ARSOL DEBUG: Request sidebar - Post ID: $post_id, Post Type: $post_type, Status: '$status', CPT: $cpt");
-error_log("ARSOL DEBUG: Request sidebar - Original project_id: $project_id, project_type: $project_type, current_status: '$current_status'");
-
+error_log("ARSOL DEBUG: Request sidebar - ID: {$project_request->ID}, Title: '{$project_request->post_title}', Type: {$project_request->post_type}, Status: '$current_status'");
 ?>
 
 <div class="project-sidebar sidebar-request">
@@ -29,67 +21,41 @@ error_log("ARSOL DEBUG: Request sidebar - Original project_id: $project_id, proj
     /**
      * Hook: arsol_pfw_request_sidebar_before
      * 
-     * @param string $post_type Project type: 'request'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
+     * @param string $project_request->post_type Project type
+     * @param string $current_status Current status
+     * @param int $project_request_id Request ID
      */
-    do_action('arsol_pfw_request_sidebar_before', $post_type, $status, $post_id, $cpt);
+    do_action('arsol_pfw_request_sidebar_before', $project_request->post_type, $current_status, $project_request_id);
     ?>
     
     <?php
     /**
      * Hook: arsol_pfw_project_request_sidebar_meta
      * 
-     * @param string $post_type Project type: 'request'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
+     * @param string $current_status Current status
+     * @param int $project_request_id Request ID
      */
-    do_action('arsol_pfw_project_request_sidebar_meta', $status, $post_id);
-    
-    /**
-     * Generic sidebar metadata section (backward compatibility)
-     */
-    ?>
-    
-    <?php
-    /**
-     * Hook: arsol_pfw_request_sidebar_form
-     * 
-     * @param string $post_type Project type: 'request'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
-     */
-    do_action('arsol_pfw_request_sidebar_form', $post_type, $status, $post_id, $cpt);
+    do_action('arsol_pfw_project_request_sidebar_meta', $current_status, $project_request_id);
     ?>
     
     <?php
     /**
      * Hook: arsol_pfw_project_request_sidebar_buttons
      * 
-     * @param string $post_type Project type: 'request'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
+     * @param string $current_status Current status
+     * @param int $project_request_id Request ID
      */
-    do_action('arsol_pfw_project_request_sidebar_buttons', $status, $post_id);
-    
-    /**
-     * Generic sidebar secondary actions section (backward compatibility)
-     */
+    do_action('arsol_pfw_project_request_sidebar_buttons', $current_status, $project_request_id);
     ?>
     
     <?php
     /**
      * Hook: arsol_pfw_request_sidebar_after
      * 
-     * @param string $post_type Project type: 'request'
-     * @param string $status Current status
-     * @param int $post_id Post ID
-     * @param string $cpt Custom post type
+     * @param string $project_request->post_type Project type
+     * @param string $current_status Current status
+     * @param int $project_request_id Request ID
      */
-    do_action('arsol_pfw_request_sidebar_after', $post_type, $status, $post_id, $cpt);
+    do_action('arsol_pfw_request_sidebar_after', $project_request->post_type, $current_status, $project_request_id);
     ?>
 </div>

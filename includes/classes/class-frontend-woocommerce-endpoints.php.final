@@ -381,7 +381,7 @@ class Frontend_Endpoints {
      */
     public function project_view_request_endpoint_content() {
         // Standardized variable generation
-        $project_request_id = absint(get_query_var('project-view-request'));
+        $project_request_id = absint($wp->query_vars['project-view-request']);
         
         if (!$project_request_id) {
             wc_add_notice(__('Invalid request ID.', 'arsol-pfw'), 'error');

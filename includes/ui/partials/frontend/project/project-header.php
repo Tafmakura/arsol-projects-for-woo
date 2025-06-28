@@ -4,9 +4,9 @@
  * 
  * A single project header that automatically adapts based on available variables.
  * 
- * Dashboard Mode (when $project_id, $project_title, $current_tab are available):
+ * Dashboard Mode (when $project_id, $project (WP_Post object), $current_tab are available):
  * @var int $project_id - The project ID
- * @var string $project_title - The project title
+ * @var WP_Post $project - The project object (use $project->post_title)
  * @var string $current_tab - Current active tab (overview, orders, subscriptions)
  * 
  * Individual Item Mode (when $post_id, $post_type are available):
@@ -19,13 +19,13 @@
  * @var string $page_title - Main page title
  * @var string $page_subtitle - Page subtitle (optional)
  * @var int $project_id - Related project ID (optional)
- * @var string $project_title - Related project title (optional)
+ * @var WP_Post $project - Related project object (optional)
  */
 
 if (!defined('ABSPATH')) exit;
 
 // Auto-detect mode based on available variables
-$is_dashboard = !empty($project_id) && !empty($project_title) && !empty($current_tab);
+$is_dashboard = !empty($project_id) && !empty($project) && !empty($current_tab);
 $is_individual_item = !empty($post_id) && !empty($post_type);
 $is_page_mode = !empty($page_title) && !$is_dashboard && !$is_individual_item;
 
@@ -50,7 +50,7 @@ if ($is_dashboard) {
                 // Full intro with subscriptions
                 echo sprintf(
                     esc_html__('This is your %s project dashboard. The %s tab shows project details, the %s tab displays your project %s, and the %s tab displays all your project %s.', 'arsol-pfw'),
-                    '<strong>' . esc_html($project_title) . '</strong>',
+                    '<strong>' . esc_html($project->post_title) . '</strong>',
                     '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
                     '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
                     esc_html__('orders', 'woocommerce'),
@@ -61,7 +61,7 @@ if ($is_dashboard) {
                 // Simplified intro without subscriptions
                 echo sprintf(
                     esc_html__('This is your %s project dashboard. The %s tab shows project details and the %s tab displays your project %s.', 'arsol-pfw'),
-                    '<strong>' . esc_html($project_title) . '</strong>',
+                    '<strong>' . esc_html($project->post_title) . '</strong>',
                     '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
                     '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
                     esc_html__('orders', 'woocommerce')
@@ -133,10 +133,10 @@ if (empty($main_title)) {
                 <?php _e('← Back to Projects', 'arsol-pfw'); ?>
             </a>
             
-            <?php if ($is_page_mode && !empty($project_id) && !empty($project_title)): ?>
+            <?php if ($is_page_mode && !empty($project_id) && !empty($project)): ?>
                 <span class="breadcrumb-separator">/</span>
                 <a href="<?php echo esc_url(wc_get_account_endpoint_url('project-overview') . '/' . $project_id); ?>">
-                    <?php echo esc_html($project_title); ?>
+                    <?php echo esc_html($project->post_title); ?>
                 </a>
             <?php endif; ?>
         </div>
