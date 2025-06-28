@@ -46,7 +46,19 @@ class Shortcodes {
 		// Template override example/demo shortcode
 		add_shortcode('arsol_template_override_demo', array($this, 'template_override_demo_shortcode'));
 
-		// Internal template system shortcodes for content areas
+		// Template override shortcodes - match setting names exactly
+		add_shortcode('arsol_pfw_project_overview', array($this, 'project_content_active_shortcode'));
+		add_shortcode('arsol_pfw_proposal_overview', array($this, 'project_content_proposal_shortcode'));
+		add_shortcode('arsol_pfw_request_overview', array($this, 'project_content_request_shortcode'));
+		add_shortcode('arsol_pfw_project_form', array($this, 'project_create_form_shortcode'));
+		add_shortcode('arsol_pfw_request_form', array($this, 'project_request_form_shortcode'));
+		add_shortcode('arsol_pfw_proposal_form', array($this, 'project_request_form_shortcode')); // Uses same form with is_edit
+		add_shortcode('arsol_pfw_projects_list', array($this, 'projects_listing_active_shortcode'));
+		add_shortcode('arsol_pfw_proposals_list', array($this, 'projects_listing_proposals_shortcode'));
+		add_shortcode('arsol_pfw_requests_list', array($this, 'projects_listing_requests_shortcode'));
+		add_shortcode('arsol_pfw_no_access', array($this, 'access_denied_shortcode'));
+
+		// Legacy shortcodes - kept for backward compatibility
 		add_shortcode('arsol_pfw_project_content_active', array($this, 'project_content_active_shortcode'));
 		add_shortcode('arsol_pfw_project_content_proposal', array($this, 'project_content_proposal_shortcode'));
 		add_shortcode('arsol_pfw_project_content_request', array($this, 'project_content_request_shortcode'));
@@ -651,7 +663,7 @@ class Shortcodes {
 	public function project_content_active_shortcode($atts) {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
-		), $atts, 'arsol_pfw_project_content_active');
+		), $atts, 'arsol_pfw_project_overview');
 
 		$project_id = $this->resolve_project_id($atts['project_id'], 'arsol-project');
 		
@@ -699,7 +711,7 @@ class Shortcodes {
 	public function project_content_proposal_shortcode($atts) {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
-		), $atts, 'arsol_pfw_project_content_proposal');
+		), $atts, 'arsol_pfw_proposal_overview');
 
 		$project_id = $this->resolve_project_id($atts['project_id'], 'arsol-pfw-proposal');
 		
@@ -744,7 +756,7 @@ class Shortcodes {
 	public function project_content_request_shortcode($atts) {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
-		), $atts, 'arsol_pfw_project_content_request');
+		), $atts, 'arsol_pfw_request_overview');
 
 		$project_id = $this->resolve_project_id($atts['project_id'], 'arsol-pfw-request');
 		
@@ -872,7 +884,7 @@ class Shortcodes {
 			'orderby' => 'date',
 			'order' => 'DESC',
 			'search' => '',
-		), $atts, 'arsol_pfw_projects_listing_active');
+		), $atts, 'arsol_pfw_projects_list');
 
 		// Resolve dynamic parameters
 		$params = $this->resolve_dynamic_parameters($atts);
@@ -1077,7 +1089,7 @@ class Shortcodes {
 			'orderby' => 'date',
 			'order' => 'DESC',
 			'search' => '',
-		), $atts, 'arsol_pfw_projects_listing_proposals');
+		), $atts, 'arsol_pfw_proposals_list');
 
 		// Resolve dynamic parameters
 		$params = $this->resolve_dynamic_parameters($atts);
@@ -1212,7 +1224,7 @@ class Shortcodes {
 			'orderby' => 'date',
 			'order' => 'DESC',
 			'search' => '',
-		), $atts, 'arsol_pfw_projects_listing_requests');
+		), $atts, 'arsol_pfw_requests_list');
 
 		// Resolve dynamic parameters
 		$params = $this->resolve_dynamic_parameters($atts);
@@ -1345,7 +1357,7 @@ class Shortcodes {
 
 		$atts = shortcode_atts(array(
 			'form_id' => 'create-project-form',
-		), $atts, 'arsol_project_create_form');
+		), $atts, 'arsol_pfw_project_form');
 
 		// Check if user can create projects
 		$user_id = get_current_user_id();
@@ -1378,7 +1390,7 @@ class Shortcodes {
 			'form_id' => 'create-request-form',
 			'is_edit' => false,
 			'post_id' => 0,
-		), $atts, 'arsol_project_request_form');
+		), $atts, 'arsol_pfw_request_form');
 
 		$user_id = get_current_user_id();
 		$admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
@@ -1413,7 +1425,7 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'title' => __('Access Denied', 'arsol-pfw'),
 			'message' => __('You do not have permission to access this feature. Please contact an administrator if you believe this is an error.', 'arsol-pfw'),
-		), $atts, 'arsol_pfw_access_denied');
+		), $atts, 'arsol_pfw_no_access');
 
 		ob_start();
 		?>

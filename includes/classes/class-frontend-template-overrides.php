@@ -35,7 +35,7 @@ class Frontend_Template_Overrides {
         'arsol-pfw-request-form' => 'arsol_pfw_request_form',
         'arsol-pfw-proposal-form' => 'arsol_pfw_proposal_form',
         'arsol-pfw-projects-list' => 'arsol_pfw_projects_list',
-        'arsol-pfw-proposal-list' => 'arsol_pfw_proposal_list',
+        'arsol-pfw-proposals-list' => 'arsol_pfw_proposals_list',
         'arsol-pfw-requests-list' => 'arsol_pfw_requests_list',
         'arsol-pfw-no-access' => 'arsol_pfw_no_access',
     ];

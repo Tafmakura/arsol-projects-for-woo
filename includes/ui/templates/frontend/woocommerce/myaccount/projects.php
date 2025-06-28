@@ -92,8 +92,8 @@ $tabs = array(
     <?php
     switch ($current_tab) {
         case 'proposals':
-            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('arsol-pfw-proposal-list')) {
-                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('arsol-pfw-proposal-list');
+            if (\Arsol_Projects_For_Woo\Frontend_Template_Overrides::has_template_override('arsol-pfw-proposals-list')) {
+                echo \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_template_override('arsol-pfw-proposals-list');
             } else {
                 echo do_shortcode('[arsol_pfw_arsol-pfw-projects-list_proposals]');
             }
