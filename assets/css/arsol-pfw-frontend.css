@@ -15,21 +15,23 @@
 
 /* Project navigation styling */
 .arsol-pfw-project-header {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 20px;
-    padding: 20px;
 }
 
 .arsol-pfw-project-header h2 {
-    margin: 0 0 10px 0;
-    color: #333;
+    margin: 0;
 }
 
 .arsol-pfw-project-navigation {
-    margin: 20px 0;
-    border-bottom: 1px solid #ddd;
+    margin-bottom: var(--space-s) !important;
+    border-top: 1px solid var(--edging-primary);
+    border-bottom: 1px solid var(--edging-primary);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-top: var(--space-s) !important;
 }
 
 /* Button-based navigation */
@@ -336,28 +338,46 @@
 /* Project Form Styling */
 .arsol-pfw-project-meta-row {
     display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    gap: 15px;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 .arsol-pfw-project-field-col {
     flex: 1;
-    min-width: 0;
 }
 
-/* Form styling for project forms */
+.arsol-budget-col {
+    flex: 0 0 200px;
+}
+
+.arsol-budget-input {
+    width: 100%;
+}
+
+.arsol-money-input {
+    text-align: right;
+}
+
 .arsol-pfw-project-form .form-row,
 .arsol-pfw-project-form .woocommerce-form-row {
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
 }
 
-.arsol-pfw-project-meta-row {
-    margin-bottom: 15px;
-}
-
-.arsol-pfw-project-field-col {
-    flex: 1;
+@media (max-width: 768px) {
+    .arsol-pfw-project-meta-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .arsol-pfw-project-field-col {
+        margin-bottom: 1rem;
+    }
+    
+    .arsol-budget-col,
+    .arsol-budget-input {
+        flex: 1;
+        width: 100%;
+    }
 }
 
 /* ===== SIMPLIFIED TEMPLATE STYLES ===== */
