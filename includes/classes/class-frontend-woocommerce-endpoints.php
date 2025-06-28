@@ -207,8 +207,25 @@ class Frontend_Endpoints {
             return;
         }
         
-        // Project data, available to the template
+        // Prepare all data for the template - separating logic from display
         $project = $this->get_project_data($project_id);
+        $project_title = $project['title'];
+        $current_tab = 'overview';
+        
+        // Get project post data
+        $current_post = get_post($project_id);
+        $current_post_type = get_post_type($project_id);
+        
+        // Initialize project variables
+        $project_type = 'active';
+        $status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+        $current_status = !empty($status_terms) ? $status_terms[0] : '';
+        
+        // Prepare comprehensive data for efficient hook usage
+        $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
+        
+        // Debug logging
+        error_log("ARSOL DEBUG: Project Overview Endpoint - ID: $project_id, Type: $project_type, Status: '$current_status'");
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
     }
@@ -225,8 +242,25 @@ class Frontend_Endpoints {
             return;
         }
         
-        // Project data, available to the template
+        // Prepare all data for the template - separating logic from display
         $project = $this->get_project_data($project_id);
+        $project_title = $project['title'];
+        $current_tab = 'orders';
+        
+        // Get project post data
+        $current_post = get_post($project_id);
+        $current_post_type = get_post_type($project_id);
+        
+        // Initialize project variables
+        $project_type = 'active';
+        $status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+        $current_status = !empty($status_terms) ? $status_terms[0] : '';
+        
+        // Prepare comprehensive data for efficient hook usage
+        $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
+        
+        // Debug logging
+        error_log("ARSOL DEBUG: Project Orders Endpoint - ID: $project_id, Type: $project_type, Status: '$current_status'");
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-orders.php';
     }
@@ -250,8 +284,25 @@ class Frontend_Endpoints {
             return;
         }
         
-        // Project data, available to the template
+        // Prepare all data for the template - separating logic from display
         $project = $this->get_project_data($project_id);
+        $project_title = $project['title'];
+        $current_tab = 'subscriptions';
+        
+        // Get project post data
+        $current_post = get_post($project_id);
+        $current_post_type = get_post_type($project_id);
+        
+        // Initialize project variables
+        $project_type = 'active';
+        $status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
+        $current_status = !empty($status_terms) ? $status_terms[0] : '';
+        
+        // Prepare comprehensive data for efficient hook usage
+        $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
+        
+        // Debug logging
+        error_log("ARSOL DEBUG: Project Subscriptions Endpoint - ID: $project_id, Type: $project_type, Status: '$current_status'");
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-subscriptions.php';
     }
@@ -325,6 +376,32 @@ class Frontend_Endpoints {
             exit;
         }
 
+        // Prepare all data for the template - separating logic from display
+        // Set up project data for consistency with project-overview.php
+        $project = array(
+            'id' => $proposal_id,
+            'title' => $proposal->post_title
+        );
+
+        $project_id = $project['id'];
+        $project_title = $project['title'];
+        $current_tab = 'proposal';
+
+        // Get project post data
+        $current_post = get_post($project_id);
+        $current_post_type = get_post_type($project_id);
+
+        // Initialize proposal variables
+        $project_type = 'proposal';
+        $status_terms = wp_get_object_terms($project_id, 'arsol-proposal-status', array('fields' => 'slugs'));
+        $current_status = !empty($status_terms) ? $status_terms[0] : '';
+
+        // Prepare comprehensive data for efficient hook usage
+        $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
+        
+        // Debug logging
+        error_log("ARSOL DEBUG: Proposal View Endpoint - ID: $project_id, Type: $project_type, Status: '$current_status'");
+
         // Include the new project view proposal template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php';
     }
@@ -362,6 +439,32 @@ class Frontend_Endpoints {
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
         }
+
+        // Prepare all data for the template - separating logic from display
+        // Set up project data for consistency with project-overview.php
+        $project = array(
+            'id' => $request_id,
+            'title' => $request->post_title
+        );
+
+        $project_id = $project['id'];
+        $project_title = $project['title'];
+        $current_tab = 'request';
+
+        // Get project post data
+        $current_post = get_post($project_id);
+        $current_post_type = get_post_type($project_id);
+
+        // Initialize request variables
+        $project_type = 'request';
+        $status_terms = wp_get_object_terms($project_id, 'arsol-request-status', array('fields' => 'slugs'));
+        $current_status = !empty($status_terms) ? $status_terms[0] : '';
+
+        // Prepare comprehensive data for efficient hook usage
+        $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
+        
+        // Debug logging
+        error_log("ARSOL DEBUG: Request View Endpoint - ID: $project_id, Type: $project_type, Status: '$current_status'");
 
         // Include the new project view request template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-request.php';

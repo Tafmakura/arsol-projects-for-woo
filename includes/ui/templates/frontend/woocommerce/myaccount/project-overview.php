@@ -12,33 +12,18 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// The following variables are passed from the endpoint function:
-// $project
-$project_id = $project['id'];
-$project_title = $project['title'];
-$current_tab = 'overview';
+// Variables passed from the endpoint class:
+// $project, $project_id, $project_title, $current_tab, $current_post, $current_post_type,
+// $project_type, $status_terms, $current_status, $wrapper_data
 
 // Include unified project header
 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
 
-// --- Get Project Data ---
-$current_post = get_post($project_id);
+// Basic validation
 if (!$current_post) {
     echo '<p>' . esc_html__('Project not found.', 'arsol-pfw') . '</p>';
     return;
 }
-
-$current_post_type = get_post_type($project_id);
-
-// Initialize variables
-$status_terms = array();
-$current_status = '';
-$project_type = 'active';
-$status_terms = wp_get_object_terms($project_id, 'arsol-project-status', array('fields' => 'slugs'));
-$current_status = !empty($status_terms) ? $status_terms[0] : '';
-
-// Prepare comprehensive data for efficient hook usage
-$wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
 
 // --- Render Project Overview Content ---
 ?>

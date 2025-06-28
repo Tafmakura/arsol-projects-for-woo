@@ -8,22 +8,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get project data from parent template variables
-// Variables available: $project_id, $project_type, $current_post_type, $current_status, $wrapper_data
-$post_id = isset($project_id) ? $project_id : get_queried_object_id();
-$post_type = isset($current_post_type) ? $current_post_type : get_post_type($post_id);
-$status = isset($current_status) ? $current_status : '';
-$cpt = 'project'; // Internal CPT identifier
+// Variables passed from parent template (no need to recalculate):
+// $project_id, $project_type, $current_post_type, $current_status, $wrapper_data
+$post_id = $project_id;
+$post_type = $current_post_type;
+$status = $current_status;
 
 error_log("ARSOL DEBUG: Active project sidebar - Post ID: $post_id, Post Type: $post_type, Status: '$status'");
-error_log("ARSOL DEBUG: Active project sidebar - Using variables from parent: project_id=" . (isset($project_id) ? $project_id : 'not set') . ", current_status=" . (isset($current_status) ? "'$current_status'" : 'not set'));
-
-// If no status from parent, try to get it directly
-if (empty($status)) {
-    $status_terms = wp_get_post_terms($post_id, 'arsol-project-status');
-    $status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0]->slug : '';
-    error_log("ARSOL DEBUG: Active project sidebar - Fallback status detection: '$status'");
-}
 ?>
 
 <div class="arsol-pfw-project-sidebar">
