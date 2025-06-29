@@ -45,22 +45,10 @@ class Setup {
     }
 
     private function instantiate_classes() {
-        // Project CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Projects();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Project();
-        
-        // Project Request CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Request();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Requests();
-        
-        // Project Proposal CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposals();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Quotation();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Budget();
+        // Main CPT Classes - These handle all component initialization
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT();
     }
 
     /**

@@ -26,40 +26,14 @@ class Project_Proposal_CPT {
     private $proposal;
 
     /**
-     * Static flag to ensure setup only runs once
-     * @var bool
-     */
-    private static $setup_initialized = false;
-
-    /**
      * Constructor
      * 
      * @param int|WP_Post $proposal Proposal ID or post object
      */
     public function __construct($proposal = null) {
-        // Initialize setup components if not already done
-        if (!self::$setup_initialized) {
-            $this->initialize_setup();
-            self::$setup_initialized = true;
-        }
-
         if ($proposal) {
             $this->load_proposal($proposal);
         }
-    }
-
-    /**
-     * Initialize setup components for post type and taxonomy registration
-     */
-    private function initialize_setup() {
-        // Instantiate the setup class that handles post type and taxonomy registration
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
-        
-        // Instantiate admin components
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposals();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Quotation();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Budget();
     }
 
     /**

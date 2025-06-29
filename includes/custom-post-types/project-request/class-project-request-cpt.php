@@ -26,38 +26,14 @@ class Project_Request_CPT {
     private $request;
 
     /**
-     * Static flag to ensure setup only runs once
-     * @var bool
-     */
-    private static $setup_initialized = false;
-
-    /**
      * Constructor
      * 
      * @param int|WP_Post $request Request ID or post object
      */
     public function __construct($request = null) {
-        // Initialize setup components if not already done
-        if (!self::$setup_initialized) {
-            $this->initialize_setup();
-            self::$setup_initialized = true;
-        }
-
         if ($request) {
             $this->load_request($request);
         }
-    }
-
-    /**
-     * Initialize setup components for post type and taxonomy registration
-     */
-    private function initialize_setup() {
-        // Instantiate the setup class that handles post type and taxonomy registration
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
-        
-        // Instantiate admin components
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Request();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Requests();
     }
 
     /**
