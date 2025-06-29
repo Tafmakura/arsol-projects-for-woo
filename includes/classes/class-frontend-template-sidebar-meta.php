@@ -312,18 +312,19 @@ class Frontend_Template_Sidebar_Meta {
         // Only add status if we have an actual status
         if (!empty($actual_status)) {
             $metadata['status'] = array(
-                'label' => __('Request Status', 'arsol-pfw'),
-                'value' => $this->format_status_display($actual_status, $post_id),
-                'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+                'label' => __('Request Stage', 'arsol-pfw'),
+                'value' => ucfirst(str_replace('-', ' ', $actual_status)),
+                'icon' => '🏷️',
+                'priority' => 100,
+                'css_class' => 'stage-' . $actual_status
             );
             
-            // Add status-specific descriptions
-            $status_description = $this->get_request_status_description($actual_status);
-            if (!empty($status_description)) {
+            // Get stage description
+            $stage_description = $this->get_request_stage_description($actual_status);
+            if (!empty($stage_description)) {
                 $metadata['status_description'] = array(
                     'label' => '',
-                    'value' => $status_description,
+                    'value' => $stage_description,
                     'type' => 'text',
                     'class' => 'status-description'
                 );
@@ -452,18 +453,18 @@ class Frontend_Template_Sidebar_Meta {
         // Get the actual WordPress post type to determine the correct taxonomy
         $wp_post_type = get_post_type($post_id);
         
-        $taxonomy_map = array(
+        $taxonomy_mapping = array(
             'arsol-pfw-project' => 'arsol-pfw-project-stage',
             'arsol-pfw-proposal' => 'arsol-pfw-proposal-status', 
-            'arsol-pfw-request' => 'arsol-pfw-request-status'
+            'arsol-pfw-request' => 'arsol-pfw-request-stage'
         );
         
-        if (!isset($taxonomy_map[$wp_post_type])) {
+        if (!isset($taxonomy_mapping[$wp_post_type])) {
             error_log("ARSOL DEBUG: Unknown post type '$wp_post_type' for post $post_id");
             return '';
         }
         
-        $taxonomy = $taxonomy_map[$wp_post_type];
+        $taxonomy = $taxonomy_mapping[$wp_post_type];
         $terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
         
         if (is_wp_error($terms)) {
@@ -497,14 +498,14 @@ class Frontend_Template_Sidebar_Meta {
         // If we have a post ID, determine the correct taxonomy first
         if ($post_id) {
             $wp_post_type = get_post_type($post_id);
-            $taxonomy_map = array(
+            $taxonomy_mapping = array(
                 'arsol-pfw-project' => 'arsol-pfw-project-stage',
                 'arsol-pfw-proposal' => 'arsol-pfw-proposal-status', 
-                'arsol-pfw-request' => 'arsol-pfw-request-status'
+                'arsol-pfw-request' => 'arsol-pfw-request-stage'
             );
             
-            if (isset($taxonomy_map[$wp_post_type])) {
-                $term = get_term_by('slug', $status, $taxonomy_map[$wp_post_type]);
+            if (isset($taxonomy_mapping[$wp_post_type])) {
+                $term = get_term_by('slug', $status, $taxonomy_mapping[$wp_post_type]);
                 if ($term && !is_wp_error($term)) {
                     return $term->name;
                 }
@@ -512,7 +513,7 @@ class Frontend_Template_Sidebar_Meta {
         }
 
         // Fallback: try to get the term from all possible taxonomies
-        $taxonomies = array('arsol-pfw-project-stage', 'arsol-pfw-proposal-status', 'arsol-pfw-request-status');
+        $taxonomies = array('arsol-pfw-project-stage', 'arsol-pfw-proposal-status', 'arsol-pfw-request-stage');
         
         foreach ($taxonomies as $taxonomy) {
             $term = get_term_by('slug', $status, $taxonomy);
@@ -531,7 +532,7 @@ class Frontend_Template_Sidebar_Meta {
      * @param string $status The status slug
      * @return string Status description
      */
-    private function get_request_status_description($status) {
+    private function get_request_stage_description($status) {
         $descriptions = array(
             'pending-review' => __('Your request is being reviewed by our team', 'arsol-pfw'),
             'under-review' => __('Being evaluated by our team', 'arsol-pfw'),

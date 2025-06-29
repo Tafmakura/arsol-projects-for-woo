@@ -101,8 +101,8 @@ do_action('arsol_request_creation_post_creation_failed', $error, $creation_data)
 
 #### Status Assignment Phase
 ```php
-do_action('arsol_before_request_creation_status_assignment', $request_id, $creation_data);
-do_action('arsol_after_request_creation_status_assigned', $request_id, $status, $creation_data);
+do_action('arsol_before_request_creation_stage_assignment', $request_id, $creation_data);
+do_action('arsol_after_request_creation_stage_assigned', $request_id, $stage, $creation_data);
 ```
 
 #### Metadata & Completion Phase
@@ -282,17 +282,17 @@ $conversion_data = array(
 
 ## Status Change Hooks
 
-### Request Status Changes (3 hooks)
+### Request Stage Changes (3 hooks)
 
 ```php
 // Before status change
-do_action('arsol_before_request_status_change', $request_id, $old_status, $new_status, $user_id);
+do_action('arsol_before_request_stage_change', $request_id, $old_stage, $new_stage, $user_id);
 
 // Status changed
-do_action('arsol_request_status_changed', $request_id, $old_status, $new_status, $user_id);
+do_action('arsol_request_stage_changed', $request_id, $old_stage, $new_stage, $user_id);
 
 // After status change processing
-do_action('arsol_after_request_status_change', $request_id, $old_status, $new_status, $user_id);
+do_action('arsol_after_request_stage_change', $request_id, $old_stage, $new_stage, $user_id);
 ```
 
 **Possible Status Values:**
@@ -302,13 +302,13 @@ do_action('arsol_after_request_status_change', $request_id, $old_status, $new_st
 
 ```php
 // Before status change
-do_action('arsol_before_proposal_status_change', $proposal_id, $old_status, $new_status, $user_id);
+do_action('arsol_before_proposal_status_change', $proposal_id, $old_stage, $new_stage, $user_id);
 
 // Status changed
-do_action('arsol_proposal_status_changed', $proposal_id, $old_status, $new_status, $user_id);
+do_action('arsol_proposal_status_changed', $proposal_id, $old_stage, $new_stage, $user_id);
 
 // After status change processing
-do_action('arsol_after_proposal_status_change', $proposal_id, $old_status, $new_status, $user_id);
+do_action('arsol_after_proposal_status_change', $proposal_id, $old_stage, $new_stage, $user_id);
 ```
 
 **Possible Status Values:**
@@ -407,9 +407,9 @@ do_action('arsol_new_proposal_created', $proposal_id, $customer_id, $project_lea
 do_action('arsol_new_project_created', $project_id, $proposal_id, $customer_id, $project_lead_id);
 
 // Status changes (trigger emails)
-do_action('arsol_request_status_changed', $request_id, $old_status, $new_status);
-do_action('arsol_proposal_status_changed', $proposal_id, $old_status, $new_status);
-do_action('arsol_project_status_changed', $project_id, $old_status, $new_status, $project_lead_id);
+do_action('arsol_request_stage_changed', $request_id, $old_stage, $new_stage);
+do_action('arsol_proposal_status_changed', $proposal_id, $old_stage, $new_stage);
+do_action('arsol_project_status_changed', $project_id, $old_stage, $new_stage, $project_lead_id);
 
 // Special workflow notifications
 do_action('arsol_proposal_processing_started', $proposal_id, $customer_id, $project_lead_id);
@@ -479,8 +479,8 @@ add_action('arsol_after_request_creation_complete', function($request_id, $creat
     ));
 });
 
-add_action('arsol_request_status_changed', function($request_id, $old_status, $new_status) {
-    ExternalCRM::update_lead_status($request_id, $new_status);
+add_action('arsol_request_stage_changed', function($request_id, $old_stage, $new_stage) {
+    ExternalCRM::update_lead_stage($request_id, $new_stage);
 });
 
 add_action('arsol_after_project_conversion_complete', function($project_id, $proposal_id, $conversion_data) {

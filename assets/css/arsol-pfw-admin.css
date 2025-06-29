@@ -1189,15 +1189,15 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
 
 /* === END ADMIN FILTER STYLING === */
 
-/* Request Status Conditional Visibility - Consolidated */
-.arsol-pfw-show-if-request-status-is-on-hold,
-.arsol-pfw-show-if-request-status-is-under-review {
-    display: block !important;
+/* Request Stage Conditional Visibility - Consolidated */
+.arsol-pfw-show-if-request-stage-is-on-hold,
+.arsol-pfw-show-if-request-stage-is-under-review {
+    display: none !important;
 }
 
-.arsol-pfw-hide-if-request-status-is-not-on-hold,
-.arsol-pfw-hide-if-request-status-is-on-hold,
-.arsol-pfw-hide-if-request-status-is-under-review {
+.arsol-pfw-hide-if-request-stage-is-not-on-hold,
+.arsol-pfw-hide-if-request-stage-is-on-hold,
+.arsol-pfw-hide-if-request-stage-is-under-review {
     display: none !important;
 }
 

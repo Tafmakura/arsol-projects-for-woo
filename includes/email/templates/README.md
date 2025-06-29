@@ -22,6 +22,7 @@ templates/
 ├── admin-proposal-decision.php           # HTML: Proposal approved/rejected (admin)
 └── lead-proposal-processing.php          # HTML: Proposal assignment (project lead)
 ├── arsol_project_stage.php              # HTML: Project stage changed
+├── arsol_request_stage.php              # HTML: Request stage changed
 ```
 
 ## Template Naming Convention

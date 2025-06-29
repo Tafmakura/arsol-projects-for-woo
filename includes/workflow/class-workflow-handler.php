@@ -123,23 +123,27 @@ class Workflow_Handler {
             // Validation step
             update_post_meta($request_id, '_arsol_conversion_step', 'validation');
 
-        // Server-side validation of the request status
-        $current_status = wp_get_object_terms($request_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
-        if (empty($current_status) || $current_status[0] !== 'approved') {
-                throw new Exception(sprintf(
-                    __('This request cannot be converted. The status is "%s", must be "approved".', 'arsol-pfw'),
-                    empty($current_status) ? 'none' : $current_status[0]
-                ));
+            // Server-side validation of the request stage
+            $current_stage = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+            
+            if (empty($current_stage) || is_wp_error($current_stage) || $current_stage[0] !== 'approved') {
+                wp_die(__('This request cannot be converted. The stage is "%s", must be "approved".', 'arsol-pfw'),
+                    ucfirst(str_replace('-', ' ', $current_stage[0] ?? 'unknown'))
+                );
             }
-
-            // Prepare conversion data for hooks
+            
+            // Get request data for conversion
+            $request = get_post($request_id);
+            if (!$request) {
+                wp_die(__('Request not found.', 'arsol-pfw'));
+            }
+            
             $conversion_data = array(
                 'request_id' => $request_id,
                 'user_id' => get_current_user_id(),
-                'conversion_method' => 'admin_conversion',
-                'timestamp' => current_time('timestamp'),
-                'request_post' => $request_post,
-                'request_status' => $current_status[0]  
+                'request_title' => $request->post_title,
+                'request_content' => $request->post_content,
+                'request_stage' => $current_stage[0]
             );
 
             /**
@@ -781,26 +785,26 @@ class Workflow_Handler {
         do_action('arsol_after_request_creation_post_created', $post_id, $post_data, $creation_data);
 
         /**
-         * Hook: arsol_before_request_creation_status_assignment
-         * Fired before setting the request status
+         * Hook: arsol_before_request_creation_stage_assignment
+         * Fired before setting the request stage
          * 
-         * @param int $post_id The request ID
-         * @param string $default_status The default status to be assigned
-         * @param array $creation_data Creation context data
+         * @param int $post_id Request ID
+         * @param string $stage Initial stage
+         * @param array $creation_data Request creation data
          */
-        do_action('arsol_before_request_creation_status_assignment', $post_id, 'pending-review', $creation_data);
-
-        wp_set_object_terms($post_id, 'pending-review', 'arsol-pfw-request-status');
-
+        do_action('arsol_before_request_creation_stage_assignment', $post_id, 'pending-review', $creation_data);
+        
+        wp_set_object_terms($post_id, 'pending-review', 'arsol-pfw-request-stage');
+        
         /**
-         * Hook: arsol_after_request_creation_status_assigned
-         * Fired after the request status is assigned
+         * Hook: arsol_after_request_creation_stage_assigned
+         * Fired after the request stage is assigned
          * 
-         * @param int $post_id The request ID
-         * @param string $assigned_status The status that was assigned
-         * @param array $creation_data Creation context data
+         * @param int $post_id Request ID
+         * @param string $stage Assigned stage
+         * @param array $creation_data Request creation data
          */
-        do_action('arsol_after_request_creation_status_assigned', $post_id, 'pending-review', $creation_data);
+        do_action('arsol_after_request_creation_stage_assigned', $post_id, 'pending-review', $creation_data);
 
         /**
          * Hook: arsol_before_request_creation_metadata_save

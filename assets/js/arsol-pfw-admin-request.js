@@ -4,10 +4,66 @@
 
     var ArsolRequest = {
         init: function() {
-            this.bindEvents();
-            this.initializeComponents();
+            console.log('ArsolRequest: Initializing request admin functionality');
+            
+            this.initConvertButton();
+            this.initValidation();
+            this.updateRequestStageVisibility();
+        },
+        
+        initConvertButton: function() {
+            console.log('ArsolRequest: Initializing convert button');
+            
+            if (!$('#request_stage').length) return;
+            
+            this.updateConvertButtonState();
+        },
+        
+        initValidation: function() {
+            console.log('ArsolRequest: Initializing validation');
+            
+            // Add validation for required fields based on conditions
+            $('form').on('submit', function(e) {
+                var validationErrors = [];
+                
+                // Check all validation fields
+                $('.arsol-pfw-validation-field').each(function() {
+                    var $field = $(this);
+                    var validationType = $field.data('validation-type');
+                    var validationCondition = $field.data('validation-condition');
+                    var validationValue = $field.data('validation-value');
+                    var validationRequired = $field.data('validation-required');
+                    var validationMessage = $field.data('validation-message');
+                    
+                    if (validationType === 'conditional' && validationCondition === 'request_stage') {
+                        var currentStage = $('#request_stage').val();
+                        
+                        if (currentStage === validationValue) {
+                            var requiredFieldValue = $('#' + validationRequired).val();
+                            
+                            if (!requiredFieldValue || requiredFieldValue.trim() === '') {
+                                validationErrors.push(validationMessage);
+                            }
+                        }
+                    }
+                });
+                
+                if (validationErrors.length > 0) {
+                    e.preventDefault();
+                    alert(validationErrors.join('\n'));
+                    return false;
+                }
+            });
         },
 
+        // Initialize event handlers
+        attachEventHandlers: function() {
+            // Handle request stage changes
+            $(document).on('change', '#request_stage', function() {
+                console.log('Request stage changed to:', $(this).val());
+                ArsolRequest.updateRequestStageVisibility();
+            });
+            
         bindEvents: function() {
             // Handle conversion confirmation for requests
             this.handleConversionConfirmation();
