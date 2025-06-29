@@ -15,80 +15,56 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
 ?>
 
 <!-- Cost Proposal Type Guidance -->
-<div class="arsol-pfw-show-if-proposal-cost-type-is-none" style="display: none;">
+<div class="arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-none">
     <div class="cost-proposal-guidance">
         <h4><?php _e('💡 Cost Proposal Type Guidance', 'arsol-pfw'); ?></h4>
-        <p><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php _e('Use when providing estimated costs or budget ranges. Good for initial planning and rough estimates.', 'arsol-pfw'); ?></p>
-        <p><strong><?php _e('Quotation:', 'arsol-pfw'); ?></strong> <?php _e('Use when providing exact pricing with specific products, services, and terms. This becomes a binding proposal when accepted.', 'arsol-pfw'); ?></p>
+        <p><?php _e('Choose a cost proposal type to provide pricing estimates:', 'arsol-pfw'); ?></p>
+        <ul>
+            <li><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php _e('Provide rough cost estimates and timelines', 'arsol-pfw'); ?></li>
+            <li><strong><?php _e('Quotation:', 'arsol-pfw'); ?></strong> <?php _e('Create detailed pricing with products and services', 'arsol-pfw'); ?></li>
+        </ul>
     </div>
 </div>
 
 <!-- Budget Summary Template -->
-<div id="budget-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-budget" style="display: none;">
+<div id="budget-summary-template" class="arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-budget">
     <h4><?php _e('📊 Budget Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for budget -->
-    <div id="budget-empty-state" class="summary-empty-state" style="display: none;">
-        <p><?php _e('Your budget proposal is empty', 'arsol-pfw'); ?></p>
+    <div id="budget-empty-state" class="summary-empty-state">
+        <p><?php _e('No budget data available', 'arsol-pfw'); ?></p>
     </div>
     
-    <p class="form-field form-field-wide summary-row" id="budget-onetime-row" style="display: none;">
-        <label><strong><?php _e('One-Time Budget:', 'arsol-pfw'); ?></strong></label>
-        <?php _e('Total:', 'arsol-pfw'); ?> <span id="summary-budget-onetime-display"><?php echo wc_price(0); ?></span>
+    <p class="summary-row" id="budget-onetime-row">
+        <span class="arsol-pfw-meta-label"><?php _e('One-time Budget:', 'arsol-pfw'); ?></span>
+        <span id="summary-budget-onetime-display">$0.00</span>
     </p>
     
-    <p class="form-field form-field-wide summary-row" id="budget-recurring-row" style="display: none;">
-        <label><strong><?php _e('Recurring Budget:', 'arsol-pfw'); ?></strong></label>
-        <?php _e('Average Monthly Total:', 'arsol-pfw'); ?> 
-        <span id="summary-budget-recurring-display"><?php echo wc_price(0); ?></span><span id="summary-budget-billing-period">/mo</span>
+    <p class="summary-row" id="budget-recurring-row">
+        <span class="arsol-pfw-meta-label"><?php _e('Recurring Budget:', 'arsol-pfw'); ?></span>
+        <span id="summary-budget-recurring-display">$0.00</span>
+        <span id="summary-budget-billing-period">/mo</span>
         <span id="summary-budget-start-date"></span>
     </p>
 </div>
 
 <!-- Quotation Summary Template -->
-<div id="quotation-summary-template" class="arsol-pfw-show-if-proposal-cost-type-is-quotation" style="display: none;">
+<div id="quotation-summary-template" class="arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-quotation">
     <h4><?php _e('📋 Quotation Summary', 'arsol-pfw'); ?></h4>
     </br>
     <!-- Empty state message for quotation -->
-    <div id="quotation-empty-state" class="summary-empty-state" style="display: none;">
-        <p><?php _e('Your quotation is empty', 'arsol-pfw'); ?></p>
+    <div id="quotation-empty-state" class="summary-empty-state">
+        <p><?php _e('No quotation data available', 'arsol-pfw'); ?></p>
     </div>
     
-    <p class="form-field form-field-wide summary-row" id="products-row" style="display: none;">
-        <label><strong><?php _e('Products:', 'arsol-pfw'); ?></strong></label>
-        <span id="products-onetime" style="display: none;">
-            <?php _e('Sub Total:', 'arsol-pfw'); ?> <span id="summary-product-subtotal-display"><?php echo wc_price(0); ?></span>
-        </span>
-        <span id="products-recurring" style="display: none;">
-            <?php _e('Average Monthly Sub Total:', 'arsol-pfw'); ?> <span id="summary-product-recurring-display"><?php echo wc_price(0); ?></span>
-        </span>
+    <p class="summary-row">
+        <span class="arsol-pfw-meta-label"><?php _e('One-time Total:', 'arsol-pfw'); ?></span>
+        <span id="summary-onetime-total-display">$0.00</span>
     </p>
     
-    <p class="form-field form-field-wide summary-row" id="onetime-fees-row" style="display: none;">
-        <label><strong><?php _e('One-Time Fees:', 'arsol-pfw'); ?></strong></label>
-        <?php _e('Sub Total:', 'arsol-pfw'); ?> <span id="summary-onetime-fee-display"><?php echo wc_price(0); ?></span>
-    </p>
-    
-    <p class="form-field form-field-wide summary-row" id="recurring-fees-row" style="display: none;">
-        <label><strong><?php _e('Recurring Fees:', 'arsol-pfw'); ?></strong></label>
-        <?php _e('Average Monthly Sub Total:', 'arsol-pfw'); ?> 
-        <span id="summary-recurring-fee-display"><?php echo wc_price(0); ?></span>
-        <span id="summary-recurring-start-date"></span>
-    </p>
-    
-    <p class="form-field form-field-wide summary-row" id="shipping-row" style="display: none;">
-        <label><strong><?php _e('Shipping:', 'arsol-pfw'); ?></strong></label>
-        <?php _e('Sub Total:', 'arsol-pfw'); ?> <span id="summary-shipping-display"><?php echo wc_price(0); ?></span>
-    </p>
-    
-    <p class="form-field form-field-wide summary-row" id="totals-row">
-        <label><strong><?php _e('Grand Totals:', 'arsol-pfw'); ?></strong></label>
-        <span id="onetime-total-row">
-            <?php _e('One-Time Total:', 'arsol-pfw'); ?> <span id="summary-one-time-total-display"><?php echo wc_price(0); ?></span>
-        </span>
-        <span id="yearly-total-row" style="display: none;">
-            <?php _e('Avg Recurring Total:', 'arsol-pfw'); ?> <span id="summary-avg-yearly-total-display"><?php echo wc_price(0); ?></span>
-        </span>
+    <p class="summary-row">
+        <span class="arsol-pfw-meta-label"><?php _e('Average Monthly:', 'arsol-pfw'); ?></span>
+        <span id="average-monthly-total-display">$0.00</span>
     </p>
 </div>
 

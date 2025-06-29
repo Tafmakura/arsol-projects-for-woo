@@ -62,7 +62,7 @@ class Proposal {
         
         // Processing feedback section
         ?>
-        <div id="arsol_proposal_processing_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-stage-is-processing">
+        <div id="arsol_proposal_processing_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal_stage-is-processing">
             <div class="panel-wrap woocommerce">
                 <div class="panel woocommerce">
                     <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
@@ -75,7 +75,7 @@ class Proposal {
             </div>
         </div>
         
-        <div id="arsol_proposal_pending_approval_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-stage-is-pending-approval">
+        <div id="arsol_proposal_pending_approval_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal_stage-is-pending-approval">
             <div class="panel-wrap woocommerce">
                 <div class="panel woocommerce">
                     <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
