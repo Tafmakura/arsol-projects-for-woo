@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Variables passed from the endpoint class:
-// $project_proposal (WP_Post object), $project_proposal_id, $current_tab, $statuses, $current_status, $wrapper_data
+// $project_proposal (WP_Post object), $project_proposal_id, $current_tab, $stages, $current_stage, $wrapper_data
 
 // Include unified project header
 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';

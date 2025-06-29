@@ -55,11 +55,11 @@ class Frontend_Template_Sidebar_Buttons {
     /**
      * Display proposal buttons
      *
-     * @param string $current_status The current status
+     * @param string $current_stage The current stage
      * @param int $project_proposal_id The proposal ID
      */
-    public function display_proposal_buttons($current_status, $project_proposal_id) {
-        error_log("ARSOL DEBUG: Proposal buttons - Status: '$current_status', Proposal ID: $project_proposal_id");
+    public function display_proposal_buttons($current_stage, $project_proposal_id) {
+        error_log("ARSOL DEBUG: Proposal buttons - Stage: '$current_stage', Proposal ID: $project_proposal_id");
         
         if (empty($project_proposal_id)) {
             error_log("ARSOL DEBUG: Proposal buttons - Empty proposal ID, returning");
@@ -67,7 +67,7 @@ class Frontend_Template_Sidebar_Buttons {
         }
 
         echo '<div class="sidebar-buttons">';
-        $this->add_proposal_buttons($project_proposal_id, $current_status);
+        $this->add_proposal_buttons($project_proposal_id, $current_stage);
         echo '</div>';
     }
 
@@ -94,23 +94,23 @@ class Frontend_Template_Sidebar_Buttons {
      * Add proposal buttons
      *
      * @param int $post_id The post ID
-     * @param string $status The current status
+     * @param string $stage The current stage
      */
-    private function add_proposal_buttons($post_id, $status) {
-        error_log("ARSOL DEBUG: add_proposal_buttons called - Status: '$status', Post ID: $post_id");
+    private function add_proposal_buttons($post_id, $stage) {
+        error_log("ARSOL DEBUG: add_proposal_buttons called - Stage: '$stage', Post ID: $post_id");
         
-        // If no status is set, show informational message
-        if (empty($status)) {
-            echo '<div class="button-item button-no-status">';
-            echo '<p style="margin-bottom: 10px;"><strong>No status set for this proposal.</strong></p>';
-            echo '<button class="button button-secondary" disabled>Awaiting Status Assignment</button>';
+        // If no stage is set, show informational message
+        if (empty($stage)) {
+            echo '<div class="button-item button-no-stage">';
+            echo '<p style="margin-bottom: 10px;"><strong>No stage set for this proposal.</strong></p>';
+            echo '<button class="button button-secondary" disabled>Awaiting Stage Assignment</button>';
             echo '</div>';
             return;
         }
         
-        // Show approve/reject buttons for pending-approval status (these use existing handlers)
-        if ($status === 'pending-approval') {
-            error_log("ARSOL DEBUG: Adding approve/reject buttons for pending-approval status");
+        // Show approve/reject buttons for pending-approval stage (these use existing handlers)
+        if ($stage === 'pending-approval') {
+            error_log("ARSOL DEBUG: Adding approve/reject buttons for pending-approval stage");
             $approve_url = wp_nonce_url(
                 admin_url('admin-post.php?action=arsol_approve_proposal&proposal_id=' . $post_id),
                 'arsol_approve_proposal_nonce'
@@ -136,20 +136,20 @@ class Frontend_Template_Sidebar_Buttons {
             echo '</div>';
         }
         
-        // Show informational buttons for other statuses
-        if ($status === 'processing') {
+        // Show informational buttons for other stages
+        if ($stage === 'processing') {
             echo '<div class="button-item button-processing">';
             echo '<button class="button button-secondary" disabled>Proposal is Processing</button>';
             echo '</div>';
         }
         
-        if ($status === 'approved') {
+        if ($stage === 'approved') {
             echo '<div class="button-item button-approved">';
             echo '<a href="/my-account/projects/" class="button button-success">View Created Project</a>';
             echo '</div>';
         }
         
-        if ($status === 'rejected') {
+        if ($stage === 'rejected') {
             echo '<div class="button-item button-rejected">';
             echo '<button class="button button-secondary" disabled>Proposal Rejected</button>';
             echo '</div>';
