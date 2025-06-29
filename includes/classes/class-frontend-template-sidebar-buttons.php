@@ -99,34 +99,16 @@ class Frontend_Template_Sidebar_Buttons {
     private function add_proposal_buttons($post_id, $status) {
         error_log("ARSOL DEBUG: add_proposal_buttons called - Status: '$status', Post ID: $post_id");
         
-        // Test button - always show to verify hook is working
-        echo '<div class="button-item button-test">';
-        echo '<button class="button button-secondary">TEST: Status is "' . esc_html($status) . '"</button>';
-        echo '</div>';
-        
-        // If no status is set, provide buttons to set initial status
+        // If no status is set, show informational message
         if (empty($status)) {
             echo '<div class="button-item button-no-status">';
             echo '<p style="margin-bottom: 10px;"><strong>No status set for this proposal.</strong></p>';
-            
-            // Button to set to pending-approval
-            $set_pending_url = wp_nonce_url(
-                admin_url('admin-post.php?action=arsol_set_proposal_status&proposal_id=' . $post_id . '&status=pending-approval'),
-                'arsol_set_proposal_status_nonce'
-            );
-            echo '<a href="' . esc_url($set_pending_url) . '" class="button button-primary" style="margin-right: 10px;">Set to Pending Approval</a>';
-            
-            // Button to set to processing
-            $set_processing_url = wp_nonce_url(
-                admin_url('admin-post.php?action=arsol_set_proposal_status&proposal_id=' . $post_id . '&status=processing'),
-                'arsol_set_proposal_status_nonce'
-            );
-            echo '<a href="' . esc_url($set_processing_url) . '" class="button button-secondary">Set to Processing</a>';
+            echo '<button class="button button-secondary" disabled>Awaiting Status Assignment</button>';
             echo '</div>';
             return;
         }
         
-        // Show approve/reject buttons for pending-approval status
+        // Show approve/reject buttons for pending-approval status (these use existing handlers)
         if ($status === 'pending-approval') {
             error_log("ARSOL DEBUG: Adding approve/reject buttons for pending-approval status");
             $approve_url = wp_nonce_url(
@@ -154,22 +136,22 @@ class Frontend_Template_Sidebar_Buttons {
             echo '</div>';
         }
         
-        // Show different buttons for other statuses (for testing)
+        // Show informational buttons for other statuses
         if ($status === 'processing') {
             echo '<div class="button-item button-processing">';
-            echo '<button class="button button-primary">Proposal is Processing</button>';
+            echo '<button class="button button-secondary" disabled>Proposal is Processing</button>';
             echo '</div>';
         }
         
         if ($status === 'approved') {
             echo '<div class="button-item button-approved">';
             echo '<a href="/my-account/projects/" class="button button-success">View Created Project</a>';
-        echo '</div>';
-    }
+            echo '</div>';
+        }
         
         if ($status === 'rejected') {
             echo '<div class="button-item button-rejected">';
-            echo '<button class="button button-secondary">Request Revision</button>';
+            echo '<button class="button button-secondary" disabled>Proposal Rejected</button>';
             echo '</div>';
         }
     }
@@ -182,11 +164,6 @@ class Frontend_Template_Sidebar_Buttons {
      */
     private function add_request_buttons($post_id, $stage) {
         error_log("ARSOL DEBUG: add_request_buttons called - Stage: '$stage', Post ID: $post_id");
-        
-        // Test button - always show to verify hook is working
-        echo '<div class="button-item button-test">';
-        echo '<button class="button button-secondary">TEST: Request Stage is "' . esc_html($stage) . '"</button>';
-        echo '</div>';
         
         switch ($stage) {
             case 'pending-review':
@@ -204,9 +181,9 @@ class Frontend_Template_Sidebar_Buttons {
             default:
                 echo '<div class="button-item button-no-stage">';
                 if (empty($stage)) {
-                    echo '<button class="button button-warning">No Stage Set</button>';
+                    echo '<button class="button button-warning" disabled>No Stage Set</button>';
                 } else {
-                    echo '<button class="button button-warning">Unknown Stage: ' . esc_html($stage) . '</button>';
+                    echo '<button class="button button-warning" disabled>Unknown Stage: ' . esc_html($stage) . '</button>';
                 }
                 echo '</div>';
                 break;
@@ -222,72 +199,52 @@ class Frontend_Template_Sidebar_Buttons {
     private function add_project_buttons($post_id, $stage) {
         error_log("ARSOL DEBUG: add_project_buttons called - Stage: '$stage', Post ID: $post_id");
         
-        // Test button - always show to verify hook is working
-        echo '<div class="button-item button-test">';
-        echo '<button class="button button-secondary">TEST: Project Stage is "' . esc_html($stage) . '"</button>';
-        echo '</div>';
-        
-        // If no stage is set, provide buttons to set initial stage
+        // If no stage is set, show informational message
         if (empty($stage)) {
             echo '<div class="button-item button-no-stage">';
             echo '<p style="margin-bottom: 10px;"><strong>No stage set for this project.</strong></p>';
-            
-            // Button to set to not-started
-            $set_not_started_url = wp_nonce_url(
-                admin_url('admin-post.php?action=arsol_set_project_stage&project_id=' . $post_id . '&stage=not-started'),
-                'arsol_set_project_stage_nonce'
-            );
-            echo '<a href="' . esc_url($set_not_started_url) . '" class="button button-primary" style="margin-right: 10px;">Set to Not Started</a>';
-            
-            // Button to set to in-progress
-            $set_in_progress_url = wp_nonce_url(
-                admin_url('admin-post.php?action=arsol_set_project_stage&project_id=' . $post_id . '&stage=in-progress'),
-                'arsol_set_project_stage_nonce'
-            );
-            echo '<a href="' . esc_url($set_in_progress_url) . '" class="button button-secondary">Set to In Progress</a>';
+            echo '<button class="button button-secondary" disabled>Awaiting Stage Assignment</button>';
             echo '</div>';
             return;
         }
         
-        // Show different buttons based on project stage
+        // Show informational buttons based on project stage
         switch ($stage) {
             case 'not-started':
                 echo '<div class="button-item button-not-started">';
-                echo '<button class="button button-primary">Start Project</button>';
+                echo '<button class="button button-secondary" disabled>Project Not Started</button>';
                 echo '</div>';
                 break;
                 
             case 'in-progress':
                 echo '<div class="button-item button-in-progress">';
-                echo '<button class="button button-primary">Mark as Complete</button>';
-                echo '<button class="button button-secondary" style="margin-left: 10px;">Put on Hold</button>';
+                echo '<button class="button button-primary" disabled>Project In Progress</button>';
                 echo '</div>';
                 break;
                 
             case 'on-hold':
                 echo '<div class="button-item button-on-hold">';
-                echo '<button class="button button-primary">Resume Project</button>';
-                echo '<button class="button button-secondary" style="margin-left: 10px;">Cancel Project</button>';
+                echo '<button class="button button-warning" disabled>Project On Hold</button>';
                 echo '</div>';
                 break;
                 
             case 'completed':
                 echo '<div class="button-item button-completed">';
-                echo '<button class="button button-success">Project Completed</button>';
+                echo '<button class="button button-success" disabled>Project Completed</button>';
                 echo '<a href="/my-account/projects/" class="button button-secondary" style="margin-left: 10px;">View All Projects</a>';
                 echo '</div>';
                 break;
                 
             case 'cancelled':
                 echo '<div class="button-item button-cancelled">';
-                echo '<button class="button button-secondary">Project Cancelled</button>';
+                echo '<button class="button button-secondary" disabled>Project Cancelled</button>';
                 echo '<a href="/contact-us/" class="button button-primary" style="margin-left: 10px;">Contact Support</a>';
                 echo '</div>';
                 break;
                 
             default:
                 echo '<div class="button-item button-unknown">';
-                echo '<button class="button button-warning">Unknown Stage: ' . esc_html($stage) . '</button>';
+                echo '<button class="button button-warning" disabled>Unknown Stage: ' . esc_html($stage) . '</button>';
                 echo '</div>';
                 break;
         }
