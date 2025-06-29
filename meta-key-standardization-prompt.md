@@ -71,7 +71,7 @@ _original_proposal_id → _arsol_pfw_project_original_proposal_id
 ## File Impact Analysis
 
 ### JavaScript Files (1 file - MAJOR changes)
-- `assets/js/arsol-pfw-admin-proposal.js` - Update all selectors, form names, and meta key references
+- `assets/js/arsol-pfw-admin-cpt-proposal.js` - Update all selectors, form names, and meta key references
 
 ### CSS Files (1 file - MINOR changes)
 - `assets/css/arsol-pfw-admin.css` - Update metabox IDs and related class names

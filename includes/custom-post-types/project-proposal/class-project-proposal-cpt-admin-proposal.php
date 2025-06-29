@@ -27,8 +27,8 @@ class Proposal {
 
     public function set_proposal_review_status($new_status, $old_status, $post) {
         if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
-            // Set the review status to 'pending-approval'
-            wp_set_object_terms($post->ID, 'pending-approval', 'arsol-pfw-proposal-stage');
+            // Set the review status to 'processing'
+            wp_set_object_terms($post->ID, 'processing', 'arsol-pfw-proposal-stage');
         }
     }
 

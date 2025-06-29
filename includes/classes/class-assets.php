@@ -109,28 +109,28 @@ class Assets {
         
         // Register proposal admin JS
         wp_register_script(
-            'arsol-pfw-admin-proposal',
-            $plugin_url . 'assets/js/arsol-pfw-admin-proposal.js',
+            'arsol-pfw-admin-cpt-proposal',
+            $plugin_url . 'assets/js/arsol-pfw-admin-cpt-proposal.js',
             array('jquery', 'wp-util', 'underscore', 'selectWoo', 'wc-enhanced-select'),
-            $this->get_file_version('assets/js/arsol-pfw-admin-proposal.js'),
+            $this->get_file_version('assets/js/arsol-pfw-admin-cpt-proposal.js'),
             true
         );
         
         // Register active project admin JS
         wp_register_script(
-            'arsol-pfw-admin-active',
-            $plugin_url . 'assets/js/arsol-pfw-admin-active.js',
+            'arsol-pfw-admin-cpt-project',
+            $plugin_url . 'assets/js/arsol-pfw-admin-cpt-project.js',
             array('jquery'),
-            $this->get_file_version('assets/js/arsol-pfw-admin-active.js'),
+            $this->get_file_version('assets/js/arsol-pfw-admin-cpt-project.js'),
             true
         );
         
         // Register request admin JS
         wp_register_script(
-            'arsol-pfw-admin-request',
-            $plugin_url . 'assets/js/arsol-pfw-admin-request.js',
+            'arsol-pfw-admin-cpt-request',
+            $plugin_url . 'assets/js/arsol-pfw-admin-cpt-request.js',
             array('jquery'),
-            $this->get_file_version('assets/js/arsol-pfw-admin-request.js'),
+            $this->get_file_version('assets/js/arsol-pfw-admin-cpt-request.js'),
             true
         );
     }
@@ -175,15 +175,15 @@ class Assets {
             // Enqueue post-type specific JavaScript (only for post type pages)
             if ($is_post_type_page) {
                 if ($screen->post_type === 'arsol-pfw-proposal') {
-                    wp_enqueue_script('arsol-pfw-admin-proposal');
+                    wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
                     
                     // Localize proposal script
-                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_vars', array(
+                    wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_vars', array(
                         'validation_message' => __('Please complete all required fields before saving.', 'arsol-pfw'),
                     ));
                     
                     // Localize budget script
-                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_budget_vars', array(
+                    wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_budget_vars', array(
                         'currency_symbol' => get_woocommerce_currency_symbol(),
                     ));
                     
@@ -207,7 +207,7 @@ class Assets {
                         }
                     }
                     
-                    wp_localize_script('arsol-pfw-admin-proposal', 'arsol_proposal_quotation_vars', array(
+                    wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_quotation_vars', array(
                         'ajax_url' => admin_url('admin-ajax.php'),
                         'nonce' => wp_create_nonce('arsol-proposal-quotation-nonce'),
                         'search_products_nonce' => wp_create_nonce('search-products'),
@@ -220,12 +220,12 @@ class Assets {
                     ));
                     
                 } elseif ($screen->post_type === 'arsol-pfw-project') {
-                    wp_enqueue_script('arsol-pfw-admin-active');
+                    wp_enqueue_script('arsol-pfw-admin-cpt-project');
                     // Also enqueue proposal script for Create Proposal button functionality
-                    wp_enqueue_script('arsol-pfw-admin-proposal');
+                    wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
                     
                 } elseif ($screen->post_type === 'arsol-pfw-request') {
-                    wp_enqueue_script('arsol-pfw-admin-request');
+                    wp_enqueue_script('arsol-pfw-admin-cpt-request');
                 }
                 
                 // WooCommerce should already provide wc_enhanced_select_params, but ensure our nonces are available

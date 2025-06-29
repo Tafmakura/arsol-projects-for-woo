@@ -41,7 +41,7 @@ The problem was in the **data flow** between the frontend proposal creation and 
 ## Solution Implemented
 
 ### 1. Frontend Fix (JavaScript)
-**File**: `assets/js/arsol-pfw-admin-proposal.js`
+**File**: `assets/js/arsol-pfw-admin-cpt-proposal.js`
 
 Added line to store the product type in the hidden input field:
 ```javascript
@@ -117,7 +117,7 @@ To verify the fix works:
 
 ## Related Files Modified
 
-1. `assets/js/arsol-pfw-admin-proposal.js` - Frontend fix
+1. `assets/js/arsol-pfw-admin-cpt-proposal.js` - Frontend fix
 2. `includes/classes/class-woocommerce-biller-invoice.php` - Backend enhancements
 3. `investigation-summary.md` - This documentation
 

@@ -281,8 +281,8 @@ class Workflow_Handler {
                 "Budget transferred: Request budget → Proposal budget");
         }
         
-        // 4. Set proposal status to pending-approval
-        wp_set_object_terms($proposal_id, 'pending-approval', 'arsol-pfw-proposal-stage');
+        // 4. Set proposal status to processing
+        wp_set_object_terms($proposal_id, 'processing', 'arsol-pfw-proposal-stage');
         
         // 5. Copy custom fields and taxonomies
         $custom_fields = get_post_meta($request_id);

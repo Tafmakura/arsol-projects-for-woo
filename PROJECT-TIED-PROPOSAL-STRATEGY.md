@@ -244,7 +244,7 @@ add_action('admin_notices', array($this, 'display_creation_success_message'));
 - Add hidden input maintenance
 
 ### 4. JavaScript File
-**File**: `assets/js/arsol-pfw-admin-proposal.js`
+**File**: `assets/js/arsol-pfw-admin-cpt-proposal.js`
 
 #### New Handler:
 ```javascript
@@ -377,7 +377,7 @@ public function restrict_bulk_edit_fields($post_ids)
 
 ### JavaScript Loading
 - Only load additional JS on proposal admin screens
-- Use existing arsol-pfw-admin-proposal.js file
+- Use existing arsol-pfw-admin-cpt-proposal.js file
 - Avoid jQuery conflicts
 
 ### Template Loading

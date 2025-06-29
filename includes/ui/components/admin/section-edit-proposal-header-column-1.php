@@ -79,7 +79,7 @@ elseif ($proposal_id > 0) {
 
 // Get status terms
 $proposal_stage_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
-$current_proposal_stage = '';
+$current_proposal_stage = 'processing'; // Default to processing
 if (!is_wp_error($proposal_stage_terms) && !empty($proposal_stage_terms)) {
     $current_proposal_stage = $proposal_stage_terms[0];
 }
