@@ -42,8 +42,8 @@
                 }
             });
 
-            // Handle proposal status changes for feedback metabox visibility
-            $(document).on('change', '#proposal_status', function() {
+            // Handle proposal stage changes for feedback metabox visibility
+            $(document).on('change', '#proposal_stage', function() {
                 ArsolProposal.updateProposalStatusVisibility();
             });
 
@@ -283,7 +283,7 @@
         },
 
         updateProposalStatusVisibility: function() {
-            var selectedStatus = $('#proposal_status').val() || '';
+            var selectedStatus = $('#proposal_stage').val() || '';
             
             // Hide all feedback sections first
             $('#arsol_proposal_processing_feedback_section, #arsol_proposal_pending_approval_feedback_section').each(function() {
@@ -1241,6 +1241,9 @@
             var $convertBtn = $('.arsol-confirm-conversion');
             if ($convertBtn.length === 0) return;
             
+            // Debug logging
+            console.log('ARSOL DEBUG: Updating convert button state');
+            
             // Check if this is a project page - projects don't need status restrictions
             if ($('#project_stage').length || $convertBtn.closest('#project_details_meta_box').length) {
                 // Project page - always enable the "Create Proposal" button
@@ -1248,17 +1251,27 @@
                           .removeClass('disabled')
                           .closest('span')
                           .attr('title', 'Creates a new proposal based on this project.');
+                console.log('ARSOL DEBUG: Project page - button enabled');
                 return;
             }
             
             // For proposals and requests, check status requirements
             var selectedStatus = '';
-            if ($('#proposal_status').length) {
+            var itemType = '';
+            
+            if ($('#proposal_stage').length) {
                 // Proposal page
-                selectedStatus = $('#proposal_status').val();
+                selectedStatus = $('#proposal_stage').val();
+                itemType = 'proposal';
+                console.log('ARSOL DEBUG: Proposal page - stage: ' + selectedStatus);
             } else if ($('#request_stage').length) {
                 // Request stage  
                 selectedStatus = $('#request_stage').val();
+                itemType = 'request';
+                console.log('ARSOL DEBUG: Request page - stage: ' + selectedStatus);
+            } else {
+                console.log('ARSOL DEBUG: No stage dropdown found');
+                return;
             }
             
             if (selectedStatus === 'approved') {
@@ -1267,21 +1280,26 @@
                           .removeClass('disabled')
                           .closest('span')
                           .attr('title', $convertBtn.is('[data-message]') ? 
-                              'Converts this ' + ($('#proposal_status').length ? 'proposal' : 'request') + ' to the next stage.' :
+                              'Converts this ' + itemType + ' to the next stage.' :
                               'Converts this item to the next stage.');
+                console.log('ARSOL DEBUG: Button enabled - status is approved');
             } else {
                 // Keep disabled and update tooltip
-                var itemType = $('#proposal_status').length ? 'proposal' : 'request';
                 var statusDisplay = selectedStatus || 'none';
                 $convertBtn.prop('disabled', true)
                           .addClass('disabled')
                           .closest('span')
-                          .attr('title', 'The ' + itemType + ' status must be "Approved" before it can be converted. Current status: "' + statusDisplay + '".');
+                          .attr('title', 'The ' + itemType + ' stage must be "Approved" before it can be converted. Current stage: "' + statusDisplay + '".');
+                console.log('ARSOL DEBUG: Button disabled - stage is: ' + statusDisplay);
             }
+            
+            // Debug current button state
+            console.log('ARSOL DEBUG: Button disabled state: ' + $convertBtn.prop('disabled'));
+            console.log('ARSOL DEBUG: Button classes: ' + $convertBtn.attr('class'));
         }
         
         // Update button state when stage changes (projects don't have restrictions)
-        $(document).on('change', '#proposal_status, #request_stage', updateConvertButtonState);
+        $(document).on('change', '#proposal_stage, #request_stage', updateConvertButtonState);
         
         // Update button state on page load
         updateConvertButtonState();
