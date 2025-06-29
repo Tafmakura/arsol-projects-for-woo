@@ -71,24 +71,24 @@ class Setup {
             3
         );
         
-        // 4. Project Statuses
-        add_submenu_page(
-            $parent_slug,
-            __('Project Statuses', 'arsol-pfw'),
-            __('Project Statuses', 'arsol-pfw'),
-            'manage_categories',
-            'edit-tags.php?taxonomy=arsol-pfw-project-status&post_type=arsol-pfw-project',
-            '',
-            4
-        );
-        
-        // 5. Project Stages
+        // 4. Project Stages (now used for status logic)
         add_submenu_page(
             $parent_slug,
             __('Project Stages', 'arsol-pfw'),
             __('Project Stages', 'arsol-pfw'),
             'manage_categories',
             'edit-tags.php?taxonomy=arsol-pfw-project-stage&post_type=arsol-pfw-project',
+            '',
+            4
+        );
+        
+        // 5. Project Statuses (kept for legacy/reference)
+        add_submenu_page(
+            $parent_slug,
+            __('Project Statuses', 'arsol-pfw'),
+            __('Project Statuses', 'arsol-pfw'),
+            'manage_categories',
+            'edit-tags.php?taxonomy=arsol-pfw-project-status&post_type=arsol-pfw-project',
             '',
             5
         );

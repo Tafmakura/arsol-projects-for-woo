@@ -17,8 +17,8 @@ if (!isset($post) || !$post) {
 }
 
 // Get project details using global $post (consistent with other templates)
-$status_terms = wp_get_post_terms($post->ID, 'arsol-pfw-project-status', array('fields' => 'names'));
-$status = !empty($status_terms) ? $status_terms[0] : 'N/A';
+$stage_terms = wp_get_post_terms($post->ID, 'arsol-pfw-project-stage', array('fields' => 'names'));
+$project_stage = (!empty($stage_terms) && !is_wp_error($stage_terms)) ? $stage_terms[0] : 'Not Started';
 $start_date = get_post_meta($post->ID, '_arsol_pfw_project_start_date', true);
 $due_date = get_post_meta($post->ID, '_arsol_pfw_project_due_date', true);
 ?>

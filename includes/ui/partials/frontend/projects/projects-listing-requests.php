@@ -40,7 +40,7 @@ do_action('arsol_projects_before_user_requests', $has_items);
                                 <a href="<?php echo esc_url($view_url); ?>" class="project-title-link">
                                     <?php the_title(); ?>
                                 </a>
-                                <span class="project-status"><?php echo esc_html($status); ?></span>
+                                <span class="project-stage stage-<?php echo esc_attr(strtolower(str_replace(' ', '-', $status))); ?>"><?php echo esc_html($status); ?></span>
                             </div>
                             <div class="project-excerpt">
                                 <?php echo esc_html($excerpt); ?>

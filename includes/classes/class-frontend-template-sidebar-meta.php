@@ -146,7 +146,7 @@ class Frontend_Template_Sidebar_Meta {
         // Only add status if we have an actual status
         if (!empty($actual_status)) {
             $metadata['status'] = array(
-                'label' => __('Status', 'arsol-pfw'),
+                'label' => __('Stage', 'arsol-pfw'),
                 'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
                 'class' => 'status-badge status-' . sanitize_html_class($actual_status)
@@ -453,7 +453,7 @@ class Frontend_Template_Sidebar_Meta {
         $wp_post_type = get_post_type($post_id);
         
         $taxonomy_map = array(
-            'arsol-pfw-project' => 'arsol-pfw-project-status',
+            'arsol-pfw-project' => 'arsol-pfw-project-stage',
             'arsol-pfw-proposal' => 'arsol-pfw-proposal-status', 
             'arsol-pfw-request' => 'arsol-pfw-request-status'
         );
@@ -498,7 +498,7 @@ class Frontend_Template_Sidebar_Meta {
         if ($post_id) {
             $wp_post_type = get_post_type($post_id);
             $taxonomy_map = array(
-                'arsol-pfw-project' => 'arsol-pfw-project-status',
+                'arsol-pfw-project' => 'arsol-pfw-project-stage',
                 'arsol-pfw-proposal' => 'arsol-pfw-proposal-status', 
                 'arsol-pfw-request' => 'arsol-pfw-request-status'
             );
@@ -512,7 +512,7 @@ class Frontend_Template_Sidebar_Meta {
         }
 
         // Fallback: try to get the term from all possible taxonomies
-        $taxonomies = array('arsol-pfw-project-status', 'arsol-pfw-proposal-status', 'arsol-pfw-request-status');
+        $taxonomies = array('arsol-pfw-project-stage', 'arsol-pfw-proposal-status', 'arsol-pfw-request-status');
         
         foreach ($taxonomies as $taxonomy) {
             $term = get_term_by('slug', $status, $taxonomy);

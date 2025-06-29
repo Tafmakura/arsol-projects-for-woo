@@ -162,6 +162,10 @@ function add_enhanced_active_info($type, $data) {
     $client = get_post_meta($project_id, '_project_client', true);
     $team_members = get_post_meta($project_id, '_project_team_members', true);
     
+    // Get project stage
+    $stage_terms = wp_get_post_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+    $current_stage = !empty($stage_terms) && !is_wp_error($stage_terms) ? $stage_terms[0] : 'not-started';
+    
     echo '<div class="enhanced-project-info">';
     
     // Priority badge
@@ -232,7 +236,7 @@ function add_project_wrapper_classes($project_type, $wrapper_data) {
     $status = '';
     
     if ($project_type === 'active') {
-        $status_terms = wp_get_post_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
+        $status_terms = wp_get_post_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
         $status = !empty($status_terms) ? $status_terms[0] : '';
     }
     

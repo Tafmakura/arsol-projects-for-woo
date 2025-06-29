@@ -931,19 +931,24 @@ class Shortcodes {
 			$query_args['meta_query'] = array(
 				'relation' => 'OR',
 				array(
-					'key' => '_arsol_pfw_project_status',
+					'key' => '_arsol_pfw_project_stage',
 					'value' => 'active',
 					'compare' => '='
 				),
 				array(
-					'key' => '_arsol_pfw_project_status',
+					'key' => '_arsol_pfw_project_stage',
+					'value' => 'completed',
+					'compare' => '!='
+				),
+				array(
+					'key' => '_arsol_pfw_project_stage',
 					'compare' => 'NOT EXISTS'
 				)
 			);
 		} elseif ($params['status']) {
 			$query_args['meta_query'] = array(
 				array(
-					'key' => '_arsol_pfw_project_status',
+					'key' => '_arsol_pfw_project_stage',
 					'value' => $params['status'],
 					'compare' => '='
 				)
@@ -1024,18 +1029,23 @@ class Shortcodes {
 			$query_args['meta_query'][] = array(
 				'relation' => 'OR',
 				array(
-					'key' => '_arsol_pfw_project_status',
+					'key' => '_arsol_pfw_project_stage',
 					'value' => 'active',
 					'compare' => '='
 				),
 				array(
-					'key' => '_arsol_pfw_project_status',
+					'key' => '_arsol_pfw_project_stage',
+					'value' => 'completed',
+					'compare' => '!='
+				),
+				array(
+					'key' => '_arsol_pfw_project_stage',
 					'compare' => 'NOT EXISTS'
 				)
 			);
 		} elseif ($params['status']) {
 			$query_args['meta_query'][] = array(
-				'key' => '_arsol_pfw_project_status',
+				'key' => '_arsol_pfw_project_stage',
 				'value' => $params['status'],
 				'compare' => '='
 			);

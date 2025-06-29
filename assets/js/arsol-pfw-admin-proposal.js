@@ -1242,7 +1242,7 @@
             if ($convertBtn.length === 0) return;
             
             // Check if this is a project page - projects don't need status restrictions
-            if ($('#project_status').length || $convertBtn.closest('#project_details_meta_box').length) {
+            if ($('#project_stage').length || $convertBtn.closest('#project_details_meta_box').length) {
                 // Project page - always enable the "Create Proposal" button
                 $convertBtn.prop('disabled', false)
                           .removeClass('disabled')

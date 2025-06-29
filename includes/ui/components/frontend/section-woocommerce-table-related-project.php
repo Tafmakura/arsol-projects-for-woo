@@ -32,7 +32,7 @@ if (!defined('ABSPATH')) {
         </tr>
     </thead>
     <tbody>
-        <tr class="woocommerce-orders-table__row <?php echo $has_link ? 'arsol-pfw-status-active' : 'arsol-pfw-status-inactive'; ?>">
+        <tr class="woocommerce-orders-table__row <?php echo $has_link ? 'arsol-pfw-stage-active' : 'arsol-pfw-stage-inactive'; ?>">
             <td class="woocommerce-orders-table__cell arsol-pfw-project-cell" data-title="<?php esc_attr_e('Project', 'arsol-pfw'); ?>">
                 <?php if ($has_link) : ?>
                     <?php 

@@ -42,7 +42,7 @@ class Projects_CPT {
     public static function get_by_status($status_slug, $args = array()) {
         $args['tax_query'] = array(
             array(
-                'taxonomy' => 'arsol-pfw-project-status',
+                'taxonomy' => 'arsol-pfw-project-stage',
                 'field' => 'slug',
                 'terms' => $status_slug
             )
@@ -78,16 +78,17 @@ class Projects_CPT {
     /**
      * Get project count by status
      */
-    public static function get_count_by_status($status_slug, $args = array()) {
-        return self::get_count(array_merge($args, array(
+    public static function get_status_count_by_status($status_slug) {
+        $args = array(
             'tax_query' => array(
                 array(
-                    'taxonomy' => 'arsol-pfw-project-status',
+                    'taxonomy' => 'arsol-pfw-project-stage',
                     'field' => 'slug',
                     'terms' => $status_slug
                 )
             )
-        )));
+        );
+        return self::get_count($args);
     }
     
     /**
@@ -147,7 +148,7 @@ class Projects_CPT {
      */
     public static function get_status_options() {
         $terms = get_terms(array(
-            'taxonomy' => 'arsol-pfw-project-status',
+            'taxonomy' => 'arsol-pfw-project-stage',
             'hide_empty' => false,
         ));
         

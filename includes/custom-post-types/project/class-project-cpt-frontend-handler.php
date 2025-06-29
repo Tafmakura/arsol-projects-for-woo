@@ -151,7 +151,7 @@ class Frontend_Handler {
         do_action('arsol_before_project_creation_status_assignment', $project_id, 'not-started', $creation_data);
 
         // Set default project status
-        wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-status');
+        wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-stage');
 
         /**
          * Hook: arsol_after_project_creation_status_assigned

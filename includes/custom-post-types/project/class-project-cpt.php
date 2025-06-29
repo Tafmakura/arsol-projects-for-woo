@@ -284,7 +284,7 @@ class Project_CPT {
      * @return string
      */
     public static function get_status_taxonomy() {
-        return 'arsol-pfw-project-status';
+        return 'arsol-pfw-project-stage';
     }
 
     /**

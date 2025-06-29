@@ -22,13 +22,13 @@
         },
 
         handleStatusChanges: function() {
-            // Handle project status changes
-            $('select[name="project_status"]').on('change', function() {
-                var newStatus = $(this).val();
+            // Handle project stage changes
+            $('select[name="project_stage"]').on('change', function() {
+                var newStage = $(this).val();
                 var $form = $(this).closest('form');
                 
-                // You can add status-specific logic here
-                if (newStatus === 'completed') {
+                // You can add stage-specific logic here
+                if (newStage === 'completed') {
                     // Maybe auto-set completion date
                     var today = new Date().toISOString().split('T')[0];
                     $('input[name="project_completion_date"]').val(today);

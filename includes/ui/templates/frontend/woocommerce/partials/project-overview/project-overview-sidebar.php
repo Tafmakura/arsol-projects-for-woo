@@ -24,10 +24,12 @@ if ($post_type === 'arsol_proposal') {
     $internal_post_type = 'project_request';
 }
 
-// Get current status
-$status_terms = wp_get_post_terms($post_id, $internal_post_type === 'project' ? 'arsol-pfw-project-status' : 
-    ($internal_post_type === 'project_proposal' ? 'arsol-pfw-proposal-status' : 'arsol-pfw-request-status'));
-$current_status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0]->slug : '';
+// Get status terms based on post type
+$status_terms = wp_get_post_terms($post_id, $internal_post_type === 'project' ? 'arsol-pfw-project-stage' :
+    ($internal_post_type === 'proposal' ? 'arsol-pfw-proposal-status' : 'arsol-pfw-request-status'), 
+    array('fields' => 'names')
+);
+$current_status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0] : '';
 ?>
 
 <div class="project-sidebar">

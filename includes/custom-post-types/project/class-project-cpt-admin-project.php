@@ -87,12 +87,12 @@ class Project {
             return;
         }
 
-        // Handle project status change
-        if (isset($_POST['project_status'])) {
-            $new_status = sanitize_text_field($_POST['project_status']);
+        // Handle project stage change
+        if (isset($_POST['project_stage'])) {
+            $new_status = sanitize_text_field($_POST['project_stage']);
             
             // Get the status before this save
-            $current_status_terms = wp_get_object_terms($post_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
+            $current_status_terms = wp_get_object_terms($post_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
             $old_status = !empty($current_status_terms) ? $current_status_terms[0] : 'not-started';
 
             // Set start date on the first transition to 'in-progress'
@@ -102,7 +102,7 @@ class Project {
                 }
             }
             
-            wp_set_object_terms($post_id, $new_status, 'arsol-pfw-project-status', false);
+            wp_set_object_terms($post_id, $new_status, 'arsol-pfw-project-stage', false);
         }
 
         // Set default start date if not already set

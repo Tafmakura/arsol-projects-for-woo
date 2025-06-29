@@ -32,8 +32,8 @@ do_action('arsol_projects_before_user_projects', $has_items);
         <tbody>
             <?php while ($query->have_posts()) : $query->the_post();
                 $project_id = get_the_ID();
-                $status_terms = wp_get_post_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'names'));
-                $status = !empty($status_terms) ? $status_terms[0] : '';
+                $status_terms = wp_get_post_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'names'));
+                $status = (!empty($status_terms) && !is_wp_error($status_terms)) ? $status_terms[0] : 'Not Started';
                 $view_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
                 $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
             ?>
@@ -43,7 +43,7 @@ do_action('arsol_projects_before_user_projects', $has_items);
                         <a href="<?php echo esc_url($view_url); ?>" class="project-title-link">
                             <?php the_title(); ?>
                         </a>
-                            <span class="project-status"><?php echo esc_html($status); ?></span>
+                            <span class="project-stage stage-<?php echo esc_attr(strtolower(str_replace(' ', '-', $status))); ?>"><?php echo esc_html($status); ?></span>
                         </div>
                         <div class="project-excerpt">
                             <?php echo esc_html($excerpt); ?>

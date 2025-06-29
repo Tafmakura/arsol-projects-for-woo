@@ -637,8 +637,8 @@ class Workflow_Handler {
         // Store original proposal ID for reference
         update_post_meta($project_id, '_arsol_pfw_project_proposal_id', $proposal_id);
 
-        // Set the project status to 'not-started'
-        wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-status');
+        // Set default project status to not-started
+        wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-stage');
 
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
             sprintf('Metadata copied from proposal #%d to project #%d (type: %s): %s', 

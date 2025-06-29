@@ -12,14 +12,14 @@ if (!$post || $post->post_type !== 'arsol-pfw-project') {
 $project_id = $post->ID;
 $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
-        $project_status_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
-$project_status = !empty($project_status_terms) ? $project_status_terms[0] : 'not-started';
+        $project_stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+$project_stage = !empty($project_stage_terms) ? $project_stage_terms[0] : 'not-started';
 $project_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
 $start_date = get_post_meta($project_id, '_arsol_pfw_project_start_date', true);
 $due_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
 
 $all_statuses = get_terms(array(
-                'taxonomy' => 'arsol-pfw-project-status',
+                'taxonomy' => 'arsol-pfw-project-stage',
     'hide_empty' => false,
 ));
 ?>
@@ -73,10 +73,10 @@ $all_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="project_status"><?php _e('Project Status:', 'arsol-pfw'); ?></label>
-        <select id="project_status" name="project_status" class="wc-enhanced-select">
+        <label for="project_stage"><?php _e('Project Stage:', 'arsol-pfw'); ?></label>
+        <select id="project_stage" name="project_stage" class="wc-enhanced-select">
             <?php foreach ($all_statuses as $status) : ?>
-                <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($project_status, $status->slug); ?>>
+                <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($project_stage, $status->slug); ?>>
                     <?php echo esc_html($status->name); ?>
                 </option>
             <?php endforeach; ?>

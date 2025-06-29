@@ -229,44 +229,67 @@
     }
 }
 
-/* Project Status Styling */
-.project-status {
+/* Project Stage Styling */
+.project-stage {
     display: inline-block;
-    padding: 0.25rem 0.5rem;
+    padding: 2px 8px;
     border-radius: 3px;
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
 }
 
-.project-status span {
+.project-stage span {
     color: inherit;
 }
 
-/* Status Colors */
-.status-not-started {
+.stage-not-started {
     background-color: #f0f0f1;
     color: #646970;
 }
 
-.status-in-progress {
+.stage-in-progress {
     background-color: #dbeafe;
     color: #1e40af;
 }
 
-.status-on-hold {
+.stage-on-hold {
     background-color: #fef3c7;
     color: #92400e;
 }
 
-.status-completed {
+.stage-completed {
     background-color: #d1fae5;
     color: #065f46;
 }
 
-.status-cancelled {
+.stage-cancelled {
     background-color: #fee2e2;
     color: #991b1b;
 }
+
+/* Updated project stage colors specific to the new workflow */
+.stage-request {
+    background-color: #e0e7ff;
+    color: #3730a3;
+}
+
+.stage-proposal {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.stage-active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.stage-archive {
+    background-color: #f3f4f6;
+    color: #6b7280;
+}
+
+/* Project Status Colors in Tables - REPLACED WITH PROJECT STAGE COLORS ABOVE */
 
 /* Create or Request Button */
 .arsol-create-or-request-button {
@@ -297,37 +320,37 @@
 }
 
 /* Project Status Colors in Tables */
-.arsol-pfw-projects-row .status-pending {
+.arsol-pfw-projects-row .stage-pending {
     background-color: #fff3cd;
     color: #856404;
 }
 
-.arsol-pfw-projects-row .status-approved {
+.arsol-pfw-projects-row .stage-approved {
     background-color: #d1edff;
     color: #0c5460;
 }
 
-.arsol-pfw-projects-row .status-rejected {
+.arsol-pfw-projects-row .stage-rejected {
     background-color: #f8d7da;
     color: #721c24;
 }
 
-.arsol-pfw-projects-row .status-in-progress {
+.arsol-pfw-projects-row .stage-in-progress {
     background-color: #d1ecf1;
     color: #0c5460;
 }
 
-.arsol-pfw-projects-row .status-completed {
+.arsol-pfw-projects-row .stage-completed {
     background-color: #d4edda;
     color: #155724;
 }
 
-.arsol-pfw-projects-row .status-cancelled {
+.arsol-pfw-projects-row .stage-cancelled {
     background-color: #f8d7da;
     color: #721c24;
 }
 
-.arsol-pfw-projects-row span[class^="status-"] {
+.arsol-pfw-projects-row span[class^="stage-"] {
     padding: 0.25rem 0.5rem;
     border-radius: 0.25rem;
     font-size: 0.875rem;
@@ -496,4 +519,37 @@
     font-weight: 600;
     color: #1d2327;
 }
+
+/* Project Stage Colors in Tables */
+.arsol-pfw-projects-row .stage-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.arsol-pfw-projects-row .stage-approved {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.arsol-pfw-projects-row .stage-rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.arsol-pfw-projects-row .stage-in-progress {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.arsol-pfw-projects-row .stage-completed {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.arsol-pfw-projects-row .stage-cancelled {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Status Colors - REPLACED WITH STAGE COLORS ABOVE */
 

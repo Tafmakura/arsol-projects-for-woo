@@ -50,7 +50,7 @@ do_action('arsol_projects_before_user_proposals', $has_items);
                                     <?php the_title(); ?>
                                 </a>
                                 <?php if (!empty($status)) : ?>
-                                    <span class="project-status"><?php echo esc_html($status); ?></span>
+                                    <span class="project-stage stage-<?php echo esc_attr(strtolower(str_replace(' ', '-', $status))); ?>"><?php echo esc_html($status); ?></span>
                                 <?php endif; ?>
                             </div>
                             <div class="project-excerpt">

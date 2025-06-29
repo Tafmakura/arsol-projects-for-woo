@@ -173,11 +173,10 @@ class Frontend_Endpoints {
                 $args['post_status'] = 'publish';
                 $args['tax_query'] = array(
                     array(
-                        'taxonomy' => 'arsol-pfw-project-status',
+                        'taxonomy' => 'arsol-pfw-project-stage',
                         'field'    => 'slug',
-                        'terms'    => array('completed'),
-                        'operator' => 'NOT IN',
-                    ),
+                        'terms'    => 'active'
+                    )
                 );
                 break;
         }
@@ -212,7 +211,7 @@ class Frontend_Endpoints {
         $current_tab = 'overview';
         
         // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
+        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
         $current_status = !empty($statuses) ? $statuses[0] : '';
         
         // Prepare comprehensive data for efficient hook usage
@@ -241,7 +240,7 @@ class Frontend_Endpoints {
         $current_tab = 'orders';
         
         // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
+        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
         $current_status = !empty($statuses) ? $statuses[0] : '';
         
         // Prepare comprehensive data for efficient hook usage
@@ -277,7 +276,7 @@ class Frontend_Endpoints {
         $current_tab = 'subscriptions';
         
         // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-status', array('fields' => 'slugs'));
+        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
         $current_status = !empty($statuses) ? $statuses[0] : '';
         
         // Prepare comprehensive data for efficient hook usage

@@ -308,7 +308,7 @@ class Project_Proposal_CPT {
 
         if (!is_wp_error($project_id) && $project_id) {
             // Set project to not-started status
-            wp_set_post_terms($project_id, array('not-started'), 'arsol-pfw-project-status');
+            wp_set_post_terms($project_id, array('not-started'), 'arsol-pfw-project-stage');
             
             do_action('arsol_proposal_approved_project_created', $project_id, $this->proposal_id, $this->proposal->post_author, $this->get_meta('_arsol_pfw_proposal_project_lead'));
             return $project_id;

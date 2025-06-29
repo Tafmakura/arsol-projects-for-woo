@@ -170,42 +170,64 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     margin: 0;
 }
 
-/* Project Status Styles */
-.column-project_status {
-    width: 120px;
+/* Project Stage Styles */
+.column-project_stage {
+    width: 100px;
 }
 
-.column-project_status .status {
+.column-project_stage .stage {
     display: inline-block;
-    padding: 0.25em 0.75em;
+    padding: 2px 8px;
     border-radius: 3px;
-    font-size: 0.9em;
+    font-size: 11px;
     font-weight: 500;
+    text-transform: uppercase;
 }
 
-.column-project_status .status-not-started {
-    background-color: #f0f0f0;
-    color: #666;
+.column-project_stage .stage-not-started {
+    background-color: #f0f0f1;
+    color: #50575e;
 }
 
-.column-project_status .status-in-progress {
-    background-color: #e3f2fd;
-    color: #1976d2;
+.column-project_stage .stage-in-progress {
+    background-color: #dbeafe;
+    color: #1e40af;
 }
 
-.column-project_status .status-on-hold {
-    background-color: #fff3e0;
-    color: #f57c00;
+.column-project_stage .stage-on-hold {
+    background-color: #fef3c7;
+    color: #92400e;
 }
 
-.column-project_status .status-completed {
-    background-color: #e8f5e9;
-    color: #388e3c;
+.column-project_stage .stage-completed {
+    background-color: #d1fae5;
+    color: #065f46;
 }
 
-.column-project_status .status-cancelled {
-    background-color: #ffebee;
-    color: #d32f2f;
+.column-project_stage .stage-cancelled {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Updated project stage colors for new workflow */
+.column-project_stage .stage-request {
+    background-color: #e0e7ff;
+    color: #3730a3;
+}
+
+.column-project_stage .stage-proposal {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.column-project_stage .stage-active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.column-project_stage .stage-archive {
+    background-color: #f3f4f6;
+    color: #6b7280;
 }
 
 /* Conditional Fields - WordPress Admin Settings */
@@ -1011,7 +1033,7 @@ body.wp-admin .tablenav.top .actions select {
 }
 
 /* Status filter dropdown styling with high specificity */
-body.wp-admin .status-filter-dropdown,
+body.wp-admin .stage-filter-dropdown,
 body.wp-admin select[name*="status"] {
     min-width: 140px !important;
     max-width: 200px !important;
@@ -1161,7 +1183,7 @@ body.post-type-arsol-pfw-proposal .tablenav .select2-container {
     display: inline-block !important;
 }
 
-body.post-type-arsol-pfw-proposal .status-filter-dropdown {
+body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
     min-width: 140px !important;
 }
 

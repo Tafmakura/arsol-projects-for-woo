@@ -28,7 +28,7 @@ class Projects {
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
         $new_columns['customer'] = __('Customer', 'arsol-pfw');
-        $new_columns['project_status'] = __('Status', 'arsol-pfw');
+        $new_columns['project_stage'] = __('Stage', 'arsol-pfw');
         $new_columns['project_lead'] = __('Project Lead', 'arsol-pfw');
         $new_columns['date'] = $columns['date'];
         
@@ -40,10 +40,12 @@ class Projects {
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
-            case 'project_status':
-                $status = wp_get_object_terms($post_id, 'arsol-pfw-project-status', array('fields' => 'names'));
+            case 'project_stage':
+                $status = wp_get_object_terms($post_id, 'arsol-pfw-project-stage', array('fields' => 'names'));
                 if (!empty($status) && !is_wp_error($status)) {
-                    echo esc_html($status[0]);
+                    echo '<span class="stage stage-' . esc_attr(strtolower(str_replace(' ', '-', $status[0]))) . '">' . esc_html($status[0]) . '</span>';
+                } else {
+                    echo '<span class="stage stage-not-started">Not Started</span>';
                 }
                 break;
                 
@@ -70,21 +72,19 @@ class Projects {
         global $typenow;
         if ($typenow === 'arsol-pfw-project') {
             // Status filter (standard dropdown)
-            $current_status = isset($_GET['project_status']) ? $_GET['project_status'] : '';
-            $statuses = get_terms('arsol-pfw-project-status', array('hide_empty' => false));
+            $current_status = isset($_GET['project_stage']) ? $_GET['project_stage'] : '';
+            $statuses = get_terms('arsol-pfw-project-stage', array('hide_empty' => false));
+            
+            echo '<select name="project_stage" id="filter-by-project-stage" class="postform stage-filter-dropdown">';
+            echo '<option value="">' . __('All Stages', 'arsol-pfw') . '</option>';
+            
             if (!empty($statuses) && !is_wp_error($statuses)) {
-                echo '<select name="project_status" id="filter-by-project-status" class="postform status-filter-dropdown">';
-                echo '<option value="">' . __('All Statuses', 'arsol-pfw') . '</option>';
                 foreach ($statuses as $status) {
-                    printf(
-                        '<option value="%s" %s>%s</option>',
-                        esc_attr($status->slug),
-                        selected($current_status, $status->slug, false),
-                        esc_html($status->name)
-                    );
+                    echo '<option value="' . esc_attr($status->slug) . '"' . selected($current_status, $status->slug, false) . '>' . esc_html($status->name) . '</option>';
                 }
-                echo '</select>';
             }
+            
+            echo '</select>';
 
             // Project Lead filter
             $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
@@ -143,15 +143,15 @@ class Projects {
                 $query->set('author', sanitize_text_field($_GET['customer']));
             }
 
-            // Filter by project status (taxonomy)
-            if (!empty($_GET['project_status'])) {
-                $tax_query = $query->get('tax_query') ?: [];
-                $tax_query[] = [
-                    'taxonomy' => 'arsol-pfw-project-status',
-                    'field'    => 'slug',
-                    'terms'    => sanitize_text_field($_GET['project_status']),
-                ];
-                $query->set('tax_query', $tax_query);
+            // Filter by project stage (taxonomy)
+            if (!empty($_GET['project_stage'])) {
+                $query->set('tax_query', array(
+                    array(
+                        'taxonomy' => 'arsol-pfw-project-stage',
+                        'field'    => 'slug',
+                        'terms'    => sanitize_text_field($_GET['project_stage']),
+                    ),
+                ));
             }
         }
     }
