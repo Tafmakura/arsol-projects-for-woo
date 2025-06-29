@@ -112,25 +112,9 @@
         },
 
         updateRequestStageVisibility: function() {
-            // The smart conditional system handles most stage visibility automatically
-            // Just trigger it if the system is available
+            // Use the smart conditional system to handle all stage-based visibility
             if (typeof window.ArsolConditionalVisibility !== 'undefined') {
                 window.ArsolConditionalVisibility.updateConditionalVisibilityForField('request_stage');
-            }
-            
-            // Keep the existing feedback sections logic for now (can be converted to CSS classes later)
-            var selectedStage = $('#request_stage').val() || '';
-            
-            // Hide all feedback sections first
-            $('#arsol_request_onhold_feedback_section, #arsol_request_underreview_feedback_section').each(function() {
-                this.style.setProperty('display', 'none', 'important');
-            });
-            
-            // Show the appropriate section based on current stage
-            if (selectedStage === 'on-hold') {
-                $('#arsol_request_onhold_feedback_section')[0].style.setProperty('display', 'block', 'important');
-            } else if (selectedStage === 'under-review') {
-                $('#arsol_request_underreview_feedback_section')[0].style.setProperty('display', 'block', 'important');
             }
         },
 
