@@ -80,19 +80,9 @@
             $(document).on('change', '#request_stage', function() {
                 const selectedStage = $(this).val();
                 
-                // Use the smart conditional system if available
+                // Use the smart conditional system
                 if (typeof window.ArsolConditionalVisibility !== 'undefined') {
                     window.ArsolConditionalVisibility.updateConditionalVisibilityForField('request_stage');
-                } else {
-                    // Fallback to hardcoded logic if smart system isn't loaded
-                    $('.arsol-pfw-show-if-request-stage-is-on-hold').hide();
-                    $('.arsol-pfw-show-if-request-stage-is-under-review').hide();
-                    
-                    if (selectedStage === 'on-hold') {
-                        $('.arsol-pfw-show-if-request-stage-is-on-hold').show();
-                    } else if (selectedStage === 'under-review') {
-                        $('.arsol-pfw-show-if-request-stage-is-under-review').show();
-                    }
                 }
                 
                 ArsolRequest.updateConversionButtonState();

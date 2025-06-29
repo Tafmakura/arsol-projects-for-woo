@@ -1189,16 +1189,37 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
 
 /* === END ADMIN FILTER STYLING === */
 
-/* Request Stage Conditional Visibility - Consolidated */
-.arsol-pfw-show-if-request-stage-is-on-hold,
-.arsol-pfw-show-if-request-stage-is-under-review {
+/* === SMART CONDITIONAL VISIBILITY SYSTEM === */
+/* Universal rules for all arsol-pfw conditional classes */
+/* The smart system controls these via JavaScript - no hardcoded stage-specific rules needed */
+
+/* Default: Hide all show-if elements, Show all hide-if elements */
+[class*="arsol-pfw-show-if-"] {
     display: none;
 }
 
-.arsol-pfw-hide-if-request-stage-is-not-on-hold,
-.arsol-pfw-hide-if-request-stage-is-on-hold,
-.arsol-pfw-hide-if-request-stage-is-under-review {
+[class*="arsol-pfw-hide-if-"] {
+    display: block;
+}
+
+/* Override for elements that should be hidden by default */
+[class*="arsol-pfw-hide-if-"].arsol-pfw-hidden-default {
     display: none;
+}
+
+/* === SPECIFIC FEEDBACK SECTIONS === */
+/* These specific sections need !important to override WordPress admin styles */
+#arsol_request_onhold_feedback_metabox,
+#arsol_request_underreview_feedback_metabox,
+#arsol_request_onhold_feedback_metabox .postbox-header {
+    display: none !important;
+}
+
+#arsol_proposal_processing_feedback_section,
+#arsol_proposal_pending_approval_feedback_section,
+#arsol_request_onhold_feedback_section,
+#arsol_request_underreview_feedback_section {
+    display: none !important;
 }
 
 /* Request Feedback Editor Styling */
@@ -1246,52 +1267,4 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
     color: #666;
     font-style: italic;
 }
-
-.summary-empty-state p {
-    margin: 0;
-    font-size: 14px;
-}
-
-/* Request Feedback Metaboxes - Hidden by default to prevent FOUC */
-#arsol_request_onhold_feedback_metabox,
-#arsol_request_underreview_feedback_metabox {
-    display: none !important;
-}
-
-/* Request Feedback Sections - Hidden by default to prevent FOUC */
-#arsol_request_onhold_feedback_section,
-#arsol_request_underreview_feedback_section {
-    display: none !important;
-}
-
-/* Proposal Status Conditional Visibility */
-.arsol-pfw-show-if-proposal-stage-is-processing,
-.arsol-pfw-show-if-proposal-stage-is-pending-approval {
-    display: block !important;
-}
-
-.arsol-pfw-hide-if-proposal-stage-is-not-processing,
-.arsol-pfw-hide-if-proposal-stage-is-processing,
-.arsol-pfw-hide-if-proposal-stage-is-pending-approval {
-    display: none !important;
-}
-
-#arsol_request_onhold_feedback_metabox,
-#arsol_request_onhold_feedback_metabox .postbox-header {
-    display: none;
-}
-
-/* Request Feedback Sections - Hidden by default to prevent FOUC */
-#arsol_request_onhold_feedback_section,
-#arsol_request_underreview_feedback_section {
-    display: none !important;
-}
-
-/* Proposal Feedback Sections - Hidden by default to prevent FOUC */
-#arsol_proposal_processing_feedback_section,
-#arsol_proposal_pending_approval_feedback_section {
-    display: none !important;
-}
-
-
 
