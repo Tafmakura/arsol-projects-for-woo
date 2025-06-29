@@ -215,18 +215,32 @@
                     return; // Continue to next condition
                 }
                 
+                var shouldShow = false;
+                
                 if (condition.action === 'show') {
-                    if (currentValue === condition.value) {
-                        $elements.css('display', '');
-                    } else {
-                        $elements.css('display', 'none');
-                    }
+                    shouldShow = (currentValue === condition.value);
                 } else if (condition.action === 'hide') {
-                    if (currentValue === condition.value) {
-                        $elements.css('display', 'none');
-                    } else {
-                        $elements.css('display', '');
-                    }
+                    shouldShow = (currentValue !== condition.value);
+                }
+                
+                // Apply visibility: display: none to hide, remove display property to show (preserves original display)
+                if (shouldShow) {
+                    // Remove only the display property, preserving other inline styles
+                    $elements.each(function() {
+                        var $el = $(this);
+                        var style = $el.attr('style');
+                        if (style) {
+                            // Remove display property but keep other styles
+                            style = style.replace(/display\s*:\s*[^;]+;?\s*/gi, '');
+                            if (style.trim()) {
+                                $el.attr('style', style);
+                            } else {
+                                $el.removeAttr('style');
+                            }
+                        }
+                    });
+                } else {
+                    $elements.css('display', 'none');
                 }
             });
         },
