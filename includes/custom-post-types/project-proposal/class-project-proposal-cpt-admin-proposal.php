@@ -33,13 +33,13 @@ class Proposal {
     }
 
     /**
-     * Add proposal details meta box
+     * Add proposal actions meta box
      */
     public function add_proposal_details_meta_box() {
         add_meta_box(
-            'proposal_details_meta_box',
-            __('Project Actions', 'arsol-pfw'),
-            array($this, 'render_proposal_details_meta_box'),
+            'arsol-pfw-proposal-actions-metabox',
+            __('Proposal Actions', 'arsol-pfw'),
+            array($this, 'render_proposal_actions_metabox'),
             'arsol-pfw-proposal',
             'side',
             'default'
@@ -169,11 +169,11 @@ class Proposal {
     }
 
     /**
-     * Render proposal details meta box
+     * Render proposal actions metabox
      */
-    public function render_proposal_details_meta_box($post) {
+    public function render_proposal_actions_metabox($post) {
         // Add nonce for security
-        wp_nonce_field('proposal_details_meta_box', 'proposal_details_meta_box_nonce');
+        wp_nonce_field('arsol-pfw-proposal-actions-metabox', 'arsol_pfw_proposal_actions_metabox_nonce');
 
         // Get current values
         $cost_proposal_type = get_post_meta($post->ID, '_arsol_pfw_proposal_costing_type', true);
@@ -313,12 +313,12 @@ class Proposal {
      */
     public function save_proposal_details($post_id) {
         // Check if our nonce is set.
-        if (!isset($_POST['proposal_details_meta_box_nonce'])) {
+        if (!isset($_POST['arsol_pfw_proposal_actions_metabox_nonce'])) {
             return;
         }
 
         // Verify that the nonce is valid.
-        if (!wp_verify_nonce($_POST['proposal_details_meta_box_nonce'], 'proposal_details_meta_box')) {
+        if (!wp_verify_nonce($_POST['arsol_pfw_proposal_actions_metabox_nonce'], 'arsol-pfw-proposal-actions-metabox')) {
             return;
         }
 

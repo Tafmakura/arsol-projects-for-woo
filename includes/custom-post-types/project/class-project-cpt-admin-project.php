@@ -15,13 +15,13 @@ class Project {
     }
 
     /**
-     * Add project details meta box
+     * Add project actions meta box
      */
     public function add_project_details_meta_box() {
         add_meta_box(
-            'project_details_meta_box',
+            'arsol-pfw-project-actions-metabox',
             __('Project Actions', 'arsol-pfw'),
-            array($this, 'render_project_details_meta_box'),
+            array($this, 'render_project_actions_metabox'),
             'arsol-pfw-project',
             'side',
             'default'
@@ -29,11 +29,11 @@ class Project {
     }
 
     /**
-     * Render project details meta box
+     * Render project actions metabox
      */
-    public function render_project_details_meta_box($post) {
+    public function render_project_actions_metabox($post) {
         // Add nonce for security
-        wp_nonce_field('project_details_meta_box', 'project_details_meta_box_nonce');
+        wp_nonce_field('arsol-pfw-project-actions-metabox', 'arsol_pfw_project_actions_metabox_nonce');
         
         // Prepare Create Proposal button data
         $create_url = admin_url('post-new.php?post_type=arsol-pfw-proposal&parent_project=' . $post->ID);
@@ -68,12 +68,12 @@ class Project {
      */
     public function save_project_details($post_id) {
         // Check if our nonce is set
-        if (!isset($_POST['project_details_meta_box_nonce'])) {
+        if (!isset($_POST['arsol_pfw_project_actions_metabox_nonce'])) {
             return;
         }
 
         // Verify that the nonce is valid
-        if (!wp_verify_nonce($_POST['project_details_meta_box_nonce'], 'project_details_meta_box')) {
+        if (!wp_verify_nonce($_POST['arsol_pfw_project_actions_metabox_nonce'], 'arsol-pfw-project-actions-metabox')) {
             return;
         }
 

@@ -13,14 +13,14 @@ class Request {
     }
 
     /**
-     * Add request details meta box
+     * Add request actions meta box
      */
     public function add_request_details_meta_box() {
         ob_start();
         add_meta_box(
-            'request_details',
-            __('Project Actions', 'arsol-pfw'),
-            array($this, 'render_request_details_meta_box'),
+            'arsol-pfw-request-actions-metabox',
+            __('Request Actions', 'arsol-pfw'),
+            array($this, 'render_request_actions_metabox'),
             'arsol-pfw-request',
             'side',
             'default'
@@ -31,11 +31,11 @@ class Request {
     }
 
     /**
-     * Render request details meta box
+     * Render request actions metabox
      */
-    public function render_request_details_meta_box($post) {
+    public function render_request_actions_metabox($post) {
         // Add nonce for security
-        wp_nonce_field('request_details_meta_box', 'request_details_meta_box_nonce');
+        wp_nonce_field('arsol-pfw-request-actions-metabox', 'arsol_pfw_request_actions_metabox_nonce');
 
         // Get current values
         $current_stage = wp_get_object_terms($post->ID, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
@@ -205,12 +205,12 @@ class Request {
      */
     public function save_request_details($post_id) {
         // Check if our nonce is set
-        if (!isset($_POST['request_details_meta_box_nonce'])) {
+        if (!isset($_POST['arsol_pfw_request_actions_metabox_nonce'])) {
             return;
         }
 
         // Verify that the nonce is valid
-        if (!wp_verify_nonce($_POST['request_details_meta_box_nonce'], 'request_details_meta_box')) {
+        if (!wp_verify_nonce($_POST['arsol_pfw_request_actions_metabox_nonce'], 'arsol-pfw-request-actions-metabox')) {
             return;
         }
 
