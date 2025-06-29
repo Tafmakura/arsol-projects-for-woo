@@ -11,6 +11,9 @@ $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' .
 $status_terms = wp_get_post_terms($post->ID, 'arsol-pfw-request-status', ['fields' => 'slugs']);
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
 
+$stage_terms = wp_get_post_terms($post->ID, 'arsol-pfw-request-stage', ['fields' => 'slugs']);
+$current_stage = !empty($stage_terms) ? $stage_terms[0] : '';
+
 do_action('arsol_projects_before_request_state', $post->ID);
 ?>
 

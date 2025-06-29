@@ -32,6 +32,7 @@ class Requests {
         $new_columns['customer'] = __('Customer', 'arsol-pfw');
         $new_columns['request_status'] = __('Status', 'arsol-pfw');
         $new_columns['request_budget'] = __('Budget', 'arsol-pfw');
+        $new_columns['request_stage'] = __('Stage', 'arsol-pfw');
         $new_columns['date'] = $columns['date'];
         
         return $new_columns;
@@ -68,6 +69,13 @@ class Requests {
                     echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($post->post_author, 'arsol-pfw-request');
                 } else {
                     echo '<span class="na">&ndash;</span>';
+                }
+                break;
+
+            case 'request_stage':
+                $stage = wp_get_object_terms($post_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
+                if (!empty($stage) && !is_wp_error($stage)) {
+                    echo esc_html($stage[0]);
                 }
                 break;
         }
@@ -116,6 +124,21 @@ class Requests {
             echo '</select>';
 
             // Customer search functionality is now handled by global admin JS
+
+            // Stage filter
+            $current_stage = isset($_GET['request_stage']) ? $_GET['request_stage'] : '';
+            $stages = get_terms('arsol-pfw-request-stage', array('hide_empty' => false));
+            echo '<select name="request_stage" id="filter-by-request-stage" class="postform stage-filter-dropdown">';
+            echo '<option value="">' . __('All Stages', 'arsol-pfw') . '</option>';
+            foreach ($stages as $stage) {
+                printf(
+                    '<option value="%s" %s>%s</option>',
+                    esc_attr($stage->slug),
+                    selected($current_stage, $stage->slug, false),
+                    esc_html($stage->name)
+                );
+            }
+            echo '</select>';
         }
     }
 
@@ -138,6 +161,17 @@ class Requests {
                     'taxonomy' => 'arsol-pfw-request-status',
                     'field'    => 'slug',
                     'terms'    => sanitize_text_field($_GET['request_status']),
+                ];
+                $query->set('tax_query', $tax_query);
+            }
+
+            // Filter by request stage (taxonomy)
+            if (!empty($_GET['request_stage'])) {
+                $tax_query = $query->get('tax_query') ?: [];
+                $tax_query[] = [
+                    'taxonomy' => 'arsol-pfw-request-stage',
+                    'field'    => 'slug',
+                    'terms'    => sanitize_text_field($_GET['request_stage']),
                 ];
                 $query->set('tax_query', $tax_query);
             }

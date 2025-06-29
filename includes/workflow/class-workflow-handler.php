@@ -123,6 +123,28 @@ class Workflow_Handler {
             // Validation step
             update_post_meta($request_id, '_arsol_conversion_step', 'validation');
 
+        // Server-side validation of the request stage
+        $current_stage = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+
+            'request_stage' => $current_stage[0]
+
+        /**
+         * Fired before setting the request stage
+         *
+         * @param int $post_id Post ID
+         */
+        do_action('arsol_before_request_stage_set', $request_id);
+
+        // Set initial request stage
+        wp_set_object_terms($request_id, 'pending-review', 'arsol-pfw-request-stage');
+
+        /**
+         * Fired after the request stage is assigned
+         *
+         * @param int $post_id Post ID
+         */
+        do_action('arsol_after_request_stage_set', $request_id);
+
         // Server-side validation of the request status
         $current_status = wp_get_object_terms($request_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
         if (empty($current_status) || $current_status[0] !== 'approved') {
@@ -139,7 +161,8 @@ class Workflow_Handler {
                 'conversion_method' => 'admin_conversion',
                 'timestamp' => current_time('timestamp'),
                 'request_post' => $request_post,
-                'request_status' => $current_status[0]  
+                'request_status' => $current_status[0],
+                'request_stage' => $current_stage[0]
             );
 
             /**

@@ -152,40 +152,36 @@ class Project_Request_CPT {
     }
 
     /**
-     * Get request status
+     * Get request stage
      * 
-     * @return string|null Status slug
+     * @return string|null Current request stage slug
      */
     public function get_status() {
-        if (!$this->request_id) {
-            return null;
-        }
-
-        $terms = wp_get_post_terms($this->request_id, self::get_status_taxonomy());
-        return !empty($terms) && !is_wp_error($terms) ? $terms[0]->slug : null;
+        $statuses = wp_get_object_terms($this->request_id, $this->get_status_taxonomy(), array('fields' => 'slugs'));
+        return !empty($statuses) ? $statuses[0] : null;
     }
 
     /**
-     * Set request status
+     * Set request stage
      * 
-     * @param string $status Status slug
+     * @param string $stage New stage slug
      * @return bool Success status
      */
-    public function set_status($status) {
-        if (!$this->request_id) {
+    public function set_status($stage) {
+        $old_stage = $this->get_status();
+        
+        $result = wp_set_object_terms($this->request_id, $stage, $this->get_status_taxonomy(), false);
+        
+        if (is_wp_error($result)) {
             return false;
         }
-
-        $old_status = $this->get_status();
-        $result = wp_set_post_terms($this->request_id, array($status), self::get_status_taxonomy());
         
-        if (!is_wp_error($result)) {
-            // Trigger status change action
-            do_action('arsol_request_status_changed', $this->request_id, $old_status, $status, $this->request->post_author);
-            return true;
+        // Trigger stage change hook
+        if ($old_stage !== $stage) {
+            do_action('arsol_request_stage_changed', $this->request_id, $old_stage, $stage, $this->request->post_author);
         }
-
-        return false;
+        
+        return true;
     }
 
     /**
@@ -339,12 +335,12 @@ class Project_Request_CPT {
     }
 
     /**
-     * Get request status taxonomy slug
-     * 
+     * Get request stage taxonomy slug
+     *
      * @return string
      */
-    public static function get_status_taxonomy() {
-        return 'arsol-pfw-request-status';
+    public function get_status_taxonomy() {
+        return 'arsol-pfw-request-stage';
     }
 
     /**

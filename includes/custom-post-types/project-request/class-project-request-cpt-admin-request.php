@@ -38,11 +38,11 @@ class Request {
         wp_nonce_field('request_details_meta_box', 'request_details_meta_box_nonce');
 
         // Get current values
-        $current_status = wp_get_object_terms($post->ID, 'arsol-pfw-request-status', array('fields' => 'slugs'));
-        $current_status = !empty($current_status) ? $current_status[0] : 'pending';
+        $current_stage = wp_get_object_terms($post->ID, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+        $current_stage = !empty($current_stage) ? $current_stage[0] : 'pending';
         ?>
         <p class="request-conversion-description">
-            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request status must be set to "Approved" before conversion. This action cannot be undone.', 'arsol-pfw'); ?>
+            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request stage must be set to "Approved" before conversion. This action cannot be undone.', 'arsol-pfw'); ?>
         </p>
         
         <div class="major-actions">
@@ -53,12 +53,12 @@ class Request {
             <?php endif; ?>
             
             <?php
-            $is_disabled = $current_status !== 'approved';
+            $is_disabled = $current_stage !== 'approved';
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
             $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
             $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete your current request request.', 'arsol-pfw'));
             $tooltip_text = $is_disabled
-                ? __('The request must be in approved status before it can be converted.', 'arsol-pfw')
+                ? __('The request must be in approved stage before it can be converted.', 'arsol-pfw')
                 : __('Converts this request into a new proposal.', 'arsol-pfw');
             ?>
             <span title="<?php echo esc_attr($tooltip_text); ?>">
@@ -86,7 +86,7 @@ class Request {
         
         // On-hold feedback section
         ?>
-        <div id="arsol_request_onhold_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-status-is-on-hold" style="display: none;">
+        <div id="arsol_request_onhold_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-stage-is-on-hold" style="display: none;">
             <div class="panel-wrap woocommerce">
                 <div class="panel woocommerce">
                     <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
@@ -99,7 +99,7 @@ class Request {
             </div>
         </div>
         
-        <div id="arsol_request_underreview_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-status-is-under-review" style="display: none;">
+        <div id="arsol_request_underreview_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-stage-is-under-review" style="display: none;">
             <div class="panel-wrap woocommerce">
                 <div class="panel woocommerce">
                     <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
@@ -154,8 +154,8 @@ class Request {
                 id="arsol_request_onhold_feedback_validation" 
                 name="arsol_request_onhold_feedback_validation" 
                 class="arsol-pfw-hidden" 
-                data-required-when-status="on-hold"
-                data-validation-message="<?php esc_attr_e('On-Hold feedback is required when request status is on-hold.', 'arsol-pfw'); ?>">
+                data-required-when-stage="on-hold"
+                data-validation-message="<?php esc_attr_e('On-Hold feedback is required when request stage is on-hold.', 'arsol-pfw'); ?>">
             </textarea>
         </div>
         <?php
@@ -224,9 +224,9 @@ class Request {
             return;
         }
 
-        // Save request status from column 1
-        if (isset($_POST['request_status'])) {
-            wp_set_object_terms($post_id, sanitize_text_field($_POST['request_status']), 'arsol-pfw-request-status', false);
+        // Save request stage from column 1
+        if (isset($_POST['request_stage'])) {
+            wp_set_object_terms($post_id, sanitize_text_field($_POST['request_stage']), 'arsol-pfw-request-stage', false);
         }
         
         // Save feedback for all three metaboxes
@@ -249,11 +249,11 @@ class Request {
         
         // Handle conversion after save (WordPress-native approach)
         if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
-            // Check if request is in approved status for conversion
-            $current_status = wp_get_object_terms($post_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
-            $current_status = !empty($current_status) ? $current_status[0] : '';
+            // Check if request is in approved stage for conversion
+            $current_stage = wp_get_object_terms($post_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+            $current_stage = !empty($current_stage) ? $current_stage[0] : '';
             
-            if ($current_status === 'approved') {
+            if ($current_stage === 'approved') {
                 // Sanitize and redirect to conversion URL
                 $conversion_url = esc_url_raw($_POST['arsol_convert_after_save']);
                 
@@ -267,10 +267,10 @@ class Request {
                 });
             } else {
                 // Show error notice if not approved
-                add_action('admin_notices', function() use ($current_status) {
-                    $status_display = $current_status ?: 'none';
+                add_action('admin_notices', function() use ($current_stage) {
+                    $stage_display = $current_stage ?: 'none';
                     echo '<div class="notice notice-error is-dismissible">
-                        <p>' . sprintf(__('Cannot convert request. Status is "%s", must be "approved".', 'arsol-pfw'), $status_display) . '</p>
+                        <p>' . sprintf(__('Cannot convert request. Stage is "%s", must be "approved".', 'arsol-pfw'), $stage_display) . '</p>
                     </div>';
                 });
             }

@@ -185,7 +185,7 @@ class Frontend_Template_Sidebar_Buttons {
         
         // Test button - always show to verify hook is working
         echo '<div class="button-item button-test">';
-        echo '<button class="button button-secondary">TEST: Request Status is "' . esc_html($status) . '"</button>';
+        echo '<button class="button button-secondary">TEST: Request Stage is "' . esc_html($status) . '"</button>';
         echo '</div>';
         
         switch ($status) {

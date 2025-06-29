@@ -25,7 +25,7 @@
             // Handle the conversion confirmation for requests only
             $(document).on('click', '.arsol-confirm-conversion', function(e) {
                 // Only handle if we're on a request page
-                if (!$('#request_status').length) return;
+                if (!$('#request_stage').length) return;
                 e.preventDefault();
                 
                 var $button = $(this);
@@ -76,63 +76,68 @@
         },
 
         handleStatusChanges: function() {
-            // Handle request status changes
-            $(document).on('change', '#request_status', function() {
-                ArsolRequest.updateConversionButtonState();
-                ArsolRequest.updateRequestStatusVisibility();
-                ArsolRequest.updateFeedbackValidation();
+            // Handle request stage changes
+            $(document).on('change', '#request_stage', function() {
+                const selectedStage = $(this).val();
+                
+                // Hide all conditional sections first
+                $('.arsol-pfw-show-if-request-stage-is-on-hold').hide();
+                $('.arsol-pfw-show-if-request-stage-is-under-review').hide();
+                
+                // Show relevant sections based on stage
+                if (selectedStage === 'on-hold') {
+                    $('.arsol-pfw-show-if-request-stage-is-on-hold').show();
+                } else if (selectedStage === 'under-review') {
+                    $('.arsol-pfw-show-if-request-stage-is-under-review').show();
+                }
+                
+                this.updateConvertButtonState();
             });
         },
 
         updateConversionButtonState: function() {
-            // Update the conversion button state based on request status
-            var $convertBtn = $('.arsol-confirm-conversion');
-            if ($convertBtn.length === 0) return;
-            
-            // Get the selected status
-            var selectedStatus = '';
-            if ($('#request_status').length) {
-                selectedStatus = $('#request_status').val();
+            // Update the conversion button state based on request stage
+            if ($('#request_stage').length) {
+                selectedStage = $('#request_stage').val();
             }
-            
-            if (selectedStatus === 'approved') {
-                // Enable button and update tooltip
-                $convertBtn.prop('disabled', false)
-                          .removeClass('disabled')
-                          .closest('span')
-                          .attr('title', 'Converts this request to a proposal.');
-            } else {
-                // Keep disabled and update tooltip
-                var statusDisplay = selectedStatus || 'none';
-                $convertBtn.prop('disabled', true)
-                          .addClass('disabled')
-                          .closest('span')
-                          .attr('title', 'The request status must be "Approved" before it can be converted. Current status: "' + statusDisplay + '".');
+
+            var convertButton = $('.arsol-convert-button');
+            if (convertButton.length) {
+                if (selectedStage === 'approved') {
+                    convertButton.prop('disabled', false).removeClass('disabled')
+                        .attr('title', 'Converts this request into a new proposal.');
+                } else {
+                    var stageDisplay = selectedStage ? selectedStage.replace(/-/g, ' ') : 'none';
+                    stageDisplay = stageDisplay.charAt(0).toUpperCase() + stageDisplay.slice(1);
+                    
+                    convertButton.prop('disabled', true).addClass('disabled')
+                        .attr('title', 'The request stage must be "Approved" before it can be converted. Current stage: "' + stageDisplay + '".');
+                }
             }
         },
 
         updateRequestStatusVisibility: function() {
-            var selectedStatus = $('#request_status').val() || '';
+            var selectedStage = $('#request_stage').val() || '';
             
             // Hide all feedback sections first
             $('#arsol_request_onhold_feedback_section, #arsol_request_underreview_feedback_section').each(function() {
                 this.style.setProperty('display', 'none', 'important');
             });
             
-            // Show the appropriate section based on current status
-            if (selectedStatus === 'on-hold') {
+            // Show the appropriate section based on current stage
+            if (selectedStage === 'on-hold') {
                 $('#arsol_request_onhold_feedback_section')[0].style.setProperty('display', 'block', 'important');
-            } else if (selectedStatus === 'under-review') {
+            } else if (selectedStage === 'under-review') {
                 $('#arsol_request_underreview_feedback_section')[0].style.setProperty('display', 'block', 'important');
             }
         },
 
         updateFeedbackValidation: function() {
-            var selectedStatus = $('#request_status').val() || '';
+            var selectedStage = $('#request_stage').val() || '';
             var $onholdValidation = $('#arsol_request_onhold_feedback_validation');
             
             // Only on-hold feedback is required
-            if (selectedStatus === 'on-hold') {
+            if (selectedStage === 'on-hold') {
                 $onholdValidation.prop('required', true);
             } else {
                 $onholdValidation.prop('required', false);
@@ -140,10 +145,10 @@
         },
 
         validateRequestFeedback: function() {
-            var selectedStatus = $('#request_status').val() || '';
+            var selectedStage = $('#request_stage').val() || '';
             
             // Validate on-hold feedback as required
-            if (selectedStatus === 'on-hold') {
+            if (selectedStage === 'on-hold') {
                 var feedbackContent = '';
                 
                 // Get content from TinyMCE editor if available
@@ -158,7 +163,7 @@
                 var textContent = feedbackContent.replace(/<[^>]*>/g, '').trim();
                 
                 if (!textContent) {
-                    alert('On-Hold feedback is required when request status is "On Hold".');
+                    alert('On-Hold feedback is required when request stage is "On Hold".');
                     
                     // Focus on the editor
                     if (typeof tinyMCE !== 'undefined' && tinyMCE.get('arsol_pfw_request_onhold_feedback')) {
@@ -172,7 +177,7 @@
             }
             
             // Validate under-review feedback (optional but if provided should not be empty)
-            if (selectedStatus === 'under-review') {
+            if (selectedStage === 'under-review') {
                 var underReviewContent = '';
                 
                 // Get content from TinyMCE editor if available
@@ -208,7 +213,7 @@
             // Handle form submission validation for save/publish buttons
             $(document).on('click', '#save-post, #publish', function(e) {
                 // Only handle if we're on a request page
-                if (!$('#request_status').length) return;
+                if (!$('#request_stage').length) return;
                 
                 // Validate request feedback before allowing form submission
                 if (!ArsolRequest.validateRequestFeedback()) {

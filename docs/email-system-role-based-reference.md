@@ -60,6 +60,7 @@ do_action('arsol_project_status_changed', $project_id, $old_status, $new_status,
 | `WC_Email_Proposal_Ready` | `arsol_proposal_ready_for_review` | Proposal ready for review | `email-proposal-ready.php` |
 | `WC_Email_Project_Creation` | `arsol_proposal_approved_project_created` | Project/order ready | `email-project-creation.php` |
 | `WC_Email_Project_Stage` | `arsol_project_stage_changed` | Project stage updates | `email-project-stage.php` |
+| `WC_Email_Request_Stage` | `arsol_request_stage_changed` | Request stage updates | `email-request-stage.php` |
 
 ### 👨‍💼 Project Lead Emails (2 total)
 
@@ -98,6 +99,14 @@ do_action('arsol_request_status_changed', $request_id, $old_status, $new_status)
 
 **Emails sent:**
 - 👤 **Customer**: `WC_Email_Request_Status` - "Your request status: {new_status}"
+
+**Request stage changes**
+```php
+do_action('arsol_request_stage_changed', $request_id, $old_stage, $new_stage);
+```
+
+**Emails sent:**
+- 👤 **Customer**: `WC_Email_Request_Stage` - "Your request stage: {new_stage}"
 
 ### Stage 2: Proposal Creation & Processing
 
@@ -207,6 +216,7 @@ $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) )
 - `includes/email/class-wc-email-proposal-ready.php`
 - `includes/email/class-wc-email-project-creation.php`
 - `includes/email/class-wc-email-project-stage.php`
+- `includes/email/class-wc-email-request-stage.php`
 
 ### Project Lead Email Classes
 - `includes/email/class-wc-email-proposal-processing.php`

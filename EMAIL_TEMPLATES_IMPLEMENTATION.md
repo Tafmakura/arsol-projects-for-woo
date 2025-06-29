@@ -25,6 +25,7 @@ includes/emails/
 │   ├── arsol_project_status.php         # HTML: Project status updates
 │   ├── admin-proposal-decision.php      # HTML: Admin proposal decisions
 │   └── lead-proposal-processing.php     # HTML: Project lead assignments
+│   └── arsol_request_stage.php         # HTML: Request stage updates
 ├── class-base-email.php                  # Base email class
 ├── class-new-request-email.php          # New request email class
 ├── class-request-status-email.php       # Request status email class
@@ -33,6 +34,7 @@ includes/emails/
 ├── class-proposal-decision-email.php    # Proposal decision email class
 ├── class-project-creation-email.php     # Project creation email class
 └── class-project-status-email.php       # Project status email class
+└── class-request-stage-email.php       # Request stage email class
 ```
 
 ## 📊 Implementation Statistics

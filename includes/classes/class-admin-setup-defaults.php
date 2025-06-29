@@ -263,7 +263,7 @@ class Setup_Defaults {
      */
     private function initialize_default_taxonomies() {
         $this->initialize_project_statuses();
-        $this->initialize_request_statuses();
+        $this->initialize_request_stages();
         $this->initialize_proposal_statuses();
     }
 
@@ -311,10 +311,10 @@ class Setup_Defaults {
     }
 
     /**
-     * Initialize default request statuses
+     * Initialize default request stages
      */
-    private function initialize_request_statuses() {
-        $taxonomy = 'arsol-pfw-request-status';
+    private function initialize_request_stages() {
+        $taxonomy = 'arsol-pfw-request-stage';
         
         $default_statuses = array(
             'pending-review' => array(

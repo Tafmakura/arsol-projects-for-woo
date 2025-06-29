@@ -31,6 +31,7 @@ do_action('arsol_projects_before_user_requests', $has_items);
                 $request_id = get_the_ID();
                 $status_terms = wp_get_post_terms($request_id, 'arsol-pfw-request-status', array('fields' => 'names'));
                 $status = !empty($status_terms) ? $status_terms[0] : '';
+                $stage_terms = wp_get_post_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
                 $view_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
                 $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
                 ?>

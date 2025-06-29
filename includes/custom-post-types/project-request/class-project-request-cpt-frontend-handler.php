@@ -129,6 +129,12 @@ class Frontend_Handler {
             // Set default request status to 'pending-review'
             wp_set_object_terms($request_id, 'pending-review', 'arsol-pfw-request-status');
             
+            // Get request stage
+            $stage_terms = get_the_terms($request_id, 'arsol-pfw-request-stage');
+
+            // Set default request stage to 'pending-review'
+            wp_set_object_terms($request_id, 'pending-review', 'arsol-pfw-request-stage');
+            
             // Save additional request meta
             if (!empty($budget)) {
                 // Remove formatting from budget amount (commas, etc.)

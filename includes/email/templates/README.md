@@ -12,6 +12,7 @@ templates/
 │   ├── arsol_request_status.php          # Plain text: Request status changed
 │   ├── arsol_proposal_ready.php          # Plain text: Proposal ready for review
 │   └── arsol_project_creation.php        # Plain text: Project/order created
+│   └── arsol_request_stage.php          # Plain text: Request stage changed
 ├── arsol_new_request.php                 # HTML: New request submitted (customer)
 ├── admin-arsol_new_request.php           # HTML: New request submitted (admin)
 ├── arsol_request_status.php              # HTML: Request status changed
@@ -22,6 +23,7 @@ templates/
 ├── admin-proposal-decision.php           # HTML: Proposal approved/rejected (admin)
 └── lead-proposal-processing.php          # HTML: Proposal assignment (project lead)
 ├── arsol_project_stage.php              # HTML: Project stage changed
+├── arsol_request_stage.php              # HTML: Request stage changed
 ```
 
 ## Template Naming Convention
@@ -44,6 +46,7 @@ Templates follow this naming pattern:
 | `Project_Creation_Email` | `arsol_project_creation` | Project created, order ready |
 | `Project_Status_Email` | `arsol_project_status` | Project status updates |
 | `Project_Stage_Email` | `arsol_project_stage` | Project stage updates |
+| `Request_Stage_Email` | `arsol_request_stage` | Request stage updates |
 
 ## Available Variables
 
@@ -62,6 +65,8 @@ Templates follow this naming pattern:
 - `$old_status` - Previous request status (for status emails)
 - `$new_status` - New request status (for status emails)
 - `$status_label` - Human-readable status label
+- `$old_stage` - Previous request stage (for stage emails)
+- `$new_stage` - New request stage (for stage emails)
 
 ### Proposal Templates
 - `$proposal` - WP_Post object for the proposal

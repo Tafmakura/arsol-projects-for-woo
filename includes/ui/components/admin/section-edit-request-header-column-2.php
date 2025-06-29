@@ -19,6 +19,8 @@ $request_status_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stat
 $request_status = !empty($request_status_terms) ? $request_status_terms[0] : '';
 $customer = get_userdata($post->post_author);
 $submission_date = get_the_time('l j F \a\t g:ia', $post);
+$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
+$request_stage = !empty($request_stage_terms) ? $request_stage_terms[0] : '';
 ?>
 
 <div class="form-field-row">

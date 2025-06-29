@@ -140,11 +140,10 @@ class Setup {
         }
         
         // Remove taxonomy management pages for protected statuses
-        remove_submenu_page('edit.php?post_type=arsol-pfw-request', 'edit-tags.php?taxonomy=arsol-pfw-request-status&post_type=arsol-pfw-request');
-        remove_submenu_page('edit.php?post_type=arsol-pfw-proposal', 'edit-tags.php?taxonomy=arsol-pfw-proposal-status&post_type=arsol-pfw-proposal');
+        remove_submenu_page('edit.php?post_type=arsol-pfw-request', 'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request');
+        remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-request-stage');
         
         // Also remove from main project menu if they appear there
-        remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-request-status');
         remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-proposal-status');
     }
     

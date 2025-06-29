@@ -1256,9 +1256,9 @@
             if ($('#proposal_status').length) {
                 // Proposal page
                 selectedStatus = $('#proposal_status').val();
-            } else if ($('#request_status').length) {
-                // Request page  
-                selectedStatus = $('#request_status').val();
+            } else if ($('#request_stage').length) {
+                // Request stage  
+                selectedStatus = $('#request_stage').val();
             }
             
             if (selectedStatus === 'approved') {
@@ -1280,8 +1280,8 @@
             }
         }
         
-        // Update button state when status changes (projects don't have restrictions)
-        $(document).on('change', '#proposal_status, #request_status', updateConvertButtonState);
+        // Update button state when stage changes (projects don't have restrictions)
+        $(document).on('change', '#proposal_status, #request_stage', updateConvertButtonState);
         
         // Update button state on page load
         updateConvertButtonState();

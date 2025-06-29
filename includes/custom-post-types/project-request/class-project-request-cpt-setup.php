@@ -9,8 +9,8 @@ if (!defined('ABSPATH')) {
 class Setup {
     public function __construct() {
         add_action('init', array($this, 'register_post_type'), 15);
-        add_action('init', array($this, 'register_request_status_taxonomy'), 15);
-        add_action('init', array($this, 'add_default_request_statuses'), 20);
+        add_action('init', array($this, 'register_request_stage_taxonomy'), 15);
+        add_action('init', array($this, 'add_default_request_stages'), 20);
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_requests'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
 
@@ -23,7 +23,7 @@ class Setup {
         add_action('arsol_request_details_content', array($this, 'render_request_details_content'));
         
         // Protect core status terms from deletion
-        add_action('pre_delete_term', array($this, 'protect_core_request_statuses'), 10, 2);
+        add_action('pre_delete_term', array($this, 'protect_core_request_stages'), 10, 2);
     }
 
     public function register_post_type() {
@@ -117,50 +117,50 @@ class Setup {
     }
 
     /**
-     * Register project request status taxonomy
+     * Register project request stage taxonomy
      */
-    public function register_request_status_taxonomy() {
+    public function register_request_stage_taxonomy() {
         $labels = array(
-            'name'              => __('Request Statuses', 'arsol-pfw'),
-            'singular_name'     => __('Request Status', 'arsol-pfw'),
-            'search_items'      => __('Search Request Statuses', 'arsol-pfw'),
-            'all_items'         => __('All Request Statuses', 'arsol-pfw'),
-            'edit_item'         => __('Edit Request Status', 'arsol-pfw'),
-            'update_item'       => __('Update Request Status', 'arsol-pfw'),
-            'add_new_item'      => __('Add New Request Status', 'arsol-pfw'),
-            'new_item_name'     => __('New Request Status Name', 'arsol-pfw'),
-            'menu_name'         => __('Request Statuses', 'arsol-pfw'),
+            'name'              => __('Request Stages', 'arsol-pfw'),
+            'singular_name'     => __('Request Stage', 'arsol-pfw'),
+            'search_items'      => __('Search Request Stages', 'arsol-pfw'),
+            'all_items'         => __('All Request Stages', 'arsol-pfw'),
+            'edit_item'         => __('Edit Request Stage', 'arsol-pfw'),
+            'update_item'       => __('Update Request Stage', 'arsol-pfw'),
+            'add_new_item'      => __('Add New Request Stage', 'arsol-pfw'),
+            'new_item_name'     => __('New Request Stage Name', 'arsol-pfw'),
+            'menu_name'         => __('Request Stages', 'arsol-pfw'),
         );
 
         $args = array(
             'hierarchical'      => false,
             'labels'            => $labels,
-            'show_ui'           => false,        // Hide taxonomy management UI
-            'show_admin_column' => true,         // Keep admin columns
+            'show_ui'           => true,
+            'show_admin_column' => true,
             'query_var'         => true,
-            'rewrite'           => array('slug' => 'request-status'),
+            'public'            => false,
             'show_in_rest'      => true,
-            'meta_box_cb'       => false,        // Remove meta box
-            'show_in_menu'      => false,        // Hide from menus
+            'rewrite'           => array('slug' => 'request-stage'),
         );
 
-        register_taxonomy('arsol-pfw-request-status', 'arsol-pfw-request', $args);
+        register_taxonomy('arsol-pfw-request-stage', 'arsol-pfw-request', $args);
     }
 
     /**
-     * Add default request statuses
+     * Add default request stages
      */
-    public function add_default_request_statuses() {
-        $default_statuses = array(
-            'pending-review'    => 'Pending Review',
-            'under-review'      => 'Under Review',
-            'on-hold'          => 'On Hold',
-            'approved'         => 'Approved'
+    public function add_default_request_stages() {
+        $default_stages = array(
+            'pending-review' => __('Pending Review', 'arsol-pfw'),
+            'under-review' => __('Under Review', 'arsol-pfw'),
+            'on-hold' => __('On Hold', 'arsol-pfw'),
+            'approved' => __('Approved', 'arsol-pfw'),
+            'rejected' => __('Rejected', 'arsol-pfw'),
         );
 
-        foreach ($default_statuses as $slug => $name) {
-            if (!term_exists($slug, 'arsol-pfw-request-status')) {
-                wp_insert_term($name, 'arsol-pfw-request-status', array('slug' => $slug));
+        foreach ($default_stages as $slug => $name) {
+            if (!term_exists($slug, 'arsol-pfw-request-stage')) {
+                wp_insert_term($name, 'arsol-pfw-request-stage', array('slug' => $slug));
             }
         }
     }
@@ -205,18 +205,21 @@ class Setup {
     }
 
     /**
-     * Protect core request status terms from deletion
+     * Protect core request stage terms from deletion
+     *
+     * @param int $term_id Term ID
+     * @param string $taxonomy Taxonomy slug
      */
-    public function protect_core_request_statuses($term_id, $taxonomy) {
-        if ($taxonomy === 'arsol-pfw-request-status') {
-            $term = get_term($term_id);
-            $protected_slugs = array('on-hold', 'approved');
+    public function protect_core_request_stages($term_id, $taxonomy) {
+        if ($taxonomy === 'arsol-pfw-request-stage') {
+            $protected_stages = array('pending-review', 'under-review', 'on-hold', 'approved', 'rejected');
+            $term = get_term($term_id, $taxonomy);
             
-            if ($term && in_array($term->slug, $protected_slugs)) {
+            if ($term && in_array($term->slug, $protected_stages)) {
                 wp_die(
-                    __('This request status cannot be deleted as it\'s required for system functionality.', 'arsol-pfw'),
-                    __('Protected Status', 'arsol-pfw'),
-                    array('response' => 403)
+                    __('This request stage cannot be deleted as it\'s required for system functionality.', 'arsol-pfw'),
+                    __('Cannot Delete Request Stage', 'arsol-pfw'),
+                    array('back_link' => true)
                 );
             }
         }

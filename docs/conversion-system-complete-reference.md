@@ -100,7 +100,7 @@ graph TD
 #### Automatic Conversion (if implemented)
 ```php
 // Triggered by status change to 'approved'
-do_action('arsol_request_status_changed', $request_id, $old_status, 'approved');
+do_action('arsol_request_stage_changed', $request_id, $old_stage, 'approved');
 ```
 
 ### Conversion Process (12 Hooks)
@@ -116,7 +116,7 @@ do_action('arsol_after_proposal_conversion_validated', $conversion_data);
 
 **Validation Checks:**
 - ✅ Request exists and is valid post type
-- ✅ Request status allows conversion
+- ✅ Request stage allows conversion
 - ✅ No concurrent conversion in progress
 - ✅ User has required permissions
 
@@ -200,7 +200,7 @@ $conversion_data = array(
     'user_id' => int,                       // User performing conversion
     'conversion_method' => 'admin_conversion', // How conversion was initiated
     'timestamp' => int,                     // When conversion started
-    'request_status' => string,             // Original request status
+    'request_stage' => string,             // Original request stage
     'new_proposal_id' => int                // Added after proposal creation
 );
 ```

@@ -312,10 +312,11 @@ class Frontend_Template_Sidebar_Meta {
         // Only add status if we have an actual status
         if (!empty($actual_status)) {
             $metadata['status'] = array(
-                'label' => __('Request Status', 'arsol-pfw'),
+                'label' => __('Request Stage', 'arsol-pfw'),
                 'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status),
+                'description' => $this->get_request_stage_description($actual_status)
             );
             
             // Add status-specific descriptions
@@ -455,7 +456,7 @@ class Frontend_Template_Sidebar_Meta {
         $taxonomy_map = array(
             'arsol-pfw-project' => 'arsol-pfw-project-stage',
             'arsol-pfw-proposal' => 'arsol-pfw-proposal-status', 
-            'arsol-pfw-request' => 'arsol-pfw-request-status'
+            'arsol-pfw-request' => 'arsol-pfw-request-stage'
         );
         
         if (!isset($taxonomy_map[$wp_post_type])) {
@@ -500,7 +501,7 @@ class Frontend_Template_Sidebar_Meta {
             $taxonomy_map = array(
                 'arsol-pfw-project' => 'arsol-pfw-project-stage',
                 'arsol-pfw-proposal' => 'arsol-pfw-proposal-status', 
-                'arsol-pfw-request' => 'arsol-pfw-request-status'
+                'arsol-pfw-request' => 'arsol-pfw-request-stage'
             );
             
             if (isset($taxonomy_map[$wp_post_type])) {
@@ -512,7 +513,7 @@ class Frontend_Template_Sidebar_Meta {
         }
 
         // Fallback: try to get the term from all possible taxonomies
-        $taxonomies = array('arsol-pfw-project-stage', 'arsol-pfw-proposal-status', 'arsol-pfw-request-status');
+        $taxonomies = array('arsol-pfw-project-stage', 'arsol-pfw-proposal-status', 'arsol-pfw-request-stage');
         
         foreach ($taxonomies as $taxonomy) {
             $term = get_term_by('slug', $status, $taxonomy);
@@ -541,5 +542,23 @@ class Frontend_Template_Sidebar_Meta {
         );
 
         return isset($descriptions[$status]) ? $descriptions[$status] : '';
+    }
+
+    /**
+     * Get request stage description
+     * 
+     * @param string $stage Stage slug
+     * @return string Stage description
+     */
+    private function get_request_stage_description($stage) {
+        $descriptions = array(
+            'pending-review' => __('Your request is being reviewed by our team', 'arsol-pfw'),
+            'under-review' => __('Being evaluated by our team', 'arsol-pfw'),
+            'on-hold' => __('Temporarily paused - still editable', 'arsol-pfw'),
+            'approved' => __('Congratulations! Moving to proposal stage', 'arsol-pfw'),
+            'rejected' => __('Request has been declined', 'arsol-pfw'),
+        );
+
+        return isset($descriptions[$stage]) ? $descriptions[$stage] : '';
     }
 } 

@@ -30,9 +30,12 @@ $budget_data = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
 $start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
 $delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', true);
 
-// Get all request statuses
-$all_statuses = get_terms(array(
-    'taxonomy' => 'arsol-pfw-request-status',
+$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+$request_stage = !empty($request_stage_terms) ? $request_stage_terms[0] : 'pending';
+
+// Get all request stages
+$statuses = get_terms(array(
+    'taxonomy' => 'arsol-pfw-request-stage',
     'hide_empty' => false,
 ));
 

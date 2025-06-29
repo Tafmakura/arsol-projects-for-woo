@@ -56,6 +56,8 @@ $project_type = $request_post->post_type; // 'arsol-pfw-request'
 $status_terms = wp_get_object_terms($project_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
 $current_status = !empty($status_terms) ? $status_terms[0] : '';
 
+$stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+
 // Prepare comprehensive data for efficient hook usage
 $wrapper_data = compact('project_id', 'project_type', 'current_post_type', 'current_status');
 
