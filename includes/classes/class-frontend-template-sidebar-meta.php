@@ -527,24 +527,6 @@ class Frontend_Template_Sidebar_Meta {
     }
 
     /**
-     * Get request status description
-     *
-     * @param string $status The status slug
-     * @return string Status description
-     */
-    private function get_request_stage_description($status) {
-        $descriptions = array(
-            'pending-review' => __('Your request is being reviewed by our team', 'arsol-pfw'),
-            'under-review' => __('Being evaluated by our team', 'arsol-pfw'),
-            'on-hold' => __('Temporarily paused - still editable', 'arsol-pfw'),
-            'approved' => __('Congratulations! Moving to proposal stage', 'arsol-pfw'),
-            'rejected' => __('Request has been declined', 'arsol-pfw'),
-        );
-
-        return isset($descriptions[$status]) ? $descriptions[$status] : '';
-    }
-
-    /**
      * Get request stage description
      * 
      * @param string $stage Stage slug
@@ -561,4 +543,5 @@ class Frontend_Template_Sidebar_Meta {
 
         return isset($descriptions[$stage]) ? $descriptions[$stage] : '';
     }
-} 
+}
+
