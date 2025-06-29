@@ -317,9 +317,9 @@ class Setup_Defaults {
         $taxonomy = 'arsol-pfw-request-status';
         
         $default_statuses = array(
-            'pending' => array(
-                'name' => __('Pending', 'arsol-pfw'),
-                'slug' => 'pending',
+            'pending-review' => array(
+                'name' => __('Pending Review', 'arsol-pfw'),
+                'slug' => 'pending-review',
                 'description' => __('Request is pending review', 'arsol-pfw')
             ),
             'under-review' => array(
@@ -365,30 +365,25 @@ class Setup_Defaults {
         $taxonomy = 'arsol-pfw-proposal-status';
         
         $default_statuses = array(
-            'draft' => array(
-                'name' => __('Draft', 'arsol-pfw'),
-                'slug' => 'draft',
-                'description' => __('Proposal is in draft status', 'arsol-pfw')
+            'processing' => array(
+                'name' => __('Processing', 'arsol-pfw'),
+                'slug' => 'processing',
+                'description' => __('Proposal is being processed', 'arsol-pfw')
             ),
-            'sent' => array(
-                'name' => __('Sent', 'arsol-pfw'),
-                'slug' => 'sent',
-                'description' => __('Proposal has been sent to client', 'arsol-pfw')
+            'pending-approval' => array(
+                'name' => __('Pending Approval', 'arsol-pfw'),
+                'slug' => 'pending-approval',
+                'description' => __('Proposal is pending customer approval', 'arsol-pfw')
             ),
-            'accepted' => array(
-                'name' => __('Accepted', 'arsol-pfw'),
-                'slug' => 'accepted',
-                'description' => __('Proposal has been accepted', 'arsol-pfw')
+            'approved' => array(
+                'name' => __('Approved', 'arsol-pfw'),
+                'slug' => 'approved',
+                'description' => __('Proposal has been approved', 'arsol-pfw')
             ),
             'rejected' => array(
                 'name' => __('Rejected', 'arsol-pfw'),
                 'slug' => 'rejected',
                 'description' => __('Proposal has been rejected', 'arsol-pfw')
-            ),
-            'expired' => array(
-                'name' => __('Expired', 'arsol-pfw'),
-                'slug' => 'expired',
-                'description' => __('Proposal has expired', 'arsol-pfw')
             )
         );
 

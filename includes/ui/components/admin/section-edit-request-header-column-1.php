@@ -13,7 +13,7 @@ $request_id = $post->ID;
 $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
 $request_status_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
-$request_status = !empty($request_status_terms) ? $request_status_terms[0] : 'processing';
+$request_status = !empty($request_status_terms) ? $request_status_terms[0] : 'pending-review';
 $budget_data = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
 $start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
 $delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', true);
