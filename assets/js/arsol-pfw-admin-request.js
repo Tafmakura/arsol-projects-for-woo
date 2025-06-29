@@ -91,12 +91,13 @@
                     $('.arsol-pfw-show-if-request-stage-is-under-review').show();
                 }
                 
-                this.updateConvertButtonState();
+                ArsolRequest.updateConversionButtonState();
             });
         },
 
         updateConversionButtonState: function() {
             // Update the conversion button state based on request stage
+            var selectedStage = '';
             if ($('#request_stage').length) {
                 selectedStage = $('#request_stage').val();
             }
@@ -232,7 +233,7 @@
         }
         
         // Update button state on page load for request pages
-        if ($('#request_status').length) {
+        if ($('#request_stage').length) {
             ArsolRequest.updateConversionButtonState();
             ArsolRequest.updateRequestStatusVisibility();
             ArsolRequest.updateFeedbackValidation();
