@@ -262,52 +262,15 @@ class Setup_Defaults {
      * Initialize default taxonomy terms
      */
     private function initialize_default_taxonomies() {
-        $this->initialize_project_statuses();
-        $this->initialize_request_stages();
-        $this->initialize_proposal_stages();
+        $this->initialize_defaults();
     }
 
     /**
-     * Initialize default project statuses
+     * Initialize all defaults
      */
-    private function initialize_project_statuses() {
-        $taxonomy = 'arsol-pfw-project-stage';
-        
-        $default_statuses = array(
-            'active' => array(
-                'name' => __('Active', 'arsol-pfw'),
-                'slug' => 'active',
-                'description' => __('Project is currently active and in progress', 'arsol-pfw')
-            ),
-            'completed' => array(
-                'name' => __('Completed', 'arsol-pfw'),
-                'slug' => 'completed',
-                'description' => __('Project has been completed successfully', 'arsol-pfw')
-            ),
-            'on-hold' => array(
-                'name' => __('On Hold', 'arsol-pfw'),
-                'slug' => 'on-hold',
-                'description' => __('Project is temporarily paused', 'arsol-pfw')
-            ),
-            'cancelled' => array(
-                'name' => __('Cancelled', 'arsol-pfw'),
-                'slug' => 'cancelled',
-                'description' => __('Project has been cancelled', 'arsol-pfw')
-            )
-        );
-
-        foreach ($default_statuses as $status_data) {
-            if (!term_exists($status_data['slug'], $taxonomy)) {
-                wp_insert_term(
-                    $status_data['name'],
-                    $taxonomy,
-                    array(
-                        'slug' => $status_data['slug'],
-                        'description' => $status_data['description']
-                    )
-                );
-            }
-        }
+    private function initialize_defaults() {
+        $this->initialize_request_stages();
+        $this->initialize_proposal_stages();
     }
 
     /**

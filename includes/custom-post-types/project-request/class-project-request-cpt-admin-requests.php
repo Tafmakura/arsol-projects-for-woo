@@ -44,7 +44,7 @@ class Requests {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'request_stage':
-                $status = wp_get_object_terms($post_id, 'arsol-pfw-request-status', array('fields' => 'names'));
+                $status = wp_get_object_terms($post_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
                 if (!empty($status) && !is_wp_error($status)) {
                     echo esc_html($status[0]);
                 }
@@ -89,7 +89,7 @@ class Requests {
         if ($typenow === 'arsol-pfw-request') {
             // Status filter
             $current_status = isset($_GET['request_stage']) ? $_GET['request_stage'] : '';
-            $statuses = get_terms('arsol-pfw-request-status', array('hide_empty' => false));
+            $statuses = get_terms('arsol-pfw-request-stage', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
                 echo '<select name="request_stage" id="filter-by-request-status" class="postform stage-filter-dropdown">';
                 echo '<option value="">' . __('All Statuses', 'arsol-pfw') . '</option>';
@@ -158,7 +158,7 @@ class Requests {
             if (!empty($_GET['request_stage'])) {
                 $tax_query = $query->get('tax_query') ?: [];
                 $tax_query[] = [
-                    'taxonomy' => 'arsol-pfw-request-status',
+                    'taxonomy' => 'arsol-pfw-request-stage',
                     'field'    => 'slug',
                     'terms'    => sanitize_text_field($_GET['request_stage']),
                 ];
@@ -207,7 +207,7 @@ class Requests {
         $status = $valid_actions[$doaction];
         
         foreach ($post_ids as $post_id) {
-            wp_set_object_terms($post_id, $status, 'arsol-pfw-request-status', false);
+            wp_set_object_terms($post_id, $status, 'arsol-pfw-request-stage', false);
         }
 
         $redirect_to = add_query_arg('bulk_requests_updated', count($post_ids), $redirect_to);
