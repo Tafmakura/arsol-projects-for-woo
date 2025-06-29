@@ -233,4 +233,4 @@ class Setup {
             include $template_path;
         }
     }
-}
+} 
