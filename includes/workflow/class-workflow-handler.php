@@ -659,7 +659,10 @@ class Workflow_Handler {
         $request_id = intval($_GET['request_id']);
         if (self::user_can_view_post(get_current_user_id(), $request_id)) {
             wp_delete_post($request_id, true); // Delete the request
-            $this->safe_redirect(wc_get_account_endpoint_url('projects')); // Redirect to projects page
+            
+            // Redirect to the requests list tab instead of general projects page
+            $requests_url = add_query_arg('tab', 'requests', wc_get_account_endpoint_url('projects'));
+            $this->safe_redirect($requests_url);
         } else {
             wp_die(__('You do not have permission to cancel this request.', 'arsol-pfw'));
         }
