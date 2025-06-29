@@ -144,7 +144,7 @@ class Setup {
         remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-request-stage');
         
         // Also remove from main project menu if they appear there
-        remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-proposal-status');
+        remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-proposal-stage');
     }
     
     /**

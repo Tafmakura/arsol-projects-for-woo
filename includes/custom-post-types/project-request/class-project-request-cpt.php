@@ -263,8 +263,8 @@ class Project_Request_CPT {
         $proposal_id = wp_insert_post($proposal_data);
 
         if (!is_wp_error($proposal_id) && $proposal_id) {
-            // Set proposal to processing status
-            wp_set_post_terms($proposal_id, array('processing'), 'arsol-pfw-proposal-status');
+            // Set proposal to processing stage
+            wp_set_post_terms($proposal_id, array('processing'), 'arsol-pfw-proposal-stage');
             
             do_action('arsol_request_converted_to_proposal', $this->request_id, $proposal_id);
             return $proposal_id;

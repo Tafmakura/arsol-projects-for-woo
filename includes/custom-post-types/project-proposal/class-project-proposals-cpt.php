@@ -42,7 +42,7 @@ class Project_Proposals_CPT {
     public static function get_by_status($status_slug, $args = array()) {
         $args['tax_query'] = array(
             array(
-                'taxonomy' => 'arsol-pfw-proposal-status',
+                'taxonomy' => 'arsol-pfw-proposal-stage',
                 'field' => 'slug',
                 'terms' => $status_slug
             )
@@ -82,7 +82,7 @@ class Project_Proposals_CPT {
         return self::get_count(array_merge($args, array(
             'tax_query' => array(
                 array(
-                    'taxonomy' => 'arsol-pfw-proposal-status',
+                    'taxonomy' => 'arsol-pfw-proposal-stage',
                     'field' => 'slug',
                     'terms' => $status_slug
                 )
@@ -141,7 +141,7 @@ class Project_Proposals_CPT {
      */
     public static function get_status_options() {
         $terms = get_terms(array(
-            'taxonomy' => 'arsol-pfw-proposal-status',
+            'taxonomy' => 'arsol-pfw-proposal-stage',
             'hide_empty' => false,
         ));
         

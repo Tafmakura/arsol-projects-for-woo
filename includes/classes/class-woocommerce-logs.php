@@ -210,7 +210,7 @@ class Woocommerce_Logs {
         $proposal = get_post($proposal_id);
         $debug_info['proposal_exists'] = !empty($proposal);
         $debug_info['proposal_type'] = $proposal ? $proposal->post_type : 'N/A';
-        $debug_info['proposal_status'] = $proposal ? $proposal->post_status : 'N/A';
+        $debug_info['proposal_stage'] = $proposal ? $proposal->post_status : 'N/A';
         $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
         
         // Get proposal type
@@ -261,13 +261,13 @@ class Woocommerce_Logs {
         $proposal = get_post($proposal_id);
         $debug_info['proposal_exists'] = !empty($proposal);
         $debug_info['proposal_type'] = $proposal ? $proposal->post_type : 'N/A';
-        $debug_info['proposal_status'] = $proposal ? $proposal->post_status : 'N/A';
+        $debug_info['proposal_stage'] = $proposal ? $proposal->post_status : 'N/A';
         $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
         
         self::log_woocommerce_billing('info', sprintf('Proposal exists: %s, Type: %s, Status: %s, Author: %s', 
             $debug_info['proposal_exists'] ? 'YES' : 'NO',
             $debug_info['proposal_type'],
-            $debug_info['proposal_status'],
+            $debug_info['proposal_stage'],
             $debug_info['proposal_author']));
         
         // Get proposal type

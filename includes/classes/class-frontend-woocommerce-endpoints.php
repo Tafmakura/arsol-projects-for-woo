@@ -368,15 +368,18 @@ class Frontend_Endpoints {
         // Generate contextual variables directly - no remapping
         $current_tab = 'proposal';
 
-        // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_proposal_id, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
-        $current_status = !empty($statuses) ? $statuses[0] : '';
+        // Stage handling with proper error checking
+        $stage_terms = wp_get_object_terms($project_proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
+        $current_stage = '';
+        if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+            $current_stage = $stage_terms[0];
+        }
 
         // Prepare comprehensive data for efficient hook usage
-        $wrapper_data = compact('project_proposal_id', 'current_status');
+        $wrapper_data = compact('project_proposal_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Proposal View - ID: {$project_proposal->ID}, Title: '{$project_proposal->post_title}', Type: {$project_proposal->post_type}, Status: '$current_status'");
+        error_log("ARSOL DEBUG: Proposal View - ID: {$project_proposal->ID}, Title: '{$project_proposal->post_title}', Type: {$project_proposal->post_type}, Stage: '$current_stage'");
 
         // Include the new project view proposal template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php';

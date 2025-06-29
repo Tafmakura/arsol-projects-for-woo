@@ -28,7 +28,7 @@ class Proposal {
     public function set_proposal_review_status($new_status, $old_status, $post) {
         if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
             // Set the review status to 'pending-approval'
-            wp_set_object_terms($post->ID, 'pending-approval', 'arsol-pfw-proposal-status');
+            wp_set_object_terms($post->ID, 'pending-approval', 'arsol-pfw-proposal-stage');
         }
     }
 
@@ -62,7 +62,7 @@ class Proposal {
         
         // Processing feedback section
         ?>
-        <div id="arsol_proposal_processing_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-status-is-processing" style="display: none;">
+        <div id="arsol_proposal_processing_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-stage-is-processing" style="display: none;">
             <div class="panel-wrap woocommerce">
                 <div class="panel woocommerce">
                     <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
@@ -75,7 +75,7 @@ class Proposal {
             </div>
         </div>
         
-        <div id="arsol_proposal_pending_approval_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-status-is-pending-approval" style="display: none;">
+        <div id="arsol_proposal_pending_approval_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal-stage-is-pending-approval" style="display: none;">
             <div class="panel-wrap woocommerce">
                 <div class="panel woocommerce">
                     <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
@@ -270,12 +270,15 @@ class Proposal {
                 <?php
             } else {
                 // Show Convert to Project button for regular proposals
-            // Check proposal status for conversion eligibility
-            $proposal_status_terms = wp_get_object_terms($post->ID, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
-            $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
+            // Check proposal stage for conversion eligibility
+            $proposal_stage_terms = wp_get_object_terms($post->ID, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
+            $current_proposal_stage = '';
+            if (!is_wp_error($proposal_stage_terms) && !empty($proposal_stage_terms)) {
+                $current_proposal_stage = $proposal_stage_terms[0];
+            }
             
             $is_not_published = $post->post_status !== 'publish';
-            $is_not_approved = $current_proposal_status !== 'approved';
+            $is_not_approved = $current_proposal_stage !== 'approved';
             $is_disabled = $is_not_published || $is_not_approved;
             
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_project&proposal_id=' . $post->ID);
@@ -285,7 +288,7 @@ class Proposal {
             if ($is_not_published) {
                 $tooltip_text = __('The proposal must be published before it can be converted.', 'arsol-pfw');
             } elseif ($is_not_approved) {
-                $tooltip_text = sprintf(__('The proposal status must be "Approved" before it can be converted. Current status: "%s".', 'arsol-pfw'), $current_proposal_status);
+                $tooltip_text = sprintf(__('The proposal status must be "Approved" before it can be converted. Current status: "%s".', 'arsol-pfw'), $current_proposal_stage);
             } else {
                 $tooltip_text = __('Converts this proposal into a new project.', 'arsol-pfw');
             }
@@ -581,7 +584,7 @@ class Proposal {
         // Handle conversion after save (WordPress-native approach)
         if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
             // Check if proposal is in approved status for conversion
-            $current_status = wp_get_object_terms($post_id, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
+            $current_status = wp_get_object_terms($post_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
             $current_status = !empty($current_status) ? $current_status[0] : '';
             
             if ($current_status === 'approved') {

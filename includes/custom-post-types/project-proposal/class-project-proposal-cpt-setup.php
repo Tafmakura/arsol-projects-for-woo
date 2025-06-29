@@ -10,8 +10,8 @@ class Setup {
     public function __construct() {
         // Add project proposal post type
         add_action('init', array($this, 'register_post_type'), 15);
-        add_action('init', array($this, 'register_proposal_status_taxonomy'), 15);
-        add_action('init', array($this, 'add_default_proposal_statuses'), 20);
+        add_action('init', array($this, 'register_proposal_stage_taxonomy'), 15);
+        add_action('init', array($this, 'add_default_proposal_stages'), 20);
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_proposals'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('add_meta_boxes', array($this, 'remove_publish_metabox'));
@@ -114,49 +114,64 @@ class Setup {
     }
 
     /**
-     * Register project proposal status taxonomy
+     * Register the proposal stage taxonomy
+     *
+     * @return void
      */
-    public function register_proposal_status_taxonomy() {
+    public function register_proposal_stage_taxonomy() {
         $labels = array(
-            'name'              => __('Proposal Statuses', 'arsol-pfw'),
-            'singular_name'     => __('Proposal Status', 'arsol-pfw'),
-            'search_items'      => __('Search Proposal Statuses', 'arsol-pfw'),
-            'all_items'         => __('All Proposal Statuses', 'arsol-pfw'),
-            'edit_item'         => __('Edit Proposal Status', 'arsol-pfw'),
-            'update_item'       => __('Update Proposal Status', 'arsol-pfw'),
-            'add_new_item'      => __('Add New Proposal Status', 'arsol-pfw'),
-            'new_item_name'     => __('New Proposal Status Name', 'arsol-pfw'),
-            'menu_name'         => __('Proposal Statuses', 'arsol-pfw'),
+            'name'                       => _x('Proposal Stages', 'Taxonomy General Name', 'arsol-pfw'),
+            'singular_name'              => _x('Proposal Stage', 'Taxonomy Singular Name', 'arsol-pfw'),
+            'menu_name'                  => __('Proposal Stages', 'arsol-pfw'),
+            'all_items'                  => __('All Proposal Stages', 'arsol-pfw'),
+            'parent_item'                => __('Parent Proposal Stage', 'arsol-pfw'),
+            'parent_item_colon'          => __('Parent Proposal Stage:', 'arsol-pfw'),
+            'new_item_name'              => __('New Proposal Stage Name', 'arsol-pfw'),
+            'add_new_item'               => __('Add New Proposal Stage', 'arsol-pfw'),
+            'edit_item'                  => __('Edit Proposal Stage', 'arsol-pfw'),
+            'update_item'                => __('Update Proposal Stage', 'arsol-pfw'),
+            'view_item'                  => __('View Proposal Stage', 'arsol-pfw'),
+            'separate_items_with_commas' => __('Separate proposal stages with commas', 'arsol-pfw'),
+            'add_or_remove_items'        => __('Add or remove proposal stages', 'arsol-pfw'),
+            'choose_from_most_used'      => __('Choose from the most used', 'arsol-pfw'),
+            'popular_items'              => __('Popular Proposal Stages', 'arsol-pfw'),
+            'search_items'               => __('Search Proposal Stages', 'arsol-pfw'),
+            'not_found'                  => __('Not Found', 'arsol-pfw'),
+            'no_terms'                   => __('No proposal stages', 'arsol-pfw'),
+            'items_list'                 => __('Proposal stages list', 'arsol-pfw'),
+            'items_list_navigation'      => __('Proposal stages list navigation', 'arsol-pfw'),
         );
 
         $args = array(
-            'hierarchical'      => false,
             'labels'            => $labels,
+            'hierarchical'      => false,
+            'public'            => false,
             'show_ui'           => true,
             'show_admin_column' => true,
-            'query_var'         => true,
-            'rewrite'           => array('slug' => 'proposal-status'),
-            'show_in_rest'      => true,
-            'meta_box_cb'       => false,
+            'show_in_nav_menus' => false,
+            'show_tagcloud'     => false,
+            'rewrite'           => array('slug' => 'proposal-stage'),
         );
 
-        register_taxonomy('arsol-pfw-proposal-status', 'arsol-pfw-proposal', $args);
+        register_taxonomy('arsol-pfw-proposal-stage', 'arsol-pfw-proposal', $args);
     }
 
     /**
-     * Add default proposal statuses
+     * Add default proposal stages
+     *
+     * @return void
      */
-    public function add_default_proposal_statuses() {
-        $default_statuses = array(
-            'processing'        => 'Processing',
-            'pending-approval'  => 'Pending Approval',
-            'approved'          => 'Approved',
-            'rejected'          => 'Rejected'
+    public function add_default_proposal_stages() {
+        $default_stages = array(
+            'processing'       => __('Processing', 'arsol-pfw'),
+            'pending-approval' => __('Pending Approval', 'arsol-pfw'),
+            'approved'         => __('Approved', 'arsol-pfw'),
+            'rejected'         => __('Rejected', 'arsol-pfw'),
         );
 
-        foreach ($default_statuses as $slug => $name) {
-            if (!term_exists($slug, 'arsol-pfw-proposal-status')) {
-                wp_insert_term($name, 'arsol-pfw-proposal-status', array('slug' => $slug));
+        foreach ($default_stages as $slug => $name) {
+            if (!term_exists($slug, 'arsol-pfw-proposal-stage')) {
+                wp_insert_term($name, 'arsol-pfw-proposal-stage', array('slug' => $slug));
             }
         }
     }
@@ -288,9 +303,9 @@ class Setup {
             return;
         }
         
-        // Save proposal status
-        if (isset($_POST['proposal_status'])) {
-            wp_set_object_terms($post_id, sanitize_text_field($_POST['proposal_status']), 'arsol-pfw-proposal-status', false);
+        // Save proposal stage
+        if (isset($_POST['proposal_stage'])) {
+            wp_set_object_terms($post_id, sanitize_text_field($_POST['proposal_stage']), 'arsol-pfw-proposal-stage', false);
         }
         
         // Save project lead

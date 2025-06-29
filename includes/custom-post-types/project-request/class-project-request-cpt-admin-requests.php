@@ -91,7 +91,7 @@ class Requests {
             $current_status = isset($_GET['request_status']) ? $_GET['request_status'] : '';
             $statuses = get_terms('arsol-pfw-request-status', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
-                echo '<select name="request_status" id="filter-by-request-status" class="postform status-filter-dropdown">';
+                echo '<select name="request_status" id="filter-by-request-status" class="postform stage-filter-dropdown">';
                 echo '<option value="">' . __('All Statuses', 'arsol-pfw') . '</option>';
                 foreach ($statuses as $status) {
                     printf(

@@ -23,9 +23,12 @@ $status_terms = isset($statuses) ? $statuses : array();
 
 // If no status from parent, try to get it directly
 if (empty($status)) {
-$status_terms = wp_get_post_terms($post_id, 'arsol-pfw-proposal-status');
-$status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0]->slug : '';
-    error_log("ARSOL DEBUG: Proposal sidebar - Fallback status detection: '$status'");
+    $stage_terms = wp_get_post_terms($post_id, 'arsol-pfw-proposal-stage');
+    $current_stage = '';
+    if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+        $current_stage = $stage_terms[0]->slug;
+    }
+    error_log("ARSOL DEBUG: Proposal sidebar - Fallback status detection: '$current_stage'");
 }
 
 error_log("ARSOL DEBUG: Proposal sidebar - Status terms: " . print_r($status_terms, true));

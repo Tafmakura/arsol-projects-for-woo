@@ -78,12 +78,15 @@ elseif ($proposal_id > 0) {
 }
 
 // Get status terms
-$proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
-$current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : 'processing';
+$proposal_stage_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
+$current_proposal_stage = '';
+if (!is_wp_error($proposal_stage_terms) && !empty($proposal_stage_terms)) {
+    $current_proposal_stage = $proposal_stage_terms[0];
+}
 
 // Get all available statuses
-$all_proposal_statuses = get_terms(array(
-    'taxonomy' => 'arsol-pfw-proposal-status',
+$all_proposal_stages = get_terms(array(
+    'taxonomy' => 'arsol-pfw-proposal-stage',
     'hide_empty' => false,
 ));
 ?>
@@ -176,11 +179,11 @@ $all_proposal_statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="proposal_status"><?php _e('Proposal Status:', 'arsol-pfw'); ?></label>
-        <select id="proposal_status" name="proposal_status" class="wc-enhanced-select">
-            <?php if (!empty($all_proposal_statuses) && !is_wp_error($all_proposal_statuses)) : ?>
-                <?php foreach ($all_proposal_statuses as $status) : ?>
-                    <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_proposal_status, $status->slug); ?>>
+        <label for="proposal_stage"><?php _e('Proposal Stage:', 'arsol-pfw'); ?></label>
+        <select id="proposal_stage" name="proposal_stage" class="wc-enhanced-select">
+            <?php if (!empty($all_proposal_stages) && !is_wp_error($all_proposal_stages)) : ?>
+                <?php foreach ($all_proposal_stages as $status) : ?>
+                    <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_proposal_stage, $status->slug); ?>>
                         <?php echo esc_html($status->name); ?>
                     </option>
                 <?php endforeach; ?>

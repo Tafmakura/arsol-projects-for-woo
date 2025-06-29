@@ -9,20 +9,25 @@ $proposal_timeline = get_post_meta($post->ID, '_arsol_pfw_proposal_timeline', tr
 $related_request_id = get_post_meta($post->ID, '_arsol_pfw_proposal_request_id', true);
 $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
-// Get proposal status to determine which message to show
-$status_terms = get_the_terms($post->ID, 'arsol-pfw-proposal-status');
-$status = $status_terms && !is_wp_error($status_terms) ? $status_terms[0]->slug : 'processing';
+// Get proposal stage to determine which message to show
+$stage_terms = get_the_terms($post->ID, 'arsol-pfw-proposal-stage');
+$stage = '';
+if ($stage_terms && !is_wp_error($stage_terms)) {
+    $stage = $stage_terms[0]->slug;
+} else {
+    $stage = 'processing'; // Default fallback
+}
 
 // Determine the message to display with proper hierarchy: Custom Feedback → Settings Defaults → Plugin Defaults
 $display_message = '';
 
 // 1. First priority: Custom feedback from metabox (if available)
-if ($status === 'processing') {
+if ($stage === 'processing') {
     $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_processing_feedback', true);
     if (!empty($custom_feedback)) {
         $display_message = $custom_feedback;
     }
-} elseif ($status === 'pending-approval') {
+} elseif ($stage === 'pending-approval') {
     $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_pending_approval_feedback', true);
     if (!empty($custom_feedback)) {
         $display_message = $custom_feedback;
@@ -31,9 +36,9 @@ if ($status === 'processing') {
 
 // 2. Second priority: Settings defaults (if no custom feedback)
 if (empty($display_message)) {
-    if ($status === 'processing') {
+    if ($stage === 'processing') {
         $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
-    } elseif ($status === 'pending-approval') {
+    } elseif ($stage === 'pending-approval') {
         $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
     } else {
         $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');

@@ -282,7 +282,7 @@ class Workflow_Handler {
         }
         
         // 4. Set proposal status to pending-approval
-        wp_set_object_terms($proposal_id, 'pending-approval', 'arsol-pfw-proposal-status');
+        wp_set_object_terms($proposal_id, 'pending-approval', 'arsol-pfw-proposal-stage');
         
         // 5. Copy custom fields and taxonomies
         $custom_fields = get_post_meta($request_id);
@@ -372,14 +372,14 @@ class Workflow_Handler {
             // Validation step
             update_post_meta($proposal_id, '_arsol_conversion_step', 'validation');
 
-            // Server-side validation: Check proposal status
-            $proposal_status_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-status', array('fields' => 'slugs'));
-            $current_proposal_status = !empty($proposal_status_terms) ? $proposal_status_terms[0] : '';
+            // Server-side validation: Check proposal stage
+            $proposal_stage_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
+            $current_proposal_stage = !empty($proposal_stage_terms) ? $proposal_stage_terms[0] : '';
 
-            if ($current_proposal_status !== 'approved') {
+            if ($current_proposal_stage !== 'approved') {
                 throw new Exception(sprintf(
-                    __('This proposal cannot be converted. The status is "%s", must be "approved".', 'arsol-pfw'),
-                    $current_proposal_status ?: 'none'
+                    __('This proposal cannot be converted. The stage is "%s", must be "approved".', 'arsol-pfw'),
+                    $current_proposal_stage ?: 'none'
                 ));
         }
 
@@ -391,7 +391,7 @@ class Workflow_Handler {
             'user_id' => get_current_user_id(),
                 'conversion_method' => $is_internal_call ? 'customer_approval' : 'admin_conversion',
                 'timestamp' => current_time('timestamp'),
-                'proposal_status' => $current_proposal_status
+                'proposal_stage' => $current_proposal_stage
         );
 
         /**
@@ -676,7 +676,7 @@ class Workflow_Handler {
         $proposal_id = intval($_GET['proposal_id']);
         if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
             // Set the proposal status to 'approved' before conversion
-            wp_set_object_terms($proposal_id, 'approved', 'arsol-pfw-proposal-status');
+            wp_set_object_terms($proposal_id, 'approved', 'arsol-pfw-proposal-stage');
             
             // Re-use the conversion logic
             $this->convert_proposal_to_project($proposal_id, true);
@@ -692,7 +692,7 @@ class Workflow_Handler {
 
         $proposal_id = intval($_GET['proposal_id']);
         if (self::user_can_view_post(get_current_user_id(), $proposal_id)) {
-            wp_set_object_terms($proposal_id, 'rejected', 'arsol-pfw-proposal-status');
+            wp_set_object_terms($proposal_id, 'rejected', 'arsol-pfw-proposal-stage');
             $this->safe_redirect(wp_get_referer());
         } else {
             wp_die(__('You do not have permission to reject this proposal.', 'arsol-pfw'));
@@ -942,7 +942,7 @@ class Workflow_Handler {
         $proposal = get_post($proposal_id);
         $debug_info['proposal_exists'] = !empty($proposal);
         $debug_info['proposal_type'] = $proposal ? $proposal->post_type : 'N/A';
-        $debug_info['proposal_status'] = $proposal ? $proposal->post_status : 'N/A';
+        $debug_info['proposal_stage'] = $proposal ? $proposal->post_status : 'N/A';
         $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
         
         // Check cost proposal type

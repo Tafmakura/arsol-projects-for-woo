@@ -183,7 +183,7 @@ class Project_Proposal_CPT {
         
         if (!is_wp_error($result)) {
             // Trigger status change action
-            do_action('arsol_proposal_status_changed', $this->proposal_id, $old_status, $status);
+            do_action('arsol_proposal_stage_changed', $this->proposal_id, $old_status, $status);
             return true;
         }
 
@@ -399,12 +399,12 @@ class Project_Proposal_CPT {
     }
 
     /**
-     * Get proposal status taxonomy slug
-     * 
+     * Get the taxonomy used for proposal stages
+     *
      * @return string
      */
-    public static function get_status_taxonomy() {
-        return 'arsol-pfw-proposal-status';
+    public function get_status_taxonomy() {
+        return 'arsol-pfw-proposal-stage';
     }
 
     /**

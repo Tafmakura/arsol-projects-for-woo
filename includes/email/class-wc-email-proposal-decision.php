@@ -31,7 +31,7 @@ class WC_Email_Proposal_Decision extends WC_Email {
         );
 
         // Listen to main workflow hook
-        add_action( 'arsol_proposal_status_changed', array( $this, 'trigger' ), 10, 3 );
+        add_action( 'arsol_proposal_stage_changed', array( $this, 'trigger' ), 10, 3 );
 
         // Call parent constructor
         parent::__construct();
