@@ -36,11 +36,11 @@ class Frontend_Template_Sidebar_Buttons {
     /**
      * Display project buttons
      *
-     * @param string $current_status The current status
+     * @param string $current_stage The current stage
      * @param int $project_id The project ID
      */
-    public function display_project_buttons($current_status, $project_id) {
-        error_log("ARSOL DEBUG: Project buttons - Status: '$current_status', Project ID: $project_id");
+    public function display_project_buttons($current_stage, $project_id) {
+        error_log("ARSOL DEBUG: Project buttons - Stage: '$current_stage', Project ID: $project_id");
         
         if (empty($project_id)) {
             error_log("ARSOL DEBUG: Project buttons - Empty project ID, returning");
@@ -48,7 +48,7 @@ class Frontend_Template_Sidebar_Buttons {
         }
 
         echo '<div class="sidebar-buttons">';
-        $this->add_project_buttons($project_id, $current_status);
+        $this->add_project_buttons($project_id, $current_stage);
         echo '</div>';
     }
 
@@ -74,11 +74,11 @@ class Frontend_Template_Sidebar_Buttons {
     /**
      * Display request buttons
      *
-     * @param string $current_status The current status
+     * @param string $current_stage The current stage
      * @param int $project_request_id The request ID
      */
-    public function display_request_buttons($current_status, $project_request_id) {
-        error_log("ARSOL DEBUG: Request buttons - Status: '$current_status', Request ID: $project_request_id");
+    public function display_request_buttons($current_stage, $project_request_id) {
+        error_log("ARSOL DEBUG: Request buttons - Stage: '$current_stage', Request ID: $project_request_id");
         
         if (empty($project_request_id)) {
             error_log("ARSOL DEBUG: Request buttons - Empty request ID, returning");
@@ -86,7 +86,7 @@ class Frontend_Template_Sidebar_Buttons {
         }
 
         echo '<div class="sidebar-buttons">';
-        $this->add_request_buttons($project_request_id, $current_status);
+        $this->add_request_buttons($project_request_id, $current_stage);
         echo '</div>';
     }
 
@@ -178,17 +178,17 @@ class Frontend_Template_Sidebar_Buttons {
      * Add request buttons
      *
      * @param int $post_id The post ID
-     * @param string $status The current status
+     * @param string $stage The current stage
      */
-    private function add_request_buttons($post_id, $status) {
-        error_log("ARSOL DEBUG: add_request_buttons called - Status: '$status', Post ID: $post_id");
+    private function add_request_buttons($post_id, $stage) {
+        error_log("ARSOL DEBUG: add_request_buttons called - Stage: '$stage', Post ID: $post_id");
         
         // Test button - always show to verify hook is working
         echo '<div class="button-item button-test">';
-        echo '<button class="button button-secondary">TEST: Request Stage is "' . esc_html($status) . '"</button>';
+        echo '<button class="button button-secondary">TEST: Request Stage is "' . esc_html($stage) . '"</button>';
         echo '</div>';
         
-        switch ($status) {
+        switch ($stage) {
             case 'pending-review':
                 $this->add_pending_review_buttons($post_id);
                 break;
@@ -202,11 +202,11 @@ class Frontend_Template_Sidebar_Buttons {
                 $this->add_approved_buttons($post_id);
                 break;
             default:
-                echo '<div class="button-item button-no-status">';
-                if (empty($status)) {
-                    echo '<button class="button button-warning">No Status Set</button>';
+                echo '<div class="button-item button-no-stage">';
+                if (empty($stage)) {
+                    echo '<button class="button button-warning">No Stage Set</button>';
                 } else {
-                    echo '<button class="button button-warning">Unknown Status: ' . esc_html($status) . '</button>';
+                    echo '<button class="button button-warning">Unknown Stage: ' . esc_html($stage) . '</button>';
                 }
                 echo '</div>';
                 break;
@@ -217,40 +217,40 @@ class Frontend_Template_Sidebar_Buttons {
      * Add project buttons
      *
      * @param int $post_id The post ID
-     * @param string $status The current status
+     * @param string $stage The current stage
      */
-    private function add_project_buttons($post_id, $status) {
-        error_log("ARSOL DEBUG: add_project_buttons called - Status: '$status', Post ID: $post_id");
+    private function add_project_buttons($post_id, $stage) {
+        error_log("ARSOL DEBUG: add_project_buttons called - Stage: '$stage', Post ID: $post_id");
         
         // Test button - always show to verify hook is working
         echo '<div class="button-item button-test">';
-        echo '<button class="button button-secondary">TEST: Project Status is "' . esc_html($status) . '"</button>';
+        echo '<button class="button button-secondary">TEST: Project Stage is "' . esc_html($stage) . '"</button>';
         echo '</div>';
         
-        // If no status is set, provide buttons to set initial status
-        if (empty($status)) {
-            echo '<div class="button-item button-no-status">';
-            echo '<p style="margin-bottom: 10px;"><strong>No status set for this project.</strong></p>';
+        // If no stage is set, provide buttons to set initial stage
+        if (empty($stage)) {
+            echo '<div class="button-item button-no-stage">';
+            echo '<p style="margin-bottom: 10px;"><strong>No stage set for this project.</strong></p>';
             
             // Button to set to not-started
             $set_not_started_url = wp_nonce_url(
-                admin_url('admin-post.php?action=arsol_set_project_status&project_id=' . $post_id . '&status=not-started'),
-                'arsol_set_project_status_nonce'
+                admin_url('admin-post.php?action=arsol_set_project_stage&project_id=' . $post_id . '&stage=not-started'),
+                'arsol_set_project_stage_nonce'
             );
             echo '<a href="' . esc_url($set_not_started_url) . '" class="button button-primary" style="margin-right: 10px;">Set to Not Started</a>';
             
             // Button to set to in-progress
             $set_in_progress_url = wp_nonce_url(
-                admin_url('admin-post.php?action=arsol_set_project_status&project_id=' . $post_id . '&status=in-progress'),
-                'arsol_set_project_status_nonce'
+                admin_url('admin-post.php?action=arsol_set_project_stage&project_id=' . $post_id . '&stage=in-progress'),
+                'arsol_set_project_stage_nonce'
             );
             echo '<a href="' . esc_url($set_in_progress_url) . '" class="button button-secondary">Set to In Progress</a>';
             echo '</div>';
             return;
         }
         
-        // Show different buttons based on project status
-        switch ($status) {
+        // Show different buttons based on project stage
+        switch ($stage) {
             case 'not-started':
                 echo '<div class="button-item button-not-started">';
                 echo '<button class="button button-primary">Start Project</button>';
@@ -287,7 +287,7 @@ class Frontend_Template_Sidebar_Buttons {
                 
             default:
                 echo '<div class="button-item button-unknown">';
-                echo '<button class="button button-warning">Unknown Status: ' . esc_html($status) . '</button>';
+                echo '<button class="button button-warning">Unknown Stage: ' . esc_html($stage) . '</button>';
                 echo '</div>';
                 break;
         }
