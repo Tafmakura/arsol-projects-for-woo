@@ -25,17 +25,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
     <li><strong><?php _e('Name:', 'arsol-pfw'); ?></strong> <?php echo esc_html($customer->display_name); ?></li>
     <li><strong><?php _e('Email:', 'arsol-pfw'); ?></strong> <?php echo esc_html($customer->user_email); ?></li>
     <li><strong><?php _e('Submitted:', 'arsol-pfw'); ?></strong> <?php echo esc_html(wp_date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($request->post_date))); ?></li>
-                    <li><strong><?php _e('Status:', 'arsol-pfw'); ?></strong> <?php 
-                    // Get the taxonomy term name directly
-                    $status_terms = wp_get_post_terms($request->ID, 'arsol-pfw-request-status');
-                    $status_display = '';
-                    if (!empty($status_terms) && !is_wp_error($status_terms)) {
-                        $status_display = $status_terms[0]->name;
-                    } else {
-                        $status_display = ucfirst(str_replace('-', ' ', $request->post_status));
-                    }
-                    echo esc_html($status_display);
-                ?></li>
+    <li><strong><?php _e('Status:', 'arsol-pfw'); ?></strong> <?php echo esc_html(ucfirst(str_replace('-', ' ', $request->post_status))); ?></li>
 </ul>
 
 <?php if (!empty($request->post_content)): ?>

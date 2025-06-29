@@ -43,10 +43,9 @@ class Requests {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'request_status':
-                // Get the taxonomy term directly and use its name
-                $status_terms = wp_get_post_terms($post_id, 'arsol-pfw-request-status');
-                if (!empty($status_terms) && !is_wp_error($status_terms)) {
-                    echo esc_html($status_terms[0]->name); // Use taxonomy term name directly
+                $status = wp_get_object_terms($post_id, 'arsol-pfw-request-status', array('fields' => 'names'));
+                if (!empty($status) && !is_wp_error($status)) {
+                    echo esc_html($status[0]);
                 }
                 break;
                 

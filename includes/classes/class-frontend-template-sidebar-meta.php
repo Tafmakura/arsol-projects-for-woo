@@ -212,33 +212,47 @@ class Frontend_Template_Sidebar_Meta {
     private function get_proposal_metadata($post_id, $status) {
         $metadata = array();
         
-        // Get the actual taxonomy term instead of just the slug
-        $status_terms = wp_get_post_terms($post_id, 'arsol-pfw-proposal-status');
+        // Get actual taxonomy status instead of using passed status
+        $actual_status = $this->get_taxonomy_status($post_id);
         
-        // Only add status if we have an actual term
-        if (!empty($status_terms) && !is_wp_error($status_terms)) {
-            $status_term = $status_terms[0]; // Get the first term
-            
+        // Only add status if we have an actual status
+        if (!empty($actual_status)) {
             $metadata['status'] = array(
-                'label' => __('Proposal Status', 'arsol-pfw'),
-                'value' => $status_term->name, // Use taxonomy term name directly
+                'label' => __('Status', 'arsol-pfw'),
+                'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($status_term->slug)
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
             );
-            
-            // Use taxonomy term description if available
-            if (!empty($status_term->description)) {
-                $metadata['status_description'] = array(
-                    'label' => '',
-                    'value' => $status_term->description, // Use taxonomy term description directly
-                    'type' => 'text',
-                    'class' => 'status-description'
+        }
+        
+        // Customer
+        $post = get_post($post_id);
+        if ($post && $post->post_author) {
+            $customer = get_userdata($post->post_author);
+            if ($customer) {
+                $metadata['customer'] = array(
+                    'label' => __('Customer', 'arsol-pfw'),
+                    'value' => $customer->display_name,
+                    'type' => 'text'
+                );
+            }
+        }
+        
+        // Project Lead
+        $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
+        if (!empty($lead_id)) {
+            $lead = get_userdata($lead_id);
+            if ($lead) {
+                $metadata['project_lead'] = array(
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
                 );
             }
         }
         
         // Budget
-        $budget = get_post_meta($post_id, '_arsol_pfw_proposal_budget', true);
+        $budget = get_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
         if (!empty($budget)) {
             if (is_array($budget) && isset($budget['amount'])) {
                 $metadata['budget'] = array(
@@ -292,29 +306,29 @@ class Frontend_Template_Sidebar_Meta {
     private function get_request_metadata($post_id, $status) {
         $metadata = array();
         
-        // Get the actual taxonomy term instead of just the slug
-        $status_terms = wp_get_post_terms($post_id, 'arsol-pfw-request-status');
+        // Get actual taxonomy status instead of using passed status
+        $actual_status = $this->get_taxonomy_status($post_id);
         
-        // Only add status if we have an actual term
-        if (!empty($status_terms) && !is_wp_error($status_terms)) {
-            $status_term = $status_terms[0]; // Get the first term
-            
+        // Only add status if we have an actual status
+        if (!empty($actual_status)) {
             $metadata['status'] = array(
                 'label' => __('Request Status', 'arsol-pfw'),
-                'value' => $status_term->name, // Use taxonomy term name directly
+                'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($status_term->slug)
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
             );
             
-            // Use taxonomy term description if available
-            if (!empty($status_term->description)) {
+            // Add status-specific descriptions
+            $status_description = $this->get_request_status_description($actual_status);
+            if (!empty($status_description)) {
                 $metadata['status_description'] = array(
                     'label' => '',
-                    'value' => $status_term->description, // Use taxonomy term description directly
+                    'value' => $status_description,
                     'type' => 'text',
                     'class' => 'status-description'
                 );
             }
+            
         }
         
         // Budget
@@ -512,35 +526,20 @@ class Frontend_Template_Sidebar_Meta {
     }
 
     /**
-     * Get taxonomy status term for a post - simple helper
+     * Get request status description
      *
-     * @param int $post_id The post ID
-     * @return object|null The taxonomy term object or null if not found
+     * @param string $status The status slug
+     * @return string Status description
      */
-    public static function get_status_term($post_id) {
-        if (empty($post_id)) {
-            return null;
-        }
-
-        // Get post type and determine correct taxonomy
-        $post_type = get_post_type($post_id);
-        $taxonomy_map = array(
-            'arsol-pfw-project' => 'arsol-pfw-project-status',
-            'arsol-pfw-proposal' => 'arsol-pfw-proposal-status', 
-            'arsol-pfw-request' => 'arsol-pfw-request-status'
+    private function get_request_status_description($status) {
+        $descriptions = array(
+            'pending-review' => __('Your request is being reviewed by our team', 'arsol-pfw'),
+            'under-review' => __('Being evaluated by our team', 'arsol-pfw'),
+            'on-hold' => __('Temporarily paused - still editable', 'arsol-pfw'),
+            'approved' => __('Congratulations! Moving to proposal stage', 'arsol-pfw'),
+            'rejected' => __('Request has been declined', 'arsol-pfw'),
         );
-        
-        if (!isset($taxonomy_map[$post_type])) {
-            return null;
-        }
-        
-        $taxonomy = $taxonomy_map[$post_type];
-        $terms = wp_get_post_terms($post_id, $taxonomy);
-        
-        if (is_wp_error($terms) || empty($terms)) {
-            return null;
-        }
-        
-        return $terms[0]; // Return the first (should be only) term
+
+        return isset($descriptions[$status]) ? $descriptions[$status] : '';
     }
 } 

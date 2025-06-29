@@ -56,17 +56,7 @@ if (!defined('ABSPATH')) {
             <div class="info-box">
                 <strong>👤 Customer:</strong> <?php echo esc_html($customer->display_name); ?> (<?php echo esc_html($customer->user_email); ?>)<br>
                 <strong>📅 Submitted:</strong> <?php echo esc_html(wp_date('F j, Y \a\t g:i A', strtotime($request->post_date))); ?><br>
-                <strong>🏷️ Status:</strong> <?php 
-                    // Get the taxonomy term name directly
-                    $status_terms = wp_get_post_terms($request->ID, 'arsol-pfw-request-status');
-                    $status_display = '';
-                    if (!empty($status_terms) && !is_wp_error($status_terms)) {
-                        $status_display = $status_terms[0]->name;
-                    } else {
-                        $status_display = ucfirst(str_replace('-', ' ', $request->post_status));
-                    }
-                    echo esc_html($status_display);
-                ?>
+                <strong>🏷️ Status:</strong> <?php echo esc_html(ucfirst(str_replace('-', ' ', $request->post_status))); ?>
             </div>
 
             <div class="request-details">
