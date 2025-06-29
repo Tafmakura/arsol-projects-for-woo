@@ -12,24 +12,27 @@ if (!$post || $post->post_type !== 'arsol-pfw-request') {
 $request_id = $post->ID;
 $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
-$request_status_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
-$request_status = !empty($request_status_terms) ? $request_status_terms[0] : 'pending-review';
+// Get request stage (with proper error handling)
+$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+$request_stage = 'pending-review'; // Default value
+if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
+    $request_stage = $request_stage_terms[0];
+}
+
 $budget_data = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
 $start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
 $delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', true);
 
-$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
-$request_stage = !empty($request_stage_terms) ? $request_stage_terms[0] : 'pending-review';
-
-$all_statuses = get_terms(array(
-    'taxonomy' => 'arsol-pfw-request-status',
-    'hide_empty' => false,
-));
-
-$statuses = get_terms(array(
+// Get all request stages (with proper error handling)
+$stages = get_terms(array(
     'taxonomy' => 'arsol-pfw-request-stage',
     'hide_empty' => false,
 ));
+
+// Handle WP_Error from get_terms
+if (is_wp_error($stages)) {
+    $stages = array(); // Fallback to empty array
+}
 ?>
 
 <div class="form-field-row">
@@ -70,26 +73,17 @@ $statuses = get_terms(array(
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="request_status"><?php _e('Status:', 'arsol-pfw'); ?></label>
-        <select id="request_status" name="request_status" class="wc-enhanced-select">
-            <?php foreach ($all_statuses as $status) : ?>
-                <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($request_status, $status->slug); ?>>
-                    <?php echo esc_html($status->name); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-    </p>
-</div>
-
-<div class="form-field-row">
-    <p class="form-field form-field-wide">
         <label for="request_stage"><?php _e('Stage:', 'arsol-pfw'); ?></label>
         <select id="request_stage" name="request_stage" class="wc-enhanced-select">
-            <?php foreach ($statuses as $status): ?>
-                <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($request_stage, $status->slug); ?>>
-                    <?php echo esc_html($status->name); ?>
-                </option>
-            <?php endforeach; ?>
+            <?php if (!empty($stages) && !is_wp_error($stages)): ?>
+                <?php foreach ($stages as $stage): ?>
+                    <option value="<?php echo esc_attr($stage->slug); ?>" <?php selected($request_stage, $stage->slug); ?>>
+                        <?php echo esc_html($stage->name); ?>
+                    </option>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <option value=""><?php _e('No stages available', 'arsol-pfw'); ?></option>
+            <?php endif; ?>
         </select>
     </p>
 </div>

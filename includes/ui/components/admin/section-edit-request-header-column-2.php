@@ -15,12 +15,16 @@ $attachments = get_attached_media('', $request_id);
 $budget_data = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
 $start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
 $delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', true);
-$request_status_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-status', array('fields' => 'names'));
-$request_status = !empty($request_status_terms) ? $request_status_terms[0] : '';
+
+// Get request stage (with proper error handling)
+$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
+$request_stage = '';
+if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
+    $request_stage = $request_stage_terms[0];
+}
+
 $customer = get_userdata($post->post_author);
 $submission_date = get_the_time('l j F \a\t g:ia', $post);
-$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
-$request_stage = !empty($request_stage_terms) ? $request_stage_terms[0] : '';
 ?>
 
 <div class="form-field-row">

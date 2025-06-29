@@ -24,20 +24,28 @@ if (!$post || $post->post_type !== 'arsol-pfw-request') {
 $request_id = $post->ID;
 $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
-$request_status_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-status', array('fields' => 'slugs'));
-$request_status = !empty($request_status_terms) ? $request_status_terms[0] : 'pending';
+
+// Get request stage (with proper error handling)
+$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+$request_stage = 'pending'; // Default value
+if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
+    $request_stage = $request_stage_terms[0];
+}
+
 $budget_data = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
 $start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
 $delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', true);
 
-$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
-$request_stage = !empty($request_stage_terms) ? $request_stage_terms[0] : 'pending';
-
-// Get all request stages
-$statuses = get_terms(array(
+// Get all request stages (with proper error handling)
+$stages = get_terms(array(
     'taxonomy' => 'arsol-pfw-request-stage',
     'hide_empty' => false,
 ));
+
+// Handle WP_Error from get_terms
+if (is_wp_error($stages)) {
+    $stages = array(); // Fallback to empty array
+}
 
 // Check for parent project
 $parent_project_id = get_post_meta($request_id, '_arsol_pfw_parent_project_id', true);
