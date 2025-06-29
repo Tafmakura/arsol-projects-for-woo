@@ -105,8 +105,6 @@ class Setup {
         new Assets();
         new Woocommerce\Frontend_Endpoints();
         new Frontend_Woocommerce_Checkout();
-    
-        new Project_Phases();
         new Taxonomies\Taxonomies_Setup();
 
         // Initialize admin classes
