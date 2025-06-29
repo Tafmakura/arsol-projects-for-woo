@@ -52,6 +52,8 @@ class Taxonomies_Project_Stage_Setup {
             'rewrite'           => array('slug' => 'project-stage'),
             'show_in_rest'      => true,
             'meta_box_cb'       => false,
+            'public'            => false,           // Hide from frontend
+            'publicly_queryable' => false,         // Not queryable on frontend
         );
 
         $result = register_taxonomy('arsol-pfw-project-stage', 'arsol-pfw-project', $args);

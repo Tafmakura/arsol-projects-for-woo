@@ -82,7 +82,18 @@ class Setup {
             4
         );
         
-        // 5. Settings (last)
+        // 5. Project Stages
+        add_submenu_page(
+            $parent_slug,
+            __('Project Stages', 'arsol-pfw'),
+            __('Project Stages', 'arsol-pfw'),
+            'manage_categories',
+            'edit-tags.php?taxonomy=arsol-pfw-project-stage&post_type=arsol-pfw-project',
+            '',
+            5
+        );
+        
+        // 6. Settings (last)
         $settings_result = add_submenu_page(
             $parent_slug,
             __('Settings', 'arsol-pfw'),
@@ -113,8 +124,8 @@ class Setup {
             
             // Remove all default WordPress submenus
             foreach ($submenu[$parent_slug] as $key => $menu_item) {
-                // Keep only our custom menus (positions 1,2,3,4,99)
-                if (!in_array($key, [1, 2, 3, 4, 99])) {
+                // Keep only our custom menus (positions 1,2,3,4,5,99)
+                if (!in_array($key, [1, 2, 3, 4, 5, 99])) {
                     unset($submenu[$parent_slug][$key]);
                 }
             }
