@@ -24,7 +24,7 @@ class Project {
             array($this, 'render_project_actions_metabox'),
             'arsol-pfw-project',
             'side',
-            'default'
+            'high'
         );
     }
 

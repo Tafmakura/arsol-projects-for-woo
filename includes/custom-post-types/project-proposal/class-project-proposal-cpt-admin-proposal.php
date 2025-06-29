@@ -42,7 +42,7 @@ class Proposal {
             array($this, 'render_proposal_actions_metabox'),
             'arsol-pfw-proposal',
             'side',
-            'default'
+            'high'
         );
         
         // Add customer feedback sections via hook (after header)

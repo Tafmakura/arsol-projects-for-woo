@@ -23,7 +23,7 @@ class Request {
             array($this, 'render_request_actions_metabox'),
             'arsol-pfw-request',
             'side',
-            'default'
+            'high'
         );
         
         // Add customer feedback sections via hook (after header)
