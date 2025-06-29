@@ -80,15 +80,19 @@
             $(document).on('change', '#request_stage', function() {
                 const selectedStage = $(this).val();
                 
-                // Hide all conditional sections first
-                $('.arsol-pfw-show-if-request-stage-is-on-hold').hide();
-                $('.arsol-pfw-show-if-request-stage-is-under-review').hide();
-                
-                // Show relevant sections based on stage
-                if (selectedStage === 'on-hold') {
-                    $('.arsol-pfw-show-if-request-stage-is-on-hold').show();
-                } else if (selectedStage === 'under-review') {
-                    $('.arsol-pfw-show-if-request-stage-is-under-review').show();
+                // Use the smart conditional system if available
+                if (typeof window.ArsolConditionalVisibility !== 'undefined') {
+                    window.ArsolConditionalVisibility.updateConditionalVisibilityForField('request_stage');
+                } else {
+                    // Fallback to hardcoded logic if smart system isn't loaded
+                    $('.arsol-pfw-show-if-request-stage-is-on-hold').hide();
+                    $('.arsol-pfw-show-if-request-stage-is-under-review').hide();
+                    
+                    if (selectedStage === 'on-hold') {
+                        $('.arsol-pfw-show-if-request-stage-is-on-hold').show();
+                    } else if (selectedStage === 'under-review') {
+                        $('.arsol-pfw-show-if-request-stage-is-under-review').show();
+                    }
                 }
                 
                 ArsolRequest.updateConversionButtonState();
@@ -118,6 +122,13 @@
         },
 
         updateRequestStageVisibility: function() {
+            // The smart conditional system handles most stage visibility automatically
+            // Just trigger it if the system is available
+            if (typeof window.ArsolConditionalVisibility !== 'undefined') {
+                window.ArsolConditionalVisibility.updateConditionalVisibilityForField('request_stage');
+            }
+            
+            // Keep the existing feedback sections logic for now (can be converted to CSS classes later)
             var selectedStage = $('#request_stage').val() || '';
             
             // Hide all feedback sections first

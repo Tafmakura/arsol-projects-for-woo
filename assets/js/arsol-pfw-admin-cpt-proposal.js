@@ -252,37 +252,24 @@
 
         /**
          * Update conditional visibility based on cost proposal type
-         * This function works with both enabled and disabled selects
+         * Now handled by the smart ArsolConditionalVisibility system
          */
         updateConditionalVisibility: function() {
-            const costType = $('#arsol_pfw_proposal_costing_type').val();
-            
-            // Hide all conditional elements with inline display:none
-            $('.arsol-pfw-show-if-proposal-cost-type-is-none, .arsol-pfw-show-if-proposal-cost-type-is-budget, .arsol-pfw-show-if-proposal-cost-type-is-quotation').css('display', 'none');
-            
-            // Show elements based on current cost type by removing inline display style
-            if (costType === 'none') {
-                $('.arsol-pfw-show-if-proposal-cost-type-is-none').css('display', '');
-            } else if (costType === 'budget') {
-                $('.arsol-pfw-show-if-proposal-cost-type-is-budget').css('display', '');
-            } else if (costType === 'quotation') {
-                $('.arsol-pfw-show-if-proposal-cost-type-is-quotation').css('display', '');
-            }
-            
-            // Handle hide-if classes (show all first, then hide specific ones)
-            $('.arsol-pfw-hide-if-proposal-cost-type-is-none, .arsol-pfw-hide-if-proposal-cost-type-is-budget, .arsol-pfw-hide-if-proposal-cost-type-is-quotation').css('display', '');
-            
-            // Hide elements that should be hidden for current cost type
-            if (costType === 'none') {
-                $('.arsol-pfw-hide-if-proposal-cost-type-is-none').css('display', 'none');
-            } else if (costType === 'budget') {
-                $('.arsol-pfw-hide-if-proposal-cost-type-is-budget').css('display', 'none');
-            } else if (costType === 'quotation') {
-                $('.arsol-pfw-hide-if-proposal-cost-type-is-quotation').css('display', 'none');
+            // The smart conditional system automatically handles this
+            // Just trigger it if the system is available
+            if (typeof window.ArsolConditionalVisibility !== 'undefined') {
+                window.ArsolConditionalVisibility.updateConditionalVisibilityForField('arsol_pfw_proposal_costing_type');
             }
         },
 
         updateProposalStageVisibility: function() {
+            // The smart conditional system handles most stage visibility automatically
+            // Just trigger it if the system is available
+            if (typeof window.ArsolConditionalVisibility !== 'undefined') {
+                window.ArsolConditionalVisibility.updateConditionalVisibilityForField('proposal_stage');
+            }
+            
+            // Keep the existing feedback sections logic for now (can be converted to CSS classes later)
             var selectedStage = $('#proposal_stage').val() || '';
             
             // Hide all feedback sections first

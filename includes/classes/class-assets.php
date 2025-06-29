@@ -133,6 +133,15 @@ class Assets {
             $this->get_file_version('assets/js/arsol-pfw-admin-cpt-request.js'),
             true
         );
+        
+        // Register unified CPT edit screen JS (works across all CPTs)
+        wp_register_script(
+            'arsol-pfw-admin-cpt-edit',
+            $plugin_url . 'assets/js/arsol-pfw-admin-cpt-edit.js',
+            array('jquery'),
+            $this->get_file_version('assets/js/arsol-pfw-admin-cpt-edit.js'),
+            true
+        );
     }
 
     /**
@@ -174,6 +183,11 @@ class Assets {
             
             // Enqueue post-type specific JavaScript (only for post type pages)
             if ($is_post_type_page) {
+                // Enqueue the unified CPT edit script for all our CPTs
+                if (in_array($screen->post_type, array('arsol-pfw-project', 'arsol-pfw-proposal', 'arsol-pfw-request'))) {
+                    wp_enqueue_script('arsol-pfw-admin-cpt-edit');
+                }
+                
                 if ($screen->post_type === 'arsol-pfw-proposal') {
                     wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
                     
