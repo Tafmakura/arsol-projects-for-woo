@@ -50,7 +50,7 @@ We have successfully implemented a comprehensive email system based on our docum
 - **Features**: Payment link for customer, order details for team
 
 ### 8. Project Status Email (`class-project-status-email.php`)
-- **Trigger**: `arsol_project_status_changed`
+- **Trigger**: `arsol_project_stage_changed`
 - **Recipients**: Customer + Project Lead + Admins
 - **Statuses Covered**: `in-progress`, `on-hold`, `completed`, `cancelled`
 - **Features**: Status-specific messaging and color coding

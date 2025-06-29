@@ -32,11 +32,10 @@ All customer emails use `$this->customer_email = true` and dynamic customer targ
    - Target: Customer who owns the project
    - Dynamic: `get_user_by('id', $customer_id)->user_email`
 
-5. **Project Customer: Project Status Update** (`class-wc-email-project-status.php`)
-   - Hook: `arsol_project_status_changed`
-   - Trigger: `trigger($project_id, $old_status, $new_status, $customer_id)`
-   - Target: Customer who owns the project
-   - Dynamic: `get_user_by('id', $customer_id)->user_email`
+5. **Project Customer: Project Stage Update** (`class-wc-email-project-stage.php`)
+   - Hook: `arsol_project_stage_changed`
+   - Recipients: Project customers
+   - Trigger: When project stage changes
 
 6. **Project Customer: Project Completed** (`class-wc-email-project-completion.php`)
    - Hook: `arsol_project_completed`
@@ -92,7 +91,7 @@ All emails use templates in `includes/email/templates/`:
 - `email-request-status.php`
 - `email-proposal-ready.php`
 - `email-project-creation.php`
-- `email-project-status.php`
+- `email-project-stage.php`
 - `email-project-completion.php`
 - `email-admin-new-request.php`
 - `email-proposal-processing.php`

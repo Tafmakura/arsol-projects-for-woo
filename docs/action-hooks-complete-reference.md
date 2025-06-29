@@ -314,21 +314,19 @@ do_action('arsol_after_proposal_status_change', $proposal_id, $old_status, $new_
 **Possible Status Values:**
 - `processing` → `pending-approval` → `approved` | `rejected`
 
-### Project Status Changes (3 hooks)
+### Project Stage Changes (3 hooks)
+
+These hooks fire when a project stage is changed:
 
 ```php
-// Before status change
-do_action('arsol_before_project_status_change', $project_id, $old_status, $new_status, $project_lead_id);
-
-// Status changed
-do_action('arsol_project_status_changed', $project_id, $old_status, $new_status, $project_lead_id);
-
-// After status change processing
-do_action('arsol_after_project_status_change', $project_id, $old_status, $new_status, $project_lead_id);
+do_action('arsol_before_project_stage_change', $project_id, $old_stage, $new_stage, $project_lead_id);
 ```
-
-**Possible Status Values:**
-- `not-started` → `in-progress` → `on-hold` → `completed` → `cancelled`
+```php
+do_action('arsol_project_stage_changed', $project_id, $old_stage, $new_stage, $project_lead_id);
+```
+```php
+do_action('arsol_after_project_stage_change', $project_id, $old_stage, $new_stage, $project_lead_id);
+```
 
 ---
 
@@ -563,6 +561,24 @@ add_action('arsol_proposal_processing_started', function($proposal_id, $customer
         ));
     }
 });
+```
+
+### Example: Send notification when project stage changes to 'completed'
+```php
+/**
+ * Example: Send notification when project stage changes to 'completed'
+ */
+add_action('arsol_project_stage_changed', 'notify_on_project_completion', 10, 4);
+function notify_on_project_completion($project_id, $old_stage, $new_stage, $project_lead_id) {
+    if ($new_stage === 'completed') {
+        // Send custom completion notification
+        $project = get_post($project_id);
+        $customer = get_userdata($project->post_author);
+        
+        // Your custom notification logic here
+        do_action('arsol_project_stage_changed', $project_id, $old_stage, $new_stage, $project_lead_id);
+    }
+}
 ```
 
 ---

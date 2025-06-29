@@ -21,6 +21,7 @@ templates/
 ├── arsol_project_status.php              # HTML: Project status changed
 ├── admin-proposal-decision.php           # HTML: Proposal approved/rejected (admin)
 └── lead-proposal-processing.php          # HTML: Proposal assignment (project lead)
+├── arsol_project_stage.php              # HTML: Project stage changed
 ```
 
 ## Template Naming Convention
@@ -42,6 +43,7 @@ Templates follow this naming pattern:
 | `Proposal_Decision_Email` | `arsol_proposal_decision` | Proposal approved/rejected |
 | `Project_Creation_Email` | `arsol_project_creation` | Project created, order ready |
 | `Project_Status_Email` | `arsol_project_status` | Project status updates |
+| `Project_Stage_Email` | `arsol_project_stage` | Project stage updates |
 
 ## Available Variables
 

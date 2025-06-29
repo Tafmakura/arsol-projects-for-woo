@@ -42,7 +42,7 @@ class Arsol_Email_Manager {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-request-status.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-ready.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-creation.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-status.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-stage.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-completion.php';
         
         // Shop Manager emails (2)
@@ -60,7 +60,7 @@ class Arsol_Email_Manager {
         $email_classes['WC_Email_Request_Status'] = new WC_Email_Request_Status();
         $email_classes['WC_Email_Proposal_Ready'] = new WC_Email_Proposal_Ready();
         $email_classes['WC_Email_Project_Creation'] = new WC_Email_Project_Creation();
-        $email_classes['WC_Email_Project_Status'] = new WC_Email_Project_Status();
+        $email_classes['WC_Email_Project_Stage'] = new WC_Email_Project_Stage();
         $email_classes['WC_Email_Project_Completion'] = new WC_Email_Project_Completion();
         
         // Shop Manager emails

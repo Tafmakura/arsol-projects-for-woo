@@ -21,6 +21,7 @@ includes/emails/
 │   ├── arsol_proposal_processing.php    # HTML: Proposal work started
 │   ├── arsol_proposal_ready.php         # HTML: Proposal ready for review
 │   ├── arsol_project_creation.php       # HTML: Project/order created
+│   ├── arsol_project_stage.php         # HTML: Project stage updates
 │   ├── arsol_project_status.php         # HTML: Project status updates
 │   ├── admin-proposal-decision.php      # HTML: Admin proposal decisions
 │   └── lead-proposal-processing.php     # HTML: Project lead assignments
