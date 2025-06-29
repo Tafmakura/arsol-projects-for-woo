@@ -223,23 +223,12 @@
                     shouldShow = (currentValue !== condition.value);
                 }
                 
-                // Apply visibility: display: none to hide, remove display property to show (preserves original display)
+                // Apply visibility: toggle display: none on/off (WooCommerce standard approach)
                 if (shouldShow) {
-                    // Remove only the display property, preserving other inline styles
-                    $elements.each(function() {
-                        var $el = $(this);
-                        var style = $el.attr('style');
-                        if (style) {
-                            // Remove display property but keep other styles
-                            style = style.replace(/display\s*:\s*[^;]+;?\s*/gi, '');
-                            if (style.trim()) {
-                                $el.attr('style', style);
-                            } else {
-                                $el.removeAttr('style');
-                            }
-                        }
-                    });
+                    // Remove display: none by setting display to empty string
+                    $elements.css('display', '');
                 } else {
+                    // Hide by setting display: none
                     $elements.css('display', 'none');
                 }
             });
