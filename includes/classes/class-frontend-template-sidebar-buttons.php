@@ -263,12 +263,16 @@ class Frontend_Template_Sidebar_Buttons {
         echo '</button>';
         echo '</div>';
 
-        // Cancel Request button
+        // Cancel Request button - properly linked to admin action
+        $cancel_url = wp_nonce_url(
+            admin_url('admin-post.php?action=arsol_cancel_request&request_id=' . $post_id),
+            'arsol_cancel_request_nonce'
+        );
         echo '<div class="arsol-pfw-project-button">';
-        echo '<button type="button" class="brxe-button bricks-button sm outline bricks-color-primary cancel-request-btn" ';
-        echo 'data-confirm-text="' . \esc_attr__('Are you sure you want to cancel this request?', 'arsol-pfw') . '">';
+        echo '<a href="' . esc_url($cancel_url) . '" class="brxe-button bricks-button sm outline bricks-color-primary" ';
+        echo 'onclick="return confirm(\'' . \esc_js(\__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw')) . '\')">';
         echo \esc_html__('Cancel Request', 'arsol-pfw');
-        echo '</button>';
+        echo '</a>';
         echo '</div>';
     }
 
@@ -306,12 +310,16 @@ class Frontend_Template_Sidebar_Buttons {
         echo '</button>';
         echo '</div>';
 
-        // Cancel Request button
+        // Cancel Request button - properly linked to admin action
+        $cancel_url = wp_nonce_url(
+            admin_url('admin-post.php?action=arsol_cancel_request&request_id=' . $post_id),
+            'arsol_cancel_request_nonce'
+        );
         echo '<div class="arsol-pfw-project-button">';
-        echo '<button type="button" class="brxe-button bricks-button sm outline bricks-color-primary cancel-request-btn" ';
-        echo 'data-confirm-text="' . \esc_attr__('Are you sure you want to cancel this request?', 'arsol-pfw') . '">';
+        echo '<a href="' . esc_url($cancel_url) . '" class="brxe-button bricks-button sm outline bricks-color-primary" ';
+        echo 'onclick="return confirm(\'' . \esc_js(\__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw')) . '\')">';
         echo \esc_html__('Cancel Request', 'arsol-pfw');
-        echo '</button>';
+        echo '</a>';
         echo '</div>';
 
         // Contact Support
