@@ -100,7 +100,7 @@ graph TD
 #### Automatic Conversion (if implemented)
 ```php
 // Triggered by status change to 'approved'
-do_action('arsol_request_stage_changed', $request_id, $old_status, 'approved');
+do_action('arsol_request_status_changed', $request_id, $old_status, 'approved');
 ```
 
 ### Conversion Process (12 Hooks)

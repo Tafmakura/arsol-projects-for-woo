@@ -34,17 +34,17 @@ The system uses standardized workflow hooks that align with business processes:
 ```php
 // Request Stage
 do_action('arsol_new_request_created', $request_id, $customer_id);
-do_action('arsol_request_stage_changed', $request_id, $old_stage, $new_stage);
+do_action('arsol_request_status_changed', $request_id, $old_status, $new_status);
 
 // Proposal Stage  
 do_action('arsol_new_proposal_created', $proposal_id, $customer_id, $project_lead_id);
 do_action('arsol_proposal_processing_started', $proposal_id, $customer_id, $project_lead_id);
-do_action('arsol_proposal_status_changed', $proposal_id, $old_stage, $new_stage);
+do_action('arsol_proposal_status_changed', $proposal_id, $old_status, $new_status);
 
 // Project Stage
 do_action('arsol_proposal_approved_project_created', $project_id, $proposal_id, $customer_id, $project_lead_id);
 do_action('arsol_new_project_created', $project_id, $proposal_id, $customer_id, $project_lead_id);
-do_action('arsol_project_status_changed', $project_id, $old_stage, $new_stage, $project_lead_id);
+do_action('arsol_project_status_changed', $project_id, $old_status, $new_status, $project_lead_id);
 ```
 
 ---
@@ -56,11 +56,10 @@ do_action('arsol_project_status_changed', $project_id, $old_stage, $new_stage, $
 | Email Class | Trigger Hook | Purpose | Template |
 |-------------|--------------|---------|----------|
 | `WC_Email_New_Request` | `arsol_new_request_created` | Request submission confirmation | `email-new-request.php` |
-| `WC_Email_Request_Stage` | `arsol_request_stage_changed` | Request stage updates | `email-request-stage.php` |
+| `WC_Email_Request_Status` | `arsol_request_status_changed` | Request status updates | `email-request-status.php` |
 | `WC_Email_Proposal_Ready` | `arsol_proposal_ready_for_review` | Proposal ready for review | `email-proposal-ready.php` |
 | `WC_Email_Project_Creation` | `arsol_proposal_approved_project_created` | Project/order ready | `email-project-creation.php` |
 | `WC_Email_Project_Stage` | `arsol_project_stage_changed` | Project stage updates | `email-project-stage.php` |
-| `WC_Email_Request_Stage` | `arsol_request_stage_changed` | Request stage updates | `email-request-stage.php` |
 
 ### 👨‍💼 Project Lead Emails (2 total)
 
@@ -94,19 +93,11 @@ do_action('arsol_new_request_created', $request_id, $customer_id);
 
 **Request status changes**
 ```php
-do_action('arsol_request_stage_changed', $request_id, $old_stage, $new_stage);
+do_action('arsol_request_status_changed', $request_id, $old_status, $new_status);
 ```
 
 **Emails sent:**
-- 👤 **Customer**: `WC_Email_Request_Stage` - "Your request status: {new_status}"
-
-**Request stage changes**
-```php
-do_action('arsol_request_stage_changed', $request_id, $old_stage, $new_stage);
-```
-
-**Emails sent:**
-- 👤 **Customer**: `WC_Email_Request_Stage` - "Your request stage: {new_stage}"
+- 👤 **Customer**: `WC_Email_Request_Status` - "Your request status: {new_status}"
 
 ### Stage 2: Proposal Creation & Processing
 
@@ -136,7 +127,7 @@ do_action('arsol_proposal_ready_for_review', $proposal_id, $customer_id);
 
 **Proposal decision made**
 ```php
-do_action('arsol_proposal_status_changed', $proposal_id, $old_stage, $new_stage);
+do_action('arsol_proposal_status_changed', $proposal_id, $old_status, $new_status);
 ```
 
 **Emails sent:**
@@ -212,7 +203,7 @@ $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) )
 
 ### Customer Email Classes
 - `includes/email/class-wc-email-new-request.php`
-- `includes/email/class-wc-email-request-stage.php`
+- `includes/email/class-wc-email-request-status.php`
 - `includes/email/class-wc-email-proposal-ready.php`
 - `includes/email/class-wc-email-project-creation.php`
 - `includes/email/class-wc-email-project-stage.php`

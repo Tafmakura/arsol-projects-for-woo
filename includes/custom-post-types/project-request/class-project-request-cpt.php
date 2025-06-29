@@ -152,35 +152,39 @@ class Project_Request_CPT {
     }
 
     /**
-     * Get request stage
-     *
-     * @return string|false
+     * Get request status
+     * 
+     * @return string|null Status slug
      */
-    public function get_stage() {
+    public function get_status() {
+        if (!$this->request_id) {
+            return null;
+        }
+
         $terms = wp_get_post_terms($this->request_id, self::get_status_taxonomy());
-        return !empty($terms) && !is_wp_error($terms) ? $terms[0]->slug : false;
+        return !empty($terms) && !is_wp_error($terms) ? $terms[0]->slug : null;
     }
 
     /**
-     * Set request stage
-     *
-     * @param string $stage
-     * @return bool
+     * Set request status
+     * 
+     * @param string $status Status slug
+     * @return bool Success status
      */
-    public function set_stage($stage) {
-        $old_stage = $this->get_stage();
+    public function set_status($status) {
+        if (!$this->request_id) {
+            return false;
+        }
+
+        $old_status = $this->get_status();
+        $result = wp_set_post_terms($this->request_id, array($status), self::get_status_taxonomy());
         
-        if ($old_stage === $stage) {
+        if (!is_wp_error($result)) {
+            // Trigger status change action
+            do_action('arsol_request_status_changed', $this->request_id, $old_status, $status, $this->request->post_author);
             return true;
         }
 
-        $result = wp_set_post_terms($this->request_id, array($stage), self::get_status_taxonomy());
-        
-        if (!is_wp_error($result)) {
-            do_action('arsol_request_stage_changed', $this->request_id, $old_stage, $stage, $this->request->post_author);
-            return true;
-        }
-        
         return false;
     }
 
@@ -241,7 +245,7 @@ class Project_Request_CPT {
      * @return int|false Proposal ID or false on failure
      */
     public function convert_to_proposal() {
-        if (!$this->exists() || $this->get_stage() !== 'approved') {
+        if (!$this->exists() || $this->get_status() !== 'approved') {
             return false;
         }
 
@@ -335,12 +339,12 @@ class Project_Request_CPT {
     }
 
     /**
-     * Get request stage taxonomy slug
-     *
+     * Get request status taxonomy slug
+     * 
      * @return string
      */
     public static function get_status_taxonomy() {
-        return 'arsol-pfw-request-stage';
+        return 'arsol-pfw-request-status';
     }
 
     /**

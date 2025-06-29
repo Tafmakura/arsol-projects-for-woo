@@ -30,7 +30,7 @@ class Requests {
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
         $new_columns['customer'] = __('Customer', 'arsol-pfw');
-        $new_columns['request_stage'] = __('Stage', 'arsol-pfw');
+        $new_columns['request_status'] = __('Status', 'arsol-pfw');
         $new_columns['request_budget'] = __('Budget', 'arsol-pfw');
         $new_columns['date'] = $columns['date'];
         
@@ -42,12 +42,10 @@ class Requests {
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
-            case 'request_stage':
-                $stage = wp_get_object_terms($post_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
-                if (!empty($stage) && !is_wp_error($stage)) {
-                    echo '<span class="stage-' . esc_attr(sanitize_title($stage[0])) . '">' . esc_html($stage[0]) . '</span>';
-                } else {
-                    echo '<span class="stage-unknown">' . __('Unknown', 'arsol-pfw') . '</span>';
+            case 'request_status':
+                $status = wp_get_object_terms($post_id, 'arsol-pfw-request-status', array('fields' => 'names'));
+                if (!empty($status) && !is_wp_error($status)) {
+                    echo esc_html($status[0]);
                 }
                 break;
                 
@@ -118,26 +116,6 @@ class Requests {
             echo '</select>';
 
             // Customer search functionality is now handled by global admin JS
-
-            // Stage filter
-            $current_stage = isset($_GET['request_stage']) ? $_GET['request_stage'] : '';
-            $stages = get_terms('arsol-pfw-request-stage', array('hide_empty' => false));
-            
-            echo '<select name="request_stage" id="filter-by-request-stage" class="postform stage-filter-dropdown">
-                <option value="">' . __('All Stages', 'arsol-pfw') . '</option>';
-            
-            if (!empty($stages) && !is_wp_error($stages)) {
-                foreach ($stages as $stage) {
-                    printf(
-                        '<option value="%s"%s>%s</option>',
-                        esc_attr($stage->slug),
-                        selected($current_stage, $stage->slug, false),
-                        esc_html($stage->name)
-                    );
-                }
-            }
-            
-            echo '</select>';
         }
     }
 

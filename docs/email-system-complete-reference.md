@@ -90,7 +90,7 @@ do_action('arsol_new_request_created', $request_id, $customer_id);
 
 ### 2. Request Status: → Under Review
 ```php
-do_action('arsol_request_stage_changed', $request_id, 'pending-review', 'under-review');
+do_action('arsol_request_status_changed', $request_id, 'pending-review', 'under-review');
 ```
 
 | Recipient | Email | Subject | Portal URL |
@@ -100,7 +100,7 @@ do_action('arsol_request_stage_changed', $request_id, 'pending-review', 'under-r
 
 ### 3. Request Status: → On Hold
 ```php
-do_action('arsol_request_stage_changed', $request_id, $old_stage, 'on-hold');
+do_action('arsol_request_status_changed', $request_id, $old_status, 'on-hold');
 ```
 
 | Recipient | Email | Subject | Portal URL |
@@ -110,7 +110,7 @@ do_action('arsol_request_stage_changed', $request_id, $old_stage, 'on-hold');
 
 ### 4. Request Status: → Approved (Admin Only)
 ```php
-do_action('arsol_request_stage_changed', $request_id, $old_stage, 'approved');
+do_action('arsol_request_status_changed', $request_id, $old_status, 'approved');
 ```
 
 | Recipient | Email | Subject | Portal URL |
@@ -420,7 +420,7 @@ do_action('arsol_new_request_created', $request_id, $customer_id);
 
 ### 2. Request Status: → Under Review
 ```php
-do_action('arsol_request_stage_changed', $request_id, 'pending-review', 'under-review');
+do_action('arsol_request_status_changed', $request_id, 'pending-review', 'under-review');
 ```
 
 | Recipient | Email | Subject | Portal URL |
@@ -430,7 +430,7 @@ do_action('arsol_request_stage_changed', $request_id, 'pending-review', 'under-r
 
 ### 3. Request Status: → On Hold
 ```php
-do_action('arsol_request_stage_changed', $request_id, $old_stage, 'on-hold');
+do_action('arsol_request_status_changed', $request_id, $old_status, 'on-hold');
 ```
 
 | Recipient | Email | Subject | Portal URL |
@@ -440,7 +440,7 @@ do_action('arsol_request_stage_changed', $request_id, $old_stage, 'on-hold');
 
 ### 4. Request Status: → Approved (Admin Only)
 ```php
-do_action('arsol_request_stage_changed', $request_id, $old_stage, 'approved');
+do_action('arsol_request_status_changed', $request_id, $old_status, 'approved');
 ```
 
 | Recipient | Email | Subject | Portal URL |
@@ -657,17 +657,17 @@ Add these action triggers throughout the codebase:
 ```php
 // Request Stage
 do_action('arsol_new_request_created', $request_id, $customer_id);
-do_action('arsol_request_stage_changed', $request_id, $old_stage, $new_stage);
+do_action('arsol_request_status_changed', $request_id, $old_status, $new_status);
 
 // Proposal Stage  
 do_action('arsol_new_proposal_created', $proposal_id, $customer_id, $project_lead_id);
 do_action('arsol_proposal_processing_started', $proposal_id, $customer_id, $project_lead_id);
-do_action('arsol_proposal_status_changed', $proposal_id, $old_stage, $new_stage);
+do_action('arsol_proposal_status_changed', $proposal_id, $old_status, $new_status);
 
 // Project Stage
 do_action('arsol_proposal_approved_project_created', $project_id, $proposal_id, $customer_id, $project_lead_id);
 do_action('arsol_new_project_created', $project_id, $proposal_id, $customer_id, $project_lead_id);
-do_action('arsol_project_stage_changed', $project_id, $old_stage, $new_stage, $project_lead_id);
+do_action('arsol_project_stage_changed', $project_id, $old_status, $new_status, $project_lead_id);
 
 // Billing Stage
 do_action('arsol_project_order_created', $project_id, $order_id);

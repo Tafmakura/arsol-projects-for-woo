@@ -1,7 +1,7 @@
 <?php
 /**
  * Project Stage Email Template
- * 
+ *
  * @package Arsol_Projects_For_Woo
  * @version 1.0.0
  */
@@ -33,7 +33,7 @@ $stage_messages = array(
     ),
     'in-progress' => array(
         'title' => 'Project Stage Update',
-        'icon' => '🚀',
+        'icon' => '🚀', 
         'message' => 'We wanted to update you on your project stage.'
     ),
     'completed' => array(
@@ -96,7 +96,7 @@ echo "= " . $email_heading . " =\n\n";
         </tr>
     </tbody>
 </table>
-    
+
 <?php if ($new_stage === 'completed'): ?>
 <h2><?php _e('Project Completion', 'arsol-pfw'); ?></h2>
 <p><?php _e('Thank you for working with us on this project. We hope you are satisfied with the results.', 'arsol-pfw'); ?></p>
@@ -113,8 +113,8 @@ echo "= " . $email_heading . " =\n\n";
 
 <p><?php _e('We will keep you updated as the project progresses and will reach out if we need any additional information from you.', 'arsol-pfw'); ?></p>
 
-    <?php endif; ?>
-    
+<?php endif; ?>
+
 <h2><?php _e('Stay Updated', 'arsol-pfw'); ?></h2>
 
 <p><?php _e('If you have any questions about this stage change or would like to discuss next steps, please don\'t hesitate to contact our team.', 'arsol-pfw'); ?></p>

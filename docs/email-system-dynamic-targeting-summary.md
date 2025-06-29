@@ -15,7 +15,7 @@ All customer emails use `$this->customer_email = true` and dynamic customer targ
    - Dynamic: `get_user_by('id', $customer_id)->user_email`
 
 2. **Project Customer: Request Status Update** (`class-wc-email-request-status.php`)
-   - Hook: `arsol_request_stage_changed`
+   - Hook: `arsol_request_status_changed`
    - Trigger: `trigger($request_id, $old_status, $new_status, $customer_id)`
    - Target: Customer who owns the request
    - Dynamic: `get_user_by('id', $customer_id)->user_email`
@@ -91,7 +91,7 @@ All emails use templates in `includes/email/templates/`:
 - `email-request-status.php`
 - `email-proposal-ready.php`
 - `email-project-creation.php`
-- `email-request-stage.php`
+- `email-project-stage.php`
 - `email-project-completion.php`
 - `email-admin-new-request.php`
 - `email-proposal-processing.php`
