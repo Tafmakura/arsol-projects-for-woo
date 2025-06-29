@@ -73,11 +73,10 @@ class Taxonomies_Project_Phase_Setup {
      */
     public function add_default_project_phases() {
         $default_phases = array(
-            'planning'      => 'Planning',
-            'development'   => 'Development',
-            'testing'       => 'Testing',
-            'deployment'    => 'Deployment',
-            'maintenance'   => 'Maintenance'
+            'request'       => 'Request',
+            'proposal'      => 'Proposal', 
+            'active'        => 'Active',
+            'archive'       => 'Archive'
         );
 
         foreach ($default_phases as $slug => $name) {
