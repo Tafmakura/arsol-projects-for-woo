@@ -210,15 +210,18 @@ class Frontend_Endpoints {
         $project = get_post($project_id);
         $current_tab = 'overview';
         
-        // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
-        $current_status = !empty($statuses) ? $statuses[0] : '';
+        // Stage handling with proper error checking
+        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+        $current_stage = '';
+        if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+            $current_stage = $stage_terms[0];
+        }
         
         // Prepare comprehensive data for efficient hook usage
-        $wrapper_data = compact('project_id', 'current_status');
+        $wrapper_data = compact('project_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Project Overview - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Status: '$current_status'");
+        error_log("ARSOL DEBUG: Project Overview - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Stage: '$current_stage'");
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
     }
@@ -239,15 +242,18 @@ class Frontend_Endpoints {
         $project = get_post($project_id);
         $current_tab = 'orders';
         
-        // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
-        $current_status = !empty($statuses) ? $statuses[0] : '';
+        // Stage handling with proper error checking
+        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+        $current_stage = '';
+        if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+            $current_stage = $stage_terms[0];
+        }
         
         // Prepare comprehensive data for efficient hook usage
-        $wrapper_data = compact('project_id', 'current_status');
+        $wrapper_data = compact('project_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Project Orders - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Status: '$current_status'");
+        error_log("ARSOL DEBUG: Project Orders - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Stage: '$current_stage'");
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-orders.php';
     }
@@ -275,15 +281,18 @@ class Frontend_Endpoints {
         $project = get_post($project_id);
         $current_tab = 'subscriptions';
         
-        // Status handling with contextual naming
-        $statuses = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
-        $current_status = !empty($statuses) ? $statuses[0] : '';
+        // Stage handling with proper error checking
+        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+        $current_stage = '';
+        if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+            $current_stage = $stage_terms[0];
+        }
         
         // Prepare comprehensive data for efficient hook usage
-        $wrapper_data = compact('project_id', 'current_status');
+        $wrapper_data = compact('project_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Project Subscriptions - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Status: '$current_status'");
+        error_log("ARSOL DEBUG: Project Subscriptions - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Stage: '$current_stage'");
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-subscriptions.php';
     }
