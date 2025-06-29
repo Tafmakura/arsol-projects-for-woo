@@ -793,7 +793,7 @@ class Workflow_Handler {
          */
         do_action('arsol_before_request_creation_status_assignment', $post_id, 'pending-review', $creation_data);
 
-        wp_set_object_terms($post_id, 'pending-review', 'arsol-pfw-request-status');
+        wp_set_object_terms($post_id, 'pending-review', 'arsol-pfw-request-stage');
 
         /**
          * Hook: arsol_after_request_creation_status_assigned

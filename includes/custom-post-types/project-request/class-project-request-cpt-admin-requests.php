@@ -30,7 +30,7 @@ class Requests {
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
         $new_columns['customer'] = __('Customer', 'arsol-pfw');
-        $new_columns['request_status'] = __('Status', 'arsol-pfw');
+        $new_columns['request_stage'] = __('Status', 'arsol-pfw');
         $new_columns['request_budget'] = __('Budget', 'arsol-pfw');
         $new_columns['request_stage'] = __('Stage', 'arsol-pfw');
         $new_columns['date'] = $columns['date'];
@@ -43,7 +43,7 @@ class Requests {
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
-            case 'request_status':
+            case 'request_stage':
                 $status = wp_get_object_terms($post_id, 'arsol-pfw-request-status', array('fields' => 'names'));
                 if (!empty($status) && !is_wp_error($status)) {
                     echo esc_html($status[0]);
@@ -88,10 +88,10 @@ class Requests {
         global $typenow;
         if ($typenow === 'arsol-pfw-request') {
             // Status filter
-            $current_status = isset($_GET['request_status']) ? $_GET['request_status'] : '';
+            $current_status = isset($_GET['request_stage']) ? $_GET['request_stage'] : '';
             $statuses = get_terms('arsol-pfw-request-status', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
-                echo '<select name="request_status" id="filter-by-request-status" class="postform stage-filter-dropdown">';
+                echo '<select name="request_stage" id="filter-by-request-status" class="postform stage-filter-dropdown">';
                 echo '<option value="">' . __('All Statuses', 'arsol-pfw') . '</option>';
                 foreach ($statuses as $status) {
                     printf(
@@ -155,12 +155,12 @@ class Requests {
             }
 
             // Filter by request status (taxonomy)
-            if (!empty($_GET['request_status'])) {
+            if (!empty($_GET['request_stage'])) {
                 $tax_query = $query->get('tax_query') ?: [];
                 $tax_query[] = [
                     'taxonomy' => 'arsol-pfw-request-status',
                     'field'    => 'slug',
-                    'terms'    => sanitize_text_field($_GET['request_status']),
+                    'terms'    => sanitize_text_field($_GET['request_stage']),
                 ];
                 $query->set('tax_query', $tax_query);
             }

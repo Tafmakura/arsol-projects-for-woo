@@ -320,7 +320,7 @@ class Frontend_Template_Sidebar_Meta {
             );
             
             // Add status-specific descriptions
-            $status_description = $this->get_request_status_description($actual_status);
+            $status_description = $this->get_request_stage_description($actual_status);
             if (!empty($status_description)) {
                 $metadata['status_description'] = array(
                     'label' => '',
@@ -532,7 +532,7 @@ class Frontend_Template_Sidebar_Meta {
      * @param string $status The status slug
      * @return string Status description
      */
-    private function get_request_status_description($status) {
+    private function get_request_stage_description($status) {
         $descriptions = array(
             'pending-review' => __('Your request is being reviewed by our team', 'arsol-pfw'),
             'under-review' => __('Being evaluated by our team', 'arsol-pfw'),

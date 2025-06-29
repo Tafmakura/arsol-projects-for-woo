@@ -338,7 +338,7 @@ class Frontend_Template_Sidebar_Buttons {
     }
 
     /**
-     * Add buttons for approved status
+     * Add buttons for approved stage
      *
      * @param int $post_id The post ID
      */

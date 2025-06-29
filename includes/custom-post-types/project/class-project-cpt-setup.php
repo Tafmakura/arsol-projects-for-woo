@@ -139,15 +139,15 @@ class Setup {
      */
     public function register_project_status_taxonomy() {
         $labels = array(
-            'name'              => __('Project Statuses', 'arsol-pfw'),
-            'singular_name'     => __('Project Status', 'arsol-pfw'),
-            'search_items'      => __('Search Project Statuses', 'arsol-pfw'),
-            'all_items'         => __('All Project Statuses', 'arsol-pfw'),
-            'edit_item'         => __('Edit Project Status', 'arsol-pfw'),
-            'update_item'       => __('Update Project Status', 'arsol-pfw'),
-            'add_new_item'      => __('Add New Project Status', 'arsol-pfw'),
-            'new_item_name'     => __('New Project Status Name', 'arsol-pfw'),
-            'menu_name'         => __('Project Statuses', 'arsol-pfw'),
+            'name'              => __('Project Stages', 'arsol-pfw'),
+            'singular_name'     => __('Project Stage', 'arsol-pfw'),
+            'search_items'      => __('Search Project Stages', 'arsol-pfw'),
+            'all_items'         => __('All Project Stages', 'arsol-pfw'),
+            'edit_item'         => __('Edit Project Stage', 'arsol-pfw'),
+            'update_item'       => __('Update Project Stage', 'arsol-pfw'),
+            'add_new_item'      => __('Add New Project Stage', 'arsol-pfw'),
+            'new_item_name'     => __('New Project Stage Name', 'arsol-pfw'),
+            'menu_name'         => __('Project Stages', 'arsol-pfw'),
         );
 
         $args = array(
@@ -161,7 +161,7 @@ class Setup {
             'meta_box_cb'       => false,
         );
 
-        register_taxonomy('arsol-pfw-project-status', 'arsol-pfw-project', $args);
+        register_taxonomy('arsol-pfw-project-stage', 'arsol-pfw-project', $args);
     }
 
     /**
@@ -177,8 +177,8 @@ class Setup {
         );
 
         foreach ($default_statuses as $slug => $name) {
-            if (!term_exists($slug, 'arsol-pfw-project-status')) {
-                wp_insert_term($name, 'arsol-pfw-project-status', array('slug' => $slug));
+            if (!term_exists($slug, 'arsol-pfw-project-stage')) {
+                wp_insert_term($name, 'arsol-pfw-project-stage', array('slug' => $slug));
             }
         }
     }

@@ -244,7 +244,7 @@ class Proposal {
             <?php if ($is_project_tied): ?>
                 <?php _e('This proposal is tied to a parent project. The Customer, Project Lead, and Cost Proposal Type fields are automatically set from the parent project and cannot be modified. Changes to these values must be made in the parent project.', 'arsol-pfw'); ?>
             <?php else: ?>
-                <?php _e('This action will create a new project based on this proposal and permanently delete the original proposal. The proposal status must be set to "Approved" before conversion. Orders and invoices will be created for quotation proposals. This action cannot be undone.', 'arsol-pfw'); ?>
+                <?php _e('This action will create a new project based on this proposal and permanently delete the original proposal. The proposal stage must be set to "Approved" before conversion. Orders and invoices will be created for quotation proposals. This action cannot be undone.', 'arsol-pfw'); ?>
             <?php endif; ?>
         </p>
         
@@ -288,7 +288,7 @@ class Proposal {
             if ($is_not_published) {
                 $tooltip_text = __('The proposal must be published before it can be converted.', 'arsol-pfw');
             } elseif ($is_not_approved) {
-                $tooltip_text = sprintf(__('The proposal status must be "Approved" before it can be converted. Current status: "%s".', 'arsol-pfw'), $current_proposal_stage);
+                $tooltip_text = sprintf(__('The proposal stage must be "Approved" before it can be converted. Current status: "%s".', 'arsol-pfw'), $current_proposal_stage);
             } else {
                 $tooltip_text = __('Converts this proposal into a new project.', 'arsol-pfw');
             }
@@ -604,7 +604,7 @@ class Proposal {
                 add_action('admin_notices', function() use ($current_status) {
                     $status_display = $current_status ?: 'none';
                     echo '<div class="notice notice-error is-dismissible">
-                        <p>' . sprintf(__('Cannot convert proposal. Status is "%s", must be "approved".', 'arsol-pfw'), $status_display) . '</p>
+                        <p>' . sprintf(__('Cannot convert proposal. Stage is "%s", must be "approved".', 'arsol-pfw'), $status_display) . '</p>
                     </div>';
                 });
             }

@@ -7,7 +7,7 @@
         init: function() {
             this.bindEvents();
             this.updateRequiredFields();
-            this.updateProposalStatusVisibility();
+            this.updateProposalStageVisibility();
         },
 
         // Shared price formatting utility to eliminate redundancy
@@ -44,7 +44,7 @@
 
             // Handle proposal stage changes for feedback metabox visibility
             $(document).on('change', '#proposal_stage', function() {
-                ArsolProposal.updateProposalStatusVisibility();
+                ArsolProposal.updateProposalStageVisibility();
             });
 
             // For project-tied proposals with disabled selects, trigger change event manually
@@ -282,7 +282,7 @@
             }
         },
 
-        updateProposalStatusVisibility: function() {
+        updateProposalStageVisibility: function() {
             var selectedStatus = $('#proposal_stage').val() || '';
             
             // Hide all feedback sections first

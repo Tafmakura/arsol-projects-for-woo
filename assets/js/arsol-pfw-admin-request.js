@@ -18,7 +18,7 @@
         initializeComponents: function() {
             // Initialize any components specific to requests
             this.updateConversionButtonState();
-            this.updateRequestStatusVisibility();
+            this.updateRequestStageVisibility();
         },
 
         handleConversionConfirmation: function() {
@@ -117,7 +117,7 @@
             }
         },
 
-        updateRequestStatusVisibility: function() {
+        updateRequestStageVisibility: function() {
             var selectedStage = $('#request_stage').val() || '';
             
             // Hide all feedback sections first
@@ -235,7 +235,7 @@
         // Update button state on page load for request pages
         if ($('#request_stage').length) {
             ArsolRequest.updateConversionButtonState();
-            ArsolRequest.updateRequestStatusVisibility();
+            ArsolRequest.updateRequestStageVisibility();
             ArsolRequest.updateFeedbackValidation();
         }
     });

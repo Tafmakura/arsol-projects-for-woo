@@ -271,7 +271,7 @@ class Setup_Defaults {
      * Initialize default project statuses
      */
     private function initialize_project_statuses() {
-        $taxonomy = 'arsol-pfw-project-status';
+        $taxonomy = 'arsol-pfw-project-stage';
         
         $default_statuses = array(
             'active' => array(

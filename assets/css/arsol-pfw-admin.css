@@ -1265,14 +1265,14 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
 }
 
 /* Proposal Status Conditional Visibility */
-.arsol-pfw-show-if-proposal-status-is-processing,
-.arsol-pfw-show-if-proposal-status-is-pending-approval {
+.arsol-pfw-show-if-proposal-stage-is-processing,
+.arsol-pfw-show-if-proposal-stage-is-pending-approval {
     display: block !important;
 }
 
-.arsol-pfw-hide-if-proposal-status-is-not-processing,
-.arsol-pfw-hide-if-proposal-status-is-processing,
-.arsol-pfw-hide-if-proposal-status-is-pending-approval {
+.arsol-pfw-hide-if-proposal-stage-is-not-processing,
+.arsol-pfw-hide-if-proposal-stage-is-processing,
+.arsol-pfw-hide-if-proposal-stage-is-pending-approval {
     display: none !important;
 }
 
