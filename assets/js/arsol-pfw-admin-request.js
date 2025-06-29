@@ -102,7 +102,7 @@
                 selectedStage = $('#request_stage').val();
             }
 
-            var convertButton = $('.arsol-convert-button');
+            var convertButton = $('.arsol-confirm-conversion');
             if (convertButton.length) {
                 if (selectedStage === 'approved') {
                     convertButton.prop('disabled', false).removeClass('disabled')
