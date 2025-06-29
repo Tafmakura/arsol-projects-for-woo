@@ -502,47 +502,4 @@ class Setup_Defaults {
             update_option('arsol_projects_templates_settings', $current_settings);
         }
     }
-
-    /**
-     * Initialize default proposal stages
-     */
-    private function initialize_proposal_stages() {
-        $taxonomy = 'arsol-pfw-proposal-stage';
-        
-        $default_statuses = array(
-            'processing' => array(
-                'name' => __('Processing', 'arsol-pfw'),
-                'slug' => 'processing',
-                'description' => __('Proposal is being processed', 'arsol-pfw')
-            ),
-            'pending-approval' => array(
-                'name' => __('Pending Approval', 'arsol-pfw'),
-                'slug' => 'pending-approval',
-                'description' => __('Proposal is pending customer approval', 'arsol-pfw')
-            ),
-            'approved' => array(
-                'name' => __('Approved', 'arsol-pfw'),
-                'slug' => 'approved',
-                'description' => __('Proposal has been approved', 'arsol-pfw')
-            ),
-            'rejected' => array(
-                'name' => __('Rejected', 'arsol-pfw'),
-                'slug' => 'rejected',
-                'description' => __('Proposal has been rejected', 'arsol-pfw')
-            )
-        );
-
-        foreach ($default_statuses as $status_data) {
-            if (!term_exists($status_data['slug'], $taxonomy)) {
-                wp_insert_term(
-                    $status_data['name'],
-                    $taxonomy,
-                    array(
-                        'slug' => $status_data['slug'],
-                        'description' => $status_data['description']
-                    )
-                );
-            }
-        }
-    }
 } 
