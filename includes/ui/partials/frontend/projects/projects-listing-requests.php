@@ -29,9 +29,14 @@ do_action('arsol_projects_before_user_requests', $has_items);
         <tbody>
             <?php while ($query->have_posts()) : $query->the_post(); 
                 $request_id = get_the_ID();
-                $status_terms = wp_get_post_terms($request_id, 'arsol-pfw-request-status', array('fields' => 'names'));
-                $status = !empty($status_terms) ? $status_terms[0] : '';
+                
+                // Get request stage (with proper error handling)
                 $stage_terms = wp_get_post_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
+                $stage = '';
+                if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+                    $stage = $stage_terms[0];
+                }
+                
                 $view_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
                 $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
                 ?>
@@ -41,7 +46,9 @@ do_action('arsol_projects_before_user_requests', $has_items);
                                 <a href="<?php echo esc_url($view_url); ?>" class="project-title-link">
                                     <?php the_title(); ?>
                                 </a>
-                                <span class="project-stage stage-<?php echo esc_attr(strtolower(str_replace(' ', '-', $status))); ?>"><?php echo esc_html($status); ?></span>
+                                <?php if ($stage): ?>
+                                    <span class="project-stage stage-<?php echo esc_attr(strtolower(str_replace(' ', '-', $stage))); ?>"><?php echo esc_html($stage); ?></span>
+                                <?php endif; ?>
                             </div>
                             <div class="project-excerpt">
                                 <?php echo esc_html($excerpt); ?>

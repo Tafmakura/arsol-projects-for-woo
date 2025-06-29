@@ -8,24 +8,25 @@ $request_budget = get_post_meta($post->ID, '_arsol_pfw_request_budget', true);
 $request_timeline = get_post_meta($post->ID, '_arsol_pfw_request_timeline', true);
 $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
-$status_terms = wp_get_post_terms($post->ID, 'arsol-pfw-request-status', ['fields' => 'slugs']);
-$current_status = !empty($status_terms) ? $status_terms[0] : '';
-
+// Get request stage (with proper error handling)
 $stage_terms = wp_get_post_terms($post->ID, 'arsol-pfw-request-stage', ['fields' => 'slugs']);
-$current_stage = !empty($stage_terms) ? $stage_terms[0] : '';
+$current_stage = '';
+if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+    $current_stage = $stage_terms[0];
+}
 
 do_action('arsol_projects_before_request_state', $post->ID);
 ?>
 
 <div class="project-content-wrapper">
     <div class="project-content">
-        <?php if ($current_status === 'pending-review') : ?>
+        <?php if ($current_stage === 'pending-review') : ?>
             <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request-pending-review.php'; ?>
-        <?php elseif ($current_status === 'on-hold') : ?>
+        <?php elseif ($current_stage === 'on-hold') : ?>
             <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request-on-hold.php'; ?>
-        <?php elseif ($current_status === 'under-review') : ?>
+        <?php elseif ($current_stage === 'under-review') : ?>
             <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request-under-review.php'; ?>
-        <?php elseif ($current_status === 'approved') : ?>
+        <?php elseif ($current_stage === 'approved') : ?>
             <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request-approved.php'; ?>
         <?php else : ?>
             <div class="arsol-pfw-project-overview-empty">

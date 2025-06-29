@@ -26,7 +26,7 @@ if ($post_type === 'arsol_proposal') {
 
 // Get status terms based on post type
 $status_terms = wp_get_post_terms($post_id, $internal_post_type === 'project' ? 'arsol-pfw-project-stage' :
-    ($internal_post_type === 'proposal' ? 'arsol-pfw-proposal-status' : 'arsol-pfw-request-status'), 
+    ($internal_post_type === 'proposal' ? 'arsol-pfw-proposal-status' : 'arsol-pfw-request-stage'), 
     array('fields' => 'names')
 );
 $current_status = !empty($status_terms) && !is_wp_error($status_terms) ? $status_terms[0] : '';
