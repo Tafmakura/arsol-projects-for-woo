@@ -71,8 +71,12 @@ class WC_Email_Proposal_Decision extends WC_Email {
         if ( $proposal_id ) {
             $this->object = get_post( $proposal_id );
             $this->placeholders['{proposal_id}'] = $proposal_id;
-            $this->placeholders['{old_status}'] = ucfirst( str_replace( '-', ' ', $old_status ) );
-            $this->placeholders['{new_status}'] = ucfirst( str_replace( '-', ' ', $new_status ) );
+            // Get taxonomy term names instead of formatting slugs
+            $old_status_term = get_term_by('slug', $old_status, 'arsol-pfw-proposal-status');
+            $new_status_term = get_term_by('slug', $new_status, 'arsol-pfw-proposal-status');
+            
+            $this->placeholders['{old_status}'] = ($old_status_term && !is_wp_error($old_status_term)) ? $old_status_term->name : ucfirst( str_replace( '-', ' ', $old_status ) );
+            $this->placeholders['{new_status}'] = ($new_status_term && !is_wp_error($new_status_term)) ? $new_status_term->name : ucfirst( str_replace( '-', ' ', $new_status ) );
             
             // Get project lead from proposal meta
             $project_lead_id = get_post_meta( $proposal_id, 'project_lead_id', true );

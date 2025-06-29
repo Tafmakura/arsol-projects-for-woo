@@ -67,7 +67,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
         <?php endif; ?>
         <tr>
             <th class="td" scope="row" style="text-align:left;"><?php _e('Previous Status:', 'arsol-pfw'); ?></th>
-            <td class="td" style="text-align:left;"><?php echo esc_html($old_status ? ucfirst(str_replace('-', ' ', $old_status)) : 'N/A'); ?></td>
+            <td class="td" style="text-align:left;"><?php echo esc_html($old_status ? $old_status : 'N/A'); ?></td>
         </tr>
         <tr>
             <th class="td" scope="row" style="text-align:left;"><?php _e('Current Status:', 'arsol-pfw'); ?></th>
