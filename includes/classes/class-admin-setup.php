@@ -82,16 +82,7 @@ class Setup {
             4
         );
         
-        // 5. Project Statuses (kept for legacy/reference)
-        add_submenu_page(
-            $parent_slug,
-            __('Project Statuses', 'arsol-pfw'),
-            __('Project Statuses', 'arsol-pfw'),
-            'manage_categories',
-            'edit-tags.php?taxonomy=arsol-pfw-project-status&post_type=arsol-pfw-project',
-            '',
-            5
-        );
+
         
         // 6. Settings (last)
         $settings_result = add_submenu_page(
@@ -124,8 +115,8 @@ class Setup {
             
             // Remove all default WordPress submenus
             foreach ($submenu[$parent_slug] as $key => $menu_item) {
-                // Keep only our custom menus (positions 1,2,3,4,5,99)
-                if (!in_array($key, [1, 2, 3, 4, 5, 99])) {
+                // Keep only our custom menus (positions 1,2,3,4,99)
+                if (!in_array($key, [1, 2, 3, 4, 99])) {
                     unset($submenu[$parent_slug][$key]);
                 }
             }
@@ -139,11 +130,9 @@ class Setup {
             ksort($submenu[$parent_slug]);
         }
         
-        // Remove taxonomy management pages for protected statuses
+        // Remove taxonomy management pages for stage taxonomies from appearing outside project menu
         remove_submenu_page('edit.php?post_type=arsol-pfw-request', 'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request');
         remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-request-stage');
-        
-        // Also remove from main project menu if they appear there
         remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-proposal-stage');
     }
     

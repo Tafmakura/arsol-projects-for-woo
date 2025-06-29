@@ -9,8 +9,6 @@ if (!defined('ABSPATH')) {
 class Setup {
     public function __construct() {
         add_action('init', array($this, 'register_post_type'), 15);
-        add_action('init', array($this, 'register_project_status_taxonomy'));
-        add_action('init', array($this, 'add_default_project_statuses'));
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_projects'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
         add_action('template_redirect', array($this, 'handle_project_template_redirect'));
@@ -25,6 +23,9 @@ class Setup {
         add_action('arsol_project_proposal_content', array($this, 'render_project_proposal_content'));
     }
 
+    /**
+     * Register the Projects post type
+     */
     public function register_post_type() {
         // Debug logging
         if (function_exists('error_log')) {
@@ -131,55 +132,6 @@ class Setup {
             // Redirect to the project overview page in the account area
             wp_redirect(wc_get_account_endpoint_url('project-overview/' . $project_id));
             exit;
-        }
-    }
-
-    /**
-     * Register project status taxonomy
-     */
-    public function register_project_status_taxonomy() {
-        $labels = array(
-            'name'              => __('Project Stages', 'arsol-pfw'),
-            'singular_name'     => __('Project Stage', 'arsol-pfw'),
-            'search_items'      => __('Search Project Stages', 'arsol-pfw'),
-            'all_items'         => __('All Project Stages', 'arsol-pfw'),
-            'edit_item'         => __('Edit Project Stage', 'arsol-pfw'),
-            'update_item'       => __('Update Project Stage', 'arsol-pfw'),
-            'add_new_item'      => __('Add New Project Stage', 'arsol-pfw'),
-            'new_item_name'     => __('New Project Stage Name', 'arsol-pfw'),
-            'menu_name'         => __('Project Stages', 'arsol-pfw'),
-        );
-
-        $args = array(
-            'hierarchical'      => false,
-            'labels'            => $labels,
-            'show_ui'           => true,
-            'show_admin_column' => true,
-            'query_var'         => true,
-            'rewrite'           => array('slug' => 'project-status'),
-            'show_in_rest'      => true,
-            'meta_box_cb'       => false,
-        );
-
-        register_taxonomy('arsol-pfw-project-stage', 'arsol-pfw-project', $args);
-    }
-
-    /**
-     * Add default project statuses
-     */
-    public function add_default_project_statuses() {
-        $default_statuses = array(
-            'not-started' => 'Not Started',
-            'in-progress' => 'In Progress',
-            'on-hold'     => 'On Hold',
-            'completed'   => 'Completed',
-            'cancelled'   => 'Cancelled'
-        );
-
-        foreach ($default_statuses as $slug => $name) {
-            if (!term_exists($slug, 'arsol-pfw-project-stage')) {
-                wp_insert_term($name, 'arsol-pfw-project-stage', array('slug' => $slug));
-            }
         }
     }
 

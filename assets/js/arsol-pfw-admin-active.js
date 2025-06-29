@@ -10,7 +10,7 @@
 
         bindEvents: function() {
             // Add any project-specific event handlers here
-            // For example, status changes, date updates, etc.
+            // For example, stage changes, date updates, etc.
             this.handleStatusChanges();
             this.handleDateValidation();
         },
