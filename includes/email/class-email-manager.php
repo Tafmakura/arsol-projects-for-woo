@@ -35,16 +35,20 @@ class Arsol_Email_Manager {
      * @return array Modified email classes.
      */
     public static function add_emails( $email_classes ) {
+        // Only proceed if WooCommerce is fully loaded
+        if ( ! class_exists( 'WC_Email' ) ) {
+            return $email_classes;
+        }
+        
         // Include role-based email classes (10 total)
         
         // Customer emails (6)
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-new-request.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-request-status.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-request-stage.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-ready.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-creation.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-stage.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-completion.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-request-stage.php';
         
         // Shop Manager emails (2)
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-request.php';
@@ -54,24 +58,43 @@ class Arsol_Email_Manager {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-processing.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-decision.php';
 
-        // Register email classes by role
+        // Register email classes by role (only if classes are available)
         
         // Customer emails
-        $email_classes['WC_Email_New_Request'] = new WC_Email_New_Request();
-        $email_classes['WC_Email_Request_Status'] = new WC_Email_Request_Status();
-        $email_classes['WC_Email_Proposal_Ready'] = new WC_Email_Proposal_Ready();
-        $email_classes['WC_Email_Project_Creation'] = new WC_Email_Project_Creation();
-        $email_classes['WC_Email_Project_Stage'] = new WC_Email_Project_Stage();
-        $email_classes['WC_Email_Project_Completion'] = new WC_Email_Project_Completion();
-        $email_classes['WC_Email_Request_Stage'] = new WC_Email_Request_Stage();
+        if ( class_exists( 'WC_Email_New_Request' ) ) {
+            $email_classes['WC_Email_New_Request'] = new WC_Email_New_Request();
+        }
+        if ( class_exists( 'WC_Email_Request_Stage' ) ) {
+            $email_classes['WC_Email_Request_Stage'] = new WC_Email_Request_Stage();
+        }
+        if ( class_exists( 'WC_Email_Proposal_Ready' ) ) {
+            $email_classes['WC_Email_Proposal_Ready'] = new WC_Email_Proposal_Ready();
+        }
+        if ( class_exists( 'WC_Email_Project_Creation' ) ) {
+            $email_classes['WC_Email_Project_Creation'] = new WC_Email_Project_Creation();
+        }
+        if ( class_exists( 'WC_Email_Project_Stage' ) ) {
+            $email_classes['WC_Email_Project_Stage'] = new WC_Email_Project_Stage();
+        }
+        if ( class_exists( 'WC_Email_Project_Completion' ) ) {
+            $email_classes['WC_Email_Project_Completion'] = new WC_Email_Project_Completion();
+        }
         
         // Shop Manager emails
-        $email_classes['WC_Email_Admin_New_Request'] = new WC_Email_Admin_New_Request();
-        $email_classes['WC_Email_Admin_New_Project'] = new WC_Email_Admin_New_Project();
+        if ( class_exists( 'WC_Email_Admin_New_Request' ) ) {
+            $email_classes['WC_Email_Admin_New_Request'] = new WC_Email_Admin_New_Request();
+        }
+        if ( class_exists( 'WC_Email_Admin_New_Project' ) ) {
+            $email_classes['WC_Email_Admin_New_Project'] = new WC_Email_Admin_New_Project();
+        }
         
         // Project Lead emails
-        $email_classes['WC_Email_Proposal_Processing'] = new WC_Email_Proposal_Processing();
-        $email_classes['WC_Email_Proposal_Decision'] = new WC_Email_Proposal_Decision();
+        if ( class_exists( 'WC_Email_Proposal_Processing' ) ) {
+            $email_classes['WC_Email_Proposal_Processing'] = new WC_Email_Proposal_Processing();
+        }
+        if ( class_exists( 'WC_Email_Proposal_Decision' ) ) {
+            $email_classes['WC_Email_Proposal_Decision'] = new WC_Email_Proposal_Decision();
+        }
 
         return $email_classes;
     }

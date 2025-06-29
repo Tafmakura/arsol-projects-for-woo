@@ -1,6 +1,6 @@
 <?php
 /**
- * Request Status Email
+ * Request Stage Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -14,22 +14,22 @@ if ( ! class_exists( 'WC_Email' ) ) {
 }
 
 /**
- * Request Status Email Class
+ * Request Stage Email Class
  */
-class WC_Email_Request_Status extends WC_Email {
+class WC_Email_Request_Stage extends WC_Email {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->id             = 'request_status';
-        $this->title          = __( 'Project Customer: Request Status Update', 'arsol-pfw' );
-        $this->description    = __( 'Customer notification when their request status changes.', 'arsol-pfw' );
-        $this->template_html  = 'email-request-status.php';
+        $this->id             = 'request_stage';
+        $this->title          = __( 'Project Customer: Request Stage Update', 'arsol-pfw' );
+        $this->description    = __( 'Customer notification when their request stage changes.', 'arsol-pfw' );
+        $this->template_html  = 'email-request-stage.php';
         $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
 
         // Triggers for this email
-        add_action( 'arsol_request_status_changed', array( $this, 'trigger' ), 10, 4 );
+        add_action( 'arsol_request_stage_changed', array( $this, 'trigger' ), 10, 4 );
 
         // Call parent constructor
         parent::__construct();
@@ -47,7 +47,7 @@ class WC_Email_Request_Status extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( '[{site_title}] Request Status Update - #{request_id}', 'arsol-pfw' );
+        return __( '[{site_title}] Request Stage Update - #{request_id}', 'arsol-pfw' );
     }
 
     /**
@@ -56,18 +56,18 @@ class WC_Email_Request_Status extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Request Status Update', 'arsol-pfw' );
+        return __( 'Request Stage Update', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
      * @param int    $request_id Request ID.
-     * @param string $old_status Old status.
-     * @param string $new_status New status.
+     * @param string $old_stage Old stage.
+     * @param string $new_stage New stage.
      * @param int    $customer_id Customer ID.
      */
-    public function trigger( $request_id, $old_status, $new_status, $customer_id ) {
+    public function trigger( $request_id, $old_stage, $new_stage, $customer_id ) {
         $this->setup_locale();
 
         if ( $request_id && $customer_id ) {
@@ -75,8 +75,8 @@ class WC_Email_Request_Status extends WC_Email {
             
             if ( $this->object ) {
                 $this->placeholders['{request_id}'] = $request_id;
-                $this->placeholders['{old_status}'] = $old_status;
-                $this->placeholders['{new_status}'] = $new_status;
+                $this->placeholders['{old_stage}'] = $old_stage;
+                $this->placeholders['{new_stage}'] = $new_stage;
                 $this->placeholders['{site_title}'] = $this->get_blogname();
                 
                 // Get customer email
@@ -104,8 +104,8 @@ class WC_Email_Request_Status extends WC_Email {
             $this->template_html,
             array(
                 'request'       => $this->object,
-                'old_status'    => $this->placeholders['{old_status}'] ?? '',
-                'new_status'    => $this->placeholders['{new_status}'] ?? '',
+                'old_stage'     => $this->placeholders['{old_stage}'] ?? '',
+                'new_stage'     => $this->placeholders['{new_stage}'] ?? '',
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => false,
@@ -131,7 +131,7 @@ class WC_Email_Request_Status extends WC_Email {
                 'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {request_id}, {old_status}, {new_status}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {request_id}, {old_stage}, {new_stage}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
@@ -139,7 +139,7 @@ class WC_Email_Request_Status extends WC_Email {
                 'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {request_id}, {old_status}, {new_status}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {request_id}, {old_stage}, {new_stage}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),
