@@ -70,6 +70,9 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-endpoints.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-checkout.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-stages-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-project-phases.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/class-taxonomies-setup.php';
         // Admin Settings Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-advanced.php';
@@ -104,6 +107,9 @@ class Setup {
         new Assets();
         new Woocommerce\Frontend_Endpoints();
         new Frontend_Woocommerce_Checkout();
+        new Stages_Handler();
+        new Project_Phases();
+        new Taxonomies\Taxonomies_Setup();
 
         // Initialize admin classes
         if (is_admin()) {
