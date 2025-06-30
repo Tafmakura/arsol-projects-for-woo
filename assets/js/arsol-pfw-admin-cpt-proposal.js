@@ -1046,6 +1046,13 @@
             }
 
             // Update main totals
+            console.log('ARSOL DEBUG - Final totals calculation:', {
+                oneTimeTotal: oneTimeTotal,
+                productSubtotal: productSubtotal,
+                onetimeFeeSubtotal: onetimeFeeSubtotal,
+                shippingSubtotal: shippingSubtotal,
+                averageYearlyTotal: averageYearlyTotal
+            });
             $('#one-time-total-display').html(ArsolProposal.formatPrice(oneTimeTotal));
             $('#average-monthly-total-display').html(ArsolProposal.formatPrice(averageYearlyTotal) + (hasRecurring ? ' /yr' : ''));
 
@@ -1077,7 +1084,11 @@
             $('#summary-shipping-display').html($('#shipping-subtotal-display').html());
             
             // Copy main totals
-            $('#summary-one-time-total-display').html($('#one-time-total-display').html());
+            console.log('ARSOL DEBUG - Copying main totals:', {
+                'one-time-total-display': $('#one-time-total-display').html(),
+                'average-monthly-total-display': $('#average-monthly-total-display').html()
+            });
+            $('#summary-onetime-total-display').html($('#one-time-total-display').html());
             $('#summary-avg-yearly-total-display').html($('#average-monthly-total-display').html());
             
             // Show/hide rows based on whether the original displays have meaningful values
