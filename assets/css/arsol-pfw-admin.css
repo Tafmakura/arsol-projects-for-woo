@@ -1190,15 +1190,14 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
 /* === END ADMIN FILTER STYLING === */
 
 /* === SMART CONDITIONAL VISIBILITY SYSTEM === */
-/* Universal rules for all arsol-pfw conditional classes */
-/* JavaScript controls visibility - these are just initial states */
+/* Prevent FOUC - hide show-if elements initially, jQuery handles the rest */
 
-/* Default: Hide all show-if elements initially (JavaScript will show them when conditions match) */
+/* Default: Hide all show-if elements initially to prevent flash */
 [class*="arsol-pfw-show-if-"] {
     display: none;
 }
 
-/* Note: hide-if elements have no CSS rule - they're visible by default, JavaScript hides them when needed */
+/* Note: hide-if elements have no CSS rule - they're visible by default, jQuery hides them when needed */
 
 /* === SPECIFIC FEEDBACK SECTIONS === */
 /* These specific sections need !important to override WordPress admin styles */

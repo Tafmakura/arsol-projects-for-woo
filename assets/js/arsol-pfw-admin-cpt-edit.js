@@ -223,13 +223,11 @@
                     shouldShow = (currentValue !== condition.value);
                 }
                 
-                // Apply visibility: toggle display: none on/off (WooCommerce standard approach)
+                // Apply visibility: jQuery show/hide (preserves original display types automatically)
                 if (shouldShow) {
-                    // Remove display: none by setting display to empty string
-                    $elements.css('display', '');
+                    $elements.show();
                 } else {
-                    // Hide by setting display: none
-                    $elements.css('display', 'none');
+                    $elements.hide();
                 }
             });
         },
