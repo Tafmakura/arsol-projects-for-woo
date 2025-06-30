@@ -62,10 +62,6 @@ class Request {
         // Check if request is published for conversion eligibility  
         $is_disabled = $post->post_status !== 'publish';
         ?>
-        <p class="request-conversion-description">
-            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request must be published before conversion. This action cannot be undone.', 'arsol-pfw'); ?>
-        </p>
-        
         <div class="major-actions">
             <?php if ($post->post_status === 'publish'): ?>
                 <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">

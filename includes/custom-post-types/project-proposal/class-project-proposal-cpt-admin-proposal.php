@@ -235,14 +235,6 @@ class Proposal {
         }
         ?>
         
-        <p class="proposal-conversion-description">
-            <?php if ($is_project_tied): ?>
-                <?php _e('This proposal is tied to a parent project. The Customer, Project Lead, and Cost Proposal Type fields are automatically set from the parent project and cannot be modified. Changes to these values must be made in the parent project.', 'arsol-pfw'); ?>
-            <?php else: ?>
-                <?php _e('This action will create a new project based on this proposal and permanently delete the original proposal. The proposal stage must be set to "Approved" before conversion. Orders and invoices will be created for quotation proposals. This action cannot be undone.', 'arsol-pfw'); ?>
-            <?php endif; ?>
-        </p>
-        
         <div class="major-actions">
                 <?php if ($post->post_status === 'publish'): ?>
                     <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">

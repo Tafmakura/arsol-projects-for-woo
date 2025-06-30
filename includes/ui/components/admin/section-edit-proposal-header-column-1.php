@@ -92,11 +92,14 @@ $all_proposal_stages = get_terms(array(
 ?>
 
 <div class="form-field-row">
-    <p class="form-field form-field-half">
+    <p class="form-field form-field-wide">
         <label for="arsol_pfw_proposal_start_date"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="arsol_pfw_proposal_start_date" name="arsol_pfw_proposal_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
     </p>
-    <p class="form-field form-field-half">
+</div>
+
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
         <label for="arsol_pfw_proposal_delivery_date"><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="arsol_pfw_proposal_delivery_date" name="arsol_pfw_proposal_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
     </p>
