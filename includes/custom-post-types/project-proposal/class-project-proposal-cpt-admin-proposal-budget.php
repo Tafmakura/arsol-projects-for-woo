@@ -7,6 +7,9 @@ class Proposal_Budget {
 
     public function __construct() {
         add_action('add_meta_boxes', array($this, 'add_budget_estimates_meta_box'));
+        
+        // Add conditional CSS class to budget metabox
+        add_filter('postbox_classes_arsol-pfw-proposal_arsol_budget_estimates_metabox', array($this, 'add_budget_metabox_classes'));
     }
 
     public function add_budget_estimates_meta_box() {
@@ -169,5 +172,13 @@ class Proposal_Budget {
         </div>
         </div>
         <?php
+    }
+
+    /**
+     * Add conditional CSS class to budget metabox
+     */
+    public function add_budget_metabox_classes($classes) {
+        $classes[] = 'arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-budget';
+        return $classes;
     }
 }
