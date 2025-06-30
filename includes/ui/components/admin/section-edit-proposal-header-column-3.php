@@ -57,12 +57,12 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
         <p><?php _e('No quotation data available', 'arsol-pfw'); ?></p>
     </div>
     
-    <p class="summary-row">
+    <p class="summary-row" id="onetime-total-row">
         <span class="arsol-pfw-meta-label"><?php _e('One-time Total:', 'arsol-pfw'); ?></span>
         <span id="summary-onetime-total-display">$0.00</span>
     </p>
     
-    <p class="summary-row">
+    <p class="summary-row" id="yearly-total-row">
         <span class="arsol-pfw-meta-label"><?php _e('Average Monthly:', 'arsol-pfw'); ?></span>
         <span id="average-monthly-total-display">$0.00</span>
     </p>

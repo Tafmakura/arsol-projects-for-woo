@@ -1126,7 +1126,7 @@
             $('#shipping-row').toggle(shippingText && !shippingText.includes('$0.00'));
             
             // Show/hide totals section rows
-            var oneTimeTotalText = $('#one-time-total-display').text();
+            var oneTimeTotalText = $('#summary-onetime-total-display').text();
             var hasOneTimeTotal = oneTimeTotalText && !oneTimeTotalText.includes('$0.00');
             $('#onetime-total-row').toggle(hasOneTimeTotal);
             
