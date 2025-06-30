@@ -57,51 +57,15 @@ $expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_d
         <p><?php _e('No quotation data available', 'arsol-pfw'); ?></p>
     </div>
     
-    <!-- Products Row -->
-    <div id="products-row" class="summary-breakdown-row">
-        <h5><?php _e('Products & Services', 'arsol-pfw'); ?></h5>
-        <p class="summary-row" id="products-onetime">
-            <span class="arsol-pfw-meta-label"><?php _e('One-time:', 'arsol-pfw'); ?></span>
-            <span id="summary-product-subtotal-display">$0.00</span>
-        </p>
-        <p class="summary-row" id="products-recurring">
-            <span class="arsol-pfw-meta-label"><?php _e('Recurring:', 'arsol-pfw'); ?></span>
-            <span id="summary-product-recurring-display">$0.00</span>
-        </p>
-    </div>
-    
-    <!-- One-time Fees Row -->
-    <p class="summary-row" id="onetime-fees-row">
-        <span class="arsol-pfw-meta-label"><?php _e('One-time Fees:', 'arsol-pfw'); ?></span>
-        <span id="summary-onetime-fee-display">$0.00</span>
+    <p class="summary-row" id="onetime-total-row">
+        <span class="arsol-pfw-meta-label"><?php _e('One-time Total:', 'arsol-pfw'); ?></span>
+        <span id="summary-onetime-total-display">$0.00</span>
     </p>
     
-    <!-- Recurring Fees Row -->
-    <p class="summary-row" id="recurring-fees-row">
-        <span class="arsol-pfw-meta-label"><?php _e('Recurring Fees:', 'arsol-pfw'); ?></span>
-        <span id="summary-recurring-fee-display">$0.00</span>
-        <span id="summary-recurring-start-date"></span>
+    <p class="summary-row" id="yearly-total-row">
+        <span class="arsol-pfw-meta-label"><?php _e('Average Monthly:', 'arsol-pfw'); ?></span>
+        <span id="average-monthly-total-display">$0.00</span>
     </p>
-    
-    <!-- Shipping Row -->
-    <p class="summary-row" id="shipping-row">
-        <span class="arsol-pfw-meta-label"><?php _e('Shipping:', 'arsol-pfw'); ?></span>
-        <span id="summary-shipping-display">$0.00</span>
-    </p>
-    
-    <!-- Totals Section -->
-    <div id="totals-row" class="summary-totals-section">
-        <hr>
-        <p class="summary-row" id="onetime-total-row">
-            <span class="arsol-pfw-meta-label"><strong><?php _e('One-time Total:', 'arsol-pfw'); ?></strong></span>
-            <span id="summary-onetime-total-display">$0.00</span>
-        </p>
-        
-        <p class="summary-row" id="yearly-total-row">
-            <span class="arsol-pfw-meta-label"><strong><?php _e('Average Monthly:', 'arsol-pfw'); ?></strong></span>
-            <span id="summary-avg-yearly-total-display">$0.00</span>
-        </p>
-    </div>
 </div>
 
 <?php /* Expiration Date removed from admin display - still shows on frontend */ ?> 
