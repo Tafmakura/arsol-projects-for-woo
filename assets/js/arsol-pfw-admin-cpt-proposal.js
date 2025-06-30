@@ -1096,13 +1096,9 @@
             var hasProductSubtotal = productSubtotalText && !productSubtotalText.includes('$0.00');
             var hasProductRecurring = productRecurringText && !productRecurringText.includes('$0.00') && productRecurringText.trim() !== '';
             
-            if (hasProductSubtotal || hasProductRecurring) {
-                $('#products-row').show();
-                $('#products-onetime').toggle(hasProductSubtotal);
-                $('#products-recurring').toggle(hasProductRecurring);
-            } else {
-                $('#products-row').hide();
-            }
+            // Show individual product rows (updated template structure)
+            $('#products-onetime-row').toggle(hasProductSubtotal);
+            $('#products-recurring-row').toggle(hasProductRecurring);
             
             // Show/hide other rows based on display content
             var onetimeFeeText = $('#onetime-fee-subtotal-display').text();
