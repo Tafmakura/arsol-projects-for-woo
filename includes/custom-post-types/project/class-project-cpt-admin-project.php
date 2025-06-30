@@ -26,6 +26,16 @@ class Project {
             'side',
             'high'
         );
+
+        // Customer Notice metabox
+        add_meta_box(
+            'arsol-pfw-project-customer-notice-metabox',
+            __('Customer Notice', 'arsol-pfw'),
+            array($this, 'render_customer_notice_metabox'),
+            'arsol-pfw-project',
+            'normal',
+            'high'
+        );
     }
 
     /**
@@ -69,6 +79,52 @@ class Project {
                        data-message="<?php echo $confirm_message; ?>"
                        <?php disabled($is_disabled, true); ?> />
             </span>
+        </div>
+        <?php
+    }
+
+    /**
+     * Render customer notice metabox
+     */
+    public function render_customer_notice_metabox($post) {
+        $this->render_customer_notice_content($post);
+    }
+
+    /**
+     * Render customer notice content
+     */
+    public function render_customer_notice_content($post) {
+        // Add nonce for security
+        wp_nonce_field('project_customer_notice_section', 'project_customer_notice_section_nonce');
+
+        // Get current values
+        $notice = get_post_meta($post->ID, '_arsol_pfw_project_customer_notice', true);
+        ?>
+        <div>
+            <p class="description">
+                <?php _e('Add any important notices or updates that should be communicated to the customer regarding this project.', 'arsol-pfw'); ?>
+            </p>
+            
+            <div class="arsol-request-feedback-editor">
+                <?php
+                $editor_settings = array(
+                    'textarea_name' => 'arsol_pfw_project_customer_notice',
+                    'textarea_rows' => 8,
+                    'media_buttons' => false,
+                    'teeny' => false,
+                    'quicktags' => array(
+                        'buttons' => 'strong,em,ul,ol,li,link,close'
+                    ),
+                    'tinymce' => array(
+                        'toolbar1' => 'bold,italic,bullist,numlist,link,unlink,undo,redo',
+                        'toolbar2' => '',
+                        'toolbar3' => ''
+                    )
+                );
+                
+                wp_editor($notice, 'arsol_pfw_project_customer_notice', $editor_settings);
+                ?>
+            </div>
         </div>
         <?php
     }
@@ -135,6 +191,14 @@ class Project {
             update_post_meta($post_id, '_arsol_pfw_project_due_date', sanitize_text_field($_POST['project_due_date']));
         }
         
+        // Save customer notice
+        if (isset($_POST['project_customer_notice_section_nonce']) && wp_verify_nonce($_POST['project_customer_notice_section_nonce'], 'project_customer_notice_section')) {
+            if (isset($_POST['arsol_pfw_project_customer_notice'])) {
+                $notice = wp_kses_post($_POST['arsol_pfw_project_customer_notice']);
+                update_post_meta($post_id, '_arsol_pfw_project_customer_notice', $notice);
+            }
+        }
+
         // Handle create proposal after save
         if (isset($_POST['arsol_create_after_save']) && !empty($_POST['arsol_create_after_save'])) {
             // Direct PHP redirect to create new proposal
