@@ -1136,24 +1136,15 @@
             var shippingText = $('#shipping-subtotal-display').text();
             $('#shipping-row').toggle(shippingText && !shippingText.includes('$0.00'));
             
-            // Show/hide totals section rows
-            var oneTimeTotalText = $('#summary-one-time-total-display').text();
-            var hasOneTimeTotal = oneTimeTotalText && !oneTimeTotalText.includes('$0.00');
-            $('#onetime-total-row').toggle(hasOneTimeTotal);
-            
-            var yearlyTotalText = $('#summary-avg-yearly-total-display').text();
-            var hasYearlyTotal = yearlyTotalText && !yearlyTotalText.includes('$0.00') && yearlyTotalText.trim() !== '';
-            $('#yearly-total-row').toggle(hasYearlyTotal);
-            
-            // Show/hide the entire totals row only if at least one total is meaningful
-            $('#totals-row').toggle(hasOneTimeTotal || hasYearlyTotal);
+            // Always show totals rows - no more toggling based on $0.00 values
+            $('#onetime-total-row').show();
+            $('#yearly-total-row').show();
             
             // Show empty state if no quotation data is available
             var hasQuotationData = (hasProductSubtotal || hasProductRecurring) || 
                                    (onetimeFeeText && !onetimeFeeText.includes('$0.00')) ||
                                    hasRecurringFees ||
-                                   (shippingText && !shippingText.includes('$0.00')) ||
-                                   hasOneTimeTotal || hasYearlyTotal;
+                                   (shippingText && !shippingText.includes('$0.00'));
             $('#quotation-empty-state').toggle(!hasQuotationData);
         },
 
