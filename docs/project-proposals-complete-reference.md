@@ -387,59 +387,57 @@ Project-tied proposals **cannot** be converted as they're already linked to exis
 
 ## JavaScript Integration
 
-### Conditional Field Display
+### Conditional Logic Implementation
 
-The proposal form uses JavaScript to show/hide sections based on cost proposal type:
+Our proposal system uses a **smart conditional visibility system** based on CSS classes and auto-discovery JavaScript:
 
-```javascript
-// Main conditional function
-function toggleCostProposalSections() {
-    var costType = $('#arsol_pfw_proposal_costing_type').val();
-    
-    // Show/hide meta boxes based on selection
-    if (costType === 'budget') {
-        $('#arsol_proposal_budget_metabox').show();
-        $('#arsol_proposal_quotation_metabox').hide();
-    } else if (costType === 'quotation') {
-        $('#arsol_proposal_budget_metabox').hide();
-        $('#arsol_proposal_quotation_metabox').show();
-    } else {
-        $('#arsol_proposal_budget_metabox').hide();
-        $('#arsol_proposal_quotation_metabox').hide();
-    }
-}
+#### CSS Class Pattern
+```css
+/* Pattern: arsol-pfw-{action}-if-{field-name}-is-{value} */
+.arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-budget { /* Budget metabox */ }
+.arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-quotation { /* Quotation metabox */ }
 ```
 
-### Project-Tied Compatibility
+#### Implementation
+The system automatically:
+1. **Scans for CSS classes** matching the pattern `arsol-pfw-{action}-if-{field-name}-is-{value}`
+2. **Auto-discovers field mappings** without hardcoded JavaScript
+3. **Binds to field changes** and updates visibility in real-time
+4. **Works with any field ID and value** - completely dynamic
 
-Project-tied proposals maintain JavaScript compatibility by:
+#### Benefits
+- ✅ **Zero configuration** - just add CSS classes
+- ✅ **Auto-discovery** of field relationships
+- ✅ **Dynamic** - works with any field/value combination
+- ✅ **Performance** - minimal JavaScript overhead
+- ✅ **Maintainable** - no hardcoded mappings to update
 
-1. **Same Element ID**: `#arsol_pfw_proposal_costing_type`
-2. **Readable Value**: `$('#arsol_pfw_proposal_costing_type').val()` returns "quotation"
-3. **No Select2**: Disabled fields don't use `wc-enhanced-select` class
+#### Example Usage
+```html
+<!-- Metabox will automatically show/hide based on proposal costing type -->
+<div class="postbox arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-budget">
+    <h2>Budget Estimation</h2>
+    <!-- Budget content -->
+</div>
 
-### URL Parameter Preservation
+<div class="postbox arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-quotation">
+    <h2>Quotation Builder</h2>
+    <!-- Quotation content -->
+</div>
+```
 
-```javascript
-// Preserve parent_project parameter during form submission
-jQuery(document).ready(function($) {
-    var parentProjectId = 123; // From PHP
-    
-    // Update form action
-    var $form = $('#post');
-    var currentAction = $form.attr('action') || '';
-    var separator = currentAction.indexOf('?') !== -1 ? '&' : '?';
-    $form.attr('action', currentAction + separator + 'parent_project=' + parentProjectId);
-    
-    // Update URL on button clicks
-    $('#publish, #save-post').on('click', function() {
-        var currentUrl = window.location.href;
-        if (currentUrl.indexOf('parent_project=') === -1) {
-            var separator = currentUrl.indexOf('?') !== -1 ? '&' : '?';
-            window.history.replaceState({}, '', currentUrl + separator + 'parent_project=' + parentProjectId);
-        }
-    });
-});
+#### Metabox Integration
+Metaboxes use WordPress `postbox_classes` filters to apply conditional CSS classes:
+
+```php
+// Budget metabox
+add_filter('postbox_classes_arsol-pfw-proposal_arsol_budget_estimates_metabox', 
+    array($this, 'add_budget_metabox_classes'));
+
+public function add_budget_metabox_classes($classes) {
+    $classes[] = 'arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-budget';
+    return $classes;
+}
 ```
 
 ---

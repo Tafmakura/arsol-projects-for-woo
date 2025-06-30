@@ -153,12 +153,7 @@ class Setup_Defaults {
         return isset($fallbacks[$key]) ? $fallbacks[$key] : '';
     }
 
-    /**
-     * Get fallback default (DEPRECATED - use load_markdown_content instead)
-     */
-    private static function get_fallback_default($key) {
-        return self::get_hardcoded_fallback($key);
-    }
+
 
     /**
      * Get effective default message (user setting or hardcoded fallback)
