@@ -1241,6 +1241,17 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
     display: block;
 }
 
+/* Consistent fade transitions for both budget and quotation summaries */
+#budget-summary-template,
+#quotation-summary-template {
+    transition: opacity 0.3s ease;
+}
+
+#budget-summary-template p.summary-row,
+#quotation-summary-template p.summary-row {
+    transition: opacity 0.2s ease;
+}
+
 #budget-summary-template p.summary-row span,
 #quotation-summary-template p.summary-row span {
     margin-bottom: 2px;

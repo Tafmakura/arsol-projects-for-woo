@@ -1136,7 +1136,7 @@
             var shippingText = $('#shipping-subtotal-display').text();
             $('#shipping-row').toggle(shippingText && !shippingText.includes('$0.00'));
             
-            // Show/hide totals section rows  
+            // Show/hide totals section rows
             var oneTimeTotalText = $('#summary-one-time-total-display').text();
             var hasOneTimeTotal = oneTimeTotalText && !oneTimeTotalText.includes('$0.00');
             $('#onetime-total-row').toggle(hasOneTimeTotal);
