@@ -307,39 +307,25 @@
         },
         
         updateSummary: function() {
-            // Copy existing totals from budget displays instead of recalculating
-            // This prevents NaN errors and ensures consistency
+            // Get total values first to determine visibility
+            var productSubtotalText = $('#product-subtotal-display').text();
+            var productRecurringText = $('#product-avg-monthly-display').text();
             
-            // Copy one-time budget total
-            $('#summary-budget-onetime-display').html($('#budget-onetime-total-display').html());
+            // Copy main total to summary display (only element that actually exists)
+            $('#summary-onetime-total-display').html($('#one-time-total-display').html());
             
-            // Copy recurring budget total and billing period
-            $('#summary-budget-recurring-display').html($('#budget-recurring-total-display').html());
-            $('#summary-budget-billing-period').text($('#budget-recurring-period').text());
+            // Show/hide summary rows based on values (only existing rows)
+            var oneTimeTotalText = $('#summary-onetime-total-display').text();
+            var hasOneTimeTotal = oneTimeTotalText && !oneTimeTotalText.includes('$0.00');
+            $('#onetime-total-row').toggle(hasOneTimeTotal);
             
-            // Show/hide budget rows based on display content
-            var oneTimeText = $('#budget-onetime-total-display').text();
-            var hasOneTime = oneTimeText && !oneTimeText.includes('$0.00');
-            $('#budget-onetime-row').toggle(hasOneTime);
+            var yearlyTotalText = $('#average-monthly-total-display').text();
+            var hasYearlyTotal = yearlyTotalText && !yearlyTotalText.includes('$0.00') && yearlyTotalText.trim() !== '';
+            $('#yearly-total-row').toggle(hasYearlyTotal);
             
-            var recurringText = $('#budget-recurring-total-display').text();
-            var hasRecurring = recurringText && !recurringText.includes('$0.00');
-            $('#budget-recurring-row').toggle(hasRecurring);
-            
-            if (hasRecurring) {
-                // Add start date if available
-                var startDate = $('.recurring-budget-start-date').val();
-                if (startDate) {
-                    var formattedDate = new Date(startDate).toLocaleDateString();
-                    $('#summary-budget-start-date').text(' (starts ' + formattedDate + ')');
-                } else {
-                    $('#summary-budget-start-date').text('');
-                }
-            }
-            
-            // Show empty state if no budget data is available
-            var hasBudgetData = hasOneTime || hasRecurring;
-            $('#budget-empty-state').toggle(!hasBudgetData);
+            // Show empty state if no quotation data is available
+            var hasQuotationData = hasOneTimeTotal || hasYearlyTotal;
+            $('#quotation-empty-state').toggle(!hasQuotationData);
         }
     };
 
@@ -1077,7 +1063,7 @@
             $('#summary-shipping-display').html($('#shipping-subtotal-display').html());
             
             // Copy main totals
-            $('#summary-one-time-total-display').html($('#one-time-total-display').html());
+            $('#summary-onetime-total-display').html($('#one-time-total-display').html());
             $('#summary-avg-yearly-total-display').html($('#average-monthly-total-display').html());
             
             // Show/hide rows based on whether the original displays have meaningful values
@@ -1105,7 +1091,7 @@
                 // Add start date if available (find the earliest start date from recurring fees)
                 var earliestStartDate = null;
                 $('#recurring-fee-lines-body tr.arsol-line-item').each(function() {
-                    var startDate = $(this).find('.arsol-start-date-input').val();
+                    var startDate = $(this).find('.arsol-date-input').val();
                     if (startDate) {
                         var date = new Date(startDate);
                         if (!earliestStartDate || date < earliestStartDate) {
