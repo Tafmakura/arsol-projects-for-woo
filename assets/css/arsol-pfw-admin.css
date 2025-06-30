@@ -1200,15 +1200,8 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
 /* Note: hide-if elements have no CSS rule - they're visible by default, jQuery hides them when needed */
 
 /* === SPECIFIC FEEDBACK SECTIONS === */
-/* Legacy metabox hiding - these are no longer used */
-#arsol_request_onhold_feedback_metabox,
-#arsol_request_underreview_feedback_metabox,
-#arsol_request_onhold_feedback_metabox .postbox-header {
-    display: none !important;
-}
-
-/* Customer feedback sections now use smart conditional visibility system */
-/* Removed hardcoded display: none !important; rules - let CSS classes handle visibility */
+/* Customer feedback sections now use smart conditional visibility system exclusively */
+/* Removed hardcoded display: none !important; rules - CSS classes handle visibility */
 
 /* Request Feedback Editor Styling */
 .arsol-request-feedback-editor {

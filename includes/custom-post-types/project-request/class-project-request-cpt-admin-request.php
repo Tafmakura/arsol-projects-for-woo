@@ -38,7 +38,7 @@ class Request {
             'arsol-pfw-request',
             'normal',
             'high',
-            array('conditional_class' => 'arsol-pfw-show-if-request-stage-is-on-hold')
+            array('conditional_class' => 'arsol-pfw-show-if-request_stage-is-on-hold')
         );
         
         add_meta_box(
@@ -48,7 +48,7 @@ class Request {
             'arsol-pfw-request',
             'normal',
             'high',
-            array('conditional_class' => 'arsol-pfw-show-if-request-stage-is-under-review')
+            array('conditional_class' => 'arsol-pfw-show-if-request_stage-is-under-review')
         );
     }
 
@@ -266,7 +266,7 @@ class Request {
      * Add conditional CSS class to onhold feedback metabox
      */
     public function add_onhold_feedback_metabox_classes($classes) {
-        $classes[] = 'arsol-pfw-show-if-request-stage-is-on-hold';
+        $classes[] = 'arsol-pfw-show-if-request_stage-is-on-hold';
         return $classes;
     }
 
@@ -274,7 +274,7 @@ class Request {
      * Add conditional CSS class to underreview feedback metabox  
      */
     public function add_underreview_feedback_metabox_classes($classes) {
-        $classes[] = 'arsol-pfw-show-if-request-stage-is-under-review';
+        $classes[] = 'arsol-pfw-show-if-request_stage-is-under-review';
         return $classes;
     }
 }
