@@ -86,7 +86,7 @@ class Request {
         
         // On-hold feedback section
         ?>
-        <div id="arsol_request_onhold_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-stage-is-on-hold" style="display: none;">
+        <div id="arsol_request_onhold_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-stage-is-on-hold">
             <div class="panel-wrap woocommerce">
                 <div class="panel woocommerce">
                     <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
@@ -99,7 +99,7 @@ class Request {
             </div>
         </div>
         
-        <div id="arsol_request_underreview_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-stage-is-under-review" style="display: none;">
+        <div id="arsol_request_underreview_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-stage-is-under-review">
             <div class="panel-wrap woocommerce">
                 <div class="panel woocommerce">
                     <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
