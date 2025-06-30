@@ -17,7 +17,6 @@
 
         initializeComponents: function() {
             // Initialize any components specific to requests
-            this.updateConversionButtonState();
             this.updateRequestStageVisibility();
         },
 
@@ -84,31 +83,7 @@
                 if (typeof window.ArsolConditionalVisibility !== 'undefined') {
                     window.ArsolConditionalVisibility.updateConditionalVisibilityForField('request_stage');
                 }
-                
-                ArsolRequest.updateConversionButtonState();
             });
-        },
-
-        updateConversionButtonState: function() {
-            // Update the conversion button state based on request stage
-            var selectedStage = '';
-            if ($('#request_stage').length) {
-                selectedStage = $('#request_stage').val();
-            }
-
-            var convertButton = $('.arsol-confirm-conversion');
-            if (convertButton.length) {
-                if (selectedStage === 'approved') {
-                    convertButton.prop('disabled', false).removeClass('disabled')
-                        .attr('title', 'Converts this request into a new proposal.');
-                } else {
-                    var stageDisplay = selectedStage ? selectedStage.replace(/-/g, ' ') : 'none';
-                    stageDisplay = stageDisplay.charAt(0).toUpperCase() + stageDisplay.slice(1);
-                    
-                    convertButton.prop('disabled', true).addClass('disabled')
-                        .attr('title', 'The request stage must be "Approved" before it can be converted. Current stage: "' + stageDisplay + '".');
-                }
-            }
         },
 
         updateRequestStageVisibility: function() {
@@ -217,9 +192,8 @@
             ArsolRequest.init();
         }
         
-        // Update button state on page load for request pages
+        // Initialize components on page load for request pages
         if ($('#request_stage').length) {
-            ArsolRequest.updateConversionButtonState();
             ArsolRequest.updateRequestStageVisibility();
             ArsolRequest.updateFeedbackValidation();
         }

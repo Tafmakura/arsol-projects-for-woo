@@ -59,12 +59,11 @@ class Request {
         // Add nonce for security
         wp_nonce_field('arsol-pfw-request-actions-metabox', 'arsol_pfw_request_actions_metabox_nonce');
 
-        // Get current values
-        $current_stage = wp_get_object_terms($post->ID, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
-        $current_stage = !empty($current_stage) ? $current_stage[0] : 'pending';
+        // Check if request is published for conversion eligibility  
+        $is_disabled = $post->post_status !== 'publish';
         ?>
         <p class="request-conversion-description">
-            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request stage must be set to "Approved" before conversion. This action cannot be undone.', 'arsol-pfw'); ?>
+            <?php _e('This action will create a new project proposal based on this request and permanently delete the original request. The request must be published before conversion. This action cannot be undone.', 'arsol-pfw'); ?>
         </p>
         
         <div class="major-actions">
@@ -75,12 +74,11 @@ class Request {
             <?php endif; ?>
             
             <?php
-            $is_disabled = $current_stage !== 'approved';
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
             $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
             $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete your current request request.', 'arsol-pfw'));
             $tooltip_text = $is_disabled
-                ? __('The request must be in approved stage before it can be converted.', 'arsol-pfw')
+                ? __('The request must be published before it can be converted.', 'arsol-pfw')
                 : __('Converts this request into a new proposal.', 'arsol-pfw');
             ?>
             <span title="<?php echo esc_attr($tooltip_text); ?>">
@@ -230,11 +228,8 @@ class Request {
         
         // Handle conversion after save (WordPress-native approach)
         if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
-            // Check if request is in approved stage for conversion
-            $current_stage = wp_get_object_terms($post_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
-            $current_stage = !empty($current_stage) ? $current_stage[0] : '';
-            
-            if ($current_stage === 'approved') {
+            // Check if request is published for conversion
+            if (get_post_status($post_id) === 'publish') {
                 // Sanitize and redirect to conversion URL
                 $conversion_url = esc_url_raw($_POST['arsol_convert_after_save']);
                 
@@ -247,11 +242,10 @@ class Request {
                     </script>';
                 });
             } else {
-                // Show error notice if not approved
-                add_action('admin_notices', function() use ($current_stage) {
-                    $stage_display = $current_stage ?: 'none';
+                // Show error notice if not published
+                add_action('admin_notices', function() {
                     echo '<div class="notice notice-error is-dismissible">
-                        <p>' . sprintf(__('Cannot convert request. Stage is "%s", must be "approved".', 'arsol-pfw'), $stage_display) . '</p>
+                        <p>' . __('Cannot convert request. Request must be published before conversion.', 'arsol-pfw') . '</p>
                     </div>';
                 });
             }

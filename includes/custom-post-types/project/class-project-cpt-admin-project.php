@@ -35,10 +35,17 @@ class Project {
         // Add nonce for security
         wp_nonce_field('arsol-pfw-project-actions-metabox', 'arsol_pfw_project_actions_metabox_nonce');
         
+        // Check if project is published for conversion eligibility
+        $is_disabled = $post->post_status !== 'publish';
+        
         // Prepare Create Proposal button data
         $create_url = admin_url('post-new.php?post_type=arsol-pfw-proposal&parent_project=' . $post->ID);
         $create_url = wp_nonce_url($create_url, 'arsol_create_proposal_nonce');
         $confirm_message = esc_js(__('This will save the current project and create a new proposal based on this project. Continue?', 'arsol-pfw'));
+        
+        $tooltip_text = $is_disabled
+            ? __('The project must be published before you can create a proposal.', 'arsol-pfw')
+            : __('Creates a new proposal based on this project.', 'arsol-pfw');
         ?>
         <div class="project-details">
             <!-- Main content area for any future project-specific content -->
@@ -52,13 +59,16 @@ class Project {
             <?php endif; ?>
             
             <!-- Secondary Action Button -->
-            <input type="button" 
-                   id="create-proposal" 
-                   name="create_proposal" 
-                   class="button button-secondary arsol-confirm-conversion" 
-                   value="<?php _e('Create Proposal', 'arsol-pfw'); ?>" 
-                   data-url="<?php echo esc_url($create_url); ?>" 
-                   data-message="<?php echo $confirm_message; ?>">
+            <span title="<?php echo esc_attr($tooltip_text); ?>">
+                <input type="button" 
+                       id="create-proposal" 
+                       name="create_proposal" 
+                       class="button button-secondary arsol-confirm-conversion" 
+                       value="<?php _e('Create Proposal', 'arsol-pfw'); ?>" 
+                       data-url="<?php echo esc_url($create_url); ?>" 
+                       data-message="<?php echo $confirm_message; ?>"
+                       <?php disabled($is_disabled, true); ?> />
+            </span>
         </div>
         <?php
     }
