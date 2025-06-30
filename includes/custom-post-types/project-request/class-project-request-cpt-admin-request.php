@@ -10,6 +10,10 @@ class Request {
         add_action('add_meta_boxes', array($this, 'add_request_details_meta_box'));
         // Save request details
         add_action('save_post_arsol-pfw-request', array($this, 'save_request_details'));
+        
+        // Add conditional CSS classes to feedback metaboxes
+        add_filter('postbox_classes_arsol-pfw-request_arsol-pfw-request-onhold-feedback-metabox', array($this, 'add_onhold_feedback_metabox_classes'));
+        add_filter('postbox_classes_arsol-pfw-request_arsol-pfw-request-underreview-feedback-metabox', array($this, 'add_underreview_feedback_metabox_classes'));
     }
 
     /**
@@ -26,8 +30,26 @@ class Request {
             'high'
         );
         
-        // Add customer feedback sections via hook (after header)
-        add_action('edit_form_after_title', array($this, 'render_customer_feedback_sections'), 15);
+        // Customer feedback metaboxes with conditional CSS classes
+        add_meta_box(
+            'arsol-pfw-request-onhold-feedback-metabox',
+            __('Customer Feedback - On Hold', 'arsol-pfw'),
+            array($this, 'render_onhold_feedback_metabox'),
+            'arsol-pfw-request',
+            'normal',
+            'default',
+            array('conditional_class' => 'arsol-pfw-show-if-request-stage-is-on-hold')
+        );
+        
+        add_meta_box(
+            'arsol-pfw-request-underreview-feedback-metabox',
+            __('Customer Feedback - Under Review', 'arsol-pfw'),
+            array($this, 'render_underreview_feedback_metabox'),
+            'arsol-pfw-request',
+            'normal',
+            'default',
+            array('conditional_class' => 'arsol-pfw-show-if-request-stage-is-under-review')
+        );
     }
 
     /**
@@ -69,47 +91,6 @@ class Request {
                        data-message="<?php echo $confirm_message; ?>"
                        <?php disabled($is_disabled, true); ?> />
             </span>
-        </div>
-        <?php
-    }
-
-    /**
-     * Render customer feedback sections (via hook)
-     */
-    public function render_customer_feedback_sections() {
-        global $post;
-        
-        // Only show for requests on the edit screen
-        if (!$post || $post->post_type !== 'arsol-pfw-request') {
-            return;
-        }
-        
-        // On-hold feedback section
-        ?>
-        <div id="arsol_request_onhold_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-stage-is-on-hold">
-            <div class="panel-wrap woocommerce">
-                <div class="panel woocommerce">
-                    <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
-                    <div class="project_data_column_container">
-                        <div class="project_data_column">
-                            <?php $this->render_onhold_feedback_content($post); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div id="arsol_request_underreview_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-request-stage-is-under-review">
-            <div class="panel-wrap woocommerce">
-                <div class="panel woocommerce">
-                    <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
-                    <div class="project_data_column_container">
-                        <div class="project_data_column">
-                            <?php $this->render_underreview_feedback_content($post); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <?php
     }
@@ -275,5 +256,35 @@ class Request {
                 });
             }
         }
+    }
+
+    /**
+     * Render onhold feedback metabox
+     */
+    public function render_onhold_feedback_metabox($post) {
+        $this->render_onhold_feedback_content($post);
+    }
+
+    /**
+     * Render underreview feedback metabox  
+     */
+    public function render_underreview_feedback_metabox($post) {
+        $this->render_underreview_feedback_content($post);
+    }
+
+    /**
+     * Add conditional CSS class to onhold feedback metabox
+     */
+    public function add_onhold_feedback_metabox_classes($classes) {
+        $classes[] = 'arsol-pfw-show-if-request-stage-is-on-hold';
+        return $classes;
+    }
+
+    /**
+     * Add conditional CSS class to underreview feedback metabox  
+     */
+    public function add_underreview_feedback_metabox_classes($classes) {
+        $classes[] = 'arsol-pfw-show-if-request-stage-is-under-review';
+        return $classes;
     }
 }

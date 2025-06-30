@@ -23,6 +23,10 @@ class Proposal {
         // Handle parent_project parameter for new proposals
         add_action('load-post-new.php', array($this, 'handle_new_proposal_from_project'));
         add_action('admin_notices', array($this, 'display_creation_success_message'));
+        
+        // Add conditional CSS classes to feedback metaboxes
+        add_filter('postbox_classes_arsol-pfw-proposal_arsol-pfw-proposal-processing-feedback-metabox', array($this, 'add_processing_feedback_metabox_classes'));
+        add_filter('postbox_classes_arsol-pfw-proposal_arsol-pfw-proposal-pending-approval-feedback-metabox', array($this, 'add_pending_approval_feedback_metabox_classes'));
     }
 
     public function set_proposal_review_status($new_status, $old_status, $post) {
@@ -45,49 +49,40 @@ class Proposal {
             'high'
         );
         
-        // Add customer feedback sections via hook (after header)
-        add_action('edit_form_after_title', array($this, 'render_customer_feedback_sections'), 15);
+        // Customer feedback metaboxes with conditional CSS classes
+        add_meta_box(
+            'arsol-pfw-proposal-processing-feedback-metabox',
+            __('Customer Feedback - Processing', 'arsol-pfw'),
+            array($this, 'render_processing_feedback_metabox'),
+            'arsol-pfw-proposal',
+            'normal',
+            'default',
+            array('conditional_class' => 'arsol-pfw-show-if-proposal_stage-is-processing')
+        );
+        
+        add_meta_box(
+            'arsol-pfw-proposal-pending-approval-feedback-metabox',
+            __('Customer Feedback - Pending Approval', 'arsol-pfw'),
+            array($this, 'render_pending_approval_feedback_metabox'),
+            'arsol-pfw-proposal',
+            'normal',
+            'default',
+            array('conditional_class' => 'arsol-pfw-show-if-proposal_stage-is-pending-approval')
+        );
     }
 
     /**
-     * Render customer feedback sections (via hook)
+     * Render processing feedback metabox
      */
-    public function render_customer_feedback_sections() {
-        global $post;
-        
-        // Only show for proposals on the edit screen
-        if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
-            return;
-        }
-        
-        // Processing feedback section
-        ?>
-        <div id="arsol_proposal_processing_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal_stage-is-processing">
-            <div class="panel-wrap woocommerce">
-                <div class="panel woocommerce">
-                    <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
-                    <div class="project_data_column_container">
-                        <div class="project_data_column">
-                            <?php $this->render_processing_feedback_content($post); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div id="arsol_proposal_pending_approval_feedback_section" class="arsol-pfw-project postbox arsol-pfw-show-if-proposal_stage-is-pending-approval">
-            <div class="panel-wrap woocommerce">
-                <div class="panel woocommerce">
-                    <h2><?php _e('Customer Feedback', 'arsol-pfw'); ?></h2>
-                    <div class="project_data_column_container">
-                        <div class="project_data_column">
-                            <?php $this->render_pending_approval_feedback_content($post); ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <?php
+    public function render_processing_feedback_metabox($post) {
+        $this->render_processing_feedback_content($post);
+    }
+
+    /**
+     * Render pending approval feedback metabox  
+     */
+    public function render_pending_approval_feedback_metabox($post) {
+        $this->render_pending_approval_feedback_content($post);
     }
 
     /**
@@ -920,5 +915,21 @@ class Proposal {
             'customer_id' => $customer_id,
             'lead_id' => $lead_id
         );
+    }
+
+    /**
+     * Add conditional CSS class to processing feedback metabox
+     */
+    public function add_processing_feedback_metabox_classes($classes) {
+        $classes[] = 'arsol-pfw-show-if-proposal_stage-is-processing';
+        return $classes;
+    }
+
+    /**
+     * Add conditional CSS class to pending approval feedback metabox  
+     */
+    public function add_pending_approval_feedback_metabox_classes($classes) {
+        $classes[] = 'arsol-pfw-show-if-proposal_stage-is-pending-approval';
+        return $classes;
     }
 }
