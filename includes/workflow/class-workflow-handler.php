@@ -587,6 +587,7 @@ class Workflow_Handler {
             '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
             '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
             '_arsol_pfw_proposal_project_lead' => '_arsol_pfw_project_lead',
+            '_arsol_pfw_proposal_delivery_date' => '_arsol_pfw_project_due_date', // Map delivery date to project due date
         );
         
         // 4. Get proposal type for type-aware handling
@@ -631,6 +632,19 @@ class Workflow_Handler {
             $value = get_post_meta($proposal_id, $proposal_key, true);
             if ($value) {
                 update_post_meta($project_id, $project_key, $value);
+            }
+        }
+
+        // 8. Historical preservation - keep original proposal field names for reference
+        $historical_fields = array(
+            '_arsol_pfw_proposal_start_date',
+            '_arsol_pfw_proposal_delivery_date',
+        );
+        
+        foreach ($historical_fields as $field) {
+            $value = get_post_meta($proposal_id, $field, true);
+            if ($value) {
+                update_post_meta($project_id, $field, $value); // Keep original field name
             }
         }
 
