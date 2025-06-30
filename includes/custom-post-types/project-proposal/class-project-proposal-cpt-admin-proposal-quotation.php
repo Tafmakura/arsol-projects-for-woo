@@ -15,6 +15,9 @@ class Proposal_Quotation {
         add_action('wp_ajax_arsol_search_products_with_price', array($this, 'ajax_search_products_with_price'));
         add_action('wp_ajax_arsol_proposal_quotation_ajax_get_product_details', array($this, 'ajax_get_product_details'));
         add_action('admin_footer', array($this, 'render_js_templates_in_footer'));
+        
+        // Add conditional CSS class to quotation metabox
+        add_filter('postbox_classes_arsol-pfw-proposal_arsol_proposal_quotation_metabox', array($this, 'add_quotation_metabox_classes'));
     }
 
     public function add_quotation_meta_box() {
@@ -24,8 +27,7 @@ class Proposal_Quotation {
             array($this, 'render_quotation_meta_box'),
             'arsol-pfw-proposal',
             'normal',
-            'high',
-            array('conditional_class' => 'arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-quotation')
+            'high'
         );
     }
 
@@ -523,5 +525,13 @@ class Proposal_Quotation {
         );
 
         wp_send_json_success($data);
+    }
+
+    /**
+     * Add conditional CSS class to quotation metabox
+     */
+    public function add_quotation_metabox_classes($classes) {
+        $classes[] = 'arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-quotation';
+        return $classes;
     }
 }

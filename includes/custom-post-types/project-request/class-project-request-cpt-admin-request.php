@@ -37,8 +37,7 @@ class Request {
             array($this, 'render_onhold_feedback_metabox'),
             'arsol-pfw-request',
             'normal',
-            'high',
-            array('conditional_class' => 'arsol-pfw-show-if-request-stage-is-on-hold')
+            'high'
         );
         
         add_meta_box(
@@ -47,8 +46,7 @@ class Request {
             array($this, 'render_underreview_feedback_metabox'),
             'arsol-pfw-request',
             'normal',
-            'high',
-            array('conditional_class' => 'arsol-pfw-show-if-request-stage-is-under-review')
+            'high'
         );
     }
 
