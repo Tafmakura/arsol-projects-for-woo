@@ -238,13 +238,13 @@
             // Trigger appropriate summary updates based on proposal type
             if (proposalType === 'budget') {
                 // Trigger budget summary update
-                if (typeof ArsolBudget !== 'undefined' && ArsolBudget.updateSummary) {
-                    ArsolBudget.updateSummary();
+                if (typeof ArsolBudget !== 'undefined' && ArsolBudget.updateBudgetSummary) {
+                    ArsolBudget.updateBudgetSummary();
                 }
             } else if (proposalType === 'quotation') {
                 // Trigger quotation summary update
-                if (typeof ArsolProposalQuotation !== 'undefined' && ArsolProposalQuotation.updateSummary) {
-                    ArsolProposalQuotation.updateSummary();
+                if (typeof ArsolProposalQuotation !== 'undefined' && ArsolProposalQuotation.updateQuotationSummary) {
+                    ArsolProposalQuotation.updateQuotationSummary();
                 }
             }
             // Note: Visibility is now handled by the class-based conditional system
@@ -302,11 +302,11 @@
             $('#budget-recurring-period').text(billingText);
             $('#budget-recurring-total-display').html(ArsolProposal.formatPrice(recurringAmount));
             
-            // Update summary if it exists
-            this.updateSummary();
+            // Update budget summary if it exists
+            this.updateBudgetSummary();
         },
         
-        updateSummary: function() {
+        updateBudgetSummary: function() {
             // Copy existing totals from budget displays instead of recalculating
             // This prevents NaN errors and ensures consistency
             
@@ -1053,31 +1053,96 @@
             $('#line_items_one_time_total').val(oneTimeTotal.toFixed(2));
             $('#line_items_recurring_totals').val(JSON.stringify(recurringTotals));
 
-            // Update summary if it exists
-            this.updateSummary();
+            // Update quotation summary if it exists
+            this.updateQuotationSummary();
 
             this.calculating = false;
         },
         
-        updateSummary: function() {
-            // Get total values first to determine visibility
+        updateQuotationSummary: function() {
+            // Copy existing totals from quotation displays instead of recalculating
+            // This prevents NaN errors and ensures consistency
+            
+            // Copy product totals
             var productSubtotalText = $('#product-subtotal-display').text();
             var productRecurringText = $('#product-avg-monthly-display').text();
+            $('#summary-product-subtotal-display').html($('#product-subtotal-display').html());
+            $('#summary-product-recurring-display').html($('#product-avg-monthly-display').html());
             
-            // Copy main total to summary display (only element that actually exists)
-            $('#summary-onetime-total-display').html($('#one-time-total-display').html());
+            // Copy fee totals
+            $('#summary-onetime-fee-display').html($('#onetime-fee-subtotal-display').html());
+            $('#summary-recurring-fee-display').html($('#recurring-fee-avg-monthly-display').html());
             
-            // Show/hide summary rows based on values (only existing rows)
-            var oneTimeTotalText = $('#summary-onetime-total-display').text();
+            // Copy shipping total
+            $('#summary-shipping-display').html($('#shipping-subtotal-display').html());
+            
+            // Copy main totals
+            $('#summary-one-time-total-display').html($('#one-time-total-display').html());
+            $('#summary-avg-yearly-total-display').html($('#average-monthly-total-display').html());
+            
+            // Show/hide rows based on whether the original displays have meaningful values
+            // Check if product subtotal is greater than $0.00
+            var hasProductSubtotal = productSubtotalText && !productSubtotalText.includes('$0.00');
+            var hasProductRecurring = productRecurringText && !productRecurringText.includes('$0.00') && productRecurringText.trim() !== '';
+            
+            if (hasProductSubtotal || hasProductRecurring) {
+                $('#products-row').show();
+                $('#products-onetime').toggle(hasProductSubtotal);
+                $('#products-recurring').toggle(hasProductRecurring);
+            } else {
+                $('#products-row').hide();
+            }
+            
+            // Show/hide other rows based on display content
+            var onetimeFeeText = $('#onetime-fee-subtotal-display').text();
+            $('#onetime-fees-row').toggle(onetimeFeeText && !onetimeFeeText.includes('$0.00'));
+            
+            var recurringFeeText = $('#recurring-fee-avg-monthly-display').text();
+            var hasRecurringFees = recurringFeeText && !recurringFeeText.includes('$0.00') && recurringFeeText.trim() !== '';
+            $('#recurring-fees-row').toggle(hasRecurringFees);
+            
+            if (hasRecurringFees) {
+                // Add start date if available (find the earliest start date from recurring fees)
+                var earliestStartDate = null;
+                $('#recurring-fee-lines-body tr.arsol-line-item').each(function() {
+                    var startDate = $(this).find('.arsol-start-date-input').val();
+                    if (startDate) {
+                        var date = new Date(startDate);
+                        if (!earliestStartDate || date < earliestStartDate) {
+                            earliestStartDate = date;
+                        }
+                    }
+                });
+                
+                if (earliestStartDate) {
+                    var formattedDate = earliestStartDate.toLocaleDateString();
+                    $('#summary-recurring-start-date').text(' (starts ' + formattedDate + ')');
+                } else {
+                    $('#summary-recurring-start-date').text('');
+                }
+            }
+            
+            var shippingText = $('#shipping-subtotal-display').text();
+            $('#shipping-row').toggle(shippingText && !shippingText.includes('$0.00'));
+            
+            // Show/hide totals section rows  
+            var oneTimeTotalText = $('#summary-one-time-total-display').text();
             var hasOneTimeTotal = oneTimeTotalText && !oneTimeTotalText.includes('$0.00');
             $('#onetime-total-row').toggle(hasOneTimeTotal);
             
-            var yearlyTotalText = $('#average-monthly-total-display').text();
+            var yearlyTotalText = $('#summary-avg-yearly-total-display').text();
             var hasYearlyTotal = yearlyTotalText && !yearlyTotalText.includes('$0.00') && yearlyTotalText.trim() !== '';
             $('#yearly-total-row').toggle(hasYearlyTotal);
             
+            // Show/hide the entire totals row only if at least one total is meaningful
+            $('#totals-row').toggle(hasOneTimeTotal || hasYearlyTotal);
+            
             // Show empty state if no quotation data is available
-            var hasQuotationData = hasOneTimeTotal || hasYearlyTotal;
+            var hasQuotationData = (hasProductSubtotal || hasProductRecurring) || 
+                                   (onetimeFeeText && !onetimeFeeText.includes('$0.00')) ||
+                                   hasRecurringFees ||
+                                   (shippingText && !shippingText.includes('$0.00')) ||
+                                   hasOneTimeTotal || hasYearlyTotal;
             $('#quotation-empty-state').toggle(!hasQuotationData);
         },
 
