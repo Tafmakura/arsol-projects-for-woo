@@ -56,7 +56,7 @@ class Proposal {
             array($this, 'render_processing_feedback_metabox'),
             'arsol-pfw-proposal',
             'normal',
-            'default',
+            'high',
             array('conditional_class' => 'arsol-pfw-show-if-proposal_stage-is-processing')
         );
         
@@ -66,7 +66,7 @@ class Proposal {
             array($this, 'render_pending_approval_feedback_metabox'),
             'arsol-pfw-proposal',
             'normal',
-            'default',
+            'high',
             array('conditional_class' => 'arsol-pfw-show-if-proposal_stage-is-pending-approval')
         );
     }
