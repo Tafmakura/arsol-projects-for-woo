@@ -65,20 +65,14 @@
         },
 
         toggleCostProposalSections: function() {
-            // This function works with both enabled and disabled selects
-            // as it only reads the value, not the disabled state
-            var selectedType = $('#arsol_pfw_proposal_costing_type').val();
-            
-            $('#arsol_budget_estimates_metabox').hide();
-            $('#arsol_proposal_quotation_metabox').hide();
-
-            if (selectedType === 'budget') {
-                $('#arsol_budget_estimates_metabox').show();
-            } else if (selectedType === 'quotation') {
-                $('#arsol_proposal_quotation_metabox').show();
+            // Smart conditional system now handles metabox visibility automatically
+            // Just trigger the update to ensure visibility is current
+            if (typeof window.ArsolConditionalVisibility !== 'undefined') {
+                window.ArsolConditionalVisibility.updateConditionalVisibilityForField('arsol_pfw_proposal_costing_type');
             }
             
             // Update proposal summary based on type
+            var selectedType = $('#arsol_pfw_proposal_costing_type').val();
             this.updateProposalSummary(selectedType);
         },
 

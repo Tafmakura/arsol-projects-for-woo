@@ -22,7 +22,8 @@ class Proposal_Budget {
             array($this, 'render_budget_estimates_meta_box'),
             'arsol-pfw-proposal',
             'normal',
-            'high'
+            'high',
+            array('conditional_class' => 'arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-budget')
         );
     }
 

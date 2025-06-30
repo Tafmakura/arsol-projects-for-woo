@@ -24,7 +24,7 @@
             // Handle the conversion confirmation for requests only
             $(document).on('click', '.arsol-confirm-conversion', function(e) {
                 // Only handle if we're on a request page
-                if (!$('#request_stage').length) return;
+                if (!$('#request-stage').length) return;
                 e.preventDefault();
                 
                 var $button = $(this);
@@ -76,12 +76,12 @@
 
         handleStatusChanges: function() {
             // Handle request stage changes
-            $(document).on('change', '#request_stage', function() {
+            $(document).on('change', '#request-stage', function() {
                 const selectedStage = $(this).val();
                 
                 // Use the smart conditional system
                 if (typeof window.ArsolConditionalVisibility !== 'undefined') {
-                    window.ArsolConditionalVisibility.updateConditionalVisibilityForField('request_stage');
+                    window.ArsolConditionalVisibility.updateConditionalVisibilityForField('request-stage');
                 }
             });
         },
@@ -89,12 +89,12 @@
         updateRequestStageVisibility: function() {
             // Use the smart conditional system to handle all stage-based visibility
             if (typeof window.ArsolConditionalVisibility !== 'undefined') {
-                window.ArsolConditionalVisibility.updateConditionalVisibilityForField('request_stage');
+                window.ArsolConditionalVisibility.updateConditionalVisibilityForField('request-stage');
             }
         },
 
         updateFeedbackValidation: function() {
-            var selectedStage = $('#request_stage').val() || '';
+            var selectedStage = $('#request-stage').val() || '';
             var $onholdValidation = $('#arsol_request_onhold_feedback_validation');
             
             // Only on-hold feedback is required
@@ -106,7 +106,7 @@
         },
 
         validateRequestFeedback: function() {
-            var selectedStage = $('#request_stage').val() || '';
+            var selectedStage = $('#request-stage').val() || '';
             
             // Validate on-hold feedback as required
             if (selectedStage === 'on-hold') {
@@ -174,7 +174,7 @@
             // Handle form submission validation for save/publish buttons
             $(document).on('click', '#save-post, #publish', function(e) {
                 // Only handle if we're on a request page
-                if (!$('#request_stage').length) return;
+                if (!$('#request-stage').length) return;
                 
                 // Validate request feedback before allowing form submission
                 if (!ArsolRequest.validateRequestFeedback()) {
@@ -193,7 +193,7 @@
         }
         
         // Initialize components on page load for request pages
-        if ($('#request_stage').length) {
+        if ($('#request-stage').length) {
             ArsolRequest.updateRequestStageVisibility();
             ArsolRequest.updateFeedbackValidation();
         }

@@ -24,7 +24,8 @@ class Proposal_Quotation {
             array($this, 'render_quotation_meta_box'),
             'arsol-pfw-proposal',
             'normal',
-            'high'
+            'high',
+            array('conditional_class' => 'arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-quotation')
         );
     }
 

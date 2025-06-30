@@ -73,8 +73,8 @@ if (is_wp_error($stages)) {
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="request_stage"><?php _e('Stage:', 'arsol-pfw'); ?></label>
-        <select id="request_stage" name="request_stage" class="wc-enhanced-select">
+        <label for="request-stage"><?php _e('Stage:', 'arsol-pfw'); ?></label>
+        <select id="request-stage" name="request_stage" class="wc-enhanced-select">
             <?php if (!empty($stages) && !is_wp_error($stages)): ?>
                 <?php foreach ($stages as $stage): ?>
                     <option value="<?php echo esc_attr($stage->slug); ?>" <?php selected($request_stage, $stage->slug); ?>>
