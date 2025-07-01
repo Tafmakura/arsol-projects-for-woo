@@ -9,8 +9,6 @@ if (!defined('ABSPATH')) {
 class Setup {
     public function __construct() {
         add_action('init', array($this, 'register_post_type'), 15);
-        add_action('init', array($this, 'register_request_stage_taxonomy'), 15);
-        add_action('init', array($this, 'add_default_request_stages'), 20);
         add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_requests'), 10, 2);
         add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
 
@@ -114,55 +112,6 @@ class Setup {
             $query_args['order'] = 'ASC';
         }
         return $query_args;
-    }
-
-    /**
-     * Register project request stage taxonomy
-     */
-    public function register_request_stage_taxonomy() {
-        $labels = array(
-            'name'              => __('Request Stages', 'arsol-pfw'),
-            'singular_name'     => __('Request Stage', 'arsol-pfw'),
-            'search_items'      => __('Search Request Stages', 'arsol-pfw'),
-            'all_items'         => __('All Request Stages', 'arsol-pfw'),
-            'edit_item'         => __('Edit Request Stage', 'arsol-pfw'),
-            'update_item'       => __('Update Request Stage', 'arsol-pfw'),
-            'add_new_item'      => __('Add New Request Stage', 'arsol-pfw'),
-            'new_item_name'     => __('New Request Stage Name', 'arsol-pfw'),
-            'menu_name'         => __('Request Stages', 'arsol-pfw'),
-        );
-
-        $args = array(
-            'hierarchical'      => false,
-            'labels'            => $labels,
-            'show_ui'           => true,
-            'show_admin_column' => true,
-            'query_var'         => true,
-            'public'            => false,
-            'show_in_rest'      => true,
-            'rewrite'           => array('slug' => 'request-stage'),
-        );
-
-        register_taxonomy('arsol-pfw-request-stage', 'arsol-pfw-request', $args);
-    }
-
-    /**
-     * Add default request stages
-     */
-    public function add_default_request_stages() {
-        $default_stages = array(
-            'pending-review' => __('Pending Review', 'arsol-pfw'),
-            'under-review' => __('Under Review', 'arsol-pfw'),
-            'on-hold' => __('On Hold', 'arsol-pfw'),
-            'approved' => __('Approved', 'arsol-pfw'),
-            'rejected' => __('Rejected', 'arsol-pfw'),
-        );
-
-        foreach ($default_stages as $slug => $name) {
-            if (!term_exists($slug, 'arsol-pfw-request-stage')) {
-                wp_insert_term($name, 'arsol-pfw-request-stage', array('slug' => $slug));
-            }
-        }
     }
 
     /**

@@ -53,29 +53,29 @@ class Taxonomies_Setup {
      * Instantiate taxonomy classes
      */
     private function instantiate_classes() {
-        // Initialize Project Phase Taxonomy
-        new ProjectPhase\Taxonomies_Project_Phase_Setup();
-        new ProjectPhase\Taxonomies_Project_Phase_Admin();
-        
-        // Initialize Project Stage Taxonomy
-        new ProjectStage\Taxonomies_Project_Stage_Setup();
-        new ProjectStage\Taxonomies_Project_Stage_Admin();
-        
-        // Initialize Request Stage Taxonomy
+        // Initialize Request Stage Taxonomy (first)
         new RequestStage\Taxonomies_Request_Stage_Setup();
         new RequestStage\Taxonomies_Request_Stage_Admin();
         
-        // Initialize Proposal Stage Taxonomy
+        // Initialize Proposal Stage Taxonomy (second)
         new ProposalStage\Taxonomies_Proposal_Stage_Setup();
         new ProposalStage\Taxonomies_Proposal_Stage_Admin();
+        
+        // Initialize Project Stage Taxonomy (third)
+        new ProjectStage\Taxonomies_Project_Stage_Setup();
+        new ProjectStage\Taxonomies_Project_Stage_Admin();
+        
+        // Initialize Project Phase Taxonomy (last - for workflow phases)
+        new ProjectPhase\Taxonomies_Project_Phase_Setup();
+        new ProjectPhase\Taxonomies_Project_Phase_Admin();
     }
 
     /**
      * Setup admin menu ordering for stage taxonomies
      */
     private function setup_menu_ordering() {
-        // Use admin_menu with high priority to run after taxonomies are registered
-        add_action('admin_menu', array($this, 'reorder_taxonomy_menus'), 999);
+        // Use admin_init with lower priority to run after taxonomies are registered
+        add_action('admin_init', array($this, 'reorder_taxonomy_menus'), 999);
     }
 
     /**
@@ -85,59 +85,31 @@ class Taxonomies_Setup {
      * 3. Project Stages
      */
     public function reorder_taxonomy_menus() {
-        global $submenu, $menu;
+        global $menu;
         
-        // The taxonomy menu items are typically added as top-level menu items
-        // We need to find and reorder them
+        if (!is_admin() || !current_user_can('manage_options')) {
+            return;
+        }
         
-        $stage_menus = array();
-        $other_menus = array();
+        // Find the positions of our stage taxonomy menus
+        $stage_positions = array();
         
-        // Extract stage taxonomy menus
-        foreach ($menu as $key => $menu_item) {
+        foreach ($menu as $position => $menu_item) {
             if (isset($menu_item[2])) {
                 $menu_slug = $menu_item[2];
                 
-                // Check if this is one of our stage taxonomy menus
                 if ($menu_slug === 'edit-tags.php?taxonomy=arsol-pfw-request-stage') {
-                    $stage_menus['request'] = array('key' => $key, 'item' => $menu_item);
-                    unset($menu[$key]);
+                    $stage_positions['request'] = $position;
                 } elseif ($menu_slug === 'edit-tags.php?taxonomy=arsol-pfw-proposal-stage') {
-                    $stage_menus['proposal'] = array('key' => $key, 'item' => $menu_item);
-                    unset($menu[$key]);
+                    $stage_positions['proposal'] = $position;
                 } elseif ($menu_slug === 'edit-tags.php?taxonomy=arsol-pfw-project-stage') {
-                    $stage_menus['project'] = array('key' => $key, 'item' => $menu_item);
-                    unset($menu[$key]);
+                    $stage_positions['project'] = $position;
                 }
             }
         }
         
-        // Find a good position to insert our ordered menus
-        // Let's put them after the custom post types (around position 20-30)
-        $insert_position = 25;
-        
-        // Ensure position is available
-        while (isset($menu[$insert_position])) {
-            $insert_position++;
-        }
-        
-        // Add stage menus in desired order
-        if (isset($stage_menus['request'])) {
-            $menu[$insert_position] = $stage_menus['request']['item'];
-            $insert_position++;
-        }
-        
-        if (isset($stage_menus['proposal'])) {
-            $menu[$insert_position] = $stage_menus['proposal']['item'];
-            $insert_position++;
-        }
-        
-        if (isset($stage_menus['project'])) {
-            $menu[$insert_position] = $stage_menus['project']['item'];
-            $insert_position++;
-        }
-        
-        // Sort menu by key to maintain order
-        ksort($menu);
+        // If we found the menus, they should automatically appear in WordPress admin
+        // The ordering will be based on registration order, which is already correct
+        // in our taxonomies setup class (request -> proposal -> project)
     }
 }
