@@ -44,58 +44,14 @@ class Frontend_Handler {
         $status_terms = get_the_terms($post->ID, 'arsol-pfw-proposal-stage');
         $status = $status_terms && !is_wp_error($status_terms) ? $status_terms[0]->slug : 'processing';
 
-        // Display status-specific messages in content section
-        $status_message = '';
-        switch ($status) {
-            case 'processing':
-                $processing_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
-                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-info">
-                    <div class="arsol-pfw-empty-state">
-                        <div class="arsol-pfw-empty-state__content">
-                            ' . wp_kses_post(wpautop($processing_message)) . '
-                        </div>
-                    </div>
-                </div>';
-                break;
-                
-            case 'pending-approval':
-                $pending_approval_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
-                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-warning">
-                    <div class="arsol-pfw-empty-state">
-                        <div class="arsol-pfw-empty-state__content">
-                            ' . wp_kses_post(wpautop($pending_approval_message)) . '
-                        </div>
-                    </div>
-                </div>';
-                break;
-                
-            case 'approved':
-                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-success">
-                    <p><strong>Status:</strong> Excellent! Your proposal has been approved and a project will be created for you shortly.</p>
-                </div>';
-                break;
-                
-            case 'rejected':
-                $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-error">
-                    <p><strong>Status:</strong> This proposal has been rejected. If you have questions or would like to discuss alternatives, please contact us.</p>
-                </div>';
-                break;
-        }
-
         // Check if user can proceed (only for approved status)
         $can_proceed = ($status === 'approved');
-        
-        if (!$can_proceed && in_array($status, ['processing', 'pending-approval', 'rejected'])) {
-            $status_message .= '<div class="arsol-pfw-notice arsol-pfw-notice-info">
-                <p><strong>Cannot Proceed:</strong> You cannot proceed to the next step until your proposal has been approved.</p>
-            </div>';
-        }
 
-        // Build content with status messages
-        $proposal_content = $status_message;
+        // Build content with just customer notice (no stage-specific messages)
+        $proposal_content = '';
         
-        // Add Customer Notice section (always show if content exists, regardless of stage)
-        $customer_notice = get_post_meta($post->ID, '_arsol_pfw_proposal_customer_notice', true);
+        // Show Customer Notice unconditionally
+        $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'proposal');
         if (!empty($customer_notice)) {
             $proposal_content .= '<div class="arsol-pfw-notice arsol-pfw-customer-notice">
                 <div class="arsol-pfw-notice-header">

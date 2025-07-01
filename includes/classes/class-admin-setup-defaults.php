@@ -28,13 +28,9 @@ class Setup_Defaults {
     const DEFAULTS_VERSION = '1.0.0';
 
     /**
-     * File map for hardcoded default messages
+     * File map for customer notice defaults only
      */
     private static $file_map = [
-        'arsol_pfw_project_default_empty_content' => 'content-active-empty.md',
-        'arsol_pfw_proposal_default_empty_content' => 'content-proposal-empty.md',
-        'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
-        'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md',
         'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
         'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
         'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
@@ -82,7 +78,6 @@ class Setup_Defaults {
      * Initialize all plugin defaults
      */
     public function initialize_all_defaults() {
-        $this->initialize_default_messages();
         $this->initialize_default_settings();
         $this->initialize_default_taxonomies();
         
@@ -94,19 +89,12 @@ class Setup_Defaults {
     }
 
     /**
-     * Get hardcoded default messages (Layer 1) - UPDATED to load from files
-     * These are always available as fallbacks
+     * Get customer notice defaults from markdown files
      */
-    public static function get_hardcoded_defaults() {
+    public static function get_customer_notice_defaults() {
         $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
         
         $file_mappings = array(
-            'arsol_pfw_project_default_empty_content' => 'content-active-empty.md',
-            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-empty.md',
-            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-processing.md',
-            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-pending-approval.md',
-            'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
-            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md',
             'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
             'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
             'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
@@ -143,17 +131,10 @@ class Setup_Defaults {
     }
 
     /**
-     * Hardcoded fallbacks as absolute last resort
-     * These are minimal and should rarely be used
+     * Hardcoded fallbacks for customer notices only
      */
     private static function get_hardcoded_fallback($key) {
         $fallbacks = array(
-            'arsol_pfw_project_default_empty_content' => __('This project is currently in progress. Content and details will be added as the project develops.', 'arsol-pfw'),
-            'arsol_pfw_proposal_default_empty_content' => __('No proposal content has been added yet. Please check back later for updates.', 'arsol-pfw'),
-            'arsol_pfw_proposal_default_empty_content' => __('Your proposal is currently being processed. We are preparing the details and will have it ready for your review soon.', 'arsol-pfw'),
-            'arsol_pfw_proposal_default_empty_content' => __('Your proposal is ready and pending your approval. Please review the details below and let us know if you approve.', 'arsol-pfw'),
-            'arsol_pfw_request_default_on_hold_content' => __('Your project request is currently on hold. We will contact you when we can proceed with your request.', 'arsol-pfw'),
-            'arsol_pfw_request_default_under_review_content' => __('Your project request is under review. We will get back to you shortly with next steps.', 'arsol-pfw'),
             'arsol_pfw_project_default_customer_notice' => __('Important project information will be displayed here when available.', 'arsol-pfw'),
             'arsol_pfw_proposal_default_customer_notice' => __('Important proposal information will be displayed here when available.', 'arsol-pfw'),
             'arsol_pfw_request_default_customer_notice' => __('Important request information will be displayed here when available.', 'arsol-pfw')
@@ -168,17 +149,6 @@ class Setup_Defaults {
      * @param string $key The message key
      * @return string The effective message content
      */
-    public static function get_effective_default_message($key) {
-        // Check user setting first
-        $user_settings = get_option('arsol_projects_templates_settings', array());
-        if (!empty($user_settings[$key])) {
-            return $user_settings[$key];
-        }
-        
-        // Fall back to hardcoded default
-        $hardcoded_defaults = self::get_hardcoded_defaults();
-        return isset($hardcoded_defaults[$key]) ? $hardcoded_defaults[$key] : '';
-    }
 
     /**
      * Get effective customer notice content
@@ -204,7 +174,8 @@ class Setup_Defaults {
         }
         
         // Layer 3: Fall back to markdown default
-        return self::get_effective_default_message($settings_key);
+        $customer_notice_defaults = self::get_customer_notice_defaults();
+        return isset($customer_notice_defaults[$settings_key]) ? $customer_notice_defaults[$settings_key] : '';
     }
 
     /**
@@ -212,48 +183,8 @@ class Setup_Defaults {
      * 
      * @return array All effective default messages
      */
-    public static function get_all_effective_default_messages() {
-        $user_settings = get_option('arsol_projects_templates_settings', array());
-        $hardcoded_defaults = self::get_hardcoded_defaults();
-        
-        $effective_messages = array();
-        
-        // For each hardcoded default, use user setting if available, otherwise use hardcoded
-        foreach ($hardcoded_defaults as $key => $default_value) {
-            $effective_messages[$key] = !empty($user_settings[$key]) ? $user_settings[$key] : $default_value;
-        }
-        
-        return $effective_messages;
-    }
 
     /**
-     * Initialize default messages - UPDATED for two-layer system
-     * Now we DON'T pre-populate the database, keeping it clean
-     */
-    private function initialize_default_messages() {
-        // In the two-layer system, we don't pre-populate the database
-        // The hardcoded defaults are always available as fallbacks
-        // This keeps the database clean and allows proper empty state detection
-        
-        // Only initialize if there are legacy values that need migration
-        $current_settings = get_option('arsol_projects_templates_settings', array());
-        
-        // Check if we have old-style pre-populated defaults that need to be cleared
-        $hardcoded_defaults = self::get_hardcoded_defaults();
-        $needs_cleanup = false;
-        
-        foreach ($hardcoded_defaults as $key => $hardcoded_value) {
-            if (isset($current_settings[$key]) && $current_settings[$key] === $hardcoded_value) {
-                // This is a pre-populated default, remove it to enable proper fallback
-                unset($current_settings[$key]);
-                $needs_cleanup = true;
-            }
-        }
-        
-        if ($needs_cleanup) {
-            update_option('arsol_projects_templates_settings', $current_settings);
-        }
-    }
 
     /**
      * Initialize default general settings
@@ -449,12 +380,6 @@ class Setup_Defaults {
         $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
         
         $file_mappings = array(
-            'arsol_pfw_project_default_empty_content' => 'content-active-empty.md',
-            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-empty.md',
-            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-processing.md',
-            'arsol_pfw_proposal_default_empty_content' => 'content-proposal-pending-approval.md',
-            'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
-            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md',
             'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
             'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
             'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'

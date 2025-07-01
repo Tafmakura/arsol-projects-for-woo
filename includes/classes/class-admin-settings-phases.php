@@ -117,7 +117,8 @@ class Settings_Phases {
         $description = $args['description'];
 
         // Get markdown default for placeholder
-        $markdown_default = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message($key);
+        $customer_notice_defaults = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_customer_notice_defaults();
+        $markdown_default = isset($customer_notice_defaults[$key]) ? $customer_notice_defaults[$key] : '';
         
         echo '<div class="arsol-pfw-customer-notice-field">';
         echo '<textarea name="arsol_phases_settings[' . esc_attr($key) . ']" rows="6" cols="80" class="large-text" placeholder="' . esc_attr($markdown_default) . '">' . esc_textarea($value) . '</textarea>';

@@ -8,7 +8,9 @@
  * @version 1.0.0
  */
 
-defined('ABSPATH') || exit;
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 // The global $post is set up by the shortcode (same pattern as proposal and request templates)
 if (!isset($post) || !$post) {
@@ -16,25 +18,24 @@ if (!isset($post) || !$post) {
     return;
 }
 
-// Get project details using global $post (consistent with other templates)
-$stage_terms = wp_get_post_terms($post->ID, 'arsol-pfw-project-stage', array('fields' => 'names'));
-$project_stage = (!empty($stage_terms) && !is_wp_error($stage_terms)) ? $stage_terms[0] : 'Not Started';
-$start_date = get_post_meta($post->ID, '_arsol_pfw_project_start_date', true);
-$due_date = get_post_meta($post->ID, '_arsol_pfw_project_due_date', true);
+// Get project details
+$project_budget = get_post_meta($post->ID, '_arsol_pfw_project_budget', true);
+$project_timeline = get_post_meta($post->ID, '_arsol_pfw_project_timeline', true);
+$related_request_id = get_post_meta($post->ID, '_arsol_pfw_related_request_id', true);
+$wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 ?>
 
 <div class="project-content-wrapper">
     <div class="project-content">
+        <h3 class="project-title"><?php echo esc_html($post->post_title); ?></h3>
         <div class="project-description">
-            <?php if (empty(get_the_content())) : ?>
-                <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-overview-empty.php'; ?>
-            <?php else : ?>
-                <?php the_content(); ?>
+            <?php if (!empty($post->post_content)) : ?>
+                <?php echo wp_kses_post($post->post_content); ?>
             <?php endif; ?>
         </div>
         
         <?php
-        // Add Customer Notice section using new three-layer helper function
+        // Show Customer Notice unconditionally
         $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'project');
         if (!empty($customer_notice)) : ?>
             <div class="arsol-pfw-notice arsol-pfw-customer-notice">

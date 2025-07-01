@@ -412,7 +412,7 @@ class Proposal {
                 }
             }
         }
-
+        
         // Handle conversion after save (WordPress-native approach)
         if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
             // Check if proposal is in approved status for conversion

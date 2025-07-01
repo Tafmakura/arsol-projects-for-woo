@@ -7,19 +7,12 @@
 if (!defined('ABSPATH')) {
     exit;
 }
-
-// Get the default message for under-review requests
-$default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_request_default_under_review_content');
 ?>
 
 <div class="arsol-pfw-request-content arsol-pfw-under-review-content">
-    <div class="arsol-pfw-default-message arsol-pfw-under-review-message">
-        <?php echo wp_kses_post(wpautop($default_message)); ?>
-    </div>
-
     <?php
-    // Add Customer Notice section (always show if content exists, regardless of stage)
-    $customer_notice = get_post_meta($post->ID, '_arsol_pfw_request_customer_notice', true);
+    // Show Customer Notice unconditionally
+    $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'request');
     if (!empty($customer_notice)) : ?>
         <div class="arsol-pfw-notice arsol-pfw-customer-notice">
             <div class="arsol-pfw-notice-header">

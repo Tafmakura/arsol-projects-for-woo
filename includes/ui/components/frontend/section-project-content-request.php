@@ -41,8 +41,8 @@ do_action('arsol_projects_before_request_state', $post->ID);
         </div>
         
         <?php
-        // Add Customer Notice section (always show if content exists, regardless of stage)
-        $customer_notice = get_post_meta($post->ID, '_arsol_pfw_request_customer_notice', true);
+        // Show Customer Notice unconditionally
+        $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'request');
         if (!empty($customer_notice)) : ?>
             <div class="arsol-pfw-notice arsol-pfw-customer-notice">
                 <div class="arsol-pfw-notice-header">
