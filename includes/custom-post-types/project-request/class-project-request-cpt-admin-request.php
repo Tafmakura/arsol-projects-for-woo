@@ -27,7 +27,7 @@ class Request {
             'side',
             'high'
         );
-
+        
         // Customer Notice metabox
         add_meta_box(
             'arsol-pfw-request-customer-notice-metabox',

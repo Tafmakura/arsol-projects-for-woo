@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
             <div class="arsol-pfw-notice-content">
                 <?php echo wp_kses_post(wpautop($customer_notice)); ?>
             </div>
-        </div>
+    </div>
     <?php endif; ?>
 
     <div class="arsol-pfw-request-details arsol-pfw-review-details">

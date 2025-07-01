@@ -22,8 +22,6 @@ class Settings_Phases {
         // Register settings after init to ensure text domain is loaded
         add_action('init', array($this, 'setup_settings'), 20);
         // Add admin scripts for Select2
-        // Add AJAX handler for loading fresh taxonomy terms
-        add_action('wp_ajax_arsol_load_taxonomy_terms', array($this, 'ajax_load_taxonomy_terms'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
     }
 
@@ -211,66 +209,26 @@ class Settings_Phases {
         echo '</a>';
         echo '</div>';
         
-        // Select2 multi-select for stages (below) - Load fresh data via AJAX
+        // Select2 multi-select for stages (below) - Load all available stages with saved selections
         echo '<div style="margin-bottom: 10px;">';
-        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="arsol-stages-select2" data-taxonomy="' . esc_attr($taxonomy) . '" data-selected="' . esc_attr(json_encode($stages)) . '" style="width: 100%; min-width: 300px;">';
+        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="arsol-stages-select2" style="width: 100%; min-width: 300px;">';
         
+        // Get all available stages
+        $terms = get_terms(array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => false
+        ));
         
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                $selected = in_array($term->term_id, $stages) ? 'selected' : '';
+                echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
+            }
+        }
         echo '</select>';
         echo '</div>';
         
         echo '<p class="description">' . sprintf(__('Control when %s content appears on the frontend based on the current stage.', 'arsol-pfw'), esc_html($type)) . '</p>';
-    }
-
-    /**
-     * AJAX handler for loading fresh taxonomy terms
-     */
-    public function ajax_load_taxonomy_terms() {
-        // Check nonce for security
-        if (!wp_verify_nonce($_REQUEST['nonce'], 'arsol_taxonomy_terms_nonce')) {
-            wp_send_json_error('Security check failed');
-        }
-
-        // Verify user capabilities
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Insufficient permissions');
-        }
-
-        $taxonomy = sanitize_text_field($_REQUEST['taxonomy']);
-
-        // Validate taxonomy exists and is one of our allowed taxonomies
-        $allowed_taxonomies = array(
-            'arsol-pfw-request-stage',
-            'arsol-pfw-proposal-stage',
-            'arsol-pfw-project-stage'
-        );
-
-        if (!in_array($taxonomy, $allowed_taxonomies) || !taxonomy_exists($taxonomy)) {
-            wp_send_json_error('Invalid taxonomy');
-        }
-
-        // Get all terms from the taxonomy (fresh data)
-        $terms = get_terms(array(
-            'taxonomy' => $taxonomy,
-            'hide_empty' => false,
-            'orderby' => 'name',
-            'order' => 'ASC'
-        ));
-
-        if (is_wp_error($terms)) {
-            wp_send_json_error($terms->get_error_message());
-        }
-
-        $results = array();
-        foreach ($terms as $term) {
-            $results[] = array(
-                'id' => (int) $term->term_id,
-                'text' => esc_html($term->name)
-            );
-        }
-
-        // WordPress standard success response
-        wp_send_json_success(array('results' => $results));
     }
 
     /**
@@ -292,13 +250,48 @@ class Settings_Phases {
         wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), '4.1.0', true);
         wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array(), '4.1.0');
         
-        // Initialize Select2 without AJAX - just basic Select2 functionality
+        // Initialize Select2 - simple configuration without AJAX
         wp_add_inline_script('select2', '
             jQuery(document).ready(function($) {
                 $(".arsol-stages-select2").select2({
                     placeholder: "Select stages...",
                     allowClear: true,
                     width: "100%"
+                });
+            });
+        ');
+    }
+}
+
+                $(".arsol-stages-select2").each(function() {
+                    var $select = $(this);
+                    var taxonomy = $select.data("taxonomy");
+                    
+                    $select.select2({
+                        placeholder: "Select stages...",
+                        allowClear: true,
+                        width: "100%",
+                        ajax: {
+                            url: ajaxurl,
+                            dataType: "json",
+                            delay: 250,
+                            data: function (params) {
+                                return {
+                                    action: "arsol_load_taxonomy_terms",
+                                    taxonomy: taxonomy,
+                                    search: params.term,
+                                    nonce: "' . wp_create_nonce('arsol_taxonomy_terms_nonce') . '"
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data.results
+                                };
+                            },
+                            cache: false
+                        },
+                        minimumInputLength: 0
+                    });
                 });
             });
         ');
