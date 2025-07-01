@@ -21,6 +21,8 @@ class Settings_Phases {
     public function __construct() {
         // Register settings after init to ensure text domain is loaded
         add_action('init', array($this, 'setup_settings'), 20);
+        // Add admin scripts for Select2
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
     }
 
     /**
@@ -35,6 +37,7 @@ class Settings_Phases {
      */
     public function register_settings() {
         register_setting('arsol_phases_settings', 'arsol_phases_settings');
+        register_setting('arsol_content_display_settings', 'arsol_content_display_settings');
 
         // Phase Settings Section
         add_settings_section(
@@ -91,6 +94,53 @@ class Settings_Phases {
                 'description' => __('This will be used when no custom notice is set for individual projects.', 'arsol-pfw')
             )
         );
+
+        // Content Display Section
+        add_settings_section(
+            'arsol_phases_content_display',
+            __('Content Display', 'arsol-pfw'),
+            array($this, 'render_content_display_section'),
+            'arsol_phases_settings'
+        );
+
+        // Request Content Display
+        add_settings_field(
+            'request_content_display',
+            __('Request Content Display', 'arsol-pfw'),
+            array($this, 'render_content_display_field'),
+            'arsol_phases_settings',
+            'arsol_phases_content_display',
+            array(
+                'type' => 'request',
+                'taxonomy' => 'arsol-pfw-request-stage'
+            )
+        );
+
+        // Proposal Content Display  
+        add_settings_field(
+            'proposal_content_display',
+            __('Proposal Content Display', 'arsol-pfw'),
+            array($this, 'render_content_display_field'),
+            'arsol_phases_settings',
+            'arsol_phases_content_display',
+            array(
+                'type' => 'proposal',
+                'taxonomy' => 'arsol-pfw-proposal-stage'
+            )
+        );
+
+        // Project Content Display
+        add_settings_field(
+            'project_content_display',
+            __('Project Content Display', 'arsol-pfw'),
+            array($this, 'render_content_display_field'),
+            'arsol_phases_settings',
+            'arsol_phases_content_display',
+            array(
+                'type' => 'project',
+                'taxonomy' => 'arsol-pfw-project-stage'
+            )
+        );
     }
 
     /**
@@ -105,6 +155,13 @@ class Settings_Phases {
      */
     public function render_customer_notice_section() {
         echo '<p>' . __('Configure default customer notice content that will be used when no custom notice is set for individual projects, proposals, or requests.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render content display section
+     */
+    public function render_content_display_section() {
+        echo '<p>' . __('Control when post content is displayed on the frontend based on stage.', 'arsol-pfw') . '</p>';
     }
 
     /**
@@ -123,6 +180,85 @@ class Settings_Phases {
         echo '<div class="arsol-pfw-customer-notice-field">';
         echo '<textarea name="arsol_phases_settings[' . esc_attr($key) . ']" rows="6" cols="80" class="large-text" placeholder="' . esc_attr($markdown_default) . '">' . esc_textarea($value) . '</textarea>';
         echo '<p class="description">' . esc_html($description) . '</p>';
+        echo '<p class="description"><em>' . __('Leave empty to use the default content from markdown files.', 'arsol-pfw') . '</em></p>';
         echo '</div>';
     }
-} 
+
+    /**
+     * Render content display field
+     */
+    public function render_content_display_field($args) {
+        $settings = get_option('arsol_content_display_settings', array());
+        $type = $args['type'];
+        $taxonomy = $args['taxonomy'];
+        
+        $visibility = isset($settings[$type . '_visibility']) ? $settings[$type . '_visibility'] : 'hide';
+        $stages = isset($settings[$type . '_stages']) ? $settings[$type . '_stages'] : array();
+        
+        // Visibility select with manage button (on top)
+        echo '<div class="arsol-stage-field-container">';
+        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_visibility]" style="width: 250px;">';
+        echo '<option value="hide"' . selected($visibility, 'hide', false) . '>' . __('Hide for selected stages', 'arsol-pfw') . '</option>';
+        echo '<option value="show"' . selected($visibility, 'show', false) . '>' . __('Show for selected stages', 'arsol-pfw') . '</option>';
+        echo '</select>';
+        
+        // Add manage button with WordPress secondary styling (no icon)
+        $manage_url = admin_url('edit-tags.php?taxonomy=' . esc_attr($taxonomy));
+        echo '<a href="' . esc_url($manage_url) . '" target="_blank" class="button button-secondary arsol-stage-manage-btn">';
+        echo __('Manage Stages', 'arsol-pfw');
+        echo '</a>';
+        echo '</div>';
+        
+        // Select2 multi-select for stages (below) - Load all available stages, no pre-population
+        echo '<div style="margin-bottom: 10px;">';
+        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="arsol-stages-select2" style="width: 100%; min-width: 300px;">';
+        
+        // Get all available stages
+        $terms = get_terms(array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => false
+        ));
+        
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                $selected = in_array($term->term_id, $stages) ? 'selected' : '';
+                echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
+            }
+        }
+        echo '</select>';
+        echo '</div>';
+        
+        echo '<p class="description">' . sprintf(__('Control when %s content appears on the frontend based on the current stage.', 'arsol-pfw'), esc_html($type)) . '</p>';
+    }
+
+    /**
+     * Enqueue admin scripts for Select2
+     */
+    public function enqueue_admin_scripts($hook) {
+        // Only load on our settings page
+        if (strpos($hook, 'arsol-projects-settings') === false) {
+            return;
+        }
+
+        // Check if we're on the phases tab
+        $tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
+        if ($tab !== 'phases') {
+            return;
+        }
+
+        // Enqueue Select2
+        wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), '4.1.0', true);
+        wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array(), '4.1.0');
+        
+        // Initialize Select2 without AJAX - just basic Select2 functionality
+        wp_add_inline_script('select2', '
+            jQuery(document).ready(function($) {
+                $(".arsol-stages-select2").select2({
+                    placeholder: "Select stages...",
+                    allowClear: true,
+                    width: "100%"
+                });
+            });
+        ');
+    }
+}
