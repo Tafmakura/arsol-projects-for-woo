@@ -57,7 +57,7 @@ class Setup {
             'public'              => false,
             'publicly_queryable'  => false,
             'show_ui'            => true,
-            'show_in_menu'       => true,
+            'show_in_menu'       => 'edit.php?post_type=arsol-pfw-project',
             'show_in_nav_menus'  => false,
             'show_in_admin_bar'  => true,
             'menu_position'      => null,

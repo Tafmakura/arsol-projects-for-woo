@@ -47,6 +47,7 @@ class Taxonomies_Project_Phase_Setup {
             'hierarchical'      => false,
             'labels'            => $labels,
             'show_ui'           => true,
+            'show_in_menu'      => false,          // Hide from admin menu
             'show_admin_column' => true,
             'query_var'         => true,
             'rewrite'           => array('slug' => 'project-phase'),
