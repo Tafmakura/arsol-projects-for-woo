@@ -219,12 +219,26 @@ class Setup {
             return $parent_file;
         }
         
-        // Check if we're on a taxonomy edit page for our stage taxonomies
+        // Handle all taxonomy-related screens for our stage taxonomies
+        $our_taxonomies = ['arsol-pfw-request-stage', 'arsol-pfw-proposal-stage', 'arsol-pfw-project-stage'];
+        
+        // Check for taxonomy listing page (edit-tags)
         if ($current_screen->base === 'edit-tags' && isset($current_screen->taxonomy)) {
-            $taxonomy = $current_screen->taxonomy;
-            
-            // Set parent file for our stage taxonomies
-            if (in_array($taxonomy, ['arsol-pfw-request-stage', 'arsol-pfw-proposal-stage', 'arsol-pfw-project-stage'])) {
+            if (in_array($current_screen->taxonomy, $our_taxonomies)) {
+                return 'edit.php?post_type=arsol-pfw-project';
+            }
+        }
+        
+        // Check for individual term edit page (term)
+        if ($current_screen->base === 'term' && isset($current_screen->taxonomy)) {
+            if (in_array($current_screen->taxonomy, $our_taxonomies)) {
+                return 'edit.php?post_type=arsol-pfw-project';
+            }
+        }
+        
+        // Check for add new term page (edit-tag)
+        if ($current_screen->base === 'edit-tag' && isset($current_screen->taxonomy)) {
+            if (in_array($current_screen->taxonomy, $our_taxonomies)) {
                 return 'edit.php?post_type=arsol-pfw-project';
             }
         }
@@ -245,8 +259,10 @@ class Setup {
             return $submenu_file;
         }
         
-        // Check if we're on a taxonomy edit page for our stage taxonomies
-        if ($current_screen->base === 'edit-tags' && isset($current_screen->taxonomy)) {
+        // Handle all taxonomy-related screens for our stage taxonomies
+        $taxonomy_screens = ['edit-tags', 'term', 'edit-tag'];
+        
+        if (in_array($current_screen->base, $taxonomy_screens) && isset($current_screen->taxonomy)) {
             $taxonomy = $current_screen->taxonomy;
             
             // Set submenu file for our stage taxonomies
