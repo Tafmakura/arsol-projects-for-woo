@@ -1260,3 +1260,24 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
     font-style: italic;
 }
 
+/* Stages select field styling */
+.arsol-stages-select2 {
+    max-width: 600px;
+}
+
+/* Stage management button container */
+.arsol-stage-field-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.arsol-stage-field-container .arsol-stages-select2 {
+    flex: 1;
+}
+
+.arsol-stage-manage-btn {
+    flex-shrink: 0;
+}
+

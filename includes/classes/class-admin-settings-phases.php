@@ -187,9 +187,6 @@ class Settings_Phases {
     /**
      * Render content display field
      */
-    /**
-     * Render content display field
-     */
     public function render_content_display_field($args) {
         $settings = get_option('arsol_content_display_settings', array());
         $type = $args['type'];
@@ -216,18 +213,26 @@ class Settings_Phases {
         echo '</select>';
         echo '</div>';
         
-        // Select2 multi-select for stages (below)
-        echo '<div style="margin-bottom: 10px;">';
+        // Select2 multi-select for stages with manage button (below)
+        echo '<div class="arsol-stage-field-container">';
         echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="arsol-stages-select2" style="width: 100%; min-width: 300px;">';
         foreach ($terms as $term) {
             $selected = in_array($term->term_id, $stages) ? 'selected' : '';
             echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
         }
         echo '</select>';
+        
+        // Add manage button with WordPress secondary styling
+        $manage_url = admin_url('edit-tags.php?taxonomy=' . esc_attr($taxonomy));
+        echo '<a href="' . esc_url($manage_url) . '" target="_blank" class="button button-secondary arsol-stage-manage-btn">';
+        echo '<span class="dashicons dashicons-edit" style="vertical-align: middle; margin-right: 4px;"></span>';
+        echo __('Manage Stages', 'arsol-pfw');
+        echo '</a>';
         echo '</div>';
         
         echo '<p class="description">' . sprintf(__('Control when %s content appears on the frontend based on the current stage.', 'arsol-pfw'), esc_html($type)) . '</p>';
     }
+
     /**
      * Enqueue admin scripts for Select2
      */
