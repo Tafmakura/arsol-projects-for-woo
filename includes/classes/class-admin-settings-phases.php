@@ -54,21 +54,21 @@ class Settings_Phases {
 
         // Customer Notice Fields
         add_settings_field(
-            'arsol_pfw_project_default_customer_notice',
-            __('Project Customer Notice Default', 'arsol-pfw'),
+            'arsol_pfw_request_default_customer_notice',
+            __('Request Customer Notice', 'arsol-pfw'),
             array($this, 'render_customer_notice_field'),
             'arsol_phases_settings',
             'arsol_phases_customer_notice_defaults',
             array(
-                'key' => 'arsol_pfw_project_default_customer_notice',
-                'label' => __('Default notice content for projects', 'arsol-pfw'),
-                'description' => __('This will be used when no custom notice is set for individual projects.', 'arsol-pfw')
+                'key' => 'arsol_pfw_request_default_customer_notice',
+                'label' => __('Default notice content for requests', 'arsol-pfw'),
+                'description' => __('This will be used when no custom notice is set for individual requests.', 'arsol-pfw')
             )
         );
 
         add_settings_field(
             'arsol_pfw_proposal_default_customer_notice',
-            __('Proposal Customer Notice Default', 'arsol-pfw'),
+            __('Proposal Customer Notice', 'arsol-pfw'),
             array($this, 'render_customer_notice_field'),
             'arsol_phases_settings',
             'arsol_phases_customer_notice_defaults',
@@ -80,15 +80,15 @@ class Settings_Phases {
         );
 
         add_settings_field(
-            'arsol_pfw_request_default_customer_notice',
-            __('Request Customer Notice Default', 'arsol-pfw'),
+            'arsol_pfw_project_default_customer_notice',
+            __('Project Customer Notice', 'arsol-pfw'),
             array($this, 'render_customer_notice_field'),
             'arsol_phases_settings',
             'arsol_phases_customer_notice_defaults',
             array(
-                'key' => 'arsol_pfw_request_default_customer_notice',
-                'label' => __('Default notice content for requests', 'arsol-pfw'),
-                'description' => __('This will be used when no custom notice is set for individual requests.', 'arsol-pfw')
+                'key' => 'arsol_pfw_project_default_customer_notice',
+                'label' => __('Default notice content for projects', 'arsol-pfw'),
+                'description' => __('This will be used when no custom notice is set for individual projects.', 'arsol-pfw')
             )
         );
     }
