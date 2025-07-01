@@ -263,9 +263,6 @@ class Settings_Advanced {
      * @param string $key The message key
      * @return string The effective message content (user setting or hardcoded default)
      */
-    public static function get_default_message($key) {
-        return \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message($key);
-    }
 
     /**
      * Get all default messages - UPDATED for two-layer system

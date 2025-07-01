@@ -62,8 +62,7 @@ class Shortcodes {
 		add_shortcode('arsol_pfw_project_content_active', array($this, 'project_content_active_shortcode'));
 		add_shortcode('arsol_pfw_project_content_proposal', array($this, 'project_content_proposal_shortcode'));
 		add_shortcode('arsol_pfw_project_content_request', array($this, 'project_content_request_shortcode'));
-		add_shortcode('arsol_pfw_project_content_proposal_processing', array($this, 'project_content_proposal_processing_shortcode'));
-		add_shortcode('arsol_pfw_project_content_proposal_pending_approval', array($this, 'project_content_proposal_pending_approval_shortcode'));
+		            // Stage-specific proposal shortcodes removed
 		add_shortcode('arsol_pfw_projects_listing_active', array($this, 'projects_listing_active_shortcode'));
 		add_shortcode('arsol_pfw_projects_listing_proposals', array($this, 'projects_listing_proposals_shortcode'));
 		add_shortcode('arsol_pfw_projects_listing_requests', array($this, 'projects_listing_requests_shortcode'));
@@ -792,81 +791,6 @@ class Shortcodes {
 	/**
 	 * Project proposal processing content shortcode
 	 * Displays processing message for proposals regardless of actual content
-	 *
-	 * @param array $atts Shortcode attributes
-	 * @return string HTML output
-	 */
-	public function project_content_proposal_processing_shortcode($atts) {
-		$atts = shortcode_atts(array(
-			'title' => '',
-			'message' => '',
-		), $atts, 'arsol_pfw_project_content_proposal_processing');
-
-		// Get the processing message
-		$processing_message = !empty($atts['message']) 
-			? $atts['message'] 
-			: \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
-
-		// Get the title
-		$title = !empty($atts['title']) ? $atts['title'] : __('Proposal Status', 'arsol-pfw');
-
-		ob_start();
-		?>
-		<div class="project-content-wrapper">
-			<div class="project-content">
-				<h3 class="project-title"><?php echo esc_html($title); ?></h3>
-				<div class="project-description">
-					<div class="arsol-pfw-project-overview-empty">
-						<div class="arsol-pfw-empty-state">
-							<div class="arsol-pfw-empty-state__content">
-								<?php echo wp_kses_post(wpautop($processing_message)); ?>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<?php
-		return ob_get_clean();
-	}
-
-	/**
-	 * Project proposal pending approval content shortcode
-	 * Displays pending approval message for proposals regardless of actual content
-	 *
-	 * @param array $atts Shortcode attributes
-	 * @return string HTML output
-	 */
-	public function project_content_proposal_pending_approval_shortcode($atts) {
-		$atts = shortcode_atts(array(
-			'title' => '',
-			'message' => '',
-		), $atts, 'arsol_pfw_project_content_proposal_pending_approval');
-
-		// Get the pending approval message
-		$pending_approval_message = !empty($atts['message']) 
-			? $atts['message'] 
-			: \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
-
-		// Get the title
-		$title = !empty($atts['title']) ? $atts['title'] : __('Proposal Status', 'arsol-pfw');
-
-		ob_start();
-		?>
-		<div class="arsol-pfw-project-overview-empty">
-			<div class="arsol-pfw-empty-state">
-				<div class="arsol-pfw-empty-state__content">
-					<h1><?php echo esc_html($title); ?></h1>
-					<?php echo wp_kses_post(wpautop($pending_approval_message)); ?>
-				</div>
-			</div>
-		</div>
-		<?php
-		return ob_get_clean();
-	}
-
-	/**
-	 * Active projects listing shortcode
 	 *
 	 * @param array $atts Shortcode attributes
 	 * @return string HTML output
