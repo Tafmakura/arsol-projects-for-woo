@@ -52,9 +52,9 @@ class Taxonomies_Proposal_Stage_Setup {
             'rewrite'           => array('slug' => 'proposal-stage'),
             'show_in_rest'      => true,
             'meta_box_cb'       => false,        // Remove meta box
-            'show_in_menu'      => true,         // Show in admin menu
             'public'            => false,        // Hide from frontend
             'publicly_queryable' => false,      // Not queryable on frontend
+            'show_in_menu'      => true,         // Show in admin menu
         );
 
         $result = register_taxonomy('arsol-pfw-proposal-stage', 'arsol-pfw-proposal', $args);
