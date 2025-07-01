@@ -30,6 +30,10 @@ class Setup {
     public function setup_admin_hooks() {
         add_action('admin_menu', array($this, 'setup_admin_menus'), 10);
         add_action('admin_menu', array($this, 'cleanup_admin_menus'), 999);
+        
+        // Add filters to highlight correct parent menu for taxonomy pages
+        add_filter('parent_file', array($this, 'taxonomy_parent_file'));
+        add_filter('submenu_file', array($this, 'taxonomy_submenu_file'));
     }
     
     /**
@@ -200,6 +204,63 @@ class Setup {
             ?>
         </div>
         <?php
+    }
+    
+    /**
+     * Fix parent file for taxonomy pages
+     * 
+     * @param string $parent_file
+     * @return string
+     */
+    public function taxonomy_parent_file($parent_file) {
+        global $current_screen;
+        
+        if (!$current_screen) {
+            return $parent_file;
+        }
+        
+        // Check if we're on a taxonomy edit page for our stage taxonomies
+        if ($current_screen->base === 'edit-tags' && isset($current_screen->taxonomy)) {
+            $taxonomy = $current_screen->taxonomy;
+            
+            // Set parent file for our stage taxonomies
+            if (in_array($taxonomy, ['arsol-pfw-request-stage', 'arsol-pfw-proposal-stage', 'arsol-pfw-project-stage'])) {
+                return 'edit.php?post_type=arsol-pfw-project';
+            }
+        }
+        
+        return $parent_file;
+    }
+    
+    /**
+     * Fix submenu file for taxonomy pages
+     * 
+     * @param string $submenu_file
+     * @return string
+     */
+    public function taxonomy_submenu_file($submenu_file) {
+        global $current_screen;
+        
+        if (!$current_screen) {
+            return $submenu_file;
+        }
+        
+        // Check if we're on a taxonomy edit page for our stage taxonomies
+        if ($current_screen->base === 'edit-tags' && isset($current_screen->taxonomy)) {
+            $taxonomy = $current_screen->taxonomy;
+            
+            // Set submenu file for our stage taxonomies
+            switch ($taxonomy) {
+                case 'arsol-pfw-request-stage':
+                    return 'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request';
+                case 'arsol-pfw-proposal-stage':
+                    return 'edit-tags.php?taxonomy=arsol-pfw-proposal-stage&post_type=arsol-pfw-proposal';
+                case 'arsol-pfw-project-stage':
+                    return 'edit-tags.php?taxonomy=arsol-pfw-project-stage&post_type=arsol-pfw-project';
+            }
+        }
+        
+        return $submenu_file;
     }
 }
 
