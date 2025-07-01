@@ -55,25 +55,3 @@ $submission_date = get_the_time('l j F \a\t g:ia', $post);
         <?php echo $delivery_date ? esc_html(date_i18n(get_option('date_format'), strtotime($delivery_date))) : __('N/A', 'arsol-pfw'); ?>
     </p>
 </div>
-
-<div class="form-field-row">
-    <p class="form-field form-field-wide">
-        <label><strong><?php _e('Project Request Details:', 'arsol-pfw'); ?></strong></label>
-        <?php echo $request_content ? wp_kses_post(wp_trim_words($request_content, 50)) : __('N/A', 'arsol-pfw'); ?>
-    </p>
-</div>
-
-<div class="form-field-row">
-    <p class="form-field form-field-wide">
-        <label><strong><?php _e('Attachments:', 'arsol-pfw'); ?></strong></label>
-        <?php if (!empty($attachments)): ?>
-                <?php foreach ($attachments as $attachment): ?>
-                <a href="<?php echo esc_url(wp_get_attachment_url($attachment->ID)); ?>" target="_blank">
-                                <?php echo esc_html($attachment->post_title); ?>
-                </a><br>
-                <?php endforeach; ?>
-        <?php else: ?>
-            <?php echo __('N/A', 'arsol-pfw'); ?>
-        <?php endif; ?>
-    </p>
-</div> 

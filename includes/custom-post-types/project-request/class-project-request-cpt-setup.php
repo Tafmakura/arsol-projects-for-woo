@@ -47,7 +47,7 @@ class Setup {
         );
 
         // Get base supports array
-        $supports = array();
+        $supports = array('title');
         
         // Add comments support if enabled
         if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-pfw-request')) {
@@ -72,7 +72,7 @@ class Setup {
             'rewrite'           => false,
             'show_in_rest'      => false,
             'capabilities'       => array(
-                'create_posts' => 'do_not_allow',
+                // Allow creation of requests - remove the restriction
             ),
         );
 

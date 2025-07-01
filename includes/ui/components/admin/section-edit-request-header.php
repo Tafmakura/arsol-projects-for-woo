@@ -70,9 +70,6 @@ $container_class = 'arsol-header-grid';
             <h2>
                 <?php printf(__('Project Request #%d details', 'arsol-pfw'), $request_id); ?>
             </h2>
-            <p class="order_number">
-                <?php _e('Title:', 'arsol-pfw'); ?> <?php echo esc_html($post->post_title); ?>
-            </p>
             
             <?php
             // Show parent project if this is a project-tied request
