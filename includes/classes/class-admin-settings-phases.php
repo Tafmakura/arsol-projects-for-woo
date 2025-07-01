@@ -123,7 +123,6 @@ class Settings_Phases {
         echo '<div class="arsol-pfw-customer-notice-field">';
         echo '<textarea name="arsol_phases_settings[' . esc_attr($key) . ']" rows="6" cols="80" class="large-text" placeholder="' . esc_attr($markdown_default) . '">' . esc_textarea($value) . '</textarea>';
         echo '<p class="description">' . esc_html($description) . '</p>';
-        echo '<p class="description"><em>' . __('Leave empty to use the default content from markdown files.', 'arsol-pfw') . '</em></p>';
         echo '</div>';
     }
 } 
