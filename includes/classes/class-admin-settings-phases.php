@@ -23,8 +23,6 @@ class Settings_Phases {
         add_action('init', array($this, 'setup_settings'), 20);
         // Add admin scripts for Select2
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
-        // Add AJAX handler for loading fresh taxonomy terms
-        add_action('wp_ajax_arsol_load_taxonomy_terms', array($this, 'ajax_load_taxonomy_terms'));
     }
 
     /**
@@ -211,52 +209,26 @@ class Settings_Phases {
         echo '</a>';
         echo '</div>';
         
-        // Select2 multi-select for stages (below) - Load fresh data on each open via AJAX
+        // Select2 multi-select for stages (below) - Load all available stages, no pre-population
         echo '<div style="margin-bottom: 10px;">';
-        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="arsol-stages-select2" data-taxonomy="' . esc_attr($taxonomy) . '" data-selected="' . esc_attr(json_encode($stages)) . '" style="width: 100%; min-width: 300px;">';
-        // No options rendered here - they will be loaded via AJAX
+        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="arsol-stages-select2" style="width: 100%; min-width: 300px;">';
+        
+        // Get all available stages
+        $terms = get_terms(array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => false
+        ));
+        
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                $selected = in_array($term->term_id, $stages) ? 'selected' : '';
+                echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
+            }
+        }
         echo '</select>';
         echo '</div>';
         
         echo '<p class="description">' . sprintf(__('Control when %s content appears on the frontend based on the current stage.', 'arsol-pfw'), esc_html($type)) . '</p>';
-    }
-
-    /**
-     * AJAX handler for loading fresh taxonomy terms
-     */
-    public function ajax_load_taxonomy_terms() {
-        // Verify nonce for security
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_taxonomy_terms_nonce')) {
-            wp_die('Security check failed');
-        }
-
-        $taxonomy = sanitize_text_field($_POST['taxonomy']);
-
-        // Validate taxonomy exists
-        if (!taxonomy_exists($taxonomy)) {
-            wp_die('Invalid taxonomy');
-        }
-
-        // Get all terms from the taxonomy (fresh data)
-        $terms = get_terms(array(
-            'taxonomy' => $taxonomy,
-            'hide_empty' => false,
-            'orderby' => 'name',
-            'order' => 'ASC'
-        ));
-
-        $results = array();
-
-        if (!is_wp_error($terms)) {
-            foreach ($terms as $term) {
-                $results[] = array(
-                    'id' => $term->term_id,
-                    'text' => $term->name
-                );
-            }
-        }
-
-        wp_send_json(array('results' => $results));
     }
 
     /**
@@ -278,54 +250,13 @@ class Settings_Phases {
         wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), '4.1.0', true);
         wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array(), '4.1.0');
         
-        // Initialize Select2 with AJAX for fresh data loading (no autocomplete)
+        // Initialize Select2 without AJAX - just basic Select2 functionality
         wp_add_inline_script('select2', '
             jQuery(document).ready(function($) {
-                $(".arsol-stages-select2").each(function() {
-                    var $select = $(this);
-                    var taxonomy = $select.data("taxonomy");
-                    var selectedIds = $select.data("selected") || [];
-                    
-                    $select.select2({
-                        placeholder: "Select stages...",
-                        allowClear: true,
-                        width: "100%",
-                        ajax: {
-                            url: ajaxurl,
-                            dataType: "json",
-                            delay: 0,
-                            data: function (params) {
-                                return {
-                                    action: "arsol_load_taxonomy_terms",
-                                    taxonomy: taxonomy,
-                                    nonce: "' . wp_create_nonce('arsol_taxonomy_terms_nonce') . '"
-                                };
-                            },
-                            processResults: function (data) {
-                                // Mark previously selected items as selected
-                                if (data.results) {
-                                    data.results.forEach(function(item) {
-                                        if (selectedIds.includes(parseInt(item.id))) {
-                                            item.selected = true;
-                                        }
-                                    });
-                                }
-                                return {
-                                    results: data.results
-                                };
-                            },
-                            cache: false
-                        },
-                        minimumInputLength: 0,
-                        escapeMarkup: function (markup) { return markup; }
-                    });
-                    
-                    // Pre-populate with selected values if any
-                    if (selectedIds.length > 0) {
-                        // Trigger initial load to populate selected items
-                        $select.trigger("select2:open");
-                        $select.trigger("select2:close");
-                    }
+                $(".arsol-stages-select2").select2({
+                    placeholder: "Select stages...",
+                    allowClear: true,
+                    width: "100%"
                 });
             });
         ');
