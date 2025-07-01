@@ -17,6 +17,20 @@ $default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_d
         <?php echo wp_kses_post(wpautop($default_message)); ?>
     </div>
 
+    <?php
+    // Add Customer Notice section (always show if content exists, regardless of stage)
+    $customer_notice = get_post_meta($post->ID, '_arsol_pfw_request_customer_notice', true);
+    if (!empty($customer_notice)) : ?>
+        <div class="arsol-pfw-notice arsol-pfw-customer-notice">
+            <div class="arsol-pfw-notice-header">
+                <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
+            </div>
+            <div class="arsol-pfw-notice-content">
+                <?php echo wp_kses_post(wpautop($customer_notice)); ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="arsol-pfw-request-details arsol-pfw-review-details">
         <h2><?php esc_html_e('Your Request Details', 'arsol-pfw'); ?></h2>
         <div class="arsol-pfw-request-summary arsol-pfw-review-summary">

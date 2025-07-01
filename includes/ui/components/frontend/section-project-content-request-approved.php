@@ -15,6 +15,20 @@ if (!defined('ABSPATH')) {
         <p class="arsol-pfw-approved-description"><?php printf(esc_html__('Congratulations! Your project request "%s" has been approved and will be converted to a project proposal soon.', 'arsol-pfw'), '<strong>' . esc_html($post->post_title) . '</strong>'); ?></p>
     </div>
 
+    <?php
+    // Add Customer Notice section (always show if content exists, regardless of stage)
+    $customer_notice = get_post_meta($post->ID, '_arsol_pfw_request_customer_notice', true);
+    if (!empty($customer_notice)) : ?>
+        <div class="arsol-pfw-notice arsol-pfw-customer-notice">
+            <div class="arsol-pfw-notice-header">
+                <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
+            </div>
+            <div class="arsol-pfw-notice-content">
+                <?php echo wp_kses_post(wpautop($customer_notice)); ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <div class="arsol-pfw-approved-info">
         <h2><?php esc_html_e('What happens next?', 'arsol-pfw'); ?></h2>
         <div class="arsol-pfw-approval-timeline">

@@ -73,6 +73,9 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/class-taxonomies-setup.php';
         // Admin Settings Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-phases.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-stages.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-files.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-advanced.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-tools.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-integrations.php';
@@ -110,6 +113,9 @@ class Setup {
         // Initialize admin classes
         if (is_admin()) {
             new Admin\Settings_General();
+            new Admin\Settings_Phases();
+            new Admin\Settings_Stages();
+            new Admin\Settings_Files();
             new Admin\Settings_Advanced();
             new Admin\Settings_Tools();
             new Admin\Setup_Defaults();

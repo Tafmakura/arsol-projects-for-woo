@@ -101,6 +101,20 @@ class Frontend_Handler {
 
         // Build content with status messages
         $proposal_content = $status_message;
+        
+        // Add Customer Notice section (always show if content exists, regardless of stage)
+        $customer_notice = get_post_meta($post->ID, '_arsol_pfw_proposal_customer_notice', true);
+        if (!empty($customer_notice)) {
+            $proposal_content .= '<div class="arsol-pfw-notice arsol-pfw-customer-notice">
+                <div class="arsol-pfw-notice-header">
+                    <h4>' . __('Important Notice', 'arsol-pfw') . '</h4>
+                </div>
+                <div class="arsol-pfw-notice-content">
+                    ' . wp_kses_post(wpautop($customer_notice)) . '
+                </div>
+            </div>';
+        }
+        
         $proposal_content .= '<div class="arsol-pfw-proposal-details">';
         $proposal_content .= $content;
         $proposal_content .= '</div>';
