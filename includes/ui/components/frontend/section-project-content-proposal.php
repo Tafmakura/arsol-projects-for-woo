@@ -64,8 +64,8 @@ if (empty($display_message)) {
         </div>
         
         <?php
-        // Add Customer Notice section (always show if content exists, regardless of stage)
-        $customer_notice = get_post_meta($post->ID, '_arsol_pfw_proposal_customer_notice', true);
+        // Add Customer Notice section using new three-layer helper function
+        $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'proposal');
         if (!empty($customer_notice)) : ?>
             <div class="arsol-pfw-notice arsol-pfw-customer-notice">
                 <div class="arsol-pfw-notice-header">

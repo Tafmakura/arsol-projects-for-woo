@@ -34,7 +34,13 @@ class Setup_Defaults {
         'arsol_pfw_project_default_empty_content' => 'content-active-empty.md',
         'arsol_pfw_proposal_default_empty_content' => 'content-proposal-empty.md',
         'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
-        'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md'
+        'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md,',
+            'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
+            'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
+            'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
+        'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
+        'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
+        'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
     ];
 
     /**
@@ -103,7 +109,10 @@ class Setup_Defaults {
             'arsol_pfw_proposal_default_empty_content' => 'content-proposal-processing.md',
             'arsol_pfw_proposal_default_empty_content' => 'content-proposal-pending-approval.md',
             'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
-            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md'
+            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md,'
+            'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
+            'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
+            'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
         );
         
         $defaults = array();
@@ -147,13 +156,14 @@ class Setup_Defaults {
             'arsol_pfw_proposal_default_empty_content' => __('Your proposal is currently being processed. We are preparing the details and will have it ready for your review soon.', 'arsol-pfw'),
             'arsol_pfw_proposal_default_empty_content' => __('Your proposal is ready and pending your approval. Please review the details below and let us know if you approve.', 'arsol-pfw'),
             'arsol_pfw_request_default_on_hold_content' => __('Your project request is currently on hold. We will contact you when we can proceed with your request.', 'arsol-pfw'),
-            'arsol_pfw_request_default_under_review_content' => __('Your project request is under review. We will get back to you shortly with next steps.', 'arsol-pfw')
+            'arsol_pfw_request_default_under_review_content' => __('Your project request is under review. We will get back to you shortly with next steps.', 'arsol-pfw'),
+            'arsol_pfw_project_default_customer_notice' => __('Important project information will be displayed here when available.', 'arsol-pfw'),
+            'arsol_pfw_proposal_default_customer_notice' => __('Important proposal information will be displayed here when available.', 'arsol-pfw'),
+            'arsol_pfw_request_default_customer_notice' => __('Important request information will be displayed here when available.', 'arsol-pfw')
         );
         
         return isset($fallbacks[$key]) ? $fallbacks[$key] : '';
     }
-
-
 
     /**
      * Get effective default message (user setting or hardcoded fallback)
@@ -171,6 +181,33 @@ class Setup_Defaults {
         // Fall back to hardcoded default
         $hardcoded_defaults = self::get_hardcoded_defaults();
         return isset($hardcoded_defaults[$key]) ? $hardcoded_defaults[$key] : '';
+    }
+
+    /**
+     * Get effective customer notice content
+     * This uses the three-layer hierarchy: custom meta → phases settings → markdown default
+     * 
+     * @param int $post_id The post ID
+     * @param string $post_type The post type ('project', 'proposal', 'request')
+     * @return string The effective customer notice content
+     */
+    public static function get_effective_customer_notice($post_id, $post_type) {
+        // Layer 1: Check custom post meta first
+        $meta_key = '_arsol_pfw_' . $post_type . '_customer_notice';
+        $custom_notice = get_post_meta($post_id, $meta_key, true);
+        if (!empty($custom_notice)) {
+            return $custom_notice;
+        }
+        
+        // Layer 2: Check phases settings default
+        $settings_key = 'arsol_pfw_' . $post_type . '_default_customer_notice';
+        $phases_settings = get_option('arsol_phases_settings', array());
+        if (!empty($phases_settings[$settings_key])) {
+            return $phases_settings[$settings_key];
+        }
+        
+        // Layer 3: Fall back to markdown default
+        return self::get_effective_default_message($settings_key);
     }
 
     /**
@@ -420,7 +457,10 @@ class Setup_Defaults {
             'arsol_pfw_proposal_default_empty_content' => 'content-proposal-processing.md',
             'arsol_pfw_proposal_default_empty_content' => 'content-proposal-pending-approval.md',
             'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
-            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md'
+            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md,'
+            'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
+            'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
+            'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
         );
         
         $debug_info = array(
