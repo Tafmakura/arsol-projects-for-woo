@@ -23,6 +23,8 @@ class Settings_Phases {
         add_action('init', array($this, 'setup_settings'), 20);
         // Add admin scripts for Select2
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+        // Add AJAX handler for loading taxonomy terms
+        add_action('wp_ajax_arsol_load_taxonomy_terms', array($this, 'ajax_load_taxonomy_terms'));
     }
 
     /**
@@ -209,20 +211,22 @@ class Settings_Phases {
         echo '</a>';
         echo '</div>';
         
-        // Select2 multi-select for stages (below) - Load all available stages with saved selections
+        // WooCommerce-style multi-select for stages
         echo '<div style="margin-bottom: 10px;">';
-        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="arsol-stages-select2" style="width: 100%; min-width: 300px;">';
+        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="wc-enhanced-select arsol-stages-select2" data-taxonomy="' . esc_attr($taxonomy) . '" style="width: 100%; min-width: 300px;">';
         
-        // Get all available stages
-        $terms = get_terms(array(
-            'taxonomy' => $taxonomy,
-            'hide_empty' => false
-        ));
-        
-        if (!is_wp_error($terms)) {
-            foreach ($terms as $term) {
-                $selected = in_array($term->term_id, $stages) ? 'selected' : '';
-                echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
+        // Pre-populate with selected values for better UX
+        if (!empty($stages)) {
+            $selected_terms = get_terms(array(
+                'taxonomy' => $taxonomy,
+                'hide_empty' => false,
+                'include' => $stages
+            ));
+            
+            if (!is_wp_error($selected_terms)) {
+                foreach ($selected_terms as $term) {
+                    echo '<option value="' . esc_attr($term->term_id) . '" selected>' . esc_html($term->name) . '</option>';
+                }
             }
         }
         echo '</select>';
@@ -232,7 +236,55 @@ class Settings_Phases {
     }
 
     /**
-     * Enqueue admin scripts for Select2
+     * AJAX handler for loading taxonomy terms
+     */
+    public function ajax_load_taxonomy_terms() {
+        // Check user permissions
+        if (!current_user_can('manage_options')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'arsol-pfw'));
+        }
+
+        // Verify nonce for security
+        check_ajax_referer('arsol_taxonomy_terms_nonce', 'security');
+
+        $taxonomy = sanitize_text_field($_POST['taxonomy']);
+        $search = isset($_POST['term']) ? sanitize_text_field($_POST['term']) : '';
+
+        // Validate taxonomy exists and user can edit terms
+        if (!taxonomy_exists($taxonomy) || !current_user_can('manage_categories')) {
+            wp_send_json_error(__('Invalid taxonomy or insufficient permissions.', 'arsol-pfw'));
+        }
+
+        $args = array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => false,
+            'number' => 50, // Limit for performance
+            'orderby' => 'name',
+            'order' => 'ASC'
+        );
+
+        if (!empty($search)) {
+            $args['search'] = $search;
+        }
+
+        $terms = get_terms($args);
+        $results = array();
+
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                $results[] = array(
+                    'id' => $term->term_id,
+                    'text' => $term->name,
+                    'slug' => $term->slug
+                );
+            }
+        }
+
+        wp_send_json_success($results);
+    }
+
+    /**
+     * Enqueue admin scripts using WordPress/WooCommerce standards
      */
     public function enqueue_admin_scripts($hook) {
         // Only load on our settings page
@@ -246,51 +298,76 @@ class Settings_Phases {
             return;
         }
 
-        // Enqueue Select2
-        wp_enqueue_script('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), '4.1.0', true);
-        wp_enqueue_style('select2', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css', array(), '4.1.0');
-        
-        // Initialize Select2 - simple configuration without AJAX
-        wp_add_inline_script('select2', '
-            jQuery(document).ready(function($) {
-                $(".arsol-stages-select2").select2({
-                    placeholder: "Select stages...",
-                    allowClear: true,
-                    width: "100%"
-                });
-            });
-        ');
-    }
-}
+        // Use WooCommerce's enhanced select functionality if available
+        if (class_exists('WooCommerce')) {
+            // WooCommerce provides selectWoo (enhanced Select2)
+            wp_enqueue_script('selectWoo');
+            wp_enqueue_style('select2');
+            
+            // Also enqueue WooCommerce admin styles for consistency
+            wp_enqueue_style('woocommerce_admin_styles');
+        } else {
+            // Fallback to WordPress core Select2
+            wp_enqueue_script('select2');
+            wp_enqueue_style('select2');
+        }
 
+        // Localize script with proper WordPress standards
+        $script_handle = class_exists('WooCommerce') ? 'selectWoo' : 'select2';
+        wp_localize_script($script_handle, 'arsol_taxonomy_ajax', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('arsol_taxonomy_terms_nonce'),
+            'strings' => array(
+                'select_stages' => __('Select stages...', 'arsol-pfw'),
+                'searching' => __('Searching...', 'arsol-pfw'),
+                'no_results' => __('No results found', 'arsol-pfw')
+            )
+        ));
+        
+        // Initialize enhanced select with WordPress/WooCommerce standards
+        $select_function = class_exists('WooCommerce') ? 'selectWoo' : 'select2';
+        wp_add_inline_script($script_handle, '
+            jQuery(document).ready(function($) {
                 $(".arsol-stages-select2").each(function() {
                     var $select = $(this);
                     var taxonomy = $select.data("taxonomy");
                     
-                    $select.select2({
-                        placeholder: "Select stages...",
+                    $select.' . $select_function . '({
+                        placeholder: arsol_taxonomy_ajax.strings.select_stages,
                         allowClear: true,
                         width: "100%",
                         ajax: {
-                            url: ajaxurl,
+                            url: arsol_taxonomy_ajax.ajax_url,
                             dataType: "json",
                             delay: 250,
                             data: function (params) {
                                 return {
                                     action: "arsol_load_taxonomy_terms",
                                     taxonomy: taxonomy,
-                                    search: params.term,
-                                    nonce: "' . wp_create_nonce('arsol_taxonomy_terms_nonce') . '"
+                                    term: params.term || "",
+                                    security: arsol_taxonomy_ajax.nonce
                                 };
                             },
-                            processResults: function (data) {
-                                return {
-                                    results: data.results
-                                };
+                            processResults: function (response) {
+                                if (response.success && response.data) {
+                                    return { results: response.data };
+                                }
+                                return { results: [] };
                             },
-                            cache: false
+                            cache: true
                         },
-                        minimumInputLength: 0
+                        minimumInputLength: 0,
+                        language: {
+                            searching: function() {
+                                return arsol_taxonomy_ajax.strings.searching;
+                            },
+                            noResults: function() {
+                                return arsol_taxonomy_ajax.strings.no_results;
+                            }
+                        },
+                        escapeMarkup: function(markup) { 
+                            return markup; 
+                        }
                     });
                 });
             });
