@@ -30,10 +30,6 @@ class Setup {
     public function setup_admin_hooks() {
         add_action('admin_menu', array($this, 'setup_admin_menus'), 10);
         add_action('admin_menu', array($this, 'cleanup_admin_menus'), 999);
-        
-        // Add filters to highlight correct parent menu for taxonomy pages
-        add_filter('parent_file', array($this, 'taxonomy_parent_file'));
-        add_filter('submenu_file', array($this, 'taxonomy_submenu_file'));
     }
     
     /**
@@ -75,39 +71,6 @@ class Setup {
             3
         );
         
-        // 4. Project Stages (now used for status logic)
-        add_submenu_page(
-            $parent_slug,
-            __('Project Stages', 'arsol-pfw'),
-            __('Project Stages', 'arsol-pfw'),
-            'manage_categories',
-            'edit-tags.php?taxonomy=arsol-pfw-project-stage&post_type=arsol-pfw-project',
-            '',
-            4
-        );
-        
-        // 5. Request Stages
-        add_submenu_page(
-            $parent_slug,
-            __('Request Stages', 'arsol-pfw'),
-            __('Request Stages', 'arsol-pfw'),
-            'manage_categories',
-            'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request',
-            '',
-            5
-        );
-        
-        // 6. Proposal Stages
-        add_submenu_page(
-            $parent_slug,
-            __('Proposal Stages', 'arsol-pfw'),
-            __('Proposal Stages', 'arsol-pfw'),
-            'manage_categories',
-            'edit-tags.php?taxonomy=arsol-pfw-proposal-stage&post_type=arsol-pfw-proposal',
-            '',
-            6
-        );
-        
         // 99. Settings (last)
         $settings_result = add_submenu_page(
             $parent_slug,
@@ -139,8 +102,8 @@ class Setup {
             
             // Remove all default WordPress submenus
             foreach ($submenu[$parent_slug] as $key => $menu_item) {
-                // Keep only our custom menus (positions 1,2,3,4,5,6,99)
-                if (!in_array($key, [1, 2, 3, 4, 5, 6, 99])) {
+                // Keep only our custom menus (positions 1,2,3,99)
+                if (!in_array($key, [1, 2, 3, 99])) {
                     unset($submenu[$parent_slug][$key]);
                 }
             }
@@ -153,11 +116,6 @@ class Setup {
             // Sort the submenu by key to ensure proper order
             ksort($submenu[$parent_slug]);
         }
-        
-        // Remove taxonomy management pages for stage taxonomies from appearing outside project menu
-        remove_submenu_page('edit.php?post_type=arsol-pfw-request', 'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request');
-        remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-request-stage');
-        remove_submenu_page('edit.php?post_type=arsol-pfw-project', 'edit-tags.php?taxonomy=arsol-pfw-proposal-stage');
     }
     
     /**
@@ -204,79 +162,6 @@ class Setup {
             ?>
         </div>
         <?php
-    }
-    
-    /**
-     * Fix parent file for taxonomy pages
-     * 
-     * @param string $parent_file
-     * @return string
-     */
-    public function taxonomy_parent_file($parent_file) {
-        global $current_screen;
-        
-        if (!$current_screen) {
-            return $parent_file;
-        }
-        
-        // Handle all taxonomy-related screens for our stage taxonomies
-        $our_taxonomies = ['arsol-pfw-request-stage', 'arsol-pfw-proposal-stage', 'arsol-pfw-project-stage'];
-        
-        // Check for taxonomy listing page (edit-tags)
-        if ($current_screen->base === 'edit-tags' && isset($current_screen->taxonomy)) {
-            if (in_array($current_screen->taxonomy, $our_taxonomies)) {
-                return 'edit.php?post_type=arsol-pfw-project';
-            }
-        }
-        
-        // Check for individual term edit page (term)
-        if ($current_screen->base === 'term' && isset($current_screen->taxonomy)) {
-            if (in_array($current_screen->taxonomy, $our_taxonomies)) {
-                return 'edit.php?post_type=arsol-pfw-project';
-            }
-        }
-        
-        // Check for add new term page (edit-tag)
-        if ($current_screen->base === 'edit-tag' && isset($current_screen->taxonomy)) {
-            if (in_array($current_screen->taxonomy, $our_taxonomies)) {
-                return 'edit.php?post_type=arsol-pfw-project';
-            }
-        }
-        
-        return $parent_file;
-    }
-    
-    /**
-     * Fix submenu file for taxonomy pages
-     * 
-     * @param string $submenu_file
-     * @return string
-     */
-    public function taxonomy_submenu_file($submenu_file) {
-        global $current_screen;
-        
-        if (!$current_screen) {
-            return $submenu_file;
-        }
-        
-        // Handle all taxonomy-related screens for our stage taxonomies
-        $taxonomy_screens = ['edit-tags', 'term', 'edit-tag'];
-        
-        if (in_array($current_screen->base, $taxonomy_screens) && isset($current_screen->taxonomy)) {
-            $taxonomy = $current_screen->taxonomy;
-            
-            // Set submenu file for our stage taxonomies
-            switch ($taxonomy) {
-                case 'arsol-pfw-request-stage':
-                    return 'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request';
-                case 'arsol-pfw-proposal-stage':
-                    return 'edit-tags.php?taxonomy=arsol-pfw-proposal-stage&post_type=arsol-pfw-proposal';
-                case 'arsol-pfw-project-stage':
-                    return 'edit-tags.php?taxonomy=arsol-pfw-project-stage&post_type=arsol-pfw-project';
-            }
-        }
-        
-        return $submenu_file;
     }
 }
 
