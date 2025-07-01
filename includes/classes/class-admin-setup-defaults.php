@@ -34,10 +34,7 @@ class Setup_Defaults {
         'arsol_pfw_project_default_empty_content' => 'content-active-empty.md',
         'arsol_pfw_proposal_default_empty_content' => 'content-proposal-empty.md',
         'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
-        'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md,',
-            'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
-            'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
-            'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
+        'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md',
         'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
         'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
         'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
@@ -109,7 +106,7 @@ class Setup_Defaults {
             'arsol_pfw_proposal_default_empty_content' => 'content-proposal-processing.md',
             'arsol_pfw_proposal_default_empty_content' => 'content-proposal-pending-approval.md',
             'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
-            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md,'
+            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md',
             'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
             'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
             'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
@@ -457,7 +454,7 @@ class Setup_Defaults {
             'arsol_pfw_proposal_default_empty_content' => 'content-proposal-processing.md',
             'arsol_pfw_proposal_default_empty_content' => 'content-proposal-pending-approval.md',
             'arsol_pfw_request_default_on_hold_content' => 'content-request-on-hold.md',
-            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md,'
+            'arsol_pfw_request_default_under_review_content' => 'content-request-under-review.md',
             'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
             'arsol_pfw_proposal_default_customer_notice' => 'content-default-proposal-customer-notice.md',
             'arsol_pfw_request_default_customer_notice' => 'content-default-request-customer-notice.md'
