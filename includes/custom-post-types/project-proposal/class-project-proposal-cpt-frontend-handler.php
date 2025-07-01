@@ -48,11 +48,7 @@ class Frontend_Handler {
         $status_message = '';
         switch ($status) {
             case 'processing':
-                // Get custom feedback first, then fall back to settings defaults
-                $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_processing_feedback', true);
-                $processing_message = !empty($custom_feedback) 
-                    ? $custom_feedback 
-                    : \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
+                $processing_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
                 $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-info">
                     <div class="arsol-pfw-empty-state">
                         <div class="arsol-pfw-empty-state__content">
@@ -63,11 +59,7 @@ class Frontend_Handler {
                 break;
                 
             case 'pending-approval':
-                // Get custom feedback first, then fall back to settings defaults
-                $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_pending_approval_feedback', true);
-                $pending_approval_message = !empty($custom_feedback) 
-                    ? $custom_feedback 
-                    : \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
+                $pending_approval_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
                 $status_message = '<div class="arsol-pfw-notice arsol-pfw-notice-warning">
                     <div class="arsol-pfw-empty-state">
                         <div class="arsol-pfw-empty-state__content">

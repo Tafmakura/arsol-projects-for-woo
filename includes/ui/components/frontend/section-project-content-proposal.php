@@ -18,32 +18,8 @@ if ($stage_terms && !is_wp_error($stage_terms)) {
     $stage = 'processing'; // Default fallback
 }
 
-// Determine the message to display with proper hierarchy: Custom Feedback → Settings Defaults → Plugin Defaults
-$display_message = '';
-
-// 1. First priority: Custom feedback from metabox (if available)
-if ($stage === 'processing') {
-    $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_processing_feedback', true);
-    if (!empty($custom_feedback)) {
-        $display_message = $custom_feedback;
-    }
-} elseif ($stage === 'pending-approval') {
-    $custom_feedback = get_post_meta($post->ID, '_arsol_pfw_proposal_pending_approval_feedback', true);
-    if (!empty($custom_feedback)) {
-        $display_message = $custom_feedback;
-    }
-}
-
-// 2. Second priority: Settings defaults (if no custom feedback)
-if (empty($display_message)) {
-    if ($stage === 'processing') {
-        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
-    } elseif ($stage === 'pending-approval') {
-        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
-    } else {
-        $display_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
-    }
-}
+// Get default content for empty proposals
+$default_message = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_default_message('arsol_pfw_proposal_default_empty_content');
 ?>
 
 <div class="project-content-wrapper">
@@ -54,7 +30,7 @@ if (empty($display_message)) {
                 <div class="arsol-pfw-project-overview-empty">
                     <div class="arsol-pfw-empty-state">
                         <div class="arsol-pfw-empty-state__content">
-                            <?php echo wp_kses_post(wpautop($display_message)); ?>
+                            <?php echo wp_kses_post(wpautop($default_message)); ?>
                         </div>
                     </div>
                 </div>

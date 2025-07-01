@@ -6,14 +6,12 @@ if (!defined('ABSPATH')) exit;
 
 class Request {
     public function __construct() {
-        // Add meta boxes
+        // Add meta boxes for single request admin screen
         add_action('add_meta_boxes', array($this, 'add_request_details_meta_box'));
-        // Save request details
+        // Save request data
         add_action('save_post_arsol-pfw-request', array($this, 'save_request_details'));
-        
-        // Add conditional CSS classes to feedback metaboxes
-        add_filter('postbox_classes_arsol-pfw-request_arsol-pfw-request-onhold-feedback-metabox', array($this, 'add_onhold_feedback_metabox_classes'));
-        add_filter('postbox_classes_arsol-pfw-request_arsol-pfw-request-underreview-feedback-metabox', array($this, 'add_underreview_feedback_metabox_classes'));
+        // Prevent request deletion if tied proposals exist
+        add_action('before_delete_post', array($this, 'prevent_request_deletion_with_proposals'));
     }
 
     /**
@@ -27,25 +25,6 @@ class Request {
             array($this, 'render_request_actions_metabox'),
             'arsol-pfw-request',
             'side',
-            'high'
-        );
-        
-        // Customer feedback metaboxes with conditional CSS classes
-        add_meta_box(
-            'arsol-pfw-request-onhold-feedback-metabox',
-            __('Customer Feedback - On Hold', 'arsol-pfw'),
-            array($this, 'render_onhold_feedback_metabox'),
-            'arsol-pfw-request',
-            'normal',
-            'high'
-        );
-        
-        add_meta_box(
-            'arsol-pfw-request-underreview-feedback-metabox',
-            __('Customer Feedback - Under Review', 'arsol-pfw'),
-            array($this, 'render_underreview_feedback_metabox'),
-            'arsol-pfw-request',
-            'normal',
             'high'
         );
 
@@ -93,92 +72,6 @@ class Request {
                        data-message="<?php echo $confirm_message; ?>"
                        <?php disabled($is_disabled, true); ?> />
             </span>
-        </div>
-        <?php
-    }
-
-    /**
-     * Render on-hold feedback content
-     */
-    public function render_onhold_feedback_content($post) {
-        // Add nonce for security
-        wp_nonce_field('request_onhold_feedback_section', 'request_onhold_feedback_section_nonce');
-
-        // Get current values
-        $feedback = get_post_meta($post->ID, '_arsol_pfw_request_onhold_feedback', true);
-        ?>
-        <div>
-            <p class="description">
-                <?php _e('Provide feedback to the customer explaining why this request is on hold and what actions they need to take.', 'arsol-pfw'); ?>
-            </p>
-            
-            <div class="arsol-request-feedback-editor">
-                <?php
-                $editor_settings = array(
-                    'textarea_name' => 'arsol_pfw_request_onhold_feedback',
-                    'textarea_rows' => 8,
-                    'media_buttons' => false,
-                    'teeny' => false,
-                    'quicktags' => array(
-                        'buttons' => 'strong,em,ul,ol,li,link,close'
-                    ),
-                    'tinymce' => array(
-                        'toolbar1' => 'bold,italic,bullist,numlist,link,unlink,undo,redo',
-                        'toolbar2' => '',
-                        'toolbar3' => ''
-                    )
-                );
-                
-                wp_editor($feedback, 'arsol_pfw_request_onhold_feedback', $editor_settings);
-                ?>
-            </div>
-            
-            <textarea 
-                id="arsol_request_onhold_feedback_validation" 
-                name="arsol_request_onhold_feedback_validation" 
-                class="arsol-pfw-hidden" 
-                data-required-when-stage="on-hold"
-                data-validation-message="<?php esc_attr_e('On-Hold feedback is required when request stage is on-hold.', 'arsol-pfw'); ?>">
-            </textarea>
-        </div>
-        <?php
-    }
-
-    /**
-     * Render under review feedback content
-     */
-    public function render_underreview_feedback_content($post) {
-        // Add nonce for security
-        wp_nonce_field('request_underreview_feedback_section', 'request_underreview_feedback_section_nonce');
-
-        // Get current values
-        $feedback = get_post_meta($post->ID, '_arsol_pfw_request_underreview_feedback', true);
-        ?>
-        <div>
-            <p class="description">
-                <?php _e('Provide feedback to the customer about the current review process and any additional information needed.', 'arsol-pfw'); ?>
-            </p>
-            
-            <div class="arsol-request-feedback-editor">
-                <?php
-                $editor_settings = array(
-                    'textarea_name' => 'arsol_pfw_request_underreview_feedback',
-                    'textarea_rows' => 8,
-                    'media_buttons' => false,
-                    'teeny' => false,
-                    'quicktags' => array(
-                        'buttons' => 'strong,em,ul,ol,li,link,close'
-                    ),
-                    'tinymce' => array(
-                        'toolbar1' => 'bold,italic,bullist,numlist,link,unlink,undo,redo',
-                        'toolbar2' => '',
-                        'toolbar3' => ''
-                    )
-                );
-                
-                wp_editor($feedback, 'arsol_pfw_request_underreview_feedback', $editor_settings);
-                ?>
-            </div>
         </div>
         <?php
     }
@@ -258,24 +151,6 @@ class Request {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['request_stage']), 'arsol-pfw-request-stage', false);
         }
         
-        // Save feedback for all three metaboxes
-        
-        // Save on-hold feedback
-        if (isset($_POST['request_onhold_feedback_section_nonce']) && wp_verify_nonce($_POST['request_onhold_feedback_section_nonce'], 'request_onhold_feedback_section')) {
-            if (isset($_POST['arsol_pfw_request_onhold_feedback'])) {
-                $feedback = wp_kses_post($_POST['arsol_pfw_request_onhold_feedback']);
-                update_post_meta($post_id, '_arsol_pfw_request_onhold_feedback', $feedback);
-            }
-        }
-        
-        // Save under review feedback
-        if (isset($_POST['request_underreview_feedback_section_nonce']) && wp_verify_nonce($_POST['request_underreview_feedback_section_nonce'], 'request_underreview_feedback_section')) {
-            if (isset($_POST['arsol_pfw_request_underreview_feedback'])) {
-                $feedback = wp_kses_post($_POST['arsol_pfw_request_underreview_feedback']);
-                update_post_meta($post_id, '_arsol_pfw_request_underreview_feedback', $feedback);
-            }
-        }
-        
         // Save customer notice
         if (isset($_POST['request_customer_notice_section_nonce']) && wp_verify_nonce($_POST['request_customer_notice_section_nonce'], 'request_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_request_customer_notice'])) {
@@ -311,32 +186,30 @@ class Request {
     }
 
     /**
-     * Render onhold feedback metabox
+     * Prevent request deletion if tied proposals exist
      */
-    public function render_onhold_feedback_metabox($post) {
-        $this->render_onhold_feedback_content($post);
-    }
+    public function prevent_request_deletion_with_proposals($post_id) {
+        // Check if the post being deleted is a request
+        if (get_post_type($post_id) === 'arsol-pfw-request') {
+            // Get proposals associated with the request
+            $proposals = get_posts(array(
+                'post_type' => 'arsol-pfw-proposal',
+                'meta_key' => '_arsol_pfw_request_id',
+                'meta_value' => $post_id,
+                'post_status' => 'any'
+            ));
 
-    /**
-     * Render underreview feedback metabox  
-     */
-    public function render_underreview_feedback_metabox($post) {
-        $this->render_underreview_feedback_content($post);
-    }
-
-    /**
-     * Add conditional CSS class to onhold feedback metabox
-     */
-    public function add_onhold_feedback_metabox_classes($classes) {
-        $classes[] = 'arsol-pfw-show-if-request-stage-is-on-hold';
-        return $classes;
-    }
-
-    /**
-     * Add conditional CSS class to underreview feedback metabox  
-     */
-    public function add_underreview_feedback_metabox_classes($classes) {
-        $classes[] = 'arsol-pfw-show-if-request-stage-is-under-review';
-        return $classes;
+            // If there are proposals associated with the request, prevent deletion
+            if (!empty($proposals)) {
+                // Show error notice
+                add_action('admin_notices', function() {
+                    echo '<div class="notice notice-error is-dismissible">
+                        <p>' . __('Cannot delete request. There are proposals associated with this request.', 'arsol-pfw') . '</p>
+                    </div>';
+                });
+                return false; // Prevent deletion
+            }
+        }
+        return true; // Allow deletion
     }
 }

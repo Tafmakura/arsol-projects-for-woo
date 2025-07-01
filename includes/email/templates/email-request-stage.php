@@ -44,15 +44,8 @@ do_action('woocommerce_email_header', $email_heading, $email); ?>
     <p><?php _e('Our team is now actively reviewing your request. We\'re evaluating the requirements and will contact you if we need any additional information.', 'arsol-pfw'); ?></p>
         
     <?php 
-    // Get under-review feedback from metabox
-    $under_review_feedback = get_post_meta($request->ID, '_arsol_pfw_under_review_feedback', true);
-    if (!empty($under_review_feedback)): 
+    // Feedback section removed
     ?>
-    <h3><?php _e('Review Notes', 'arsol-pfw'); ?></h3>
-    <blockquote style="border-left: 4px solid #96588a; padding: 15px; margin: 20px 0; background-color: #f9f9f9;">
-        <?php echo wp_kses_post(wpautop($under_review_feedback)); ?>
-    </blockquote>
-    <?php endif; ?>
     
     <h3><?php _e('Next steps', 'arsol-pfw'); ?></h3>
         <ul>
@@ -63,25 +56,12 @@ do_action('woocommerce_email_header', $email_heading, $email); ?>
         
     <?php elseif ($new_status === 'on-hold'): ?>
     <h3><?php _e('What this means', 'arsol-pfw'); ?></h3>
-    <p><?php _e('Your request has been temporarily placed on hold.', 'arsol-pfw'); ?></p>
-    
-    <?php 
-    // Get on-hold feedback from metabox
-    $on_hold_feedback = get_post_meta($request->ID, '_arsol_pfw_on_hold_feedback', true);
-    if (!empty($on_hold_feedback)): 
-    ?>
-    <h3><?php _e('Reason for Hold', 'arsol-pfw'); ?></h3>
-    <blockquote style="border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; background-color: #fff3cd;">
-        <?php echo wp_kses_post(wpautop($on_hold_feedback)); ?>
-    </blockquote>
-    <?php else: ?>
-    <p><?php _e('This may be due to:', 'arsol-pfw'); ?></p>
+    <p><?php _e('Your request has been temporarily placed on hold. This may be due to:', 'arsol-pfw'); ?></p>
         <ul>
         <li><?php _e('Additional information needed from you', 'arsol-pfw'); ?></li>
         <li><?php _e('Current capacity constraints', 'arsol-pfw'); ?></li>
         <li><?php _e('Technical clarifications required', 'arsol-pfw'); ?></li>
         </ul>
-    <?php endif; ?>
         
     <h3><?php _e('Next steps', 'arsol-pfw'); ?></h3>
     <p><?php _e('Our team will contact you directly with details about what steps are needed to proceed.', 'arsol-pfw'); ?></p>
