@@ -22,17 +22,4 @@ if (!defined('ABSPATH')) {
         submit_button();
         ?>
     </form>
-</div>
-
-<script>
-jQuery(document).ready(function($) {
-    // Add any JavaScript interactions here
-    $('.arsol-pfw-stage-notifications input[type="checkbox"]').on('change', function() {
-        if ($(this).is(':checked')) {
-            $('.arsol-pfw-stage-history').closest('tr').show();
-        } else {
-            $('.arsol-pfw-stage-history').closest('tr').hide();
-        }
-    }).trigger('change');
-});
-</script> 
+</div> 
