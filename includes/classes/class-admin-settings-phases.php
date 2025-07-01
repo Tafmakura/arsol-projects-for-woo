@@ -205,29 +205,29 @@ class Settings_Phases {
             $terms = array();
         }
         
-        // Visibility select (on top)
-        echo '<div style="margin-bottom: 10px;">';
+        // Visibility select with manage button (on top)
+        echo '<div class="arsol-stage-field-container">';
         echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_visibility]" style="width: 250px;">';
         echo '<option value="hide"' . selected($visibility, 'hide', false) . '>' . __('Hide for selected stages', 'arsol-pfw') . '</option>';
         echo '<option value="show"' . selected($visibility, 'show', false) . '>' . __('Show for selected stages', 'arsol-pfw') . '</option>';
         echo '</select>';
+        
+        // Add manage button with WordPress secondary styling
+        $manage_url = admin_url('edit-tags.php?taxonomy=' . esc_attr($taxonomy));
+        echo '<a href="' . esc_url($manage_url) . '" target="_blank" class="button button-secondary arsol-stage-manage-btn">';
+        echo '<span class="dashicons dashicons-admin-generic" style="vertical-align: middle; margin-right: 4px;"></span>';
+        echo __('Manage Stages', 'arsol-pfw');
+        echo '</a>';
         echo '</div>';
         
-        // Select2 multi-select for stages with manage button (below)
-        echo '<div class="arsol-stage-field-container">';
+        // Select2 multi-select for stages (below)
+        echo '<div style="margin-bottom: 10px;">';
         echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="arsol-stages-select2" style="width: 100%; min-width: 300px;">';
         foreach ($terms as $term) {
             $selected = in_array($term->term_id, $stages) ? 'selected' : '';
             echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
         }
         echo '</select>';
-        
-        // Add manage button with WordPress secondary styling
-        $manage_url = admin_url('edit-tags.php?taxonomy=' . esc_attr($taxonomy));
-        echo '<a href="' . esc_url($manage_url) . '" target="_blank" class="button button-secondary arsol-stage-manage-btn">';
-        echo '<span class="dashicons dashicons-edit" style="vertical-align: middle; margin-right: 4px;"></span>';
-        echo __('Manage Stages', 'arsol-pfw');
-        echo '</a>';
         echo '</div>';
         
         echo '<p class="description">' . sprintf(__('Control when %s content appears on the frontend based on the current stage.', 'arsol-pfw'), esc_html($type)) . '</p>';
