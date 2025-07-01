@@ -46,13 +46,15 @@ class Taxonomies_Request_Stage_Setup {
         $args = array(
             'hierarchical'      => false,
             'labels'            => $labels,
-            'show_ui'           => false,        // Hide taxonomy management UI
+            'show_ui'           => true,         // Show taxonomy management UI
             'show_admin_column' => true,         // Keep admin columns
             'query_var'         => true,
             'rewrite'           => array('slug' => 'request-stage'),
             'show_in_rest'      => true,
             'meta_box_cb'       => false,        // Remove meta box
-            'show_in_menu'      => false,        // Hide from menus
+            'show_in_menu'      => true,         // Show in admin menu
+            'public'            => false,        // Hide from frontend
+            'publicly_queryable' => false,      // Not queryable on frontend
         );
 
         $result = register_taxonomy('arsol-pfw-request-stage', 'arsol-pfw-request', $args);

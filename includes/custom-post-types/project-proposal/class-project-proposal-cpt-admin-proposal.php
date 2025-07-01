@@ -405,6 +405,14 @@ class Proposal {
             update_post_meta($post_id, '_arsol_pfw_proposal_notes', wp_kses_post($_POST['arsol_pfw_proposal_notes']));
         }
         
+        // Save customer notice
+        if (isset($_POST['proposal_customer_notice_section_nonce']) && wp_verify_nonce($_POST['proposal_customer_notice_section_nonce'], 'proposal_customer_notice_section')) {
+            if (isset($_POST['arsol_pfw_proposal_customer_notice'])) {
+                $notice = wp_kses_post($_POST['arsol_pfw_proposal_customer_notice']);
+                update_post_meta($post_id, '_arsol_pfw_proposal_customer_notice', $notice);
+            }
+        }
+        
         // Handle parent project ID for project-tied proposals
         // Check if this is a new proposal created from a project
         if (get_post_status($post_id) === 'auto-draft' || (get_post_status($post_id) === 'draft' && !get_post_meta($post_id, '_arsol_pfw_parent_project_id', true))) {

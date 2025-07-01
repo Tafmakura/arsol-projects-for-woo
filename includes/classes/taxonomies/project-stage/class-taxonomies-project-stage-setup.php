@@ -54,6 +54,7 @@ class Taxonomies_Project_Stage_Setup {
             'meta_box_cb'       => false,
             'public'            => false,           // Hide from frontend
             'publicly_queryable' => false,         // Not queryable on frontend
+            'show_in_menu'      => true,            // Show in admin menu
         );
 
         $result = register_taxonomy('arsol-pfw-project-stage', 'arsol-pfw-project', $args);
