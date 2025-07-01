@@ -147,8 +147,7 @@ class Settings_Advanced {
     }
 
     public function render_template_overrides_description() {
-        echo '<p>' . esc_html__('Use these settings to override the default plugin templates with your own shortcodes. The plugin now uses its own internal shortcodes for all content rendering, which you can see as placeholders in each input field below.', 'arsol-pfw') . '</p>';
-        echo '<p>' . esc_html__('This allows for custom layouts and designs for various components without needing to edit plugin files directly. You can either use the default shortcodes as-is, or replace them with your own custom shortcodes (like Gravity Forms, Elementor widgets, etc.).', 'arsol-pfw') . '</p>';
+        echo '<p>' . esc_html__('Use these settings to override the default plugin templates with your own shortcodes. The plugin now uses its own internal shortcodes for all content rendering, which you can see as placeholders in each input field below. This allows for custom layouts and designs for various components without needing to edit plugin files directly. You can either use the default shortcodes as-is, or replace them with your own custom shortcodes (like Gravity Forms, Elementor widgets, etc.).', 'arsol-pfw') . '</p>';
         echo '<p><strong>' . esc_html__('Important:', 'arsol-pfw') . '</strong> ' . esc_html__('Template overrides are placed inside existing wrapper elements to preserve page structure and styling. Your shortcode content will appear within the appropriate container divs.', 'arsol-pfw') . '</p>';
         echo '<p><em>' . esc_html__('Tip: Leave fields empty to use the default shortcodes shown as placeholders, or enter your own shortcodes to customize specific areas.', 'arsol-pfw') . '</em></p>';
     }

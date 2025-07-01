@@ -36,6 +36,16 @@ class Proposal {
             'side',
             'high'
         );
+
+        // Customer Notice metabox
+        add_meta_box(
+            'arsol-pfw-proposal-customer-notice-metabox',
+            __('Customer Notice', 'arsol-pfw'),
+            array($this, 'render_customer_notice_metabox'),
+            'arsol-pfw-proposal',
+            'normal',
+            'high'
+        );
     }
 
     /**
@@ -767,5 +777,51 @@ class Proposal {
                 }
             }
         }
+    }
+
+    /**
+     * Render customer notice metabox
+     */
+    public function render_customer_notice_metabox($post) {
+        $this->render_customer_notice_content($post);
+    }
+
+    /**
+     * Render customer notice content
+     */
+    public function render_customer_notice_content($post) {
+        // Add nonce for security
+        wp_nonce_field('proposal_customer_notice_section', 'proposal_customer_notice_section_nonce');
+
+        // Get current values
+        $notice = get_post_meta($post->ID, '_arsol_pfw_proposal_customer_notice', true);
+        ?>
+        <div>
+            <p class="description">
+                <?php _e('Add any important notices or updates that should be communicated to the customer regarding this proposal.', 'arsol-pfw'); ?>
+            </p>
+            
+            <div class="arsol-request-feedback-editor">
+                <?php
+                $editor_settings = array(
+                    'textarea_name' => 'arsol_pfw_proposal_customer_notice',
+                    'textarea_rows' => 8,
+                    'media_buttons' => false,
+                    'teeny' => false,
+                    'quicktags' => array(
+                        'buttons' => 'strong,em,ul,ol,li,link,close'
+                    ),
+                    'tinymce' => array(
+                        'toolbar1' => 'bold,italic,bullist,numlist,link,unlink,undo,redo',
+                        'toolbar2' => '',
+                        'toolbar3' => ''
+                    )
+                );
+                
+                wp_editor($notice, 'arsol_pfw_proposal_customer_notice', $editor_settings);
+                ?>
+            </div>
+        </div>
+        <?php
     }
 }
