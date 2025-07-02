@@ -30,6 +30,10 @@ class Setup {
     public function setup_admin_hooks() {
         add_action('admin_menu', array($this, 'setup_admin_menus'), 10);
         add_action('admin_menu', array($this, 'cleanup_admin_menus'), 999);
+        
+        // Add menu highlighting for taxonomy pages
+        add_filter('parent_file', array($this, 'highlight_parent_menu'));
+        add_filter('submenu_file', array($this, 'highlight_submenu'));
     }
     
     /**
@@ -71,6 +75,39 @@ class Setup {
             3
         );
         
+        // 4. Request Stages
+        add_submenu_page(
+            $parent_slug,
+            __('Request Stages', 'arsol-pfw'),
+            __('Request Stages', 'arsol-pfw'),
+            'manage_categories',
+            'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request',
+            '',
+            4
+        );
+        
+        // 5. Proposal Stages
+        add_submenu_page(
+            $parent_slug,
+            __('Proposal Stages', 'arsol-pfw'),
+            __('Proposal Stages', 'arsol-pfw'),
+            'manage_categories',
+            'edit-tags.php?taxonomy=arsol-pfw-proposal-stage&post_type=arsol-pfw-proposal',
+            '',
+            5
+        );
+        
+        // 6. Project Stages
+        add_submenu_page(
+            $parent_slug,
+            __('Project Stages', 'arsol-pfw'),
+            __('Project Stages', 'arsol-pfw'),
+            'manage_categories',
+            'edit-tags.php?taxonomy=arsol-pfw-project-stage&post_type=arsol-pfw-project',
+            '',
+            6
+        );
+        
         // 99. Settings (last)
         $settings_result = add_submenu_page(
             $parent_slug,
@@ -91,31 +128,84 @@ class Setup {
         $parent_slug = 'edit.php?post_type=arsol-pfw-project';
         
         if (isset($submenu[$parent_slug])) {
-            // Store our settings menu before cleanup
-            $settings_menu = null;
+            // Store our custom menus before cleanup
+            $custom_menus = array();
             foreach ($submenu[$parent_slug] as $key => $menu_item) {
-                if (isset($menu_item[2]) && $menu_item[2] === 'arsol-projects-settings') {
-                    $settings_menu = $menu_item;
-                    break;
+                if (in_array($key, [1, 2, 3, 4, 5, 6, 99])) {
+                    $custom_menus[$key] = $menu_item;
                 }
             }
             
             // Remove all default WordPress submenus
             foreach ($submenu[$parent_slug] as $key => $menu_item) {
-                // Keep only our custom menus (positions 1,2,3,99)
-                if (!in_array($key, [1, 2, 3, 99])) {
+                // Keep only our custom menus (positions 1,2,3,4,5,6,99)
+                if (!in_array($key, [1, 2, 3, 4, 5, 6, 99])) {
                     unset($submenu[$parent_slug][$key]);
                 }
             }
             
-            // Ensure settings menu is preserved at position 99
-            if ($settings_menu && !isset($submenu[$parent_slug][99])) {
-                $submenu[$parent_slug][99] = $settings_menu;
+            // Restore our custom menus
+            foreach ($custom_menus as $position => $menu_item) {
+                $submenu[$parent_slug][$position] = $menu_item;
             }
             
             // Sort the submenu by key to ensure proper order
             ksort($submenu[$parent_slug]);
         }
+    }
+    
+    /**
+     * Highlight the Projects parent menu when viewing stage taxonomy pages
+     *
+     * @param string $parent_file The parent file
+     * @return string Modified parent file
+     */
+    public function highlight_parent_menu($parent_file) {
+        global $current_screen;
+        
+        if (!$current_screen) {
+            return $parent_file;
+        }
+        
+        // Check if we're on a stage taxonomy page
+        $stage_taxonomies = array(
+            'arsol-pfw-request-stage',
+            'arsol-pfw-proposal-stage',
+            'arsol-pfw-project-stage'
+        );
+        
+        if (in_array($current_screen->taxonomy, $stage_taxonomies)) {
+            return 'edit.php?post_type=arsol-pfw-project';
+        }
+        
+        return $parent_file;
+    }
+    
+    /**
+     * Highlight the correct submenu when viewing stage taxonomy pages
+     *
+     * @param string $submenu_file The submenu file
+     * @return string Modified submenu file
+     */
+    public function highlight_submenu($submenu_file) {
+        global $current_screen;
+        
+        if (!$current_screen) {
+            return $submenu_file;
+        }
+        
+        // Map taxonomies to their submenu files
+        $taxonomy_submenu_map = array(
+            'arsol-pfw-request-stage' => 'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request',
+            'arsol-pfw-proposal-stage' => 'edit-tags.php?taxonomy=arsol-pfw-proposal-stage&post_type=arsol-pfw-proposal',
+            'arsol-pfw-project-stage' => 'edit-tags.php?taxonomy=arsol-pfw-project-stage&post_type=arsol-pfw-project'
+        );
+        
+        if (isset($taxonomy_submenu_map[$current_screen->taxonomy])) {
+            return $taxonomy_submenu_map[$current_screen->taxonomy];
+        }
+        
+        return $submenu_file;
     }
     
     /**
