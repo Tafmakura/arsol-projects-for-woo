@@ -127,7 +127,7 @@ class Settings_Advanced {
         // Comment Display Section
         add_settings_section(
             'arsol_comment_display_section',
-            __('Comment Display', 'arsol-pfw'),
+            __('Comments Display', 'arsol-pfw'),
             array($this, 'render_comment_display_section'),
             'arsol_projects_templates_settings'
         );
@@ -172,14 +172,17 @@ class Settings_Advanced {
     }
 
     /**
-     * Add display fields for a specific type (content/sidebar)
+     * Add display fields for a specific type (content/sidebar/comment)
      */
     private function add_display_fields($type, $section) {
         $types = ['request', 'proposal', 'project'];
         foreach ($types as $phase_type) {
+            // Pluralize 'comment' to 'comments' for labels
+            $type_label = ($type === 'comment') ? 'comments' : $type;
+            
             add_settings_field(
                 $type . '_' . $phase_type . '_display',
-                ucfirst($phase_type) . ' ' . ucfirst($type),
+                ucfirst($phase_type) . ' ' . ucfirst($type_label),
                 array($this, 'render_display_field'),
                 'arsol_projects_templates_settings',
                 $section,
