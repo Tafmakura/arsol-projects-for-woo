@@ -53,29 +53,7 @@ class Setup {
             1
         );
         
-        // 2. Project Proposals
-        add_submenu_page(
-            $parent_slug,
-            __('Project Proposals', 'arsol-pfw'),
-            __('Project Proposals', 'arsol-pfw'),
-            'edit_posts',
-            'edit.php?post_type=arsol-pfw-proposal',
-            '',
-            2
-        );
-        
-        // 3. Projects
-        add_submenu_page(
-            $parent_slug,
-            __('Projects', 'arsol-pfw'),
-            __('Projects', 'arsol-pfw'),
-            'edit_posts',
-            'edit.php?post_type=arsol-pfw-project',
-            '',
-            3
-        );
-        
-        // 4. Request Stages
+        // 2. Request Stages
         add_submenu_page(
             $parent_slug,
             __('Request Stages', 'arsol-pfw'),
@@ -83,16 +61,38 @@ class Setup {
             'manage_categories',
             'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request',
             '',
-            4
+            2
         );
         
-        // 5. Proposal Stages
+        // 3. Project Proposals
+        add_submenu_page(
+            $parent_slug,
+            __('Project Proposals', 'arsol-pfw'),
+            __('Project Proposals', 'arsol-pfw'),
+            'edit_posts',
+            'edit.php?post_type=arsol-pfw-proposal',
+            '',
+            3
+        );
+        
+        // 4. Proposal Stages
         add_submenu_page(
             $parent_slug,
             __('Proposal Stages', 'arsol-pfw'),
             __('Proposal Stages', 'arsol-pfw'),
             'manage_categories',
             'edit-tags.php?taxonomy=arsol-pfw-proposal-stage&post_type=arsol-pfw-proposal',
+            '',
+            4
+        );
+        
+        // 5. Projects
+        add_submenu_page(
+            $parent_slug,
+            __('Projects', 'arsol-pfw'),
+            __('Projects', 'arsol-pfw'),
+            'edit_posts',
+            'edit.php?post_type=arsol-pfw-project',
             '',
             5
         );
