@@ -17,9 +17,10 @@ if (!defined('ABSPATH')) {
 <div class="wrap">
     <form method="post" action="options.php">
         <?php
-        // Register both settings groups
+        // Register all settings groups
         settings_fields('arsol_phases_settings');
         settings_fields('arsol_content_display_settings');
+        settings_fields('arsol_sidebar_display_settings');
         
         // Output all settings sections
         do_settings_sections('arsol_phases_settings');
