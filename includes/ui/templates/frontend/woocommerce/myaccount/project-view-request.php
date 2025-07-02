@@ -118,6 +118,20 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
          */
         do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
         ?>
+        
+        <?php
+        // Comments section - dual-layer permission check
+        $current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($project_id);
+        $show_comments = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_comments($project_id, $current_stage_id);
+        if ($show_comments): ?>
+            <div class="comments">
+                <?php 
+                // Set project_id for the comments partial
+                $project_id = $project_id;
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; 
+                ?>
+            </div>
+        <?php endif; ?>
     </div>
     
     <div class="project-sidebar">

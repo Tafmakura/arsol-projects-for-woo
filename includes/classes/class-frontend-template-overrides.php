@@ -41,9 +41,6 @@ class Frontend_Template_Overrides {
     ];
 
     /**
-    }
-
-    /**
      * Get template map with conditional subscription support
      *
      * @return array Template mapping array
@@ -233,61 +230,65 @@ class Frontend_Template_Overrides {
         $debug_info = [
             'settings_exist' => !empty($advanced_settings),
             'template_map' => $template_map,
-            'raw_settings' => $advanced_settings,
-            'active_overrides' => self::get_active_overrides(),
-            'invalid_shortcodes' => [],
-            'woocommerce_subscriptions_active' => class_exists('WC_Subscriptions')
+            'settings' => $advanced_settings,
+            'active_overrides' => self::get_active_overrides()
         ];
-
-        // Check for invalid shortcodes
-        foreach ($template_map as $template_type => $setting_key) {
-            if (isset($advanced_settings[$setting_key])) {
-                $shortcode = trim($advanced_settings[$setting_key]);
-                if (!empty($shortcode) && !self::is_valid_shortcode($shortcode)) {
-                    $debug_info['invalid_shortcodes'][$template_type] = $shortcode;
-                }
-            }
-        }
         
         return $debug_info;
     }
 
     /**
-     * Get shortcode override with validation
+     * Get shortcode override for a specific shortcode
+     * 
+     * Checks if there's a template override configured for the given shortcode.
+     * This method takes a shortcode tag (like '[arsol_pfw_project_overview]') and checks
+     * if there's a replacement shortcode configured in the advanced settings.
      *
-     * @param string $default_shortcode The shortcode to check for override (e.g., '[arsol_pfw_projects_list]')
-     * @return string|false The override shortcode if valid, or false if no valid override exists
+     * @param string $default_shortcode The default shortcode to check for override
+     * @return string|false The override shortcode if found, false otherwise
      */
     public static function get_shortcode_override($default_shortcode) {
-        // Extract shortcode name from the default shortcode
-        preg_match('/^\[([^\s\]]+)/', $default_shortcode, $matches);
-        $shortcode_name = isset($matches[1]) ? $matches[1] : '';
+        // Extract shortcode name from the full shortcode string
+        $shortcode_name = '';
+        if (preg_match('/^\[([^\s\]]+)/', $default_shortcode, $matches)) {
+            $shortcode_name = $matches[1];
+        }
         
         if (empty($shortcode_name)) {
             return false;
         }
         
-        // Check if this is a valid plugin shortcode (must start with arsol_pfw_)
-        if (strpos($shortcode_name, 'arsol_pfw_') !== 0) {
+        // Get the advanced settings
+        $advanced_settings = get_option('arsol_projects_templates_settings', []);
+        
+        // Map shortcode names to their setting keys
+        $shortcode_to_setting_map = [
+            'arsol_pfw_project_overview' => 'arsol_pfw_project_overview',
+            'arsol_pfw_proposal_overview' => 'arsol_pfw_proposal_overview',
+            'arsol_pfw_request_overview' => 'arsol_pfw_request_overview',
+            'arsol_pfw_project_form' => 'arsol_pfw_project_form',
+            'arsol_pfw_request_form' => 'arsol_pfw_request_form',
+            'arsol_pfw_proposal_form' => 'arsol_pfw_proposal_form',
+            'arsol_pfw_projects_list' => 'arsol_pfw_projects_list',
+            'arsol_pfw_proposals_list' => 'arsol_pfw_proposals_list',
+            'arsol_pfw_requests_list' => 'arsol_pfw_requests_list',
+            'arsol_pfw_no_access' => 'arsol_pfw_no_access',
+        ];
+        
+        // Check if we have a setting for this shortcode
+        if (!isset($shortcode_to_setting_map[$shortcode_name])) {
             return false;
         }
         
-        // The setting key is the same as the shortcode name
-        $advanced_settings = get_option('arsol_projects_templates_settings', []);
+        $setting_key = $shortcode_to_setting_map[$shortcode_name];
         
-        // Check if there's an override in the settings
-        if (isset($advanced_settings[$shortcode_name])) {
-            $override_shortcode = trim($advanced_settings[$shortcode_name]);
+        // Get the override shortcode from settings
+        if (isset($advanced_settings[$setting_key])) {
+            $override_shortcode = trim($advanced_settings[$setting_key]);
             
-            // Validate that the override shortcode is registered in WordPress
-            if (!empty($override_shortcode) && self::is_registered_shortcode($override_shortcode)) {
+            // Validate it's a proper shortcode and return it
+            if (!empty($override_shortcode) && self::is_valid_shortcode($override_shortcode)) {
                 return $override_shortcode;
-            } else {
-                if (defined('WP_DEBUG') && WP_DEBUG) {
-                    preg_match('/^\[([^\s\]]+)/', $override_shortcode, $debug_matches);
-                    $override_name = isset($debug_matches[1]) ? $debug_matches[1] : 'unknown';
-                    error_log("Arsol Projects: Override shortcode '{$override_name}' is not registered in WordPress");
-                }
             }
         }
         
@@ -295,56 +296,37 @@ class Frontend_Template_Overrides {
     }
 
     /**
-     * Map shortcode names to their corresponding admin setting keys
+     * Check if a shortcode is registered with WordPress
      *
-     * @return array Mapping of shortcode names to setting keys
+     * @param string $shortcode_name The shortcode name to check
+     * @return bool True if shortcode is registered, false otherwise
      */
-
-    /**
-     * Check if shortcode is properly formatted and registered in WordPress
-     *
-     * @param string $shortcode The shortcode to validate
-     * @return bool True if shortcode is registered
-     */
-    private static function is_registered_shortcode($shortcode) {
-        // Basic format validation
-        if (!preg_match('/^\[[\w\s_-]+.*\]$/', $shortcode)) {
-            return false;
+    private static function is_registered_shortcode($shortcode_name) {
+        global $shortcode_tags;
+        
+        // Extract just the shortcode name without brackets and attributes
+        if (preg_match('/^\[([^\s\]]+)/', $shortcode_name, $matches)) {
+            $shortcode_name = $matches[1];
         }
         
-        // Extract shortcode name
-        preg_match('/^\[([^\s\]]+)/', $shortcode, $matches);
-        $shortcode_name = isset($matches[1]) ? $matches[1] : '';
-        
-        if (empty($shortcode_name)) {
-            return false;
-        }
-        
-        // Use WordPress native function to check if shortcode exists
-        return shortcode_exists($shortcode_name);
+        return isset($shortcode_tags[$shortcode_name]);
     }
 
     /**
-     * Render shortcode with override check
+     * Render shortcode with potential override
      *
      * @param string $default_shortcode The default shortcode to render
      * @return string The rendered shortcode output
      */
     public static function render_with_override($default_shortcode) {
         $override = self::get_shortcode_override($default_shortcode);
-        return do_shortcode($override ?: $default_shortcode);
+        
+        if ($override !== false) {
+            return do_shortcode($override);
+        }
+        
+        return do_shortcode($default_shortcode);
     }
-
-    /**
-     * Get the WooCommerce endpoint for the given project type
-     * 
-     * @param string $project_type The project type (CPT slug: arsol-pfw-project, arsol-pfw-proposal, arsol-pfw-request)
-     * @return string|null
-     */
-
-    // ==========================================================================
-    // DISPLAY CONTROL METHODS
-    // ==========================================================================
 
     /**
      * Check if content should be displayed based on content display rules
@@ -408,6 +390,38 @@ class Frontend_Template_Overrides {
         $settings = get_option('arsol_form_display_settings', array());
         $visibility_key = $form_type . '_visibility';
         $stages_key = $form_type . '_stages';
+        
+        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
+        $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
+        
+        return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);
+    }
+
+    /**
+     * Check if comments should be displayed based on CPT permissions and stage display rules
+     *
+     * @param int $post_id The post ID
+     * @param int $current_stage_id The current stage term ID
+     * @return bool Whether comments should be displayed
+     */
+    public static function should_show_comments($post_id, $current_stage_id) {
+        $post_type = get_post_type($post_id);
+        
+        // First check: CPT must support comments (WordPress native permission)
+        if (!post_type_supports($post_type, 'comments')) {
+            return false;
+        }
+        
+        // Second check: Stage display settings (our custom rules)
+        $phase_type = self::get_phase_type_from_post_type($post_type);
+        
+        if (!$phase_type) {
+            return false; // If we can't determine phase type, don't show comments
+        }
+        
+        $settings = get_option('arsol_comment_display_settings', array());
+        $visibility_key = $phase_type . '_visibility';
+        $stages_key = $phase_type . '_stages';
         
         $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
