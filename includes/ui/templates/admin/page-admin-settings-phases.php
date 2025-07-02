@@ -1,8 +1,8 @@
 <?php
 /**
- * Admin Settings Page: Content
+ * Admin Settings Page: Display
  * 
- * Template for the content settings tab.
+ * Template for the display settings tab (customer notices and display controls).
  *
  * @package Arsol_Projects_For_Woo
  * @since 1.0.0
@@ -17,8 +17,12 @@ if (!defined('ABSPATH')) {
 <div class="wrap">
     <form method="post" action="options.php">
         <?php
-        // Register only phases settings
+        // Register all settings groups for the display page
         settings_fields('arsol_phases_settings');
+        settings_fields('arsol_content_display_settings');
+        settings_fields('arsol_sidebar_display_settings');
+        settings_fields('arsol_comment_display_settings');
+        settings_fields('arsol_form_display_settings');
         
         // Output all settings sections
         do_settings_sections('arsol_phases_settings');
