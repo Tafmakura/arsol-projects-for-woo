@@ -165,7 +165,7 @@ class Setup {
             <h1><?php _e('Arsol Projects for Woo', 'arsol-pfw'); ?></h1>
             <h2 class="nav-tab-wrapper">
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php _e('General', 'arsol-pfw'); ?></a>
-                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=phases" class="nav-tab <?php echo $active_tab == 'phases' ? 'nav-tab-active' : ''; ?>"><?php _e('Display', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=display" class="nav-tab <?php echo $active_tab == 'display' ? 'nav-tab-active' : ''; ?>"><?php _e('Display', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=files" class="nav-tab <?php echo $active_tab == 'files' ? 'nav-tab-active' : ''; ?>"><?php _e('Files', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=templates" class="nav-tab <?php echo $active_tab == 'templates' ? 'nav-tab-active' : ''; ?>"><?php _e('Templates', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=tools" class="nav-tab <?php echo $active_tab == 'tools' ? 'nav-tab-active' : ''; ?>"><?php _e('Tools', 'arsol-pfw'); ?></a>
@@ -173,8 +173,8 @@ class Setup {
             </h2>
             <?php
             switch ($active_tab) {
-                case 'phases':
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-phases.php';
+                case 'display':
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-display.php';
                     break;
                 case 'files':
                     include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-files.php';
