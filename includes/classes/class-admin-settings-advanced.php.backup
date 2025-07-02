@@ -19,8 +19,6 @@ class Settings_Advanced {
     public function __construct() {
         add_action('init', array($this, 'init_translations'));
         add_action('admin_init', array($this, 'register_settings'));
-        // Add admin scripts for enhanced select
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
     }
 
     public function init_translations() {
@@ -88,44 +86,6 @@ class Settings_Advanced {
             )
         );
 
-        // Register display settings
-        register_setting('arsol_content_display_settings', 'arsol_content_display_settings');
-        register_setting('arsol_sidebar_display_settings', 'arsol_sidebar_display_settings');
-        register_setting('arsol_form_display_settings', 'arsol_form_display_settings');
-
-        // Content Display Section
-        add_settings_section(
-            'arsol_content_display_section',
-            __('Content Display', 'arsol-pfw'),
-            array($this, 'render_content_display_section'),
-            'arsol_projects_templates_settings'
-        );
-
-        // Content Display Fields
-        $this->add_display_fields('content', 'arsol_content_display_section');
-
-        // Sidebar Display Section
-        add_settings_section(
-            'arsol_sidebar_display_section',
-            __('Sidebar Display', 'arsol-pfw'),
-            array($this, 'render_sidebar_display_section'),
-            'arsol_projects_templates_settings'
-        );
-
-        // Sidebar Display Fields
-        $this->add_display_fields('sidebar', 'arsol_sidebar_display_section');
-
-        // Form Display Section
-        add_settings_section(
-            'arsol_form_display_section',
-            __('Form Display', 'arsol-pfw'),
-            array($this, 'render_form_display_section'),
-            'arsol_projects_templates_settings'
-        );
-
-        // Form Display Fields
-        $this->add_form_display_fields();
-
         // Template Overrides Section
         add_settings_section(
             'arsol_projects_template_overrides_section',
@@ -149,128 +109,6 @@ class Settings_Advanced {
                 ]
             );
         }
-    }
-
-    /**
-     * Add display fields for a specific type (content/sidebar)
-     */
-    private function add_display_fields($type, $section) {
-        $types = ['request', 'proposal', 'project'];
-        foreach ($types as $phase_type) {
-            add_settings_field(
-                $type . '_' . $phase_type . '_display',
-                ucfirst($phase_type) . ' ' . ucfirst($type),
-                array($this, 'render_display_field'),
-                'arsol_projects_templates_settings',
-                $section,
-                [
-                    'type' => $type,
-                    'phase_type' => $phase_type,
-                    'taxonomy' => 'arsol-pfw-' . $phase_type . '-stage'
-                ]
-            );
-        }
-    }
-
-    /**
-     * Add form display fields
-     */
-    private function add_form_display_fields() {
-        $form_types = [
-            'request_form' => 'Request Form',
-            'edit_request_form' => 'Edit Request Form'
-        ];
-
-        foreach ($form_types as $form_type => $label) {
-            add_settings_field(
-                'form_' . $form_type . '_display',
-                $label,
-                array($this, 'render_display_field'),
-                'arsol_projects_templates_settings',
-                'arsol_form_display_section',
-                [
-                    'type' => 'form',
-                    'phase_type' => $form_type,
-                    'taxonomy' => 'arsol-pfw-request-stage'
-                ]
-            );
-        }
-    }
-
-    /**
-     * Render display field
-     */
-    public function render_display_field($args) {
-        $type = $args['type'];
-        $phase_type = $args['phase_type'];
-        $taxonomy = $args['taxonomy'];
-        
-        $option_name = 'arsol_' . $type . '_display_settings';
-        $settings = get_option($option_name, array());
-        
-        $visibility_key = $phase_type . '_visibility';
-        $stages_key = $phase_type . '_stages';
-        
-        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
-        $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
-        
-        // Get taxonomy terms
-        $terms = get_terms(array(
-            'taxonomy' => $taxonomy,
-            'hide_empty' => false,
-        ));
-        
-        if (is_wp_error($terms)) {
-            $terms = array();
-        }
-
-        echo '<div class="arsol-pfw-display-field">';
-        
-        // Visibility dropdown and manage button
-        echo '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">';
-        echo '<select name="' . esc_attr($option_name) . '[' . esc_attr($visibility_key) . ']" style="min-width: 150px;">';
-        echo '<option value="hide"' . selected($visibility, 'hide', false) . '>' . __('Hide for selected stages', 'arsol-pfw') . '</option>';
-        echo '<option value="show"' . selected($visibility, 'show', false) . '>' . __('Show only for selected stages', 'arsol-pfw') . '</option>';
-        echo '</select>';
-        
-        // Manage button
-        $manage_url = admin_url('edit-tags.php?taxonomy=' . $taxonomy);
-        echo '<a href="' . esc_url($manage_url) . '" target="_blank" class="button button-secondary">';
-        echo __('Manage', 'arsol-pfw');
-        echo '</a>';
-        echo '</div>';
-        
-        // Stage multi-select
-        echo '<select name="' . esc_attr($option_name) . '[' . esc_attr($stages_key) . '][]" multiple class="wc-enhanced-select" style="max-width: 600px; width: 100%;">';
-        foreach ($terms as $term) {
-            $selected = in_array($term->term_id, $selected_stages) ? 'selected' : '';
-            echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
-        }
-        echo '</select>';
-        
-        echo '<p class="description">' . sprintf(__('Control when %s %s is displayed based on stage.', 'arsol-pfw'), $phase_type, $type) . '</p>';
-        echo '</div>';
-    }
-
-    /**
-     * Render content display section
-     */
-    public function render_content_display_section() {
-        echo '<p>' . __('Control when post content is displayed on the frontend based on stage.', 'arsol-pfw') . '</p>';
-    }
-
-    /**
-     * Render sidebar display section
-     */
-    public function render_sidebar_display_section() {
-        echo '<p>' . __('Control when sidebar elements are displayed on the frontend based on stage.', 'arsol-pfw') . '</p>';
-    }
-
-    /**
-     * Render form display section
-     */
-    public function render_form_display_section() {
-        echo '<p>' . __('Control when forms are displayed on the frontend based on stage.', 'arsol-pfw') . '</p>';
     }
 
     /**
@@ -332,50 +170,5 @@ class Settings_Advanced {
             <p class="description"><?php echo esc_html($args['description']); ?></p>
         <?php endif; ?>
         <?php
-    }
-
-    /**
-     * Enqueue admin scripts using WordPress/WooCommerce standards
-     */
-    public function enqueue_admin_scripts($hook) {
-        // Only load on our settings page
-        if (strpos($hook, 'arsol-projects-settings') === false) {
-            return;
-        }
-
-        // Check if we're on the templates tab
-        $tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
-        if ($tab !== 'templates') {
-            return;
-        }
-
-        // Use WooCommerce's enhanced select if available
-        if (class_exists('WooCommerce')) {
-            wp_enqueue_script('selectWoo');
-            wp_enqueue_style('select2');
-            wp_enqueue_style('woocommerce_admin_styles');
-            
-            // Simple SelectWoo initialization without AJAX
-            wp_add_inline_script('selectWoo', '
-                jQuery(document).ready(function($) {
-                    $(".wc-enhanced-select").selectWoo({
-                        placeholder: "' . esc_js(__('Select stages...', 'arsol-pfw')) . '",
-                        allowClear: true,
-                        width: "100%"
-                    });
-                });
-            ');
-        } else {
-            // Fallback to basic WordPress styling
-            wp_enqueue_script('jquery');
-            wp_add_inline_script('jquery', '
-                jQuery(document).ready(function($) {
-                    $(".wc-enhanced-select").css({
-                        "width": "100%",
-                        "min-height": "30px"
-                    });
-                });
-            ');
-        }
     }
 }
