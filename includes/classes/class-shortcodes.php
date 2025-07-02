@@ -50,9 +50,8 @@ class Shortcodes {
 		add_shortcode('arsol_pfw_project_overview', array($this, 'project_content_active_shortcode'));
 		add_shortcode('arsol_pfw_proposal_overview', array($this, 'project_content_proposal_shortcode'));
 		add_shortcode('arsol_pfw_request_overview', array($this, 'project_content_request_shortcode'));
-		add_shortcode('arsol_pfw_project_form', array($this, 'project_create_form_shortcode'));
+		add_shortcode('arsol_pfw_project_form', array($this, 'project_form_shortcode'));
 		add_shortcode('arsol_pfw_request_form', array($this, 'project_request_form_shortcode'));
-		add_shortcode('arsol_pfw_proposal_form', array($this, 'project_request_form_shortcode')); // Uses same form with is_edit
 		add_shortcode('arsol_pfw_projects_list', array($this, 'projects_listing_active_shortcode'));
 		add_shortcode('arsol_pfw_proposals_list', array($this, 'projects_listing_proposals_shortcode'));
 		add_shortcode('arsol_pfw_requests_list', array($this, 'projects_listing_requests_shortcode'));
@@ -62,12 +61,11 @@ class Shortcodes {
 		add_shortcode('arsol_pfw_project_content_active', array($this, 'project_content_active_shortcode'));
 		add_shortcode('arsol_pfw_project_content_proposal', array($this, 'project_content_proposal_shortcode'));
 		add_shortcode('arsol_pfw_project_content_request', array($this, 'project_content_request_shortcode'));
-		            // Stage-specific proposal shortcodes removed
 		add_shortcode('arsol_pfw_projects_listing_active', array($this, 'projects_listing_active_shortcode'));
 		add_shortcode('arsol_pfw_projects_listing_proposals', array($this, 'projects_listing_proposals_shortcode'));
 		add_shortcode('arsol_pfw_projects_listing_requests', array($this, 'projects_listing_requests_shortcode'));
-		add_shortcode('arsol_pfw_project_create_form', array($this, 'project_create_form_shortcode'));
-		add_shortcode('arsol_pfw_project_request_form', array($this, 'project_request_form_shortcode'));
+		add_shortcode('arsol_pfw_project_create_form', array($this, 'project_form_shortcode')); // Legacy
+		add_shortcode('arsol_pfw_project_request_form', array($this, 'project_request_form_shortcode')); // Legacy
 		add_shortcode('arsol_pfw_access_denied', array($this, 'access_denied_shortcode'));
 	}
 
@@ -1276,31 +1274,62 @@ class Shortcodes {
 	}
 
 	/**
-	 * Project creation form shortcode
+	 * Project form shortcode (handles both create and edit)
 	 *
 	 * @param array $atts Shortcode attributes
 	 * @return string HTML output
 	 */
-	public function project_create_form_shortcode($atts) {
+	public function project_form_shortcode($atts) {
 		if (!is_user_logged_in()) {
-			return '<p>' . __('Please log in to create a project.', 'arsol-pfw') . '</p>';
+			return '<p>' . __('Please log in to access the project form.', 'arsol-pfw') . '</p>';
 		}
 
 		$atts = shortcode_atts(array(
-			'form_id' => 'create-project-form',
+			'form_id' => 'project-form',
+			'is_edit' => false,
+			'post_id' => 0,
 		), $atts, 'arsol_pfw_project_form');
 
-		// Check if user can create projects
 		$user_id = get_current_user_id();
-		$can_create = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id);
+		$is_edit = filter_var($atts['is_edit'], FILTER_VALIDATE_BOOLEAN);
 
-		if (!$can_create) {
-			return '<p>' . __('You do not have permission to create projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw') . '</p>';
+		// Check permissions based on mode
+		if ($is_edit) {
+			// For editing, check if user can edit projects and owns the project
+			$can_edit = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id);
+			if (!$can_edit) {
+				return '<p>' . __('You do not have permission to edit projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw') . '</p>';
+			}
+			
+			// Verify project ownership or admin access
+			if ($atts['post_id']) {
+				$project = get_post(intval($atts['post_id']));
+				if (!$project || $project->post_type !== 'arsol-pfw-project') {
+					return '<p>' . __('Invalid project.', 'arsol-pfw') . '</p>';
+				}
+				
+				// Check if user owns the project or is admin
+				if ($project->post_author != $user_id && !current_user_can('manage_options')) {
+					return '<p>' . __('You do not have permission to edit this project.', 'arsol-pfw') . '</p>';
+				}
+			}
+		} else {
+			// For creating, check if user can create projects
+			$can_create = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id);
+			if (!$can_create) {
+				return '<p>' . __('You do not have permission to create projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw') . '</p>';
+			}
 		}
 
 		ob_start();
 		
-		// Load the create project form template
+		// Set up variables for template
+		$post = null;
+		if ($is_edit && $atts['post_id']) {
+			$post = get_post(intval($atts['post_id']));
+		}
+		
+		// Load the project form template
 		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-active.php';
 
 		return ob_get_clean();

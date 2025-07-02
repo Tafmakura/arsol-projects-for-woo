@@ -70,12 +70,12 @@ class Project {
             
             <!-- Secondary Action Button -->
             <span title="<?php echo esc_attr($tooltip_text); ?>">
-                <input type="button" 
-                       id="create-proposal" 
-                       name="create_proposal" 
-                       class="button button-secondary arsol-confirm-conversion" 
-                       value="<?php _e('Create Proposal', 'arsol-pfw'); ?>" 
-                       data-url="<?php echo esc_url($create_url); ?>" 
+            <input type="button" 
+                   id="create-proposal" 
+                   name="create_proposal" 
+                   class="button button-secondary arsol-confirm-conversion" 
+                   value="<?php _e('Create Proposal', 'arsol-pfw'); ?>" 
+                   data-url="<?php echo esc_url($create_url); ?>" 
                        data-message="<?php echo $confirm_message; ?>"
                        <?php disabled($is_disabled, true); ?> />
             </span>
@@ -198,7 +198,7 @@ class Project {
                 update_post_meta($post_id, '_arsol_pfw_project_customer_notice', $notice);
             }
         }
-
+        
         // Handle create proposal after save
         if (isset($_POST['arsol_create_after_save']) && !empty($_POST['arsol_create_after_save'])) {
             // Direct PHP redirect to create new proposal

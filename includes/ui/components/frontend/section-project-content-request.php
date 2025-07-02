@@ -28,9 +28,9 @@ do_action('arsol_projects_before_request_state', $post->ID);
         <h3 class="project-title"><?php echo esc_html($post->post_title); ?></h3>
         <div class="project-description">
             <?php if (empty(get_the_content())) : ?>
-                <div class="arsol-pfw-project-overview-empty">
-                    <div class="arsol-pfw-empty-state">
-                        <div class="arsol-pfw-empty-state__content">
+            <div class="arsol-pfw-project-overview-empty">
+                <div class="arsol-pfw-empty-state">
+                    <div class="arsol-pfw-empty-state__content">
                             <p><?php echo esc_html(__('Your request is being processed. We will update you with more details soon.', 'arsol-pfw')); ?></p>
                         </div>
                     </div>

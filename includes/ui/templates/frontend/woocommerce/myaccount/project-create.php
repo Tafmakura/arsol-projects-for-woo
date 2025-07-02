@@ -14,4 +14,4 @@ if (!defined('ABSPATH')) {
 }
 
 // Use shortcode for form rendering
-echo do_shortcode('[arsol_pfw_project_create_form]');
+echo do_shortcode('[arsol_pfw_project_form]');

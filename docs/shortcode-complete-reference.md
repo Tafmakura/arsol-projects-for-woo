@@ -66,11 +66,39 @@ Lists project requests with search capabilities.
 
 ## Form Shortcodes
 
-### `[arsol_pfw_project_create_form]`
-Displays the **Project Form** for creating projects.
+### `[arsol_pfw_project_form]`
+Displays the project form for both creating new projects and editing existing projects.
 
-### `[arsol_pfw_project_request_form]`
-Displays the **Project Request Form** for creating/editing requests.
+**Parameters:**
+- `is_edit` - Boolean to enable edit mode (default: false)
+- `post_id` - ID of the project to edit (required when is_edit=true)
+- `form_id` - Custom form ID (default: "project-form")
+
+**Examples:**
+```php
+// Create new project
+[arsol_pfw_project_form]
+
+// Edit existing project (ID: 123)
+[arsol_pfw_project_form is_edit="true" post_id="123"]
+```
+
+### `[arsol_pfw_request_form]`
+Displays the request form for both creating new requests and editing existing requests.
+
+**Parameters:**
+- `is_edit` - Boolean to enable edit mode (default: false)
+- `post_id` - ID of the request to edit (required when is_edit=true)
+- `form_id` - Custom form ID (default: "create-request-form")
+
+**Examples:**
+```php
+// Create new request
+[arsol_pfw_request_form]
+
+// Edit existing request (ID: 456)
+[arsol_pfw_request_form is_edit="true" post_id="456"]
+```
 
 ---
 
@@ -108,8 +136,8 @@ Displays access denied notice with customizable title and message.
 // URL: /projects/?category=web-dev&search=wordpress
 
 // Project forms
-[arsol_pfw_project_create_form]
-[arsol_pfw_project_request_form]
+[arsol_pfw_project_form]
+[arsol_pfw_request_form]
 ```
 
 *For complete documentation, see the full reference guide.* 
