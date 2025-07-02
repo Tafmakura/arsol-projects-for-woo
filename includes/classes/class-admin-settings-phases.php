@@ -39,6 +39,7 @@ class Settings_Phases {
         register_setting('arsol_phases_settings', 'arsol_phases_settings');
         register_setting('arsol_content_display_settings', 'arsol_content_display_settings');
         register_setting('arsol_sidebar_display_settings', 'arsol_sidebar_display_settings');
+        register_setting('arsol_form_display_settings', 'arsol_form_display_settings');
 
         // Phase Settings Section
         add_settings_section(
@@ -189,6 +190,40 @@ class Settings_Phases {
                 'taxonomy' => 'arsol-pfw-project-stage'
             )
         );
+
+        // Form Display Section
+        add_settings_section(
+            'arsol_phases_form_display',
+            __('Form Display', 'arsol-pfw'),
+            array($this, 'render_form_display_section'),
+            'arsol_phases_settings'
+        );
+
+        // Request Form Display
+        add_settings_field(
+            'request_form_display',
+            __('Request Form', 'arsol-pfw'),
+            array($this, 'render_form_display_field'),
+            'arsol_phases_settings',
+            'arsol_phases_form_display',
+            array(
+                'type' => 'request_form',
+                'taxonomy' => 'arsol-pfw-request-stage'
+            )
+        );
+
+        // Edit Request Form Display
+        add_settings_field(
+            'edit_request_form_display',
+            __('Edit Request Form', 'arsol-pfw'),
+            array($this, 'render_form_display_field'),
+            'arsol_phases_settings',
+            'arsol_phases_form_display',
+            array(
+                'type' => 'edit_request_form',
+                'taxonomy' => 'arsol-pfw-request-stage'
+            )
+        );
     }
 
     /**
@@ -335,6 +370,62 @@ class Settings_Phases {
         echo '</div>';
         
         echo '<p class="description">' . sprintf(__('Control when %s sidebar elements appear on the frontend based on the current stage.', 'arsol-pfw'), esc_html($type)) . '</p>';
+    }
+
+    /**
+     * Render form display section
+     */
+    public function render_form_display_section() {
+        echo '<p>' . __('Control when form elements are displayed on the frontend based on stage.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render form display field
+     */
+    public function render_form_display_field($args) {
+        $settings = get_option('arsol_form_display_settings', array());
+        $type = $args['type'];
+        $taxonomy = $args['taxonomy'];
+        
+        $visibility = isset($settings[$type . '_visibility']) ? $settings[$type . '_visibility'] : 'hide';
+        $stages = isset($settings[$type . '_stages']) ? $settings[$type . '_stages'] : array();
+        
+        // Visibility select with manage button (on top)
+        echo '<div class="arsol-stage-field-container">';
+        echo '<select name="arsol_form_display_settings[' . esc_attr($type) . '_visibility]" style="width: 250px;">';
+        echo '<option value="hide"' . selected($visibility, 'hide', false) . '>' . __('Hide for selected stages', 'arsol-pfw') . '</option>';
+        echo '<option value="show"' . selected($visibility, 'show', false) . '>' . __('Show for selected stages', 'arsol-pfw') . '</option>';
+        echo '</select>';
+        
+        // Add manage button with WordPress secondary styling (no icon)
+        $manage_url = admin_url('edit-tags.php?taxonomy=' . esc_attr($taxonomy));
+        echo '<a href="' . esc_url($manage_url) . '" target="_blank" class="button button-secondary arsol-stage-manage-btn">';
+        echo __('Manage Stages', 'arsol-pfw');
+        echo '</a>';
+        echo '</div>';
+        
+        // Simple multi-select with all available stages loaded directly
+        echo '<div style="margin-bottom: 10px;">';
+        echo '<select name="arsol_form_display_settings[' . esc_attr($type) . '_stages][]" multiple class="wc-enhanced-select" style="width: 100%; min-width: 300px;">';
+        
+        // Get all available stages for this taxonomy
+        $terms = get_terms(array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => false,
+            'orderby' => 'name',
+            'order' => 'ASC'
+        ));
+        
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                $selected = in_array($term->term_id, $stages) ? 'selected' : '';
+                echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
+            }
+        }
+        echo '</select>';
+        echo '</div>';
+        
+        echo '<p class="description">' . sprintf(__('Control when %s appears on the frontend based on the current stage.', 'arsol-pfw'), esc_html(str_replace('_', ' ', $type))) . '</p>';
     }
 
     /**
