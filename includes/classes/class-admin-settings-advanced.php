@@ -99,6 +99,7 @@ class Settings_Advanced {
         // Register display settings
         register_setting('arsol_content_display_settings', 'arsol_content_display_settings');
         register_setting('arsol_sidebar_display_settings', 'arsol_sidebar_display_settings');
+        register_setting('arsol_comment_display_settings', 'arsol_comment_display_settings');
         register_setting('arsol_form_display_settings', 'arsol_form_display_settings');
 
         // Content Display Section
@@ -122,6 +123,17 @@ class Settings_Advanced {
 
         // Sidebar Display Fields
         $this->add_display_fields('sidebar', 'arsol_sidebar_display_section');
+
+        // Comment Display Section
+        add_settings_section(
+            'arsol_comment_display_section',
+            __('Comment Display', 'arsol-pfw'),
+            array($this, 'render_comment_display_section'),
+            'arsol_projects_templates_settings'
+        );
+
+        // Comment Display Fields
+        $this->add_display_fields('comment', 'arsol_comment_display_section');
 
         // Form Display Section
         add_settings_section(
@@ -248,18 +260,12 @@ class Settings_Advanced {
 
         echo '<div class="arsol-pfw-display-field">';
         
-        // Visibility dropdown and manage button
-        echo '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">';
+        // Visibility dropdown
+        echo '<div style="margin-bottom: 10px;">';
         echo '<select name="' . esc_attr($option_name) . '[' . esc_attr($visibility_key) . ']" style="min-width: 150px;">';
         echo '<option value="hide"' . selected($visibility, 'hide', false) . '>' . __('Hide for selected stages', 'arsol-pfw') . '</option>';
         echo '<option value="show"' . selected($visibility, 'show', false) . '>' . __('Show only for selected stages', 'arsol-pfw') . '</option>';
         echo '</select>';
-        
-        // Manage button
-        $manage_url = admin_url('edit-tags.php?taxonomy=' . $taxonomy);
-        echo '<a href="' . esc_url($manage_url) . '" target="_blank" class="button button-secondary">';
-        echo __('Manage', 'arsol-pfw');
-        echo '</a>';
         echo '</div>';
         
         // Stage multi-select
@@ -286,6 +292,13 @@ class Settings_Advanced {
      */
     public function render_sidebar_display_section() {
         echo '<p>' . __('Control when sidebar elements are displayed on the frontend based on stage.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render comment display section
+     */
+    public function render_comment_display_section() {
+        echo '<p>' . __('Control when comment content is displayed on the frontend based on stage.', 'arsol-pfw') . '</p>';
     }
 
     /**
