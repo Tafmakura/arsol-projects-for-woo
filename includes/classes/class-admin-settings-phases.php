@@ -21,10 +21,8 @@ class Settings_Phases {
     public function __construct() {
         // Register settings after init to ensure text domain is loaded
         add_action('init', array($this, 'setup_settings'), 20);
-        // Add admin scripts for Select2
+        // Add admin scripts for enhanced select
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
-        // Add AJAX handler for loading taxonomy terms
-        add_action('wp_ajax_arsol_load_taxonomy_terms', array($this, 'ajax_load_taxonomy_terms'));
     }
 
     /**
@@ -211,76 +209,28 @@ class Settings_Phases {
         echo '</a>';
         echo '</div>';
         
-        // WooCommerce-style multi-select for stages
+        // Simple multi-select with all available stages loaded directly
         echo '<div style="margin-bottom: 10px;">';
-        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="wc-enhanced-select arsol-stages-select2" data-taxonomy="' . esc_attr($taxonomy) . '" style="width: 100%; min-width: 300px;">';
+        echo '<select name="arsol_content_display_settings[' . esc_attr($type) . '_stages][]" multiple class="wc-enhanced-select" style="width: 100%; min-width: 300px;">';
         
-        // Pre-populate with selected values for better UX
-        if (!empty($stages)) {
-            $selected_terms = get_terms(array(
-                'taxonomy' => $taxonomy,
-                'hide_empty' => false,
-                'include' => $stages
-            ));
-            
-            if (!is_wp_error($selected_terms)) {
-                foreach ($selected_terms as $term) {
-                    echo '<option value="' . esc_attr($term->term_id) . '" selected>' . esc_html($term->name) . '</option>';
-                }
+        // Get all available stages for this taxonomy
+        $terms = get_terms(array(
+            'taxonomy' => $taxonomy,
+            'hide_empty' => false,
+            'orderby' => 'name',
+            'order' => 'ASC'
+        ));
+        
+        if (!is_wp_error($terms)) {
+            foreach ($terms as $term) {
+                $selected = in_array($term->term_id, $stages) ? 'selected' : '';
+                echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
             }
         }
         echo '</select>';
         echo '</div>';
         
         echo '<p class="description">' . sprintf(__('Control when %s content appears on the frontend based on the current stage.', 'arsol-pfw'), esc_html($type)) . '</p>';
-    }
-
-    /**
-     * AJAX handler for loading taxonomy terms
-     */
-    public function ajax_load_taxonomy_terms() {
-        // Check user permissions
-        if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'arsol-pfw'));
-        }
-
-        // Verify nonce for security
-        check_ajax_referer('arsol_taxonomy_terms_nonce', 'security');
-
-        $taxonomy = sanitize_text_field($_POST['taxonomy']);
-        $search = isset($_POST['term']) ? sanitize_text_field($_POST['term']) : '';
-
-        // Validate taxonomy exists and user can edit terms
-        if (!taxonomy_exists($taxonomy) || !current_user_can('manage_categories')) {
-            wp_send_json_error(__('Invalid taxonomy or insufficient permissions.', 'arsol-pfw'));
-        }
-
-        $args = array(
-            'taxonomy' => $taxonomy,
-            'hide_empty' => false,
-            'number' => 50, // Limit for performance
-            'orderby' => 'name',
-            'order' => 'ASC'
-        );
-
-        if (!empty($search)) {
-            $args['search'] = $search;
-        }
-
-        $terms = get_terms($args);
-        $results = array();
-
-        if (!is_wp_error($terms)) {
-            foreach ($terms as $term) {
-                $results[] = array(
-                    'id' => $term->term_id,
-                    'text' => $term->name,
-                    'slug' => $term->slug
-                );
-            }
-        }
-
-        wp_send_json_success($results);
     }
 
     /**
@@ -298,79 +248,33 @@ class Settings_Phases {
             return;
         }
 
-        // Use WooCommerce's enhanced select functionality if available
+        // Use WooCommerce's enhanced select if available
         if (class_exists('WooCommerce')) {
-            // WooCommerce provides selectWoo (enhanced Select2)
             wp_enqueue_script('selectWoo');
             wp_enqueue_style('select2');
-            
-            // Also enqueue WooCommerce admin styles for consistency
             wp_enqueue_style('woocommerce_admin_styles');
-        } else {
-            // Fallback to WordPress core Select2
-            wp_enqueue_script('select2');
-            wp_enqueue_style('select2');
-        }
-
-        // Localize script with proper WordPress standards
-        $script_handle = class_exists('WooCommerce') ? 'selectWoo' : 'select2';
-        wp_localize_script($script_handle, 'arsol_taxonomy_ajax', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('arsol_taxonomy_terms_nonce'),
-            'strings' => array(
-                'select_stages' => __('Select stages...', 'arsol-pfw'),
-                'searching' => __('Searching...', 'arsol-pfw'),
-                'no_results' => __('No results found', 'arsol-pfw')
-            )
-        ));
-        
-        // Initialize enhanced select with WordPress/WooCommerce standards
-        $select_function = class_exists('WooCommerce') ? 'selectWoo' : 'select2';
-        wp_add_inline_script($script_handle, '
-            jQuery(document).ready(function($) {
-                $(".arsol-stages-select2").each(function() {
-                    var $select = $(this);
-                    var taxonomy = $select.data("taxonomy");
-                    
-                    $select.' . $select_function . '({
-                        placeholder: arsol_taxonomy_ajax.strings.select_stages,
+            
+            // Simple SelectWoo initialization without AJAX
+            wp_add_inline_script('selectWoo', '
+                jQuery(document).ready(function($) {
+                    $(".wc-enhanced-select").selectWoo({
+                        placeholder: "' . esc_js(__('Select stages...', 'arsol-pfw')) . '",
                         allowClear: true,
-                        width: "100%",
-                        ajax: {
-                            url: arsol_taxonomy_ajax.ajax_url,
-                            dataType: "json",
-                            delay: 250,
-                            data: function (params) {
-                                return {
-                                    action: "arsol_load_taxonomy_terms",
-                                    taxonomy: taxonomy,
-                                    term: params.term || "",
-                                    security: arsol_taxonomy_ajax.nonce
-                                };
-                            },
-                            processResults: function (response) {
-                                if (response.success && response.data) {
-                                    return { results: response.data };
-                                }
-                                return { results: [] };
-                            },
-                            cache: true
-                        },
-                        minimumInputLength: 0,
-                        language: {
-                            searching: function() {
-                                return arsol_taxonomy_ajax.strings.searching;
-                            },
-                            noResults: function() {
-                                return arsol_taxonomy_ajax.strings.no_results;
-                            }
-                        },
-                        escapeMarkup: function(markup) { 
-                            return markup; 
-                        }
+                        width: "100%"
                     });
                 });
-            });
-        ');
+            ');
+        } else {
+            // Fallback to basic WordPress styling
+            wp_enqueue_script('jquery');
+            wp_add_inline_script('jquery', '
+                jQuery(document).ready(function($) {
+                    $(".wc-enhanced-select").css({
+                        "width": "100%",
+                        "min-height": "30px"
+                    });
+                });
+            ');
+        }
     }
 }
