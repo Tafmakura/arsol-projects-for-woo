@@ -1,6 +1,8 @@
 <?php
 /**
- * Admin Templates Settings Page
+ * Admin Display Settings Page
+ *
+ * Template for the display settings tab.
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -13,7 +15,7 @@ if (!defined('ABSPATH')) {
 <div class="wrap">
     <form action="options.php" method="post">
         <?php
-        // Register all settings groups for the templates page
+        // Register all settings groups for the display page
         settings_fields('arsol_content_display_settings');
         settings_fields('arsol_sidebar_display_settings');
         settings_fields('arsol_form_display_settings');

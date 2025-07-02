@@ -1,6 +1,8 @@
 <?php
 /**
- * Admin Settings Advanced Class
+ * Admin Display Settings Class
+ *
+ * Handles display controls and template overrides for the plugin.
  *
  * @package Arsol_Projects_For_Woo\Admin
  * @version 1.0.0

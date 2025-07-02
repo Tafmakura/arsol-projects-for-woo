@@ -128,10 +128,10 @@ class Setup {
             <h1><?php _e('Arsol Projects for Woo', 'arsol-pfw'); ?></h1>
             <h2 class="nav-tab-wrapper">
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php _e('General', 'arsol-pfw'); ?></a>
-                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=phases" class="nav-tab <?php echo $active_tab == 'phases' ? 'nav-tab-active' : ''; ?>"><?php _e('Phases', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=phases" class="nav-tab <?php echo $active_tab == 'phases' ? 'nav-tab-active' : ''; ?>"><?php _e('Content', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=stages" class="nav-tab <?php echo $active_tab == 'stages' ? 'nav-tab-active' : ''; ?>"><?php _e('Stages', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=files" class="nav-tab <?php echo $active_tab == 'files' ? 'nav-tab-active' : ''; ?>"><?php _e('Files', 'arsol-pfw'); ?></a>
-                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=templates" class="nav-tab <?php echo $active_tab == 'templates' ? 'nav-tab-active' : ''; ?>"><?php _e('Templates', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=templates" class="nav-tab <?php echo $active_tab == 'templates' ? 'nav-tab-active' : ''; ?>"><?php _e('Display', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=tools" class="nav-tab <?php echo $active_tab == 'tools' ? 'nav-tab-active' : ''; ?>"><?php _e('Tools', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=integrations" class="nav-tab <?php echo $active_tab == 'integrations' ? 'nav-tab-active' : ''; ?>"><?php _e('Integrations', 'arsol-pfw'); ?></a>
             </h2>

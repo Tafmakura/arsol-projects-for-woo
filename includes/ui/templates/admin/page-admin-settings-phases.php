@@ -1,8 +1,8 @@
 <?php
 /**
- * Admin Settings Page: Phases
+ * Admin Settings Page: Content
  * 
- * Template for the phases settings tab.
+ * Template for the content settings tab.
  *
  * @package Arsol_Projects_For_Woo
  * @since 1.0.0

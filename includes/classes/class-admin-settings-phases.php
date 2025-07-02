@@ -1,8 +1,8 @@
 <?php
 /**
- * Admin Phases Settings Class
+ * Admin Content Settings Class
  *
- * Handles the phases settings page functionality.
+ * Handles the content settings page functionality.
  *
  * @package Arsol_Projects_For_Woo
  * @since 1.0.0
