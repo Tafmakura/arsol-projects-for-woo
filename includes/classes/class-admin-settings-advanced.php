@@ -43,20 +43,16 @@ class Settings_Advanced {
                 'placeholder' => '[arsol_pfw_request_overview]'
             ],
             'arsol_pfw_project_form' => [
-                'title' => __('Project Form', 'arsol-pfw'),
-                'description' => __('Overrides the Project Form for creating new projects.', 'arsol-pfw'),
+                'title' => __('Create Project Form', 'arsol-pfw'),
+                'description' => __('Overrides the Create Project Form for creating new projects.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_form]'
             ],
             'arsol_pfw_edit_project_form' => [
-                'title' => __('Edit Project Form', 'arsol-pfw'),
-                'description' => __('Overrides the Edit Project Form for editing existing projects.', 'arsol-pfw'),
+                'title' => __('Create Project Form (Edit)', 'arsol-pfw'),
+                'description' => __('Overrides the Create Project Form for editing existing projects.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_edit_project_form]'
             ],
-            'arsol_pfw_edit_project_form' => [
-                'title' => __('Edit Project Form', 'arsol-pfw'),
-                'description' => __('Overrides the Edit Project Form for editing existing projects.', 'arsol-pfw'),
-                'placeholder' => '[arsol_pfw_edit_project_form]'
-            ],
+            
             'arsol_pfw_request_form' => [
                 'title' => __('Request Project Form', 'arsol-pfw'),
                 'description' => __('Overrides the Request Project Form for requesting new projects.', 'arsol-pfw'),
