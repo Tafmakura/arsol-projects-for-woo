@@ -133,7 +133,7 @@ class Settings_Advanced {
         );
 
         // Comment Display Fields
-        $this->add_display_fields('comment', 'arsol_comment_display_section');
+        $this->add_comment_display_fields();
 
         // Form Display Section
         add_settings_section(
@@ -172,22 +172,40 @@ class Settings_Advanced {
     }
 
     /**
-     * Add display fields for a specific type (content/sidebar/comment)
+     * Add display fields for a specific type (content/sidebar)
      */
     private function add_display_fields($type, $section) {
         $types = ['request', 'proposal', 'project'];
         foreach ($types as $phase_type) {
-            // Pluralize 'comment' to 'comments' for labels
-            $type_label = ($type === 'comment') ? 'comments' : $type;
-            
             add_settings_field(
                 $type . '_' . $phase_type . '_display',
-                ucfirst($phase_type) . ' ' . ucfirst($type_label),
+                ucfirst($phase_type) . ' ' . ucfirst($type),
                 array($this, 'render_display_field'),
                 'arsol_projects_templates_settings',
                 $section,
                 [
                     'type' => $type,
+                    'phase_type' => $phase_type,
+                    'taxonomy' => 'arsol-pfw-' . $phase_type . '-stage'
+                ]
+            );
+        }
+    }
+
+    /**
+     * Add comment display fields with plural labels
+     */
+    private function add_comment_display_fields() {
+        $types = ['request', 'proposal', 'project'];
+        foreach ($types as $phase_type) {
+            add_settings_field(
+                'comment_' . $phase_type . '_display',
+                ucfirst($phase_type) . ' Comments',
+                array($this, 'render_display_field'),
+                'arsol_projects_templates_settings',
+                'arsol_comment_display_section',
+                [
+                    'type' => 'comment',
                     'phase_type' => $phase_type,
                     'taxonomy' => 'arsol-pfw-' . $phase_type . '-stage'
                 ]
