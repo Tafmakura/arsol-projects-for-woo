@@ -47,11 +47,21 @@ class Settings_Advanced {
                 'description' => __('Overrides the Project Form for creating and editing projects.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_form]'
             ],
+            'arsol_pfw_edit_project_form' => [
+                'title' => __('Edit Project Form', 'arsol-pfw'),
+                'description' => __('Overrides the Project Form specifically for editing existing projects.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_form is_edit="true"]'
+            ],
             
             'arsol_pfw_request_form' => [
                 'title' => __('Request Project Form', 'arsol-pfw'),
                 'description' => __('Overrides the Request Project Form for creating and editing project requests.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_request_form]'
+            ],
+            'arsol_pfw_edit_request_form' => [
+                'title' => __('Edit Request Form', 'arsol-pfw'),
+                'description' => __('Overrides the Request Project Form specifically for editing existing requests.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_request_form is_edit="true"]'
             ],
             'arsol_pfw_projects_list' => [
                 'title' => __('Active Projects Listing', 'arsol-pfw'),
@@ -179,8 +189,16 @@ class Settings_Advanced {
                 'label' => 'Request Form',
                 'taxonomy' => 'arsol-pfw-request-stage'
             ],
+            'edit_request_form' => [
+                'label' => 'Edit Request Form',
+                'taxonomy' => 'arsol-pfw-request-stage'
+            ],
             'project_form' => [
                 'label' => 'Project Form',
+                'taxonomy' => 'arsol-pfw-project-stage'
+            ],
+            'edit_project_form' => [
+                'label' => 'Edit Project Form',
                 'taxonomy' => 'arsol-pfw-project-stage'
             ]
         ];

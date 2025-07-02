@@ -67,7 +67,7 @@ Lists project requests with search capabilities.
 ## Form Shortcodes
 
 ### `[arsol_pfw_project_form]`
-Displays the project form for both creating new projects and editing existing projects.
+**Main project form shortcode** - Displays the project form for both creating new projects and editing existing projects.
 
 **Parameters:**
 - `is_edit` - Boolean to enable edit mode (default: false)
@@ -83,8 +83,21 @@ Displays the project form for both creating new projects and editing existing pr
 [arsol_pfw_project_form is_edit="true" post_id="123"]
 ```
 
+### `[arsol_pfw_edit_project_form]`
+**Dedicated edit shortcode** - For custom implementations that want separate shortcodes for editing.
+
+**Parameters:**
+- `post_id` - ID of the project to edit (required)
+- `form_id` - Custom form ID (default: "edit-project-form")
+
+**Examples:**
+```php
+// Edit existing project (ID: 123) - dedicated shortcode
+[arsol_pfw_edit_project_form post_id="123"]
+```
+
 ### `[arsol_pfw_request_form]`
-Displays the request form for both creating new requests and editing existing requests.
+**Main request form shortcode** - Displays the request form for both creating new requests and editing existing requests.
 
 **Parameters:**
 - `is_edit` - Boolean to enable edit mode (default: false)
@@ -99,6 +112,24 @@ Displays the request form for both creating new requests and editing existing re
 // Edit existing request (ID: 456)
 [arsol_pfw_request_form is_edit="true" post_id="456"]
 ```
+
+### `[arsol_pfw_edit_request_form]`
+**Dedicated edit shortcode** - For custom implementations that want separate shortcodes for editing.
+
+**Parameters:**
+- `post_id` - ID of the request to edit (required)
+- `form_id` - Custom form ID (default: "edit-request-form")
+
+**Examples:**
+```php
+// Edit existing request (ID: 456) - dedicated shortcode
+[arsol_pfw_edit_request_form post_id="456"]
+```
+
+#### **Implementation Notes:**
+- **Default behavior**: Our plugin uses the main shortcodes with `is_edit` parameter
+- **Custom implementations**: Can override with dedicated edit shortcodes if needed
+- **Template overrides**: Both approaches available in admin settings under Display tab
 
 ---
 

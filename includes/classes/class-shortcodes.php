@@ -51,7 +51,9 @@ class Shortcodes {
 		add_shortcode('arsol_pfw_proposal_overview', array($this, 'project_content_proposal_shortcode'));
 		add_shortcode('arsol_pfw_request_overview', array($this, 'project_content_request_shortcode'));
 		add_shortcode('arsol_pfw_project_form', array($this, 'project_form_shortcode'));
+		add_shortcode('arsol_pfw_edit_project_form', array($this, 'project_edit_form_shortcode'));
 		add_shortcode('arsol_pfw_request_form', array($this, 'project_request_form_shortcode'));
+		add_shortcode('arsol_pfw_edit_request_form', array($this, 'project_request_edit_form_shortcode'));
 		add_shortcode('arsol_pfw_projects_list', array($this, 'projects_listing_active_shortcode'));
 		add_shortcode('arsol_pfw_proposals_list', array($this, 'projects_listing_proposals_shortcode'));
 		add_shortcode('arsol_pfw_requests_list', array($this, 'projects_listing_requests_shortcode'));
@@ -1395,5 +1397,45 @@ class Shortcodes {
 		</div>
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * Project edit form shortcode (for custom implementations)
+	 * Automatically sets is_edit=true for simple usage
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function project_edit_form_shortcode($atts) {
+		$atts = shortcode_atts(array(
+			'form_id' => 'edit-project-form',
+			'post_id' => 0,
+		), $atts, 'arsol_pfw_edit_project_form');
+
+		// Automatically set is_edit to true for simple implementation
+		$atts['is_edit'] = true;
+		
+		// Use the main project form shortcode with edit mode
+		return $this->project_form_shortcode($atts);
+	}
+
+	/**
+	 * Request edit form shortcode (for custom implementations)
+	 * Automatically sets is_edit=true for simple usage
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function project_request_edit_form_shortcode($atts) {
+		$atts = shortcode_atts(array(
+			'form_id' => 'edit-request-form',
+			'post_id' => 0,
+		), $atts, 'arsol_pfw_edit_request_form');
+
+		// Automatically set is_edit to true for simple implementation
+		$atts['is_edit'] = true;
+		
+		// Use the main request form shortcode with edit mode
+		return $this->project_request_form_shortcode($atts);
 	}
 }
