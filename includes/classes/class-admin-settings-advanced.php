@@ -321,7 +321,7 @@ class Settings_Advanced {
                         $field,
                         sprintf(__('Invalid shortcode format for %s. Please use format: [shortcode_name]', 'arsol-pfw'), $field)
                     );
-                } else {
+                            } else {
                     $sanitized[$field] = $value;
                 }
             }

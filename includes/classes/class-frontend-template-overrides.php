@@ -341,4 +341,174 @@ class Frontend_Template_Overrides {
      * @param string $project_type The project type (CPT slug: arsol-pfw-project, arsol-pfw-proposal, arsol-pfw-request)
      * @return string|null
      */
+
+    // ==========================================================================
+    // DISPLAY CONTROL METHODS
+    // ==========================================================================
+
+    /**
+     * Check if content should be displayed based on content display rules
+     *
+     * @param int $post_id The post ID
+     * @param int $current_stage_id The current stage term ID
+     * @return bool Whether content should be displayed
+     */
+    public static function should_show_content($post_id, $current_stage_id) {
+        $post_type = get_post_type($post_id);
+        $phase_type = self::get_phase_type_from_post_type($post_type);
+        
+        if (!$phase_type) {
+            return true; // Default to show if we can't determine phase type
+        }
+        
+        $settings = get_option('arsol_content_display_settings', array());
+        $visibility_key = $phase_type . '_visibility';
+        $stages_key = $phase_type . '_stages';
+        
+        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
+        $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
+        
+        return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);
+    }
+
+    /**
+     * Check if sidebar should be displayed based on sidebar display rules
+     *
+     * @param int $post_id The post ID
+     * @param int $current_stage_id The current stage term ID
+     * @return bool Whether sidebar should be displayed
+     */
+    public static function should_show_sidebar($post_id, $current_stage_id) {
+        $post_type = get_post_type($post_id);
+        $phase_type = self::get_phase_type_from_post_type($post_type);
+        
+        if (!$phase_type) {
+            return true; // Default to show if we can't determine phase type
+        }
+        
+        $settings = get_option('arsol_sidebar_display_settings', array());
+        $visibility_key = $phase_type . '_visibility';
+        $stages_key = $phase_type . '_stages';
+        
+        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
+        $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
+        
+        return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);
+    }
+
+    /**
+     * Check if form should be displayed based on form display rules
+     *
+     * @param int $post_id The post ID
+     * @param int $current_stage_id The current stage term ID
+     * @param string $form_type The form type (request_form, edit_request_form, project_form, edit_project_form)
+     * @return bool Whether form should be displayed
+     */
+    public static function should_show_form($post_id, $current_stage_id, $form_type) {
+        $settings = get_option('arsol_form_display_settings', array());
+        $visibility_key = $form_type . '_visibility';
+        $stages_key = $form_type . '_stages';
+        
+        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
+        $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
+        
+        return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);
+    }
+
+    /**
+     * Get the display mode for a post (form, content, or empty)
+     *
+     * @param int $post_id The post ID
+     * @param int $current_stage_id The current stage term ID
+     * @param string $form_type The form type to check
+     * @return string 'form', 'content', or 'empty'
+     */
+    public static function get_display_mode($post_id, $current_stage_id, $form_type) {
+        // Form rules override everything
+        if (self::should_show_form($post_id, $current_stage_id, $form_type)) {
+            return 'form';
+        }
+        
+        // Check content rules
+        if (self::should_show_content($post_id, $current_stage_id)) {
+            return 'content';
+        }
+        
+        // Nothing to show
+        return 'empty';
+    }
+
+    /**
+     * Apply visibility rules logic
+     *
+     * @param string $visibility 'hide' or 'show'
+     * @param array $selected_stages Array of selected stage term IDs
+     * @param int $current_stage_id Current stage term ID
+     * @return bool Whether content should be displayed
+     */
+    private static function apply_visibility_rules($visibility, $selected_stages, $current_stage_id) {
+        // Convert selected stages to integers for comparison
+        $selected_stages = array_map('intval', $selected_stages);
+        $current_stage_id = intval($current_stage_id);
+        
+        if ($visibility === 'hide') {
+            if (empty($selected_stages)) {
+                return true; // Hide rule with no stages = show on all stages
+            } else {
+                return !in_array($current_stage_id, $selected_stages); // Hide on selected stages
+            }
+        } else { // 'show'
+            if (empty($selected_stages)) {
+                return false; // Show rule with no stages = show on no stages (hidden everywhere)
+            } else {
+                return in_array($current_stage_id, $selected_stages); // Show only on selected stages
+            }
+        }
+    }
+
+    /**
+     * Get phase type from post type
+     *
+     * @param string $post_type WordPress post type
+     * @return string|false Phase type ('request', 'proposal', 'project') or false if not found
+     */
+    private static function get_phase_type_from_post_type($post_type) {
+        $map = array(
+            'arsol-pfw-request' => 'request',
+            'arsol-pfw-proposal' => 'proposal',
+            'arsol-pfw-project' => 'project'
+        );
+        
+        return isset($map[$post_type]) ? $map[$post_type] : false;
+    }
+
+    /**
+     * Get current stage term ID from post
+     *
+     * @param int $post_id The post ID
+     * @return int Stage term ID or 0 if not found
+     */
+    public static function get_current_stage_id($post_id) {
+        $post_type = get_post_type($post_id);
+        
+        // Map post types to their stage taxonomies
+        $taxonomy_map = array(
+            'arsol-pfw-project' => 'arsol-pfw-project-stage',
+            'arsol-pfw-proposal' => 'arsol-pfw-proposal-stage',
+            'arsol-pfw-request' => 'arsol-pfw-request-stage'
+        );
+        
+        if (!isset($taxonomy_map[$post_type])) {
+            return 0;
+        }
+        
+        $taxonomy = $taxonomy_map[$post_type];
+        $stage_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'ids'));
+        
+        if (is_wp_error($stage_terms) || empty($stage_terms)) {
+            return 0;
+        }
+        
+        return intval($stage_terms[0]);
+    }
 } 
