@@ -231,7 +231,7 @@ class Frontend_Handler {
         wp_safe_redirect($redirect_url);
         exit;
     }
-} 
+
     /**
      * Handle edit project form submission
      */
@@ -445,3 +445,4 @@ class Frontend_Handler {
         wp_safe_redirect($redirect_url);
         exit;
     }
+}
