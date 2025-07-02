@@ -43,9 +43,19 @@ class Settings_Advanced {
                 'placeholder' => '[arsol_pfw_request_overview]'
             ],
             'arsol_pfw_project_form' => [
-                'title' => __('Create Project Form', 'arsol-pfw'),
-                'description' => __('Overrides the Create Project Form for creating new projects.', 'arsol-pfw'),
+                'title' => __('Project Form', 'arsol-pfw'),
+                'description' => __('Overrides the Project Form for creating new projects.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_project_form]'
+            ],
+            'arsol_pfw_edit_project_form' => [
+                'title' => __('Edit Project Form', 'arsol-pfw'),
+                'description' => __('Overrides the Edit Project Form for editing existing projects.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_edit_project_form]'
+            ],
+            'arsol_pfw_edit_project_form' => [
+                'title' => __('Edit Project Form', 'arsol-pfw'),
+                'description' => __('Overrides the Edit Project Form for editing existing projects.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_edit_project_form]'
             ],
             'arsol_pfw_request_form' => [
                 'title' => __('Request Project Form', 'arsol-pfw'),
@@ -179,21 +189,35 @@ class Settings_Advanced {
      */
     private function add_form_display_fields() {
         $form_types = [
-            'request_form' => 'Request Form',
-            'edit_request_form' => 'Edit Request Form'
+            'request_form' => [
+                'label' => 'Request Form',
+                'taxonomy' => 'arsol-pfw-request-stage'
+            ],
+            'edit_request_form' => [
+                'label' => 'Edit Request Form',
+                'taxonomy' => 'arsol-pfw-request-stage'
+            ],
+            'project_form' => [
+                'label' => 'Project Form',
+                'taxonomy' => 'arsol-pfw-project-stage'
+            ],
+            'edit_project_form' => [
+                'label' => 'Edit Project Form',
+                'taxonomy' => 'arsol-pfw-project-stage'
+            ]
         ];
 
-        foreach ($form_types as $form_type => $label) {
+        foreach ($form_types as $form_type => $config) {
             add_settings_field(
                 'form_' . $form_type . '_display',
-                $label,
+                $config['label'],
                 array($this, 'render_display_field'),
                 'arsol_projects_templates_settings',
                 'arsol_form_display_section',
                 [
                     'type' => 'form',
                     'phase_type' => $form_type,
-                    'taxonomy' => 'arsol-pfw-request-stage'
+                    'taxonomy' => $config['taxonomy']
                 ]
             );
         }
