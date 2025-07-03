@@ -42,6 +42,7 @@ class Settings_Phases {
         register_setting('arsol_content_display_settings', 'arsol_content_display_settings');
         register_setting('arsol_sidebar_display_settings', 'arsol_sidebar_display_settings');
         register_setting('arsol_comment_display_settings', 'arsol_comment_display_settings');
+        register_setting('arsol_files_display_settings', 'arsol_files_display_settings');
         register_setting('arsol_form_display_settings', 'arsol_form_display_settings');
 
         // Customer Notice Defaults Section
@@ -125,6 +126,17 @@ class Settings_Phases {
         // Comment Display Fields
         $this->add_comment_display_fields();
 
+        // Files Display Section
+        add_settings_section(
+            'arsol_files_display_section',
+            __('Files Display', 'arsol-pfw'),
+            array($this, 'render_files_display_section'),
+            'arsol_phases_settings'
+        );
+
+        // Files Display Fields
+        $this->add_files_display_fields();
+
         // Form Display Section
         add_settings_section(
             'arsol_form_display_section',
@@ -174,6 +186,37 @@ class Settings_Phases {
                     'type' => 'comment',
                     'phase_type' => $phase_type,
                     'taxonomy' => 'arsol-pfw-' . $phase_type . '-stage'
+                ]
+            );
+        }
+    }
+
+    /**
+     * Add files display fields
+     */
+    private function add_files_display_fields() {
+        $files_types = [
+            'request_file_upload' => [
+                'label' => 'Request File Upload',
+                'taxonomy' => 'arsol-pfw-request-stage'
+            ],
+            'proposal_file_display' => [
+                'label' => 'Proposal File Display',
+                'taxonomy' => 'arsol-pfw-proposal-stage'
+            ]
+        ];
+
+        foreach ($files_types as $files_type => $config) {
+            add_settings_field(
+                'files_' . $files_type . '_display',
+                $config['label'],
+                array($this, 'render_display_field'),
+                'arsol_phases_settings',
+                'arsol_files_display_section',
+                [
+                    'type' => 'files',
+                    'phase_type' => $files_type,
+                    'taxonomy' => $config['taxonomy']
                 ]
             );
         }
@@ -232,8 +275,8 @@ class Settings_Phases {
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
-        // Set default visibility based on type - forms default to 'show' to prevent overriding
-        $default_visibility = ($type === 'form') ? 'show' : 'hide';
+        // Set default visibility based on type - forms and files default to 'show' to prevent overriding
+        $default_visibility = (in_array($type, ['form', 'files'])) ? 'show' : 'hide';
         $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : $default_visibility;
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
         
@@ -302,6 +345,13 @@ class Settings_Phases {
      */
     public function render_comment_display_section() {
         echo '<p>' . __('Control when comment content is displayed on the frontend based on stage.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render files display section
+     */
+    public function render_files_display_section() {
+        echo '<p>' . __('Control when file upload and display elements are shown on the frontend based on stage.', 'arsol-pfw') . '</p>';
     }
 
     /**

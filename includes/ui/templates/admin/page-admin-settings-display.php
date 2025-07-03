@@ -21,6 +21,7 @@ if (!defined('ABSPATH')) {
         settings_fields('arsol_content_display_settings');
         settings_fields('arsol_sidebar_display_settings');
         settings_fields('arsol_comment_display_settings');
+        settings_fields('arsol_files_display_settings');
         settings_fields('arsol_form_display_settings');
         
         // Output all settings sections
