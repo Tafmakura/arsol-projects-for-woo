@@ -307,6 +307,9 @@ jQuery(function($) {
                     // Remove the comment from DOM with fade effect
                     commentLi.fadeOut(300, function() {
                         $(this).remove();
+                        
+                        // Update comment count after removal
+                        updateCommentCount("delete");
                     });
                 } else {
                     alert('Error deleting comment');
