@@ -275,8 +275,8 @@ class Settings_Phases {
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
-        // Set default visibility based on type - forms and files default to 'show' to prevent overriding
-        $default_visibility = (in_array($type, ['form', 'files'])) ? 'show' : 'hide';
+        // Set default visibility based on type - files default to 'show', others default to 'hide'
+        $default_visibility = ($type === 'files') ? 'show' : 'hide';
         $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : $default_visibility;
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
         
