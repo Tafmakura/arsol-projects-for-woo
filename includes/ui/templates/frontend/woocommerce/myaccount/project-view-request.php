@@ -13,13 +13,10 @@ if (!defined('ABSPATH')) {
 }
 
 // Variables passed from the endpoint class:
-// $request (WP_Post object), $request_id, $current_tab, $statuses, $current_status, $wrapper_data
+// $request (WP_Post object), $request_id, $current_tab, $current_stage, $wrapper_data
 
 // Set variables for the header component
 $request_title = $request->post_title ?? '';
-
-// Include unified project header
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project-view-request/project-view-request-header.php';
 
 // Basic validation
 if (!$request) {

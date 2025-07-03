@@ -18,9 +18,6 @@ if (!defined('ABSPATH')) {
 // Set variables for the header component
 $proposal_title = $proposal->post_title ?? '';
 
-// Include unified project header
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project-view-proposal/project-view-proposal-header.php';
-
 // Basic validation
 if (!$proposal) {
     echo '<p>' . esc_html__('Proposal not found.', 'arsol-pfw') . '</p>';
