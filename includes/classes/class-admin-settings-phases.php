@@ -240,7 +240,9 @@ class Settings_Phases {
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
-        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
+        // Set default visibility based on type - forms default to 'show' to prevent overriding
+        $default_visibility = ($type === 'form') ? 'show' : 'hide';
+        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : $default_visibility;
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
         
         // Get taxonomy terms
