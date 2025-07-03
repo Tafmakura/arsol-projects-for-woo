@@ -168,13 +168,8 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                         ?>
                         
                         <?php
-                        // Check for shortcode override
-                        $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_proposal_sidebar]');
-                        if ($override) {
-                            echo do_shortcode($override . ' project_id="' . $project_proposal_id . '"');
-                        } else {
-                            echo do_shortcode('[arsol_pfw_proposal_sidebar project_id="' . $project_proposal_id . '"]');
-                        }
+                        // Include proposal sidebar template directly
+                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-sidebar-proposal.php';
                         ?>
                         
                         <?php
