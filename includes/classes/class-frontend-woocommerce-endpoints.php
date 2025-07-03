@@ -456,7 +456,7 @@ class Frontend_Endpoints {
         }
         
         return true;
-        }
+    }
 
     /**
      * Get project data for API response
@@ -509,5 +509,48 @@ class Frontend_Endpoints {
         }
 
         return false;
+    }
+
+    /**
+     * Handle comment redirect for project-related posts
+     *
+     * @param string $location The redirect URL
+     * @param WP_Comment $comment The comment object
+     * @return string Modified redirect URL
+     */
+    public function handle_comment_redirect($location, $comment) {
+        $post = get_post($comment->comment_post_ID);
+        
+        if (!$post) {
+            return $location;
+        }
+
+        // Check if this is a project-related post type
+        if (in_array($post->post_type, ['arsol-pfw-project', 'arsol-pfw-proposal', 'arsol-pfw-request'])) {
+            // Determine the appropriate endpoint based on post type
+            switch ($post->post_type) {
+                case 'arsol-pfw-project':
+                    $endpoint = 'project-overview';
+                    break;
+                case 'arsol-pfw-proposal':
+                    $endpoint = 'project-view-proposal';
+                    break;
+                case 'arsol-pfw-request':
+                    $endpoint = 'project-view-request';
+                    break;
+                default:
+                    return $location;
+            }
+
+            // Redirect to the appropriate WooCommerce account endpoint
+            $redirect_url = wc_get_account_endpoint_url($endpoint, $post->ID);
+            
+            // Add comment anchor
+            $redirect_url .= '#comment-' . $comment->comment_ID;
+            
+            return $redirect_url;
+        }
+
+        return $location;
     }
 } 
