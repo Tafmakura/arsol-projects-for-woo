@@ -7,7 +7,7 @@ This document provides a comprehensive guide for implementing the new shortcode 
 - **Plugin Name**: Arsol Projects for WooCommerce (arsol-pfw)
 - **Namespace**: `Arsol_Projects_For_Woo`
 - **Main Class**: `Frontend_Template_Overrides`
-- **Settings Option**: `arsol_projects_templates_settings`
+- **Settings Option**: `arsol_pfw_advanced_settings`
 
 ## Current Implementation Status
 
@@ -41,7 +41,7 @@ public static function get_shortcode_override($default_shortcode) {
     }
     
     // Check for override in settings (setting key = shortcode name)
-    $advanced_settings = get_option('arsol_projects_templates_settings', []);
+    $advanced_settings = get_option('arsol_pfw_advanced_settings', []);
     if (isset($advanced_settings[$shortcode_name])) {
         $override_shortcode = trim($advanced_settings[$shortcode_name]);
         

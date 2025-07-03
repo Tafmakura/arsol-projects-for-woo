@@ -17,8 +17,8 @@ if (!defined('ABSPATH')) {
 <div class="wrap">
     <form method="post" action="options.php">
         <?php
-        settings_fields('arsol_files_settings');
-        do_settings_sections('arsol_files_settings');
+        settings_fields('arsol_pfw_files_settings');
+        do_settings_sections('arsol_pfw_files_settings');
         submit_button();
         ?>
     </form>

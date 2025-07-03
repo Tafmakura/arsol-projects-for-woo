@@ -269,7 +269,16 @@ class Settings_Phases {
         $phase_type = $args['phase_type'];
         $taxonomy = $args['taxonomy'];
         
-        $option_name = 'arsol_' . $type . '_display_settings';
+        // Map types to correct option names to match frontend expectations
+        $type_to_option = array(
+            'content' => 'arsol_pfw_display_content_settings',
+            'sidebar' => 'arsol_pfw_display_sidebar_settings',
+            'comment' => 'arsol_pfw_display_comments_settings',
+            'files' => 'arsol_pfw_display_files_settings',
+            'form' => 'arsol_pfw_display_forms_settings'
+        );
+        
+        $option_name = isset($type_to_option[$type]) ? $type_to_option[$type] : 'arsol_pfw_display_' . $type . '_settings';
         $settings = get_option($option_name, array());
         
         $visibility_key = $phase_type . '_visibility';
