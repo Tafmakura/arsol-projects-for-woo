@@ -92,15 +92,54 @@ switch ($post_type) {
                             ?>
                         </h4>
                         
-                        <ul class="comment-list">
+                        <ol id="comments" class="commentlist">
                             <?php
                             wp_list_comments(array(
-                                'style' => 'ul',
+                                'style' => 'ol',
                                 'short_ping' => true,
-                                'avatar_size' => 32,
+                                'avatar_size' => 0, // No avatars
+                                'max_depth' => 5,   // Allow nested replies
+                                'thread_comments' => true,
+                                'reply_text' => __('Reply', 'arsol-pfw'),
+                                'callback' => function($comment, $args, $depth) {
+                                    $current_user_id = get_current_user_id();
+                                    $comment_author_id = get_comment_meta($comment->comment_ID, '_arsol_original_author', true);
+                                    
+                                    echo '<li id="comment-' . $comment->comment_ID . '" class="comment">';
+                                    echo '<div class="comment-body">';
+                                    echo '<div class="comment-author">' . get_comment_author($comment) . '</div>';
+                                    echo '<div class="comment-meta">';
+                                    echo '<time class="comment-date" datetime="' . get_comment_date('c', $comment) . '">';
+                                    echo get_comment_date('M j, Y \a\t g:i A', $comment);
+                                    echo '</time>';
+                                    echo '</div>';
+                                    echo '<div class="comment-content">' . get_comment_text($comment) . '</div>';
+                                    
+                                    // Add reply link
+                                    if ($depth < $args['max_depth']) {
+                                        echo '<div class="reply">';
+                                        comment_reply_link(array_merge($args, array(
+                                            'add_below' => 'comment',
+                                            'depth' => $depth,
+                                            'max_depth' => $args['max_depth'],
+                                            'reply_text' => __('Reply', 'arsol-pfw')
+                                        )), $comment);
+                                        echo '</div>';
+                                    }
+                                    
+                                    // Add edit/delete links if user has permission
+                                    if ($current_user_id == $comment_author_id || current_user_can('manage_options')) {
+                                        echo '<div class="arsol-comment-actions">';
+                                        echo '<a href="#" class="arsol-edit-comment" data-comment-id="' . $comment->comment_ID . '">' . __('Edit', 'arsol-pfw') . '</a> | ';
+                                        echo '<a href="#" class="arsol-delete-comment" data-comment-id="' . $comment->comment_ID . '">' . __('Delete', 'arsol-pfw') . '</a>';
+                                        echo '</div>';
+                                    }
+                                    
+                                    echo '</div>';
+                                }
                             ), $comments);
                             ?>
-                        </ul>
+                        </ol>
                         <?php
                     }
                     ?>
@@ -113,16 +152,21 @@ switch ($post_type) {
                     <div class="comment-form-container">
                         <?php
                         $comment_form_args = array(
-                            'title_reply' => sprintf(__('Leave a Comment on this %s', 'arsol-pfw'), ucfirst($phase_type)),
-                            'comment_field' => '<p class="comment-form-comment"><label for="comment">' . __('Your Comment', 'arsol-pfw') . ' <span class="required">*</span></label><textarea id="comment" name="comment" cols="45" rows="4" maxlength="65525" required="required"></textarea></p>',
+                            'title_reply' => sprintf(__('Add a Comment to this %s', 'arsol-pfw'), ucfirst($phase_type)),
+                            'title_reply_to' => __('Reply to %s', 'arsol-pfw'),
+                            'comment_field' => '<div class="arsol-comment-form"><textarea id="comment" name="comment" cols="45" rows="6" maxlength="65525" required="required" placeholder="' . esc_attr__('Write your comment...', 'arsol-pfw') . '"></textarea></div>',
                             'logged_in_as' => '',
-                            'comment_notes_before' => '',
+                            'comment_notes_before' => '<p class="comment-notes">' . __('Logged in users can edit and delete their own comments.', 'arsol-pfw') . '</p>',
                             'comment_notes_after' => '',
-                            'id_form' => 'commentform-' . $project_id,
-                            'id_submit' => 'submit-' . $project_id,
+                            'id_form' => 'commentform',
+                            'id_submit' => 'submit',
+                            'class_form' => 'comment-form',
                             'class_submit' => 'button submit',
+                            'label_submit' => __('Post Comment', 'arsol-pfw'),
                             'submit_button' => '<input name="%1$s" type="submit" id="%2$s" class="%3$s" value="%4$s" />',
                             'submit_field' => '<p class="form-submit">%1$s %2$s</p>',
+                            'cancel_reply_link' => __('Cancel Reply', 'arsol-pfw'),
+                            'format' => 'html5'
                         );
                         
                         /**

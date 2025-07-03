@@ -18,7 +18,6 @@ if (!defined('ABSPATH')) {
     <form method="post" action="options.php">
         <?php
         // Register all settings groups for the display page
-        settings_fields('arsol_phases_settings');
         settings_fields('arsol_content_display_settings');
         settings_fields('arsol_sidebar_display_settings');
         settings_fields('arsol_comment_display_settings');

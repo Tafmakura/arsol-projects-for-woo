@@ -44,14 +44,6 @@ class Settings_Phases {
         register_setting('arsol_comment_display_settings', 'arsol_comment_display_settings');
         register_setting('arsol_form_display_settings', 'arsol_form_display_settings');
 
-        // Phase Settings Section
-        add_settings_section(
-            'arsol_phases_general_settings',
-            __('Phase Settings', 'arsol-pfw'),
-            array($this, 'render_phases_section'),
-            'arsol_phases_settings'
-        );
-
         // Customer Notice Defaults Section
         add_settings_section(
             'arsol_phases_customer_notice_defaults',
