@@ -2,262 +2,238 @@
  * Arsol Projects for WooCommerce - Frontend Styles
  */
 
-/* ========================================
-   Arsol Projects for WooCommerce Frontend
-   ======================================== */
-
-/* Global Base Styles
-   ================== */
-.arsol-pfw-header {
-    margin-bottom: 20px;
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 6px;
-}
-
-.arsol-pfw-title {
-    margin: 0;
-    font-size: 24px;
-    color: #333;
-}
-
-.arsol-pfw-content-wrapper {
-    background: #fff;
-    border: 1px solid #e1e1e1;
-    border-radius: 6px;
-}
-
-.arsol-pfw-content {
-    padding: 20px;
-}
-
-.arsol-pfw-post-content {
-    margin-top: 15px;
-}
-
-.arsol-pfw-notice {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #d1ecf1;
-    border-radius: 4px;
-    background: #d1ecf1;
-}
-
-.arsol-pfw-notice-header h4 {
-    margin: 0 0 10px 0;
-    color: #0c5460;
-}
-
-.arsol-pfw-notice-content {
-    color: #0c5460;
-}
-
-/* Request-Specific Styles
-   ======================= */
-.arsol-pfw-request .arsol-pfw-header {
-    background: #fff3cd;
-    border-left: 4px solid #ffc107;
-}
-
-.arsol-pfw-request .arsol-pfw-title {
-    color: #856404;
-}
-
-.arsol-pfw-request .arsol-pfw-notice {
-    background: #ffeaa7;
-    border-color: #fdcb6e;
-}
-
-.arsol-pfw-request .arsol-pfw-overview-empty {
-    text-align: center;
-    padding: 40px;
-    background: #f8f9fa;
-    border-radius: 4px;
-}
-
-.arsol-pfw-request .arsol-pfw-form-section {
-    margin-top: 30px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 6px;
-}
-
-.arsol-pfw-request .arsol-pfw-approved-header h1 {
-    color: #28a745;
-    text-align: center;
-}
-
-.arsol-pfw-request .timeline-step {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 20px;
-}
-
-.arsol-pfw-request .timeline-step.completed .step-number {
-    background: #28a745;
-    color: white;
-}
-
-.arsol-pfw-request .timeline-step.active .step-number {
-    background: #007cba;
-    color: white;
-}
-
-/* Proposal-Specific Styles
-   ======================== */
-.arsol-pfw-proposal .arsol-pfw-header {
-    background: #d4edda;
-    border-left: 4px solid #28a745;
-}
-
-.arsol-pfw-proposal .arsol-pfw-title {
-    color: #155724;
-}
-
-.arsol-pfw-proposal .arsol-pfw-notice {
-    background: #d4edda;
-    border-color: #c3e6cb;
-}
-
-.arsol-pfw-proposal .arsol-pfw-post-content {
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-/* Project-Specific Styles
-   ======================= */
-.arsol-pfw-project .arsol-pfw-header {
-    background: #cce5ff;
-    border-left: 4px solid #007cba;
-}
-
-.arsol-pfw-project .arsol-pfw-title {
-    color: #004085;
-}
-
-.arsol-pfw-project .arsol-pfw-notice {
-    background: #cce5ff;
-    border-color: #b3d9ff;
-}
-
-.arsol-pfw-project .arsol-pfw-post-content {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 4px;
-    border-left: 3px solid #007cba;
-}
-
-/* Responsive Design
-   ================ */
-@media (max-width: 768px) {
-    .arsol-pfw-header {
-        padding: 10px;
-    }
-    
-    .arsol-pfw-content {
-        padding: 15px;
-    }
-    
-    .arsol-pfw-title {
-        font-size: 20px;
-    }
-    
-    .arsol-pfw-request .timeline-step {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-}
-
-/* ========================================
-   Utility & Component Styles
-   ======================================== */
-
-/* WooCommerce Integration */
+/* Temporary CSS */
+/* Hide additional info wrapper */
 .wc-block-order-confirmation-additional-fields-wrapper {
     display: none !important;
 }
 
+/* Project select field on checkout */
 .woocommerce-checkout .form-row label[for="arsol-pfw-project"] {
     font-weight: bold;
 }
 
-/* Project Navigation */
+/* Project navigation styling */
+.arsol-pfw-project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.arsol-pfw-project-header h2 {
+    margin: 0;
+}
+
 .arsol-pfw-project-navigation {
     margin-bottom: var(--space-s) !important;
     border-top: 1px solid var(--edging-primary);
     border-bottom: 1px solid var(--edging-primary);
     padding-top: 15px;
     padding-bottom: 15px;
+    margin-top: var(--space-s) !important;
 }
 
-/* Button Styles */
+/* Button-based navigation */
 .arsol-button-container {
     display: flex;
-    gap: 15px;
-    margin-top: 20px;
+    flex-wrap: wrap;
 }
 
 .arsol-button-groups {
     display: flex;
-    gap: 15px;
     flex-wrap: wrap;
+    gap: 10px;
 }
 
 .arsol-btn-secondary {
-    background: #6c757d;
-    color: white;
-    border: 1px solid #6c757d;
     padding: 8px 16px;
     border-radius: 4px;
-    text-decoration: none;
-    display: inline-block;
+    background-color: transparent;
+    font-size: 14px;
+    height: 40px;
+    cursor: pointer;
+    font-weight: 700;
 }
 
 .arsol-btn-secondary:hover,
-.arsol-btn-secondary:focus {
-    background: #5a6268;
-    border-color: #545b62;
-    color: white;
+.arsol-btn-secondary.active {
+    color: #2271b1;
+    background-color: #e5f3ff;
 }
 
 .back-to-projects {
-    margin-bottom: 20px;
-    display: inline-block;
+    font-size: 14px;
 }
 
-.arsol-create-or-request-button {
-    transition: all 0.3s ease;
+/* Responsive styling */
+@media (max-width: 768px) {
+    .arsol-button-groups {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .arsol-btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .arsol-pfw-projects-row thead {
+        display: none;
+    }
+    
+    .arsol-pfw-projects-row td {
+        display: block;
+        text-align: right;
+    }
+    
+    .arsol-pfw-projects-row td:before {
+        content: attr(data-title);
+        float: left;
+        font-weight: bold;
+    }
 }
 
-.arsol-create-or-request-button:hover {
-    transform: translateY(-2px);
+/* Add styles for the project content layout with sidebar */
+.project-content-wrapper {
+    display: flex;
+    flex-wrap: wrap; /* Allows columns to wrap on smaller screens */
+    gap: 20px; /* Adds space between columns */
 }
 
-/* No Permission Message */
-.arsol-no-permission {
-    padding: 20px;
-    background: #f8f9fa;
-    border: 1px solid #e1e1e1;
+.project-content-wrapper h1,
+.project-content-wrapper h2,
+.project-wrapper h3,
+.project-content-wrapper h4,
+.project-content-wrapper h5,
+.project-content-wrapper h6 {
+    margin-bottom: 0.4em;
+}
+
+.project-content {
+    flex: 1; /* Allows content to grow and take up available space */
+    min-width: 0; /* Prevents flex item from overflowing */
+}
+
+.project-content h1,
+.project-content h2,
+.project-content h3,
+.project-content h4,
+.project-content h5,
+.project-content h6 {
+    transform: scale(0.85);
+    transform-origin: left;
+}
+
+.project-sidebar {
+    max-width: 300px;
+    width: 100%;
+    flex-basis: 300px; /* Set a preferred width for the sidebar */
+    flex-grow: 0; /* Prevent sidebar from growing */
+    flex-shrink: 0; /* Prevent sidebar from shrinking below its basis */
+}
+
+/* Responsive adjustment: Stack columns on smaller screens */
+@media (max-width: 768px) {
+    .project-content-wrapper {
+        flex-direction: column; /* Stack items vertically */
+        gap: 15px; /* Adjust gap for stacked layout */
+    }
+
+    .project-content,
+    .project-sidebar {
+        flex-basis: auto; /* Reset flex-basis */
+        width: 100%; /* Take full width */
+    }
+}
+
+/* Basic styling for the meta data within the sidebar */
+.project-sidebar .project-meta p {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.project-sidebar .project-meta p:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+/* Project empty state styling */
+.project-empty-state-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Project Metadata Styling - Standard for all sidebars */
+.arsol-pfw-project-meta {
+    padding: 1rem;
+    background-color: #f8f9fa;
     border-radius: 4px;
+    border-left: 4px solid #007cba;
+}
+
+.arsol-pfw-project-meta p {
+    margin: 0.5rem 0;
+    color: #23282d;
+}
+
+.arsol-pfw-project-meta p:first-child {
+    margin-top: 0;
+}
+
+.arsol-pfw-project-meta p:last-child {
+    margin-bottom: 0;
+}
+
+/* Legacy support for existing request meta */
+.arsol-pfw-empty-state__request-meta {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border-left: 4px solid #007cba;
+}
+
+.arsol-pfw-empty-state__request-meta p {
+    margin: 0.5rem 0;
+    color: #23282d;
+}
+
+.arsol-pfw-empty-state__request-meta p:first-child {
+    margin-top: 0;
+}
+
+.arsol-pfw-empty-state__request-meta p:last-child {
+    margin-bottom: 0;
+}
+
+/* Project Actions Styling */
+.arsol-pfw-project-action .brxe-button,
+.arsol-pfw-project-action .bricks-button {
+    display: block;
+    width: 100%;
+    margin-bottom: 0.5rem;
     text-align: center;
 }
 
-.arsol-no-permission h3 {
-    color: #dc3545;
-    margin-bottom: 10px;
+@media (max-width: 768px) {
+    .project-empty-state-actions {
+        flex-direction: column;
+    }
+    
+    .project-empty-state-actions .bricks-button {
+        width: 100%;
+    }
 }
 
-.arsol-no-permission p {
-    color: #6c757d;
-    margin: 0;
-}
-
-/* Stage Badges */
+/* Project Stage Styling */
 .project-stage {
     display: inline-block;
-    padding: 4px 8px;
-    border-radius: 12px;
+    padding: 2px 8px;
+    border-radius: 3px;
     font-size: 12px;
     font-weight: 500;
     text-transform: uppercase;
@@ -268,96 +244,125 @@
 }
 
 .stage-not-started {
-    background: #e9ecef;
-    color: #6c757d;
+    background-color: #f0f0f1;
+    color: #646970;
 }
 
 .stage-in-progress {
-    background: #fff3cd;
-    color: #856404;
+    background-color: #dbeafe;
+    color: #1e40af;
 }
 
 .stage-on-hold {
-    background: #f8d7da;
-    color: #721c24;
+    background-color: #fef3c7;
+    color: #92400e;
 }
 
 .stage-completed {
-    background: #d4edda;
-    color: #155724;
+    background-color: #d1fae5;
+    color: #065f46;
 }
 
 .stage-cancelled {
-    background: #f8d7da;
-    color: #721c24;
+    background-color: #fee2e2;
+    color: #991b1b;
 }
 
-/* Phase Badges */
+/* Updated project stage colors specific to the new workflow */
 .stage-request {
-    background: #fff3cd;
-    color: #856404;
+    background-color: #e0e7ff;
+    color: #3730a3;
 }
 
 .stage-proposal {
-    background: #d4edda;
-    color: #155724;
+    background-color: #fef3c7;
+    color: #92400e;
 }
 
 .stage-active {
-    background: #cce5ff;
-    color: #004085;
+    background-color: #d1fae5;
+    color: #065f46;
 }
 
 .stage-archive {
-    background: #e9ecef;
-    color: #6c757d;
+    background-color: #f3f4f6;
+    color: #6b7280;
 }
 
-/* Projects Table Stage Badges */
+/* Project Status Colors in Tables - REPLACED WITH PROJECT STAGE COLORS ABOVE */
+
+/* Create or Request Button */
+.arsol-create-or-request-button {
+    background-color: #007cba !important;
+}
+
+.arsol-create-or-request-button:hover {
+    background-color: #005a87 !important;
+}
+
+/* No Permission Message */
+.arsol-no-permission {
+    text-align: center;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+}
+
+.arsol-no-permission h3 {
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.arsol-no-permission p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+/* Project Status Colors in Tables */
 .arsol-pfw-projects-row .stage-pending {
-    background: #fff3cd;
+    background-color: #fff3cd;
     color: #856404;
 }
 
 .arsol-pfw-projects-row .stage-approved {
-    background: #d4edda;
-    color: #155724;
+    background-color: #d1edff;
+    color: #0c5460;
 }
 
 .arsol-pfw-projects-row .stage-rejected {
-    background: #f8d7da;
+    background-color: #f8d7da;
     color: #721c24;
 }
 
 .arsol-pfw-projects-row .stage-in-progress {
-    background: #cce5ff;
-    color: #004085;
+    background-color: #d1ecf1;
+    color: #0c5460;
 }
 
 .arsol-pfw-projects-row .stage-completed {
-    background: #d4edda;
+    background-color: #d4edda;
     color: #155724;
 }
 
 .arsol-pfw-projects-row .stage-cancelled {
-    background: #f8d7da;
-    color: #721c24;
+    background-color: #fee2e2;
+    color: #991b1b;
 }
 
 .arsol-pfw-projects-row span[class^="stage-"] {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
     font-weight: 500;
-    text-transform: uppercase;
+    display: inline-block;
 }
 
-/* Project Meta & Forms */
+/* Project Form Styling */
 .arsol-pfw-project-meta-row {
     display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 .arsol-pfw-project-field-col {
@@ -373,117 +378,279 @@
 }
 
 .arsol-money-input {
-    width: 100%;
+    text-align: right;
 }
 
 .arsol-pfw-project-form .form-row,
-.arsol-pfw-project-form .form-group {
-    margin-bottom: 20px;
+.arsol-pfw-project-form .woocommerce-form-row {
+    margin-bottom: 1rem;
 }
 
-/* Project Sidebar */
-.project-sidebar {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 6px;
-    margin-top: 20px;
+@media (max-width: 768px) {
+    .arsol-pfw-project-meta-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .arsol-pfw-project-field-col {
+        margin-bottom: 1rem;
+    }
+    
+    .arsol-budget-col,
+    .arsol-budget-input {
+        flex: 1;
+        width: 100%;
+    }
 }
 
-.project-sidebar .project-meta p {
-    margin: 0 0 10px 0;
-    color: #6c757d;
+/* ===== SIMPLIFIED TEMPLATE STYLES ===== */
+
+/* Generic request content container */
+.arsol-pfw-request-content {
+    margin-bottom: 2rem;
 }
 
-.project-sidebar .project-meta p:last-child {
-    margin-bottom: 0;
+/* Default message container - used for markdown content */
+.arsol-pfw-default-message {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007cba;
+    margin-bottom: 1.5rem;
 }
 
-/* Project Meta Styles */
-.arsol-pfw-project-meta {
-    background: #f8f9fa;
-    padding: 15px;
+.arsol-pfw-default-message h1,
+.arsol-pfw-default-message h2,
+.arsol-pfw-default-message h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #23282d;
+}
+
+.arsol-pfw-default-message p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: #23282d;
+}
+
+.arsol-pfw-default-message ul,
+.arsol-pfw-default-message ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.arsol-pfw-default-message li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+.arsol-pfw-default-message strong {
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.arsol-pfw-default-message em {
+    font-style: italic;
+}
+
+.arsol-pfw-default-message code {
+    background-color: #f1f1f1;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.arsol-pfw-default-message blockquote {
+    border-left: 4px solid #ddd;
+    margin: 1rem 0;
+    padding-left: 1rem;
+    color: #666;
+    font-style: italic;
+}
+
+/* Form section styling */
+.arsol-pfw-form-section {
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 2rem;
+}
+
+.arsol-pfw-form-section h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #23282d;
+    border-bottom: 2px solid #007cba;
+    padding-bottom: 0.5rem;
+}
+
+.arsol-pfw-form-section p {
+    margin-bottom: 1.5rem;
+    color: #646970;
+    line-height: 1.6;
+}
+
+/* Request details section */
+.arsol-pfw-request-details {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.arsol-pfw-request-details h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #23282d;
+    border-bottom: 2px solid #007cba;
+    padding-bottom: 0.5rem;
+}
+
+.arsol-pfw-request-summary p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    color: #23282d;
+}
+
+.arsol-pfw-request-summary strong {
+    font-weight: 600;
+    color: #1d2327;
+}
+
+/* Project Stage Colors in Tables */
+.arsol-pfw-projects-row .stage-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.arsol-pfw-projects-row .stage-approved {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.arsol-pfw-projects-row .stage-rejected {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.arsol-pfw-projects-row .stage-in-progress {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.arsol-pfw-projects-row .stage-completed {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.arsol-pfw-projects-row .stage-cancelled {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* Status Colors - REPLACED WITH STAGE COLORS ABOVE */
+
+/* Customer Notice Styles */
+.arsol-pfw-customer-notice {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background-color: #e7f3ff;
+    border: 1px solid #2271b1;
+    border-left: 4px solid #2271b1;
     border-radius: 4px;
-    margin-bottom: 20px;
 }
 
-.arsol-pfw-project-meta p {
-    margin: 0 0 8px 0;
+.arsol-pfw-customer-notice .arsol-pfw-notice-header h4 {
+    margin: 0 0 0.75rem 0;
+    color: #2271b1;
+    font-size: 1.1em;
+    font-weight: 600;
 }
 
-.arsol-pfw-project-meta p:first-child {
-    font-weight: bold;
+.arsol-pfw-customer-notice .arsol-pfw-notice-content {
+    color: #23282d;
+    line-height: 1.6;
 }
 
-.arsol-pfw-project-meta p:last-child {
+.arsol-pfw-customer-notice .arsol-pfw-notice-content p {
+    margin: 0 0 0.75rem 0;
+}
+
+.arsol-pfw-customer-notice .arsol-pfw-notice-content p:last-child {
     margin-bottom: 0;
 }
 
-.arsol-pfw-empty-state__request-meta {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    border-left: 4px solid #ffc107;
+.arsol-pfw-customer-notice .arsol-pfw-notice-content ul,
+.arsol-pfw-customer-notice .arsol-pfw-notice-content ol {
+    margin: 0 0 0.75rem 1.5rem;
 }
 
-.arsol-pfw-empty-state__request-meta p {
-    margin: 0 0 8px 0;
+.arsol-pfw-customer-notice .arsol-pfw-notice-content li {
+    margin-bottom: 0.25rem;
 }
 
-.arsol-pfw-empty-state__request-meta p:first-child {
-    font-weight: bold;
+.arsol-pfw-customer-notice .arsol-pfw-notice-content strong {
+    font-weight: 600;
+    color: #1d2327;
 }
 
-.arsol-pfw-empty-state__request-meta p:last-child {
-    margin-bottom: 0;
+.arsol-pfw-customer-notice .arsol-pfw-notice-content em {
+    font-style: italic;
 }
 
-.arsol-pfw-project-action .brxe-button,
-.arsol-pfw-project-action .bricks-button {
-    margin-top: 15px;
-    width: 100%;
-    display: block;
-    text-align: center;
+/* Responsive adjustments for customer notice */
+@media (max-width: 768px) {
+    .arsol-pfw-customer-notice {
+        margin: 1rem 0;
+        padding: 0.75rem;
+    }
+    
+    .arsol-pfw-customer-notice .arsol-pfw-notice-header h4 {
+        font-size: 1em;
+    }
 }
 
-/* Comments System */
+
+/* AJAX Comments Styles */
 .comment-form .error {
-    color: #dc3545;
-    margin-top: 5px;
+    border-color: #dc3232 !important;
+    border-width: 2px !important;
 }
 
 .comment-form .loadingform {
     opacity: 0.6;
-    pointer-events: none;
+    cursor: not-allowed;
 }
 
+/* Basic comment styling */
 .commentlist {
     list-style: none;
-    margin: 0;
     padding: 0;
 }
 
 .commentlist li {
-    background: #f8f9fa;
+    margin-bottom: 20px;
     padding: 15px;
-    margin-bottom: 15px;
+    background: #f9f9f9;
     border-radius: 4px;
-    border-left: 3px solid #007cba;
 }
 
 .commentlist .children {
-    margin-left: 20px;
     margin-top: 15px;
+    margin-left: 20px;
 }
 
 .comment-meta .comment-author {
     font-weight: bold;
-    color: #333;
+    margin-bottom: 5px;
 }
 
 .comment-metadata {
-    color: #6c757d;
     font-size: 0.9em;
+    color: #666;
     margin-bottom: 10px;
 }
 
@@ -492,7 +659,7 @@
 }
 
 .reply a {
-    color: #007cba;
+    color: #0073aa;
     text-decoration: none;
     font-size: 0.9em;
 }
@@ -501,39 +668,39 @@
     text-decoration: underline;
 }
 
+/* Enhanced comment styling to match existing structure */
 .commentlist .comment-body {
-    background: #fff;
     padding: 15px;
+    background: #f9f9f9;
     border-radius: 4px;
-    border: 1px solid #e1e1e1;
 }
 
 .commentlist .comment-author {
     font-weight: bold;
-    color: #333;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    font-size: 1.1em;
 }
 
 .commentlist .comment-meta {
-    color: #6c757d;
-    font-size: 0.9em;
+    margin-bottom: 12px;
 }
 
 .commentlist .comment-date {
-    color: #6c757d;
+    color: #666;
     font-size: 0.9em;
 }
 
 .commentlist .comment-content {
-    margin: 10px 0;
+    margin-bottom: 12px;
+    line-height: 1.6;
 }
 
 .commentlist .reply {
-    margin-top: 10px;
+    margin-bottom: 8px;
 }
 
 .commentlist .reply a {
-    color: #007cba;
+    color: #0073aa;
     text-decoration: none;
     font-size: 0.9em;
 }
@@ -543,56 +710,59 @@
 }
 
 .commentlist .arsol-comment-actions {
-    margin-top: 10px;
+    margin-top: 8px;
+    font-size: 0.9em;
 }
 
 .commentlist .arsol-comment-actions a {
-    color: #007cba;
+    color: #0073aa;
     text-decoration: none;
-    margin-right: 10px;
-    font-size: 0.9em;
+    margin-right: 8px;
 }
 
 .commentlist .arsol-comment-actions a:hover {
     text-decoration: underline;
 }
 
+/* Nested comments */
 .commentlist .children {
-    margin-left: 20px;
     margin-top: 15px;
-    padding-left: 20px;
-    border-left: 2px solid #e1e1e1;
+    margin-left: 30px;
+    list-style: none;
+    padding: 0;
 }
 
 .commentlist .children .comment-body {
-    background: #f8f9fa;
-    border-color: #e1e1e1;
+    background: #ffffff;
+    border-left: 3px solid #0073aa;
 }
 
-/* Comment Edit Forms */
+/* Comment editing styles */
 .arsol-edit-form {
-    background: #f8f9fa;
+    margin-top: 15px;
     padding: 15px;
+    background: #f0f8ff;
     border-radius: 4px;
-    margin-top: 10px;
-    border: 1px solid #e1e1e1;
+    border: 1px solid #0073aa;
 }
 
 .arsol-edit-textarea {
     width: 100%;
-    min-height: 100px;
+    min-height: 80px;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    resize: vertical;
     font-family: inherit;
     font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    box-sizing: border-box;
 }
 
 .arsol-edit-textarea:focus {
     outline: none;
-    border-color: #007cba;
-    box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.2);
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
 }
 
 .arsol-edit-buttons {
@@ -607,11 +777,12 @@
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.3s ease;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
 .arsol-save-edit {
-    background: #007cba;
+    background: #0073aa;
     color: white;
 }
 
@@ -625,35 +796,37 @@
 }
 
 .arsol-cancel-edit {
-    background: #6c757d;
-    color: white;
+    background: #f1f1f1;
+    color: #333;
 }
 
 .arsol-cancel-edit:hover {
-    background: #5a6268;
+    background: #e1e1e1;
 }
 
-/* Comment Reply Forms */
+/* Reply form styles */
 .arsol-reply-form-container {
-    background: #f8f9fa;
+    margin-top: 20px;
     padding: 20px;
-    border-radius: 4px;
-    margin-top: 15px;
-    border: 1px solid #e1e1e1;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .arsol-reply-form-header {
     margin-bottom: 15px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #e1e1e1;
+    border-bottom: 1px solid #dee2e6;
 }
 
 .arsol-reply-form-header strong {
-    color: #333;
+    color: #495057;
+    font-size: 16px;
 }
 
 .arsol-reply-form-fields {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .arsol-reply-form-row {
@@ -663,8 +836,8 @@
 .arsol-reply-form-row label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
+    font-weight: 600;
+    color: #495057;
 }
 
 .arsol-reply-form-row .required {
@@ -675,41 +848,44 @@
 .arsol-reply-form-row textarea {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #ced4da;
     border-radius: 4px;
-    font-family: inherit;
     font-size: 14px;
+    line-height: 1.5;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
 }
 
 .arsol-reply-form-row input:focus,
 .arsol-reply-form-row textarea:focus {
     outline: none;
-    border-color: #007cba;
-    box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.2);
+    border-color: #0073aa;
+    box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.2);
 }
 
 .arsol-reply-form-row textarea {
-    min-height: 120px;
     resize: vertical;
+    min-height: 100px;
 }
 
 .arsol-reply-form-actions {
     display: flex;
     gap: 10px;
-    justify-content: flex-end;
+    align-items: center;
 }
 
 .arsol-reply-form-actions button {
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.3s ease;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
 }
 
 .arsol-reply-submit {
-    background: #007cba;
+    background: #0073aa;
     color: white;
 }
 
@@ -718,7 +894,7 @@
 }
 
 .arsol-reply-submit:disabled {
-    background: #ccc;
+    background: #6c757d;
     cursor: not-allowed;
 }
 
@@ -735,99 +911,54 @@
     transform: translateY(1px);
 }
 
+/* Nested reply styling */
 .comment .children {
     margin-left: 30px;
+    margin-top: 20px;
 }
 
 .comment .children .comment {
-    margin-top: 15px;
+    border-left: 3px solid #e9ecef;
+    padding-left: 15px;
 }
 
 .comment .children .comment .comment-body {
     background: #f8f9fa;
-    border-left: 3px solid #007cba;
+    padding: 15px;
+    border-radius: 6px;
+    margin-bottom: 10px;
 }
 
-/* Comment Reply Links */
+/* Reply link styling */
 .comment-reply-link {
-    background: #007cba;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
+    color: #0073aa;
     text-decoration: none;
-    font-size: 0.9em;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 .comment-reply-link:hover {
-    background: #005a87;
-    color: white;
-    text-decoration: none;
+    color: #005a87;
+    text-decoration: underline;
 }
 
-/* Mobile Responsive */
+/* Responsive design */
 @media (max-width: 768px) {
-    .arsol-button-groups {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .arsol-btn-secondary {
-        width: 100%;
-        text-align: center;
-    }
-
-    .arsol-pfw-projects-row thead {
-        display: none;
-    }
-
-    .arsol-pfw-projects-row td {
-        display: block;
-        text-align: left;
-    }
-
-    .arsol-pfw-projects-row td:before {
-        content: attr(data-label) ": ";
-        font-weight: bold;
-        display: inline-block;
-        width: 100px;
-    }
-
-    .arsol-pfw-project-meta-row {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .arsol-pfw-project-field-col {
-        flex: none;
-    }
-
-    .arsol-budget-col,
-    .arsol-money-col {
-        flex: none;
-    }
-
-    .project-empty-state-actions {
-        flex-direction: column;
-    }
-
-    .project-empty-state-actions .bricks-button {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
     .comment .children {
         margin-left: 15px;
     }
-
+    
     .arsol-reply-form-container {
         padding: 15px;
     }
-
+    
     .arsol-reply-form-actions {
         flex-direction: column;
+        align-items: stretch;
     }
-
+    
     .arsol-reply-form-actions button {
         width: 100%;
+        margin-bottom: 10px;
     }
 }
