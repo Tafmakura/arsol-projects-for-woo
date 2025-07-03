@@ -200,6 +200,10 @@ jQuery(function($) {
         commentContent.after(editForm);
         
         // Focus on textarea
+        
+        // Hide reply link and edit/delete actions while editing
+        commentBody.find(".reply").hide();
+        commentBody.find(".arsol-comment-actions").hide();
         editForm.find('.arsol-edit-textarea').focus();
     });
     
@@ -238,6 +242,10 @@ jQuery(function($) {
                     commentContent.text(newContent);
                     
                     // Remove edit form and show original content
+                    
+                    // Show reply link and edit/delete actions again
+                    commentBody.find(".reply").show();
+                    commentBody.find(".arsol-comment-actions").show();
                     editForm.remove();
                     commentContent.show();
                 } else {
@@ -261,6 +269,10 @@ jQuery(function($) {
         var commentContent = commentBody.find('.comment-content');
         
         // Remove edit form and show original content
+        
+        // Show reply link and edit/delete actions again
+        commentBody.find(".reply").show();
+        commentBody.find(".arsol-comment-actions").show();
         editForm.remove();
         commentContent.show();
     });
@@ -273,8 +285,13 @@ jQuery(function($) {
             return;
         }
         
+        var deleteButton = $(this);
+        var originalText = deleteButton.text();
         var commentId = $(this).data('comment-id');
-        var commentLi = $(this).closest('li.comment');
+        var commentLi = deleteButton.closest('li.comment');
+        
+        // Show loading state
+        deleteButton.prop('disabled', true).text('Deleting...');
         
         // AJAX request to delete comment
         $.ajax({
@@ -293,15 +310,18 @@ jQuery(function($) {
                     });
                 } else {
                     alert('Error deleting comment');
+                    // Reset button state on error
+                    deleteButton.prop('disabled', false).text(originalText);
                 }
             },
             error: function(xhr, status, error) {
                 alert('Error deleting comment: ' + (xhr.responseText || 'Unknown error'));
+                // Reset button state on error
+                deleteButton.prop('disabled', false).text(originalText);
             }
         });
     });
-    
-    // ===== REPLY FUNCTIONALITY =====
+
     
     // Handle reply link click
     $(document).on('click', '.comment-reply-link', function(e) {
@@ -341,7 +361,7 @@ jQuery(function($) {
         if ($('.arsol-reply-form-container').length > 0) {
             console.log('Another reply form is open, closing it first');
             $('.arsol-reply-form-container').remove();
-            $('.comment-reply-link').text('Reply');
+            $('.comment-reply-link').text('Reply').show(); // Show all reply links when closing other forms
         }
         
         // Show loading state for this specific link
@@ -371,8 +391,8 @@ jQuery(function($) {
                 // Focus on the reply textarea (be specific to avoid nested ones)
                 directCommentBody.find('.arsol-reply-form textarea').first().focus();
                 
-                // Reset only this specific reply link text
-                clickedLink.text('Reply');
+                // Hide the reply link for this specific comment
+                clickedLink.hide();
             },
             error: function(xhr, status, error) {
                 console.log('Error loading reply form:', xhr.responseText || 'Unknown error');
@@ -425,8 +445,8 @@ jQuery(function($) {
                 // Remove the reply form
                 form.closest('.arsol-reply-form-container').remove();
                 
-                // Reset reply link text
-                parentComment.find('.comment-reply-link').text('Reply');
+                // Show the reply link again for this comment
+                parentComment.find('.comment-reply-link').first().show();
                 
                 // Scroll to new comment
                 var newComment = childrenList.find('li:last-child');
@@ -454,8 +474,8 @@ jQuery(function($) {
         // Remove reply form
         replyForm.remove();
         
-        // Reset reply link text
-        commentElement.find('.comment-reply-link').text('Reply');
+        // Show the reply link again for this comment
+        commentElement.find('.comment-reply-link').first().show();
     });
     
 }); 
