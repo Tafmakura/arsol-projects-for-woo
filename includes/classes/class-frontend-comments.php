@@ -240,10 +240,6 @@ class Frontend_Comments {
                             <label for="arsol-reply-email"><?php _e('Email', 'arsol-pfw'); ?> <span class="required">*</span></label>
                             <input type="email" id="arsol-reply-email" name="email" required>
                         </div>
-                    <?php else: ?>
-                        <div class="arsol-reply-form-user-info">
-                            <?php printf(__('Replying as %s', 'arsol-pfw'), '<strong>' . $current_user->display_name . '</strong>'); ?>
-                        </div>
                     <?php endif; ?>
                     
                     <div class="arsol-reply-form-row">

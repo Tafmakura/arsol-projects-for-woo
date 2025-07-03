@@ -868,15 +868,6 @@
     min-height: 100px;
 }
 
-.arsol-reply-form-user-info {
-    margin-bottom: 15px;
-    padding: 10px;
-    background: #e9ecef;
-    border-radius: 4px;
-    font-size: 14px;
-    color: #495057;
-}
-
 .arsol-reply-form-actions {
     display: flex;
     gap: 10px;
