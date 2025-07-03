@@ -56,18 +56,4 @@ do_action('arsol_projects_before_request_state', $post->ID);
     </div>
 </div>
 
-<div class="arsol-pfw-request-actions">
-    <?php
-    $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
-    $cancel_url = add_query_arg(array(
-        'action' => 'arsol_cancel_request',
-        'request_id' => $post->ID,
-        '_wpnonce' => wp_create_nonce('arsol_cancel_request_nonce')
-    ), admin_url('admin-post.php'));
-    ?>
-    <a href="<?php echo esc_url($cancel_url); ?>" class="button<?php echo esc_attr($wp_button_class); ?> arsol-pfw-cancel-button" onclick="return confirm('<?php echo esc_js(__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw')); ?>')">
-        <?php esc_html_e('Cancel Request', 'arsol-pfw'); ?>
-    </a>
-</div>
-
 <?php do_action('arsol_projects_after_request_state', $post->ID); ?>
