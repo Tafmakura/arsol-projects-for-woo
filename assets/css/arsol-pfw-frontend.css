@@ -476,6 +476,36 @@
     color: #333;
 }
 
+.arsol-pfw-projects-row .stage-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.arsol-pfw-projects-row .stage-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.arsol-pfw-projects-row .stage-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.arsol-pfw-projects-row .stage-in-progress {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.arsol-pfw-projects-row .stage-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.arsol-pfw-projects-row .stage-cancelled {
+    background: #f8d7da;
+    color: #721c24;
+}
+
 /* Customer Notice Styles */
 .arsol-pfw-customer-notice {
     background: #d1ecf1;
@@ -528,5 +558,340 @@
 
     .arsol-pfw-customer-notice .arsol-pfw-notice-header h4 {
         font-size: 1em;
+    }
+}
+
+/* Comment form styles */
+.comment-form .error {
+    color: #dc3545;
+    margin-top: 5px;
+}
+
+.comment-form .loadingform {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.commentlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.commentlist li {
+    background: #f8f9fa;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border-left: 3px solid #007cba;
+}
+
+.commentlist .children {
+    margin-left: 20px;
+    margin-top: 15px;
+}
+
+.comment-meta .comment-author {
+    font-weight: bold;
+    color: #333;
+}
+
+.comment-metadata {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin-bottom: 10px;
+}
+
+.comment-content {
+    margin-bottom: 10px;
+}
+
+.reply a {
+    color: #007cba;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.reply a:hover {
+    text-decoration: underline;
+}
+
+.commentlist .comment-body {
+    background: #fff;
+    padding: 15px;
+    border-radius: 4px;
+    border: 1px solid #e1e1e1;
+}
+
+.commentlist .comment-author {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.commentlist .comment-meta {
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+.commentlist .comment-date {
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+.commentlist .comment-content {
+    margin: 10px 0;
+}
+
+.commentlist .reply {
+    margin-top: 10px;
+}
+
+.commentlist .reply a {
+    color: #007cba;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.commentlist .reply a:hover {
+    text-decoration: underline;
+}
+
+.commentlist .arsol-comment-actions {
+    margin-top: 10px;
+}
+
+.commentlist .arsol-comment-actions a {
+    color: #007cba;
+    text-decoration: none;
+    margin-right: 10px;
+    font-size: 0.9em;
+}
+
+.commentlist .arsol-comment-actions a:hover {
+    text-decoration: underline;
+}
+
+.commentlist .children {
+    margin-left: 20px;
+    margin-top: 15px;
+    padding-left: 20px;
+    border-left: 2px solid #e1e1e1;
+}
+
+.commentlist .children .comment-body {
+    background: #f8f9fa;
+    border-color: #e1e1e1;
+}
+
+/* Comment editing styles */
+.arsol-edit-form {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 10px;
+    border: 1px solid #e1e1e1;
+}
+
+.arsol-edit-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.arsol-edit-textarea:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.2);
+}
+
+.arsol-edit-buttons {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.arsol-edit-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.arsol-save-edit {
+    background: #007cba;
+    color: white;
+}
+
+.arsol-save-edit:hover {
+    background: #005a87;
+}
+
+.arsol-save-edit:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.arsol-cancel-edit {
+    background: #6c757d;
+    color: white;
+}
+
+.arsol-cancel-edit:hover {
+    background: #5a6268;
+}
+
+/* Comment reply form styles */
+.arsol-reply-form-container {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 4px;
+    margin-top: 15px;
+    border: 1px solid #e1e1e1;
+}
+
+.arsol-reply-form-header {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.arsol-reply-form-header strong {
+    color: #333;
+}
+
+.arsol-reply-form-fields {
+    margin-bottom: 15px;
+}
+
+.arsol-reply-form-row {
+    margin-bottom: 15px;
+}
+
+.arsol-reply-form-row label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.arsol-reply-form-row .required {
+    color: #dc3545;
+}
+
+.arsol-reply-form-row input,
+.arsol-reply-form-row textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.arsol-reply-form-row input:focus,
+.arsol-reply-form-row textarea:focus {
+    outline: none;
+    border-color: #007cba;
+    box-shadow: 0 0 0 2px rgba(0, 124, 186, 0.2);
+}
+
+.arsol-reply-form-row textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.arsol-reply-form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.arsol-reply-form-actions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.arsol-reply-submit {
+    background: #007cba;
+    color: white;
+}
+
+.arsol-reply-submit:hover {
+    background: #005a87;
+}
+
+.arsol-reply-submit:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.arsol-reply-cancel {
+    background: #6c757d;
+    color: white;
+}
+
+.arsol-reply-cancel:hover {
+    background: #5a6268;
+}
+
+.arsol-reply-form-actions button:active {
+    transform: translateY(1px);
+}
+
+.comment .children {
+    margin-left: 30px;
+}
+
+.comment .children .comment {
+    margin-top: 15px;
+}
+
+.comment .children .comment .comment-body {
+    background: #f8f9fa;
+    border-left: 3px solid #007cba;
+}
+
+.comment-reply-link {
+    background: #007cba;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.comment-reply-link:hover {
+    background: #005a87;
+    color: white;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .comment .children {
+        margin-left: 15px;
+    }
+
+    .arsol-reply-form-container {
+        padding: 15px;
+    }
+
+    .arsol-reply-form-actions {
+        flex-direction: column;
+    }
+
+    .arsol-reply-form-actions button {
+        width: 100%;
     }
 }
