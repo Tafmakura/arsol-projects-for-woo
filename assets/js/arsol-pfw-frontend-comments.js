@@ -1,54 +1,132 @@
+/*
+ * Simple AJAX Comments for Arsol Projects for WooCommerce
+ * Based on https://rudrastyh.com/wordpress/ajax-comments.html
+ */
+
+// Validation functions
+jQuery.extend(jQuery.fn, {
+    /*
+     * check if field value length more than 3 symbols (for name and comment)
+     */
+    validate: function () {
+        if (jQuery(this).val().length < 3) {
+            jQuery(this).addClass('error');
+            return false;
+        } else {
+            jQuery(this).removeClass('error');
+            return true;
+        }
+    },
+    /*
+     * check if email is correct
+     */
+    validateEmail: function () {
+        var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/,
+            emailToValidate = jQuery(this).val();
+        if (!emailReg.test(emailToValidate) || emailToValidate == "") {
+            jQuery(this).addClass('error');
+            return false;
+        } else {
+            jQuery(this).removeClass('error');
+            return true;
+        }
+    },
+});
+
 jQuery(function($) {
-    
-    // Handle comment form submission
-    $('.comment-form').on('submit', function(e) {
-        e.preventDefault();
+    /*
+     * On comment form submit
+     */
+    $('#commentform').submit(function() {
         
-        var form = $(this);
-        var formData = form.serialize();
+        // define some vars
+        var button = $('#submit'), // submit button
+            respond = $('#respond'), // comment form container
+            commentlist = $('#comments.commentlist'), // comment list container (existing structure)
+            cancelreplylink = $('#cancel-comment-reply-link');
+            
+        // if user is logged in, do not validate author and email fields
+        if ($('#author').length)
+            $('#author').validate();
         
-        // Add loading state
-        form.addClass('loadingform');
-        form.find('input[type="submit"]').prop('disabled', true);
+        if ($('#email').length)
+            $('#email').validateEmail();
+            
+        // validate comment in any case
+        $('#comment').validate();
         
-        $.ajax({
-            type: 'POST',
-            url: arsolComments.ajaxurl,
-            data: formData + '&action=arsol_ajax_comments',
-            dataType: 'json',
-            success: function(response) {
-                if (response.success) {
-                    // Add the new comment to the list
-                    var commentList = $('#comments .commentlist');
-                    if (commentList.length === 0) {
-                        $('#comments').append('<ul class="commentlist"></ul>');
-                        commentList = $('#comments .commentlist');
+        // if comment form isn't in process, submit it
+        if (!button.hasClass('loadingform') && !$('#author').hasClass('error') && !$('#email').hasClass('error') && !$('#comment').hasClass('error')) {
+            
+            // ajax request
+            $.ajax({
+                type: 'POST',
+                url: arsolComments.ajaxurl, // admin-ajax.php URL
+                data: $(this).serialize() + '&action=arsol_ajax_comments', // send form data + action parameter
+                beforeSend: function(xhr) {
+                    // what to do just after the form has been submitted
+                    button.addClass('loadingform').val('Loading...');
+                },
+                error: function (request, status, error) {
+                    if (status == 500) {
+                        alert('Error while adding comment');
+                    } else if (status == 'timeout') {
+                        alert('Error: Server doesn\'t respond.');
+                    } else {
+                        // process WordPress errors
+                        var wpErrorHtml = request.responseText.split("<p>"),
+                            wpErrorStr = wpErrorHtml[1].split("</p>");
+                            
+                        alert(wpErrorStr[0]);
+                    }
+                },
+                success: function (addedCommentHTML) {
+                
+                    // if this post already has comments
+                    if (commentlist.length > 0) {
+                    
+                        // if in reply to another comment
+                        if (respond.parent().hasClass('comment')) {
+                        
+                            // if the other replies exist
+                            if (respond.parent().children('.children').length) {    
+                                respond.parent().children('.children').append(addedCommentHTML);
+                            } else {
+                                // if no replies, add <ol class="children"> list
+                                addedCommentHTML = '<ol class="children">' + addedCommentHTML + '</ol>';
+                                respond.parent().append(addedCommentHTML);
+                            }
+                            
+                            // remove the reply form
+                            cancelreplylink.trigger("click");
+                            
+                        } else {
+                            // simple comment
+                            commentlist.append(addedCommentHTML);
+                        }
+                        
+                    } else {
+                        // if no comments yet, create the comment list with correct structure
+                        addedCommentHTML = '<ol id="comments" class="commentlist">' + addedCommentHTML + '</ol>';
+                        respond.before($(addedCommentHTML));
                     }
                     
-                    commentList.append(response.data.comment_html);
+                    // clear form fields
+                    $('#comment').val('');
                     
-                    // Clear the form
-                    form[0].reset();
-                    
-                    // Show success message
-                    showNotice(response.data.message, 'success');
-                } else {
-                    showNotice(response.data.message || 'Error posting comment', 'error');
+                },
+                complete: function() {
+                    // what to do after a comment has been added
+                    button.removeClass('loadingform').val('Post Comment');
                 }
-            },
-            error: function(xhr, status, error) {
-                var errorMessage = 'Error posting comment';
-                if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                    errorMessage = xhr.responseJSON.data.message;
-                }
-                showNotice(errorMessage, 'error');
-            },
-            complete: function() {
-                form.removeClass('loadingform');
-                form.find('input[type="submit"]').prop('disabled', false);
-            }
-        });
+            });
+        }
+        return false;
     });
+});
+
+// Comment editing and deletion functionality
+jQuery(function($) {
     
     // Handle edit comment click
     $(document).on('click', '.arsol-edit-comment', function(e) {
@@ -64,14 +142,12 @@ jQuery(function($) {
             return;
         }
         
-        // Create edit form with better structure
-        var editForm = $('<div class="arsol-edit-form" role="form" aria-label="Edit comment">' +
-            '<label for="arsol-edit-textarea-' + commentId + '" class="screen-reader-text">Edit comment content</label>' +
-            '<textarea id="arsol-edit-textarea-' + commentId + '" class="arsol-edit-textarea" rows="4" required>' + originalText + '</textarea>' +
+        // Create edit form
+        var editForm = $('<div class="arsol-edit-form">' +
+            '<textarea class="arsol-edit-textarea">' + originalText + '</textarea>' +
             '<div class="arsol-edit-buttons">' +
-                '<button type="button" class="arsol-save-edit" aria-describedby="save-help-' + commentId + '">Save</button>' +
+                '<button type="button" class="arsol-save-edit">Save</button> ' +
                 '<button type="button" class="arsol-cancel-edit">Cancel</button>' +
-                '<span id="save-help-' + commentId + '" class="screen-reader-text">Save changes to this comment</span>' +
             '</div>' +
         '</div>');
         
@@ -79,7 +155,7 @@ jQuery(function($) {
         commentContent.hide();
         commentContent.after(editForm);
         
-        // Focus on textarea for accessibility
+        // Focus on textarea
         editForm.find('.arsol-edit-textarea').focus();
     });
     
@@ -87,23 +163,19 @@ jQuery(function($) {
     $(document).on('click', '.arsol-save-edit', function(e) {
         e.preventDefault();
         
-        var button = $(this);
-        var editForm = button.closest('.arsol-edit-form');
+        var editForm = $(this).closest('.arsol-edit-form');
         var commentBody = editForm.closest('.comment-body');
         var commentContent = commentBody.find('.comment-content');
         var commentId = commentBody.find('.arsol-edit-comment').data('comment-id');
         var newContent = editForm.find('.arsol-edit-textarea').val().trim();
         
-        // Validate content
         if (newContent === '') {
-            showNotice('Comment content cannot be empty', 'error');
-            editForm.find('.arsol-edit-textarea').focus();
+            alert('Comment content cannot be empty');
             return;
         }
         
         // Show loading state
-        button.prop('disabled', true).text('Saving...');
-        editForm.addClass('loading');
+        $(this).prop('disabled', true).text('Saving...');
         
         // AJAX request to save edit
         $.ajax({
@@ -115,29 +187,14 @@ jQuery(function($) {
                 comment_content: newContent,
                 nonce: arsolComments.nonce
             },
-            dataType: 'json',
             success: function(response) {
-                if (response.success) {
-                    // Update the comment content
-                    commentContent.html(response.data.comment_content).show();
-                    editForm.remove();
-                    
-                    // Show success message
-                    showNotice(response.data.message, 'success');
-                } else {
-                    showNotice(response.data.message || 'Error updating comment', 'error');
-                }
+                // Update the comment content
+                commentContent.text(newContent).show();
+                editForm.remove();
             },
             error: function(xhr, status, error) {
-                var errorMessage = 'Error updating comment';
-                if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                    errorMessage = xhr.responseJSON.data.message;
-                }
-                showNotice(errorMessage, 'error');
-            },
-            complete: function() {
-                button.prop('disabled', false).text('Save');
-                editForm.removeClass('loading');
+                alert('Error saving comment: ' + (xhr.responseText || 'Unknown error'));
+                editForm.find('.arsol-save-edit').prop('disabled', false).text('Save');
             }
         });
     });
@@ -158,16 +215,12 @@ jQuery(function($) {
     $(document).on('click', '.arsol-delete-comment', function(e) {
         e.preventDefault();
         
-        if (!confirm('Are you sure you want to delete this comment? This action cannot be undone.')) {
+        if (!confirm('Are you sure you want to delete this comment?')) {
             return;
         }
         
-        var button = $(this);
-        var commentId = button.data('comment-id');
-        var commentLi = button.closest('li.comment');
-        
-        // Show loading state
-        button.prop('disabled', true).text('Deleting...');
+        var commentId = $(this).data('comment-id');
+        var commentLi = $(this).closest('li.comment');
         
         // AJAX request to delete comment
         $.ajax({
@@ -178,79 +231,142 @@ jQuery(function($) {
                 comment_id: commentId,
                 nonce: arsolComments.nonce
             },
-            dataType: 'json',
             success: function(response) {
-                if (response.success) {
+                if (response === 'success') {
                     // Remove the comment from DOM with fade effect
                     commentLi.fadeOut(300, function() {
                         $(this).remove();
                     });
-                    
-                    // Show success message
-                    showNotice(response.data.message, 'success');
                 } else {
-                    showNotice(response.data.message || 'Error deleting comment', 'error');
+                    alert('Error deleting comment');
                 }
             },
             error: function(xhr, status, error) {
-                var errorMessage = 'Error deleting comment';
-                if (xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message) {
-                    errorMessage = xhr.responseJSON.data.message;
-                }
-                showNotice(errorMessage, 'error');
+                alert('Error deleting comment: ' + (xhr.responseText || 'Unknown error'));
+            }
+        });
+    });
+});
+
+// Reply functionality
+jQuery(function($) {
+    
+    // Handle reply link click
+    $(document).on('click', '.comment-reply-link', function(e) {
+        e.preventDefault();
+        
+        var commentId = $(this).data('belowelement').replace('comment-', '');
+        var postId = $('#commentform input[name="comment_post_ID"]').val();
+        var commentElement = $('#comment-' + commentId);
+        
+        // Check if reply form is already showing
+        if (commentElement.find('.arsol-reply-form-container').length > 0) {
+            return;
+        }
+        
+        // Hide any other open reply forms
+        $('.arsol-reply-form-container').remove();
+        
+        // Show loading state
+        $(this).text('Loading...');
+        
+        // AJAX request to get reply form
+        $.ajax({
+            type: 'POST',
+            url: arsolComments.ajaxurl,
+            data: {
+                action: 'arsol_reply_comment',
+                comment_id: commentId,
+                post_id: postId,
+                nonce: arsolComments.nonce
             },
-            complete: function() {
-                button.prop('disabled', false).text('Delete');
+            success: function(response) {
+                // Add reply form after the comment
+                commentElement.find('.comment-body').append(response);
+                
+                // Focus on the reply textarea
+                commentElement.find('.arsol-reply-form textarea').focus();
+                
+                // Reset reply link text
+                commentElement.find('.comment-reply-link').text('Reply');
+            },
+            error: function(xhr, status, error) {
+                alert('Error loading reply form: ' + (xhr.responseText || 'Unknown error'));
+                // Reset reply link text
+                commentElement.find('.comment-reply-link').text('Reply');
             }
         });
     });
     
-    // Handle keyboard navigation for edit form
-    $(document).on('keydown', '.arsol-edit-textarea', function(e) {
-        // Save with Ctrl+Enter
-        if (e.ctrlKey && e.key === 'Enter') {
-            e.preventDefault();
-            $(this).closest('.arsol-edit-form').find('.arsol-save-edit').click();
+    // Handle reply form submission
+    $(document).on('submit', '.arsol-reply-form', function(e) {
+        e.preventDefault();
+        
+        var form = $(this);
+        var commentId = form.data('comment-id');
+        var postId = form.data('post-id');
+        var formData = form.serialize();
+        
+        // Basic validation
+        var content = form.find('textarea[name="comment"]').val().trim();
+        if (content === '') {
+            alert('Please enter your reply');
+            return;
         }
-        // Cancel with Escape
-        else if (e.key === 'Escape') {
-            e.preventDefault();
-            $(this).closest('.arsol-edit-form').find('.arsol-cancel-edit').click();
-        }
-    });
-    
-    /**
-     * Show notice message
-     * 
-     * @param {string} message
-     * @param {string} type - 'success' or 'error'
-     */
-    function showNotice(message, type) {
-        // Remove existing notices
-        $('.arsol-comment-notice').remove();
         
-        // Create new notice
-        var notice = $('<div class="arsol-comment-notice arsol-notice-' + type + '" role="alert" aria-live="polite">' +
-            '<p>' + message + '</p>' +
-            '<button type="button" class="arsol-notice-dismiss" aria-label="Dismiss notice">&times;</button>' +
-        '</div>');
+        // Show loading state
+        form.find('.arsol-reply-submit').prop('disabled', true).text('Posting...');
         
-        // Add to page
-        $('#comments').prepend(notice);
-        
-        // Auto-dismiss after 5 seconds
-        setTimeout(function() {
-            notice.fadeOut(300, function() {
-                $(this).remove();
-            });
-        }, 5000);
-    }
-    
-    // Handle notice dismissal
-    $(document).on('click', '.arsol-notice-dismiss', function() {
-        $(this).closest('.arsol-comment-notice').fadeOut(300, function() {
-            $(this).remove();
+        // AJAX request to submit reply
+        $.ajax({
+            type: 'POST',
+            url: arsolComments.ajaxurl,
+            data: formData + '&action=arsol_ajax_comments',
+            success: function(response) {
+                // Find the parent comment element
+                var parentComment = $('#comment-' + commentId);
+                
+                // Check if there's already a children list
+                var childrenList = parentComment.find('> .children');
+                if (childrenList.length === 0) {
+                    // Create new children list
+                    childrenList = $('<ul class="children"></ul>');
+                    parentComment.append(childrenList);
+                }
+                
+                // Add the new reply
+                childrenList.append(response);
+                
+                // Remove the reply form
+                form.closest('.arsol-reply-form-container').remove();
+                
+                // Reset reply link text
+                parentComment.find('.comment-reply-link').text('Reply');
+                
+                // Scroll to new comment
+                var newComment = childrenList.find('li:last-child');
+                $('html, body').animate({
+                    scrollTop: newComment.offset().top - 100
+                }, 500);
+            },
+            error: function(xhr, status, error) {
+                alert('Error posting reply: ' + (xhr.responseText || 'Unknown error'));
+                form.find('.arsol-reply-submit').prop('disabled', false).text('Post Reply');
+            }
         });
     });
     
+    // Handle reply form cancel
+    $(document).on('click', '.arsol-reply-cancel', function(e) {
+        e.preventDefault();
+        
+        var replyForm = $(this).closest('.arsol-reply-form-container');
+        var commentElement = replyForm.closest('.comment');
+        
+        // Remove reply form
+        replyForm.remove();
+        
+        // Reset reply link text
+        commentElement.find('.comment-reply-link').text('Reply');
+    });
 });
