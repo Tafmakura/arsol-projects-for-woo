@@ -38,12 +38,12 @@ class Settings_Phases {
     public function register_settings() {
         register_setting('arsol_phases_settings', 'arsol_phases_settings');
 
-        // Register display settings
-        register_setting('arsol_content_display_settings', 'arsol_content_display_settings');
-        register_setting('arsol_sidebar_display_settings', 'arsol_sidebar_display_settings');
-        register_setting('arsol_comment_display_settings', 'arsol_comment_display_settings');
-        register_setting('arsol_files_display_settings', 'arsol_files_display_settings');
-        register_setting('arsol_form_display_settings', 'arsol_form_display_settings');
+        // Register display settings under the main phases settings group
+        register_setting('arsol_phases_settings', 'arsol_content_display_settings');
+        register_setting('arsol_phases_settings', 'arsol_sidebar_display_settings');
+        register_setting('arsol_phases_settings', 'arsol_comment_display_settings');
+        register_setting('arsol_phases_settings', 'arsol_files_display_settings');
+        register_setting('arsol_phases_settings', 'arsol_form_display_settings');
 
         // Customer Notice Defaults Section
         add_settings_section(
