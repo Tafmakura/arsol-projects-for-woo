@@ -449,7 +449,7 @@ jQuery(function($) {
                 form.closest('.arsol-reply-form-container').remove();
                 
                 // Show the reply link again for this comment
-                parentComment.find('.comment-reply-link').first().show();
+                parentComment.find(".comment-reply-link").first().text("Reply").show();
                 
                 // Scroll to new comment
                 var newComment = childrenList.find('li:last-child');
@@ -478,7 +478,7 @@ jQuery(function($) {
         replyForm.remove();
         
         // Show the reply link again for this comment
-        commentElement.find('.comment-reply-link').first().show();
+        commentElement.find(".comment-reply-link").first().text("Reply").show();
     });
     
 }); 
