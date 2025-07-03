@@ -23,36 +23,41 @@ if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
 do_action('arsol_projects_before_request_state', $post->ID);
 ?>
 
-<div class="project-content-wrapper">
-    <div class="project-content">
-        <h3 class="project-title"><?php echo esc_html($post->post_title); ?></h3>
-        <div class="project-description">
-            <?php if (empty(get_the_content())) : ?>
-            <div class="arsol-pfw-project-overview-empty">
-                <div class="arsol-pfw-empty-state">
-                    <div class="arsol-pfw-empty-state__content">
-                            <p><?php echo esc_html(__('Your request is being processed. We will update you with more details soon.', 'arsol-pfw')); ?></p>
-                        </div>
+<div class="arsol-pfw-request">
+    <div class="arsol-pfw-header">
+        <h3 class="arsol-pfw-title"><?php echo esc_html($post->post_title); ?></h3>
+    </div>
+
+    <div class="arsol-pfw-content-wrapper">
+        <div class="arsol-pfw-content">
+            <?php
+            // Show Customer Notice unconditionally
+            $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'request');
+            if (!empty($customer_notice)) : ?>
+                <div class="arsol-pfw-notice arsol-pfw-customer-notice">
+                    <div class="arsol-pfw-notice-header">
+                        <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
+                    </div>
+                    <div class="arsol-pfw-notice-content">
+                        <?php echo wp_kses_post(wpautop($customer_notice)); ?>
                     </div>
                 </div>
-            <?php else : ?>
-                <?php echo wp_kses_post($post->post_content); ?>
             <?php endif; ?>
-        </div>
-        
-        <?php
-        // Show Customer Notice unconditionally
-        $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'request');
-        if (!empty($customer_notice)) : ?>
-            <div class="arsol-pfw-notice arsol-pfw-customer-notice">
-                <div class="arsol-pfw-notice-header">
-                    <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
-                </div>
-                <div class="arsol-pfw-notice-content">
-                    <?php echo wp_kses_post(wpautop($customer_notice)); ?>
-                </div>
+            
+            <div class="arsol-pfw-post-content">
+                <?php if (empty(get_the_content())) : ?>
+                <div class="arsol-pfw-overview-empty">
+                    <div class="arsol-pfw-empty-state">
+                        <div class="arsol-pfw-empty-state__content">
+                                <p><?php echo esc_html(__('Your request is being processed. We will update you with more details soon.', 'arsol-pfw')); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                <?php else : ?>
+                    <?php echo wp_kses_post($post->post_content); ?>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
+        </div>
     </div>
 </div>
 
