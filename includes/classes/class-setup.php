@@ -75,7 +75,7 @@ class Setup {
         
         // Admin Settings Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-phases.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-display.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-files.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-advanced.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-tools.php';
@@ -117,7 +117,7 @@ class Setup {
         // Initialize admin classes
         if (is_admin()) {
             new Admin\Settings_General();
-            new Admin\Settings_Phases();
+            new Admin\Settings_Display();
             new Admin\Settings_Files();
             new Admin\Settings_Advanced();
             new Admin\Settings_Tools();

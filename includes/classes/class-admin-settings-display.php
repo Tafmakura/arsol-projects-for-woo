@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class Settings_Phases {
+class Settings_Display {
     /**
      * Constructor
      */
@@ -284,8 +284,8 @@ class Settings_Phases {
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
-        // Set default visibility based on type - files default to 'show', others default to 'hide'
-        $default_visibility = ($type === 'files') ? 'show' : 'hide';
+        // Set default visibility: files and forms default to 'show' (safer for forms to be hidden by default)
+        $default_visibility = (in_array($type, ['files', 'form'])) ? 'show' : 'hide';
         $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : $default_visibility;
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
         
