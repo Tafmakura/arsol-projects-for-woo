@@ -306,6 +306,7 @@ jQuery(function($) {
     // Handle reply link click
     $(document).on('click', '.comment-reply-link', function(e) {
         e.preventDefault();
+        e.stopPropagation(); // Prevent event bubbling
         
         // Store reference to the clicked link
         var clickedLink = $(this);
@@ -327,8 +328,11 @@ jQuery(function($) {
             return;
         }
         
-        // Check if reply form is already showing for this specific comment
-        if (commentElement.find('.arsol-reply-form-container').length > 0) {
+        // Get the direct comment body (first level only, not nested)
+        var directCommentBody = commentElement.children('.comment-body').first();
+        
+        // Check if reply form is already showing for this specific comment (direct child only)
+        if (directCommentBody.children('.arsol-reply-form-container').length > 0) {
             console.log('Reply form already open for comment:', commentId);
             return;
         }
@@ -354,18 +358,18 @@ jQuery(function($) {
                 nonce: arsolComments.nonce
             },
             success: function(response) {
-                // Double-check that no form exists before adding
-                if (commentElement.find('.arsol-reply-form-container').length > 0) {
+                // Double-check that no form exists before adding (direct child only)
+                if (directCommentBody.children('.arsol-reply-form-container').length > 0) {
                     console.log('Form already exists, not adding another');
                     clickedLink.text('Reply');
                     return;
                 }
                 
-                // Add reply form after the comment
-                commentElement.find('.comment-body').append(response);
+                // Add reply form to the specific comment's body only (direct child)
+                directCommentBody.append(response);
                 
-                // Focus on the reply textarea
-                commentElement.find('.arsol-reply-form textarea').focus();
+                // Focus on the reply textarea (be specific to avoid nested ones)
+                directCommentBody.find('.arsol-reply-form textarea').first().focus();
                 
                 // Reset only this specific reply link text
                 clickedLink.text('Reply');
