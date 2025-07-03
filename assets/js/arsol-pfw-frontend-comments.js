@@ -42,7 +42,7 @@ jQuery(function($) {
         // define some vars
         var button = $('#submit'), // submit button
             respond = $('#respond'), // comment form container
-            commentlist = $('.comment-list'), // comment list container
+            commentlist = $('#comments.commentlist'), // comment list container (existing structure)
             cancelreplylink = $('#cancel-comment-reply-link');
             
         // if user is logged in, do not validate author and email fields
@@ -106,8 +106,8 @@ jQuery(function($) {
                         }
                         
                     } else {
-                        // if no comments yet
-                        addedCommentHTML = '<ol class="comment-list">' + addedCommentHTML + '</ol>';
+                        // if no comments yet, create the comment list with correct structure
+                        addedCommentHTML = '<ol id="comments" class="commentlist">' + addedCommentHTML + '</ol>';
                         respond.before($(addedCommentHTML));
                     }
                     

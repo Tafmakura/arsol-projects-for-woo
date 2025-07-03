@@ -626,19 +626,19 @@
 }
 
 /* Basic comment styling */
-.comment-list {
+.commentlist {
     list-style: none;
     padding: 0;
 }
 
-.comment-list li {
+.commentlist li {
     margin-bottom: 20px;
     padding: 15px;
     background: #f9f9f9;
     border-radius: 4px;
 }
 
-.comment-list .children {
+.commentlist .children {
     margin-top: 15px;
     margin-left: 20px;
 }
@@ -666,4 +666,73 @@
 
 .reply a:hover {
     text-decoration: underline;
+}
+
+/* Enhanced comment styling to match existing structure */
+.commentlist .comment-body {
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.commentlist .comment-author {
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 1.1em;
+}
+
+.commentlist .comment-meta {
+    margin-bottom: 12px;
+}
+
+.commentlist .comment-date {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.commentlist .comment-content {
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.commentlist .reply {
+    margin-bottom: 8px;
+}
+
+.commentlist .reply a {
+    color: #0073aa;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.commentlist .reply a:hover {
+    text-decoration: underline;
+}
+
+.commentlist .arsol-comment-actions {
+    margin-top: 8px;
+    font-size: 0.9em;
+}
+
+.commentlist .arsol-comment-actions a {
+    color: #0073aa;
+    text-decoration: none;
+    margin-right: 8px;
+}
+
+.commentlist .arsol-comment-actions a:hover {
+    text-decoration: underline;
+}
+
+/* Nested comments */
+.commentlist .children {
+    margin-top: 15px;
+    margin-left: 30px;
+    list-style: none;
+    padding: 0;
+}
+
+.commentlist .children .comment-body {
+    background: #ffffff;
+    border-left: 3px solid #0073aa;
 }
