@@ -34,9 +34,6 @@ class Comments {
         // Add comment support to post types
         add_action('init', array($this, 'add_comment_support_to_post_types'));
         
-        // Enqueue scripts and styles
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
-        
         // Handle comment notifications
         add_action('comment_post', array($this, 'send_comment_notifications'), 10, 3);
         
@@ -82,62 +79,6 @@ class Comments {
             if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type($post_type)) {
                 add_post_type_support($post_type, 'comments');
             }
-        }
-    }
-    
-    /**
-     * Enqueue scripts and styles for comments
-     */
-    public function enqueue_scripts() {
-        if (!is_account_page()) {
-            return;
-        }
-        
-        global $wp_query;
-        
-        // Check if we're on a project-related page
-        $is_project_page = (
-            isset($wp_query->query_vars['project-overview']) ||
-            isset($wp_query->query_vars['project-view-proposal']) ||
-            isset($wp_query->query_vars['project-view-request'])
-        );
-        
-        if ($is_project_page) {
-            // Enqueue our custom comments script
-            wp_enqueue_script(
-                'arsol-pfw-frontend-comments',
-                ARSOL_PROJECTS_PLUGIN_URL . 'assets/js/arsol-pfw-frontend-comments.js',
-                array('jquery', 'wp-util'),
-                ARSOL_PROJECTS_VERSION,
-                true
-            );
-            
-            // Localize script for AJAX
-            wp_localize_script('arsol-pfw-frontend-comments', 'arsolComments', array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('arsol_comments_nonce'),
-                'strings' => array(
-                    'edit' => __('Edit', 'arsol-pfw'),
-                    'delete' => __('Delete', 'arsol-pfw'),
-                    'save' => __('Save', 'arsol-pfw'),
-                    'cancel' => __('Cancel', 'arsol-pfw'),
-                    'confirm_delete' => __('Are you sure you want to delete this comment?', 'arsol-pfw'),
-                    'error' => __('An error occurred. Please try again.', 'arsol-pfw'),
-                    'comment_updated' => __('Comment updated successfully.', 'arsol-pfw'),
-                    'comment_deleted' => __('Comment deleted successfully.', 'arsol-pfw')
-                )
-            ));
-            
-            // Add custom CSS for comments
-            wp_add_inline_style('woocommerce-general', '
-                .arsol-comment-actions { margin-top: 10px; }
-                .arsol-comment-actions a { margin-right: 10px; color: #0073aa; text-decoration: none; }
-                .arsol-comment-actions a:hover { text-decoration: underline; }
-                .arsol-comment-edit-form { margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 4px; }
-                .arsol-comment-edit-form textarea { width: 100%; min-height: 80px; }
-                .comment-meta .avatar { display: none !important; }
-                .comment-author .avatar { display: none !important; }
-            ');
         }
     }
     

@@ -64,6 +64,15 @@ class Assets {
             $this->get_file_version('assets/js/arsol-pfw-frontend.js'),
             true
         );
+        
+        // Register frontend comments JS
+        wp_register_script(
+            'arsol-pfw-frontend-comments',
+            $plugin_url . 'assets/js/arsol-pfw-frontend-comments.js',
+            array('jquery', 'wp-util'),
+            $this->get_file_version('assets/js/arsol-pfw-frontend-comments.js'),
+            true
+        );
     }
 
     /**
@@ -81,6 +90,49 @@ class Assets {
                 'nonce' => wp_create_nonce('arsol-pfw-frontend'),
                 'selectProject' => __('Please select a project', 'arsol-pfw'),
             ));
+            
+            // Enqueue comments script on project-related pages
+            if (is_account_page()) {
+                global $wp_query;
+                
+                // Check if we're on a project-related page
+                $is_project_page = (
+                    isset($wp_query->query_vars['project-overview']) ||
+                    isset($wp_query->query_vars['project-view-proposal']) ||
+                    isset($wp_query->query_vars['project-view-request'])
+                );
+                
+                if ($is_project_page) {
+                    wp_enqueue_script('arsol-pfw-frontend-comments');
+                    
+                    // Localize comments script for AJAX
+                    wp_localize_script('arsol-pfw-frontend-comments', 'arsolComments', array(
+                        'ajax_url' => admin_url('admin-ajax.php'),
+                        'nonce' => wp_create_nonce('arsol_comments_nonce'),
+                        'strings' => array(
+                            'edit' => __('Edit', 'arsol-pfw'),
+                            'delete' => __('Delete', 'arsol-pfw'),
+                            'save' => __('Save', 'arsol-pfw'),
+                            'cancel' => __('Cancel', 'arsol-pfw'),
+                            'confirm_delete' => __('Are you sure you want to delete this comment?', 'arsol-pfw'),
+                            'error' => __('An error occurred. Please try again.', 'arsol-pfw'),
+                            'comment_updated' => __('Comment updated successfully.', 'arsol-pfw'),
+                            'comment_deleted' => __('Comment deleted successfully.', 'arsol-pfw')
+                        )
+                    ));
+                    
+                    // Add custom CSS for comments
+                    wp_add_inline_style('arsol-pfw-frontend', '
+                        .arsol-comment-actions { margin-top: 10px; }
+                        .arsol-comment-actions a { margin-right: 10px; color: #0073aa; text-decoration: none; }
+                        .arsol-comment-actions a:hover { text-decoration: underline; }
+                        .arsol-comment-edit-form { margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 4px; }
+                        .arsol-comment-edit-form textarea { width: 100%; min-height: 80px; }
+                        .comment-meta .avatar { display: none !important; }
+                        .comment-author .avatar { display: none !important; }
+                    ');
+                }
+            }
         }
     }
 
