@@ -375,7 +375,7 @@ Demo shortcode for testing template overrides.
 [arsol_pfw_request_form]
 ```
 
-*For complete documentation, see the full reference guide.* 
+*For complete documentation, see the full reference guide.*
 
 ### Template Override System Enhancement
 

@@ -10,26 +10,32 @@ if (!defined('ABSPATH')) {
 ?>
 
 <div class="arsol-pfw-request">
-    <h3 class="project-title"><?php echo esc_html($post->post_title); ?></h3>
+    <div class="arsol-pfw-header">
+        <h3 class="arsol-pfw-title"><?php echo esc_html($post->post_title); ?></h3>
+    </div>
 
-    <?php
-    // Show Customer Notice unconditionally
-    $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'request');
-    if (!empty($customer_notice)) : ?>
-        <div class="arsol-pfw-customer-notice">
-            <div class="arsol-pfw-notice-header">
-                <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
-            </div>
-            <div class="arsol-pfw-notice-content">
-                <?php echo wp_kses_post(wpautop($customer_notice)); ?>
+    <div class="arsol-pfw-content-wrapper">
+        <div class="arsol-pfw-content">
+            <?php
+            // Show Customer Notice unconditionally
+            $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'request');
+            if (!empty($customer_notice)) : ?>
+                <div class="arsol-pfw-notice arsol-pfw-customer-notice">
+                    <div class="arsol-pfw-notice-header">
+                        <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
+                    </div>
+                    <div class="arsol-pfw-notice-content">
+                        <?php echo wp_kses_post(wpautop($customer_notice)); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            
+            <div class="arsol-pfw-post-content">
+                <?php if (!empty($post->post_content)) : ?>
+                    <?php echo wp_kses_post($post->post_content); ?>
+                <?php endif; ?>
             </div>
         </div>
-    <?php endif; ?>
-
-    <div class="arsol-pfw-request-content">
-        <?php if (!empty($post->post_content)) : ?>
-            <?php echo wp_kses_post($post->post_content); ?>
-        <?php endif; ?>
     </div>
 
     <div class="arsol-pfw-form-section arsol-pfw-on-hold-form-section">
