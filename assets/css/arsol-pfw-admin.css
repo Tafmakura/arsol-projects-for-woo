@@ -263,9 +263,6 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     margin-top: 5px;
 }
 
-.arsol-pfw-admin-multi-select + .select2-container .select2-selection--multiple {
-    min-height: 60px;
-}
 
 /* Multi-select styling for settings pages */
 .arsol-pfw-multiselect2 {
@@ -273,7 +270,7 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     width: 100%;
 }
 
-.arsol-pfw-multiselect2 span.arsol-pfw-admin-multi-select + span.select2-selection--multiple {
+.arsol-pfw-multiselect2 + .select2-container .select2-selection--multiple {
     min-height: 60px;
 }
 
