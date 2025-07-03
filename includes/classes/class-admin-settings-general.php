@@ -43,7 +43,7 @@ class Settings_General {
      * Register settings
      */
     public function register_settings() {
-        register_setting('arsol_projects_settings', 'arsol_projects_settings');
+        register_setting('arsol_projects_settings', 'arsol_projects_settings', array($this, 'validate_settings'));
 
         // General Settings Section
         add_settings_section(
@@ -204,6 +204,23 @@ class Settings_General {
             'arsol_projects_comments_settings',
             array(
                 'class' => 'arsol-pfw-comment-permissions'
+            )
+        );
+
+        add_settings_field(
+            'comment_max_depth',
+            __('Maximum Reply Depth', 'arsol-pfw'),
+            array($this, 'render_number_field'),
+            'arsol_projects_settings',
+            'arsol_projects_comments_settings',
+            array(
+                'field' => 'comment_max_depth',
+                'description' => __('Maximum number of reply levels (0 = no replies, 5 = maximum). Controls how deep comment threads can go.', 'arsol-pfw'),
+                'min' => 0,
+                'max' => 5,
+                'step' => 1,
+                'default' => 5,
+                'class' => 'arsol-pfw-comment-max-depth'
             )
         );
     }
@@ -744,5 +761,45 @@ class Settings_General {
         }
         
         echo '</div>';
+    }
+
+    /**
+     * Render number field
+     */
+    public function render_number_field($args) {
+        $settings = get_option('arsol_projects_settings', array());
+        $field_name = isset($args['field']) ? $args['field'] : $args['label_for'] ?? '';
+        $value = isset($settings[$field_name]) ? $settings[$field_name] : ($args['default'] ?? '');
+        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
+        
+        echo '<div class="' . esc_attr($class) . '">';
+        
+        printf(
+            '<input type="number" id="%s" name="arsol_projects_settings[%s]" value="%s" class="regular-text" %s>',
+            esc_attr($field_name),
+            esc_attr($field_name),
+            esc_attr($value),
+            isset($args['attributes']) ? $args['attributes'] : ''
+        );
+        
+        if (!empty($args['description'])) {
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
+        }
+        
+        echo '</div>';
+    }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+    public function validate_settings($input) {
+        $input['comment_max_depth'] = intval($input['comment_max_depth']);
+        if ($input['comment_max_depth'] < 0 || $input['comment_max_depth'] > 5) {
+            $input['comment_max_depth'] = 5; // Default to maximum if out of range
+        }
+        return $input;
     }
 }

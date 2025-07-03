@@ -13,9 +13,29 @@ if (!defined('ABSPATH')) {
 class Frontend_Comments {
 
     /**
+     * Maximum comment reply depth
+     * Change this single value to control reply nesting throughout the system
+     */
+    private $max_reply_depth;
+
+    /**
+     * Get maximum reply depth from settings
+     * Static method to access the depth value from templates and other classes
+     */
+    public static function get_max_reply_depth() {
+        $settings = get_option('arsol_projects_settings', array());
+        $depth = isset($settings['comment_max_depth']) ? $settings['comment_max_depth'] : 5;
+        // Ensure depth is between 0 and 5
+        return max(0, min(5, intval($depth)));
+    }
+
+    /**
      * Constructor
      */
     public function __construct() {
+        // Set max depth from settings
+        $this->max_reply_depth = self::get_max_reply_depth();
+        
         add_action('wp_ajax_arsol_ajax_comments', array($this, 'handle_ajax_comments'));
         
         add_action('wp_ajax_nopriv_arsol_ajax_comments', array($this, 'handle_ajax_comments'));
@@ -74,13 +94,13 @@ class Frontend_Comments {
                 </div>
                 <div class="comment-content"><?php echo get_comment_text($comment->comment_ID); ?></div>
                 
-                <?php if ($comment_depth < 5): // Max depth for replies ?>
+                <?php if ($comment_depth < $this->max_reply_depth): // Max depth for replies ?>
                 <div class="reply">
                     <?php 
                     comment_reply_link(array(
                         'add_below' => 'comment',
                         'depth' => $comment_depth,
-                        'max_depth' => 5,
+                        'max_depth' => $this->max_reply_depth,
                         'reply_text' => __('Reply', 'arsol-pfw')
                     ), $comment); 
                     ?>
@@ -214,7 +234,7 @@ class Frontend_Comments {
         }
         
         // Check if we're at max depth
-        if ($comment_depth >= 5) {
+        if ($comment_depth >= $this->max_reply_depth) {
             wp_die(__('Maximum reply depth reached', 'arsol-pfw'));
         }
         
