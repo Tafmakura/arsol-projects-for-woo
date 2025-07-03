@@ -209,13 +209,13 @@ class Settings_General {
 
         add_settings_field(
             'comment_max_depth',
-            __('Maximum Reply Depth', 'arsol-pfw'),
+            __('Comment Reply Depth', 'arsol-pfw'),
             array($this, 'render_number_field'),
             'arsol_projects_settings',
             'arsol_projects_comments_settings',
             array(
                 'field' => 'comment_max_depth',
-                'description' => __('Maximum number of reply levels (0 = no replies, 5 = maximum). Controls how deep comment threads can go.', 'arsol-pfw'),
+                'description' => __('Maximum reply depth for comments (0 = no replies, 1 = one level of replies, etc.). Reply buttons are hidden when depth limit is reached, but existing replies remain visible.', 'arsol-pfw'),
                 'min' => 0,
                 'max' => 5,
                 'step' => 1,
@@ -772,6 +772,21 @@ class Settings_General {
         $value = isset($settings[$field_name]) ? $settings[$field_name] : ($args['default'] ?? '');
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         
+        // Build attributes for number field
+        $attributes = '';
+        if (isset($args['min'])) {
+            $attributes .= ' min="' . esc_attr($args['min']) . '"';
+        }
+        if (isset($args['max'])) {
+            $attributes .= ' max="' . esc_attr($args['max']) . '"';
+        }
+        if (isset($args['step'])) {
+            $attributes .= ' step="' . esc_attr($args['step']) . '"';
+        }
+        if (isset($args['attributes'])) {
+            $attributes .= ' ' . $args['attributes'];
+        }
+        
         echo '<div class="' . esc_attr($class) . '">';
         
         printf(
@@ -779,7 +794,7 @@ class Settings_General {
             esc_attr($field_name),
             esc_attr($field_name),
             esc_attr($value),
-            isset($args['attributes']) ? $args['attributes'] : ''
+            $attributes
         );
         
         if (!empty($args['description'])) {
