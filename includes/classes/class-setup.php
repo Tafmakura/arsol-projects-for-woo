@@ -71,8 +71,6 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-endpoints.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-checkout.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/class-taxonomies-setup.php';
-        
-        // Frontend Comments Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-comments.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-comments-ajax.php';
         
@@ -88,7 +86,6 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-users.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-capabilities.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-stages.php';
 
         // Frontend Handlers
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-frontend-handler.php';
@@ -118,6 +115,7 @@ class Setup {
         // Frontend Comments Classes
         new Frontend\Comments();
         new Frontend\Comments_Ajax();
+
         // Initialize admin classes
         if (is_admin()) {
             new Admin\Settings_General();
