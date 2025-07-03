@@ -96,7 +96,8 @@ class Assets {
                 
                 // Simple localization for AJAX comments
                 wp_localize_script('arsol-pfw-frontend-comments', 'arsolComments', array(
-                    'ajaxurl' => admin_url('admin-ajax.php')
+                    'ajaxurl' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('arsol_comments_nonce')
                 ));
                 
                 // Add basic CSS for form validation errors

@@ -736,3 +736,263 @@
     background: #ffffff;
     border-left: 3px solid #0073aa;
 }
+
+/* Comment editing styles */
+.arsol-edit-form {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f0f8ff;
+    border-radius: 4px;
+    border: 1px solid #0073aa;
+}
+
+.arsol-edit-textarea {
+    width: 100%;
+    min-height: 80px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.arsol-edit-textarea:focus {
+    outline: none;
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+}
+
+.arsol-edit-buttons {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.arsol-edit-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.arsol-save-edit {
+    background: #0073aa;
+    color: white;
+}
+
+.arsol-save-edit:hover {
+    background: #005a87;
+}
+
+.arsol-save-edit:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.arsol-cancel-edit {
+    background: #f1f1f1;
+    color: #333;
+}
+
+.arsol-cancel-edit:hover {
+    background: #e1e1e1;
+}
+
+/* Comment notices */
+.arsol-comment-notice {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid;
+    position: relative;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.arsol-notice-success {
+    border-left-color: #46b450;
+    background: #f0fff4;
+    color: #155724;
+}
+
+.arsol-notice-error {
+    border-left-color: #dc3232;
+    background: #fff5f5;
+    color: #721c24;
+}
+
+.arsol-comment-notice p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.arsol-notice-dismiss {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.arsol-notice-dismiss:hover {
+    opacity: 1;
+}
+
+/* Loading states */
+.loadingform {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.arsol-edit-form.loading {
+    opacity: 0.8;
+}
+
+.arsol-edit-form.loading .arsol-edit-textarea {
+    pointer-events: none;
+}
+
+/* Accessibility improvements */
+.screen-reader-text {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+/* Enhanced button styling */
+.arsol-comment-actions button {
+    background: none;
+    border: none;
+    color: #0073aa;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
+    padding: 0;
+    margin: 0;
+}
+
+.arsol-comment-actions button:hover {
+    color: #005a87;
+}
+
+.arsol-comment-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Improved edit form styling */
+.arsol-edit-form {
+    margin-top: 15px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e1e5e9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.arsol-edit-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.arsol-edit-textarea:focus {
+    outline: none;
+    border-color: #0073aa;
+    box-shadow: 0 0 0 2px rgba(0, 115, 170, 0.2);
+}
+
+.arsol-edit-buttons {
+    margin-top: 15px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.arsol-edit-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 80px;
+}
+
+.arsol-save-edit {
+    background: #0073aa;
+    color: white;
+}
+
+.arsol-save-edit:hover:not(:disabled) {
+    background: #005a87;
+}
+
+.arsol-save-edit:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.arsol-cancel-edit {
+    background: #f1f1f1;
+    color: #333;
+}
+
+.arsol-cancel-edit:hover {
+    background: #e1e1e1;
+}
+
+/* Focus indicators for accessibility */
+.arsol-comment-actions button:focus,
+.arsol-edit-buttons button:focus {
+    outline: 2px solid #0073aa;
+    outline-offset: 2px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .arsol-edit-form {
+        padding: 15px;
+    }
+    
+    .arsol-edit-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .arsol-edit-buttons button {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+}
