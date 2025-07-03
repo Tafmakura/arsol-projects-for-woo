@@ -85,7 +85,6 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-users.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-capabilities.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-stages.php';
 
         // Frontend Handlers
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-frontend-handler.php';
@@ -113,8 +112,7 @@ class Setup {
         new Taxonomies\Taxonomies_Setup();
         
         // Frontend Comments Classes
-        new Frontend\Comments();
-        new Frontend\Comments_Ajax();
+        new Frontend_Comments();
 
         // Initialize admin classes
         if (is_admin()) {

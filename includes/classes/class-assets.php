@@ -75,11 +75,7 @@ class Assets {
         );
     }
 
-    /**
-     * Enqueue frontend assets on appropriate pages
-     */
-    /**
-     * Enqueue frontend assets on appropriate pages
+    /** Enqueue frontend assets on appropriate pages
      */
     public function enqueue_frontend_assets() {
         // Only load on relevant pages like checkout, account page, etc.
