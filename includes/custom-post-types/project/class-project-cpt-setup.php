@@ -152,7 +152,7 @@ class Setup {
             return;
         }
         
-        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header.php';
+        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header.php';
         if (file_exists($template_path)) {
             include $template_path;
         }
@@ -178,7 +178,7 @@ class Setup {
             return;
         }
         
-        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-2.php';
+        $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-2.php';
         if (file_exists($template_path)) {
             include $template_path;
         }

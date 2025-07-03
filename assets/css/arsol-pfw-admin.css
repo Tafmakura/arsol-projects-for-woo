@@ -61,10 +61,75 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 }
 
 /* Frontend Form Buttons */
-.form-project-create-request .submit-button,
-.form-project-create-active .submit-button {
+.form-project-create-project .submit-button {
+    background-color: #0073aa;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-project-create-project .submit-button:hover {
+    background-color: #005a87;
+}
+
+.form-project-create-project .submit-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.form-project-create-project .form-field {
+    margin-bottom: 15px;
+}
+
+.form-project-create-project .form-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-project-create-project .form-field input[type="text"],
+.form-project-create-project .form-field input[type="email"],
+.form-project-create-project .form-field textarea,
+.form-project-create-project .form-field select {
     width: 100%;
-    margin-top: 8px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-project-create-project .form-field textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.form-project-create-project .form-field input[type="file"] {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.form-project-create-project .form-field .field-description {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Error styling */
+.form-project-create-project .form-field.error input,
+.form-project-create-project .form-field.error textarea,
+.form-project-create-project .form-field.error select {
+    border-color: #dc3232;
+}
+
+.form-project-create-project .form-field .error-message {
+    color: #dc3232;
+    font-size: 12px;
+    margin-top: 5px;
 }
 
 /* Admin Component Styles */
@@ -913,18 +978,142 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 /* === CUSTOMER REQUEST DETAILS AFTER TITLE POSITIONING === */
 
 /* Ensure the postbox after title has proper spacing */
-#arsol-pfw-project-active-data.postbox,
-#arsol-pfw-project-proposal-data.postbox {
-    margin-top: 20px;
+#arsol-pfw-project-project-data.postbox,
+#arsol-pfw-project-project-data .panel-wrap {
+    margin-bottom: 20px;
 }
 
-/* Customer request details inside postbox after title */
-.postbox .inside .arsol-customer-request-details {
+#arsol-pfw-project-project-data .panel woocommerce {
+    padding: 20px;
+}
+
+#arsol-pfw-project-project-data h2 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    color: #333;
+}
+
+#arsol-pfw-project-project-data .project_data_column_container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+#arsol-pfw-project-project-data .project_data_column {
+    flex: 1;
+    min-width: 250px;
     background: #f9f9f9;
-    border: 1px solid #ddd;
     padding: 15px;
-    border-radius: 4px;
-    margin: 0;
+    border-radius: 5px;
+    border: 1px solid #e5e5e5;
+}
+
+#arsol-pfw-project-project-data .project_data_column h3 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #555;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+#arsol-pfw-project-project-data .project_data_column .form-field {
+    margin-bottom: 10px;
+}
+
+#arsol-pfw-project-project-data .project_data_column .form-field label {
+    display: block;
+    margin-bottom: 3px;
+    font-weight: 600;
+    color: #333;
+    font-size: 13px;
+}
+
+#arsol-pfw-project-project-data .project_data_column .form-field input,
+#arsol-pfw-project-project-data .project_data_column .form-field select,
+#arsol-pfw-project-project-data .project_data_column .form-field textarea {
+    width: 100%;
+    padding: 5px 8px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 13px;
+    background: white;
+}
+
+#arsol-pfw-project-project-data .project_data_column .form-field textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+#arsol-pfw-project-project-data .project_data_column .form-field .description {
+    font-size: 12px;
+    color: #666;
+    margin-top: 3px;
+    font-style: italic;
+}
+
+/* Grid layout for has-col-2 class */
+#arsol-pfw-project-project-data .arsol-header-grid.has-col-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+#arsol-pfw-project-project-data .arsol-header-grid.has-col-2 .column_1 {
+    grid-column: 1;
+}
+
+#arsol-pfw-project-project-data .arsol-header-grid.has-col-2 .column_2 {
+    grid-column: 2;
+}
+
+#arsol-pfw-project-project-data .arsol-header-grid.has-col-2 .column_3 {
+    grid-column: 3;
+}
+
+/* Grid layout for default (no col-2) */
+#arsol-pfw-project-project-data .arsol-header-grid:not(.has-col-2) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+#arsol-pfw-project-project-data .arsol-header-grid:not(.has-col-2) .column_1 {
+    grid-column: 1;
+}
+
+#arsol-pfw-project-project-data .arsol-header-grid:not(.has-col-2) .column_3 {
+    grid-column: 2;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    #arsol-pfw-project-project-data .arsol-header-grid.has-col-2 {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    #arsol-pfw-project-project-data .arsol-header-grid.has-col-2 .column_1 {
+        grid-column: 1;
+    }
+    
+    #arsol-pfw-project-project-data .arsol-header-grid.has-col-2 .column_2 {
+        grid-column: 2;
+    }
+    
+    #arsol-pfw-project-project-data .arsol-header-grid.has-col-2 .column_3 {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    #arsol-pfw-project-project-data .arsol-header-grid,
+    #arsol-pfw-project-project-data .arsol-header-grid.has-col-2 {
+        grid-template-columns: 1fr;
+    }
+    
+    #arsol-pfw-project-project-data .arsol-header-grid .project_data_column,
+    #arsol-pfw-project-project-data .arsol-header-grid.has-col-2 .project_data_column {
+        grid-column: 1;
+    }
 }
 
 /* === PROPOSAL HEADER CONTAINER STYLES === */

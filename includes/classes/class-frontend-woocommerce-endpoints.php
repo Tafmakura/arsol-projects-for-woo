@@ -338,26 +338,26 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_view_proposal_endpoint_content() {
-        $project_proposal_id = absint(get_query_var('project-view-proposal'));
+        $proposal_id = absint(get_query_var('project-view-proposal'));
         
-        if (!$project_proposal_id) {
+        if (!$proposal_id) {
             wc_add_notice(__('Invalid proposal ID.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
         }
 
         // Check if user has permission to view this proposal
-        $project_proposal = get_post($project_proposal_id);
+        $proposal = get_post($proposal_id);
         $user_id = get_current_user_id();
         
-        if (!$project_proposal || $project_proposal->post_type !== 'arsol-pfw-proposal') {
+        if (!$proposal || $proposal->post_type !== 'arsol-pfw-proposal') {
             wc_add_notice(__('Invalid proposal.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
         }
 
         // Allow access if user is the author or has project management capabilities
-        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $project_proposal_id);
+        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $proposal_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
@@ -369,17 +369,17 @@ class Frontend_Endpoints {
         $current_tab = 'proposal';
 
         // Stage handling with proper error checking
-        $stage_terms = wp_get_object_terms($project_proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
+        $stage_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
         $current_stage = '';
         if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
         }
 
         // Prepare comprehensive data for efficient hook usage
-        $wrapper_data = compact('project_proposal_id', 'current_stage');
+        $wrapper_data = compact('proposal_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Proposal View - ID: {$project_proposal->ID}, Title: '{$project_proposal->post_title}', Type: {$project_proposal->post_type}, Stage: '$current_stage'");
+        error_log("ARSOL DEBUG: Proposal View - ID: {$proposal->ID}, Title: '{$proposal->post_title}', Type: {$proposal->post_type}, Stage: '$current_stage'");
 
         // Include the new project view proposal template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php';
@@ -391,27 +391,26 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_view_request_endpoint_content() {
-        // Standardized variable generation
-        $project_request_id = absint(get_query_var('project-view-request'));
+        $request_id = absint(get_query_var('project-view-request'));
         
-        if (!$project_request_id) {
+        if (!$request_id) {
             wc_add_notice(__('Invalid request ID.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
         }
 
         // Check if user has permission to view this request
-        $project_request = get_post($project_request_id);
+        $request = get_post($request_id);
         $user_id = get_current_user_id();
         
-        if (!$project_request || $project_request->post_type !== 'arsol-pfw-request') {
+        if (!$request || $request->post_type !== 'arsol-pfw-request') {
             wc_add_notice(__('Invalid request.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
         }
 
         // Allow access if user is the author or has project management capabilities
-        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $project_request_id);
+        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $request_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
@@ -423,17 +422,17 @@ class Frontend_Endpoints {
         $current_tab = 'request';
 
         // Get request stage (with proper error handling)
-        $stage_terms = wp_get_object_terms($project_request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+        $stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
         $current_stage = '';
         if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
         }
 
         // Prepare comprehensive data for efficient hook usage
-        $wrapper_data = compact('project_request_id', 'current_stage');
+        $wrapper_data = compact('request_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Request View - ID: {$project_request->ID}, Title: '{$project_request->post_title}', Type: {$project_request->post_type}, Stage: '$current_stage'");
+        error_log("ARSOL DEBUG: Request View - ID: {$request->ID}, Title: '{$request->post_title}', Type: {$request->post_type}, Stage: '$current_stage'");
 
         // Include the new project view request template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-request.php';

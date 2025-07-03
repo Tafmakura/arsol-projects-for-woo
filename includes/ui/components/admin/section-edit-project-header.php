@@ -75,7 +75,7 @@ if ($has_proposal_data) {
 }
 ?>
 
-<div id="arsol-pfw-project-active-data" class="arsol-pfw-project postbox ">
+<div id="arsol-pfw-project-project-data" class="arsol-pfw-project postbox ">
     <div id="proposal_metabox" class="panel-wrap woocommerce">
         <div id="order_data" class="panel woocommerce">
             <h2>
@@ -88,7 +88,7 @@ if ($has_proposal_data) {
 
                         <?php
                     // Load the general settings template
-                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-1.php';
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-1.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }
@@ -101,7 +101,7 @@ if ($has_proposal_data) {
                     
                     <?php
                     // Load the project details template
-                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-2.php';
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-2.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }
@@ -111,7 +111,7 @@ if ($has_proposal_data) {
                     <h3><?php _e('Project Details', 'arsol-pfw'); ?></h3>
                     <?php
                     // Load the status & actions template
-                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-3.php';
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-3.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }
@@ -122,7 +122,7 @@ if ($has_proposal_data) {
                     <h3><?php _e('Project Details', 'arsol-pfw'); ?></h3>
                     <?php 
                     // Load the status & actions template
-                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-active-header-column-3.php';
+                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-3.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }

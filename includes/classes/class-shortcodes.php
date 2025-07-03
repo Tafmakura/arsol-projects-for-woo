@@ -499,7 +499,7 @@ class Shortcodes {
 		$wp_button_class = wc_wp_theme_get_element_class_name('button') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 		
 		// Load component template - UPDATED PATH
-		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/partials/frontend/projects/projects-orders-table.php');
+		include(plugin_dir_path(dirname(dirname(__FILE__))) . 'includes/ui/partials/frontend/projects/projects-listing-project.php');
 		
 		// Return buffered content
 		return ob_get_clean();
@@ -680,8 +680,8 @@ class Shortcodes {
 			setup_postdata($post);
 		}
 
-		// Load the active project content template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-active.php';
+		// Load the project content template
+		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-project.php';
 		
 		// Restore original post
 		$post = $original_post;
@@ -701,9 +701,12 @@ class Shortcodes {
 	public function project_content_proposal_shortcode($atts) {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
+			'proposal_id' => 0,
 		), $atts, 'arsol_pfw_proposal_overview');
 
-		$project_id = $this->resolve_project_id($atts['project_id'], 'arsol-pfw-proposal');
+		// Support both old and new attribute names
+		$project_id = !empty($atts['proposal_id']) ? $atts['proposal_id'] : $atts['project_id'];
+		$project_id = $this->resolve_project_id($project_id, 'arsol-pfw-proposal');
 		
 		if (!$project_id) {
 			return '<p>' . $this->get_context_error_message('proposal') . '</p>';
@@ -746,9 +749,12 @@ class Shortcodes {
 	public function project_content_request_shortcode($atts) {
 		$atts = shortcode_atts(array(
 			'project_id' => 0,
+			'request_id' => 0,
 		), $atts, 'arsol_pfw_request_overview');
 
-		$project_id = $this->resolve_project_id($atts['project_id'], 'arsol-pfw-request');
+		// Support both old and new attribute names
+		$project_id = !empty($atts['request_id']) ? $atts['request_id'] : $atts['project_id'];
+		$project_id = $this->resolve_project_id($project_id, 'arsol-pfw-request');
 		
 		if (!$project_id) {
 			return '<p>' . $this->get_context_error_message('request') . '</p>';
@@ -895,8 +901,8 @@ class Shortcodes {
 		$wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 		$current_tab = $project_type;
 
-		// Load the active projects listing template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-active.php';
+		// Load the projects listing template
+		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-project.php';
 		
 		wp_reset_postdata();
 
@@ -991,8 +997,8 @@ class Shortcodes {
 		$wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 		$current_tab = $project_type;
 
-		// Load the active projects listing template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-active.php';
+		// Load the projects listing template
+		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-project.php';
 		
 		wp_reset_postdata();
 
@@ -1326,7 +1332,7 @@ class Shortcodes {
 		}
 		
 		// Load the project form template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-active.php';
+		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-project.php';
 
 		return ob_get_clean();
 	}
@@ -1346,6 +1352,7 @@ class Shortcodes {
 			'form_id' => 'create-request-form',
 			'is_edit' => false,
 			'post_id' => 0,
+			'request_id' => 0,
 		), $atts, 'arsol_pfw_request_form');
 
 		$user_id = get_current_user_id();
@@ -1361,8 +1368,11 @@ class Shortcodes {
 		$is_edit = filter_var($atts['is_edit'], FILTER_VALIDATE_BOOLEAN);
 		$post = null;
 		
-		if ($is_edit && $atts['post_id']) {
-			$post = get_post(intval($atts['post_id']));
+		// Support both old and new attribute names
+		$post_id = !empty($atts['request_id']) ? $atts['request_id'] : $atts['post_id'];
+		
+		if ($is_edit && $post_id) {
+			$post = get_post(intval($post_id));
 		}
 		
 		// Load the request form template
@@ -1424,7 +1434,12 @@ class Shortcodes {
 		$atts = shortcode_atts(array(
 			'form_id' => 'edit-request-form',
 			'post_id' => 0,
+			'request_id' => 0,
 		), $atts, 'arsol_pfw_edit_request_form');
+
+		// Support both old and new attribute names
+		$post_id = !empty($atts['request_id']) ? $atts['request_id'] : $atts['post_id'];
+		$atts['post_id'] = $post_id;
 
 		// Automatically set is_edit to true for simple implementation
 		$atts['is_edit'] = true;
