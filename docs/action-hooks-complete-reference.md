@@ -16,8 +16,9 @@
 6. [WooCommerce Integration Hooks](#woocommerce-integration-hooks)
 7. [Admin & UI Hooks](#admin--ui-hooks)
 8. [Email System Hooks](#email-system-hooks)
-9. [Implementation Examples](#implementation-examples)
-10. [Best Practices](#best-practices)
+9. [File System Hooks](#file-system-hooks)
+10. [Implementation Examples](#implementation-examples)
+11. [Best Practices](#best-practices)
 
 ---
 
@@ -43,7 +44,8 @@ The Arsol Projects for Woo plugin provides a comprehensive action hook system wi
 | **WooCommerce Integration** | 6 | Order/subscription creation and management |
 | **Admin & UI** | 8 | Admin interface and user interactions |
 | **Email System** | 14 | Email notification triggers |
-| **TOTAL** | **97** | Complete hook coverage |
+| **File System** | 9 | File display and upload hooks |
+| **TOTAL** | **106** | Complete hook coverage |
 
 ---
 
@@ -78,6 +80,11 @@ For admin interface actions and user interactions.
 *14 total hooks*
 
 For email notification triggers throughout workflows.
+
+### 7. File System Hooks
+*9 total hooks*
+
+For file display and upload functionality across project types.
 
 ---
 
@@ -440,6 +447,192 @@ do_action('arsol_email_preferences_updated', $user_id, $preferences);
 
 ---
 
+## File System Hooks
+
+### Project Files Hooks (3 hooks)
+*File: `includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php`*
+
+```php
+// Before project files section display
+do_action('arsol_pfw_project_files_before', $project_type, $project_id, $current_stage_id);
+
+// Custom project files content
+do_action('arsol_pfw_project_files_content', $project_id);
+
+// After project files section display
+do_action('arsol_pfw_project_files_after', $project_type, $project_id, $current_stage_id);
+```
+
+### Proposal Files Hooks (3 hooks)
+*File: `includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php`*
+
+```php
+// Before proposal files section display
+do_action('arsol_pfw_proposal_files_before', $project_type, $proposal_id, $current_stage_id);
+
+// Custom proposal files content
+do_action('arsol_pfw_proposal_files_content', $project_type, $proposal_id, $current_stage_id);
+
+// After proposal files section display
+do_action('arsol_pfw_proposal_files_after', $project_type, $proposal_id, $current_stage_id);
+```
+
+### Request Files Hooks (3 hooks)
+*File: `includes/ui/templates/frontend/woocommerce/myaccount/project-view-request.php`*
+
+```php
+// Before request files section display
+do_action('arsol_pfw_request_files_before', $project_type, $request_id, $current_stage_id);
+
+// Custom request files content
+do_action('arsol_pfw_request_files_content', $project_type, $request_id, $current_stage_id);
+
+// After request files section display
+do_action('arsol_pfw_request_files_after', $project_type, $request_id, $current_stage_id);
+```
+
+### Context Data Structure for File Hooks
+```php
+$project_type = string;        // 'project', 'proposal', or 'request'
+$post_id = int;               // Project, proposal, or request ID
+$current_stage_id = string;   // Current stage taxonomy term ID
+```
+
+### File System Hook Examples
+
+#### Custom File Upload Processing
+```php
+// Add custom file processing before request files
+add_action('arsol_pfw_request_files_before', function($project_type, $request_id, $current_stage_id) {
+    if ($project_type === 'request') {
+        // Add custom upload processing
+        echo '<div class="custom-upload-instructions">Please upload project requirements</div>';
+    }
+}, 10, 3);
+```
+
+#### Custom File Display
+```php
+// Add custom proposal file display
+add_action('arsol_pfw_proposal_files_content', function($project_type, $proposal_id, $current_stage_id) {
+    if ($project_type === 'proposal') {
+        $custom_files = get_post_meta($proposal_id, '_custom_proposal_files', true);
+        if (!empty($custom_files)) {
+            echo '<div class="custom-files-section">';
+            // Custom file display logic
+            echo '</div>';
+        }
+    }
+}, 10, 3);
+```
+
+#### File Access Control
+```php
+// Control file visibility based on user role
+add_action('arsol_pfw_project_files_before', function($project_type, $project_id, $current_stage_id) {
+    if (!current_user_can('download_project_files')) {
+        echo '<div class="access-restricted">File access restricted to authorized users only.</div>';
+        // Prevent default file display
+        remove_action('arsol_pfw_project_files_content', 'default_files_display');
+    }
+}, 5, 3);
+```
+
+---
+
+## File System Hooks
+
+### Project Files Hooks (3 hooks)
+*File: `includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php`*
+
+```php
+// Before project files section display
+do_action('arsol_pfw_project_files_before', $project_type, $project_id, $current_stage_id);
+
+// Custom project files content
+do_action('arsol_pfw_project_files_content', $project_id);
+
+// After project files section display
+do_action('arsol_pfw_project_files_after', $project_type, $project_id, $current_stage_id);
+```
+
+### Proposal Files Hooks (3 hooks)
+*File: `includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php`*
+
+```php
+// Before proposal files section display
+do_action('arsol_pfw_proposal_files_before', $project_type, $proposal_id, $current_stage_id);
+
+// Custom proposal files content
+do_action('arsol_pfw_proposal_files_content', $project_type, $proposal_id, $current_stage_id);
+
+// After proposal files section display
+do_action('arsol_pfw_proposal_files_after', $project_type, $proposal_id, $current_stage_id);
+```
+
+### Request Files Hooks (3 hooks)
+*File: `includes/ui/templates/frontend/woocommerce/myaccount/project-view-request.php`*
+
+```php
+// Before request files section display
+do_action('arsol_pfw_request_files_before', $project_type, $request_id, $current_stage_id);
+
+// Custom request files content
+do_action('arsol_pfw_request_files_content', $project_type, $request_id, $current_stage_id);
+
+// After request files section display
+do_action('arsol_pfw_request_files_after', $project_type, $request_id, $current_stage_id);
+```
+
+### Context Data Structure for File Hooks
+```php
+$project_type = string;        // 'project', 'proposal', or 'request'
+$post_id = int;               // Project, proposal, or request ID
+$current_stage_id = string;   // Current stage taxonomy term ID
+```
+
+### File System Hook Examples
+
+#### Custom File Upload Processing
+```php
+// Add custom file processing before request files
+add_action('arsol_pfw_request_files_before', function($project_type, $request_id, $current_stage_id) {
+    if ($project_type === 'request') {
+        // Add custom upload processing
+        echo '<div class="custom-upload-instructions">Please upload project requirements</div>';
+    }
+}, 10, 3);
+```
+
+#### Custom File Display
+```php
+// Add custom proposal file display
+add_action('arsol_pfw_proposal_files_content', function($project_type, $proposal_id, $current_stage_id) {
+    if ($project_type === 'proposal') {
+        $custom_files = get_post_meta($proposal_id, '_custom_proposal_files', true);
+        if (!empty($custom_files)) {
+            echo '<div class="custom-files-section">';
+            // Custom file display logic
+            echo '</div>';
+        }
+    }
+}, 10, 3);
+```
+
+#### File Access Control
+```php
+// Control file visibility based on user role
+add_action('arsol_pfw_project_files_before', function($project_type, $project_id, $current_stage_id) {
+    if (!current_user_can('download_project_files')) {
+        echo '<div class="access-restricted">File access restricted to authorized users only.</div>';
+        // Prevent default file display
+        remove_action('arsol_pfw_project_files_content', 'default_files_display');
+    }
+}, 5, 3);
+```
+
+---
+
 ## Implementation Examples
 
 ### Complete Activity Logging
@@ -561,6 +754,55 @@ add_action('arsol_proposal_processing_started', function($proposal_id, $customer
         ));
     }
 });
+```
+
+### File Management Integration
+
+```php
+// Cloud storage integration for proposal files
+add_action('arsol_pfw_proposal_files_content', function($project_type, $proposal_id, $current_stage_id) {
+    if ($project_type === 'proposal') {
+        $cloud_files = CloudStorage::get_proposal_files($proposal_id);
+        
+        if (!empty($cloud_files)) {
+            echo '<div class="cloud-files-section">';
+            echo '<h4>Cloud Storage Files</h4>';
+            
+            foreach ($cloud_files as $file) {
+                echo sprintf(
+                    '<a href="%s" class="file-download" data-file-id="%s">%s</a>',
+                    esc_url($file['download_url']),
+                    esc_attr($file['id']),
+                    esc_html($file['name'])
+                );
+            }
+            
+            echo '</div>';
+        }
+    }
+}, 10, 3);
+
+// File access logging
+add_action('arsol_pfw_project_files_before', function($project_type, $project_id, $current_stage_id) {
+    // Log file access attempt
+    arsol_log_file_access(array(
+        'user_id' => get_current_user_id(),
+        'project_type' => $project_type,
+        'project_id' => $project_id,
+        'stage' => $current_stage_id,
+        'timestamp' => current_time('mysql'),
+        'ip_address' => $_SERVER['REMOTE_ADDR']
+    ));
+}, 10, 3);
+
+// Automatic file organization
+add_action('arsol_pfw_request_files_after', function($project_type, $request_id, $current_stage_id) {
+    if ($project_type === 'request' && $current_stage_id === 'approved') {
+        // Automatically organize files when request is approved
+        FileOrganizer::create_project_structure($request_id);
+        FileOrganizer::move_request_files_to_project($request_id);
+    }
+}, 15, 3);
 ```
 
 ### Example: Send notification when project stage changes to 'completed'

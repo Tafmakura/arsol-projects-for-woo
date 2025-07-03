@@ -1,128 +1,257 @@
-# Arsol Projects for WooCommerce - Complete Shortcode Reference
+# Shortcode Complete Reference
+
+This document provides a comprehensive reference for all available shortcodes in the Arsol Projects for WooCommerce plugin.
 
 ## Overview
 
-This plugin provides a comprehensive set of shortcodes for displaying project content, listings, and forms. All shortcodes use the **arsol_pfw_** naming convention and are **context-aware**.
+All shortcodes follow WordPress naming standards with underscores and use the `arsol_pfw_` prefix for consistency and to avoid conflicts with other plugins.
 
-## Naming Convention
+## Core Shortcodes
 
-- **Shortcodes**: Use `arsol_pfw_*` prefix (e.g., `[arsol_pfw_project_create_form]`)
-- **Post Types**: `arsol-pfw-project`, `arsol-pfw-proposal`, `arsol-pfw-request`
-- **Frontend Names**: Always include "Project" (e.g., "Project Form", "Project Request Form")
+### `[arsol_pfw_projects]`
+Displays a grid/list of projects with customizable parameters.
+
+**Parameters:**
+- `limit` - Number of projects to display (default: 10)
+- `category` - Filter by project category slug
+- `columns` - Number of columns for grid display (default: 3)
+- `orderby` - Sort field: date, title, menu_order, author, modified (default: date)
+- `order` - Sort direction: ASC, DESC (default: DESC)
+- `pagination` - Show pagination: yes, no (default: yes)
+
+**Example:**
+```php
+[arsol_pfw_projects limit="6" columns="2" orderby="title" order="ASC"]
+[arsol_pfw_projects category="web-development" pagination="no"]
+```
+
+### `[arsol_pfw_project]`
+Displays a single project by ID.
+
+**Parameters:**
+- `id` - Project ID (required)
+
+**Example:**
+```php
+[arsol_pfw_project id="123"]
+```
+
+### `[arsol_pfw_project_categories]`
+Displays project categories.
+
+**Parameters:**
+- `limit` - Number of categories to show (default: -1 for all)
+- `orderby` - Sort field: name, count, slug (default: name)
+- `order` - Sort direction: ASC, DESC (default: ASC)
+- `parent` - Show only child categories of specified parent
+- `hide_empty` - Hide categories with no projects: yes, no (default: no)
+
+**Example:**
+```php
+[arsol_pfw_project_categories limit="5" orderby="count" order="DESC"]
+```
+
+### `[arsol_pfw_user_projects]`
+Displays projects for the current logged-in user.
+
+**Parameters:**
+- `status` - Filter by project status (default: any)
+- `per_page` - Projects per page (default: 10)
+- `paged` - Current page number (default: 1)
+
+**Example:**
+```php
+[arsol_pfw_user_projects status="active" per_page="5"]
+```
+
+### `[arsol_pfw_user_projects_count]`
+Displays the count of projects for the current user.
+
+**Example:**
+```php
+You have [arsol_pfw_user_projects_count] active projects.
+```
+
+### `[arsol_pfw_projects_count]`
+Displays the total count of all published projects.
+
+**Example:**
+```php
+Total projects: [arsol_pfw_projects_count]
+```
+
+### `[arsol_pfw_project_orders]`
+Displays WooCommerce orders associated with a specific project.
+
+**Parameters:**
+- `id` - Project ID (required)
+
+**Example:**
+```php
+[arsol_pfw_project_orders id="123"]
+```
+
+### `[arsol_pfw_project_subscriptions]`
+Displays WooCommerce subscriptions associated with a specific project.
+
+**Parameters:**
+- `id` - Project ID (required)
+
+**Note:** Requires WooCommerce Subscriptions plugin to be active.
+
+**Example:**
+```php
+[arsol_pfw_project_subscriptions id="123"]
+```
 
 ---
 
-## Content Shortcodes
+## Template Override Shortcodes
 
-### `[arsol_pfw_project_content_active]`
-Displays active project content.
+These shortcodes are used for displaying specific content sections and can be overridden in admin settings.
 
-### `[arsol_pfw_project_content_proposal]`
-Displays project proposal content.
-
-### `[arsol_pfw_project_content_proposal_processing]`
-Displays processing message for project proposals regardless of content.
+### `[arsol_pfw_project_overview]`
+Displays the overview content for active projects.
 
 **Parameters:**
-- `title` - Custom title (default: "Proposal Status")
-- `message` - Custom processing message (default: uses configured processing message)
+- `project_id` - Project ID (optional in My Account context)
+
+**Context:**
+- **My Account**: Auto-detects project ID from URL
+- **Public Pages**: Requires `project_id` parameter
 
 **Example:**
 ```php
-[arsol_pfw_project_content_proposal_processing]
-[arsol_pfw_project_content_proposal_processing title="Working on Your Proposal" message="Our team is crafting your custom proposal..."]
+[arsol_pfw_project_overview]
+[arsol_pfw_project_overview project_id="123"]
 ```
 
-### `[arsol_pfw_project_content_proposal_pending_approval]`
-Displays pending approval message for project proposals regardless of content.
+### `[arsol_pfw_proposal_overview]`
+Displays the overview content for project proposals.
 
 **Parameters:**
-- `title` - Custom title (default: "Proposal Status")
-- `message` - Custom pending approval message (default: uses configured pending approval message)
+- `project_id` - Proposal ID (optional in My Account context)
 
 **Example:**
 ```php
-[arsol_pfw_project_content_proposal_pending_approval]
-[arsol_pfw_project_content_proposal_pending_approval title="Ready for Review" message="Your proposal is ready for your review and approval..."]
+[arsol_pfw_proposal_overview]
+[arsol_pfw_proposal_overview project_id="456"]
 ```
 
-### `[arsol_pfw_project_content_request]`
-Displays project request content.
+### `[arsol_pfw_request_overview]`
+Displays the overview content for project requests.
+
+**Parameters:**
+- `project_id` - Request ID (optional in My Account context)
+
+**Example:**
+```php
+[arsol_pfw_request_overview]
+[arsol_pfw_request_overview project_id="789"]
+```
 
 ---
 
 ## Listing Shortcodes
 
-### `[arsol_pfw_projects_listing_active]`
-Lists active projects with context-aware behavior and dynamic URL parameters.
+### `[arsol_pfw_projects_list]`
+Displays a list of active projects with advanced filtering.
 
-### `[arsol_pfw_projects_listing_proposals]`
-Lists project proposals with filtering options.
+**Parameters:**
+- `per_page` - Projects per page (default: 10)
+- `paged` - Current page number (default: 1)
+- `customer_id` - Filter by specific customer (default: 0)
+- `status` - Filter by project status (default: active)
+- `category` - Filter by category slug
+- `orderby` - Sort field (default: date)
+- `order` - Sort direction (default: DESC)
+- `search` - Search term for project titles/content
 
-### `[arsol_pfw_projects_listing_requests]`
-Lists project requests with search capabilities.
+**Context-Aware Behavior:**
+- **My Account**: Shows user's own projects automatically
+- **Public Pages**: Shows public projects with optional customer filtering
+
+**Example:**
+```php
+[arsol_pfw_projects_list per_page="5" orderby="title"]
+[arsol_pfw_projects_list customer_id="123" category="web-dev"]
+```
+
+### `[arsol_pfw_proposals_list]`
+Displays a list of project proposals.
+
+**Parameters:** Same as `arsol_pfw_projects_list` but for proposals
+
+**Example:**
+```php
+[arsol_pfw_proposals_list]
+[arsol_pfw_proposals_list per_page="8" status="pending"]
+```
+
+### `[arsol_pfw_requests_list]`
+Displays a list of project requests.
+
+**Parameters:** Same as `arsol_pfw_projects_list` but for requests
+
+**Example:**
+```php
+[arsol_pfw_requests_list]
+[arsol_pfw_requests_list orderby="date" order="ASC"]
+```
 
 ---
 
 ## Form Shortcodes
 
 ### `[arsol_pfw_project_form]`
-**Main project form shortcode** - Displays the project form for both creating new projects and editing existing projects.
+Displays the project creation/editing form.
 
 **Parameters:**
-- `is_edit` - Boolean to enable edit mode (default: false)
-- `post_id` - ID of the project to edit (required when is_edit=true)
-- `form_id` - Custom form ID (default: "project-form")
+- `form_id` - Custom form ID (default: project-form)
+- `is_edit` - Edit mode: true, false (default: false)
+- `post_id` - Project ID for editing (required if is_edit=true)
 
-**Examples:**
+**Example:**
 ```php
-// Create new project
 [arsol_pfw_project_form]
-
-// Edit existing project (ID: 123)
 [arsol_pfw_project_form is_edit="true" post_id="123"]
 ```
 
-### `[arsol_pfw_edit_project_form]`
-**Dedicated edit shortcode** - For custom implementations that want separate shortcodes for editing.
-
-**Parameters:**
-- `post_id` - ID of the project to edit (required)
-- `form_id` - Custom form ID (default: "edit-project-form")
-
-**Examples:**
-```php
-// Edit existing project (ID: 123) - dedicated shortcode
-[arsol_pfw_edit_project_form post_id="123"]
-```
-
 ### `[arsol_pfw_request_form]`
-**Main request form shortcode** - Displays the request form for both creating new requests and editing existing requests.
+Displays the project request creation/editing form.
 
 **Parameters:**
-- `is_edit` - Boolean to enable edit mode (default: false)
-- `post_id` - ID of the request to edit (required when is_edit=true)
-- `form_id` - Custom form ID (default: "create-request-form")
+- `form_id` - Custom form ID (default: create-request-form)
+- `is_edit` - Edit mode: true, false (default: false)
+- `post_id` - Request ID for editing (required if is_edit=true)
 
-**Examples:**
+**Example:**
 ```php
-// Create new request
 [arsol_pfw_request_form]
-
-// Edit existing request (ID: 456)
 [arsol_pfw_request_form is_edit="true" post_id="456"]
 ```
 
-### `[arsol_pfw_edit_request_form]`
-**Dedicated edit shortcode** - For custom implementations that want separate shortcodes for editing.
+### `[arsol_pfw_edit_project_form]`
+Simplified edit form shortcode that automatically sets edit mode.
 
 **Parameters:**
-- `post_id` - ID of the request to edit (required)
-- `form_id` - Custom form ID (default: "edit-request-form")
+- `form_id` - Custom form ID (default: edit-project-form)
+- `post_id` - Project ID (required)
 
-**Examples:**
+**Example:**
 ```php
-// Edit existing request (ID: 456) - dedicated shortcode
+[arsol_pfw_edit_project_form post_id="123"]
+```
+
+### `[arsol_pfw_edit_request_form]`
+Simplified edit form shortcode for requests that automatically sets edit mode.
+
+**Parameters:**
+- `form_id` - Custom form ID (default: edit-request-form)
+- `post_id` - Request ID (required)
+
+**Example:**
+```php
 [arsol_pfw_edit_request_form post_id="456"]
 ```
 
@@ -133,9 +262,70 @@ Lists project requests with search capabilities.
 
 ---
 
+## File Management Shortcodes
+
+### `[arsol_pfw_proposal_files]`
+Displays files associated with a project proposal, with download capability.
+
+**Parameters:**
+- `id` - Proposal ID (optional in My Account context)
+
+**Context:**
+- **My Account**: Auto-detects proposal ID from URL
+- **Public Pages**: Requires `id` parameter
+
+**Example:**
+```php
+[arsol_pfw_proposal_files]
+[arsol_pfw_proposal_files id="123"]
+```
+
+### `[arsol_pfw_request_file_upload]`
+Displays file upload form for project requests.
+
+**Parameters:**
+- `id` - Request ID (optional in My Account context)
+
+**Context:**
+- **My Account**: Auto-detects request ID from URL
+- **Public Pages**: Requires `id` parameter
+
+**File Settings:**
+- All file upload settings (formats, sizes, etc.) configured in Admin → Files Settings
+- Uses clean implementation with WordPress file handling
+
+**Example:**
+```php
+[arsol_pfw_request_file_upload]
+[arsol_pfw_request_file_upload id="456"]
+```
+
+### `[arsol_pfw_project_files_list]`
+Displays a listing of all files associated with an active project.
+
+**Parameters:**
+- `id` - Project ID (optional in My Account context)
+
+**Context:**
+- **My Account**: Auto-detects project ID from URL
+- **Public Pages**: Requires `id` parameter
+
+**Features:**
+- File download capability
+- Integrated with conditional display system
+- HTML classes only (no additional CSS rules)
+
+**Example:**
+```php
+[arsol_pfw_project_files_list]
+[arsol_pfw_project_files_list id="789"]
+```
+
+---
+
 ## Utility Shortcodes
 
-### `[arsol_pfw_access_denied]`
+### `[arsol_pfw_no_access]`
 Displays access denied notice with customizable title and message.
 
 **Parameters:**
@@ -144,8 +334,22 @@ Displays access denied notice with customizable title and message.
 
 **Example:**
 ```php
-[arsol_pfw_access_denied]
-[arsol_pfw_access_denied title="Restricted Area" message="This content is for members only."]
+[arsol_pfw_no_access]
+[arsol_pfw_no_access title="Restricted Area" message="This content is for members only."]
+```
+
+### `[arsol_pfw_template_override_demo]`
+Demo shortcode for testing template overrides.
+
+**Parameters:**
+- `title` - Demo title
+- `message` - Demo message  
+- `style` - Style class: default, success, warning, error
+- `type` - Demo type for context
+
+**Example:**
+```php
+[arsol_pfw_template_override_demo title="Test Override" style="success"]
 ```
 
 ---
@@ -160,10 +364,10 @@ Displays access denied notice with customizable title and message.
 
 ```php
 // Public project gallery with customer filter
-[arsol_pfw_projects_listing_active customer_id="123"]
+[arsol_pfw_projects_list customer_id="123"]
 
 // Dynamic filtering via URL
-[arsol_pfw_projects_listing_active]
+[arsol_pfw_projects_list]
 // URL: /projects/?category=web-dev&search=wordpress
 
 // Project forms

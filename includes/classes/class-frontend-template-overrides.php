@@ -37,6 +37,9 @@ class Frontend_Template_Overrides {
         'arsol-pfw-projects-list' => 'arsol_pfw_projects_list',
         'arsol-pfw-proposals-list' => 'arsol_pfw_proposals_list',
         'arsol-pfw-requests-list' => 'arsol_pfw_requests_list',
+        'arsol-pfw-proposal-files' => 'arsol_pfw_proposal_files',
+        'arsol-pfw-request-file-upload' => 'arsol_pfw_request_file_upload',
+        'arsol-pfw-project-files-list' => 'arsol_pfw_project_files_list',
         'arsol-pfw-no-access' => 'arsol_pfw_no_access',
     ];
 
@@ -272,6 +275,9 @@ class Frontend_Template_Overrides {
             'arsol_pfw_projects_list' => 'arsol_pfw_projects_list',
             'arsol_pfw_proposals_list' => 'arsol_pfw_proposals_list',
             'arsol_pfw_requests_list' => 'arsol_pfw_requests_list',
+            'arsol_pfw_proposal_files' => 'arsol_pfw_proposal_files',
+            'arsol_pfw_request_file_upload' => 'arsol_pfw_request_file_upload',
+            'arsol_pfw_project_files_list' => 'arsol_pfw_project_files_list',
             'arsol_pfw_no_access' => 'arsol_pfw_no_access',
         ];
         

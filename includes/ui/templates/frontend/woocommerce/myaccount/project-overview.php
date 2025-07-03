@@ -143,6 +143,42 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             ?>
             
             <?php
+            // Project files section - show project files if enabled for this stage
+            $show_project_files = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_files($project_id, $current_stage_id, 'project_files_list');
+            if ($show_project_files): ?>
+                <div class="files">
+                    <?php
+                    /**
+                     * Hook: arsol_pfw_project_files_before
+                     * 
+                     * @param string $project_type Project type
+                     * @param int $project_id Project ID
+                     * @param int $current_stage_id Current stage ID
+                     */
+                    do_action('arsol_pfw_project_files_before', $project_type, $project_id, $current_stage_id);
+                    ?>
+                    
+                    <div class="arsol-pfw-files-section">
+                        <h4><?php esc_html_e('Project Files', 'arsol-pfw'); ?></h4>
+                        <div class="arsol-pfw-files-content">
+                            <?php echo do_shortcode('[arsol_pfw_project_files_list id="' . $project_id . '"]'); ?>
+                        </div>
+                    </div>
+                    
+                    <?php
+                    /**
+                     * Hook: arsol_pfw_project_files_after
+                     * 
+                     * @param string $project_type Project type
+                     * @param int $project_id Project ID
+                     * @param int $current_stage_id Current stage ID
+                     */
+                    do_action('arsol_pfw_project_files_after', $project_type, $project_id, $current_stage_id);
+                    ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php
             // Comments section - dual-layer permission check
             $show_comments = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_comments($project_id, $current_stage_id);
             if ($show_comments): ?>

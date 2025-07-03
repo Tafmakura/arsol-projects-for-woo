@@ -28,23 +28,23 @@ class Shortcodes {
 	 * Constructor.
 	 */
 	public function __construct() {
-		// Register your existing shortcodes
-		add_shortcode('arsol_projects', array($this, 'render_projects'));
-		add_shortcode('arsol_project', array($this, 'render_single_project'));
-		add_shortcode('arsol_project_categories', array($this, 'render_project_categories'));
-		add_shortcode('arsol_project_orders', array($this, 'project_orders_shortcode'));
+		// Core shortcodes with arsol_pfw_ prefix
+		add_shortcode('arsol_pfw_projects', array($this, 'render_projects'));
+		add_shortcode('arsol_pfw_project', array($this, 'render_single_project'));
+		add_shortcode('arsol_pfw_project_categories', array($this, 'render_project_categories'));
+		add_shortcode('arsol_pfw_project_orders', array($this, 'project_orders_shortcode'));
 		
 		// Only register subscription shortcode if WooCommerce Subscriptions is active
 		if (class_exists('WC_Subscriptions')) {
-			add_shortcode('arsol_project_subscriptions', array($this, 'project_subscriptions_shortcode'));
+			add_shortcode('arsol_pfw_project_subscriptions', array($this, 'project_subscriptions_shortcode'));
 		}
 		
-		add_shortcode('arsol_user_projects', array($this, 'user_projects_shortcode'));
-		add_shortcode('arsol_user_projects_count', array($this, 'user_projects_count_shortcode'));
-		add_shortcode('arsol_projects_count', array($this, 'projects_count_shortcode'));
+		add_shortcode('arsol_pfw_user_projects', array($this, 'user_projects_shortcode'));
+		add_shortcode('arsol_pfw_user_projects_count', array($this, 'user_projects_count_shortcode'));
+		add_shortcode('arsol_pfw_projects_count', array($this, 'projects_count_shortcode'));
 		
 		// Template override example/demo shortcode
-		add_shortcode('arsol_template_override_demo', array($this, 'template_override_demo_shortcode'));
+		add_shortcode('arsol_pfw_template_override_demo', array($this, 'template_override_demo_shortcode'));
 
 		// Template override shortcodes - match setting names exactly
 		add_shortcode('arsol_pfw_project_overview', array($this, 'project_content_active_shortcode'));
@@ -59,16 +59,10 @@ class Shortcodes {
 		add_shortcode('arsol_pfw_requests_list', array($this, 'projects_listing_requests_shortcode'));
 		add_shortcode('arsol_pfw_no_access', array($this, 'access_denied_shortcode'));
 
-		// Legacy shortcodes - kept for backward compatibility
-		add_shortcode('arsol_pfw_project_content_active', array($this, 'project_content_active_shortcode'));
-		add_shortcode('arsol_pfw_project_content_proposal', array($this, 'project_content_proposal_shortcode'));
-		add_shortcode('arsol_pfw_project_content_request', array($this, 'project_content_request_shortcode'));
-		add_shortcode('arsol_pfw_projects_listing_active', array($this, 'projects_listing_active_shortcode'));
-		add_shortcode('arsol_pfw_projects_listing_proposals', array($this, 'projects_listing_proposals_shortcode'));
-		add_shortcode('arsol_pfw_projects_listing_requests', array($this, 'projects_listing_requests_shortcode'));
-		add_shortcode('arsol_pfw_project_create_form', array($this, 'project_form_shortcode')); // Legacy
-		add_shortcode('arsol_pfw_project_request_form', array($this, 'project_request_form_shortcode')); // Legacy
-		add_shortcode('arsol_pfw_access_denied', array($this, 'access_denied_shortcode'));
+		// File-related shortcodes
+		add_shortcode('arsol_pfw_proposal_files', array($this, 'proposal_files_shortcode'));
+		add_shortcode('arsol_pfw_request_file_upload', array($this, 'request_file_upload_shortcode'));
+		add_shortcode('arsol_pfw_project_files_list', array($this, 'project_files_list_shortcode'));
 	}
 
 	/**
@@ -282,7 +276,7 @@ class Shortcodes {
 				'pagination' => 'yes',
 			),
 			$atts,
-			'arsol_projects'
+			'arsol_pfw_projects'
 		);
 
 		ob_start();
@@ -312,7 +306,7 @@ class Shortcodes {
 				'id' => 0,
 			),
 			$atts,
-			'arsol_project'
+			'arsol_pfw_project'
 		);
 
 		if ( empty( $atts['id'] ) ) {
@@ -341,7 +335,7 @@ class Shortcodes {
 				'hide_empty' => 'no',
 			),
 			$atts,
-			'arsol_project_categories'
+			'arsol_pfw_project_categories'
 		);
 
 		ob_start();
@@ -363,7 +357,7 @@ class Shortcodes {
 
 		$atts = shortcode_atts(array(
 			'id' => 0,
-		), $atts, 'project_orders');
+		), $atts, 'arsol_pfw_project_orders');
 
 		$project_id = intval($atts['id']);
 		if (!$project_id) {
@@ -415,7 +409,7 @@ class Shortcodes {
 
 		$atts = shortcode_atts(array(
 			'id' => 0,
-		), $atts, 'project_subscriptions');
+		), $atts, 'arsol_pfw_project_subscriptions');
 
 		$project_id = intval($atts['id']);
 		if (!$project_id) {
@@ -1437,5 +1431,128 @@ class Shortcodes {
 		
 		// Use the main request form shortcode with edit mode
 		return $this->project_request_form_shortcode($atts);
+	}
+
+	/**
+	 * Proposal files shortcode
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function proposal_files_shortcode($atts) {
+		$atts = shortcode_atts(array(
+			'id' => 0,
+		), $atts, 'arsol_pfw_proposal_files');
+
+		$proposal_id = $this->resolve_project_id($atts['id'], 'arsol-pfw-proposal');
+		
+		if (!$proposal_id) {
+			return '<p>' . $this->get_context_error_message('proposal') . '</p>';
+		}
+
+		// Check permissions
+		if (!$this->can_customer_view_project($proposal_id)) {
+			return '<p>' . __('You do not have permission to view these files.', 'arsol-pfw') . '</p>';
+		}
+
+		ob_start();
+		?>
+		<div class="arsol-pfw-proposal-files">
+			<h4><?php esc_html_e('Proposal Files', 'arsol-pfw'); ?></h4>
+			<div class="arsol-pfw-files-content">
+				<?php
+				/**
+				 * Hook: arsol_pfw_proposal_files_content
+				 * 
+				 * @param int $proposal_id Proposal ID
+				 */
+				do_action('arsol_pfw_proposal_files_content', $proposal_id);
+				?>
+			</div>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Request file upload shortcode
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function request_file_upload_shortcode($atts) {
+		$atts = shortcode_atts(array(
+			'id' => 0,
+		), $atts, 'arsol_pfw_request_file_upload');
+
+		$request_id = $this->resolve_project_id($atts['id'], 'arsol-pfw-request');
+		
+		if (!$request_id) {
+			return '<p>' . $this->get_context_error_message('request') . '</p>';
+		}
+
+		// Check permissions
+		if (!$this->can_customer_view_project($request_id)) {
+			return '<p>' . __('You do not have permission to upload files to this request.', 'arsol-pfw') . '</p>';
+		}
+
+		ob_start();
+		?>
+		<div class="arsol-pfw-request-file-upload">
+			<h4><?php esc_html_e('File Upload', 'arsol-pfw'); ?></h4>
+			<div class="arsol-pfw-file-upload-content">
+				<?php
+				/**
+				 * Hook: arsol_pfw_request_file_upload_content
+				 * 
+				 * @param int $request_id Request ID
+				 */
+				do_action('arsol_pfw_request_file_upload_content', $request_id);
+				?>
+			</div>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Project files list shortcode
+	 *
+	 * @param array $atts Shortcode attributes
+	 * @return string HTML output
+	 */
+	public function project_files_list_shortcode($atts) {
+		$atts = shortcode_atts(array(
+			'id' => 0,
+		), $atts, 'arsol_pfw_project_files_list');
+
+		$project_id = $this->resolve_project_id($atts['id'], 'arsol-pfw-project');
+		
+		if (!$project_id) {
+			return '<p>' . $this->get_context_error_message('project') . '</p>';
+		}
+
+		// Check permissions
+		if (!$this->can_customer_view_project($project_id)) {
+			return '<p>' . __('You do not have permission to view these files.', 'arsol-pfw') . '</p>';
+		}
+
+		ob_start();
+		?>
+		<div class="arsol-pfw-project-files-list">
+			<h4><?php esc_html_e('Project Files', 'arsol-pfw'); ?></h4>
+			<div class="arsol-pfw-files-content">
+				<?php
+				/**
+				 * Hook: arsol_pfw_project_files_list_content
+				 * 
+				 * @param int $project_id Project ID
+				 */
+				do_action('arsol_pfw_project_files_list_content', $project_id);
+				?>
+			</div>
+		</div>
+		<?php
+		return ob_get_clean();
 	}
 }

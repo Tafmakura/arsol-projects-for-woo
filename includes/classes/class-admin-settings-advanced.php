@@ -52,8 +52,8 @@ class Settings_Advanced {
             ],
             
             'arsol_pfw_request_form' => [
-                'title' => __('Request Project Form', 'arsol-pfw'),
-                'description' => __('Overrides the Request Project Form for creating and editing project requests.', 'arsol-pfw'),
+                'title' => __('Create Request Form', 'arsol-pfw'),
+                'description' => __('Overrides the Request Form for creating and editing requests.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_request_form]'
             ],
             'arsol_pfw_edit_request_form' => [
@@ -62,19 +62,34 @@ class Settings_Advanced {
                 'placeholder' => '[arsol_pfw_request_form is_edit="true"]'
             ],
             'arsol_pfw_projects_list' => [
-                'title' => __('Active Projects Listing', 'arsol-pfw'),
-                'description' => __('Overrides the display of all active projects for a user.', 'arsol-pfw'),
+                'title' => __('Active Projects List', 'arsol-pfw'),
+                'description' => __('Overrides the listing section for active projects.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_projects_list]'
             ],
             'arsol_pfw_proposals_list' => [
-                'title' => __('Project Proposals Listing', 'arsol-pfw'),
-                'description' => __('Overrides the display of all project proposals for a user.', 'arsol-pfw'),
+                'title' => __('Project Proposals List', 'arsol-pfw'),
+                'description' => __('Overrides the listing section for project proposals.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_proposals_list]'
             ],
             'arsol_pfw_requests_list' => [
-                'title' => __('Project Requests Listing', 'arsol-pfw'),
-                'description' => __('Overrides the display of all project requests for a user.', 'arsol-pfw'),
+                'title' => __('Project Requests List', 'arsol-pfw'),
+                'description' => __('Overrides the listing section for project requests.', 'arsol-pfw'),
                 'placeholder' => '[arsol_pfw_requests_list]'
+            ],
+            'arsol_pfw_proposal_files' => [
+                'title' => __('Proposal Files Display', 'arsol-pfw'),
+                'description' => __('Overrides the files section for project proposals.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_proposal_files]'
+            ],
+            'arsol_pfw_request_file_upload' => [
+                'title' => __('Request File Upload', 'arsol-pfw'),
+                'description' => __('Overrides the file upload section for project requests.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_request_file_upload]'
+            ],
+            'arsol_pfw_project_files_list' => [
+                'title' => __('Project Files List', 'arsol-pfw'),
+                'description' => __('Overrides the files listing section for active projects.', 'arsol-pfw'),
+                'placeholder' => '[arsol_pfw_project_files_list]'
             ],
             'arsol_pfw_no_access' => [
                 'title' => __('Access Denied Notice', 'arsol-pfw'),

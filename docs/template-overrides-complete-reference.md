@@ -66,31 +66,31 @@ The plugin uses these shortcodes internally. You can reference them when creatin
 
 ```php
 // Content Areas
-[arsol_pfw_project_content_active]
-[arsol_pfw_project_content_proposal]
-[arsol_pfw_project_content_request]
+[arsol_pfw_project_overview]
+[arsol_pfw_proposal_overview]
+[arsol_pfw_request_overview]
 
 // Listings
-[arsol_pfw_projects_listing_active]
-[arsol_pfw_projects_listing_proposals]
-[arsol_pfw_projects_listing_requests]
+[arsol_pfw_projects_list]
+[arsol_pfw_proposals_list]
+[arsol_pfw_requests_list]
 
 // Forms
-[arsol_pfw_project_create_form]
-[arsol_pfw_project_request_form]
+[arsol_pfw_project_form]
+[arsol_pfw_request_form]
 ```
 
 ### Custom Override Examples
 
 #### 1. Enhanced Project Overview
 ```php
-[arsol_pfw_project_content_active]
+[arsol_pfw_project_overview]
 <div class="project-extras">
     <h3>Related Orders</h3>
-    [arsol_project_orders]
+    [arsol_pfw_project_orders]
     
     <h3>Subscriptions</h3>
-    [arsol_project_subscriptions]
+    [arsol_pfw_project_subscriptions]
 </div>
 ```
 
@@ -100,7 +100,7 @@ The plugin uses these shortcodes internally. You can reference them when creatin
     <h2>My Active Projects</h2>
     <p>Showing projects sorted by title</p>
 </div>
-[arsol_projects_listing_active orderby="title" order="ASC"]
+[arsol_pfw_projects_list orderby="title" order="ASC"]
 ```
 
 #### 3. Custom Form Layout
@@ -110,7 +110,7 @@ The plugin uses these shortcodes internally. You can reference them when creatin
         <h3>Create Your Project</h3>
         <p>Fill out the form below to get started.</p>
     </div>
-    [arsol_project_create_form form_id="custom-project-form"]
+    [arsol_pfw_project_form form_id="custom-project-form"]
 </div>
 ```
 
@@ -118,12 +118,12 @@ The plugin uses these shortcodes internally. You can reference them when creatin
 ```php
 <div class="row">
     <div class="col-md-8">
-        [arsol_project_content_active]
+        [arsol_pfw_project_overview]
     </div>
     <div class="col-md-4">
         <h4>Project Stats</h4>
-        [arsol_project_orders]
-        [arsol_project_subscriptions]
+        [arsol_pfw_project_orders]
+        [arsol_pfw_project_subscriptions]
     </div>
 </div>
 ```
@@ -137,11 +137,11 @@ The plugin uses these shortcodes internally. You can reference them when creatin
 You can create different overrides for different contexts using conditional shortcodes:
 
 ```php
-[arsol_template_override_demo type="active" title="Custom Active Project" style="success"]
+[arsol_pfw_template_override_demo type="active" title="Custom Active Project" style="success"]
 
 <!-- Or combine multiple shortcodes -->
-[arsol_project_content_active]
-[arsol_user_projects_count] total projects
+[arsol_pfw_project_overview]
+[arsol_pfw_user_projects_count] total projects
 ```
 
 ### Dynamic Content Integration
@@ -151,11 +151,11 @@ Combine static content with dynamic shortcodes:
 ```php
 <div class="project-dashboard">
     <div class="stats-bar">
-        Total Projects: [arsol_user_projects_count]
-        | Active Projects: [arsol_projects_count]
+        Total Projects: [arsol_pfw_user_projects_count]
+        | Active Projects: [arsol_pfw_projects_count]
     </div>
     
-    [arsol_projects_listing_active per_page="5"]
+    [arsol_pfw_projects_list per_page="5"]
     
     <div class="quick-actions">
         <a href="/my-account/create-project/" class="button">Create New Project</a>
@@ -169,14 +169,14 @@ Leverage WooCommerce data in your overrides:
 
 ```php
 <div class="project-commerce">
-    [arsol_project_content_active]
+    [arsol_pfw_project_overview]
     
     <div class="commerce-section">
         <h3>Project Orders</h3>
-        [arsol_project_orders limit="5"]
+        [arsol_pfw_project_orders limit="5"]
         
         <h3>Subscriptions</h3>
-        [arsol_project_subscriptions limit="3"]
+        [arsol_pfw_project_subscriptions limit="3"]
     </div>
 </div>
 ```
@@ -189,15 +189,15 @@ Leverage WooCommerce data in your overrides:
 
 | Template File | Override Field | Default Shortcode |
 |---------------|----------------|-------------------|
-| `section-project-content-active.php` | Active Project Overview | `[arsol_project_content_active]` |
-| `section-project-content-proposal.php` | Proposal Project Overview | `[arsol_project_content_proposal]` |
-| `section-project-content-request.php` | Request Project Overview | `[arsol_project_content_request]` |
-| `form-project-create-active.php` | Create Project Form | `[arsol_project_create_form]` |
-| `form-project-request-create.php` | Create Request Form | `[arsol_project_request_form]` |
-| `form-project-request-edit.php` | Edit Request Form | `[arsol_project_request_form is_edit="true"]` |
-| `projects-listing-active.php` | Active Projects Listing | `[arsol_projects_listing_active]` |
-| `projects-listing-proposals.php` | Proposals Listing | `[arsol_projects_listing_proposals]` |
-| `projects-listing-requests.php` | Requests Listing | `[arsol_projects_listing_requests]` |
+| `section-project-content-active.php` | Active Project Overview | `[arsol_pfw_project_overview]` |
+| `section-project-content-proposal.php` | Proposal Project Overview | `[arsol_pfw_proposal_overview]` |
+| `section-project-content-request.php` | Request Project Overview | `[arsol_pfw_request_overview]` |
+| `form-project-create-active.php` | Create Project Form | `[arsol_pfw_project_form]` |
+| `form-project-request-create.php` | Create Request Form | `[arsol_pfw_request_form]` |
+| `form-project-request-edit.php` | Edit Request Form | `[arsol_pfw_request_form is_edit="true"]` |
+| `projects-listing-active.php` | Active Projects Listing | `[arsol_pfw_projects_list]` |
+| `projects-listing-proposals.php` | Proposals Listing | `[arsol_pfw_proposals_list]` |
+| `projects-listing-requests.php` | Requests Listing | `[arsol_pfw_requests_list]` |
 | `page-access-denied.php` | Access Denied | Custom HTML/shortcode |
 
 ### Context Integration Points
@@ -226,18 +226,18 @@ The system validates shortcodes using these criteria:
 
 ✅ **Valid Overrides:**
 ```php
-[arsol_project_content_active]
-[arsol_projects_listing_active per_page="10"]
-[arsol_project_create_form form_id="custom-form"]
-<div class="wrapper">[arsol_project_content_active]</div>
+[arsol_pfw_project_overview]
+[arsol_pfw_projects_list per_page="10"]
+[arsol_pfw_project_form form_id="custom-form"]
+<div class="wrapper">[arsol_pfw_project_overview]</div>
 ```
 
 ❌ **Invalid Overrides:**
 ```php
 [invalid_shortcode]
-[arsol_project_content_active malicious_param="<script>"]
-arsol_project_content_active (missing brackets)
-[arsol_project_content_active (unclosed bracket)
+[arsol_pfw_project_overview malicious_param="<script>"]
+arsol_pfw_project_overview (missing brackets)
+[arsol_pfw_project_overview (unclosed bracket)
 ```
 
 ### Error Handling Behavior
@@ -258,13 +258,13 @@ Begin with basic shortcode replacements before adding complex layouts:
 
 ```php
 <!-- Start with this -->
-[arsol_project_content_active]
+[arsol_pfw_project_overview]
 
 <!-- Then enhance -->
 <div class="enhanced-project">
-    [arsol_project_content_active]
+    [arsol_pfw_project_overview]
     <div class="project-meta">
-        [arsol_project_orders limit="3"]
+        [arsol_pfw_project_orders limit="3"]
     </div>
 </div>
 ```
@@ -275,7 +275,7 @@ Use consistent styling and structure across all overrides:
 ```php
 <div class="arsol-override-wrapper">
     <div class="arsol-content">
-        [arsol_project_content_active]
+        [arsol_pfw_project_overview]
     </div>
     <div class="arsol-sidebar">
         <!-- Additional content -->
@@ -299,10 +299,10 @@ Structure your overrides with proper semantic HTML:
         <h1>Project Details</h1>
     </header>
     <main class="project-content">
-        [arsol_project_content_active]
+        [arsol_pfw_project_overview]
     </main>
     <aside class="project-sidebar">
-        [arsol_project_orders]
+        [arsol_pfw_project_orders]
     </aside>
 </article>
 ```

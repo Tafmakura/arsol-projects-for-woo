@@ -71,16 +71,31 @@ You can manage projects, assign orders/subscriptions, and define custom statuses
 
 ## Shortcodes
 
-- `[arsol_projects]` – Display a grid of projects
-- `[arsol_project id="123"]` – Show a single project
-- `[arsol_project_categories]` – List project categories
-- `[arsol_project_orders project_id="123"]` – Show orders for a project
-- `[arsol_project_subscriptions project_id="123"]` – Show subscriptions for a project
-- `[arsol_user_projects]` – List projects for the current user
-- `[arsol_user_projects_count]` – Number of active projects for the current user
-- `[arsol_projects_count]` – Total number of all active projects
+- `[arsol_pfw_projects]` – Display a grid of projects
+- `[arsol_pfw_project id="123"]` – Show a single project
+- `[arsol_pfw_project_categories]` – List project categories
+- `[arsol_pfw_project_orders id="123"]` – Show orders for a project
+- `[arsol_pfw_project_subscriptions id="123"]` – Show subscriptions for a project (requires WooCommerce Subscriptions)
+- `[arsol_pfw_user_projects]` – List projects for the current user
+- `[arsol_pfw_user_projects_count]` – Number of active projects for the current user
+- `[arsol_pfw_projects_count]` – Total number of all active projects
 
-See the "Shortcode Examples" section below for usage and arguments.
+### Template Override Shortcodes
+- `[arsol_pfw_project_overview]` – Project overview content
+- `[arsol_pfw_proposal_overview]` – Proposal overview content  
+- `[arsol_pfw_request_overview]` – Request overview content
+- `[arsol_pfw_projects_list]` – Active projects listing
+- `[arsol_pfw_proposals_list]` – Proposals listing
+- `[arsol_pfw_requests_list]` – Requests listing
+- `[arsol_pfw_project_form]` – Project creation/edit form
+- `[arsol_pfw_request_form]` – Request creation/edit form
+
+### File Management Shortcodes
+- `[arsol_pfw_proposal_files]` – Display proposal files with download capability
+- `[arsol_pfw_request_file_upload]` – File upload form for requests
+- `[arsol_pfw_project_files_list]` – Project files listing with download capability
+
+See the complete shortcode documentation in `/docs/shortcode-complete-reference.md` for detailed usage and parameters.
 
 ---
 
