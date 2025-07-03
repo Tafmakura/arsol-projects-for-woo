@@ -270,6 +270,7 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 /* Multi-select styling for settings pages */
 .arsol-pfw-multiselect2 {
     max-width: 500px;
+    width: 100%;
 }
 
 .arsol-pfw-multiselect2 span.arsol-pfw-admin-multi-select + span.select2-selection--multiple {
