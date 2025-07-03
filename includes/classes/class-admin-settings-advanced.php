@@ -128,7 +128,7 @@ class Settings_Advanced {
     public function register_settings() {
         // Register main settings group
         register_setting(
-            'arsol_pfw_advanced_settings',
+            'arsol_pfw_advanced_settings', 
             'arsol_pfw_advanced_settings',
             array(
                 'sanitize_callback' => array( $this, 'validate_settings' ),
