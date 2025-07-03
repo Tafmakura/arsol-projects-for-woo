@@ -375,4 +375,23 @@ Demo shortcode for testing template overrides.
 [arsol_pfw_request_form]
 ```
 
-*For complete documentation, see the full reference guide.* 
+*For complete documentation, see the full reference guide.*
+
+### Template Override System Enhancement
+
+**NEW: WordPress Coding Standards Compliance**
+- ✅ **Enhanced Validation**: All shortcode inputs are validated for proper format
+- ✅ **Error Handling**: Invalid shortcodes show clear error messages
+- ✅ **Security**: All inputs are properly sanitized and escaped
+- ✅ **Known Shortcode Detection**: System validates against registered shortcodes
+- ✅ **WordPress Best Practices**: Follows all WP coding standards
+
+**Validation Rules:**
+- Shortcode format: `[shortcode_name]` or `[shortcode_name param="value"]`
+- Must match regex: `/^\[[\w\s_=-]+\]$/`
+- Must be either a registered WordPress shortcode or one of our known plugin shortcodes
+- Empty values are accepted (will use default templates)
+
+**Error Messages:**
+If you enter an invalid shortcode format, you'll see a clear error message:
+> "Invalid shortcode format for Project Form: "[invalid_shortcode]". Please use the format [shortcode_name]." 
