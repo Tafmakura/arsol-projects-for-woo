@@ -76,10 +76,10 @@ jQuery.extend(jQuery.fn, {
     },
 });
 
+// SINGLE DOCUMENT READY HANDLER - All functionality consolidated
 jQuery(function($) {
-    /*
-     * On comment form submit
-     */
+    
+    // ===== COMMENT FORM SUBMISSION =====
     $('#commentform').submit(function() {
         
         // define some vars
@@ -169,10 +169,8 @@ jQuery(function($) {
         }
         return false;
     });
-});
-
-// Comment editing and deletion functionality
-jQuery(function($) {
+    
+    // ===== COMMENT EDITING AND DELETION =====
     
     // Handle edit comment click
     $(document).on('click', '.arsol-edit-comment', function(e) {
@@ -215,8 +213,9 @@ jQuery(function($) {
         var commentId = commentBody.find('.arsol-edit-comment').data('comment-id');
         var newContent = editForm.find('.arsol-edit-textarea').val().trim();
         
+        // Basic validation
         if (newContent === '') {
-            alert('Comment content cannot be empty');
+            alert('Comment cannot be empty');
             return;
         }
         
@@ -234,13 +233,21 @@ jQuery(function($) {
                 nonce: arsolComments.nonce
             },
             success: function(response) {
-                // Update the comment content
-                commentContent.text(newContent).show();
-                editForm.remove();
+                if (response === 'success') {
+                    // Update comment content
+                    commentContent.text(newContent);
+                    
+                    // Remove edit form and show original content
+                    editForm.remove();
+                    commentContent.show();
+                } else {
+                    alert('Error saving comment');
+                    $(this).prop('disabled', false).text('Save');
+                }
             },
             error: function(xhr, status, error) {
                 alert('Error saving comment: ' + (xhr.responseText || 'Unknown error'));
-                editForm.find('.arsol-save-edit').prop('disabled', false).text('Save');
+                $(this).prop('disabled', false).text('Save');
             }
         });
     });
@@ -250,11 +257,12 @@ jQuery(function($) {
         e.preventDefault();
         
         var editForm = $(this).closest('.arsol-edit-form');
-        var commentContent = editForm.siblings('.comment-content');
+        var commentBody = editForm.closest('.comment-body');
+        var commentContent = commentBody.find('.comment-content');
         
-        // Show original content and remove edit form
-        commentContent.show();
+        // Remove edit form and show original content
         editForm.remove();
+        commentContent.show();
     });
     
     // Handle delete comment
@@ -292,29 +300,48 @@ jQuery(function($) {
             }
         });
     });
-});
-
-// Reply functionality
-jQuery(function($) {
+    
+    // ===== REPLY FUNCTIONALITY =====
     
     // Handle reply link click
     $(document).on('click', '.comment-reply-link', function(e) {
         e.preventDefault();
         
-        var commentId = $(this).data('belowelement').replace('comment-', '');
-        var postId = $('#commentform input[name="comment_post_ID"]').val();
-        var commentElement = $('#comment-' + commentId);
+        // Store reference to the clicked link
+        var clickedLink = $(this);
+        var belowElement = clickedLink.data('belowelement');
         
-        // Check if reply form is already showing
-        if (commentElement.find('.arsol-reply-form-container').length > 0) {
+        // Check if we have the correct data attribute
+        if (!belowElement) {
+            console.log('No belowelement data found on reply link');
             return;
         }
         
-        // Hide any other open reply forms
-        $('.arsol-reply-form-container').remove();
+        var commentId = belowElement.replace('comment-', '');
+        var postId = $('#commentform input[name="comment_post_ID"]').val();
+        var commentElement = $('#comment-' + commentId);
         
-        // Show loading state
-        $(this).text('Loading...');
+        // Additional check: make sure we found the comment element
+        if (commentElement.length === 0) {
+            console.log('Comment element not found for ID:', commentId);
+            return;
+        }
+        
+        // Check if reply form is already showing for this specific comment
+        if (commentElement.find('.arsol-reply-form-container').length > 0) {
+            console.log('Reply form already open for comment:', commentId);
+            return;
+        }
+        
+        // Check if ANY reply form is currently open (additional safety)
+        if ($('.arsol-reply-form-container').length > 0) {
+            console.log('Another reply form is open, closing it first');
+            $('.arsol-reply-form-container').remove();
+            $('.comment-reply-link').text('Reply');
+        }
+        
+        // Show loading state for this specific link
+        clickedLink.text('Loading...');
         
         // AJAX request to get reply form
         $.ajax({
@@ -327,19 +354,27 @@ jQuery(function($) {
                 nonce: arsolComments.nonce
             },
             success: function(response) {
+                // Double-check that no form exists before adding
+                if (commentElement.find('.arsol-reply-form-container').length > 0) {
+                    console.log('Form already exists, not adding another');
+                    clickedLink.text('Reply');
+                    return;
+                }
+                
                 // Add reply form after the comment
                 commentElement.find('.comment-body').append(response);
                 
                 // Focus on the reply textarea
                 commentElement.find('.arsol-reply-form textarea').focus();
                 
-                // Reset reply link text
-                commentElement.find('.comment-reply-link').text('Reply');
+                // Reset only this specific reply link text
+                clickedLink.text('Reply');
             },
             error: function(xhr, status, error) {
+                console.log('Error loading reply form:', xhr.responseText || 'Unknown error');
                 alert('Error loading reply form: ' + (xhr.responseText || 'Unknown error'));
-                // Reset reply link text
-                commentElement.find('.comment-reply-link').text('Reply');
+                // Reset only this specific reply link text
+                clickedLink.text('Reply');
             }
         });
     });
@@ -394,6 +429,9 @@ jQuery(function($) {
                 $('html, body').animate({
                     scrollTop: newComment.offset().top - 100
                 }, 500);
+                
+                // Update comment count
+                updateCommentCount('add');
             },
             error: function(xhr, status, error) {
                 alert('Error posting reply: ' + (xhr.responseText || 'Unknown error'));
@@ -415,51 +453,5 @@ jQuery(function($) {
         // Reset reply link text
         commentElement.find('.comment-reply-link').text('Reply');
     });
-});
-
-// AJAX Comments
-jQuery(function($) {
     
-    // Function to update comment count dynamically
-    function updateCommentCount(action, count) {
-        var commentsTitle = $('.comments-title');
-        
-        // Get current count from title
-        var currentText = commentsTitle.text();
-        var currentMatch = currentText.match(/(\d+)/);
-        var currentCount = currentMatch ? parseInt(currentMatch[1]) : 0;
-        
-        var newCount;
-        if (action === 'add') {
-            newCount = currentCount + 1;
-        } else if (action === 'delete') {
-            newCount = Math.max(0, currentCount - 1);
-        } else if (action === 'set') {
-            newCount = count;
-        }
-        
-        // Update the count text
-        if (newCount === 0) {
-            commentsTitle.text('No Comments');
-            $('.comments-list').hide();
-            if ($('.no-comments').length === 0) {
-                $('.comments-container').prepend('<div class="no-comments"><p>No comments yet. Be the first to comment!</p></div>');
-            }
-        } else if (newCount === 1) {
-            commentsTitle.text('One Comment');
-            $('.comments-list').show();
-            $('.no-comments').remove();
-        } else {
-            commentsTitle.text(newCount + ' Comments');
-            $('.comments-list').show();
-            $('.no-comments').remove();
-        }
-        
-        // If this is the first comment, show the title
-        if (currentCount === 0 && newCount === 1) {
-            if (commentsTitle.length === 0) {
-                $('.commentlist').before('<h4 class="comments-title">One Comment</h4>');
-            }
-        }
-    }
-});
+}); 
