@@ -259,7 +259,7 @@ class Settings_Phases {
         echo '<div style="margin-bottom: 10px;">';
         echo '<select name="' . esc_attr($option_name) . '[' . esc_attr($visibility_key) . ']" style="min-width: 150px;">';
         echo '<option value="hide"' . selected($visibility, 'hide', false) . '>' . __('Hide for selected stages', 'arsol-pfw') . '</option>';
-        echo '<option value="show"' . selected($visibility, 'show', false) . '>' . __('Show only for selected stages', 'arsol-pfw') . '</option>';
+        echo '<option value="show"' . selected($visibility, 'show', false) . '>' . __('Show for selected stages', 'arsol-pfw') . '</option>';
         echo '</select>';
         echo '</div>';
         
