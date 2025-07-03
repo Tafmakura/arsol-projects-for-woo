@@ -29,7 +29,7 @@ class Settings_General {
         add_filter('post_type_supports', array($this, 'filter_post_type_supports'), 10, 2);
 
         // Update capabilities when settings are saved
-        add_action('update_option_arsol_projects_settings', array($this, 'update_capabilities'), 10, 2);
+        add_action('update_option_arsol_pfw_general_settings', array($this, 'update_capabilities'), 10, 2);
     }
 
     /**
@@ -43,14 +43,14 @@ class Settings_General {
      * Register settings
      */
     public function register_settings() {
-        register_setting('arsol_projects_settings', 'arsol_projects_settings', array($this, 'validate_settings'));
+        register_setting('arsol_pfw_general_settings', 'arsol_pfw_general_settings', array($this, 'validate_settings'));
 
         // General Settings Section
         add_settings_section(
             'arsol_projects_general_settings',
             null,
             null,
-            'arsol_projects_settings'
+            'arsol_pfw_general_settings'
         );
 
         // Product Settings Section
@@ -58,14 +58,14 @@ class Settings_General {
             'arsol_projects_product_settings',
             __('Product Settings', 'arsol-pfw'),
             array($this, 'render_product_settings_section'),
-            'arsol_projects_settings'
+            'arsol_pfw_general_settings'
         );
 
         add_settings_field(
             'project_products',
             __('Project Products', 'arsol-pfw'),
             array($this, 'render_products_select_field'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_product_settings',
             array(
                 'description' => __('Show the project selector at checkout only if these products are in the cart. Leave empty to show for all products.', 'arsol-pfw'),
@@ -77,7 +77,7 @@ class Settings_General {
             'project_categories',
             __('Project Categories', 'arsol-pfw'),
             array($this, 'render_categories_select_field'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_product_settings',
             array(
                 'description' => __('Show the project selector at checkout if a product from these categories is in the cart. Leave empty to show for all products.', 'arsol-pfw'),
@@ -89,7 +89,7 @@ class Settings_General {
             'require_project_selection',
             __('Require Project Selection', 'arsol-pfw'),
             array($this, 'render_checkbox_field'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_product_settings',
             array(
                 'field' => 'require_project_selection',
@@ -102,7 +102,7 @@ class Settings_General {
             'mixed_cart_behavior',
             __('Mixed Cart Behavior', 'arsol-pfw'),
             array($this, 'render_select_field'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_product_settings',
             array(
                 'field' => 'mixed_cart_behavior',
@@ -120,14 +120,14 @@ class Settings_General {
             'arsol_projects_user_permissions',
             __('User Project Permissions', 'arsol-pfw'),
             array($this, 'render_user_permissions_section'),
-            'arsol_projects_settings'
+            'arsol_pfw_general_settings'
         );
 
         add_settings_field(
             'manage_roles',
             __('Project Manager Roles', 'arsol-pfw'),
             array($this, 'render_roles_field'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
                 'field' => 'manage_roles',
@@ -140,7 +140,7 @@ class Settings_General {
             'create_roles',
             __('Project User Roles', 'arsol-pfw'),
             array($this, 'render_roles_field'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
                 'field' => 'create_roles',
@@ -153,7 +153,7 @@ class Settings_General {
             'user_project_permissions',
             __('Frontend Permissions', 'arsol-pfw'),
             array($this, 'render_select_field'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
                 'description' => __('Controls how user project permissions are handled globally', 'arsol-pfw'),
@@ -171,7 +171,7 @@ class Settings_General {
             'default_user_permission',
             __('New User Permissions', 'arsol-pfw'),
             array($this, 'render_conditional_select_field'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
                 'description' => __('Default permission level assigned to new users (only applies when "User Specific" is selected above)', 'arsol-pfw'),
@@ -193,14 +193,14 @@ class Settings_General {
             'arsol_projects_comments_settings',
             __('Comments Settings', 'arsol-pfw'),
             array($this, 'render_comments_settings_section'),
-            'arsol_projects_settings'
+            'arsol_pfw_general_settings'
         );
 
         add_settings_field(
             'comment_permissions',
             __('Comments permissions', 'arsol-pfw'),
             array($this, 'render_comment_permissions_group'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_comments_settings',
             array(
                 'class' => 'arsol-pfw-comment-permissions'
@@ -211,7 +211,7 @@ class Settings_General {
             'comment_max_depth',
             __('Comment Reply Depth', 'arsol-pfw'),
             array($this, 'render_number_field'),
-            'arsol_projects_settings',
+            'arsol_pfw_general_settings',
             'arsol_projects_comments_settings',
             array(
                 'field' => 'comment_max_depth',
@@ -260,14 +260,14 @@ class Settings_General {
      * Render products select field
      */
     public function render_products_select_field($args) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $product_ids = isset($settings['project_products']) ? $settings['project_products'] : array();
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
             <select class="wc-product-search arsol-pfw-admin-multi-select arsol-settings-wide-field arsol-pfw-multiselect2"
                     multiple="multiple"
-                    name="arsol_projects_settings[project_products][]"
+                    name="arsol_pfw_general_settings[project_products][]"
                     data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
                     data-action="woocommerce_json_search_products_and_variations">
                 <?php
@@ -292,14 +292,14 @@ class Settings_General {
      * Render categories select field
      */
     public function render_categories_select_field($args) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $category_ids = isset($settings['project_categories']) ? $settings['project_categories'] : array();
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
             <select class="wc-enhanced-select arsol-pfw-admin-multi-select arsol-settings-wide-field arsol-pfw-multiselect2"
                     multiple="multiple"
-                    name="arsol_projects_settings[project_categories][]"
+                    name="arsol_pfw_general_settings[project_categories][]"
                     data-placeholder="<?php esc_attr_e('Search for a category…', 'arsol-pfw'); ?>">
                 <?php
                 $categories = get_terms('product_cat', array('hide_empty' => false));
@@ -321,7 +321,7 @@ class Settings_General {
      * Render comment permissions checkbox group
      */
     public function render_comment_permissions_group($args) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         
         $comment_options = array(
@@ -337,7 +337,7 @@ class Settings_General {
             <label for="<?php echo esc_attr($field); ?>">
                 <input type="checkbox"
                        id="<?php echo esc_attr($field); ?>"
-                       name="arsol_projects_settings[<?php echo esc_attr($field); ?>]"
+                       name="arsol_pfw_general_settings[<?php echo esc_attr($field); ?>]"
                        value="1"
                        <?php checked(1, $value); ?>>
                 <?php echo esc_html($label); ?>
@@ -351,7 +351,7 @@ class Settings_General {
      * Render checkbox field
      */
     public function render_checkbox_field($args) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $field = isset($args['field']) ? $args['field'] : $args['label_for'] ?? '';
         $value = isset($settings[$field]) ? $settings[$field] : 0;
         $label = isset($args['label']) ? $args['label'] : '';
@@ -361,7 +361,7 @@ class Settings_General {
         <label for="<?php echo esc_attr($field); ?>">
             <input type="checkbox"
                    id="<?php echo esc_attr($field); ?>"
-                   name="arsol_projects_settings[<?php echo esc_attr($field); ?>]"
+                   name="arsol_pfw_general_settings[<?php echo esc_attr($field); ?>]"
                    value="1"
                    <?php checked(1, $value); ?>>
             <?php echo esc_html($label); ?>
@@ -377,7 +377,7 @@ class Settings_General {
      * Render select field
      */
     public function render_select_field($args) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $field_name = isset($args['field']) ? $args['field'] : 'user_project_permissions';
         $default_value = ($field_name === 'mixed_cart_behavior') ? 'add_all' : 'none';
         $value = isset($settings[$field_name]) ? $settings[$field_name] : $default_value;
@@ -385,7 +385,7 @@ class Settings_General {
         ?>
         <div class="<?php echo $class; ?>">
         <select id="<?php echo esc_attr($field_name); ?>"
-                name="arsol_projects_settings[<?php echo esc_attr($field_name); ?>]">
+                name="arsol_pfw_general_settings[<?php echo esc_attr($field_name); ?>]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
                     <?php echo esc_html($label); ?>
@@ -403,7 +403,7 @@ class Settings_General {
      * Render conditional select field
      */
     public function render_conditional_select_field($args) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $value = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'none';
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         
@@ -418,7 +418,7 @@ class Settings_General {
         ?>
         <div class="<?php echo $class; ?>"<?php echo $data_attributes; ?>>
         <select id="default_user_permission"
-                name="arsol_projects_settings[default_user_permission]">
+                name="arsol_pfw_general_settings[default_user_permission]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
                     <?php echo esc_html($label); ?>
@@ -451,7 +451,7 @@ class Settings_General {
      */
     public function render_roles_field($args) {
         $field_name = $args['field'];
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $selected_roles = isset($settings[$field_name]) ? $settings[$field_name] : array('administrator');
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         
@@ -474,12 +474,12 @@ class Settings_General {
             $disabled = $is_admin ? 'disabled' : '';
 
             echo '<label>';
-            echo '<input type="checkbox" name="arsol_projects_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . ' ' . $disabled . '> ';
+            echo '<input type="checkbox" name="arsol_pfw_general_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . ' ' . $disabled . '> ';
             echo esc_html($details['name']);
             if ($is_admin) {
                 echo ' <em>(' . esc_html__('always enabled', 'arsol-pfw') . ')</em>';
                 // Add a hidden input to ensure the administrator role is always submitted
-                echo '<input type="hidden" name="arsol_projects_settings[' . esc_attr($field_name) . '][]" value="administrator">';
+                echo '<input type="hidden" name="arsol_pfw_general_settings[' . esc_attr($field_name) . '][]" value="administrator">';
             }
             echo '</label><br>';
         }
@@ -502,7 +502,7 @@ class Settings_General {
             return;
         }
 
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $product_id = isset($settings[$field_name]) ? $settings[$field_name] : '';
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
 
@@ -517,7 +517,7 @@ class Settings_General {
         <div class="<?php echo esc_attr($class); ?>">
             <select class="wc-product-search regular-text"
                     id="<?php echo esc_attr($field_name); ?>"
-                    name="arsol_projects_settings[<?php echo esc_attr($field_name); ?>]"
+                    name="arsol_pfw_general_settings[<?php echo esc_attr($field_name); ?>]"
                     data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
                     data-action="woocommerce_json_search_products_and_variations"
                     data-allow_clear="true"
@@ -545,7 +545,7 @@ class Settings_General {
      * @return bool Whether comments are enabled for the post type
      */
     public static function is_comments_enabled_for_post_type($post_type) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         
         switch ($post_type) {
             case 'arsol-pfw-project':
@@ -627,7 +627,7 @@ class Settings_General {
      * @param array $args Field arguments
      */
     public function render_generic_field($args) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $field_name = isset($args['field']) ? $args['field'] : $args['label_for'] ?? '';
         $field_type = isset($args['type']) ? $args['type'] : 'text';
         $value = isset($settings[$field_name]) ? $settings[$field_name] : ($args['default'] ?? '');
@@ -638,7 +638,7 @@ class Settings_General {
         switch ($field_type) {
             case 'checkbox':
                 printf(
-                    '<label for="%1$s"><input type="checkbox" id="%1$s" name="arsol_projects_settings[%1$s]" value="1" %2$s> %3$s</label>',
+                    '<label for="%1$s"><input type="checkbox" id="%1$s" name="arsol_pfw_general_settings[%1$s]" value="1" %2$s> %3$s</label>',
                     esc_attr($field_name),
                     checked(1, $value, false),
                     esc_html($args['label'] ?? '')
@@ -646,7 +646,7 @@ class Settings_General {
                 break;
                 
             case 'select':
-                printf('<select id="%s" name="arsol_projects_settings[%s]">', esc_attr($field_name), esc_attr($field_name));
+                printf('<select id="%s" name="arsol_pfw_general_settings[%s]">', esc_attr($field_name), esc_attr($field_name));
                 foreach ($args['options'] as $option_value => $option_label) {
                     printf(
                         '<option value="%s" %s>%s</option>',
@@ -664,7 +664,7 @@ class Settings_General {
             case 'number':
             default:
                 printf(
-                    '<input type="%s" id="%s" name="arsol_projects_settings[%s]" value="%s" class="regular-text" %s>',
+                    '<input type="%s" id="%s" name="arsol_pfw_general_settings[%s]" value="%s" class="regular-text" %s>',
                     esc_attr($field_type),
                     esc_attr($field_name),
                     esc_attr($field_name),
@@ -687,7 +687,7 @@ class Settings_General {
      * @param array $args Field arguments
      */
     public function render_wc_enhanced_field($args) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $field_name = isset($args['field']) ? $args['field'] : $args['label_for'] ?? '';
         $field_type = isset($args['wc_type']) ? $args['wc_type'] : 'product';
         $value = isset($settings[$field_name]) ? $settings[$field_name] : array();
@@ -720,7 +720,7 @@ class Settings_General {
         $field_name_attr = $multiple ? $field_name . '[]' : $field_name;
         
         printf(
-            '<select class="%s" %s name="arsol_projects_settings[%s]" data-placeholder="%s" %s>',
+            '<select class="%s" %s name="arsol_pfw_general_settings[%s]" data-placeholder="%s" %s>',
             esc_attr($select_class),
             $multiple,
             esc_attr($field_name_attr),
@@ -767,7 +767,7 @@ class Settings_General {
      * Render number field
      */
     public function render_number_field($args) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $field_name = isset($args['field']) ? $args['field'] : $args['label_for'] ?? '';
         $value = isset($settings[$field_name]) ? $settings[$field_name] : ($args['default'] ?? '');
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
@@ -790,7 +790,7 @@ class Settings_General {
         echo '<div class="' . esc_attr($class) . '">';
         
         printf(
-            '<input type="number" id="%s" name="arsol_projects_settings[%s]" value="%s" class="regular-text" %s>',
+            '<input type="number" id="%s" name="arsol_pfw_general_settings[%s]" value="%s" class="regular-text" %s>',
             esc_attr($field_name),
             esc_attr($field_name),
             esc_attr($value),

@@ -26,13 +26,13 @@ class Settings_Files {
      * Register settings
      */
     public function register_settings() {
-        register_setting('arsol_files_settings', 'arsol_files_settings');
+        register_setting('arsol_pfw_files_settings', 'arsol_pfw_files_settings');
 
         add_settings_section(
             'arsol_files_general_settings',
             __('File Settings', 'arsol-pfw'),
             array($this, 'render_files_section'),
-            'arsol_files_settings'
+            'arsol_pfw_files_settings'
         );
     }
 

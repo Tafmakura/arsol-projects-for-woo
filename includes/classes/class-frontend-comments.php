@@ -23,7 +23,7 @@ class Frontend_Comments {
      * Static method to access the depth value from templates and other classes
      */
     public static function get_max_reply_depth() {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $depth = isset($settings['comment_max_depth']) ? $settings['comment_max_depth'] : 5;
         // Ensure depth is between 0 and 5
         return max(0, min(5, intval($depth)));

@@ -36,21 +36,21 @@ class Settings_Phases {
      * Register settings
      */
     public function register_settings() {
-        register_setting('arsol_phases_settings', 'arsol_phases_settings');
+        register_setting('arsol_pfw_display_settings', 'arsol_pfw_display_settings');
 
         // Register display settings under the main phases settings group
-        register_setting('arsol_phases_settings', 'arsol_content_display_settings');
-        register_setting('arsol_phases_settings', 'arsol_sidebar_display_settings');
-        register_setting('arsol_phases_settings', 'arsol_comment_display_settings');
-        register_setting('arsol_phases_settings', 'arsol_files_display_settings');
-        register_setting('arsol_phases_settings', 'arsol_form_display_settings');
+        register_setting('arsol_pfw_display_settings', 'arsol_pfw_display_content_settings');
+        register_setting('arsol_pfw_display_settings', 'arsol_pfw_display_sidebar_settings');
+        register_setting('arsol_pfw_display_settings', 'arsol_pfw_display_comments_settings');
+        register_setting('arsol_pfw_display_settings', 'arsol_pfw_display_files_settings');
+        register_setting('arsol_pfw_display_settings', 'arsol_pfw_display_forms_settings');
 
         // Customer Notice Defaults Section
         add_settings_section(
             'arsol_phases_customer_notice_defaults',
             __('Customer Notice Defaults', 'arsol-pfw'),
             array($this, 'render_customer_notice_section'),
-            'arsol_phases_settings'
+            'arsol_pfw_display_settings'
         );
 
         // Customer Notice Fields
@@ -58,7 +58,7 @@ class Settings_Phases {
             'arsol_pfw_request_default_customer_notice',
             __('Request Customer Notice', 'arsol-pfw'),
             array($this, 'render_customer_notice_field'),
-            'arsol_phases_settings',
+            'arsol_pfw_display_settings',
             'arsol_phases_customer_notice_defaults',
             array(
                 'key' => 'arsol_pfw_request_default_customer_notice',
@@ -71,7 +71,7 @@ class Settings_Phases {
             'arsol_pfw_proposal_default_customer_notice',
             __('Proposal Customer Notice', 'arsol-pfw'),
             array($this, 'render_customer_notice_field'),
-            'arsol_phases_settings',
+            'arsol_pfw_display_settings',
             'arsol_phases_customer_notice_defaults',
             array(
                 'key' => 'arsol_pfw_proposal_default_customer_notice',
@@ -84,7 +84,7 @@ class Settings_Phases {
             'arsol_pfw_project_default_customer_notice',
             __('Project Customer Notice', 'arsol-pfw'),
             array($this, 'render_customer_notice_field'),
-            'arsol_phases_settings',
+            'arsol_pfw_display_settings',
             'arsol_phases_customer_notice_defaults',
             array(
                 'key' => 'arsol_pfw_project_default_customer_notice',
@@ -98,7 +98,7 @@ class Settings_Phases {
             'arsol_content_display_section',
             __('Content Display', 'arsol-pfw'),
             array($this, 'render_content_display_section'),
-            'arsol_phases_settings'
+            'arsol_pfw_display_settings'
         );
 
         // Content Display Fields
@@ -109,7 +109,7 @@ class Settings_Phases {
             'arsol_sidebar_display_section',
             __('Sidebar Display', 'arsol-pfw'),
             array($this, 'render_sidebar_display_section'),
-            'arsol_phases_settings'
+            'arsol_pfw_display_settings'
         );
 
         // Sidebar Display Fields
@@ -120,7 +120,7 @@ class Settings_Phases {
             'arsol_comment_display_section',
             __('Comments Display', 'arsol-pfw'),
             array($this, 'render_comment_display_section'),
-            'arsol_phases_settings'
+            'arsol_pfw_display_settings'
         );
 
         // Comment Display Fields
@@ -131,7 +131,7 @@ class Settings_Phases {
             'arsol_files_display_section',
             __('Files Display', 'arsol-pfw'),
             array($this, 'render_files_display_section'),
-            'arsol_phases_settings'
+            'arsol_pfw_display_settings'
         );
 
         // Files Display Fields
@@ -142,7 +142,7 @@ class Settings_Phases {
             'arsol_form_display_section',
             __('Form Display', 'arsol-pfw'),
             array($this, 'render_form_display_section'),
-            'arsol_phases_settings'
+            'arsol_pfw_display_settings'
         );
 
         // Form Display Fields
@@ -159,7 +159,7 @@ class Settings_Phases {
                 $type . '_' . $phase_type . '_display',
                 ucfirst($phase_type) . ' ' . ucfirst($type),
                 array($this, 'render_display_field'),
-                'arsol_phases_settings',
+                'arsol_pfw_display_settings',
                 $section,
                 [
                     'type' => $type,
@@ -180,7 +180,7 @@ class Settings_Phases {
                 'comment_' . $phase_type . '_display',
                 ucfirst($phase_type) . ' Comments',
                 array($this, 'render_display_field'),
-                'arsol_phases_settings',
+                'arsol_pfw_display_settings',
                 'arsol_comment_display_section',
                 [
                     'type' => 'comment',
@@ -211,7 +211,7 @@ class Settings_Phases {
                 'files_' . $files_type . '_display',
                 $config['label'],
                 array($this, 'render_display_field'),
-                'arsol_phases_settings',
+                'arsol_pfw_display_settings',
                 'arsol_files_display_section',
                 [
                     'type' => 'files',
@@ -250,7 +250,7 @@ class Settings_Phases {
                 'form_' . $form_type . '_display',
                 $config['label'],
                 array($this, 'render_display_field'),
-                'arsol_phases_settings',
+                'arsol_pfw_display_settings',
                 'arsol_form_display_section',
                 [
                     'type' => 'form',
@@ -365,7 +365,7 @@ class Settings_Phases {
      * Render customer notice field
      */
     public function render_customer_notice_field($args) {
-        $settings = get_option('arsol_phases_settings', array());
+        $settings = get_option('arsol_pfw_display_settings', array());
         $key = $args['key'];
         $value = isset($settings[$key]) ? $settings[$key] : '';
         $description = $args['description'];
@@ -375,7 +375,7 @@ class Settings_Phases {
         $markdown_default = isset($customer_notice_defaults[$key]) ? $customer_notice_defaults[$key] : '';
         
         echo '<div class="arsol-pfw-customer-notice-field">';
-        echo '<textarea name="arsol_phases_settings[' . esc_attr($key) . ']" rows="6" cols="80" class="large-text" placeholder="' . esc_attr($markdown_default) . '">' . esc_textarea($value) . '</textarea>';
+        echo '<textarea name="arsol_pfw_display_settings[' . esc_attr($key) . ']" rows="6" cols="80" class="large-text" placeholder="' . esc_attr($markdown_default) . '">' . esc_textarea($value) . '</textarea>';
         echo '<p class="description">' . esc_html($description) . '</p>';
         echo '<p class="description"><em>' . __('Leave empty to use the default content from markdown files.', 'arsol-pfw') . '</em></p>';
         echo '</div>';

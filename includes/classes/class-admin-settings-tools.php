@@ -28,8 +28,8 @@ class Settings_Tools {
 
     public function register_settings() {
         register_setting(
-            'arsol_projects_tools_settings', 
-            'arsol_projects_tools_settings',
+            'arsol_pfw_tools_settings', 
+            'arsol_pfw_tools_settings',
             array(
                 'sanitize_callback' => array($this, 'sanitize_settings'),
                 'default' => array()
@@ -41,14 +41,14 @@ class Settings_Tools {
             'arsol_projects_conversion_management_section',
             __('Conversion Management', 'arsol-pfw'),
             array($this, 'render_conversion_management_description'),
-            'arsol_projects_tools_settings'
+            'arsol_pfw_tools_settings'
         );
 
         add_settings_field(
             'conversion_cleanup',
             __('Maintenance', 'arsol-pfw'),
             array($this, 'render_conversion_cleanup_field'),
-            'arsol_projects_tools_settings',
+            'arsol_pfw_tools_settings',
             'arsol_projects_conversion_management_section'
         );
 
@@ -57,14 +57,14 @@ class Settings_Tools {
             'arsol_projects_error_logs_section',
             __('Error Logs', 'arsol-pfw'),
             array($this, 'render_error_logs_description'),
-            'arsol_projects_tools_settings'
+            'arsol_pfw_tools_settings'
         );
 
         add_settings_field(
             'error_logs_viewer',
             __('Log Management', 'arsol-pfw'),
             array($this, 'render_error_logs_field'),
-            'arsol_projects_tools_settings',
+            'arsol_pfw_tools_settings',
             'arsol_projects_error_logs_section'
         );
     }

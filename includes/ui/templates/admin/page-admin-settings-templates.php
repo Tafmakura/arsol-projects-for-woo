@@ -16,10 +16,10 @@ if (!defined('ABSPATH')) {
     <form action="options.php" method="post">
         <?php
         // Register settings group for the templates page
-        settings_fields('arsol_projects_templates_settings');
+        settings_fields('arsol_pfw_advanced_settings');
         
         // Output all settings sections
-        do_settings_sections('arsol_projects_templates_settings');
+        do_settings_sections('arsol_pfw_advanced_settings');
         
         submit_button();
         ?>

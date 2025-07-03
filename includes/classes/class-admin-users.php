@@ -172,7 +172,7 @@ class Users {
                     $display_permission = !empty($current_permission) ? $current_permission : $effective_permission;
                     
                     // Check if global settings override individual settings
-                    $global_settings = get_option('arsol_projects_settings', array());
+                    $global_settings = get_option('arsol_pfw_general_settings', array());
                     $global_permission = isset($global_settings['user_project_permissions']) ? $global_settings['user_project_permissions'] : 'none';
                     $is_overridden = $global_permission !== 'user_specific';
                     ?>
@@ -342,7 +342,7 @@ class Users {
      * @return string User permission level ('none', 'request', 'create')
      */
     public function get_effective_user_permission($user_id) {
-        $global_settings = get_option('arsol_projects_settings', array());
+        $global_settings = get_option('arsol_pfw_general_settings', array());
         $global_permission = isset($global_settings['user_project_permissions']) ? $global_settings['user_project_permissions'] : 'none';
         
         // If global setting is not 'user_specific', it overrides individual settings
@@ -369,7 +369,7 @@ class Users {
      * @return void
      */
     public function set_default_user_permission($user_id) {
-        $global_settings = get_option('arsol_projects_settings', array());
+        $global_settings = get_option('arsol_pfw_general_settings', array());
         $global_permission = isset($global_settings['user_project_permissions']) ? $global_settings['user_project_permissions'] : 'none';
         
         // Only set individual permission if we're in user_specific mode
@@ -411,7 +411,7 @@ class Users {
         }
         
         // Get roles from Project Manager Roles setting
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $manage_roles = isset($settings['manage_roles']) ? $settings['manage_roles'] : array('administrator');
         $create_roles = isset($settings['create_roles']) ? $settings['create_roles'] : array('administrator');
         
@@ -501,7 +501,7 @@ class Users {
      */
     public static function get_project_lead_user_ids() {
         // Get roles from Project Manager Roles setting
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $manage_roles = isset($settings['manage_roles']) ? $settings['manage_roles'] : array('administrator');
         $create_roles = isset($settings['create_roles']) ? $settings['create_roles'] : array('administrator');
         

@@ -64,7 +64,7 @@ class Woocommerce {
      * @return bool
      */
     private function should_display_project_field() {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $project_products = !empty($settings['project_products']) ? (array) $settings['project_products'] : array();
         $project_categories = !empty($settings['project_categories']) ? (array) $settings['project_categories'] : array();
 

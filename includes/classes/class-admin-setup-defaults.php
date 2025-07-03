@@ -168,7 +168,7 @@ class Setup_Defaults {
         
         // Layer 2: Check phases settings default
         $settings_key = 'arsol_pfw_' . $post_type . '_default_customer_notice';
-        $phases_settings = get_option('arsol_phases_settings', array());
+        $phases_settings = get_option('arsol_pfw_display_settings', array());
         if (!empty($phases_settings[$settings_key])) {
             return $phases_settings[$settings_key];
         }
@@ -190,7 +190,7 @@ class Setup_Defaults {
      * Initialize default general settings
      */
     private function initialize_default_settings() {
-        $current_settings = get_option('arsol_projects_settings', array());
+        $current_settings = get_option('arsol_pfw_general_settings', array());
         
         $default_settings = array(
             'user_project_permissions' => 'request',
@@ -214,7 +214,7 @@ class Setup_Defaults {
         }
 
         if ($updated) {
-            update_option('arsol_projects_settings', $current_settings);
+            update_option('arsol_pfw_general_settings', $current_settings);
         }
     }
 
@@ -413,13 +413,13 @@ class Setup_Defaults {
      * Initialize default advanced settings if they don't exist
      */
     private function initialize_default_advanced_settings() {
-        $current_settings = get_option('arsol_projects_templates_settings', array());
+        $current_settings = get_option('arsol_pfw_advanced_settings', array());
         
         // We don't set defaults for advanced settings anymore - 
         // they're handled by the two-layer system (user setting + hardcoded fallback)
         // This just ensures the option exists
-        if (false === get_option('arsol_projects_templates_settings')) {
-            update_option('arsol_projects_templates_settings', $current_settings);
+        if (false === get_option('arsol_pfw_advanced_settings')) {
+            update_option('arsol_pfw_advanced_settings', $current_settings);
         }
     }
 } 

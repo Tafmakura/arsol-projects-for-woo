@@ -23,7 +23,7 @@ class Frontend_Woocommerce_Checkout {
      * @return bool
      */
     private function should_display_project_field() {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $project_products = !empty($settings['project_products']) ? (array) $settings['project_products'] : array();
         $project_categories = !empty($settings['project_categories']) ? (array) $settings['project_categories'] : array();
 
@@ -48,7 +48,7 @@ class Frontend_Woocommerce_Checkout {
      * @return bool Whether to show project field
      */
     private function handle_mixed_cart_behavior($project_products, $project_categories) {
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $mixed_cart_behavior = isset($settings['mixed_cart_behavior']) ? $settings['mixed_cart_behavior'] : 'add_all';
         
         $project_items = array();
@@ -188,7 +188,7 @@ class Frontend_Woocommerce_Checkout {
             // Show field if: pre-assigned project exists OR regular field should be displayed
             if ($pre_assigned_project || $this->should_display_project_field()) {
                 try {
-                    $settings = get_option('arsol_projects_settings', array());
+                    $settings = get_option('arsol_pfw_general_settings', array());
                     $is_required = !empty($settings['require_project_selection']);
 
                     $field_id = 'arsol-pfw/parent-project-id';
@@ -297,7 +297,7 @@ class Frontend_Woocommerce_Checkout {
         }
 
         // Show normal project selector
-        $settings = get_option('arsol_projects_settings', array());
+        $settings = get_option('arsol_pfw_general_settings', array());
         $is_required = !empty($settings['require_project_selection']);
 
         $current_user_id = get_current_user_id();

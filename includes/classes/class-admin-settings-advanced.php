@@ -86,8 +86,8 @@ class Settings_Advanced {
 
     public function register_settings() {
         register_setting(
-            'arsol_projects_templates_settings', 
-            'arsol_projects_templates_settings',
+            'arsol_pfw_advanced_settings', 
+            'arsol_pfw_advanced_settings',
             array(
                 'sanitize_callback' => array($this, 'sanitize_settings'),
                 'default' => array()
@@ -99,7 +99,7 @@ class Settings_Advanced {
             'arsol_projects_template_overrides_section',
             __('Template Overrides', 'arsol-pfw'),
             array($this, 'render_template_overrides_description'),
-            'arsol_projects_templates_settings'
+            'arsol_pfw_advanced_settings'
         );
 
         foreach ($this->shortcode_fields as $id => $field_data) {
@@ -107,7 +107,7 @@ class Settings_Advanced {
                 $id,
                 $field_data['title'],
                 array($this, 'render_text_field'),
-                'arsol_projects_templates_settings',
+                'arsol_pfw_advanced_settings',
                 'arsol_projects_template_overrides_section',
                 [
                     'id' => $id,
@@ -131,14 +131,14 @@ class Settings_Advanced {
      * Render text field
      */
     public function render_text_field($args) {
-        $settings = get_option('arsol_projects_templates_settings', array());
+        $settings = get_option('arsol_pfw_advanced_settings', array());
         $id = $args['id'];
         $value = isset($settings[$id]) ? $settings[$id] : '';
         $pattern = isset($args['pattern']) ? $args['pattern'] : '';
         $description = isset($args['description']) ? $args['description'] : '';
         $placeholder = isset($args['placeholder']) ? $args['placeholder'] : '';
 
-        echo '<input type="text" id="' . esc_attr($id) . '" name="arsol_projects_templates_settings[' . esc_attr($id) . ']" value="' . esc_attr($value) . '" class="regular-text" placeholder="' . esc_attr($placeholder) . '"';
+        echo '<input type="text" id="' . esc_attr($id) . '" name="arsol_pfw_advanced_settings[' . esc_attr($id) . ']" value="' . esc_attr($value) . '" class="regular-text" placeholder="' . esc_attr($placeholder) . '"';
         if (!empty($pattern)) {
             echo ' pattern="' . esc_attr($pattern) . '"';
         }
