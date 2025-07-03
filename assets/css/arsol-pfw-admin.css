@@ -267,6 +267,15 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     min-height: 60px;
 }
 
+/* Multi-select styling for settings pages */
+.arsol-pfw-multiselect2 {
+    max-width: 500px;
+}
+
+.arsol-pfw-multiselect2 span.arsol-pfw-admin-multi-select + span.select2-selection--multiple {
+    min-height: 60px;
+}
+
 .arsol-money-input {
     text-align: right;
 }

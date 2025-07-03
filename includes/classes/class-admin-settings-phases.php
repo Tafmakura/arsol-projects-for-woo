@@ -264,7 +264,7 @@ class Settings_Phases {
         echo '</div>';
         
         // Stage multi-select
-        echo '<select name="' . esc_attr($option_name) . '[' . esc_attr($stages_key) . '][]" multiple class="wc-enhanced-select" style="max-width: 600px; width: 100%;">';
+        echo '<select name="' . esc_attr($option_name) . '[' . esc_attr($stages_key) . '][]" multiple class="wc-enhanced-select arsol-pfw-multiselect2">';
         foreach ($terms as $term) {
             $selected = in_array($term->term_id, $selected_stages) ? 'selected' : '';
             echo '<option value="' . esc_attr($term->term_id) . '" ' . $selected . '>' . esc_html($term->name) . '</option>';
@@ -346,9 +346,9 @@ class Settings_Phases {
             return;
         }
 
-        // Check if we're on the phases (now display) tab
+        // Check if we're on the display tab
         $tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
-        if ($tab !== 'phases') {
+        if ($tab !== 'display') {
             return;
         }
 

@@ -248,7 +248,7 @@ class Settings_General {
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-            <select class="wc-product-search arsol-pfw-admin-multi-select arsol-settings-wide-field"
+            <select class="wc-product-search arsol-pfw-admin-multi-select arsol-settings-wide-field arsol-pfw-multiselect2"
                     multiple="multiple"
                     name="arsol_projects_settings[project_products][]"
                     data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
@@ -280,7 +280,7 @@ class Settings_General {
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         ?>
         <div class="<?php echo $class; ?>">
-            <select class="wc-enhanced-select arsol-pfw-admin-multi-select arsol-settings-wide-field"
+            <select class="wc-enhanced-select arsol-pfw-admin-multi-select arsol-settings-wide-field arsol-pfw-multiselect2"
                     multiple="multiple"
                     name="arsol_projects_settings[project_categories][]"
                     data-placeholder="<?php esc_attr_e('Search for a category…', 'arsol-pfw'); ?>">
