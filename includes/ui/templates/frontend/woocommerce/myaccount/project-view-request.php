@@ -120,8 +120,53 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         ?>
         
         <?php
-        // Comments section - dual-layer permission check
+        // Files section - show request file upload if enabled for this stage
         $current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($project_id);
+        $show_files = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_files($project_id, $current_stage_id, 'request_file_upload');
+        if ($show_files): ?>
+            <div class="files">
+                <?php
+                /**
+                 * Hook: arsol_pfw_request_files_before
+                 * 
+                 * @param string $project_type Project type
+                 * @param int $project_id Request ID
+                 * @param int $current_stage_id Current stage ID
+                 */
+                do_action('arsol_pfw_request_files_before', $project_type, $project_id, $current_stage_id);
+                ?>
+                
+                <div class="arsol-pfw-files-section">
+                    <h4><?php esc_html_e('Files', 'arsol-pfw'); ?></h4>
+                    <div class="arsol-pfw-files-content">
+                        <?php
+                        /**
+                         * Hook: arsol_pfw_request_files_content
+                         * 
+                         * @param string $project_type Project type
+                         * @param int $project_id Request ID
+                         * @param int $current_stage_id Current stage ID
+                         */
+                        do_action('arsol_pfw_request_files_content', $project_type, $project_id, $current_stage_id);
+                        ?>
+                    </div>
+                </div>
+                
+                <?php
+                /**
+                 * Hook: arsol_pfw_request_files_after
+                 * 
+                 * @param string $project_type Project type
+                 * @param int $project_id Request ID
+                 * @param int $current_stage_id Current stage ID
+                 */
+                do_action('arsol_pfw_request_files_after', $project_type, $project_id, $current_stage_id);
+                ?>
+            </div>
+        <?php endif; ?>
+        
+        <?php
+        // Comments section - dual-layer permission check
         $show_comments = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_comments($project_id, $current_stage_id);
         if ($show_comments): ?>
             <div class="comments">

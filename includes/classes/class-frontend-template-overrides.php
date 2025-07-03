@@ -398,6 +398,25 @@ class Frontend_Template_Overrides {
     }
 
     /**
+     * Check if files should be displayed based on file display rules
+     *
+     * @param int $post_id The post ID
+     * @param int $current_stage_id The current stage term ID
+     * @param string $file_type The file type (request_file_upload, proposal_file_display)
+     * @return bool Whether files should be displayed
+     */
+    public static function should_show_files($post_id, $current_stage_id, $file_type) {
+        $settings = get_option('arsol_files_display_settings', array());
+        $visibility_key = $file_type . '_visibility';
+        $stages_key = $file_type . '_stages';
+        
+        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'show';
+        $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
+        
+        return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);
+    }
+
+    /**
      * Check if comments should be displayed based on CPT permissions and stage display rules
      *
      * @param int $post_id The post ID
