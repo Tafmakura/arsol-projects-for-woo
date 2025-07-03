@@ -613,3 +613,56 @@
     }
 }
 
+
+/* AJAX Comments Styles */
+.comment-form .error {
+    border-color: #dc3232 !important;
+    border-width: 2px !important;
+}
+
+.comment-form .loadingform {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Basic comment styling */
+.comment-list {
+    list-style: none;
+    padding: 0;
+}
+
+.comment-list li {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+.comment-list .children {
+    margin-top: 15px;
+    margin-left: 20px;
+}
+
+.comment-meta .comment-author {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.comment-metadata {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.comment-content {
+    margin-bottom: 10px;
+}
+
+.reply a {
+    color: #0073aa;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+.reply a:hover {
+    text-decoration: underline;
+}

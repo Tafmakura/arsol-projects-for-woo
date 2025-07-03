@@ -1,311 +1,91 @@
 <?php
-/**
- * Frontend Comments Handler
- *
- * Handles comments functionality for project-related post types with rich text,
- * threaded replies, edit/delete capabilities, and email notifications.
- *
- * @package Arsol_Projects_For_Woo
- * @since 1.0.0
- */
 
-namespace Arsol_Projects_For_Woo\Frontend;
+namespace Arsol_Projects_For_Woo;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Comments {
-    
+/**
+ * Simple AJAX Comments Handler
+ * Based on https://rudrastyh.com/wordpress/ajax-comments.html
+ */
+class Frontend_Comments {
+
     /**
      * Constructor
      */
     public function __construct() {
-        add_action('init', array($this, 'init'));
+        add_action('wp_ajax_arsol_ajax_comments', array($this, 'handle_ajax_comments'));
+        add_action('wp_ajax_nopriv_arsol_ajax_comments', array($this, 'handle_ajax_comments'));
     }
-    
+
     /**
-     * Initialize comments functionality
+     * Handle AJAX comment submission
      */
-    public function init() {
-        // Enable comments for our post types based on settings
-        add_filter('comments_open', array($this, 'enable_comments_for_post_types'), 10, 2);
+    public function handle_ajax_comments() {
         
-        // Add comment support to post types
-        add_action('init', array($this, 'add_comment_support_to_post_types'));
+        // Get the submitted comment
+        $comment = wp_handle_comment_submission(wp_unslash($_POST));
         
-        // Handle comment notifications
-        add_action('comment_post', array($this, 'send_comment_notifications'), 10, 3);
-        
-        // Add edit/delete capabilities
-        add_action('wp_ajax_edit_project_comment', array($this, 'handle_edit_comment'));
-        add_action('wp_ajax_delete_project_comment', array($this, 'handle_delete_comment'));
-        
-        // Filter comment form defaults
-        add_filter('comment_form_defaults', array($this, 'customize_comment_form'));
-        
-        // Add custom comment meta for edit tracking
-        add_action('comment_post', array($this, 'add_comment_meta'), 10, 3);
-        
-        // Add edit/delete links to comments
-        add_filter('comment_text', array($this, 'add_comment_edit_delete_links'), 10, 2);
-    }
-    
-    /**
-     * Enable comments for project post types based on settings
-     */
-    public function enable_comments_for_post_types($open, $post_id) {
-        $post = get_post($post_id);
-        
-        if (!$post) {
-            return $open;
-        }
-        
-        // Check if comments are enabled for this post type in settings
-        if (in_array($post->post_type, ['arsol-pfw-project', 'arsol-pfw-request', 'arsol-pfw-proposal'])) {
-            return \Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type($post->post_type);
-        }
-        
-        return $open;
-    }
-    
-    /**
-     * Add comment support to post types based on settings
-     */
-    public function add_comment_support_to_post_types() {
-        $post_types = ['arsol-pfw-project', 'arsol-pfw-request', 'arsol-pfw-proposal'];
-        
-        foreach ($post_types as $post_type) {
-            if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type($post_type)) {
-                add_post_type_support($post_type, 'comments');
-            }
-        }
-    }
-    
-    /**
-     * Customize comment form defaults
-     */
-    public function customize_comment_form($defaults) {
-        if (!is_account_page()) {
-            return $defaults;
-        }
-        
-        $defaults['comment_field'] = '<div class="arsol-comment-form"><textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required="required" placeholder="' . esc_attr__('Write your comment...', 'arsol-pfw') . '"></textarea></div>';
-        $defaults['title_reply'] = __('Add a Comment', 'arsol-pfw');
-        $defaults['title_reply_to'] = __('Reply to %s', 'arsol-pfw');
-        $defaults['cancel_reply_link'] = __('Cancel Reply', 'arsol-pfw');
-        $defaults['label_submit'] = __('Post Comment', 'arsol-pfw');
-        $defaults['submit_button'] = '<input name="%1$s" type="submit" id="%2$s" class="%3$s button" value="%4$s" />';
-        
-        return $defaults;
-    }
-    
-    /**
-     * Add comment meta for edit tracking
-     */
-    public function add_comment_meta($comment_id, $comment_approved, $commentdata) {
-        // Add original author ID for edit permissions
-        add_comment_meta($comment_id, '_arsol_original_author', get_current_user_id());
-        add_comment_meta($comment_id, '_arsol_created_date', current_time('mysql'));
-    }
-    
-    /**
-     * Add edit/delete links to comments
-     */
-    public function add_comment_edit_delete_links($comment_text, $comment) {
-        if (!is_account_page()) {
-            return $comment_text;
-        }
-        
-        $current_user_id = get_current_user_id();
-        $comment_author_id = get_comment_meta($comment->comment_ID, '_arsol_original_author', true);
-        
-        // Only show edit/delete links to comment author or project managers
-        if ($current_user_id == $comment_author_id || current_user_can('manage_options')) {
-            $edit_link = '<a href="#" class="arsol-edit-comment" data-comment-id="' . $comment->comment_ID . '">' . __('Edit', 'arsol-pfw') . '</a>';
-            $delete_link = '<a href="#" class="arsol-delete-comment" data-comment-id="' . $comment->comment_ID . '">' . __('Delete', 'arsol-pfw') . '</a>';
-            
-            $comment_text .= '<div class="arsol-comment-actions">' . $edit_link . ' | ' . $delete_link . '</div>';
-        }
-        
-        return $comment_text;
-    }
-    
-    /**
-     * Handle AJAX comment editing
-     */
-    public function handle_edit_comment() {
-        // Verify nonce
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_comments_nonce')) {
-            wp_die(__('Security check failed.', 'arsol-pfw'));
-        }
-        
-        $comment_id = intval($_POST['comment_id']);
-        $new_content = wp_kses_post($_POST['content']);
-        
-        if (!$comment_id || !$new_content) {
-            wp_send_json_error(__('Invalid comment data.', 'arsol-pfw'));
-        }
-        
-        $comment = get_comment($comment_id);
-        if (!$comment) {
-            wp_send_json_error(__('Comment not found.', 'arsol-pfw'));
-        }
-        
-        // Check permissions
-        $current_user_id = get_current_user_id();
-        $comment_author_id = get_comment_meta($comment_id, '_arsol_original_author', true);
-        
-        if ($current_user_id != $comment_author_id && !current_user_can('manage_options')) {
-            wp_send_json_error(__('You do not have permission to edit this comment.', 'arsol-pfw'));
-        }
-        
-        // Update comment
-        $updated = wp_update_comment(array(
-            'comment_ID' => $comment_id,
-            'comment_content' => $new_content
-        ));
-        
-        if ($updated) {
-            // Add edit meta
-            update_comment_meta($comment_id, '_arsol_edited_date', current_time('mysql'));
-            update_comment_meta($comment_id, '_arsol_edited_by', $current_user_id);
-            
-            wp_send_json_success(array(
-                'message' => __('Comment updated successfully.', 'arsol-pfw'),
-                'content' => apply_filters('comment_text', $new_content, $comment)
-            ));
-        } else {
-            wp_send_json_error(__('Failed to update comment.', 'arsol-pfw'));
-        }
-    }
-    
-    /**
-     * Handle AJAX comment deletion
-     */
-    public function handle_delete_comment() {
-        // Verify nonce
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_comments_nonce')) {
-            wp_die(__('Security check failed.', 'arsol-pfw'));
-        }
-        
-        $comment_id = intval($_POST['comment_id']);
-        
-        if (!$comment_id) {
-            wp_send_json_error(__('Invalid comment ID.', 'arsol-pfw'));
-        }
-        
-        $comment = get_comment($comment_id);
-        if (!$comment) {
-            wp_send_json_error(__('Comment not found.', 'arsol-pfw'));
-        }
-        
-        // Check permissions
-        $current_user_id = get_current_user_id();
-        $comment_author_id = get_comment_meta($comment_id, '_arsol_original_author', true);
-        
-        if ($current_user_id != $comment_author_id && !current_user_can('manage_options')) {
-            wp_send_json_error(__('You do not have permission to delete this comment.', 'arsol-pfw'));
-        }
-        
-        // Delete comment
-        $deleted = wp_delete_comment($comment_id, true);
-        
-        if ($deleted) {
-            wp_send_json_success(__('Comment deleted successfully.', 'arsol-pfw'));
-        } else {
-            wp_send_json_error(__('Failed to delete comment.', 'arsol-pfw'));
-        }
-    }
-    
-    /**
-     * Send email notifications to project participants
-     */
-    public function send_comment_notifications($comment_id, $comment_approved, $commentdata) {
-        if ($comment_approved !== 1) {
-            return;
-        }
-        
-        $comment = get_comment($comment_id);
-        $post = get_post($comment->comment_post_ID);
-        
-        if (!in_array($post->post_type, ['arsol-pfw-project', 'arsol-pfw-request', 'arsol-pfw-proposal'])) {
-            return;
-        }
-        
-        // Get project participants
-        $participants = array();
-        
-        // Add post author
-        $post_author = get_userdata($post->post_author);
-        if ($post_author) {
-            $participants[$post_author->ID] = $post_author;
-        }
-        
-        // Add project managers from WooCommerce customer role
-        $customer_users = get_users(array('role' => 'customer'));
-        foreach ($customer_users as $user) {
-            if (wc_customer_bought_product($user->user_email, $user->ID, $post->ID)) {
-                $participants[$user->ID] = $user;
+        if (is_wp_error($comment)) {
+            $data = intval($comment->get_error_data());
+            if (!empty($data)) {
+                wp_die('<p>' . $comment->get_error_message() . '</p>', __('Comment Submission Failure'), array('response' => $data, 'back_link' => true));
+            } else {
+                wp_die('Unknown error');
             }
         }
         
-        // Remove comment author from notifications
-        unset($participants[$comment->user_id]);
+        $user = wp_get_current_user();
+        do_action('set_comment_cookies', $comment, $user);
         
-        if (empty($participants)) {
-            return;
+        // Get comment to display
+        $comment_depth = 1;
+        $comment_parent = $comment->comment_parent;
+        while ($comment_parent) {
+            $comment_depth++;
+            $parent_comment = get_comment($comment_parent);
+            $comment_parent = $parent_comment->comment_parent;
         }
         
-        // Prepare email content
-        $comment_author = get_userdata($comment->user_id);
-        $comment_author_name = $comment_author ? $comment_author->display_name : $comment->comment_author;
+        // Generate comment output
+        ob_start();
+        ?>
+        <li <?php comment_class('depth-' . $comment_depth); ?> id="comment-<?php echo $comment->comment_ID; ?>">
+            <article id="div-comment-<?php echo $comment->comment_ID; ?>" class="comment-body">
+                <footer class="comment-meta">
+                    <div class="comment-author vcard">
+                        <b class="fn"><?php echo get_comment_author($comment->comment_ID); ?></b>
+                        <span class="says">says:</span>
+                    </div>
+                    <div class="comment-metadata">
+                        <a href="<?php echo esc_url(get_comment_link($comment->comment_ID)); ?>">
+                            <time datetime="<?php comment_time('c'); ?>">
+                                <?php printf(__('%1$s at %2$s'), get_comment_date('', $comment->comment_ID), get_comment_time()); ?>
+                            </time>
+                        </a>
+                    </div>
+                </footer>
+                
+                <div class="comment-content">
+                    <?php comment_text($comment->comment_ID); ?>
+                </div>
+                
+                <div class="reply">
+                    <?php 
+                    comment_reply_link(array_merge(array(
+                        'add_below' => 'div-comment',
+                        'depth' => $comment_depth,
+                        'max_depth' => get_option('thread_comments_depth')
+                    ), array('comment' => $comment))); 
+                    ?>
+                </div>
+            </article>
+        </li>
+        <?php
         
-        $subject = sprintf(
-            __('New comment on %s: %s', 'arsol-pfw'),
-            ucfirst(str_replace(['arsol-pfw-', '-'], ['', ' '], $post->post_type)),
-            $post->post_title
-        );
-        
-        $message = sprintf(
-            __('A new comment has been posted by %s:', 'arsol-pfw') . "\n\n" .
-            '%s' . "\n\n" .
-            __('You can view and reply to this comment here:', 'arsol-pfw') . "\n" .
-            '%s',
-            $comment_author_name,
-            wp_strip_all_tags($comment->comment_content),
-            $this->get_comment_url($post, $comment_id)
-        );
-        
-        // Send emails to participants
-        foreach ($participants as $participant) {
-            wp_mail(
-                $participant->user_email,
-                $subject,
-                $message,
-                array('Content-Type: text/plain; charset=UTF-8')
-            );
-        }
+        $comment_output = ob_get_clean();
+        wp_die($comment_output);
     }
-    
-    /**
-     * Get comment URL for notifications
-     */
-    private function get_comment_url($post, $comment_id) {
-        switch ($post->post_type) {
-            case 'arsol-pfw-project':
-                $endpoint = 'project-overview';
-                break;
-            case 'arsol-pfw-proposal':
-                $endpoint = 'project-view-proposal';
-                break;
-            case 'arsol-pfw-request':
-                $endpoint = 'project-view-request';
-                break;
-            default:
-                return get_permalink($post->ID);
-        }
-        
-        return wc_get_account_endpoint_url($endpoint, $post->ID) . '#comment-' . $comment_id;
-    }
-}
+} 
