@@ -3,6 +3,49 @@
  * Based on https://rudrastyh.com/wordpress/ajax-comments.html
  */
 
+// Function to update comment count dynamically - Global function
+function updateCommentCount(action, count) {
+    var commentsTitle = jQuery('.comments-title');
+    
+    // Get current count from title
+    var currentText = commentsTitle.text();
+    var currentMatch = currentText.match(/(\d+)/);
+    var currentCount = currentMatch ? parseInt(currentMatch[1]) : 0;
+    
+    var newCount;
+    if (action === 'add') {
+        newCount = currentCount + 1;
+    } else if (action === 'delete') {
+        newCount = Math.max(0, currentCount - 1);
+    } else if (action === 'set') {
+        newCount = count;
+    }
+    
+    // Update the count text
+    if (newCount === 0) {
+        commentsTitle.text('No Comments');
+        jQuery('.comments-list').hide();
+        if (jQuery('.no-comments').length === 0) {
+            jQuery('.comments-container').prepend('<div class="no-comments"><p>No comments yet. Be the first to comment!</p></div>');
+        }
+    } else if (newCount === 1) {
+        commentsTitle.text('One Comment');
+        jQuery('.comments-list').show();
+        jQuery('.no-comments').remove();
+    } else {
+        commentsTitle.text(newCount + ' Comments');
+        jQuery('.comments-list').show();
+        jQuery('.no-comments').remove();
+    }
+    
+    // If this is the first comment, show the title
+    if (currentCount === 0 && newCount === 1) {
+        if (commentsTitle.length === 0) {
+            jQuery('.commentlist').before('<h4 class="comments-title">One Comment</h4>');
+        }
+    }
+}
+
 // Validation functions
 jQuery.extend(jQuery.fn, {
     /*
@@ -113,6 +156,9 @@ jQuery(function($) {
                     
                     // clear form fields
                     $('#comment').val('');
+                    
+                    // Update comment count
+                    updateCommentCount('add');
                     
                 },
                 complete: function() {
@@ -369,4 +415,51 @@ jQuery(function($) {
         // Reset reply link text
         commentElement.find('.comment-reply-link').text('Reply');
     });
+});
+
+// AJAX Comments
+jQuery(function($) {
+    
+    // Function to update comment count dynamically
+    function updateCommentCount(action, count) {
+        var commentsTitle = $('.comments-title');
+        
+        // Get current count from title
+        var currentText = commentsTitle.text();
+        var currentMatch = currentText.match(/(\d+)/);
+        var currentCount = currentMatch ? parseInt(currentMatch[1]) : 0;
+        
+        var newCount;
+        if (action === 'add') {
+            newCount = currentCount + 1;
+        } else if (action === 'delete') {
+            newCount = Math.max(0, currentCount - 1);
+        } else if (action === 'set') {
+            newCount = count;
+        }
+        
+        // Update the count text
+        if (newCount === 0) {
+            commentsTitle.text('No Comments');
+            $('.comments-list').hide();
+            if ($('.no-comments').length === 0) {
+                $('.comments-container').prepend('<div class="no-comments"><p>No comments yet. Be the first to comment!</p></div>');
+            }
+        } else if (newCount === 1) {
+            commentsTitle.text('One Comment');
+            $('.comments-list').show();
+            $('.no-comments').remove();
+        } else {
+            commentsTitle.text(newCount + ' Comments');
+            $('.comments-list').show();
+            $('.no-comments').remove();
+        }
+        
+        // If this is the first comment, show the title
+        if (currentCount === 0 && newCount === 1) {
+            if (commentsTitle.length === 0) {
+                $('.commentlist').before('<h4 class="comments-title">One Comment</h4>');
+            }
+        }
+    }
 });
