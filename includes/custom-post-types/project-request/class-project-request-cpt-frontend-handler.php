@@ -157,7 +157,7 @@ class Frontend_Handler {
             }
             
             // Redirect to the specific request view
-            $redirect_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
+            $redirect_url = wc_get_account_endpoint_url('view-request/' . $request_id);
             wp_safe_redirect($redirect_url);
             exit;
         } else {

@@ -33,13 +33,13 @@ $is_page_mode = !empty($page_title) && !$is_dashboard && !$is_individual_item;
 if ($is_dashboard) {
     // Build tabs array
     $tabs = array(
-        'overview' => array('label' => __('Overview', 'arsol-pfw'), 'url' => wc_get_account_endpoint_url('project-overview/' . $project_id)),
-        'orders' => array('label' => __('Orders', 'woocommerce'), 'url' => wc_get_account_endpoint_url('project-orders/' . $project_id))
+        'overview' => array('label' => __('Overview', 'arsol-pfw'), 'url' => wc_get_account_endpoint_url('view-project/' . $project_id)),
+        'orders' => array('label' => __('Orders', 'woocommerce'), 'url' => wc_get_account_endpoint_url('view-project-orders/' . $project_id))
     );
     
     // Only add subscriptions tab if WooCommerce Subscriptions is active
     if (class_exists('WC_Subscriptions')) {
-        $tabs['subscriptions'] = array('label' => __('Subscriptions', 'woocommerce-subscriptions'), 'url' => wc_get_account_endpoint_url('project-subscriptions/' . $project_id));
+        $tabs['subscriptions'] = array('label' => __('Subscriptions', 'woocommerce-subscriptions'), 'url' => wc_get_account_endpoint_url('view-project-subscriptions/' . $project_id));
     }
     ?>
     <div class="arsol-pfw-project-intro">
@@ -135,7 +135,7 @@ if (empty($main_title)) {
             
             <?php if ($is_page_mode && !empty($project_id) && !empty($project)): ?>
                 <span class="breadcrumb-separator">/</span>
-                <a href="<?php echo esc_url(wc_get_account_endpoint_url('project-overview') . '/' . $project_id); ?>">
+                <a href="<?php echo esc_url(wc_get_account_endpoint_url('view-project') . '/' . $project_id); ?>">
                     <?php echo esc_html($project->post_title); ?>
                 </a>
             <?php endif; ?>
@@ -164,7 +164,7 @@ if (empty($main_title)) {
             // Default actions based on post type
             switch ($post_type) {
                 case 'arsol-pfw-project':
-                    $url = wc_get_account_endpoint_url('project-create') . '?edit=' . $post_id;
+                    $url = wc_get_account_endpoint_url('create-project') . '?edit=' . $post_id;
                     $label = __('Edit Project', 'arsol-pfw');
                     $type = 'secondary';
                     $icon = 'dashicons-edit';
@@ -172,7 +172,7 @@ if (empty($main_title)) {
                     break;
                     
                 case 'arsol-pfw-proposal':
-                    $url = wc_get_account_endpoint_url('project-create') . '?edit_proposal=' . $post_id;
+                    $url = wc_get_account_endpoint_url('create-project') . '?edit_proposal=' . $post_id;
                     $label = __('Edit Proposal', 'arsol-pfw');
                     $type = 'secondary';
                     $icon = 'dashicons-edit';
@@ -180,7 +180,7 @@ if (empty($main_title)) {
                     break;
                     
                 case 'arsol-pfw-request':
-                    $url = wc_get_account_endpoint_url('project-create') . '?from_request=' . $post_id;
+                    $url = wc_get_account_endpoint_url('create-project') . '?from_request=' . $post_id;
                     $label = __('Convert to Project', 'arsol-pfw');
                     $type = 'primary';
                     $icon = 'dashicons-arrow-right-alt';
@@ -190,7 +190,7 @@ if (empty($main_title)) {
             ?>
         <?php elseif ($is_page_mode && !empty($project_id)): ?>
             <!-- Default action for project pages: View Project -->
-            <a href="<?php echo esc_url(wc_get_account_endpoint_url('project-overview') . '/' . $project_id); ?>" class="button button-secondary">
+            <a href="<?php echo esc_url(wc_get_account_endpoint_url('view-project') . '/' . $project_id); ?>" class="button button-secondary">
                 <?php _e('View Project', 'arsol-pfw'); ?>
             </a>
         <?php endif; ?>

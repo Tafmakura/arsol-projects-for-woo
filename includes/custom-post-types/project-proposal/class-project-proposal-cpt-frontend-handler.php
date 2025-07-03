@@ -261,7 +261,7 @@ class Frontend_Handler {
          * @param string $redirect_url The URL about to redirect to
          * @param array $creation_data Creation context data
          */
-        $redirect_url = wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id);
+        $redirect_url = wc_get_account_endpoint_url('view-proposal/' . $proposal_id);
         do_action('arsol_before_proposal_creation_redirect', $proposal_id, $redirect_url, $creation_data);
 
         // Redirect to project proposal view page

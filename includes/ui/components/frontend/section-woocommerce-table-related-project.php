@@ -37,7 +37,7 @@ if (!defined('ABSPATH')) {
                 <?php if ($has_link) : ?>
                     <?php 
                     // Generate account endpoint URL for project overview
-                    $project_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
+                    $project_url = wc_get_account_endpoint_url('view-project/' . $project_id);
                     ?>
                     <a href="<?php echo esc_url($project_url); ?>" class="arsol-pfw-project-link">
                         <?php echo esc_html($project_name); ?>
@@ -60,7 +60,7 @@ if (!defined('ABSPATH')) {
                 <?php if ($has_link) : ?>
                     <?php 
                     // Generate account endpoint URL for project overview
-                    $project_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
+                    $project_url = wc_get_account_endpoint_url('view-project/' . $project_id);
                     ?>
                     <a href="<?php echo esc_url($project_url); ?>" class="woocommerce-button button view arsol-pfw-view-button">
                         <?php esc_html_e('View', 'arsol-pfw'); ?>

@@ -40,7 +40,7 @@ do_action('arsol_projects_before_user_proposals', $has_items);
                         }
                         // No fallback - if no taxonomy status found, leave empty
                     }
-                    $view_url = wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id);
+                    $view_url = wc_get_account_endpoint_url('view-proposal/' . $proposal_id);
                     $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
                 ?>
                     <tr class="woocommerce-projects-table__row">

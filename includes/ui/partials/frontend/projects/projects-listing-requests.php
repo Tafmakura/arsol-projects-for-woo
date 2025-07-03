@@ -37,7 +37,7 @@ do_action('arsol_projects_before_user_requests', $has_items);
                     $stage = $stage_terms[0];
                 }
                 
-                $view_url = wc_get_account_endpoint_url('project-view-request/' . $request_id);
+                $view_url = wc_get_account_endpoint_url('view-request/' . $request_id);
                 $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
                 ?>
                     <tr class="woocommerce-projects-table__row">

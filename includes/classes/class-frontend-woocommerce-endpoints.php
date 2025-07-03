@@ -39,18 +39,18 @@ class Frontend_Endpoints {
         
         // Handle endpoint content
         add_action('woocommerce_account_projects_endpoint', array($this, 'projects_endpoint_content'));
-        add_action('woocommerce_account_project-overview_endpoint', array($this, 'project_overview_endpoint_content'));
-        add_action('woocommerce_account_project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
+        add_action('woocommerce_account_view-project_endpoint', array($this, 'project_overview_endpoint_content'));
+        add_action('woocommerce_account_view-project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
         
         // Only register subscription endpoint if WooCommerce Subscriptions is active
         if (class_exists('WC_Subscriptions')) {
-            add_action('woocommerce_account_project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
+            add_action('woocommerce_account_view-project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
         }
         
-        add_action('woocommerce_account_project-create_endpoint', array($this, 'project_create_endpoint_content'));
-        add_action('woocommerce_account_project-request_endpoint', array($this, 'project_request_endpoint_content'));
-        add_action('woocommerce_account_project-view-proposal_endpoint', array($this, 'project_view_proposal_endpoint_content'));
-        add_action('woocommerce_account_project-view-request_endpoint', array($this, 'project_view_request_endpoint_content'));
+        add_action('woocommerce_account_create-project_endpoint', array($this, 'project_create_endpoint_content'));
+        add_action('woocommerce_account_create-request_endpoint', array($this, 'project_request_endpoint_content'));
+        add_action('woocommerce_account_view-proposal_endpoint', array($this, 'project_view_proposal_endpoint_content'));
+        add_action('woocommerce_account_view-request_endpoint', array($this, 'project_view_request_endpoint_content'));
 
         // Add comment redirect filter
         add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
@@ -73,18 +73,18 @@ class Frontend_Endpoints {
         }
 
         add_rewrite_endpoint('projects', EP_PAGES);
-        add_rewrite_endpoint('project-overview', EP_PAGES);
-        add_rewrite_endpoint('project-orders', EP_PAGES);
+        add_rewrite_endpoint('view-project', EP_PAGES);
+        add_rewrite_endpoint('view-project-orders', EP_PAGES);
         
         // Only register subscription endpoint if WooCommerce Subscriptions is active
         if (class_exists('WC_Subscriptions')) {
-            add_rewrite_endpoint('project-subscriptions', EP_PAGES);
+            add_rewrite_endpoint('view-project-subscriptions', EP_PAGES);
         }
         
-        add_rewrite_endpoint('project-create', EP_PAGES);
-        add_rewrite_endpoint('project-request', EP_PAGES);
-        add_rewrite_endpoint('project-view-proposal', EP_PAGES);
-        add_rewrite_endpoint('project-view-request', EP_PAGES);
+        add_rewrite_endpoint('create-project', EP_PAGES);
+        add_rewrite_endpoint('create-request', EP_PAGES);
+        add_rewrite_endpoint('view-proposal', EP_PAGES);
+        add_rewrite_endpoint('view-request', EP_PAGES);
 
         // Debug logging
         if (function_exists('error_log')) {
@@ -114,18 +114,18 @@ class Frontend_Endpoints {
      */
     public function add_woocommerce_query_vars($query_vars) {
         $query_vars['projects'] = 'projects';
-        $query_vars['project-overview'] = 'project-overview';
-        $query_vars['project-orders'] = 'project-orders';
+        $query_vars['view-project'] = 'view-project';
+        $query_vars['view-project-orders'] = 'view-project-orders';
         
         // Only add subscription query var if WooCommerce Subscriptions is active
         if (class_exists('WC_Subscriptions')) {
-            $query_vars['project-subscriptions'] = 'project-subscriptions';
+            $query_vars['view-project-subscriptions'] = 'view-project-subscriptions';
         }
         
-        $query_vars['project-create'] = 'project-create';
-        $query_vars['project-request'] = 'project-request';
-        $query_vars['project-view-proposal'] = 'project-view-proposal';
-        $query_vars['project-view-request'] = 'project-view-request';
+        $query_vars['create-project'] = 'create-project';
+        $query_vars['create-request'] = 'create-request';
+        $query_vars['view-proposal'] = 'view-proposal';
+        $query_vars['view-request'] = 'view-request';
         
         // Debug logging
         if (function_exists('error_log')) {
@@ -200,7 +200,7 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_overview_endpoint_content() {
-        $project_id = absint(get_query_var('project-overview'));
+        $project_id = absint(get_query_var('view-project'));
         
         if (!$this->validate_project_access($project_id)) {
             return;
@@ -232,7 +232,7 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_orders_endpoint_content() {
-        $project_id = absint(get_query_var('project-orders'));
+        $project_id = absint(get_query_var('view-project-orders'));
         
         if (!$this->validate_project_access($project_id)) {
             return;
@@ -271,7 +271,7 @@ class Frontend_Endpoints {
             exit;
         }
         
-        $project_id = absint(get_query_var('project-subscriptions'));
+        $project_id = absint(get_query_var('view-project-subscriptions'));
         
         if (!$this->validate_project_access($project_id)) {
             return;
@@ -338,7 +338,7 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_view_proposal_endpoint_content() {
-        $proposal_id = absint(get_query_var('project-view-proposal'));
+        $proposal_id = absint(get_query_var('view-proposal'));
         
         if (!$proposal_id) {
             wc_add_notice(__('Invalid proposal ID.', 'arsol-pfw'), 'error');
@@ -391,7 +391,7 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_view_request_endpoint_content() {
-        $request_id = absint(get_query_var('project-view-request'));
+        $request_id = absint(get_query_var('view-request'));
         
         if (!$request_id) {
             wc_add_notice(__('Invalid request ID.', 'arsol-pfw'), 'error');
@@ -529,13 +529,13 @@ class Frontend_Endpoints {
             // Determine the appropriate endpoint based on post type
             switch ($post->post_type) {
                 case 'arsol-pfw-project':
-                    $endpoint = 'project-overview';
+                    $endpoint = 'view-project';
                     break;
                 case 'arsol-pfw-proposal':
-                    $endpoint = 'project-view-proposal';
+                    $endpoint = 'view-proposal';
                     break;
                 case 'arsol-pfw-request':
-                    $endpoint = 'project-view-request';
+                    $endpoint = 'view-request';
                     break;
                 default:
                     return $location;

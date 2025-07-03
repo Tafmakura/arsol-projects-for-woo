@@ -34,7 +34,7 @@ do_action('arsol_projects_before_user_projects', $has_items);
                 $project_id = get_the_ID();
                 $status_terms = wp_get_post_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'names'));
                 $status = (!empty($status_terms) && !is_wp_error($status_terms)) ? $status_terms[0] : 'Not Started';
-                $view_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
+                $view_url = wc_get_account_endpoint_url('view-project/' . $project_id);
                 $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
             ?>
                 <tr class="woocommerce-projects-table__row">

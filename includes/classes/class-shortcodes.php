@@ -194,7 +194,7 @@ class Shortcodes {
 	 * @return int ID from URL or 0 if not found
 	 */
 	private function get_id_from_account_url() {
-		$endpoints = array('project-overview', 'project-orders', 'project-subscriptions', 'project-view-proposal', 'project-view-request');
+		$endpoints = array('view-project', 'view-project-orders', 'view-project-subscriptions', 'view-proposal', 'view-request');
 		
 		foreach ($endpoints as $endpoint) {
 			$value = get_query_var($endpoint);

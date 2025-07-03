@@ -29,7 +29,7 @@ do_action('arsol_projects_before_user_projects', $has_projects);
                     $projects_query->the_post();
                     $project_id = get_the_ID();
                     // Generate account endpoint URL for project overview
-                    $project_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
+                    $project_url = wc_get_account_endpoint_url('view-project/' . $project_id);
                     ?>
                     <tr class="woocommerce-orders-table__row project">
                         <td class="woocommerce-orders-table__cell woocommerce-orders-table__cell-project-name" data-title="<?php esc_attr_e('Name', 'arsol-pfw'); ?>" scope="row">

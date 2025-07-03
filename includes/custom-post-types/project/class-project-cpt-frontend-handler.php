@@ -224,7 +224,7 @@ class Frontend_Handler {
          * @param string $redirect_url The URL about to redirect to
          * @param array $creation_data Creation context data
          */
-        $redirect_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
+        $redirect_url = wc_get_account_endpoint_url('view-project/' . $project_id);
         do_action('arsol_before_project_creation_redirect', $project_id, $redirect_url, $creation_data);
 
         // Redirect to project overview page
@@ -306,7 +306,7 @@ class Frontend_Handler {
         // Validate required fields
         if (empty($title)) {
             wc_add_notice(__('Please fill in all required fields', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('project-overview/' . $project_id));
+            wp_safe_redirect(wc_get_account_endpoint_url('view-project/' . $project_id));
             exit;
         }
 
@@ -357,7 +357,7 @@ class Frontend_Handler {
             do_action('arsol_project_edit_post_update_failed', $result, $project_data, $edit_data);
             
             wc_add_notice($result->get_error_message(), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('project-overview/' . $project_id));
+            wp_safe_redirect(wc_get_account_endpoint_url('view-project/' . $project_id));
             exit;
         }
 
@@ -428,7 +428,7 @@ class Frontend_Handler {
          * @param int $project_id The project ID that was edited
          * @param array $edit_data Edit context data
          */
-        $redirect_url = wc_get_account_endpoint_url('project-overview/' . $project_id);
+        $redirect_url = wc_get_account_endpoint_url('view-project/' . $project_id);
         $redirect_url = apply_filters('arsol_project_edit_redirect_url', $redirect_url, $project_id, $edit_data);
 
         /**

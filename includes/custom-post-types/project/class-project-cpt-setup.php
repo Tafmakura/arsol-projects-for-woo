@@ -130,7 +130,7 @@ class Setup {
             }
             
             // Redirect to the project overview page in the account area
-            wp_redirect(wc_get_account_endpoint_url('project-overview/' . $project_id));
+            wp_redirect(wc_get_account_endpoint_url('view-project/' . $project_id));
             exit;
         }
     }

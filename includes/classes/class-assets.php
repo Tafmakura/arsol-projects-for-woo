@@ -91,7 +91,7 @@ class Assets {
             ));
             
             // Enqueue comments script on project-related pages (simple approach)
-            if (is_account_page() && (is_wc_endpoint_url('project-overview') || is_wc_endpoint_url('project-view-proposal') || is_wc_endpoint_url('project-view-request'))) {
+            if (is_account_page() && (is_wc_endpoint_url('view-project') || is_wc_endpoint_url('view-proposal') || is_wc_endpoint_url('view-request'))) {
                 wp_enqueue_script('arsol-pfw-frontend-comments');
                 
                 // Simple localization for AJAX comments

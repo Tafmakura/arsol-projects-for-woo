@@ -122,7 +122,7 @@ echo "= " . $email_heading . " =\n\n";
 <p><?php _e('You can always check the current stage and view all communications in your customer portal.', 'arsol-pfw'); ?></p>
 
 <p>
-    <a href="<?php echo esc_url(wc_get_account_endpoint_url('project-overview')); ?>" target="_blank">
+    <a href="<?php echo esc_url(wc_get_account_endpoint_url('view-project')); ?>" target="_blank">
         <?php _e('View Project Dashboard', 'arsol-pfw'); ?>
     </a>
 </p>

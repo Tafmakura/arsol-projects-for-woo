@@ -29,10 +29,10 @@ $can_request = $admin_users->can_user_request_projects($user_id);
 $button_url = '';
 $button_label = '';
 if ($can_create) {
-    $button_url = wc_get_account_endpoint_url('project-create');
+    $button_url = wc_get_account_endpoint_url('create-project');
     $button_label = __('+ Create Project', 'arsol-pfw');
 } elseif ($can_request) {
-    $button_url = wc_get_account_endpoint_url('project-request');
+    $button_url = wc_get_account_endpoint_url('create-request');
     $button_label = __('+ Request Project', 'arsol-pfw');
 }
 
@@ -100,6 +100,8 @@ $tabs = array(
             }
             break;
         case 'requests':
+            $button_text = __('Create New Request', 'arsol-pfw');
+            $button_url = wc_get_account_endpoint_url('create-request');
             $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_requests_list]');
             if ($override) {
                 echo do_shortcode($override);
@@ -109,6 +111,8 @@ $tabs = array(
             break;
         case 'active':
         default:
+            $button_text = __('Create New Project', 'arsol-pfw');
+            $button_url = wc_get_account_endpoint_url('create-project');
             $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_projects_list]');
             if ($override) {
                 echo do_shortcode($override);

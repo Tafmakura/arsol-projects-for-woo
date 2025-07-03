@@ -529,7 +529,7 @@ class Workflow_Handler {
              * Fired just before redirecting to the new project
              */
             $redirect_url = $is_internal_call 
-                ? wc_get_account_endpoint_url('project-overview/' . $new_project_id)
+                ? wc_get_account_endpoint_url('view-project/' . $new_project_id)
                 : admin_url('post.php?post=' . $new_project_id . '&action=edit');
             
             do_action('arsol_before_project_conversion_redirect', $new_project_id, $redirect_url, $conversion_data);
@@ -555,7 +555,7 @@ class Workflow_Handler {
                 if (function_exists('wc_add_notice')) {
                     wc_add_notice($e->getMessage(), 'error');
                 }
-                $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('project-view-proposal/' . $proposal_id));
+                $this->safe_redirect(wp_get_referer() ?: wc_get_account_endpoint_url('view-proposal/' . $proposal_id));
             } else {
                 // Redirect back to the proposal edit page instead of listing page
                 $this->safe_redirect(admin_url('post.php?post=' . $proposal_id . '&action=edit'));
@@ -782,7 +782,7 @@ class Workflow_Handler {
              */
             do_action('arsol_request_creation_post_creation_failed', $post_id, $post_data, $creation_data);
             
-            $this->safe_redirect(wc_get_account_endpoint_url('project-create-request'));
+            $this->safe_redirect(wc_get_account_endpoint_url('create-request'));
         }
 
         $creation_data['request_id'] = $post_id;
@@ -859,7 +859,7 @@ class Workflow_Handler {
          * @param string $redirect_url The URL about to redirect to
          * @param array $creation_data Creation context data
          */
-        $redirect_url = wc_get_account_endpoint_url('project-view-request/' . $post_id);
+        $redirect_url = wc_get_account_endpoint_url('view-request/' . $post_id);
         do_action('arsol_before_request_creation_redirect', $post_id, $redirect_url, $creation_data);
 
         $this->safe_redirect($redirect_url);
@@ -885,11 +885,9 @@ class Workflow_Handler {
         );
         $result = wp_update_post($post_data);
 
-
-
         $this->update_request_meta($post_id, $_POST);
         
-        $this->safe_redirect(wc_get_account_endpoint_url('project-view-request/' . $post_id));
+        $this->safe_redirect(wc_get_account_endpoint_url('view-request/' . $post_id));
     }
 
     private function update_request_meta($post_id, $data) {
