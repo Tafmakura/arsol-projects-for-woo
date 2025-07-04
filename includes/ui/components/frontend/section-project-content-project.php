@@ -25,14 +25,8 @@ $related_request_id = get_post_meta($post->ID, '_arsol_pfw_related_request_id', 
 $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 ?>
 
-<div class="arsol-pfw-project-description">
-    <?php if (!empty($post->post_content)) : ?>
-        <?php echo wp_kses_post($post->post_content); ?>
-    <?php endif; ?>
-</div>
-
 <?php
-// Show Customer Notice unconditionally
+// 1. Customer Notice (first)
 $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'project');
 if (!empty($customer_notice)) : ?>
     <div class="arsol-pfw-notice arsol-pfw-customer-notice">
@@ -42,5 +36,13 @@ if (!empty($customer_notice)) : ?>
         <div class="arsol-pfw-notice-content">
             <?php echo wp_kses_post(wpautop($customer_notice)); ?>
         </div>
+    </div>
+<?php endif; ?>
+
+<?php
+// 2. Post Content (second)
+if (!empty($post->post_content)) : ?>
+    <div class="arsol-pfw-post-content">
+        <?php echo wp_kses_post($post->post_content); ?>
     </div>
 <?php endif; ?> 
