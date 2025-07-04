@@ -74,7 +74,6 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             do_action('arsol_pfw_project_content_before', $project_type, $wrapper_data);
             ?>
             
-            <div class="arsol-pfw-post-content">
                 <?php
                 // Check for shortcode override using the new system
                 $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_proposal_overview]');
@@ -84,7 +83,6 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                     echo do_shortcode('[arsol_pfw_proposal_overview proposal_id="' . $proposal_id . '"]');
                 }
                 ?>
-            </div>
             
             <?php
             /**

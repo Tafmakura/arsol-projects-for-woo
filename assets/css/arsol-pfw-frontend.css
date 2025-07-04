@@ -127,6 +127,9 @@
 .arsol-pfw-content {
     flex: 1; /* Allows content to grow and take up available space */
     min-width: 0; /* Prevents flex item from overflowing */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Space between child elements (customer notice, post content, files, comments) */
 }
 
 .arsol-pfw-content h1,

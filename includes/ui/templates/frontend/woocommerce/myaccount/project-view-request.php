@@ -129,27 +129,25 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         do_action('arsol_pfw_project_content_before', $project_type, $wrapper_data);
         ?>
         
-                <div class="arsol-pfw-post-content">
-        <?php
-        // Check for shortcode override using the new system
-        $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_overview]');
-        if ($override) {
-                        echo do_shortcode($override . ' request_id="' . $request_id . '"');
-        } else {
-                        echo do_shortcode('[arsol_pfw_request_overview request_id="' . $request_id . '"]');
-        }
-        ?>
-                </div>
-        
-        <?php
-        /**
-         * Hook: arsol_pfw_project_content_after
-         * 
-         * @param string $project_type Project type: 'request'
-         * @param array $data Wrapper data
-         */
-        do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
-        ?>
+                <?php
+                // Check for shortcode override using the new system
+                $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_overview]');
+                if ($override) {
+                                echo do_shortcode($override . ' request_id="' . $request_id . '"');
+                } else {
+                                echo do_shortcode('[arsol_pfw_request_overview request_id="' . $request_id . '"]');
+                }
+                ?>
+                
+                <?php
+                /**
+                 * Hook: arsol_pfw_project_content_after
+                 * 
+                 * @param string $project_type Project type: 'request'
+                 * @param array $data Wrapper data
+                 */
+                do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
+                ?>
         
         <?php
                 // Files section - show request file upload if enabled for this stage
