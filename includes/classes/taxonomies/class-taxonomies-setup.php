@@ -32,10 +32,6 @@ class Taxonomies_Setup {
      * Include necessary taxonomy files
      */
     private function require_files() {
-        // Project Phase Taxonomy Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/project-phase/class-taxonomies-project-phase-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/project-phase/class-taxonomies-project-phase-admin.php';
-        
         // Project Stage Taxonomy Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/project-stage/class-taxonomies-project-stage-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/project-stage/class-taxonomies-project-stage-admin.php';
@@ -64,10 +60,6 @@ class Taxonomies_Setup {
         // Initialize Project Stage Taxonomy (third)
         new ProjectStage\Taxonomies_Project_Stage_Setup();
         new ProjectStage\Taxonomies_Project_Stage_Admin();
-        
-        // Initialize Project Phase Taxonomy (last - for workflow phases)
-        new ProjectPhase\Taxonomies_Project_Phase_Setup();
-        new ProjectPhase\Taxonomies_Project_Phase_Admin();
     }
 
     /**
