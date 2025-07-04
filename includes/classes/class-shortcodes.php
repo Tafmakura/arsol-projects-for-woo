@@ -681,7 +681,7 @@ class Shortcodes {
 		}
 
 		// Load the project content template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-project.php';
+		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project.php';
 		
 		// Restore original post
 		$post = $original_post;
@@ -729,7 +729,7 @@ class Shortcodes {
 		}
 
 		// Load the proposal content template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-proposal.php';
+		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-proposal.php';
 		
 		// Restore original post
 		$post = $original_post;
@@ -777,7 +777,7 @@ class Shortcodes {
 		}
 
 		// Load the request content template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-content-request.php';
+		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-request.php';
 		
 		// Restore original post
 		$post = $original_post;
@@ -1332,7 +1332,7 @@ class Shortcodes {
 		}
 		
 		// Load the project form template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-project.php';
+		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-create-project.php';
 
 		return ob_get_clean();
 	}
@@ -1376,7 +1376,7 @@ class Shortcodes {
 		}
 		
 		// Load the request form template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/form-project-create-request.php';
+		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-create-request.php';
 
 		return ob_get_clean();
 	}

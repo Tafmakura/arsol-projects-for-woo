@@ -129,25 +129,25 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         do_action('arsol_pfw_project_content_before', $project_type, $wrapper_data);
         ?>
         
-                <?php
-                // Check for shortcode override using the new system
-                $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_overview]');
-                if ($override) {
+        <?php
+        // Check for shortcode override using the new system
+        $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_overview]');
+        if ($override) {
                                 echo do_shortcode($override . ' request_id="' . $request_id . '"');
-                } else {
+        } else {
                                 echo do_shortcode('[arsol_pfw_request_overview request_id="' . $request_id . '"]');
-                }
-                ?>
-                
-                <?php
-                /**
-                 * Hook: arsol_pfw_project_content_after
-                 * 
-                 * @param string $project_type Project type: 'request'
-                 * @param array $data Wrapper data
-                 */
-                do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
-                ?>
+        }
+        ?>
+        
+        <?php
+        /**
+         * Hook: arsol_pfw_project_content_after
+         * 
+         * @param string $project_type Project type: 'request'
+         * @param array $data Wrapper data
+         */
+        do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
+        ?>
         
         <?php
                 // Files section - show request file upload if enabled for this stage
@@ -195,9 +195,9 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                         // Set the variable that the comments template expects
                         $project_id = $request_id;
                         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; 
-                        ?>
-                    </div>
-                <?php endif; ?>
+                ?>
+            </div>
+        <?php endif; ?>
     </div>
     
             <?php if ($show_sidebar): ?>

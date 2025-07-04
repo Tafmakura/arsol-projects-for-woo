@@ -22,7 +22,7 @@ include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/proje
 // Always render orders content for this template
 \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
     'project_orders',
-    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/section-project-listing-orders.php',
+    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project-orders.php',
     compact('project')
 );
 ?>

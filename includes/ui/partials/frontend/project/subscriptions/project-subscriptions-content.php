@@ -13,6 +13,6 @@ if (!defined('ABSPATH')) exit;
 <div class="arsol-pfw-project-subscriptions-content">
     <?php
     // Include the existing subscriptions listing section
-    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-project-listing-subscriptions.php';
+    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project-subscriptions.php';
     ?>
 </div>
