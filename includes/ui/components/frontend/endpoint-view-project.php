@@ -30,9 +30,6 @@ $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' .
 $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'project');
 if (!empty($customer_notice)) : ?>
     <div class="arsol-pfw-customer-notice">
-        <div class="arsol-pfw-notice-header">
-            <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
-        </div>
         <div class="arsol-pfw-notice-content">
             <?php echo wp_kses_post(wpautop($customer_notice)); ?>
         </div>
@@ -42,6 +39,7 @@ if (!empty($customer_notice)) : ?>
 <?php
 // 2. Post Content (second)
 if (!empty($post->post_content)) : ?>
+    <h4><?php _e('Project Details', 'arsol-pfw'); ?></h4>
     <div class="arsol-pfw-post-content">
         <?php echo wp_kses_post($post->post_content); ?>
     </div>

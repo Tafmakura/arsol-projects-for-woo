@@ -152,7 +152,9 @@ switch ($post_type) {
                     <div class="comment-form-container">
                         <?php
                         $comment_form_args = array(
-                            'title_reply' => sprintf(__('Add a Comment to this %s', 'arsol-pfw'), ucfirst($phase_type)),
+                            'title_reply' => __('Add a Comment', 'arsol-pfw'),
+                            'title_reply_before' => '<h4 id="reply-title" class="comment-reply-title">',
+                            'title_reply_after' => '</h4>',
                             'title_reply_to' => __('Reply to %s', 'arsol-pfw'),
                             'comment_field' => '<div class="arsol-comment-form"><textarea id="comment" name="comment" cols="45" rows="6" maxlength="65525" required="required" placeholder="' . esc_attr__('Write your comment...', 'arsol-pfw') . '"></textarea></div>',
                             'logged_in_as' => '',
