@@ -110,6 +110,7 @@
 /* Add styles for the project content layout with sidebar */
 .arsol-pfw-content-wrapper {
     display: flex;
+    margin-top: 1.5em;
     flex-wrap: wrap; /* Allows columns to wrap on smaller screens */
     gap: 20px; /* Adds space between columns */
 }
@@ -568,7 +569,7 @@
 
 /* Customer Notice Styles */
 .arsol-pfw-customer-notice {
-    margin: 1.5rem 0;
+    margin: 0 0 1.5rem 0;
     padding: 1rem;
     background-color: #e7f3ff;
     border: 1px solid #2271b1;
