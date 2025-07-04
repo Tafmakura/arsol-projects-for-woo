@@ -39,8 +39,8 @@ if (!empty($customer_notice)) : ?>
 <?php
 // 2. Post Content (second)
 if (!empty($post->post_content)) : ?>
-    <h4><?php _e('Project Details', 'arsol-pfw'); ?></h4>
     <div class="arsol-pfw-post-content">
+        <h4><?php _e('Project Details', 'arsol-pfw'); ?></h4>
         <?php echo wp_kses_post($post->post_content); ?>
     </div>
-<?php endif; ?> 
+<?php endif; ?>
