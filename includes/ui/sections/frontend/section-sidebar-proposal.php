@@ -27,27 +27,27 @@ error_log("ARSOL DEBUG: Proposal sidebar - ID: {$proposal->ID}, Title: '{$propos
      */
     do_action('arsol_pfw_proposal_sidebar_before', $proposal->post_type, $current_stage, $proposal_id);
     ?>
-    
-    <?php
-    /**
-     * Hook: arsol_pfw_project_proposal_sidebar_meta
-     * 
+
+        <?php
+        /**
+         * Hook: arsol_pfw_project_proposal_sidebar_meta
+         * 
      * @param string $current_stage Current stage
      * @param int $proposal_id Proposal ID
-     */
+         */
     do_action('arsol_pfw_project_proposal_sidebar_meta', $current_stage, $proposal_id);
-    ?>
+        ?>
     
-    <?php
-    /**
-     * Hook: arsol_pfw_project_proposal_sidebar_buttons
-     * 
+        <?php
+        /**
+         * Hook: arsol_pfw_project_proposal_sidebar_buttons
+         * 
      * @param string $current_stage Current stage
      * @param int $proposal_id Proposal ID
-     */
+         */
     do_action('arsol_pfw_project_proposal_sidebar_buttons', $current_stage, $proposal_id);
-    ?>
-    
+        ?>
+
     <?php
     /**
      * Hook: arsol_pfw_proposal_sidebar_after
@@ -58,4 +58,4 @@ error_log("ARSOL DEBUG: Proposal sidebar - ID: {$proposal->ID}, Title: '{$propos
      */
     do_action('arsol_pfw_proposal_sidebar_after', $proposal->post_type, $current_stage, $proposal_id);
     ?>
-</div> 
+    </div>

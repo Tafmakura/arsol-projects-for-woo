@@ -138,7 +138,11 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             $show_comments = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_comments($proposal_id, $current_stage_id);
             if ($show_comments): ?>
                 <div class="comments">
-                    <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; ?>
+                    <?php 
+                    // Set the variable that the comments template expects
+                    $project_id = $proposal_id;
+                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; 
+                    ?>
                 </div>
             <?php endif; ?>
         </div>

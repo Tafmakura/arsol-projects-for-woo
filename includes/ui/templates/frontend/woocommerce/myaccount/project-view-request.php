@@ -59,16 +59,16 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
     </div>
     
     <div class="arsol-pfw-content-wrapper" id="request-wrapper">
-        <?php
-        /**
-         * Hook: arsol_pfw_project_wrapper_start
-         * 
-         * @param string $project_type Project type: 'request'
-         * @param array $data Wrapper data
-         */
-        do_action('arsol_pfw_project_wrapper_start', $project_type, $wrapper_data);
-        ?>
-        
+    <?php
+    /**
+     * Hook: arsol_pfw_project_wrapper_start
+     * 
+     * @param string $project_type Project type: 'request'
+     * @param array $data Wrapper data
+     */
+    do_action('arsol_pfw_project_wrapper_start', $project_type, $wrapper_data);
+    ?>
+    
         <?php if ($display_mode === 'form'): ?>
             <!-- FORM MODE: Form overrides content and sidebar -->
             <div class="form-content">
@@ -119,39 +119,39 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         <?php elseif ($display_mode === 'content'): ?>
             <!-- CONTENT MODE: Show content and optionally sidebar -->
             <div class="arsol-pfw-content">
-                <?php
-                /**
-                 * Hook: arsol_pfw_project_content_before
-                 * 
-                 * @param string $project_type Project type: 'request'
-                 * @param array $data Wrapper data
-                 */
-                do_action('arsol_pfw_project_content_before', $project_type, $wrapper_data);
-                ?>
-                
+        <?php
+        /**
+         * Hook: arsol_pfw_project_content_before
+         * 
+         * @param string $project_type Project type: 'request'
+         * @param array $data Wrapper data
+         */
+        do_action('arsol_pfw_project_content_before', $project_type, $wrapper_data);
+        ?>
+        
                 <div class="arsol-pfw-post-content">
-                    <?php
-                    // Check for shortcode override using the new system
-                    $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_overview]');
-                    if ($override) {
+        <?php
+        // Check for shortcode override using the new system
+        $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_overview]');
+        if ($override) {
                         echo do_shortcode($override . ' request_id="' . $request_id . '"');
-                    } else {
+        } else {
                         echo do_shortcode('[arsol_pfw_request_overview request_id="' . $request_id . '"]');
-                    }
-                    ?>
+        }
+        ?>
                 </div>
-                
-                <?php
-                /**
-                 * Hook: arsol_pfw_project_content_after
-                 * 
-                 * @param string $project_type Project type: 'request'
-                 * @param array $data Wrapper data
-                 */
-                do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
-                ?>
-                
-                <?php
+        
+        <?php
+        /**
+         * Hook: arsol_pfw_project_content_after
+         * 
+         * @param string $project_type Project type: 'request'
+         * @param array $data Wrapper data
+         */
+        do_action('arsol_pfw_project_content_after', $project_type, $wrapper_data);
+        ?>
+        
+        <?php
                 // Files section - show request file upload if enabled for this stage
                 $current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($request_id);
                 $show_files = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_files($request_id, $current_stage_id, 'request_file_upload');
@@ -175,7 +175,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                             </div>
                         </div>
                         
-                        <?php
+                <?php 
                         /**
                          * Hook: arsol_pfw_request_files_after
                          * 
@@ -184,35 +184,39 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                          * @param int $current_stage_id Current stage ID
                          */
                         do_action('arsol_pfw_request_files_after', $project_type, $request_id, $current_stage_id);
-                        ?>
-                    </div>
-                <?php endif; ?>
+                ?>
+            </div>
+        <?php endif; ?>
                 
                 <?php
                 // Comments section - dual-layer permission check
                 $show_comments = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_comments($request_id, $current_stage_id);
                 if ($show_comments): ?>
                     <div class="comments">
-                        <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; ?>
+                        <?php 
+                        // Set the variable that the comments template expects
+                        $project_id = $request_id;
+                        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; 
+                        ?>
                     </div>
                 <?php endif; ?>
-            </div>
-            
+    </div>
+    
             <?php if ($show_sidebar): ?>
-                <div class="project-sidebar">
-                    <?php
-                    /**
-                     * Hook: arsol_pfw_project_sidebar_wrapper_before
-                     * 
-                     * @param string $project_type Project type: 'request'
-                     * @param array $data Wrapper data
-                     */
-                    do_action('arsol_pfw_project_sidebar_wrapper_before', $project_type, $wrapper_data);
-                    ?>
-                    
-                    <div class="project-sidebar-wrapper">
-                        <div class="project-sidebar-card card">
-                            <?php
+    <div class="project-sidebar">
+        <?php
+        /**
+         * Hook: arsol_pfw_project_sidebar_wrapper_before
+         * 
+         * @param string $project_type Project type: 'request'
+         * @param array $data Wrapper data
+         */
+        do_action('arsol_pfw_project_sidebar_wrapper_before', $project_type, $wrapper_data);
+        ?>
+        
+        <div class="project-sidebar-wrapper">
+            <div class="project-sidebar-card card">
+                <?php
                             /**
                              * Hook: arsol_pfw_project_sidebar_start
                              * 
@@ -224,8 +228,8 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                             
                             <?php
                             // Include request sidebar template directly
-                            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-sidebar-request.php';
-                            ?>
+                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-sidebar-request.php';
+                ?>
                             
                             <?php
                             /**
@@ -235,20 +239,20 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                              * @param array $data Wrapper data
                              */
                             do_action('arsol_pfw_project_sidebar_end', $project_type, $wrapper_data);
-                            ?>
-                        </div>
-                    </div>
-                    
-                    <?php
-                    /**
-                     * Hook: arsol_pfw_project_sidebar_wrapper_after
-                     * 
-                     * @param string $project_type Project type: 'request'
-                     * @param array $data Wrapper data
-                     */
-                    do_action('arsol_pfw_project_sidebar_wrapper_after', $project_type, $wrapper_data);
-                    ?>
-                </div>
+                ?>
+            </div>
+        </div>
+        
+        <?php
+        /**
+         * Hook: arsol_pfw_project_sidebar_wrapper_after
+         * 
+         * @param string $project_type Project type: 'request'
+         * @param array $data Wrapper data
+         */
+        do_action('arsol_pfw_project_sidebar_wrapper_after', $project_type, $wrapper_data);
+        ?>
+    </div>
             <?php endif; ?>
             
         <?php else: ?>
@@ -267,16 +271,16 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                 </div>
             </div>
         <?php endif; ?>
-        
-        <?php
-        /**
-         * Hook: arsol_pfw_project_wrapper_end
-         * 
-         * @param string $project_type Project type: 'request'
-         * @param array $data Wrapper data
-         */
-        do_action('arsol_pfw_project_wrapper_end', $project_type, $wrapper_data);
-        ?>
+    
+    <?php
+    /**
+     * Hook: arsol_pfw_project_wrapper_end
+     * 
+     * @param string $project_type Project type: 'request'
+     * @param array $data Wrapper data
+     */
+    do_action('arsol_pfw_project_wrapper_end', $project_type, $wrapper_data);
+    ?>
     </div>
 </div>
 

@@ -26,21 +26,21 @@ $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' .
 ?>
 
 <div class="arsol-pfw-proposal-description">
-    <?php if (!empty($post->post_content)) : ?>
-        <?php echo wp_kses_post($post->post_content); ?>
-    <?php endif; ?>
-</div>
-
-<?php
+            <?php if (!empty($post->post_content)) : ?>
+                <?php echo wp_kses_post($post->post_content); ?>
+            <?php endif; ?>
+        </div>
+        
+        <?php
 // Show Customer Notice unconditionally
-$customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'proposal');
-if (!empty($customer_notice)) : ?>
-    <div class="arsol-pfw-notice arsol-pfw-customer-notice">
-        <div class="arsol-pfw-notice-header">
-            <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
-        </div>
-        <div class="arsol-pfw-notice-content">
-            <?php echo wp_kses_post(wpautop($customer_notice)); ?>
-        </div>
-    </div>
-<?php endif; ?>
+        $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'proposal');
+        if (!empty($customer_notice)) : ?>
+            <div class="arsol-pfw-notice arsol-pfw-customer-notice">
+                <div class="arsol-pfw-notice-header">
+                    <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
+                </div>
+                <div class="arsol-pfw-notice-content">
+                    <?php echo wp_kses_post(wpautop($customer_notice)); ?>
+                </div>
+            </div>
+        <?php endif; ?>
