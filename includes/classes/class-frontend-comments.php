@@ -172,34 +172,7 @@ class Frontend_Comments {
     }
     
     /**
-     * Recursively get all child comment IDs for a given comment
-     * 
-     * @param int $comment_id The parent comment ID
-     * @return array Array of all child comment IDs (including nested children)
-     */
-    private function get_all_child_comment_ids($comment_id) {
-        $child_ids = array();
-        
-        // Get direct children
-        $children = get_comments(array(
-            'parent' => $comment_id,
-            'fields' => 'ids',
-            'status' => 'all'
-        ));
-        
-        foreach ($children as $child_id) {
-            $child_ids[] = $child_id;
-            // Recursively get children of children
-            $grandchildren = $this->get_all_child_comment_ids($child_id);
-            $child_ids = array_merge($child_ids, $grandchildren);
-        }
-        
-        return $child_ids;
-    }
-    
-    /**
      * Handle AJAX comment deletion
-     * Properly deletes comment and all its child replies
      */
     public function handle_delete_comment() {
         // Check nonce for security
@@ -223,15 +196,7 @@ class Frontend_Comments {
             wp_die(__('You do not have permission to delete this comment', 'arsol-pfw'));
         }
         
-        // Get all child comment IDs recursively
-        $child_comment_ids = $this->get_all_child_comment_ids($comment_id);
-        
-        // Delete all child comments first (bottom-up)
-        foreach (array_reverse($child_comment_ids) as $child_id) {
-            wp_delete_comment($child_id, true);
-        }
-        
-        // Delete the parent comment
+        // Delete the comment
         $result = wp_delete_comment($comment_id, true); // true = force delete
         
         if (!$result) {
