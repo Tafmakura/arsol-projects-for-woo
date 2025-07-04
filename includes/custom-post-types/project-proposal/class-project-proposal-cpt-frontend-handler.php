@@ -53,7 +53,7 @@ class Frontend_Handler {
         // Show Customer Notice unconditionally
         $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'proposal');
         if (!empty($customer_notice)) {
-            $proposal_content .= '<div class="arsol-pfw-notice arsol-pfw-customer-notice">
+            $proposal_content .= '<div class="arsol-pfw-customer-notice">
                 <div class="arsol-pfw-notice-header">
                     <h4>' . __('Important Notice', 'arsol-pfw') . '</h4>
                 </div>

@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     // Show Customer Notice unconditionally
     $customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'request');
     if (!empty($customer_notice)) : ?>
-        <div class="arsol-pfw-notice arsol-pfw-customer-notice">
+        <div class="arsol-pfw-customer-notice">
             <div class="arsol-pfw-notice-header">
                 <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
             </div>

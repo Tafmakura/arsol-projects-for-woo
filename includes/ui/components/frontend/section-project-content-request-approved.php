@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     // Add Customer Notice section (always show if content exists, regardless of stage)
     $customer_notice = get_post_meta($post->ID, '_arsol_pfw_request_customer_notice', true);
     if (!empty($customer_notice)) : ?>
-        <div class="arsol-pfw-notice arsol-pfw-customer-notice">
+        <div class="arsol-pfw-customer-notice">
             <div class="arsol-pfw-notice-header">
                 <h4><?php _e('Important Notice', 'arsol-pfw'); ?></h4>
             </div>
