@@ -27,18 +27,33 @@ if (!$project) {
 // Set project type for hook compatibility - use actual CPT slug
 $project_type = $project->post_type; // 'arsol-pfw-project'
 
-// === NEW DISPLAY CONTROL LOGIC ===
+// === PURE STAGE-BASED DISPLAY LOGIC ===
 $current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($project_id);
 
-// Determine form type based on edit mode
-$is_edit_mode = !empty($_GET['edit']) && !empty($_GET['post_id']);
-$form_type = $is_edit_mode ? 'edit_project_form' : 'project_form';
+// Check what forms are allowed for this stage
+$should_show_edit_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($project_id, $current_stage_id, 'edit_project_form');
+$should_show_create_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($project_id, $current_stage_id, 'project_form');
 
-// Get display mode (form, content, or empty)
-$display_mode = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_display_mode($project_id, $current_stage_id, $form_type);
+// Determine display mode based on stage settings
+if ($should_show_edit_form) {
+    $form_type = 'edit_project_form';
+    $display_mode = 'form';
+    $is_edit_mode = true;
+} elseif ($should_show_create_form) {
+    $form_type = 'project_form';
+    $display_mode = 'form';
+    $is_edit_mode = false;
+} else {
+    // No forms allowed, check if content should be shown
+    $form_type = '';
+    $is_edit_mode = false;
+    $display_mode = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_content($project_id, $current_stage_id) ? 'content' : 'empty';
+}
 
-// Check sidebar visibility (only shown if not in form mode)
-$show_sidebar = ($display_mode !== 'form') && \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_sidebar($project_id, $current_stage_id);
+// Check sidebar visibility (create forms: hidden, edit forms: follow settings, content: follow settings)
+$show_sidebar = ($display_mode === 'form' && !$is_edit_mode) 
+    ? false 
+    : \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_sidebar($project_id, $current_stage_id);
 
 // --- Render Project Overview Content ---
 ?>

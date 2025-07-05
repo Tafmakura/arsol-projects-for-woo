@@ -2,7 +2,7 @@
 /**
  * Project Request View endpoint template
  *
- * Handles /my-account/project-view-request/{project_id}/ endpoint
+ * Handles /my-account/view-request/{request_id}/ endpoint
  *
  * @package Arsol_Projects_For_Woo
  * @version 1.1.0
@@ -26,6 +26,59 @@ if (!$request) {
 
 // Set project type for hook compatibility
 $project_type = 'request';
+
+// === PURE STAGE-BASED DISPLAY LOGIC ===
+$current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($request_id);
+
+// Check what forms are allowed for this stage
+$should_show_edit_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($request_id, $current_stage_id, 'edit_request_form');
+$should_show_create_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($request_id, $current_stage_id, 'request_form');
+
+// Determine display mode based on stage settings
+if ($should_show_edit_form) {
+    $form_type = 'edit_request_form';
+    $display_mode = 'form';
+    $is_edit_mode = true;
+} elseif ($should_show_create_form) {
+    $form_type = 'request_form';
+    $display_mode = 'form';
+    $is_edit_mode = false;
+} else {
+    // No forms allowed, check if content should be shown
+    $form_type = '';
+    $is_edit_mode = false;
+    $display_mode = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_content($request_id, $current_stage_id) ? 'content' : 'empty';
+}
+
+// Check sidebar visibility (create forms: hidden, edit forms: follow settings, content: follow settings)
+$show_sidebar = ($display_mode === 'form' && !$is_edit_mode) 
+    ? false 
+    : \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_sidebar($request_id, $current_stage_id);
+
+// === DEBUG LOGGING ===
+error_log("=== ARSOL DEBUG: Request Display Mode Detection ===");
+error_log("Request ID: " . $request_id);
+error_log("Current Stage ID: " . $current_stage_id);
+error_log("Is Edit Mode: " . ($is_edit_mode ? 'YES' : 'NO'));
+error_log("Form Type: " . $form_type);
+error_log("Display Mode: " . $display_mode);
+
+// Let's also check what the form display settings contain
+$form_settings = get_option('arsol_pfw_display_forms_settings', array());
+error_log("Form Settings: " . print_r($form_settings, true));
+
+// Check specifically for edit_request_form settings
+$edit_form_visibility = isset($form_settings['edit_request_form_visibility']) ? $form_settings['edit_request_form_visibility'] : 'not set';
+$edit_form_stages = isset($form_settings['edit_request_form_stages']) ? $form_settings['edit_request_form_stages'] : array();
+error_log("Edit Request Form Visibility: " . $edit_form_visibility);
+error_log("Edit Request Form Stages: " . print_r($edit_form_stages, true));
+
+// Check the should_show_form result for both form types
+$should_show_edit_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($request_id, $current_stage_id, 'edit_request_form');
+$should_show_create_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($request_id, $current_stage_id, 'request_form');
+error_log("Should Show Edit Form: " . ($should_show_edit_form ? 'YES' : 'NO'));
+error_log("Should Show Create Form: " . ($should_show_create_form ? 'YES' : 'NO'));
+error_log("=== END DEBUG ===");
 
 // === NEW DISPLAY CONTROL LOGIC ===
 $current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($request_id);
@@ -153,7 +206,6 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         
         <?php
                 // Files section - show request file upload if enabled for this stage
-                $current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($request_id);
                 $show_files = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_files($request_id, $current_stage_id, 'request_file_upload');
                 if ($show_files): ?>
                     <div class="files">
