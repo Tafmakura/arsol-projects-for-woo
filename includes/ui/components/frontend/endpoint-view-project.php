@@ -43,4 +43,4 @@ if (!empty($post->post_content)) : ?>
         <h4><?php _e('Project Details', 'arsol-pfw'); ?></h4>
         <?php echo wp_kses_post($post->post_content); ?>
     </div>
-<?php endif; ?>
+<?php endif; ?> 
