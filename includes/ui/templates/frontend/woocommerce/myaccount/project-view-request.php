@@ -37,12 +37,10 @@ $form_type = $is_edit_mode ? 'edit_request_form' : 'request_form';
 // Get display mode (form, content, or empty)
 $display_mode = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_display_mode($request_id, $current_stage_id, $form_type);
 
-// Check sidebar visibility - pass form context for form-specific settings
-$form_context = null;
-if ($display_mode === 'form') {
-    $form_context = $is_edit_mode ? 'edit_request_form' : 'create_request_form';
-}
-$show_sidebar = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_sidebar($request_id, $current_stage_id, $form_context);
+// Check sidebar visibility (create forms: hidden, edit forms: follow settings, content: follow settings)
+$show_sidebar = ($display_mode === 'form' && !$is_edit_mode) 
+    ? false 
+    : \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_sidebar($request_id, $current_stage_id);
 
 // --- Render Project Request Content ---
 ?>

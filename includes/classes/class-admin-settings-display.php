@@ -155,20 +155,6 @@ class Settings_Display {
     private function add_display_fields($type, $section) {
         $types = ['request', 'proposal', 'project'];
         foreach ($types as $phase_type) {
-            // Add form-specific checkbox groups for sidebar type (only for request and project)
-            if ($type === 'sidebar' && in_array($phase_type, ['request', 'project'])) {
-                add_settings_field(
-                    'sidebar_' . $phase_type . '_form_display',
-                    ucfirst($phase_type) . ' Form Sidebar Display',
-                    array($this, 'render_form_sidebar_checkboxes'),
-                    'arsol_pfw_display_settings',
-                    $section,
-                    [
-                        'phase_type' => $phase_type
-                    ]
-                );
-            }
-            
             add_settings_field(
                 $type . '_' . $phase_type . '_display',
                 ucfirst($phase_type) . ' ' . ucfirst($type),
@@ -332,43 +318,6 @@ class Settings_Display {
         echo '</select>';
         
         echo '<p class="description">' . sprintf(__('Control when %s %s is displayed based on stage.', 'arsol-pfw'), $phase_type, $type) . '</p>';
-        echo '</div>';
-    }
-
-    /**
-     * Render form sidebar checkboxes
-     */
-    public function render_form_sidebar_checkboxes($args) {
-        $phase_type = $args['phase_type'];
-        $settings = get_option('arsol_pfw_display_sidebar_settings', array());
-        
-        // Define form types for this phase type
-        $form_types = array(
-            'create_' . $phase_type . '_form' => array(
-                'label' => __('Show sidebar for create ' . $phase_type . ' form', 'arsol-pfw'),
-                'default' => false
-            ),
-            'edit_' . $phase_type . '_form' => array(
-                'label' => __('Show sidebar for edit ' . $phase_type . ' form', 'arsol-pfw'),
-                'default' => true // Default checked for edit forms
-            )
-        );
-        
-        echo '<div class="arsol-pfw-form-sidebar-checkboxes" style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; background-color: #f9f9f9;">';
-        echo '<div style="margin-bottom: 10px; font-weight: 600;">' . sprintf(__('%s Form Sidebar Display', 'arsol-pfw'), ucfirst($phase_type)) . '</div>';
-        
-        foreach ($form_types as $form_key => $form_config) {
-            $checked = isset($settings[$form_key]) ? $settings[$form_key] : $form_config['default'];
-            
-            echo '<div style="margin-bottom: 5px;">';
-            echo '<label>';
-            echo '<input type="checkbox" name="arsol_pfw_display_sidebar_settings[' . esc_attr($form_key) . ']" value="1" ' . checked($checked, true, false) . '>';
-            echo ' ' . esc_html($form_config['label']);
-            echo '</label>';
-            echo '</div>';
-        }
-        
-        echo '<p class="description" style="margin-top: 10px; font-style: italic;">' . __('These settings control sidebar display specifically for form endpoints and override stage-based settings when forms are displayed.', 'arsol-pfw') . '</p>';
         echo '</div>';
     }
 

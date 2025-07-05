@@ -364,10 +364,9 @@ class Frontend_Template_Overrides {
      *
      * @param int $post_id The post ID
      * @param int $current_stage_id The current stage term ID
-     * @param string $form_context Optional form context (create_request_form, edit_request_form, create_project_form, edit_project_form)
      * @return bool Whether sidebar should be displayed
      */
-    public static function should_show_sidebar($post_id, $current_stage_id, $form_context = null) {
+    public static function should_show_sidebar($post_id, $current_stage_id) {
         $post_type = get_post_type($post_id);
         $phase_type = self::get_phase_type_from_post_type($post_type);
         
@@ -376,16 +375,6 @@ class Frontend_Template_Overrides {
         }
         
         $settings = get_option('arsol_pfw_display_sidebar_settings', array());
-        
-        // Check form-specific settings first if we're on a form endpoint
-        if ($form_context) {
-            // Check if form-specific setting exists and use it
-            if (isset($settings[$form_context])) {
-                return (bool) $settings[$form_context];
-            }
-        }
-        
-        // Fall back to stage-based settings
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
