@@ -353,7 +353,13 @@ class Frontend_Template_Overrides {
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
-        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
+        // Use explicit database values - no fallbacks (settings should always exist after initialization)
+        if (!isset($settings[$visibility_key])) {
+            error_log('ARSOL PFW: Missing content display settings for ' . $phase_type . '. Please check plugin initialization.');
+            return false; // Safe fallback
+        }
+        
+        $visibility = $settings[$visibility_key];
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
         
         return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);
@@ -378,7 +384,13 @@ class Frontend_Template_Overrides {
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
-        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
+        // Use explicit database values - no fallbacks (settings should always exist after initialization)
+        if (!isset($settings[$visibility_key])) {
+            error_log('ARSOL PFW: Missing sidebar display settings for ' . $phase_type . '. Please check plugin initialization.');
+            return false; // Safe fallback
+        }
+        
+        $visibility = $settings[$visibility_key];
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
         
         return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);
@@ -397,7 +409,13 @@ class Frontend_Template_Overrides {
         $visibility_key = $form_type . '_visibility';
         $stages_key = $form_type . '_stages';
         
-        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
+        // Use explicit database values - no fallbacks (settings should always exist after initialization)
+        if (!isset($settings[$visibility_key])) {
+            error_log('ARSOL PFW: Missing form display settings for ' . $form_type . '. Please check plugin initialization.');
+            return false; // Safe fallback: hide forms
+        }
+        
+        $visibility = $settings[$visibility_key];
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
         
         return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);
@@ -416,7 +434,13 @@ class Frontend_Template_Overrides {
         $visibility_key = $file_type . '_visibility';
         $stages_key = $file_type . '_stages';
         
-        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'show';
+        // Use explicit database values - no fallbacks (settings should always exist after initialization)
+        if (!isset($settings[$visibility_key])) {
+            error_log('ARSOL PFW: Missing file display settings for ' . $file_type . '. Please check plugin initialization.');
+            return false; // Safe fallback: hide files
+        }
+        
+        $visibility = $settings[$visibility_key];
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
         
         return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);
@@ -448,7 +472,13 @@ class Frontend_Template_Overrides {
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
-        $visibility = isset($settings[$visibility_key]) ? $settings[$visibility_key] : 'hide';
+        // Use explicit database values - no fallbacks (settings should always exist after initialization)
+        if (!isset($settings[$visibility_key])) {
+            error_log('ARSOL PFW: Missing comments display settings for ' . $phase_type . '. Please check plugin initialization.');
+            return false; // Safe fallback: hide comments
+        }
+        
+        $visibility = $settings[$visibility_key];
         $selected_stages = isset($settings[$stages_key]) ? $settings[$stages_key] : array();
         
         return self::apply_visibility_rules($visibility, $selected_stages, $current_stage_id);

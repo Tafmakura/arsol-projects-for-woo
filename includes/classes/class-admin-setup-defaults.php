@@ -80,6 +80,7 @@ class Setup_Defaults {
     public function initialize_all_defaults() {
         $this->initialize_default_settings();
         $this->initialize_default_taxonomies();
+        $this->initialize_display_settings();
         
         // Log the initialization
         if (function_exists('wc_get_logger')) {
@@ -420,6 +421,122 @@ class Setup_Defaults {
         // This just ensures the option exists
         if (false === get_option('arsol_pfw_advanced_settings')) {
             update_option('arsol_pfw_advanced_settings', $current_settings);
+        }
+    }
+
+    /**
+     * Initialize display settings with explicit defaults
+     * This ensures frontend and admin always have the same defaults
+     */
+    private function initialize_display_settings() {
+        // Initialize content display settings
+        $this->initialize_content_display_settings();
+        
+        // Initialize sidebar display settings
+        $this->initialize_sidebar_display_settings();
+        
+        // Initialize comments display settings
+        $this->initialize_comments_display_settings();
+        
+        // Initialize files display settings
+        $this->initialize_files_display_settings();
+        
+        // Initialize forms display settings
+        $this->initialize_forms_display_settings();
+    }
+
+    /**
+     * Initialize content display settings
+     */
+    private function initialize_content_display_settings() {
+        if (false === get_option('arsol_pfw_display_content_settings')) {
+            $default_settings = array(
+                // Content defaults to 'hide' with no stages = show on all stages
+                'request_visibility' => 'hide',
+                'request_stages' => array(),
+                'proposal_visibility' => 'hide',
+                'proposal_stages' => array(),
+                'project_visibility' => 'hide',
+                'project_stages' => array(),
+            );
+            
+            update_option('arsol_pfw_display_content_settings', $default_settings);
+        }
+    }
+
+    /**
+     * Initialize sidebar display settings
+     */
+    private function initialize_sidebar_display_settings() {
+        if (false === get_option('arsol_pfw_display_sidebar_settings')) {
+            $default_settings = array(
+                // Sidebar defaults to 'hide' with no stages = show on all stages
+                'request_visibility' => 'hide',
+                'request_stages' => array(),
+                'proposal_visibility' => 'hide',
+                'proposal_stages' => array(),
+                'project_visibility' => 'hide',
+                'project_stages' => array(),
+            );
+            
+            update_option('arsol_pfw_display_sidebar_settings', $default_settings);
+        }
+    }
+
+    /**
+     * Initialize comments display settings
+     */
+    private function initialize_comments_display_settings() {
+        if (false === get_option('arsol_pfw_display_comments_settings')) {
+            $default_settings = array(
+                // Comments default to 'hide' with no stages = show on all stages
+                'request_visibility' => 'hide',
+                'request_stages' => array(),
+                'proposal_visibility' => 'hide',
+                'proposal_stages' => array(),
+                'project_visibility' => 'hide',
+                'project_stages' => array(),
+            );
+            
+            update_option('arsol_pfw_display_comments_settings', $default_settings);
+        }
+    }
+
+    /**
+     * Initialize files display settings
+     */
+    private function initialize_files_display_settings() {
+        if (false === get_option('arsol_pfw_display_files_settings')) {
+            $default_settings = array(
+                // Files default to 'show' with no stages = hidden everywhere (require explicit stage selection)
+                'request_file_upload_visibility' => 'show',
+                'request_file_upload_stages' => array(),
+                'proposal_file_display_visibility' => 'show',
+                'proposal_file_display_stages' => array(),
+            );
+            
+            update_option('arsol_pfw_display_files_settings', $default_settings);
+        }
+    }
+
+    /**
+     * Initialize forms display settings
+     */
+    private function initialize_forms_display_settings() {
+        if (false === get_option('arsol_pfw_display_forms_settings')) {
+            $default_settings = array(
+                // Forms default to 'show' with no stages = hidden everywhere (require explicit stage selection)
+                'request_form_visibility' => 'show',
+                'request_form_stages' => array(),
+                'edit_request_form_visibility' => 'show',
+                'edit_request_form_stages' => array(),
+                'project_form_visibility' => 'show',
+                'project_form_stages' => array(),
+                'edit_project_form_visibility' => 'show',
+                'edit_project_form_stages' => array(),
+            );
+            
+            update_option('arsol_pfw_display_forms_settings', $default_settings);
         }
     }
 } 
