@@ -35,6 +35,10 @@ class Includes_Setup {
         $this->require_includes_files();
         $this->initialize_includes_classes();
         $this->setup_hooks();
+        
+        // Delay email includes until after WooCommerce is loaded
+        add_action('woocommerce_loaded', array($this, 'require_email_files'));
+        add_action('woocommerce_loaded', array($this, 'initialize_email_classes'));
     }
 
     /**
@@ -122,19 +126,6 @@ class Includes_Setup {
         // Phases Files
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/phases/class-arsol-pfw-phases-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/phases/class-arsol-pfw-phases-conversion.php';
-        
-        // Email Files (excluding templates)
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-email-manager.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-project.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-request.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-new-request.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-project-completion.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-project-creation.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-project-stage.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-decision.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-processing.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-ready.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-request-stage.php';
     }
 
     /**
@@ -223,18 +214,7 @@ class Includes_Setup {
         Phases\Setup::get_instance();
         Phases\Conversion::get_instance();
         
-        // Initialize Email Classes
-        \Arsol_Email_Manager::init();
-        new WC_Email_Admin_New_Project();
-        new WC_Email_Admin_New_Request();
-        new WC_Email_New_Request();
-        new WC_Email_Project_Completion();
-        new WC_Email_Project_Creation();
-        new WC_Email_Project_Stage();
-        new WC_Email_Proposal_Decision();
-        new WC_Email_Proposal_Processing();
-        new WC_Email_Proposal_Ready();
-        new WC_Email_Request_Stage();
+        // Note: Email classes are initialized separately after WooCommerce is loaded
     }
 
     /**
@@ -334,4 +314,50 @@ class Includes_Setup {
             'workflows' => Workflows\Setup::get_instance(),
         ];
     }
-} 
+
+    /**
+     * Require email files after WooCommerce is loaded
+     */
+    public function require_email_files() {
+        if (!class_exists('WooCommerce')) {
+            return;
+        }
+        
+        // Email Files (loaded after WooCommerce)
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-email-manager.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-project.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-new-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-project-completion.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-project-creation.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-project-stage.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-decision.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-processing.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-ready.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-request-stage.php';
+    }
+
+    /**
+     * Initialize email classes after WooCommerce is loaded
+     */
+    public function initialize_email_classes() {
+        if (!class_exists('WooCommerce')) {
+            return;
+        }
+        
+        // Initialize Email Manager first
+        \Arsol_Email_Manager::init();
+        
+        // Initialize Email Classes
+        new WC_Email_Admin_New_Project();
+        new WC_Email_Admin_New_Request();
+        new WC_Email_New_Request();
+        new WC_Email_Project_Completion();
+        new WC_Email_Project_Creation();
+        new WC_Email_Project_Stage();
+        new WC_Email_Proposal_Decision();
+        new WC_Email_Proposal_Processing();
+        new WC_Email_Proposal_Ready();
+        new WC_Email_Request_Stage();
+    }
+}
