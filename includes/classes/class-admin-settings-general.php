@@ -123,29 +123,31 @@ class Settings_General {
             'arsol_pfw_general_settings'
         );
 
+        // Project Manager Roles
         add_settings_field(
-            'manage_roles',
-            __('Project Manager Roles', 'arsol-pfw'),
-            array($this, 'render_roles_field'),
+            'project_manager_roles',
+            __('Project Manager Permissions', 'arsol-pfw'),
+            array($this, 'render_manager_roles_field'),
             'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
-                'field' => 'manage_roles',
-                'description' => __('Users with these roles can manage all projects, proposals, and requests.', 'arsol-pfw'),
-                'class' => 'arsol-pfw-manage-roles'
+                'field' => 'project_manager_roles',
+                'description' => __('Select roles that can manage all projects, proposals, and requests.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-manager-roles-field'
             )
         );
 
+        // Project User Roles
         add_settings_field(
-            'create_roles',
-            __('Project User Roles', 'arsol-pfw'),
+            'project_user_roles',
+            __('Frontend Permissions', 'arsol-pfw'),
             array($this, 'render_roles_field'),
             'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
-                'field' => 'create_roles',
-                'description' => __('Users with these roles can create new projects and requests.', 'arsol-pfw'),
-                'class' => 'arsol-pfw-create-roles'
+                'field' => 'project_user_roles',
+                'description' => __('Select roles that can create and manage their own projects.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-user-roles-field'
             )
         );
 
@@ -447,6 +449,59 @@ class Settings_General {
     }
 
     /**
+     * Render manager roles field (only roles with admin access)
+     */
+    public function render_manager_roles_field($args) {
+        $field_name = $args['field'];
+        $settings = get_option('arsol_pfw_general_settings', array());
+        $selected_roles = isset($settings[$field_name]) ? $settings[$field_name] : array('administrator');
+        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
+        
+        $editable_roles = get_editable_roles();
+        
+        // Filter roles to only include those with admin access (manage_options capability)
+        $admin_roles = array();
+        foreach ($editable_roles as $role => $details) {
+            if (isset($details['capabilities']['manage_options']) && $details['capabilities']['manage_options']) {
+                $admin_roles[$role] = $details;
+            }
+        }
+        
+        $role_order = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
+        
+        uksort($admin_roles, function ($a, $b) use ($role_order) {
+            $a_pos = array_search($a, $role_order);
+            $b_pos = array_search($b, $role_order);
+            if ($a_pos === false && $b_pos === false) return 0;
+            if ($a_pos === false) return 1;
+            if ($b_pos === false) return -1;
+            return $a_pos - $b_pos;
+        });
+
+        echo "<div class='{$class}'>";
+        foreach ($admin_roles as $role => $details) {
+            $is_admin = ($role === 'administrator');
+            $checked = ($is_admin || in_array($role, $selected_roles)) ? 'checked' : '';
+            $disabled = $is_admin ? 'disabled' : '';
+
+            echo '<label>';
+            echo '<input type="checkbox" name="arsol_pfw_general_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . ' ' . $disabled . '> ';
+            echo esc_html($details['name']);
+            if ($is_admin) {
+                echo ' <em>(' . esc_html__('always enabled', 'arsol-pfw') . ')</em>';
+                // Add a hidden input to ensure the administrator role is always submitted
+                echo '<input type="hidden" name="arsol_pfw_general_settings[' . esc_attr($field_name) . '][]" value="administrator">';
+            }
+            echo '</label><br>';
+        }
+
+        if (!empty($args['description'])) {
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
+        }
+        echo '</div>';
+    }
+
+    /**
      * Render roles field
      */
     public function render_roles_field($args) {
@@ -488,54 +543,6 @@ class Settings_General {
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
         }
         echo '</div>';
-    }
-
-    /**
-     * Render single product select field
-     */
-    public function render_single_product_select_field($args) {
-        $field_name = $args['field'];
-        $product_type = isset($args['product_type']) ? $args['product_type'] : 'any';
-
-        if ($product_type === 'subscription' && !class_exists('WC_Subscriptions')) {
-            echo '<p class="description">' . esc_html__('WooCommerce Subscriptions plugin is not active.', 'arsol-pfw') . '</p>';
-            return;
-        }
-
-        $settings = get_option('arsol_pfw_general_settings', array());
-        $product_id = isset($settings[$field_name]) ? $settings[$field_name] : '';
-        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
-
-        $custom_attributes = '';
-        if ($product_type === 'simple') {
-            $custom_attributes = 'data-exclude-type="subscription,variable-subscription"';
-        } elseif ($product_type === 'subscription') {
-            $custom_attributes = 'data-include-type="subscription,variable-subscription"';
-        }
-
-        ?>
-        <div class="<?php echo esc_attr($class); ?>">
-            <select class="wc-product-search regular-text"
-                    id="<?php echo esc_attr($field_name); ?>"
-                    name="arsol_pfw_general_settings[<?php echo esc_attr($field_name); ?>]"
-                    data-placeholder="<?php esc_attr_e('Search for a product…', 'arsol-pfw'); ?>"
-                    data-action="woocommerce_json_search_products_and_variations"
-                    data-allow_clear="true"
-                    <?php echo $custom_attributes; ?>>
-                <?php
-                if (!empty($product_id)) {
-                    $product = wc_get_product($product_id);
-                    if (is_object($product)) {
-                        echo '<option value="' . esc_attr($product_id) . '"' . selected(true, true, false) . '>' . wp_kses_post($product->get_formatted_name()) . '</option>';
-                    }
-                }
-                ?>
-            </select>
-            <?php if (!empty($args['description'])): ?>
-                <p class="description"><?php echo esc_html($args['description']); ?></p>
-            <?php endif; ?>
-        </div>
-        <?php
     }
 
     /**
@@ -582,8 +589,8 @@ class Settings_General {
      * @param mixed $new_value New settings value
      */
     public function update_capabilities($old_value, $new_value) {
-        $manage_roles = isset($new_value['manage_roles']) ? array_unique($new_value['manage_roles']) : array('administrator');
-        $create_roles = isset($new_value['create_roles']) ? array_unique($new_value['create_roles']) : array('administrator');
+        $manage_roles = isset($new_value['project_manager_roles']) ? array_unique($new_value['project_manager_roles']) : array('administrator');
+        $create_roles = isset($new_value['project_user_roles']) ? array_unique($new_value['project_user_roles']) : array('administrator');
 
         if (!in_array('administrator', $manage_roles)) {
             $manage_roles[] = 'administrator';
