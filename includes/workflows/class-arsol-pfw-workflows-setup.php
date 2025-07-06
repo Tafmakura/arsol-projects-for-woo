@@ -93,7 +93,7 @@ class Setup {
         $standard_setup = \Arsol_Projects_For_Woo\Workflows\Standard\Setup::get_instance();
         
         // Initialize standard workflow
-        $standard_workflow = \Arsol_Projects_For_Woo\Workflows\StandardWorkflow::get_instance();
+        $standard_workflow = \Arsol_Projects_For_Woo\Workflows\Standard::get_instance();
         
         // Store workflow instance
         $this->workflows['default'] = $standard_workflow;

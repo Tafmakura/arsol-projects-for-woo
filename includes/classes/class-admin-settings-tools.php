@@ -137,7 +137,7 @@ class Settings_Tools {
             wp_send_json_error('Security check failed');
         }
         
-        $cleaned = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::cleanup_stuck_workflows(30);
+        $cleaned = \Arsol_Projects_For_Woo\Workflows\Standard::cleanup_stuck_workflows(30);
         
         wp_send_json_success(array(
             'cleaned' => $cleaned,

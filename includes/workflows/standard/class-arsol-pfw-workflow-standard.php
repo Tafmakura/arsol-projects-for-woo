@@ -22,19 +22,20 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Standard Workflow Main Class
+ * Standard Workflow Implementation
  *
- * Consolidated workflow class that handles all aspects of the standard workflow
- * including transitions, stages, permissions, and transaction management.
+ * Handles the standard workflow for Arsol Projects for WooCommerce
+ * Manages request -> proposal -> project transitions
  *
+ * @package Arsol_Projects_For_Woo\Workflows
  * @since 1.0.0
  */
-class StandardWorkflow {
+class Standard {
 
     /**
      * Class instance
      *
-     * @var StandardWorkflow|null
+     * @var Standard|null
      */
     private static $instance = null;
 
@@ -48,9 +49,9 @@ class StandardWorkflow {
     /**
      * Get class instance
      *
-     * @return StandardWorkflow
+     * @return Standard
      */
-    public static function get_instance(): StandardWorkflow {
+    public static function get_instance(): Standard {
         if (null === self::$instance) {
             self::$instance = new self();
         }

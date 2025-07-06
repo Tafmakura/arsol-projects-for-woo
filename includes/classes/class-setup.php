@@ -35,7 +35,7 @@ class Setup {
      * Cleanup stuck conversions via cron
      */
     public function cleanup_stuck_conversions() {
-        $cleaned = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::cleanup_stuck_workflows(30);
+        $cleaned = \Arsol_Projects_For_Woo\Workflows\Standard::cleanup_stuck_workflows(30);
         if ($cleaned > 0) {
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
                 "Automatic cleanup: removed {$cleaned} stuck conversions");

@@ -357,7 +357,7 @@ class Frontend_Endpoints {
         }
 
         // Allow access if user is the author or has project management capabilities
-        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $proposal_id);
+        $can_view = \Arsol_Projects_For_Woo\Workflows\Standard::user_can_view_post($user_id, $proposal_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
@@ -410,7 +410,7 @@ class Frontend_Endpoints {
         }
 
         // Allow access if user is the author or has project management capabilities
-        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $request_id);
+        $can_view = \Arsol_Projects_For_Woo\Workflows\Standard::user_can_view_post($user_id, $request_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');

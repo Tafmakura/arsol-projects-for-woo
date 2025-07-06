@@ -24,7 +24,7 @@ includes/workflows/
 - **Namespace**: `Arsol_Projects_For_Woo\Workflows\Standard`
 - **Components**:
   - **Setup**: Configuration and initialization
-  - **StandardWorkflow**: Consolidated class containing all workflow operations including transitions, stages, permissions, and transaction management
+  - **Standard**: Consolidated class containing all workflow operations including transitions, stages, permissions, and transaction management
 
 ## 🚀 Core Functionality
 
@@ -107,7 +107,7 @@ $status = $standard_workflow->get_status();
 
 ### **Check User Permissions**
 ```php
-$workflow = \Arsol_Projects_For_Woo\Workflows\StandardWorkflow::get_instance();
+$workflow = \Arsol_Projects_For_Woo\Workflows\Standard::get_instance();
 $can_view = $workflow->user_can_view_post($user_id, $post_id);
 ```
 
