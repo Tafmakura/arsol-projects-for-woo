@@ -121,7 +121,7 @@ class Includes_Setup {
             new Admin\Setup_Defaults();
             
             // Initialize Admin Menu Setup
-            new Admin\Menu\Setup(); // Admin menu management
+            new \Arsol_Projects_For_Woo\Admin\Menu\Setup(); // Admin menu management
         }
         
         // Initialize classes that work in both admin and frontend
