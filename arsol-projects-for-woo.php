@@ -50,7 +50,7 @@ define('ARSOL_PROJECT_META_KEY', 'arsol-pfw/parent-project-id');
 
 // Use correct namespace
 use Arsol_Projects_For_Woo\Setup;
-use Arsol_Projects_For_Woo\Workflow\Workflow_Handler;
+use Arsol_Projects_For_Woo\Setup\Workflows;
 use Arsol_Projects_For_Woo\Admin\Setup_Defaults;
 use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Meta;
 use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Buttons;
@@ -64,8 +64,8 @@ require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-
 // Include the admin setup defaults class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup-defaults.php';
 
-// Include the workflow handler class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-workflow-handler.php';
+// Include the workflows setup class
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflows/class-arsol-pfw-workflows-setup.php';
 
 // Include the frontend sidebar classes
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-meta.php';
@@ -109,8 +109,8 @@ function arsol_projects_deactivate() {
 function arsol_projects_init() {
     // Instantiate the Setup class
     new Setup();
-    // Instantiate the Workflow_Handler class
-    new Workflow_Handler();
+    // Instantiate the Workflows setup class
+    Workflows::get_instance();
     // Instantiate the Setup_Defaults class
     new Setup_Defaults();
     // Instantiate the Frontend Sidebar classes
