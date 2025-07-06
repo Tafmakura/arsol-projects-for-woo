@@ -83,8 +83,6 @@ class Setup {
         // Load standard workflow setup
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard-setup.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard-transitions.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard-stages.php';
     }
 
     /**

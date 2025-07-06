@@ -8,10 +8,8 @@ This directory contains the workflow management system for the Arsol Projects Fo
 includes/workflows/
 ├── class-arsol-pfw-workflows-setup.php    # Main workflows manager
 ├── standard/                               # Standard workflow implementation
-│   ├── class-arsol-pfw-workflow-standard-setup.php      # Setup & configuration
-│   ├── class-arsol-pfw-workflow-standard.php            # Main workflow coordinator
-│   ├── class-arsol-pfw-workflow-standard-transitions.php # Conversions & actions
-│   └── class-arsol-pfw-workflow-standard-stages.php     # Permissions & transactions
+│   ├── class-arsol-pfw-workflow-standard-setup.php     # Setup & configuration
+│   └── class-arsol-pfw-workflow-standard.php           # Consolidated workflow (all operations)
 └── README.md                              # This documentation
 ```
 
@@ -26,9 +24,7 @@ includes/workflows/
 - **Namespace**: `Arsol_Projects_For_Woo\Workflows\Standard`
 - **Components**:
   - **Setup**: Configuration and initialization
-  - **Workflow**: Main coordination and entry point
-  - **Transitions**: Conversion logic and customer actions
-  - **Stages**: Permission checking and transaction management
+  - **StandardWorkflow**: Consolidated class containing all workflow operations including transitions, stages, permissions, and transaction management
 
 ## 🚀 Core Functionality
 
@@ -111,17 +107,17 @@ $status = $standard_workflow->get_status();
 
 ### **Check User Permissions**
 ```php
-$stages = \Arsol_Projects_For_Woo\Workflows\Standard\Stages::get_instance();
-$can_view = $stages->user_can_view_post($user_id, $post_id);
+$workflow = \Arsol_Projects_For_Woo\Workflows\StandardWorkflow::get_instance();
+$can_view = $workflow->user_can_view_post($user_id, $post_id);
 ```
 
 ### **Manual Workflow Cleanup**
 ```php
 // Cleanup stuck workflows
-$stages->cleanup_stuck_workflows(30); // 30 minutes max age
+$workflow->cleanup_stuck_workflows(30); // 30 minutes max age
 
 // Emergency cleanup all
-$stages->emergency_cleanup_all_stuck_workflows();
+$workflow->emergency_cleanup_all_stuck_workflows();
 ```
 
 ## 📊 Monitoring & Debugging
