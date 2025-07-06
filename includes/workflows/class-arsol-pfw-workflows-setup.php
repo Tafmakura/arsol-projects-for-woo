@@ -81,8 +81,6 @@ class Setup {
      */
     private function load_dependencies(): void {
         // Load standard workflow setup
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard-setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard.php';
     }
 
     /**

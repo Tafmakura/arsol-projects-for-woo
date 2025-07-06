@@ -32,38 +32,8 @@ class Setup {
      * Constructor
      */
     private function __construct() {
-        $this->require_integration_files();
-        $this->initialize_integrations();
-    }
-
-    /**
-     * Require integration files
-     */
-    private function require_integration_files() {
-        // WooCommerce Core Integration
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-woocommerce.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-woocommerce-logs.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-woocommerce-biller-invoice.php';
-        
-        // WooCommerce Subscriptions Integration
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce-subscriptions/class-woocommerce-subscriptions.php';
-    }
-
-    /**
-     * Initialize all integrations
-     */
-    private function initialize_integrations() {
-        // Check if WooCommerce is active before initializing integrations
-        if (!class_exists('WooCommerce')) {
-            return;
-        }
-
-        // Initialize WooCommerce Core Integration
-        new \Arsol_Projects_For_Woo\Woocommerce();
-        new \Arsol_Projects_For_Woo\Woocommerce_Biller();
-        
-        // Initialize WooCommerce Subscriptions Integration
-        new \Arsol_Projects_For_Woo\Woocommerce_Subscriptions();
+        // Main includes setup handles all file includes and instantiations
+        // This setup now only handles integration-specific coordination
     }
 
     /**

@@ -8,59 +8,11 @@ if (!defined('ABSPATH')) {
 
 class Setup {
     public function __construct() {
-        $this->require_files();
-        $this->instantiate_classes();
+        // Main includes setup handles all file includes and instantiations
+        // This setup now only handles CPT-specific coordination
         
         // Add manual menu registration as backup
         add_action('admin_menu', array($this, 'ensure_submenus'), 20);
-    }
-
-    private function require_files() {
-        // Main CPT Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt.php';
-        
-        // Collection Management Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-projects-cpt.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-requests-cpt.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposals-cpt.php';
-        
-        // Custom Post Types
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-project.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-projects.php';
-        
-        // Project Request CPT
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-request.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-requests.php';
-        
-        // Project Proposal CPT
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposals.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal-quotation.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal-budget.php';
-    }
-
-    private function instantiate_classes() {
-        // Project CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Projects();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Project();
-        
-        // Project Request CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Request();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Requests();
-        
-        // Project Proposal CPT
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposals();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Quotation();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Budget();
     }
 
     /**

@@ -41,22 +41,11 @@ class Includes_Setup {
      * Require all includes files
      */
     private function require_includes_files() {
-        // Core Setup
+        // Core Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-assets.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-shortcodes.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-stages-handler.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-pfw-core-setup.php';
-        
-        // Custom Post Types Setup
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-arsol-pfw-custom-post-types-setup.php';
-        
-        // Taxonomies Setup
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-arsol-pfw-taxonomies-setup.php';
-        
-        // Email Manager
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-email-manager.php';
-        
-        // Frontend Handlers
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-frontend-handler.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-frontend-handler.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-frontend-handler.php';
         
         // Admin Files
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-capabilities.php';
@@ -67,81 +56,185 @@ class Includes_Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-integrations.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-tools.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-setup-defaults.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-menu-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-users.php';
-        
-        // Admin Setup
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-menu-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-setup.php';
         
-        // Frontend Setup
+        // Frontend Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-comments.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-template-overrides.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-template-sidebar-buttons.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-template-sidebar-meta.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-woocommerce-checkout.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-woocommerce-endpoints.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-setup.php';
         
-        // Integrations Setup
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/class-arsol-pfw-integrations-setup.php';
+        // Custom Post Types Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-arsol-pfw-custom-post-types-setup.php';
         
-        // Phases Setup
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/phases/class-arsol-pfw-phases-setup.php';
+        // Project CPT Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-project.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-admin-projects.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-frontend-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-projects-cpt.php';
         
-        // Workflows Setup
+        // Project Request CPT Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-admin-requests.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-frontend-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-requests-cpt.php';
+        
+        // Project Proposal CPT Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal-budget.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposal-quotation.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-admin-proposals.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-frontend-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposals-cpt.php';
+        
+        // Taxonomies Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-arsol-pfw-taxonomies-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/request-stage/class-taxonomies-request-stage-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/request-stage/class-taxonomies-request-stage-admin.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/class-taxonomies-proposal-stage-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/class-taxonomies-proposal-stage-admin.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/class-taxonomies-project-stage-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/class-taxonomies-project-stage-admin.php';
+        
+        // Workflows Files
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflows/class-arsol-pfw-workflows-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard.php';
+        
+        // Integrations Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/class-arsol-pfw-integrations-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-woocommerce.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-woocommerce-logs.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-woocommerce-biller-invoice.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce-subscriptions/class-woocommerce-subscriptions.php';
+        
+        // Phases Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/phases/class-arsol-pfw-phases-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/phases/class-arsol-pfw-phases-conversion.php';
+        
+        // Email Files (excluding templates)
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-email-manager.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-project.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-new-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-project-completion.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-project-creation.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-project-stage.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-decision.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-processing.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-ready.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-wc-email-request-stage.php';
     }
 
     /**
      * Initialize all includes classes
      */
     private function initialize_includes_classes() {
-        // Initialize Core Setup (assets, shortcodes, basic hooks)
+        // Initialize Core Classes
+        new Assets();
+        new Shortcodes();
+        new Stages_Handler();
         new Core\Setup();
+        
+        // Initialize Admin Classes
+        new Admin\Admin_Capabilities();
+        new Admin\Settings_Advanced();
+        new Admin\Settings_Display();
+        new Admin\Settings_Files();
+        new Admin\Settings_General();
+        new Admin\Settings_Integrations();
+        new Admin\Settings_Tools();
+        new Admin\Setup_Defaults();
+        new Admin\Users();
+        new \Arsol_Projects_For_Woo\Admin\Menu\Setup();
+        Admin\Setup::get_instance();
+        
+        // Initialize Frontend Classes
+        new Frontend\Comments();
+        new Frontend\Template_Overrides();
+        new Frontend\Template_Sidebar_Buttons();
+        new Frontend\Template_Sidebar_Meta();
+        new Frontend\WooCommerce_Checkout();
+        new Frontend\WooCommerce_Endpoints();
+        Frontend\Setup::get_instance();
         
         // Initialize Custom Post Types Setup
         new Custom_Post_Types\Setup();
         
-        // Initialize Taxonomies Setup
-        new Taxonomies\Setup();
-        
-        // Initialize Email Manager
-        \Arsol_Email_Manager::init();
-        
-        // Initialize Frontend Handlers
+        // Initialize Project CPT Classes
+        new Custom_Post_Types\Project\Setup();
+        new Custom_Post_Types\Project\Admin_Project();
+        new Custom_Post_Types\Project\Admin_Projects();
         new Custom_Post_Types\Project\Frontend_Handler();
+        new Custom_Post_Types\Project\Project_CPT();
+        new Custom_Post_Types\Project\Projects_CPT();
+        
+        // Initialize Project Request CPT Classes
+        new Custom_Post_Types\ProjectRequest\Setup();
+        new Custom_Post_Types\ProjectRequest\Admin_Request();
+        new Custom_Post_Types\ProjectRequest\Admin_Requests();
         new Custom_Post_Types\ProjectRequest\Frontend_Handler();
+        new Custom_Post_Types\ProjectRequest\Project_Request_CPT();
+        new Custom_Post_Types\ProjectRequest\Project_Requests_CPT();
+        
+        // Initialize Project Proposal CPT Classes
+        new Custom_Post_Types\ProjectProposal\Setup();
+        new Custom_Post_Types\ProjectProposal\Admin_Proposal();
+        new Custom_Post_Types\ProjectProposal\Admin_Proposal_Budget();
+        new Custom_Post_Types\ProjectProposal\Admin_Proposal_Quotation();
+        new Custom_Post_Types\ProjectProposal\Admin_Proposals();
         new Custom_Post_Types\ProjectProposal\Frontend_Handler();
+        new Custom_Post_Types\ProjectProposal\Project_Proposal_CPT();
+        new Custom_Post_Types\ProjectProposal\Project_Proposals_CPT();
         
-        // Initialize Admin Classes
-        // Initialize capabilities first
-        new Admin\Admin_Capabilities();
+        // Initialize Taxonomies Classes
+        new Taxonomies\Setup();
+        new Taxonomies\Request_Stage\Setup();
+        new Taxonomies\Request_Stage\Admin();
+        new Taxonomies\Proposal_Stage\Setup();
+        new Taxonomies\Proposal_Stage\Admin();
+        new Taxonomies\Project_Stage\Setup();
+        new Taxonomies\Project_Stage\Admin();
         
-        // Initialize admin-only classes
-        if (is_admin()) {
-            new Admin\Settings_General();
-            new Admin\Settings_Display();
-            new Admin\Settings_Files();
-            new Admin\Settings_Advanced();
-            new Admin\Settings_Tools();
-            new Admin\Setup_Defaults();
-            
-            // Initialize Admin Menu Setup
-            new \Arsol_Projects_For_Woo\Admin\Menu\Setup(); // Admin menu management
-        }
-        
-        // Initialize classes that work in both admin and frontend
-        new Admin\Settings_Integrations();
-        new Admin\Users();
-        
-        // Initialize Admin Management Coordinator (singleton)
-        Admin\Setup::get_instance(); // This refers to the coordinator in class-arsol-pfw-admin-setup.php
-        
-        // Initialize Frontend Management
-        Frontend\Setup::get_instance();
-        
-        // Initialize Integrations Management
-        Integrations\Setup::get_instance();
-        
-        // Initialize Phases Management
-        Phases\Setup::get_instance();
-        
-        // Initialize Workflows Management
+        // Initialize Workflows Classes
         Workflows\Setup::get_instance();
+        new Workflows\Standard\Setup();
+        new Workflows\Standard\Standard();
+        
+        // Initialize Integrations Classes
+        Integrations\Setup::get_instance();
+        new Integrations\WooCommerce\WooCommerce();
+        new Integrations\WooCommerce\Logs();
+        new Integrations\WooCommerce\Biller_Invoice();
+        new Integrations\WooCommerce_Subscriptions\Subscriptions();
+        
+        // Initialize Phases Classes
+        Phases\Setup::get_instance();
+        Phases\Conversion::get_instance();
+        
+        // Initialize Email Classes
+        \Arsol_Email_Manager::init();
+        new WC_Email_Admin_New_Project();
+        new WC_Email_Admin_New_Request();
+        new WC_Email_New_Request();
+        new WC_Email_Project_Completion();
+        new WC_Email_Project_Creation();
+        new WC_Email_Project_Stage();
+        new WC_Email_Proposal_Decision();
+        new WC_Email_Proposal_Processing();
+        new WC_Email_Proposal_Ready();
+        new WC_Email_Request_Stage();
     }
 
     /**

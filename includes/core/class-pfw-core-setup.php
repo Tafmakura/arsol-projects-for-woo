@@ -17,8 +17,8 @@ class Setup {
      * Constructor
      */
     public function __construct() {
-        $this->require_core_files();
-        $this->instantiate_core_classes();
+        // Main includes setup handles all file includes and instantiations
+        // This setup now only handles core-specific hooks and functionality
         $this->setup_core_hooks();
     }
 
@@ -49,24 +49,6 @@ class Setup {
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
                 "Automatic cleanup: removed {$cleaned} stuck conversions");
         }
-    }
-
-    /**
-     * Include only core files (assets, shortcodes)
-     */
-    private function require_core_files() {
-        // Core Classes Only
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-shortcodes.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-assets.php';
-    }
-
-    /**
-     * Instantiate only core classes
-     */
-    private function instantiate_core_classes() {
-        // Initialize core classes only
-        new \Arsol_Projects_For_Woo\Shortcodes();
-        new \Arsol_Projects_For_Woo\Assets();
     }
 
     /**

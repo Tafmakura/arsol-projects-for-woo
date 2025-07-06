@@ -32,35 +32,8 @@ class Setup {
      * Constructor
      */
     private function __construct() {
-        $this->require_frontend_files();
-        $this->initialize_frontend_classes();
-    }
-
-    /**
-     * Require frontend files
-     */
-    private function require_frontend_files() {
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-comments.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-template-overrides.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-template-sidebar-buttons.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-template-sidebar-meta.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-woocommerce-checkout.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-woocommerce-endpoints.php';
-    }
-
-    /**
-     * Initialize frontend classes
-     */
-    private function initialize_frontend_classes() {
-        // Initialize frontend classes only if not in admin
-        if (!is_admin() || wp_doing_ajax()) {
-            new \Arsol_Projects_For_Woo\Frontend_Comments();
-            new \Arsol_Projects_For_Woo\Frontend_Template_Overrides();
-            new \Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Buttons();
-            new \Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Meta();
-            new \Arsol_Projects_For_Woo\Frontend_Woocommerce_Checkout();
-            new \Arsol_Projects_For_Woo\Frontend_Woocommerce_Endpoints();
-        }
+        // Main includes setup handles all file includes and instantiations
+        // This setup now only handles frontend-specific coordination
     }
 
     /**
