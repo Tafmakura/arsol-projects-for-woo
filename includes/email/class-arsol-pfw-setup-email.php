@@ -44,13 +44,16 @@ class Email {
      * Initialize email classes
      */
     private function init_classes() {
-        // Include existing email manager class (global namespace)
-        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/email/class-arsol-pfw-email-manager.php';
+        // Include the email manager class first
+        $email_manager_file = ARSOL_PFW_PLUGIN_PATH . 'includes/email/class-arsol-pfw-email-manager.php';
         
-        // Initialize the email manager using static method call
-        // Note: Arsol_Email_Manager is in the global namespace, not Arsol_PFW
-        if (class_exists('Arsol_Email_Manager')) {
-            Arsol_Email_Manager::init();
+        if (file_exists($email_manager_file)) {
+            require_once $email_manager_file;
+            
+            // Initialize the email manager - it's in the global namespace
+            if (class_exists('Arsol_Email_Manager')) {
+                \Arsol_Email_Manager::init();
+            }
         }
     }
     
