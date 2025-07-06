@@ -51,6 +51,11 @@ class Core {
         require_once ARSOL_PFW_PLUGIN_PATH . 'includes/core/class-arsol-pfw-stages-handler.php';
         require_once ARSOL_PFW_PLUGIN_PATH . 'includes/core/class-arsol-pfw-project-phases.php';
         
+        // Include compatibility layer for old namespace references
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/classes/class-admin-capabilities.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/classes/class-admin-settings-general.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/classes/class-admin-setup-defaults.php';
+        
         // Initialize core classes that need to be loaded immediately
         if (class_exists('\Arsol_PFW\Core\Assets')) {
             new \Arsol_PFW\Core\Assets();
