@@ -3,7 +3,7 @@
  * Plugin Name: Arsol Projects for Woo
  * Plugin URI: https://your-site.com/arsol-projects-for-woo
  * Description: A WordPress plugin to manage projects with WooCommerce integration
- * Version: 0.0.9.6
+ * Version: 1.0.0
  * Requires at least: 5.8
  * Requires PHP: 7.4.1
  * Requires Plugins: woocommerce
@@ -14,7 +14,7 @@
  * Text Domain: arsol-pfw
  * Domain Path: /languages
  * 
- * @package Arsol_Projects_For_Woo
+ * @package Arsol_PFW
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,34 +42,21 @@ define('ARSOL_PROJECTS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ARSOL_PROJECTS_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('ARSOL_PROJECTS_PLUGIN_BASENAME', plugin_basename(__FILE__));
 
-// Define additional constants for compatibility
+// Define additional constants for compatibility and new architecture
 define('ARSOL_PFW_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('ARSOL_PFW_PLUGIN_FILE', __FILE__);
+define('ARSOL_PFW_PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('ARSOL_PFW_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('ARSOL_PFW_VERSION', '1.0.0');
 
 // Define project meta key constant for WooCommerce integration
 define('ARSOL_PROJECT_META_KEY', 'arsol-pfw/parent-project-id');
 
-// Use correct namespace
-use Arsol_Projects_For_Woo\Setup;
-use Arsol_Projects_For_Woo\Workflow\Workflow_Handler;
-use Arsol_Projects_For_Woo\Admin\Setup_Defaults;
-use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Meta;
-use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Buttons;
+// Use new refactored namespace
+use Arsol_PFW\Setup;
 
-// Include the Setup class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
-
-// Include the admin settings class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
-
-// Include the admin setup defaults class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup-defaults.php';
-
-// Include the workflow handler class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-workflow-handler.php';
-
-// Include the frontend sidebar classes
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-meta.php';
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-buttons.php';
+// Include the new root Setup class
+require_once ARSOL_PFW_PLUGIN_PATH . 'includes/class-arsol-pfw-setup.php';
 
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');
@@ -107,15 +94,8 @@ function arsol_projects_deactivate() {
  * @return void
  */
 function arsol_projects_init() {
-    // Instantiate the Setup class
-    new Setup();
-    // Instantiate the Workflow_Handler class
-    new Workflow_Handler();
-    // Instantiate the Setup_Defaults class
-    new Setup_Defaults();
-    // Instantiate the Frontend Sidebar classes
-    new Frontend_Template_Sidebar_Meta();
-    new Frontend_Template_Sidebar_Buttons();
+    // Initialize the new refactored plugin architecture
+    Setup::get_instance();
 }
 add_action('plugins_loaded', 'arsol_projects_init');
 
