@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 /**
  * Taxonomies Setup class
  */
-class Taxonomies_Setup {
+class Setup {
 
     /**
      * Constructor

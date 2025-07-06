@@ -45,10 +45,10 @@ class Includes_Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-pfw-core-setup.php';
         
         // Custom Post Types Setup
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-arsol-pfw-custom-post-types-setup.php';
         
         // Taxonomies Setup
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-taxonomies-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-arsol-pfw-taxonomies-setup.php';
         
         // Email Manager
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-email-manager.php';
@@ -85,7 +85,7 @@ class Includes_Setup {
         new Custom_Post_Types\Setup();
         
         // Initialize Taxonomies Setup
-        new Taxonomies\Taxonomies_Setup();
+        new Taxonomies\Setup();
         
         // Initialize Email Manager
         \Arsol_Email_Manager::init();
@@ -182,7 +182,7 @@ class Includes_Setup {
         return [
             'core' => class_exists('Arsol_Projects_For_Woo\Core\Setup'),
             'custom_post_types' => class_exists('Arsol_Projects_For_Woo\Custom_Post_Types\Setup'),
-            'taxonomies' => class_exists('Arsol_Projects_For_Woo\Taxonomies\Taxonomies_Setup'),
+            'taxonomies' => class_exists('Arsol_Projects_For_Woo\Taxonomies\Setup'),
             'email_manager' => class_exists('Arsol_Email_Manager'),
             'admin' => class_exists('Arsol_Projects_For_Woo\Admin\Setup'),
             'frontend' => class_exists('Arsol_Projects_For_Woo\Frontend\Setup'),
@@ -200,7 +200,7 @@ class Includes_Setup {
         return [
             'core' => new Core\Setup(),
             'custom_post_types' => new Custom_Post_Types\Setup(),
-            'taxonomies' => new Taxonomies\Taxonomies_Setup(),
+            'taxonomies' => new Taxonomies\Setup(),
             'admin' => Admin\Setup::get_instance(),
             'frontend' => Frontend\Setup::get_instance(),
             'integrations' => Integrations\Setup::get_instance(),
