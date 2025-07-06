@@ -118,7 +118,7 @@ class Settings_General {
         // User Permissions Section
         add_settings_section(
             'arsol_projects_user_permissions',
-            __('User Frontend Permissions', 'arsol-pfw'),
+            __('Project Permissions', 'arsol-pfw'),
             array($this, 'render_user_permissions_section'),
             'arsol_pfw_general_settings'
         );
@@ -140,13 +140,13 @@ class Settings_General {
         // Project User Roles
         add_settings_field(
             'project_user_roles',
-            __('Frontend Permissions', 'arsol-pfw'),
+            __('Customer Permissions', 'arsol-pfw'),
             array($this, 'render_roles_field'),
             'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
                 'field' => 'project_user_roles',
-                'description' => __('Select roles that can create and manage their own projects.', 'arsol-pfw'),
+                'description' => __('Select roles that can create and manage their own projects as WooCommerce customers.', 'arsol-pfw'),
                 'class' => 'arsol-pfw-user-roles-field'
             )
         );
@@ -438,7 +438,7 @@ class Settings_General {
      * Render user permissions section description
      */
     public function render_user_permissions_section() {
-        echo '<p>' . esc_html__('Configure frontend permissions for creating and requesting projects.', 'arsol-pfw') . '</p>';
+        echo '<p>' . esc_html__('Configure project permissions: Project managers need WooCommerce admin knowledge, while regular users just need to be WooCommerce customers.', 'arsol-pfw') . '</p>';
     }
 
     /**
@@ -459,15 +459,42 @@ class Settings_General {
         
         $editable_roles = get_editable_roles();
         
-        // Filter roles to only include those with admin access (manage_options capability)
+        // Filter roles to include those with admin access (WordPress admin OR WooCommerce admin)
         $admin_roles = array();
         foreach ($editable_roles as $role => $details) {
+            $has_admin_access = false;
+            
+            // Check for WordPress admin capabilities
             if (isset($details['capabilities']['manage_options']) && $details['capabilities']['manage_options']) {
+                $has_admin_access = true;
+            }
+            
+            // Check for WooCommerce admin capabilities
+            $woocommerce_admin_caps = array(
+                'manage_woocommerce',
+                'view_woocommerce_reports',
+                'edit_shop_orders',
+                'read_shop_orders',
+                'delete_shop_orders',
+                'publish_shop_orders',
+                'edit_others_shop_orders',
+                'read_private_shop_orders',
+                'delete_others_shop_orders'
+            );
+            
+            foreach ($woocommerce_admin_caps as $cap) {
+                if (isset($details['capabilities'][$cap]) && $details['capabilities'][$cap]) {
+                    $has_admin_access = true;
+                    break;
+                }
+            }
+            
+            if ($has_admin_access) {
                 $admin_roles[$role] = $details;
             }
         }
         
-        $role_order = array('administrator', 'editor', 'author', 'contributor', 'subscriber');
+        $role_order = array('administrator', 'shop_manager', 'editor', 'author', 'contributor', 'subscriber');
         
         uksort($admin_roles, function ($a, $b) use ($role_order) {
             $a_pos = array_search($a, $role_order);
