@@ -184,7 +184,7 @@ class Settings_General {
                     'request' => __('Can request projects', 'arsol-pfw'),
                     'create' => __('Can create projects', 'arsol-pfw')
                 ),
-                'class' => 'arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user-specific arsol-pfw-new-user-permissions'
+                'class' => 'arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user_specific arsol-pfw-new-user-permissions'
             )
         );
 

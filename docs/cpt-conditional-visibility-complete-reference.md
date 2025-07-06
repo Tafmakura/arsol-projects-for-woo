@@ -165,6 +165,38 @@ arsol-pfw-{action}-if-{field-name}-is-{value}
 <div class="arsol-pfw-show-if-user_project_permissions-is-user_specific">
 ```
 
+### ⚠️ **Critical Rule: Value Matching**
+
+The **value part** of the CSS class must match the field value **exactly** - do NOT convert to kebab-case:
+
+```html
+<!-- Field with option value -->
+<select id="arsol-pfw-user-project-permissions">
+    <option value="user_specific">Set per user</option>  <!-- Value has underscore -->
+</select>
+
+<!-- ✅ CORRECT: Value matches exactly -->
+<div class="arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user_specific">
+    <!-- CSS class uses exact value: user_specific -->
+</div>
+
+<!-- ❌ INCORRECT: Value converted to kebab-case -->
+<div class="arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user-specific">
+    <!-- This would NOT work - value doesn't match -->
+</div>
+```
+
+### CSS Class Naming Rules
+
+| **Part** | **Format** | **Example** |
+|---|---|---|
+| Prefix | kebab-case | `arsol-pfw-` |
+| Action | kebab-case | `show-if-` |
+| Field ID | kebab-case | `arsol-pfw-user-project-permissions-` |
+| Value | **EXACT MATCH** | `user_specific` (not `user-specific`) |
+
+**Final Class:** `arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user_specific`
+
 ---
 
 ## Field ID Requirements
