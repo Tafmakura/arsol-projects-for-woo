@@ -46,7 +46,7 @@ class Setup {
     /**
      * Initialize the phases system
      */
-    private function init(): void {
+    public function init(): void {
         $this->require_files();
         $this->instantiate_classes();
     }
