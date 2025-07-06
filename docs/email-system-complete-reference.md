@@ -1,402 +1,439 @@
-# Arsol Projects for Woo - Email System Complete Reference
-
-**Version**: 1.0  
-**Date**: 2024  
-**Purpose**: Complete documentation of the email notification system for Arsol Projects for Woo plugin
-
----
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Email Architecture](#email-architecture)
-3. [Complete Email Matrix](#complete-email-matrix)
-4. [Stage 1: Project Requests](#stage-1-project-requests)
-5. [Stage 2: Project Proposals](#stage-2-project-proposals)
-6. [Stage 3: Active Projects](#stage-3-active-projects)
-7. [Billing Notifications](#billing-notifications)
-8. [Email Templates](#email-templates)
-9. [Implementation Reference](#implementation-reference)
-10. [Portal URLs](#portal-urls)
-
----
+# Email System - Complete Reference
 
 ## Overview
 
-The Arsol Projects for Woo plugin implements a comprehensive email notification system that manages communication between **Customers**, **Project Leads**, and **Admins** throughout the complete project lifecycle from initial request to project completion.
+The **Arsol Projects for WooCommerce** email system provides comprehensive email notifications for all project lifecycle events. Built on WooCommerce's email framework, it offers advanced targeting, role-based delivery, and dynamic content generation.
 
-### Key Principles
+## Key Features
 
-- **Portal-First Content**: Every email prioritizes portal links as primary CTAs
-- **Role-Based Distribution**: Different user types receive appropriate notifications
-- **Complete Admin Oversight**: Admins get notifications for ALL workflow steps
-- **Customer-Focused Journey**: Customers only get actionable, relevant emails
-- **WooCommerce Integration**: Leverages WooCommerce's native email system
-
----
-
-## Email Architecture
-
-### User Types & Access Levels
-
-| User Type | Request Stage | Proposal Stage | Project Stage |
-|-----------|---------------|----------------|---------------|
-| **👤 Customers** | ✅ Submitter | ✅ Reviewer/Approver | ✅ Project Owner |
-| **👨‍💼 Project Leads** | ❌ Not involved | ✅ Assigned & Working | ✅ Project Manager |
-| **🔧 Admins** | ✅ Full oversight | ✅ Full oversight | ✅ Full oversight |
-
-### Email Integration
-
-```php
-// WooCommerce Email System Integration
-add_filter('woocommerce_email_classes', array($this, 'add_email_classes'));
-
-// Custom Email Classes
-$email_classes['Arsol_New_Request_Email'] = new \Arsol_Projects_For_Woo\Emails\New_Request_Email();
-$email_classes['Arsol_Request_Status_Email'] = new \Arsol_Projects_For_Woo\Emails\Request_Status_Email();
-$email_classes['Arsol_Proposal_Processing_Email'] = new \Arsol_Projects_For_Woo\Emails\Proposal_Processing_Email();
-$email_classes['Arsol_Request_Stage_Email'] = new \Arsol_Projects_For_Woo\Emails\Request_Stage_Email();
-// ... additional email classes
-```
+- ✅ **10 Email Types** covering all project lifecycle events
+- ✅ **Role-Based Targeting** with dynamic recipient detection
+- ✅ **Template Override System** for complete customization
+- ✅ **Dynamic Content** with shortcode support
+- ✅ **Admin Controls** for enable/disable per email type
+- ✅ **WooCommerce Integration** with standard email settings
 
 ---
 
-## Complete Email Matrix
+## Email Types
 
-### Email Summary Statistics
+### 1. Request Stage Changes
+**Class:** `WC_Email_Request_Stage`
+**Triggers:** When project request stage changes
+**Recipients:** Request author, project managers
+**Template:** `email-request-stage.php`
 
-| **Stage** | **Customer Emails** | **Project Lead Emails** | **Admin Emails** | **Total** |
-|-----------|-------------------|------------------------|------------------|-----------|
-| **Requests** | 3 | 0 | 4 | **7** |
-| **Proposals** | 2 | 4 | 5 | **11** |
-| **Projects** | 4 | 4 | 4 | **12** |
-| **Billing** | 1 | 1 | 1 | **3** |
-| **TOTAL** | **10** | **9** | **14** | **33** |
+### 2. New Request Notifications
+**Class:** `WC_Email_New_Request`
+**Triggers:** When new project request is created
+**Recipients:** Request author (confirmation)
+**Template:** `email-new-request.php`
 
----
+### 3. Admin New Request
+**Class:** `WC_Email_Admin_New_Request`
+**Triggers:** When new project request is created
+**Recipients:** Site administrators, project managers
+**Template:** `email-admin-new-request.php`
 
-## Stage 1: Project Requests
+### 4. Proposal Processing
+**Class:** `WC_Email_Proposal_Processing`
+**Triggers:** When proposal moves to processing stage
+**Recipients:** Project managers
+**Template:** `email-proposal-processing.php`
 
-*Users Involved: Admins + Customers (NO Project Leads)*
+### 5. Proposal Ready
+**Class:** `WC_Email_Proposal_Ready`
+**Triggers:** When proposal is ready for client review
+**Recipients:** Project owner, proposal author
+**Template:** `email-proposal-ready.php`
 
-### 1. New Request Submitted
-```php
-do_action('arsol_new_request_created', $request_id, $customer_id);
-```
+### 6. Proposal Decision
+**Class:** `WC_Email_Proposal_Decision`
+**Triggers:** When proposal is approved/rejected
+**Recipients:** Project managers, proposal author
+**Template:** `email-proposal-decision.php`
 
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👤 Customer** | Request Submitted Successfully | `"Your Project Request Has Been Received - #{Request ID}"` | `/my-account/project-view-request/{request_id}` |
-| **🔧 Admins** | New Project Request Submitted | `"New Project Request: {Request Title}"` | Admin edit link |
+### 7. Project Creation
+**Class:** `WC_Email_Project_Creation`
+**Triggers:** When new project is created
+**Recipients:** Project owner, project managers
+**Template:** `email-project-creation.php`
 
-### 2. Request Stage: → Under Review
-```php
-do_action('arsol_request_stage_changed', $request_id, 'pending-review', 'under-review');
-```
+### 8. Project Stage Changes
+**Class:** `WC_Email_Project_Stage`
+**Triggers:** When project stage changes
+**Recipients:** Project owner, project managers
+**Template:** `email-project-stage.php`
 
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👤 Customer** | Request Under Review | `"Update: Your Request is Being Reviewed - #{Request ID}"` | `/my-account/project-view-request/{request_id}` |
-| **🔧 Admins** | Request Under Review | `"Request Status: Under Review - {Request Title}"` | Admin link |
+### 9. Project Completion
+**Class:** `WC_Email_Project_Completion`
+**Triggers:** When project is marked as completed
+**Recipients:** Project owner, project managers
+**Template:** `email-project-completion.php`
 
-### 3. Request Stage: → On Hold
-```php
-do_action('arsol_request_stage_changed', $request_id, $old_stage, 'on-hold');
-```
-
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👤 Customer** | Request On Hold | `"Status Update: Request On Hold - #{Request ID}"` | `/my-account/project-view-request/{request_id}` |
-| **🔧 Admins** | Request On Hold | `"Request On Hold: {Request Title} - #{Request ID}"` | Admin link |
-
-### 4. Request Stage: → Approved (Admin Only)
-```php
-do_action('arsol_request_stage_changed', $request_id, $old_stage, 'approved');
-```
-
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **🔧 Admins** | Request Approved - Ready for Conversion | `"Request Approved: {Request Title} - #{Request ID}"` | Admin conversion link |
-
-*Note: Customer gets "proposal processing" email instead of "request approved"*
-
----
-
-## Stage 2: Project Proposals
-
-*Users Involved: Admins + Project Leads + Customers*
-
-### 5. New Proposal Created (Internal)
-```php
-do_action('arsol_new_proposal_created', $proposal_id, $customer_id, $project_lead_id);
-```
-
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👨‍💼 Project Lead** | New Project Assignment | `"You've been assigned: {Project Title} - #{Proposal ID}"` | Admin proposal link |
-| **🔧 Admins** | New Proposal Created | `"Proposal Generated: {Project Title} - Lead: {Lead Name}"` | Admin proposal link |
-
-### 6. Proposal Processing Started
-```php
-do_action('arsol_proposal_processing_started', $proposal_id, $customer_id, $project_lead_id);
-```
-
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👤 Customer** | 🔧 We're Working on Your Proposal | `"We're Working on Your Proposal: {Project Title} - #{Proposal ID}"` | `/my-account/project-view-proposal/{proposal_id}` |
-| **👨‍💼 Project Lead** | Proposal Assignment Active | `"Now Processing: {Project Title} - #{Proposal ID}"` | Admin proposal link |
-| **🔧 Admins** | Proposal Processing Started | `"Processing Started: {Project Title} - Lead: {Lead Name}"` | Admin proposal link |
-
-### 7. Proposal Status: Processing → Pending Approval
-```php
-do_action('arsol_proposal_status_changed', $proposal_id, 'processing', 'pending-approval');
-```
-
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👤 Customer** | ⏰ Action Required: Review Your Proposal | `"Please Review: {Project Title} Proposal - #{Proposal ID}"` | `/my-account/project-view-proposal/{proposal_id}` |
-| **👨‍💼 Project Lead** | Proposal Sent to Customer | `"Awaiting Customer Response: {Project Title} - #{Proposal ID}"` | Admin proposal link |
-| **🔧 Admins** | Proposal Pending Customer Response | `"Customer Review: {Project Title} - #{Proposal ID}"` | Admin proposal link |
-
-### 8. Proposal Status: Pending Approval → Approved
-```php
-do_action('arsol_proposal_status_changed', $proposal_id, 'pending-approval', 'approved');
-```
-
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👨‍💼 Project Lead** | 🎉 Project Approved & Created! | `"Ready to Start: {Project Title} - #{Project ID}"` | Admin project link |
-| **🔧 Admins** | Project Created from Approved Proposal | `"New Active Project: {Project Title} - #{Project ID}"` | Admin project link |
-
-### 9. Proposal Status: Pending Approval → Rejected
-```php
-do_action('arsol_proposal_status_changed', $proposal_id, 'pending-approval', 'rejected');
-```
-
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👨‍💼 Project Lead** | Proposal Rejected - Customer Feedback | `"Revision Needed: {Project Title} - #{Proposal ID}"` | Admin proposal link |
-| **🔧 Admins** | Proposal Rejected - Follow-up Needed | `"Customer Feedback: {Project Title} - #{Proposal ID}"` | Admin proposal link |
-
-*Note: Customer doesn't get notification for their own rejection*
+### 10. Admin New Project
+**Class:** `WC_Email_Admin_New_Project`
+**Triggers:** When new project is created
+**Recipients:** Site administrators
+**Template:** `email-admin-new-project.php`
 
 ---
 
-## Stage 3: Active Projects
+## Role-Based Targeting
 
-*Users Involved: Admins + Project Leads + Customers*
+### Dynamic Recipient Detection
 
-### 10. Your Order Is Ready (After Approval)
-```php
-do_action('arsol_proposal_approved_project_created', $project_id, $proposal_id, $customer_id, $project_lead_id);
-```
+The system automatically determines recipients based on:
+- **User Roles** (project managers, administrators)
+- **Project Ownership** (project authors, assigned users)
+- **Stage-Specific Rules** (different recipients for different stages)
 
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👤 Customer** | 🎉 Your Order Is Ready! | `"Your Order Is Ready: {Project Title} - #{Project ID}"` | `/my-account/project-overview/{project_id}` |
+### Target Roles
 
-### 11. Project Created (Internal)
-```php
-do_action('arsol_new_project_created', $project_id, $proposal_id, $customer_id, $project_lead_id);
-```
+#### Project Managers
+- Users with `arsol_pfw_manage` capability
+- Configurable via Settings → General → Project Manager Permissions
+- Default: Administrator, Shop Manager
 
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👨‍💼 Project Lead** | Project Officially Active | `"Project Kickoff: {Project Title} - #{Project ID}"` | Admin project link |
-| **🔧 Admins** | New Active Project | `"Project Live: {Project Title} - Lead: {Lead Name}"` | Admin project link |
+#### Project Owners
+- Original project author
+- Users assigned to specific projects
+- WooCommerce customers with project access
 
-### 12. Project Stage: Not Started → Custom Stage
-
-```php
-do_action('arsol_project_stage_changed', $project_id, 'not-started', $new_stage, $project_lead_id);
-```
-
-**Email Flow:**
-| **Recipient** | **Email Type** | **Subject** | **Action** |
-|---------------|----------------|-------------|------------|
-| **👤 Customer** | 🚀 Project Stage Update | `"Stage Update: {Project Title} - Now {New Stage}"` | `/my-account/project-overview/{project_id}` |
-| **👨‍💼 Project Lead** | Project Stage Updated | `"Project Active: {Project Title} - #{Project ID}"` | Admin project link |
-| **🔧 Admins** | Project Stage Update | `"Stage Change: {Project Title} - Now {New Stage}"` | Admin project link |
-
-### 13. Project Stage: In Progress → Completed
-
-```php
-do_action('arsol_project_stage_changed', $project_id, 'in-progress', 'completed', $project_lead_id);
-```
+#### Site Administrators
+- Users with `manage_options` capability
+- Receive system-wide notifications
+- Can override all email settings
 
 ---
 
-## Billing Notifications
+## Template System
 
-### 14. Order/Subscription Created
-```php
-do_action('arsol_project_order_created', $project_id, $order_id);
+### Template Locations
+
+```
+your-theme/arsol-projects-for-woo/emails/
+├── email-request-stage.php
+├── email-new-request.php
+├── email-admin-new-request.php
+├── email-proposal-processing.php
+├── email-proposal-ready.php
+├── email-proposal-decision.php
+├── email-project-creation.php
+├── email-project-stage.php
+├── email-project-completion.php
+└── email-admin-new-project.php
 ```
 
-| Recipient | Email | Subject | Portal URL |
-|-----------|-------|---------|------------|
-| **👤 Customer** | Payment Setup Complete | `"Billing Activated: {Project Title} - #{Project ID}"` | `/my-account/project-overview/{project_id}` |
-| **👨‍💼 Project Lead** | Project Billing Active | `"Billing Confirmed: {Project Title} - #{Project ID}"` | Admin project link |
-| **🔧 Admins** | Project Order Created | `"Order Created: {Project Title} - #{Order ID}"` | Admin order link |
+### Template Variables
 
----
+All email templates receive these variables:
 
-## Email Templates
+```php
+// Core Entity Data
+$project_id     // Project ID (if applicable)
+$proposal_id    // Proposal ID (if applicable)
+$request_id     // Request ID (if applicable)
+
+// Stage Information
+$old_stage      // Previous stage
+$new_stage      // New stage
+$stage_name     // Human-readable stage name
+
+// User Data
+$user_id        // Recipient user ID
+$user_email     // Recipient email
+$user_name      // Recipient display name
+
+// Email Settings
+$email_heading  // Email heading text
+$email_title    // Email subject line
+$sent_to_admin  // Boolean: is admin email
+```
 
 ### Template Structure
 
-All emails follow this structure:
-
-```html
-<!-- Status Header -->
-<div style="background: {status_color}; padding: 20px; border-radius: 8px; margin: 20px 0;">
-    <h2 style="color: {text_color}; margin: 0;">{status_icon} {Email Title}</h2>
-    <p style="margin: 10px 0 0; color: {text_color};">Status: {Current Status}</p>
-</div>
-
-<!-- Main Content -->
-<p>Hi {Recipient Name},</p>
-<p>{Main message content}</p>
-
-<!-- Information Box -->
-<div style="background: #e8f4fd; padding: 15px; border-left: 4px solid #0073aa; margin: 20px 0;">
-    <h3 style="margin: 0 0 10px; color: #0073aa;">{Info Title}</h3>
-    <ul style="margin: 0; padding-left: 20px;">
-        <li>{Info item 1}</li>
-        <li>{Info item 2}</li>
-    </ul>
-</div>
-
-<!-- Primary CTA -->
-<div style="text-align: center; margin: 30px 0;">
-    <a href="{portal_url}" 
-       style="background: {cta_color}; color: white; padding: 15px 30px; 
-              text-decoration: none; border-radius: 5px; font-weight: bold; 
-              display: inline-block;">
-        🔗 {CTA Text}
-    </a>
-</div>
-
-<!-- Contact Information -->
-<p><strong>Contact:</strong> {Contact Details}</p>
-```
-
-### Color Schemes
-
-| Status | Background | Text | CTA |
-|--------|------------|------|-----|
-| **Processing** | `#cce5ff` | `#0073aa` | `#0073aa` |
-| **Success** | `#d4edda` | `#155724` | `#28a745` |
-| **Action Required** | `#fff3cd` | `#856404` | `#ffc107` |
-| **Error/Hold** | `#f8d7da` | `#721c24` | `#dc3545` |
-
----
-
-## Implementation Reference
-
-### Required Email Classes
-
-Create these email classes in `includes/emails/`:
-
 ```php
-// includes/emails/class-new-request-email.php
-class New_Request_Email extends WC_Email
+<?php
+// Email header
+do_action('woocommerce_email_header', $email_heading, $email);
 
-// includes/emails/class-request-status-email.php  
-class Request_Status_Email extends WC_Email
+// Email content
+echo '<h2>' . esc_html($email_title) . '</h2>';
+echo '<p>' . sprintf(__('Hello %s,', 'arsol-pfw'), esc_html($user_name)) . '</p>';
 
-// includes/emails/class-proposal-processing-email.php
-class Proposal_Processing_Email extends WC_Email
-
-// includes/emails/class-proposal-status-email.php
-class Proposal_Status_Email extends WC_Email
-
-// includes/emails/class-project-ready-email.php
-class Project_Ready_Email extends WC_Email
-
-// includes/emails/class-project-stage-email.php
-class Project_Stage_Email extends WC_Email
-
-// includes/emails/class-billing-notification-email.php
-class Billing_Notification_Email extends WC_Email
-```
-
-### Email Action Hooks Implementation
-
-Add these action triggers throughout the codebase:
-
-```php
-// Request Stage
-do_action('arsol_new_request_created', $request_id, $customer_id);
-do_action('arsol_request_stage_changed', $request_id, $old_stage, $new_stage);
-
-// Proposal Stage  
-do_action('arsol_new_proposal_created', $proposal_id, $customer_id, $project_lead_id);
-do_action('arsol_proposal_processing_started', $proposal_id, $customer_id, $project_lead_id);
-do_action('arsol_proposal_status_changed', $proposal_id, $old_status, $new_status);
-
-// Project Stage
-do_action('arsol_proposal_approved_project_created', $project_id, $proposal_id, $customer_id, $project_lead_id);
-do_action('arsol_new_project_created', $project_id, $proposal_id, $customer_id, $project_lead_id);
-do_action('arsol_project_stage_changed', $project_id, $old_stage, $new_stage, $project_lead_id);
-
-// Billing Stage
-do_action('arsol_project_order_created', $project_id, $order_id);
-```
-
-### Common Hook Usage Examples
-
-```php
-// Hook into stage changes
-add_action('arsol_project_stage_changed', 'custom_stage_change_handler', 10, 4);
-function custom_stage_change_handler($project_id, $old_stage, $new_stage, $project_lead_id) {
-    // Custom logic when project stage changes
+// Entity-specific content
+if ($project_id) {
+    echo '<p>' . sprintf(__('Project: %s', 'arsol-pfw'), get_the_title($project_id)) . '</p>';
 }
 
-// Hook example for specific stage transitions
-add_action('arsol_project_stage_changed', 'handle_project_completion', 10, 4);
-function handle_project_completion($project_id, $old_stage, $new_stage, $project_lead_id) {
-    if ($new_stage === 'completed') {
-        // Send completion notifications
-        do_action('arsol_project_stage_changed', $project_id, $old_stage, $new_stage, $project_lead_id);
-    }
+// Stage change information
+if ($old_stage && $new_stage) {
+    echo '<p>' . sprintf(__('Stage changed from %s to %s', 'arsol-pfw'), $old_stage, $new_stage) . '</p>';
 }
+
+// Email footer
+do_action('woocommerce_email_footer', $email);
+?>
 ```
 
 ---
 
-## Portal URLs
+## Email Configuration
 
-### Customer Portal URLs
+### Admin Settings
 
-| Stage | URL Pattern | Example |
-|-------|-------------|---------|
-| **Requests** | `/my-account/project-view-request/{request_id}` | `/my-account/project-view-request/123` |
-| **Proposals** | `/my-account/project-view-proposal/{proposal_id}` | `/my-account/project-view-proposal/456` |
-| **Projects** | `/my-account/project-overview/{project_id}` | `/my-account/project-overview/789` |
+Navigate to **WooCommerce → Settings → Emails** to configure:
 
-### Admin URLs
+#### Per-Email Settings
+- **Enable/Disable** each email type
+- **Subject Line** customization
+- **Heading** text modification
+- **Additional Content** sections
 
-| Stage | URL Pattern | Example |
-|-------|-------------|---------|
-| **Requests** | `admin.php?post={request_id}&action=edit` | `admin.php?post=123&action=edit` |
-| **Proposals** | `admin.php?post={proposal_id}&action=edit` | `admin.php?post=456&action=edit` |
-| **Projects** | `admin.php?post={project_id}&action=edit` | `admin.php?post=789&action=edit` |
+#### Global Settings
+- **From Name** and **From Email**
+- **Email Template** selection
+- **Header Image** configuration
+
+### Programmatic Configuration
+
+```php
+// Enable/disable specific email
+add_filter('woocommerce_email_enabled_email_request_stage', '__return_false');
+
+// Modify email subject
+add_filter('woocommerce_email_subject_email_request_stage', function($subject, $email) {
+    return 'Custom: ' . $subject;
+}, 10, 2);
+
+// Add custom recipients
+add_filter('woocommerce_email_recipient_email_request_stage', function($recipients, $email) {
+    return $recipients . ',custom@example.com';
+}, 10, 2);
+```
 
 ---
 
-## Customer Email Journey
+## Shortcode Support
 
-The complete customer experience:
+### Available Shortcodes
 
-1. **📨 Request Submitted** → Portal access to track
-2. **🔍 Request Under Review** → Status update
-3. **⏸️ Request On Hold** (if applicable) → Reason & timeline
-4. **🔧 Proposal Processing** → Work beginning notification
-5. **⏰ Proposal Ready for Review** → Action required
-6. **🎉 Your Order Is Ready** → Project created & billing active
-7. **🚀 Project Status Updates** → Work progress
-8. **🎉 Project Delivered** → Completion & deliverables
-9. **💳 Billing Notifications** → Payment confirmations
+All email templates support these shortcodes:
 
-This comprehensive email system ensures clear, actionable communication while maintaining appropriate information sharing across all user types throughout the complete project lifecycle. 
+#### Entity Information
+```
+[arsol_project_title]      // Project title
+[arsol_project_status]     // Project status
+[arsol_project_stage]      // Project stage
+[arsol_proposal_title]     // Proposal title
+[arsol_request_title]      // Request title
+```
+
+#### User Information
+```
+[arsol_user_name]          // User display name
+[arsol_user_email]         // User email
+[arsol_user_role]          // User role
+```
+
+#### Links
+```
+[arsol_project_link]       // Link to project
+[arsol_proposal_link]      // Link to proposal
+[arsol_request_link]       // Link to request
+[arsol_dashboard_link]     // Link to user dashboard
+```
+
+#### Dates
+```
+[arsol_current_date]       // Current date
+[arsol_project_created]    // Project creation date
+[arsol_last_updated]       // Last update date
+```
+
+### Custom Shortcodes
+
+```php
+// Add custom shortcode for emails
+add_shortcode('arsol_custom_email_content', function($atts) {
+    $atts = shortcode_atts(array(
+        'project_id' => 0,
+        'format' => 'default'
+    ), $atts);
+    
+    // Generate custom content based on project
+    return 'Custom email content for project ' . $atts['project_id'];
+});
+```
+
+---
+
+## Hooks & Filters
+
+### Action Hooks
+
+#### Email Triggering
+```php
+// Trigger request stage email
+do_action('arsol_pfw_request_stage_changed', $request_id, $old_stage, $new_stage);
+
+// Trigger new request email
+do_action('arsol_pfw_new_request_created', $request_id, $user_id);
+
+// Trigger proposal decision email
+do_action('arsol_pfw_proposal_decision_made', $proposal_id, $decision, $user_id);
+```
+
+#### Email Customization
+```php
+// Before email content
+do_action('arsol_pfw_email_before_content', $email_type, $email_data);
+
+// After email content
+do_action('arsol_pfw_email_after_content', $email_type, $email_data);
+```
+
+### Filter Hooks
+
+#### Recipient Filtering
+```php
+// Filter email recipients
+add_filter('arsol_pfw_email_recipients', function($recipients, $email_type, $entity_id) {
+    // Add custom recipients based on logic
+    return $recipients;
+}, 10, 3);
+
+// Filter manager recipients
+add_filter('arsol_pfw_email_manager_recipients', function($managers, $project_id) {
+    // Add/remove managers for specific projects
+    return $managers;
+}, 10, 2);
+```
+
+#### Content Filtering
+```php
+// Filter email subject
+add_filter('arsol_pfw_email_subject', function($subject, $email_type, $entity_id) {
+    return 'Custom: ' . $subject;
+}, 10, 3);
+
+// Filter email heading
+add_filter('arsol_pfw_email_heading', function($heading, $email_type, $entity_id) {
+    return 'Custom: ' . $heading;
+}, 10, 3);
+```
+
+---
+
+## Advanced Features
+
+### Conditional Email Delivery
+
+```php
+// Send emails only during business hours
+add_filter('arsol_pfw_should_send_email', function($should_send, $email_type, $recipient) {
+    $current_hour = date('H');
+    return ($current_hour >= 9 && $current_hour <= 17) ? $should_send : false;
+}, 10, 3);
+```
+
+### Email Queuing
+
+```php
+// Queue emails for batch processing
+add_action('arsol_pfw_queue_email', function($email_type, $recipients, $data) {
+    // Add to email queue instead of sending immediately
+    wp_schedule_single_event(time() + 300, 'arsol_pfw_process_email_queue', array($email_type, $recipients, $data));
+});
+```
+
+### Email Logging
+
+```php
+// Log all email sends
+add_action('arsol_pfw_email_sent', function($email_type, $recipient, $subject, $success) {
+    error_log("Email sent: {$email_type} to {$recipient} - " . ($success ? 'SUCCESS' : 'FAILED'));
+});
+```
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+#### Emails Not Sending
+1. **Check WooCommerce Email Settings**
+   - Ensure WooCommerce emails are enabled
+   - Verify SMTP configuration
+
+2. **Verify Plugin Email Settings**
+   - Check if specific email types are enabled
+   - Verify recipient settings
+
+3. **Check Server Email Configuration**
+   - Ensure PHP mail() function works
+   - Check server email logs
+
+#### Missing Email Templates
+1. **Template Location**: Ensure templates are in correct theme directory
+2. **File Permissions**: Check file read permissions
+3. **Template Syntax**: Verify PHP syntax in custom templates
+
+#### Wrong Recipients
+1. **Role Configuration**: Check project manager role settings
+2. **User Capabilities**: Verify user has required capabilities
+3. **Email Filters**: Check for custom recipient filters
+
+### Debug Mode
+
+Enable email debugging:
+
+```php
+// Add to wp-config.php
+define('ARSOL_PFW_EMAIL_DEBUG', true);
+
+// Check email logs
+$logs = get_option('arsol_pfw_email_debug_log', array());
+```
+
+---
+
+## Best Practices
+
+### Template Development
+1. **Always Use Escaping**: `esc_html()`, `esc_attr()`, etc.
+2. **Check Data Existence**: Verify variables exist before using
+3. **Responsive Design**: Use email-safe CSS
+4. **Testing**: Test across email clients
+
+### Performance Optimization
+1. **Limit Recipients**: Avoid sending to large recipient lists
+2. **Queue Heavy Operations**: Use email queuing for batch sends
+3. **Cache Template Data**: Cache complex data generation
+
+### Security
+1. **Validate Input**: Sanitize all email content
+2. **Limit Shortcodes**: Restrict shortcode usage in email settings
+3. **User Permissions**: Verify user can access referenced content
+
+---
+
+## Migration & Updates
+
+### Template Updates
+When updating the plugin:
+1. **Backup Custom Templates**: Save theme template overrides
+2. **Check Template Changes**: Compare with new template structure
+3. **Update Hooks**: Verify custom hooks still work
+
+### Database Changes
+Email settings are stored in:
+- `wp_options` table with `woocommerce_email_*` keys
+- User meta for individual email preferences
+- Project meta for project-specific settings
+
+---
+
+This completes the comprehensive email system reference. The system provides powerful, flexible email notifications while maintaining WooCommerce compatibility and WordPress standards. 
