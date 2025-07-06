@@ -45,7 +45,7 @@ class Setup {
         );
 
         // Get base supports array
-        $supports = array('title');
+        $supports = array('title', 'author');
         
         // Add comments support if enabled
         if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-pfw-request')) {
@@ -62,15 +62,33 @@ class Setup {
             'show_in_admin_bar'  => true,
             'menu_position'      => null,
             'menu_icon'          => 'dashicons-format-chat',
-            'capability_type'    => array('arsol_project_request', 'arsol_project_requests'),
-            'map_meta_cap'       => true,
             'hierarchical'       => false,
             'supports'           => $supports,
             'has_archive'        => false,
             'rewrite'           => false,
             'show_in_rest'      => false,
+            
+            // ✅ WordPress-Native Capability Configuration
+            'capability_type'    => array('arsol_pfw_request', 'arsol_pfw_requests'),
+            'map_meta_cap'       => true,  // Let WordPress handle meta capability mapping
             'capabilities'       => array(
-                // Allow creation of requests - remove the restriction
+                // Meta capabilities (mapped by WordPress)
+                'edit_post'          => 'edit_arsol_pfw_request',
+                'read_post'          => 'read_arsol_pfw_request',
+                'delete_post'        => 'delete_arsol_pfw_request',
+                
+                // Primitive capabilities
+                'edit_posts'         => 'edit_arsol_pfw_requests',
+                'edit_others_posts'  => 'edit_others_arsol_pfw_requests',
+                'publish_posts'      => 'publish_arsol_pfw_requests',
+                'read_private_posts' => 'read_private_arsol_pfw_requests',
+                'delete_posts'       => 'delete_arsol_pfw_requests',
+                'delete_private_posts' => 'delete_private_arsol_pfw_requests',
+                'delete_published_posts' => 'delete_published_arsol_pfw_requests',
+                'delete_others_posts' => 'delete_others_arsol_pfw_requests',
+                'edit_private_posts' => 'edit_private_arsol_pfw_requests',
+                'edit_published_posts' => 'edit_published_arsol_pfw_requests',
+                'create_posts'       => 'edit_arsol_pfw_requests',
             ),
         );
 

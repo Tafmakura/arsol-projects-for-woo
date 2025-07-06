@@ -118,7 +118,7 @@ class Settings_General {
         // User Permissions Section
         add_settings_section(
             'arsol_projects_user_permissions',
-            __('User Project Permissions', 'arsol-pfw'),
+            __('User Frontend Permissions', 'arsol-pfw'),
             array($this, 'render_user_permissions_section'),
             'arsol_pfw_general_settings'
         );
@@ -436,7 +436,7 @@ class Settings_General {
      * Render user permissions section description
      */
     public function render_user_permissions_section() {
-        echo '<p>' . esc_html__('Configure user project permissions for Arsol Projects For Woo.', 'arsol-pfw') . '</p>';
+        echo '<p>' . esc_html__('Configure frontend permissions for creating and requesting projects.', 'arsol-pfw') . '</p>';
     }
 
     /**
@@ -567,11 +567,11 @@ class Settings_General {
      * @return array Modified supports array
      */
     public static function filter_post_type_supports($supports, $post_type) {
-        if (in_array($post_type, array('arsol-pfw-project', 'arsol-pfw-request', 'arsol-pfw-proposal'))) {
-            if (!self::is_comments_enabled_for_post_type($post_type)) {
-                $supports = array_diff($supports, array('comments'));
-            }
+        // Check if comments are enabled for this post type
+        if (self::is_comments_enabled_for_post_type($post_type)) {
+            $supports[] = 'comments';
         }
+        
         return $supports;
     }
 
@@ -591,31 +591,70 @@ class Settings_General {
 
         $all_roles = wp_roles()->get_names();
 
+        // Define WordPress-native capabilities for each level
+        $manage_capabilities = array(
+            'arsol_pfw_manage',
+            'edit_arsol_pfw_projects',
+            'edit_others_arsol_pfw_projects',
+            'publish_arsol_pfw_projects',
+            'read_private_arsol_pfw_projects',
+            'delete_arsol_pfw_projects',
+            'delete_others_arsol_pfw_projects',
+            'edit_arsol_pfw_proposals',
+            'edit_others_arsol_pfw_proposals',
+            'publish_arsol_pfw_proposals',
+            'read_private_arsol_pfw_proposals',
+            'delete_arsol_pfw_proposals',
+            'delete_others_arsol_pfw_proposals',
+            'edit_arsol_pfw_requests',
+            'edit_others_arsol_pfw_requests',
+            'publish_arsol_pfw_requests',
+            'read_private_arsol_pfw_requests',
+            'delete_arsol_pfw_requests',
+            'delete_others_arsol_pfw_requests',
+        );
+
+        $create_capabilities = array(
+            'edit_arsol_pfw_projects',
+            'publish_arsol_pfw_projects',
+            'delete_arsol_pfw_projects',
+            'edit_arsol_pfw_proposals',
+            'publish_arsol_pfw_proposals',
+            'delete_arsol_pfw_proposals',
+            'edit_arsol_pfw_requests',
+            'publish_arsol_pfw_requests',
+            'delete_arsol_pfw_requests',
+        );
+
+        // Clean up old capabilities first
+        $old_capabilities = array('manage_projects', 'create_projects', 'request_projects');
+        
         foreach ($all_roles as $role_slug => $role_name) {
             $role = get_role($role_slug);
             if (!$role) {
                 continue;
             }
             
-            if (in_array($role_slug, $manage_roles)) {
-                $role->add_cap('manage_projects');
-                $role->add_cap('create_projects');
-                $role->add_cap('request_projects');
-            } else {
-                $role->remove_cap('manage_projects');
-                if (!in_array($role_slug, $create_roles)) {
-                    $role->remove_cap('create_projects');
-                    $role->remove_cap('request_projects');
-                }
+            // Remove old capabilities
+            foreach ($old_capabilities as $old_cap) {
+                $role->remove_cap($old_cap);
             }
-
-            if (in_array($role_slug, $create_roles)) {
-                $role->add_cap('create_projects');
-                $role->add_cap('request_projects');
-            } else {
-                if (!in_array($role_slug, $manage_roles)) {
-                    $role->remove_cap('create_projects');
-                    $role->remove_cap('request_projects');
+            
+            // Remove all PFW capabilities first
+            foreach ($manage_capabilities as $cap) {
+                $role->remove_cap($cap);
+            }
+            
+            // Add capabilities based on role assignment
+            if (in_array($role_slug, $manage_roles)) {
+                // Add all management capabilities
+                foreach ($manage_capabilities as $cap) {
+                    $role->add_cap($cap);
+                }
+            } elseif (in_array($role_slug, $create_roles)) {
+                // Add only create capabilities
+                foreach ($create_capabilities as $cap) {
+                    $role->add_cap($cap);
                 }
             }
         }

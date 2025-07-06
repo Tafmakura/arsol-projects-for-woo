@@ -45,7 +45,7 @@ class Setup {
         );
 
         // Get base supports array
-        $supports = array('title');
+        $supports = array('title', 'author');
         
         // Add comments support if enabled
         if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-pfw-proposal')) {
@@ -62,13 +62,34 @@ class Setup {
             'show_in_admin_bar'  => true,
             'menu_position'      => null,
             'menu_icon'          => 'dashicons-portfolio',
-            'capability_type'    => array('arsol_project_proposal', 'arsol_project_proposals'),
-            'map_meta_cap'       => true,
             'hierarchical'       => false,
             'supports'           => $supports,
             'has_archive'        => false,
             'rewrite'           => false,
             'show_in_rest'      => false,
+            
+            // ✅ WordPress-Native Capability Configuration
+            'capability_type'    => array('arsol_pfw_proposal', 'arsol_pfw_proposals'),
+            'map_meta_cap'       => true,  // Let WordPress handle meta capability mapping
+            'capabilities'       => array(
+                // Meta capabilities (mapped by WordPress)
+                'edit_post'          => 'edit_arsol_pfw_proposal',
+                'read_post'          => 'read_arsol_pfw_proposal',
+                'delete_post'        => 'delete_arsol_pfw_proposal',
+                
+                // Primitive capabilities
+                'edit_posts'         => 'edit_arsol_pfw_proposals',
+                'edit_others_posts'  => 'edit_others_arsol_pfw_proposals',
+                'publish_posts'      => 'publish_arsol_pfw_proposals',
+                'read_private_posts' => 'read_private_arsol_pfw_proposals',
+                'delete_posts'       => 'delete_arsol_pfw_proposals',
+                'delete_private_posts' => 'delete_private_arsol_pfw_proposals',
+                'delete_published_posts' => 'delete_published_arsol_pfw_proposals',
+                'delete_others_posts' => 'delete_others_arsol_pfw_proposals',
+                'edit_private_posts' => 'edit_private_arsol_pfw_proposals',
+                'edit_published_posts' => 'edit_published_arsol_pfw_proposals',
+                'create_posts'       => 'edit_arsol_pfw_proposals',
+            ),
         );
 
         $result = register_post_type('arsol-pfw-proposal', $args);
