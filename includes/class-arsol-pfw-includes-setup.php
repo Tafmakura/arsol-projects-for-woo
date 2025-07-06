@@ -119,15 +119,17 @@ class Includes_Setup {
             new Admin\Settings_Advanced();
             new Admin\Settings_Tools();
             new Admin\Setup_Defaults();
+            
+            // Initialize Admin Menu Setup
+            new Admin\Menu\Setup(); // Admin menu management
         }
         
         // Initialize classes that work in both admin and frontend
         new Admin\Settings_Integrations();
-        new Admin\Setup(); // Admin menu setup
         new Admin\Users();
         
-        // Initialize Admin Management Coordinator
-        Admin\Setup::get_instance();
+        // Initialize Admin Management Coordinator (singleton)
+        Admin\Setup::get_instance(); // This refers to the coordinator in class-arsol-pfw-admin-setup.php
         
         // Initialize Frontend Management
         Frontend\Setup::get_instance();
