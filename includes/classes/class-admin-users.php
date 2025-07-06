@@ -237,7 +237,7 @@ class Users {
                 <th><label for="arsol_pfw_user_permission_disabled"><?php esc_html_e('Frontend Permissions', 'arsol-pfw'); ?></label></th>
                 <td>
                     <select name="arsol_pfw_user_permission_disabled" id="arsol_pfw_user_permission_disabled" disabled>
-                        <?php 
+                    <?php 
                         // Show the current effective permission based on global setting
                         $current_option = '';
                         $current_label = '';
@@ -257,11 +257,11 @@ class Users {
                     </select>
                     <p class="description">
                         <?php 
-                        printf(
+                            printf(
                             esc_html__('Individual permissions are disabled. Global setting is "%s". Change to "Set per user" in %s to enable individual permissions.', 'arsol-pfw'),
                             esc_html($global_permission),
                             '<a href="' . esc_url(admin_url('edit.php?post_type=arsol-pfw-project&page=arsol-pfw-settings-general')) . '">' . esc_html__('Settings → General', 'arsol-pfw') . '</a>'
-                        );
+                            );
                         ?>
                     </p>
                 </td>

@@ -124,6 +124,47 @@ arsol-pfw-{action}-if-{field-name}-is-{value}
 </div>
 ```
 
+### General Settings Example
+
+```html
+<!-- Frontend Permissions field (kebab-case ID with arsol-pfw prefix) -->
+<select id="arsol-pfw-user-project-permissions">
+    <option value="none">None</option>
+    <option value="request">Users can request projects</option>
+    <option value="create">Users can create projects</option>
+    <option value="user_specific">Set per user</option>
+</select>
+
+<!-- New User Permissions field (shown only when "Set per user" is selected) -->
+<div class="arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user_specific">
+    <label for="arsol-pfw-default-user-permission">New User Permissions</label>
+    <select id="arsol-pfw-default-user-permission">
+        <option value="none">None</option>
+        <option value="request">Can request projects</option>
+        <option value="create">Can create projects</option>
+    </select>
+    <p class="description">Default permission level assigned to new users</p>
+</div>
+```
+
+**Key Points:**
+- ✅ **Field ID:** `arsol-pfw-user-project-permissions` (kebab-case with arsol-pfw prefix)
+- ✅ **CSS Class:** `arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user_specific` (matches field ID exactly)
+- ✅ **WordPress Standards:** Follows WordPress CSS naming conventions
+- ✅ **Consistent Prefix:** All elements use `arsol-pfw-` prefix for proper namespacing
+
+### WordPress Standards Implementation
+
+```html
+<!-- ✅ CORRECT: WordPress kebab-case with prefix -->
+<select id="arsol-pfw-user-project-permissions">
+<div class="arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user_specific">
+
+<!-- ❌ INCORRECT: Mixed naming conventions -->
+<select id="user_project_permissions">
+<div class="arsol-pfw-show-if-user_project_permissions-is-user_specific">
+```
+
 ---
 
 ## Field ID Requirements
@@ -290,14 +331,17 @@ ArsolConditionalVisibility: Updating field proposal-stage value: processing
 ### File Location
 The smart conditional visibility system is implemented in:
 ```
-assets/js/arsol-pfw-admin-cpt-edit.js
+assets/js/arsol-pfw-admin.js
 ```
 
 ### Auto-Loading
-The system is automatically loaded on all CPT edit screens:
+The system is automatically loaded on all admin pages:
+- Settings pages
+- User profile pages
 - Project edit screens
 - Proposal edit screens  
 - Request edit screens
+- Any admin page where conditional logic is needed
 
 ### Initialization
 ```javascript
@@ -306,12 +350,15 @@ $(document).ready(function() {
     ArsolConditionalVisibility.init();
 });
 
-// Also refreshes after AJAX calls
+// Also refreshes after AJAX calls and DOM mutations
 $(document).ajaxComplete(function() {
     setTimeout(function() {
         ArsolConditionalVisibility.refresh();
     }, 100);
 });
+
+// MutationObserver automatically detects new conditional elements
+// and refreshes the system when needed
 ```
 
 ---

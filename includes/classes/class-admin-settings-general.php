@@ -152,13 +152,14 @@ class Settings_General {
         );
 
         add_settings_field(
-            'user_project_permissions',
+            'arsol-pfw-user-project-permissions',
             __('Frontend Permissions', 'arsol-pfw'),
             array($this, 'render_select_field'),
             'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
                 'description' => __('Controls how user project permissions are handled globally', 'arsol-pfw'),
+                'field' => 'user_project_permissions',
                 'options' => array(
                     'none' => __('None', 'arsol-pfw'),
                     'request' => __('Users can request projects', 'arsol-pfw'),
@@ -170,23 +171,20 @@ class Settings_General {
         );
 
         add_settings_field(
-            'default_user_permission',
+            'arsol-pfw-default-user-permission',
             __('New User Permissions', 'arsol-pfw'),
-            array($this, 'render_conditional_select_field'),
+            array($this, 'render_select_field'),
             'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
                 'description' => __('Default permission level assigned to new users (only applies when "User Specific" is selected above)', 'arsol-pfw'),
-                'condition_field' => 'user_project_permissions',
-                'condition_value' => 'user_specific',
+                'field' => 'default_user_permission',
                 'options' => array(
                     'none' => __('None', 'arsol-pfw'),
                     'request' => __('Can request projects', 'arsol-pfw'),
                     'create' => __('Can create projects', 'arsol-pfw')
                 ),
-                'class' => 'arsol-conditional-field arsol-pfw-new-user-permissions',
-                'data-condition-field' => 'user_project_permissions',
-                'data-condition-value' => 'user_specific'
+                'class' => 'arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user-specific arsol-pfw-new-user-permissions'
             )
         );
 
@@ -384,9 +382,18 @@ class Settings_General {
         $default_value = ($field_name === 'mixed_cart_behavior') ? 'add_all' : 'none';
         $value = isset($settings[$field_name]) ? $settings[$field_name] : $default_value;
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
+        
+        // Use the registration ID (kebab-case) for the HTML id attribute
+        // Get the ID from the current add_settings_field call context
+        $field_id = isset($args['label_for']) ? $args['label_for'] : $field_name;
+        
+        // Convert field_name to kebab-case for ID if it contains underscores
+        if (strpos($field_name, '_') !== false) {
+            $field_id = 'arsol-pfw-' . str_replace('_', '-', $field_name);
+        }
         ?>
         <div class="<?php echo $class; ?>">
-        <select id="<?php echo esc_attr($field_name); ?>"
+        <select id="<?php echo esc_attr($field_id); ?>"
                 name="arsol_pfw_general_settings[<?php echo esc_attr($field_name); ?>]">
             <?php foreach ($args['options'] as $option => $label): ?>
                 <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
@@ -397,39 +404,6 @@ class Settings_General {
         <?php if (!empty($args['description'])): ?>
             <p class="description"><?php echo esc_html($args['description']); ?></p>
         <?php endif; ?>
-        </div>
-        <?php
-    }
-
-    /**
-     * Render conditional select field
-     */
-    public function render_conditional_select_field($args) {
-        $settings = get_option('arsol_pfw_general_settings', array());
-        $value = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'none';
-        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
-        
-        // Build data attributes for conditional functionality
-        $data_attributes = '';
-        if (isset($args['data-condition-field'])) {
-            $data_attributes .= ' data-condition-field="' . esc_attr($args['data-condition-field']) . '"';
-        }
-        if (isset($args['data-condition-value'])) {
-            $data_attributes .= ' data-condition-value="' . esc_attr($args['data-condition-value']) . '"';
-        }
-        ?>
-        <div class="<?php echo $class; ?>"<?php echo $data_attributes; ?>>
-        <select id="default_user_permission"
-                name="arsol_pfw_general_settings[default_user_permission]">
-            <?php foreach ($args['options'] as $option => $label): ?>
-                <option value="<?php echo esc_attr($option); ?>" <?php selected($value, $option); ?>>
-                    <?php echo esc_html($label); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <p class="description">
-            <?php echo esc_html($args['description']); ?>
-        </p>
         </div>
         <?php
     }
