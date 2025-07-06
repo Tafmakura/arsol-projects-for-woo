@@ -8,13 +8,13 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Admin;
+namespace Arsol_Projects_For_Woo\Admin\Menu;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Menu_Setup {
+class Setup {
     
     /**
      * Constructor
