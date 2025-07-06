@@ -58,6 +58,18 @@ class Includes_Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-project-request-cpt-frontend-handler.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-project-proposal-cpt-frontend-handler.php';
         
+        // Admin Files
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-capabilities.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-advanced.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-display.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-files.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-general.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-integrations.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-tools.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-setup-defaults.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-menu-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-users.php';
+        
         // Admin Setup
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-setup.php';
         
@@ -95,7 +107,26 @@ class Includes_Setup {
         new Custom_Post_Types\ProjectRequest\Frontend_Handler();
         new Custom_Post_Types\ProjectProposal\Frontend_Handler();
         
-        // Initialize Admin Management
+        // Initialize Admin Classes
+        // Initialize capabilities first
+        new Admin\Admin_Capabilities();
+        
+        // Initialize admin-only classes
+        if (is_admin()) {
+            new Admin\Settings_General();
+            new Admin\Settings_Display();
+            new Admin\Settings_Files();
+            new Admin\Settings_Advanced();
+            new Admin\Settings_Tools();
+            new Admin\Setup_Defaults();
+        }
+        
+        // Initialize classes that work in both admin and frontend
+        new Admin\Settings_Integrations();
+        new Admin\Setup(); // Admin menu setup
+        new Admin\Users();
+        
+        // Initialize Admin Management Coordinator
         Admin\Setup::get_instance();
         
         // Initialize Frontend Management
