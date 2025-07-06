@@ -212,47 +212,15 @@ class Users {
             $user_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request';
         }
         
+        // Determine effective permission for display
+        $effective_level = $this->get_effective_user_permission($user->ID);
+        
         ?>
-        <h3><?php esc_html_e('PFW User Permissions', 'arsol-pfw'); ?></h3>
+        <h3><?php esc_html_e('Project Settings', 'arsol-pfw'); ?></h3>
         <table class="form-table">
-            <tr>
-                <th><label><?php esc_html_e('Current WordPress Role(s)', 'arsol-pfw'); ?></label></th>
-                <td>
-                    <strong><?php echo esc_html(implode(', ', $user->roles)); ?></strong>
-                </td>
-            </tr>
-            <tr>
-                <th><label><?php esc_html_e('Role-Based PFW Capabilities', 'arsol-pfw'); ?></label></th>
-                <td>
-                    <?php
-                    $pfw_caps = array();
-                    $check_caps = array(
-                        'arsol_pfw_manage' => __('Full PFW Management', 'arsol-pfw'),
-                        'edit_arsol_pfw_projects' => __('Edit Projects', 'arsol-pfw'),
-                        'edit_arsol_pfw_proposals' => __('Edit Proposals', 'arsol-pfw'),
-                        'edit_arsol_pfw_requests' => __('Edit Requests', 'arsol-pfw'),
-                    );
-                    
-                    foreach ($check_caps as $cap => $label) {
-                        if ($user->has_cap($cap)) {
-                            $pfw_caps[] = $label;
-                        }
-                    }
-                    
-                    if (!empty($pfw_caps)) {
-                        echo '<ul><li>' . implode('</li><li>', array_map('esc_html', $pfw_caps)) . '</li></ul>';
-                    } else {
-                        echo '<em>' . esc_html__('No role-based PFW capabilities', 'arsol-pfw') . '</em>';
-                    }
-                    ?>
-                    <p class="description">
-                        <?php esc_html_e('These capabilities are assigned based on the user\'s WordPress role.', 'arsol-pfw'); ?>
-                    </p>
-                </td>
-            </tr>
             <?php if ($global_permission === 'user_specific') : ?>
             <tr>
-                <th><label for="arsol_pfw_user_permission"><?php esc_html_e('Individual PFW Permission', 'arsol-pfw'); ?></label></th>
+                <th><label for="arsol_pfw_user_permission"><?php esc_html_e('Frontend Permissions', 'arsol-pfw'); ?></label></th>
                 <td>
                     <select name="arsol_pfw_user_permission" id="arsol_pfw_user_permission">
                         <option value="none" <?php selected($user_permission, 'none'); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
@@ -260,19 +228,37 @@ class Users {
                         <option value="create" <?php selected($user_permission, 'create'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
                     </select>
                     <p class="description">
-                        <?php esc_html_e('This individual permission works together with the user\'s role-based capabilities to determine final access.', 'arsol-pfw'); ?>
+                        <?php esc_html_e('This individual permission controls frontend access for creating and requesting projects.', 'arsol-pfw'); ?>
                     </p>
                 </td>
             </tr>
             <?php else : ?>
             <tr>
-                <th><label><?php esc_html_e('Individual PFW Permission', 'arsol-pfw'); ?></label></th>
+                <th><label for="arsol_pfw_user_permission_disabled"><?php esc_html_e('Frontend Permissions', 'arsol-pfw'); ?></label></th>
                 <td>
-                    <p><?php esc_html_e('Individual permissions are disabled.', 'arsol-pfw'); ?></p>
+                    <select name="arsol_pfw_user_permission_disabled" id="arsol_pfw_user_permission_disabled" disabled>
+                        <?php 
+                        // Show the current effective permission based on global setting
+                        $current_option = '';
+                        $current_label = '';
+                        
+                        if ($global_permission === 'none') {
+                            $current_option = 'none';
+                            $current_label = __('None (Global Setting)', 'arsol-pfw');
+                        } elseif ($global_permission === 'request') {
+                            $current_option = 'request';
+                            $current_label = __('Can request projects (Global Setting)', 'arsol-pfw');
+                        } elseif ($global_permission === 'create') {
+                            $current_option = 'create';
+                            $current_label = __('Can create projects (Global Setting)', 'arsol-pfw');
+                        }
+                        ?>
+                        <option value="<?php echo esc_attr($current_option); ?>" selected><?php echo esc_html($current_label); ?></option>
+                    </select>
                     <p class="description">
                         <?php 
                         printf(
-                            esc_html__('Global setting is currently "%s". Change to "Set per user" in %s to enable individual permissions.', 'arsol-pfw'),
+                            esc_html__('Individual permissions are disabled. Global setting is "%s". Change to "Set per user" in %s to enable individual permissions.', 'arsol-pfw'),
                             esc_html($global_permission),
                             '<a href="' . esc_url(admin_url('edit.php?post_type=arsol-pfw-project&page=arsol-pfw-settings-general')) . '">' . esc_html__('Settings → General', 'arsol-pfw') . '</a>'
                         );
@@ -285,16 +271,22 @@ class Users {
                 <th><label><?php esc_html_e('Effective Permission Level', 'arsol-pfw'); ?></label></th>
                 <td>
                     <?php
-                    $effective_level = $this->get_effective_user_permission($user->ID);
+                    $level_descriptions = array(
+                        'none' => __('This user cannot create or request projects on the frontend.', 'arsol-pfw'),
+                        'creator' => __('This user can create and request projects they own, and view projects assigned to them.', 'arsol-pfw'),
+                        'manager' => __('This user can manage the plugin, edit all projects, proposals, and requests regardless of ownership.', 'arsol-pfw')
+                    );
+                    
                     $level_labels = array(
                         'none' => __('None', 'arsol-pfw'),
                         'creator' => __('Creator', 'arsol-pfw'),
                         'manager' => __('Manager', 'arsol-pfw')
                     );
+                    
                     echo '<strong>' . esc_html($level_labels[$effective_level]) . '</strong>';
                     ?>
                     <p class="description">
-                        <?php esc_html_e('This shows the final permission level after combining role-based capabilities with individual permissions and global settings.', 'arsol-pfw'); ?>
+                        <?php echo esc_html($level_descriptions[$effective_level]); ?>
                     </p>
                 </td>
             </tr>
