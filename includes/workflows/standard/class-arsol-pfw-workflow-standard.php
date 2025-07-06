@@ -153,7 +153,7 @@ class StandardWorkflow {
      * @return bool
      */
     public function user_can_perform_action(int $user_id, int $post_id, string $action): bool {
-        return $this->user_can_view_post($user_id, $post_id);
+        return self::user_can_view_post($user_id, $post_id);
     }
 
     /**
@@ -227,7 +227,7 @@ class StandardWorkflow {
      * @param int $post_id The ID of the post
      * @return bool True if the user can view the post, false otherwise
      */
-    public function user_can_view_post($user_id, $post_id): bool {
+    public static function user_can_view_post($user_id, $post_id): bool {
         if (empty($user_id) || empty($post_id)) {
             return false;
         }
@@ -396,7 +396,7 @@ class StandardWorkflow {
      *
      * @param int $max_age_minutes Maximum age in minutes
      */
-    public function cleanup_stuck_workflows($max_age_minutes = 30): void {
+    public static function cleanup_stuck_workflows($max_age_minutes = 30): void {
         global $wpdb;
         
         // Find workflows that are stuck (older than max_age_minutes)
@@ -417,7 +417,7 @@ class StandardWorkflow {
         ));
         
         foreach ($stuck_workflows as $workflow) {
-            $this->force_clear_stuck_workflow($workflow->post_id);
+            self::force_clear_stuck_workflow($workflow->post_id);
             
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
                 "Cleanup: Cleared stuck workflow for post #{$workflow->post_id}, started at {$workflow->started_time}");
@@ -434,7 +434,7 @@ class StandardWorkflow {
      *
      * @param int $post_id Post ID
      */
-    public function force_clear_stuck_workflow($post_id): void {
+    public static function force_clear_stuck_workflow($post_id): void {
         // Log the force clear
         update_post_meta($post_id, '_arsol_workflow_force_cleared', current_time('mysql'));
         update_post_meta($post_id, '_arsol_workflow_step', 'force_cleared');
@@ -450,7 +450,7 @@ class StandardWorkflow {
     /**
      * Emergency cleanup all stuck workflows
      */
-    public function emergency_cleanup_all_stuck_workflows(): void {
+    public static function emergency_cleanup_all_stuck_workflows(): void {
         global $wpdb;
         
         // Get all workflows that are marked as in progress
@@ -462,7 +462,7 @@ class StandardWorkflow {
         );
         
         foreach ($stuck_workflows as $workflow) {
-            $this->force_clear_stuck_workflow($workflow->post_id);
+            self::force_clear_stuck_workflow($workflow->post_id);
         }
         
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
@@ -997,13 +997,29 @@ class StandardWorkflow {
      * @param string $title Post title
      */
     private function set_conversion_success_notice($from_type, $to_type, $from_id, $to_id, $title): void {
-        set_transient('arsol_conversion_success', array(
-            'from_type' => $from_type,
-            'to_type' => $to_type,
+        // Map types to proper display names
+        $type_names = array(
+            'request' => __('Project Request', 'arsol-pfw'),
+            'proposal' => __('Project Proposal', 'arsol-pfw'),
+            'project' => __('Project', 'arsol-pfw')
+        );
+        
+        $from_name = isset($type_names[$from_type]) ? $type_names[$from_type] : ucfirst($from_type);
+        $to_name = isset($type_names[$to_type]) ? $type_names[$to_type] : ucfirst($to_type);
+        
+        $message = sprintf(
+            __('Successfully converted %s "%s" to %s. You can now edit the new %s.', 'arsol-pfw'),
+            $from_name,
+            esc_html($title),
+            $to_name,
+            $to_name
+        );
+        
+        $this->set_admin_notice('success', $message, array(
+            'conversion_type' => $from_type . '_to_' . $to_type,
             'from_id' => $from_id,
-            'to_id' => $to_id,
-            'title' => $title
-        ), 300);
+            'to_id' => $to_id
+        ));
     }
 
     /**
@@ -1016,48 +1032,203 @@ class StandardWorkflow {
      * @param string $error Error message
      */
     private function set_conversion_failure_notice($from_type, $to_type, $from_id, $title, $error): void {
-        set_transient('arsol_conversion_error', array(
-            'from_type' => $from_type,
-            'to_type' => $to_type,
+        // Map types to proper display names
+        $type_names = array(
+            'request' => __('Project Request', 'arsol-pfw'),
+            'proposal' => __('Project Proposal', 'arsol-pfw'),
+            'project' => __('Project', 'arsol-pfw')
+        );
+        
+        $from_name = isset($type_names[$from_type]) ? $type_names[$from_type] : ucfirst($from_type);
+        $to_name = isset($type_names[$to_type]) ? $type_names[$to_type] : ucfirst($to_type);
+        
+        $message = sprintf(
+            __('Failed to convert %s "%s" to %s: %s', 'arsol-pfw'),
+            $from_name,
+            esc_html($title),
+            $to_name,
+            esc_html($error)
+        );
+        
+        $this->set_admin_notice('error', $message, array(
+            'conversion_type' => $from_type . '_to_' . $to_type,
             'from_id' => $from_id,
-            'title' => $title,
             'error' => $error
-        ), 300);
+        ));
     }
 
     /**
      * Display conversion notices
      */
     public function display_conversion_notices(): void {
-        // Check for success notice
-        $success = get_transient('arsol_conversion_success');
-        if ($success) {
-            delete_transient('arsol_conversion_success');
-            printf(
-                '<div class="notice notice-success is-dismissible"><p>%s</p></div>',
-                sprintf(
-                    __('Successfully converted %s "%s" to %s.', 'arsol-pfw'),
-                    $success['from_type'],
-                    esc_html($success['title']),
-                    $success['to_type']
-                )
+        $user_id = get_current_user_id();
+        $notice_data = get_transient('arsol_notice_' . $user_id);
+        
+        if ($notice_data && is_array($notice_data)) {
+            $class = 'notice notice-' . $notice_data['type'] . ' is-dismissible';
+            printf('<div class="%s"><p>%s</p></div>', esc_attr($class), esc_html($notice_data['message']));
+            
+            // Clear the notice after displaying
+            delete_transient('arsol_notice_' . $user_id);
+        }
+    }
+
+    /**
+     * Debug proposal conversion
+     *
+     * @param int $proposal_id Proposal ID
+     * @return array Debug information
+     */
+    public static function debug_proposal_conversion($proposal_id) {
+        $debug_info = array();
+        
+        // Check proposal exists
+        $proposal = get_post($proposal_id);
+        $debug_info['proposal_exists'] = !empty($proposal);
+        $debug_info['proposal_type'] = $proposal ? $proposal->post_type : 'N/A';
+        $debug_info['proposal_status'] = $proposal ? $proposal->post_status : 'N/A';
+        $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
+        
+        // Check cost proposal type
+        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+        
+        $debug_info['cost_proposal_type'] = $cost_proposal_type;
+        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
+        
+        // Check line items
+        $line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
+        $debug_info['has_line_items'] = !empty($line_items);
+        $debug_info['line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
+        
+        if (!empty($line_items)) {
+            $debug_info['products_count'] = !empty($line_items['products']) ? count($line_items['products']) : 0;
+            $debug_info['one_time_fees_count'] = !empty($line_items['one_time_fees']) ? count($line_items['one_time_fees']) : 0;
+            $debug_info['recurring_fees_count'] = !empty($line_items['recurring_fees']) ? count($line_items['recurring_fees']) : 0;
+            $debug_info['shipping_fees_count'] = !empty($line_items['shipping_fees']) ? count($line_items['shipping_fees']) : 0;
+        }
+        
+        // Check if customer exists
+        if ($proposal) {
+            $customer = new \WC_Customer($proposal->post_author);
+            $debug_info['customer_exists'] = $customer && $customer->get_id();
+            $debug_info['customer_email'] = $customer ? $customer->get_billing_email() : 'N/A';
+        }
+        
+        // Check WooCommerce Subscriptions
+        $debug_info['wc_subscriptions_active'] = class_exists('WC_Subscriptions') && function_exists('wcs_create_subscription');
+        
+        return $debug_info;
+    }
+
+    /**
+     * Copy proposal metadata to project
+     *
+     * @param int $proposal_id Proposal ID
+     * @param int $project_id Project ID
+     */
+    private function copy_proposal_metadata_to_project($proposal_id, $project_id) {
+        // ✅ PHASE 2: COMPREHENSIVE META KEY RESTRUCTURING
+        
+        // 1. Preserve proposal content in project meta
+        $proposal_post = get_post($proposal_id);
+        update_post_meta($project_id, '_arsol_pfw_project_proposal_details', $proposal_post->post_content);
+        
+        // 2. Rename request data with project context
+        $request_meta_mapping = array(
+            '_arsol_pfw_proposal_request_details' => '_arsol_pfw_project_request_details',
+            '_arsol_pfw_proposal_request_title' => '_arsol_pfw_project_request_title',
+            '_arsol_pfw_proposal_request_date' => '_arsol_pfw_project_request_date',
+            '_arsol_pfw_proposal_request_budget' => '_arsol_pfw_project_request_budget',
+            '_arsol_pfw_proposal_request_start_date' => '_arsol_pfw_project_request_start_date',
+            '_arsol_pfw_proposal_request_delivery_date' => '_arsol_pfw_project_request_delivery_date',
+            '_arsol_pfw_proposal_request_attachments' => '_arsol_pfw_project_request_attachments',
+        );
+        
+        // 3. Rename proposal data with project context
+        $proposal_meta_mapping = array(
+            '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
+            '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
+            '_arsol_pfw_proposal_project_lead' => '_arsol_pfw_project_lead',
+        );
+        
+        // 4. Get proposal type for type-aware handling
+        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+        
+        // 5. Type-aware meta mapping
+        $type_specific_mapping = array();
+        
+        if ($cost_proposal_type === 'budget') {
+            // Budget proposals: Preserve ALL budget details
+            $type_specific_mapping = array(
+                '_arsol_pfw_proposal_budget_onetime_amount' => '_arsol_pfw_project_proposal_budget_onetime_amount',
+                '_arsol_pfw_proposal_budget_onetime_amount_details' => '_arsol_pfw_project_proposal_budget_onetime_amount_details',
+                '_arsol_pfw_proposal_budget_recurring_amount' => '_arsol_pfw_project_proposal_budget_recurring_amount',
+                '_arsol_pfw_proposal_budget_recurring_amount_details' => '_arsol_pfw_project_proposal_budget_recurring_amount_details',
+                '_arsol_pfw_proposal_budget_recurring_amount_billing_interval' => '_arsol_pfw_project_proposal_budget_recurring_amount_billing_interval',
+                '_arsol_pfw_proposal_budget_recurring_amount_billing_period' => '_arsol_pfw_project_proposal_budget_recurring_amount_billing_period',
+                '_arsol_pfw_proposal_budget_recurring_billing_start_date' => '_arsol_pfw_project_proposal_budget_recurring_billing_start_date',
             );
+        } elseif ($cost_proposal_type === 'quotation') {
+            // Quotation proposals: Preserve quotation details with key totals
+            $type_specific_mapping = array(
+                '_arsol_pfw_proposal_quotation_line_items' => '_arsol_pfw_project_proposal_quotation_line_items',
+                '_arsol_pfw_proposal_quotation_onetime_total' => '_arsol_pfw_project_proposal_quotation_onetime_total',
+                '_arsol_pfw_proposal_quotation_recurring_totals_grouped' => '_arsol_pfw_project_proposal_quotation_recurring_average_total',
+                '_arsol_pfw_proposal_quotation_currency' => '_arsol_pfw_project_proposal_quotation_currency',
+                '_arsol_pfw_proposal_quotation_currency_symbol' => '_arsol_pfw_project_proposal_quotation_currency_symbol',
+            );
+        }
+        
+        // 6. Combine all mappings
+        $meta_to_copy = array_merge($request_meta_mapping, $proposal_meta_mapping, $type_specific_mapping);
+
+        /**
+         * Filter: arsol_project_conversion_meta_mapping
+         * Allows modification of metadata mapping from proposal to project
+         */
+        $meta_to_copy = apply_filters('arsol_project_conversion_meta_mapping', $meta_to_copy, $project_id, $proposal_id, $cost_proposal_type, array());
+
+        // 7. Copy all meta data
+        foreach ($meta_to_copy as $proposal_key => $project_key) {
+            $value = get_post_meta($proposal_id, $proposal_key, true);
+            if ($value) {
+                update_post_meta($project_id, $project_key, $value);
+            }
         }
 
-        // Check for error notice
-        $error = get_transient('arsol_conversion_error');
-        if ($error) {
-            delete_transient('arsol_conversion_error');
-            printf(
-                '<div class="notice notice-error is-dismissible"><p>%s</p></div>',
-                sprintf(
-                    __('Failed to convert %s "%s" to %s: %s', 'arsol-pfw'),
-                    $error['from_type'],
-                    esc_html($error['title']),
-                    $error['to_type'],
-                    esc_html($error['error'])
-                )
-            );
-        }
+        // Store original proposal ID for reference
+        update_post_meta($project_id, '_arsol_pfw_project_proposal_id', $proposal_id);
+
+        // Set default project status to not-started
+        wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-stage');
+
+        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
+            sprintf('Metadata copied from proposal #%d to project #%d (type: %s): %s', 
+                $proposal_id, $project_id, $cost_proposal_type, implode(', ', array_keys($meta_to_copy))));
+
+        /**
+         * Hook: arsol_after_project_conversion_metadata_copied
+         * Fired after all metadata is copied from proposal to project
+         */
+        do_action('arsol_after_project_conversion_metadata_copied', $project_id, $proposal_id, $meta_to_copy, $cost_proposal_type, array());
+    }
+
+    /**
+     * Set admin notice
+     *
+     * @param string $type Notice type
+     * @param string $message Notice message
+     * @param array $details Additional details
+     */
+    private function set_admin_notice($type, $message, $details = array()) {
+        $notice_data = array(
+            'type' => $type, // 'success', 'error', 'warning', 'info'
+            'message' => $message,
+            'details' => $details,
+            'timestamp' => current_time('timestamp')
+        );
+        
+        $user_id = get_current_user_id();
+        set_transient('arsol_notice_' . $user_id, $notice_data, 300); // 5 minutes
     }
 } 
