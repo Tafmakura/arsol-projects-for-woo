@@ -204,8 +204,16 @@ class Users {
             return;
         }
         
+        // Get current settings
+        $settings = get_option('arsol_pfw_general_settings', array());
+        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request';
+        $user_permission = get_user_meta($user->ID, 'arsol_pfw_user_permission', true);
+        if (empty($user_permission)) {
+            $user_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request';
+        }
+        
         ?>
-        <h3><?php esc_html_e('PFW Capabilities', 'arsol-pfw'); ?></h3>
+        <h3><?php esc_html_e('PFW User Permissions', 'arsol-pfw'); ?></h3>
         <table class="form-table">
             <tr>
                 <th><label><?php esc_html_e('Current WordPress Role(s)', 'arsol-pfw'); ?></label></th>
@@ -214,7 +222,7 @@ class Users {
                 </td>
             </tr>
             <tr>
-                <th><label><?php esc_html_e('Current PFW Capabilities', 'arsol-pfw'); ?></label></th>
+                <th><label><?php esc_html_e('Role-Based PFW Capabilities', 'arsol-pfw'); ?></label></th>
                 <td>
                     <?php
                     $pfw_caps = array();
@@ -234,16 +242,59 @@ class Users {
                     if (!empty($pfw_caps)) {
                         echo '<ul><li>' . implode('</li><li>', array_map('esc_html', $pfw_caps)) . '</li></ul>';
                     } else {
-                        echo '<em>' . esc_html__('No PFW capabilities', 'arsol-pfw') . '</em>';
+                        echo '<em>' . esc_html__('No role-based PFW capabilities', 'arsol-pfw') . '</em>';
                     }
                     ?>
                     <p class="description">
+                        <?php esc_html_e('These capabilities are assigned based on the user\'s WordPress role.', 'arsol-pfw'); ?>
+                    </p>
+                </td>
+            </tr>
+            <?php if ($global_permission === 'user_specific') : ?>
+            <tr>
+                <th><label for="arsol_pfw_user_permission"><?php esc_html_e('Individual PFW Permission', 'arsol-pfw'); ?></label></th>
+                <td>
+                    <select name="arsol_pfw_user_permission" id="arsol_pfw_user_permission">
+                        <option value="none" <?php selected($user_permission, 'none'); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
+                        <option value="request" <?php selected($user_permission, 'request'); ?>><?php esc_html_e('Can request projects', 'arsol-pfw'); ?></option>
+                        <option value="create" <?php selected($user_permission, 'create'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
+                    </select>
+                    <p class="description">
+                        <?php esc_html_e('This individual permission works together with the user\'s role-based capabilities to determine final access.', 'arsol-pfw'); ?>
+                    </p>
+                </td>
+            </tr>
+            <?php else : ?>
+            <tr>
+                <th><label><?php esc_html_e('Individual PFW Permission', 'arsol-pfw'); ?></label></th>
+                <td>
+                    <p><?php esc_html_e('Individual permissions are disabled.', 'arsol-pfw'); ?></p>
+                    <p class="description">
                         <?php 
                         printf(
-                            esc_html__('PFW capabilities are assigned to roles in %s. To change this user\'s PFW access, either change their role or modify the role capabilities in settings.', 'arsol-pfw'),
+                            esc_html__('Global setting is currently "%s". Change to "Set per user" in %s to enable individual permissions.', 'arsol-pfw'),
+                            esc_html($global_permission),
                             '<a href="' . esc_url(admin_url('edit.php?post_type=arsol-pfw-project&page=arsol-pfw-settings-general')) . '">' . esc_html__('Settings → General', 'arsol-pfw') . '</a>'
                         );
                         ?>
+                    </p>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <tr>
+                <th><label><?php esc_html_e('Effective Permission Level', 'arsol-pfw'); ?></label></th>
+                <td>
+                    <?php
+                    $effective_level = $this->get_effective_user_permission($user->ID);
+                    $level_labels = array(
+                        'none' => __('None', 'arsol-pfw'),
+                        'creator' => __('Creator', 'arsol-pfw'),
+                        'manager' => __('Manager', 'arsol-pfw')
+                    );
+                    echo '<strong>' . esc_html($level_labels[$effective_level]) . '</strong>';
+                    ?>
+                    <p class="description">
+                        <?php esc_html_e('This shows the final permission level after combining role-based capabilities with individual permissions and global settings.', 'arsol-pfw'); ?>
                     </p>
                 </td>
             </tr>
@@ -258,9 +309,21 @@ class Users {
      * @return void
      */
     public function save_user_profile_fields($user_id) {
-        // No custom role assignment needed - capabilities are managed through settings
-        // This method is kept for potential future use but currently does nothing
-        return;
+        // Only allow administrators or users with manage capability to save
+        if (!current_user_can('manage_options') && !current_user_can('arsol_pfw_manage')) {
+            return;
+        }
+        
+        // Only save individual permission if it's posted
+        if (isset($_POST['arsol_pfw_user_permission'])) {
+            $permission = sanitize_text_field($_POST['arsol_pfw_user_permission']);
+            
+            // Validate the permission value
+            $valid_permissions = array('none', 'request', 'create');
+            if (in_array($permission, $valid_permissions)) {
+                update_user_meta($user_id, 'arsol_pfw_user_permission', $permission);
+            }
+        }
     }
     
     /**
