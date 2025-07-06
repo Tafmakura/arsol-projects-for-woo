@@ -711,7 +711,7 @@ class Settings_General {
             case 'number':
             default:
                 printf(
-                    '<input type="%s" id="%s" name="arsol_pfw_general_settings[%s]" value="%s"  %s>',
+                    '<input type="%s" id="%s" name="arsol_pfw_general_settings[%s]" value="%s" class="regular-text" %s>',
                     esc_attr($field_type),
                     esc_attr($field_name),
                     esc_attr($field_name),
@@ -837,7 +837,7 @@ class Settings_General {
         echo '<div class="' . esc_attr($class) . '">';
         
         printf(
-            '<input type="number" id="%s" name="arsol_pfw_general_settings[%s]" value="%s" class="regular-text" %s>',
+            '<input type="number" id="%s" name="arsol_pfw_general_settings[%s]" value="%s" %s>',
             esc_attr($field_name),
             esc_attr($field_name),
             esc_attr($value),
