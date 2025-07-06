@@ -61,33 +61,22 @@ class Setup {
     private function require_files() {
         // Core Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-shortcodes.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-subscriptions.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-logs.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-shortcodes.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-assets.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-taxonomies-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-email-manager.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-woocommerce-biller-invoice.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-assets.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-endpoints.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-woocommerce-checkout.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/class-taxonomies-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-comments.php';
+        
+        // Admin Management
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-setup.php';
+        
+        // Frontend Management
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-setup.php';
+        
+        // Integrations Management
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/class-arsol-pfw-integrations-setup.php';
         
         // Phases Management System
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/phases/class-arsol-pfw-phases-setup.php';
-        
-        // Admin Settings Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-display.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-files.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-advanced.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-tools.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-integrations.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup-defaults.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-overrides.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-users.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-capabilities.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/phases/class-arsol-pfw-phases-setup.php';
 
         // Frontend Handlers
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-frontend-handler.php';
@@ -99,40 +88,24 @@ class Setup {
      * Instantiate plugin classes.
      */
     private function instantiate_classes() {
-        // Initialize capabilities first
-        new Admin\Admin_Capabilities();
-        
-        // Initialize other classes
+        // Initialize core classes
         new Custom_Post_Types\Setup();
         new Shortcodes();
-        new Woocommerce();
-        new Woocommerce_Subscriptions();
-        \Arsol_Email_Manager::init();
-        new Woocommerce_Biller();
         new Assets();
-        new Woocommerce\Frontend_Endpoints();
-        new Frontend_Woocommerce_Checkout();
+        \Arsol_Email_Manager::init();
         new Taxonomies\Taxonomies_Setup();
         
-        // Frontend Comments Classes
-        new Frontend_Comments();
-
+        // Initialize Admin Management
+        Admin\Setup::get_instance();
+        
+        // Initialize Frontend Management
+        Frontend\Setup::get_instance();
+        
+        // Initialize Integrations Management
+        Integrations\Setup::get_instance();
+        
         // Initialize Phases Management System
         Phases\Setup::get_instance();
-
-        // Initialize admin classes
-        if (is_admin()) {
-            new Admin\Settings_General();
-            new Admin\Settings_Display();
-            new Admin\Settings_Files();
-            new Admin\Settings_Advanced();
-            new Admin\Settings_Tools();
-            new Admin\Setup_Defaults();
-        }
-        
-        new Admin\Settings_Integrations();
-        new Admin\Setup();
-        new Admin\Users();
 
         // Frontend Handlers
         new Custom_Post_Types\Project\Frontend_Handler();

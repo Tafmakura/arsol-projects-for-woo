@@ -58,20 +58,20 @@ use Arsol_Projects_For_Woo\Setup\Workflows_Setup;
 use Arsol_Projects_For_Woo\Workflows\StandardWorkflow;
 
 // Include the Setup class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-setup.php';
 
 // Include the admin settings class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-general.php';
 
 // Include the admin setup defaults class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup-defaults.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-setup-defaults.php';
 
 // Include the workflows setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflows/class-arsol-pfw-workflows-setup.php';
 
 // Include the frontend sidebar classes
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-meta.php';
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-buttons.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-template-sidebar-meta.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-frontend-template-sidebar-buttons.php';
 
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');

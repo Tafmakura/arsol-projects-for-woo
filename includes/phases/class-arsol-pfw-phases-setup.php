@@ -32,10 +32,15 @@ class Setup {
     }
 
     /**
-     * Private constructor
+     * Constructor
+     * Initializes the phases system
      */
     private function __construct() {
-        $this->init();
+        // Load phases conversion class
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/phases/class-arsol-pfw-phases-conversion.php';
+        
+        // Initialize after all plugins are loaded
+        add_action('plugins_loaded', array($this, 'init'), 20);
     }
 
     /**
@@ -51,7 +56,7 @@ class Setup {
      */
     private function require_files(): void {
         // Core phases classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/phases/class-arsol-pfw-phases-conversion.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/phases/class-arsol-pfw-phases-conversion.php';
     }
 
     /**

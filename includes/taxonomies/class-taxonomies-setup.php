@@ -29,20 +29,20 @@ class Taxonomies_Setup {
     }
 
     /**
-     * Include necessary taxonomy files
+     * Require taxonomy files
      */
     private function require_files() {
-        // Project Stage Taxonomy Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/project-stage/class-taxonomies-project-stage-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/project-stage/class-taxonomies-project-stage-admin.php';
+        // Project Stage taxonomy
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/class-taxonomies-project-stage-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/class-taxonomies-project-stage-admin.php';
         
-        // Request Stage Taxonomy Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/request-stage/class-taxonomies-request-stage-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/request-stage/class-taxonomies-request-stage-admin.php';
+        // Request Stage taxonomy
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/request-stage/class-taxonomies-request-stage-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/request-stage/class-taxonomies-request-stage-admin.php';
         
-        // Proposal Stage Taxonomy Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/proposal-stage/class-taxonomies-proposal-stage-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/proposal-stage/class-taxonomies-proposal-stage-admin.php';
+        // Proposal Stage taxonomy
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/class-taxonomies-proposal-stage-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/class-taxonomies-proposal-stage-admin.php';
     }
 
     /**
