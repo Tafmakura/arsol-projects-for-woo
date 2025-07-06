@@ -7,11 +7,11 @@ This directory contains the workflow management system for the Arsol Projects Fo
 ```
 includes/workflows/
 ├── class-arsol-pfw-workflows-setup.php    # Main workflows manager
-├── default/                               # Default workflow implementation
-│   ├── class-arsol-pfw-workflow-default-setup.php      # Setup & configuration
-│   ├── class-arsol-pfw-workflow-default.php            # Main workflow coordinator
-│   ├── class-arsol-pfw-workflow-default-transitions.php # Conversions & actions
-│   └── class-arsol-pfw-workflow-default-stages.php     # Permissions & transactions
+├── standard/                               # Standard workflow implementation
+│   ├── class-arsol-pfw-workflow-standard-setup.php      # Setup & configuration
+│   ├── class-arsol-pfw-workflow-standard.php            # Main workflow coordinator
+│   ├── class-arsol-pfw-workflow-standard-transitions.php # Conversions & actions
+│   └── class-arsol-pfw-workflow-standard-stages.php     # Permissions & transactions
 └── README.md                              # This documentation
 ```
 
@@ -22,8 +22,8 @@ includes/workflows/
 - **Namespace**: `Arsol_Projects_For_Woo\Setup\Workflows`
 - **Purpose**: Initializes and manages all workflow systems
 
-### **Default Workflow**
-- **Namespace**: `Arsol_Projects_For_Woo\Workflows\Default`
+### **Standard Workflow**
+- **Namespace**: `Arsol_Projects_For_Woo\Workflows\Standard`
 - **Components**:
   - **Setup**: Configuration and initialization
   - **Workflow**: Main coordination and entry point
@@ -100,18 +100,18 @@ do_action('arsol_before_proposal_conversion_redirect', $proposal_id, $url, $data
 ### **Initialize Workflows**
 ```php
 // Get workflow manager
-$workflows = \Arsol_Projects_For_Woo\Setup\Workflows::get_instance();
+$workflows = \Arsol_Projects_For_Woo\Setup\Workflows_Setup::get_instance();
 
-// Get default workflow
-$default_workflow = $workflows->get_workflow('default');
+// Get standard workflow
+$standard_workflow = $workflows->get_workflow('standard');
 
 // Check workflow status
-$status = $default_workflow->get_status();
+$status = $standard_workflow->get_status();
 ```
 
 ### **Check User Permissions**
 ```php
-$stages = \Arsol_Projects_For_Woo\Workflows\Default\Stages::get_instance();
+$stages = \Arsol_Projects_For_Woo\Workflows\Standard\Stages::get_instance();
 $can_view = $stages->user_can_view_post($user_id, $post_id);
 ```
 

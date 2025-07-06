@@ -1,18 +1,18 @@
 <?php
 /**
- * Default Workflow Stages Handler
+ * Standard Workflow Stages Handler
  *
  * Handles workflow stages, permissions, and transaction management
- * for the default workflow system.
+ * for the standard workflow system.
  *
  * @package Arsol_Projects_For_Woo
- * @subpackage Workflows\Default
+ * @subpackage Workflows\Standard
  * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace Arsol_Projects_For_Woo\Workflows\Default;
+namespace Arsol_Projects_For_Woo\Workflows\Standard;
 
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
@@ -20,10 +20,10 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Default Workflow Stages Handler
+ * Standard Workflow Stages Handler
  *
  * Manages workflow stages, user permissions, and transaction handling
- * for the default workflow system.
+ * for the standard workflow system.
  *
  * @since 1.0.0
  */

@@ -50,10 +50,12 @@ define('ARSOL_PROJECT_META_KEY', 'arsol-pfw/parent-project-id');
 
 // Use correct namespace
 use Arsol_Projects_For_Woo\Setup;
-use Arsol_Projects_For_Woo\Setup\Workflows;
+use Arsol_Projects_For_Woo\Workflows\Setup as WorkflowsSetup;
 use Arsol_Projects_For_Woo\Admin\Setup_Defaults;
 use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Meta;
 use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Buttons;
+use Arsol_Projects_For_Woo\Setup\Workflows_Setup;
+use Arsol_Projects_For_Woo\Workflows\StandardWorkflow;
 
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
@@ -110,7 +112,7 @@ function arsol_projects_init() {
     // Instantiate the Setup class
     new Setup();
     // Instantiate the Workflows setup class
-    Workflows::get_instance();
+    WorkflowsSetup::get_instance();
     // Instantiate the Setup_Defaults class
     new Setup_Defaults();
     // Instantiate the Frontend Sidebar classes

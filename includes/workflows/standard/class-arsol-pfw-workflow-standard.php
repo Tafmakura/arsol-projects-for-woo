@@ -1,8 +1,8 @@
 <?php
 /**
- * Default Workflow Main Class
+ * Standard Workflow Main Class
  *
- * Main coordination class for the default workflow system.
+ * Main coordination class for the standard workflow system.
  * Handles workflow initialization and coordination between transitions and stages.
  *
  * @package Arsol_Projects_For_Woo
@@ -20,33 +20,33 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Default Workflow Main Class
+ * Standard Workflow Main Class
  *
- * Coordinates all aspects of the default workflow including transitions,
+ * Coordinates all aspects of the standard workflow including transitions,
  * stages, and workflow management.
  *
  * @since 1.0.0
  */
-class Default {
+class StandardWorkflow {
 
     /**
      * Class instance
      *
-     * @var Default|null
+     * @var StandardWorkflow|null
      */
     private static $instance = null;
 
     /**
      * Transitions handler
      *
-     * @var \Arsol_Projects_For_Woo\Workflows\Default\Transitions|null
+     * @var \Arsol_Projects_For_Woo\Workflows\Standard\Transitions|null
      */
     private $transitions = null;
 
     /**
      * Stages handler
      *
-     * @var \Arsol_Projects_For_Woo\Workflows\Default\Stages|null
+     * @var \Arsol_Projects_For_Woo\Workflows\Standard\Stages|null
      */
     private $stages = null;
 
@@ -60,9 +60,9 @@ class Default {
     /**
      * Get class instance
      *
-     * @return Default
+     * @return StandardWorkflow
      */
-    public static function get_instance(): Default {
+    public static function get_instance(): StandardWorkflow {
         if (null === self::$instance) {
             self::$instance = new self();
         }
@@ -95,9 +95,9 @@ class Default {
      */
     private function load_config(): void {
         $this->config = array(
-            'name' => 'default',
+            'name' => 'standard',
             'version' => '1.0.0',
-            'description' => 'Default workflow for Arsol Projects for WooCommerce',
+            'description' => 'Standard workflow for Arsol Projects for WooCommerce',
             'stages' => array(
                 'request' => array('pending', 'under-review', 'approved', 'rejected', 'cancelled'),
                 'proposal' => array('pending-approval', 'approved', 'rejected', 'expired'),
@@ -110,10 +110,10 @@ class Default {
         );
 
         /**
-         * Filter: arsol_pfw_default_workflow_config
-         * Allows modification of default workflow configuration
+         * Filter: arsol_pfw_standard_workflow_config
+         * Allows modification of standard workflow configuration
          */
-        $this->config = apply_filters('arsol_pfw_default_workflow_config', $this->config);
+        $this->config = apply_filters('arsol_pfw_standard_workflow_config', $this->config);
     }
 
     /**
@@ -121,10 +121,10 @@ class Default {
      */
     private function init_handlers(): void {
         // Initialize transitions handler
-        $this->transitions = \Arsol_Projects_For_Woo\Workflows\Default\Transitions::get_instance();
+        $this->transitions = \Arsol_Projects_For_Woo\Workflows\Standard\Transitions::get_instance();
 
         // Initialize stages handler
-        $this->stages = \Arsol_Projects_For_Woo\Workflows\Default\Stages::get_instance();
+        $this->stages = \Arsol_Projects_For_Woo\Workflows\Standard\Stages::get_instance();
     }
 
     /**
@@ -153,18 +153,18 @@ class Default {
     /**
      * Get transitions handler
      *
-     * @return \Arsol_Projects_For_Woo\Workflows\Default\Transitions|null
+     * @return \Arsol_Projects_For_Woo\Workflows\Standard\Transitions|null
      */
-    public function get_transitions(): ?\Arsol_Projects_For_Woo\Workflows\Default\Transitions {
+    public function get_transitions(): ?\Arsol_Projects_For_Woo\Workflows\Standard\Transitions {
         return $this->transitions;
     }
 
     /**
      * Get stages handler
      *
-     * @return \Arsol_Projects_For_Woo\Workflows\Default\Stages|null
+     * @return \Arsol_Projects_For_Woo\Workflows\Standard\Stages|null
      */
-    public function get_stages(): ?\Arsol_Projects_For_Woo\Workflows\Default\Stages {
+    public function get_stages(): ?\Arsol_Projects_For_Woo\Workflows\Standard\Stages {
         return $this->stages;
     }
 
@@ -204,10 +204,10 @@ class Default {
      */
     public function on_workflow_init(): void {
         /**
-         * Hook: arsol_pfw_default_workflow_initialized
-         * Fired when default workflow is fully initialized
+         * Hook: arsol_pfw_standard_workflow_initialized
+         * Fired when standard workflow is fully initialized
          */
-        do_action('arsol_pfw_default_workflow_initialized', $this);
+        do_action('arsol_pfw_standard_workflow_initialized', $this);
     }
 
     /**

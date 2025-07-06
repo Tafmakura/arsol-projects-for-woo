@@ -6,13 +6,13 @@
  * Arsol Projects for WooCommerce plugin.
  *
  * @package Arsol_Projects_For_Woo
- * @subpackage Setup
+ * @subpackage Workflows
  * @since 1.0.0
  */
 
 declare(strict_types=1);
 
-namespace Arsol_Projects_For_Woo\Setup;
+namespace Arsol_Projects_For_Woo\Workflows;
 
 // Exit if accessed directly
 if (!defined('ABSPATH')) {
@@ -27,12 +27,12 @@ if (!defined('ABSPATH')) {
  *
  * @since 1.0.0
  */
-class Workflows {
+class Setup {
 
     /**
      * Class instance
      *
-     * @var Workflows|null
+     * @var Setup|null
      */
     private static $instance = null;
 
@@ -46,9 +46,9 @@ class Workflows {
     /**
      * Get class instance
      *
-     * @return Workflows
+     * @return Setup
      */
-    public static function get_instance(): Workflows {
+    public static function get_instance(): Setup {
         if (null === self::$instance) {
             self::$instance = new self();
         }
@@ -80,25 +80,25 @@ class Workflows {
      * Load workflow dependencies
      */
     private function load_dependencies(): void {
-        // Load default workflow setup
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/default/class-arsol-pfw-default-workflow-setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/default/class-arsol-pfw-default-workflow.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/default/class-arsol-pfw-default-workflow-transitions.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/default/class-arsol-pfw-default-workflow-stages.php';
+        // Load standard workflow setup
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard-setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard-transitions.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/workflows/standard/class-arsol-pfw-workflow-standard-stages.php';
     }
 
     /**
      * Initialize default workflow
      */
     private function init_default_workflow(): void {
-        // Initialize default workflow setup
-        $default_setup = \Arsol_Projects_For_Woo\Workflows\Default\Setup::get_instance();
+        // Initialize standard workflow setup
+        $standard_setup = \Arsol_Projects_For_Woo\Workflows\Standard\Setup::get_instance();
         
-        // Initialize default workflow
-        $default_workflow = \Arsol_Projects_For_Woo\Workflows\Default\Workflow::get_instance();
+        // Initialize standard workflow
+        $standard_workflow = \Arsol_Projects_For_Woo\Workflows\StandardWorkflow::get_instance();
         
         // Store workflow instance
-        $this->workflows['default'] = $default_workflow;
+        $this->workflows['default'] = $standard_workflow;
     }
 
     /**
