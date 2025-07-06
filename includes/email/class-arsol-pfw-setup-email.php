@@ -44,9 +44,12 @@ class Email {
      * Initialize email classes
      */
     private function init_classes() {
+        // Include existing email manager class
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/email/class-arsol-pfw-email-manager.php';
+        
         // Initialize email classes when they exist
-        if (class_exists('\Arsol_PFW\Email\Manager')) {
-            new \Arsol_PFW\Email\Manager();
+        if (class_exists('Arsol_Email_Manager')) {
+            Arsol_Email_Manager::init();
         }
     }
     

@@ -44,18 +44,18 @@ class Custom_Post_Types {
      * Initialize custom post type classes
      */
     private function init_classes() {
+        // Include custom post type setup classes
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/custom-post-types/project/class-arsol-pfw-project-cpt-setup.php';
+        // Note: Proposal and Request setup classes still use old namespaces, 
+        // will be updated in future refactoring phase
+        
         // Initialize setup classes for each custom post type
         if (class_exists('\Arsol_PFW\Custom_Post_Types\Project\Setup')) {
             new \Arsol_PFW\Custom_Post_Types\Project\Setup();
         }
         
-        if (class_exists('\Arsol_PFW\Custom_Post_Types\Proposal\Setup')) {
-            new \Arsol_PFW\Custom_Post_Types\Proposal\Setup();
-        }
-        
-        if (class_exists('\Arsol_PFW\Custom_Post_Types\Request\Setup')) {
-            new \Arsol_PFW\Custom_Post_Types\Request\Setup();
-        }
+        // TODO: Create proper setup classes for Proposal and Request
+        // These still use old namespace structure and need to be refactored
     }
     
     /**

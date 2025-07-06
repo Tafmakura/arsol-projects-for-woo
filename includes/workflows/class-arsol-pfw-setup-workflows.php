@@ -44,9 +44,12 @@ class Workflows {
      * Initialize workflow classes
      */
     private function init_classes() {
+        // Include existing workflow handler class
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/workflows/class-workflow-handler.php';
+        
         // Initialize workflow classes when they exist
-        if (class_exists('\Arsol_PFW\Workflows\Handler')) {
-            new \Arsol_PFW\Workflows\Handler();
+        if (class_exists('\Arsol_Projects_For_Woo\Workflow\Workflow_Handler')) {
+            new \Arsol_Projects_For_Woo\Workflow\Workflow_Handler();
         }
     }
     

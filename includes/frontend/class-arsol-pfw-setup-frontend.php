@@ -50,6 +50,14 @@ class Frontend {
             return;
         }
         
+        // Include frontend classes
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/frontend/class-arsol-pfw-comments.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/frontend/class-arsol-pfw-template-overrides.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/frontend/class-arsol-pfw-template-sidebar-buttons.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/frontend/class-arsol-pfw-template-sidebar-meta.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/frontend/class-arsol-pfw-woocommerce-checkout.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/frontend/class-arsol-pfw-woocommerce-endpoints.php';
+        
         // Initialize frontend classes that need to be loaded immediately
         if (class_exists('\Arsol_PFW\Frontend\Comments')) {
             new \Arsol_PFW\Frontend\Comments();

@@ -44,9 +44,12 @@ class Taxonomies {
      * Initialize taxonomy classes
      */
     private function init_classes() {
+        // Include existing taxonomy setup class
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/taxonomies/class-taxonomies-setup.php';
+        
         // Initialize existing taxonomy classes
-        if (class_exists('\Arsol_PFW\Taxonomies\Setup')) {
-            new \Arsol_PFW\Taxonomies\Setup();
+        if (class_exists('\Arsol_Projects_For_Woo\Taxonomies\Taxonomies_Setup')) {
+            new \Arsol_Projects_For_Woo\Taxonomies\Taxonomies_Setup();
         }
     }
     

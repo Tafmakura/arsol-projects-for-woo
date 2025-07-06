@@ -44,6 +44,13 @@ class Core {
      * Initialize core classes
      */
     private function init_classes() {
+        // Include core classes
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/core/class-arsol-pfw-assets.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/core/class-arsol-pfw-capabilities.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/core/class-arsol-pfw-shortcodes.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/core/class-arsol-pfw-stages-handler.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/core/class-arsol-pfw-project-phases.php';
+        
         // Initialize core classes that need to be loaded immediately
         if (class_exists('\Arsol_PFW\Core\Assets')) {
             new \Arsol_PFW\Core\Assets();

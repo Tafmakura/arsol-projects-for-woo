@@ -114,6 +114,17 @@ class Setup {
      * This creates a clean separation of concerns.
      */
     private function init_subsystems() {
+        // Include directory setup classes
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/core/class-arsol-pfw-setup-core.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/admin/class-arsol-pfw-setup-admin.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/frontend/class-arsol-pfw-setup-frontend.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/custom-post-types/class-arsol-pfw-setup-custom-post-types.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/taxonomies/class-arsol-pfw-setup-taxonomies.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/data-stores/class-arsol-pfw-setup-data-stores.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/workflows/class-arsol-pfw-setup-workflows.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/integrations/class-arsol-pfw-setup-integrations.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/email/class-arsol-pfw-setup-email.php';
+        
         // Initialize directory setup classes in dependency order
         new \Arsol_PFW\Setup\Core();
         new \Arsol_PFW\Setup\Admin();

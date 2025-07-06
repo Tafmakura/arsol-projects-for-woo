@@ -50,6 +50,16 @@ class Admin {
             return;
         }
         
+        // Include admin classes
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/admin/class-arsol-pfw-settings-general.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/admin/class-arsol-pfw-settings-display.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/admin/class-arsol-pfw-settings-files.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/admin/class-arsol-pfw-settings-advanced.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/admin/class-arsol-pfw-settings-integrations.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/admin/class-arsol-pfw-settings-tools.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/admin/class-arsol-pfw-users.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/admin/class-arsol-pfw-setup-defaults.php';
+        
         // Initialize admin classes that need to be loaded immediately
         if (class_exists('\Arsol_PFW\Admin\Settings_General')) {
             new \Arsol_PFW\Admin\Settings_General();

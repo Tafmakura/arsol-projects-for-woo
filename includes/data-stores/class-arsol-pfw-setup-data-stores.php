@@ -44,6 +44,11 @@ class Data_Stores {
      * Initialize data store classes
      */
     private function init_classes() {
+        // Include data store classes
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/data-stores/class-arsol-pfw-project-data-store.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/data-stores/class-arsol-pfw-proposal-data-store.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/data-stores/class-arsol-pfw-request-data-store.php';
+        
         // Initialize data store classes when they exist
         if (class_exists('\Arsol_PFW\Data_Stores\Project_Data_Store')) {
             new \Arsol_PFW\Data_Stores\Project_Data_Store();

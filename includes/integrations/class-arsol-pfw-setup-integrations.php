@@ -44,6 +44,12 @@ class Integrations {
      * Initialize integration classes
      */
     private function init_classes() {
+        // Include integration classes
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/integrations/class-arsol-pfw-woocommerce.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/integrations/class-arsol-pfw-woocommerce-subscriptions.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/integrations/class-arsol-pfw-woocommerce-logs.php';
+        require_once ARSOL_PFW_PLUGIN_PATH . 'includes/integrations/class-arsol-pfw-woocommerce-biller-invoice.php';
+        
         // Initialize integration classes when they exist
         if (class_exists('\Arsol_PFW\Integrations\Woocommerce')) {
             new \Arsol_PFW\Integrations\Woocommerce();
