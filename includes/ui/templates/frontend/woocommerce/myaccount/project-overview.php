@@ -278,7 +278,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                     ?>
                 </div>
         </div>
-        <?php endif; ?>
+    <?php endif; ?>
     
     <?php
     /**

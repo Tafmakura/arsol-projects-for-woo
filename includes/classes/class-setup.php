@@ -73,6 +73,9 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/class-taxonomies-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-comments.php';
         
+        // Phases Management System
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/phases/class-arsol-pfw-phases-setup.php';
+        
         // Admin Settings Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-display.php';
@@ -113,6 +116,9 @@ class Setup {
         
         // Frontend Comments Classes
         new Frontend_Comments();
+
+        // Initialize Phases Management System
+        Phases\Setup::get_instance();
 
         // Initialize admin classes
         if (is_admin()) {

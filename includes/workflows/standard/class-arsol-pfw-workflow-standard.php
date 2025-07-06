@@ -113,21 +113,7 @@ class StandardWorkflow {
         add_action('arsol_pfw_cleanup_stuck_workflows', array($this, 'cleanup_stuck_workflows'));
 
         // Transition hooks
-        add_action('admin_post_arsol_convert_to_proposal', array($this, 'convert_request_to_proposal'));
-        add_action('admin_post_arsol_convert_to_project', array($this, 'convert_proposal_to_project'));
         add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
-
-        // Customer actions
-        add_action('admin_post_arsol_cancel_request', array($this, 'customer_cancel_request'));
-        add_action('admin_post_arsol_approve_proposal', array($this, 'customer_approve_proposal'));
-        add_action('admin_post_arsol_reject_proposal', array($this, 'customer_reject_proposal'));
-
-        // Form submissions
-        add_action('admin_post_arsol_create_request', array($this, 'handle_create_request'));
-        add_action('admin_post_arsol_edit_request', array($this, 'handle_edit_request'));
-
-        // Admin notice display
-        add_action('admin_notices', array($this, 'display_conversion_notices'));
     }
 
     /**
@@ -171,49 +157,14 @@ class StandardWorkflow {
     }
 
     /**
-     * Handle workflow initialization
+     * Workflow initialization handler
      */
     public function on_workflow_init(): void {
         /**
-         * Hook: arsol_pfw_standard_workflow_initialized
-         * Fired when standard workflow is fully initialized
+         * Hook: arsol_workflow_initialized
+         * Fired when workflow system is initialized
          */
-        do_action('arsol_pfw_standard_workflow_initialized', $this);
-    }
-
-    /**
-     * Get workflow statistics
-     *
-     * @return array
-     */
-    public function get_statistics(): array {
-        $stats = array(
-            'total_requests' => 0,
-            'total_proposals' => 0,
-            'total_projects' => 0,
-            'active_workflows' => 0,
-            'stuck_workflows' => 0
-        );
-
-        // Count posts by type
-        $post_types = array('arsol-pfw-request', 'arsol-pfw-proposal', 'arsol-pfw-project');
-        
-        foreach ($post_types as $post_type) {
-            $counts = wp_count_posts($post_type);
-            $type_key = str_replace('arsol-pfw-', 'total_', $post_type) . 's';
-            $stats[$type_key] = $counts->publish + $counts->draft + $counts->pending;
-        }
-
-        // Count active workflows
-        global $wpdb;
-        $active_workflows = $wpdb->get_var(
-            "SELECT COUNT(*) FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_arsol_workflow_in_progress' 
-             AND meta_value = '1'"
-        );
-        $stats['active_workflows'] = (int) $active_workflows;
-
-        return $stats;
+        do_action('arsol_workflow_initialized', $this);
     }
 
     // ===========================================
@@ -474,95 +425,6 @@ class StandardWorkflow {
      *
      * @return array
      */
-    public function get_workflow_statistics(): array {
-        global $wpdb;
-        
-        $stats = array(
-            'active_workflows' => 0,
-            'completed_workflows' => 0,
-            'failed_workflows' => 0,
-            'stuck_workflows' => 0
-        );
-        
-        // Count active workflows
-        $active_workflows = $wpdb->get_var(
-            "SELECT COUNT(*) 
-             FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_arsol_workflow_in_progress' 
-             AND meta_value = '1'"
-        );
-        $stats['active_workflows'] = (int) $active_workflows;
-        
-        // Count completed workflows
-        $completed_workflows = $wpdb->get_var(
-            "SELECT COUNT(*) 
-             FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_arsol_workflow_step' 
-             AND meta_value = 'completed'"
-        );
-        $stats['completed_workflows'] = (int) $completed_workflows;
-        
-        // Count failed workflows
-        $failed_workflows = $wpdb->get_var(
-            "SELECT COUNT(*) 
-             FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_arsol_workflow_step' 
-             AND meta_value = 'rollback'"
-        );
-        $stats['failed_workflows'] = (int) $failed_workflows;
-        
-        // Count stuck workflows (older than 30 minutes)
-        $cutoff_time = date('Y-m-d H:i:s', current_time('timestamp') - (30 * 60));
-        $stuck_workflows = $wpdb->get_var($wpdb->prepare(
-            "SELECT COUNT(*) 
-             FROM {$wpdb->postmeta} 
-             WHERE meta_key = '_arsol_workflow_started' 
-             AND meta_value < %s
-             AND post_id IN (
-                 SELECT post_id 
-                 FROM {$wpdb->postmeta} 
-                 WHERE meta_key = '_arsol_workflow_in_progress' 
-                 AND meta_value = '1'
-             )",
-            $cutoff_time
-        ));
-        $stats['stuck_workflows'] = (int) $stuck_workflows;
-        
-        return $stats;
-    }
-
-    /**
-     * Get workflow history for a post
-     *
-     * @param int $post_id Post ID
-     * @return array
-     */
-    public function get_workflow_history($post_id): array {
-        $history = array();
-        
-        // Get all workflow related meta
-        $workflow_meta_keys = array(
-            '_arsol_workflow_started',
-            '_arsol_workflow_completed',
-            '_arsol_workflow_rollback_time',
-            '_arsol_workflow_force_cleared',
-            '_arsol_workflow_type',
-            '_arsol_workflow_conversion_type',
-            '_arsol_workflow_step',
-            '_arsol_workflow_rollback_reason'
-        );
-        
-        foreach ($workflow_meta_keys as $meta_key) {
-            $value = get_post_meta($post_id, $meta_key, true);
-            if (!empty($value)) {
-                $history[$meta_key] = $value;
-            }
-        }
-        
-        return $history;
-    }
-
-    // ===========================================
     // TRANSITIONS METHODS (formerly from transitions class)
     // ===========================================
 
