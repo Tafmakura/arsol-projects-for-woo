@@ -247,11 +247,11 @@ class Comments {
         <div class="arsol-reply-form-container">
             <form class="arsol-reply-form" data-comment-id="<?php echo $comment_id; ?>" data-post-id="<?php echo $post_id; ?>">
                 <div class="arsol-reply-form-header">
-                    <strong><?php printf(\__('Reply to %s', 'arsol-pfw'), \get_comment_author($comment_id)); ?></strong>
+                    <strong><?php \printf(\__('Reply to %s', 'arsol-pfw'), \get_comment_author($comment_id)); ?></strong>
                 </div>
                 
                 <div class="arsol-reply-form-fields">
-                    <?php if (!is_user_logged_in()): ?>
+                    <?php if (!\is_user_logged_in()): ?>
                         <div class="arsol-reply-form-row">
                             <label for="arsol-reply-author"><?php \_e('Name', 'arsol-pfw'); ?> <span class="required">*</span></label>
                             <input type="text" id="arsol-reply-author" name="author" required>

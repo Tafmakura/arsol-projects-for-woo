@@ -8,10 +8,9 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Woocommerce;
+namespace Arsol_Projects_For_Woo\Frontend;
 
-use Arsol_Projects_For_Woo\Frontend_Template_Overrides;
-use Arsol_Projects_For_Woo\Woocommerce;
+use Arsol_Projects_For_Woo\Frontend\Template_Overrides;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -21,39 +20,39 @@ if (!defined('ABSPATH')) {
 /**
  * Frontend Project Endpoints class
  */
-class Frontend_Endpoints {
+class WooCommerce_Endpoints {
     
     /**
      * Constructor
      */
     public function __construct() {
         // Register endpoints
-        add_action('init', array($this, 'register_endpoints'));
+        \add_action('init', array($this, 'register_endpoints'));
         
         // Add Projects to account menu
-        add_filter('woocommerce_account_menu_items', array($this, 'add_projects_menu_item'));
+        \add_filter('woocommerce_account_menu_items', array($this, 'add_projects_menu_item'));
         
         // Add custom query vars
-        add_filter('query_vars', array($this, 'add_woocommerce_query_vars'));
-        add_filter('woocommerce_get_query_vars', array($this, 'add_woocommerce_query_vars'));
+        \add_filter('query_vars', array($this, 'add_woocommerce_query_vars'));
+        \add_filter('woocommerce_get_query_vars', array($this, 'add_woocommerce_query_vars'));
         
         // Handle endpoint content
-        add_action('woocommerce_account_projects_endpoint', array($this, 'projects_endpoint_content'));
-        add_action('woocommerce_account_view-project_endpoint', array($this, 'project_overview_endpoint_content'));
-        add_action('woocommerce_account_view-project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
+        \add_action('woocommerce_account_projects_endpoint', array($this, 'projects_endpoint_content'));
+        \add_action('woocommerce_account_view-project_endpoint', array($this, 'project_overview_endpoint_content'));
+        \add_action('woocommerce_account_view-project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
         
         // Only register subscription endpoint if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
-            add_action('woocommerce_account_view-project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
+        if (\class_exists('WC_Subscriptions')) {
+            \add_action('woocommerce_account_view-project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
         }
         
-        add_action('woocommerce_account_create-project_endpoint', array($this, 'project_create_endpoint_content'));
-        add_action('woocommerce_account_create-request_endpoint', array($this, 'project_request_endpoint_content'));
-        add_action('woocommerce_account_view-proposal_endpoint', array($this, 'project_view_proposal_endpoint_content'));
-        add_action('woocommerce_account_view-request_endpoint', array($this, 'project_view_request_endpoint_content'));
+        \add_action('woocommerce_account_create-project_endpoint', array($this, 'project_create_endpoint_content'));
+        \add_action('woocommerce_account_create-request_endpoint', array($this, 'project_request_endpoint_content'));
+        \add_action('woocommerce_account_view-proposal_endpoint', array($this, 'project_view_proposal_endpoint_content'));
+        \add_action('woocommerce_account_view-request_endpoint', array($this, 'project_view_request_endpoint_content'));
 
         // Add comment redirect filter
-        add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
+        \add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
     }
     
     /**
@@ -77,7 +76,7 @@ class Frontend_Endpoints {
         add_rewrite_endpoint('view-project-orders', EP_PAGES);
         
         // Only register subscription endpoint if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
+        if (\class_exists('WC_Subscriptions')) {
             add_rewrite_endpoint('view-project-subscriptions', EP_PAGES);
         }
         
@@ -88,7 +87,7 @@ class Frontend_Endpoints {
 
         // Debug logging
         if (function_exists('error_log')) {
-            error_log('ARSOL DEBUG: Registering endpoints');
+            \error_log('ARSOL DEBUG: Registering endpoints');
         }
     }
     
@@ -118,7 +117,7 @@ class Frontend_Endpoints {
         $query_vars['view-project-orders'] = 'view-project-orders';
         
         // Only add subscription query var if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
+        if (\class_exists('WC_Subscriptions')) {
             $query_vars['view-project-subscriptions'] = 'view-project-subscriptions';
         }
         
@@ -129,7 +128,7 @@ class Frontend_Endpoints {
         
         // Debug logging
         if (function_exists('error_log')) {
-            error_log('ARSOL DEBUG: Registered query vars: ' . print_r($query_vars, true));
+            \error_log('ARSOL DEBUG: Registered query vars: ' . print_r($query_vars, true));
         }
         
         return $query_vars;
@@ -143,10 +142,10 @@ class Frontend_Endpoints {
         $current_tab = isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : 'active';
 
         // Get current user ID
-        $user_id = get_current_user_id();
+        $user_id = \get_current_user_id();
         
         // Determine current page from query vars
-        $paged = get_query_var('paged') ? get_query_var('paged') : 1;
+        $paged = \get_query_var('paged') ? \get_query_var('paged') : 1;
 
         // Base query arguments
         $args = array(
@@ -200,20 +199,20 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_overview_endpoint_content() {
-        $project_id = absint(get_query_var('view-project'));
+        $project_id = \absint(\get_query_var('view-project'));
         
         if (!$this->validate_project_access($project_id)) {
             return;
         }
         
         // Get the project object - templates use object properties directly
-        $project = get_post($project_id);
+        $project = \get_post($project_id);
         $current_tab = 'overview';
         
         // Stage handling with proper error checking
-        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+        $stage_terms = \wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
         $current_stage = '';
-        if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+        if (!\is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
         }
         
@@ -221,7 +220,7 @@ class Frontend_Endpoints {
         $wrapper_data = compact('project_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Project Overview - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Stage: '$current_stage'");
+        \error_log("ARSOL DEBUG: Project Overview - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Stage: '$current_stage'");
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
     }
@@ -232,20 +231,20 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_orders_endpoint_content() {
-        $project_id = absint(get_query_var('view-project-orders'));
+        $project_id = \absint(\get_query_var('view-project-orders'));
         
         if (!$this->validate_project_access($project_id)) {
             return;
         }
         
         // Get the project object - templates use object properties directly
-        $project = get_post($project_id);
+        $project = \get_post($project_id);
         $current_tab = 'orders';
         
         // Stage handling with proper error checking
-        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+        $stage_terms = \wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
         $current_stage = '';
-        if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+        if (!\is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
         }
         
@@ -253,7 +252,7 @@ class Frontend_Endpoints {
         $wrapper_data = compact('project_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Project Orders - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Stage: '$current_stage'");
+        \error_log("ARSOL DEBUG: Project Orders - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Stage: '$current_stage'");
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-orders.php';
     }
@@ -265,26 +264,26 @@ class Frontend_Endpoints {
      */
     public function project_subscriptions_endpoint_content() {
         // Check if WooCommerce Subscriptions is active
-        if (!class_exists('WC_Subscriptions')) {
-            wc_add_notice(__('WooCommerce Subscriptions plugin is required for this feature.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+        if (!\class_exists('WC_Subscriptions')) {
+            \wc_add_notice(__('WooCommerce Subscriptions plugin is required for this feature.', 'arsol-pfw'), 'error');
+            \wp_safe_redirect(\wc_get_account_endpoint_url('projects'));
             exit;
         }
         
-        $project_id = absint(get_query_var('view-project-subscriptions'));
+        $project_id = \absint(\get_query_var('view-project-subscriptions'));
         
         if (!$this->validate_project_access($project_id)) {
             return;
         }
         
         // Get the project object - templates use object properties directly
-        $project = get_post($project_id);
+        $project = \get_post($project_id);
         $current_tab = 'subscriptions';
         
         // Stage handling with proper error checking
-        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+        $stage_terms = \wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
         $current_stage = '';
-        if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+        if (!\is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
         }
         
@@ -292,7 +291,7 @@ class Frontend_Endpoints {
         $wrapper_data = compact('project_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Project Subscriptions - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Stage: '$current_stage'");
+        \error_log("ARSOL DEBUG: Project Subscriptions - ID: {$project->ID}, Title: '{$project->post_title}', Type: {$project->post_type}, Stage: '$current_stage'");
         
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-subscriptions.php';
     }
@@ -303,7 +302,7 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_create_endpoint_content() {
-        $user_id = get_current_user_id();
+        $user_id = \get_current_user_id();
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
         
         if (!$admin_users->can_user_create_projects($user_id)) {
@@ -320,7 +319,7 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_request_endpoint_content() {
-        $user_id = get_current_user_id();
+        $user_id = \get_current_user_id();
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
 
         if (!$admin_users->can_user_request_projects($user_id)) {
@@ -338,21 +337,21 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_view_proposal_endpoint_content() {
-        $proposal_id = absint(get_query_var('view-proposal'));
+        $proposal_id = \absint(\get_query_var('view-proposal'));
         
         if (!$proposal_id) {
-            wc_add_notice(__('Invalid proposal ID.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            \wc_add_notice(__('Invalid proposal ID.', 'arsol-pfw'), 'error');
+            \wp_safe_redirect(\wc_get_account_endpoint_url('projects'));
             exit;
         }
 
         // Check if user has permission to view this proposal
-        $proposal = get_post($proposal_id);
-        $user_id = get_current_user_id();
+        $proposal = \get_post($proposal_id);
+        $user_id = \get_current_user_id();
         
         if (!$proposal || $proposal->post_type !== 'arsol-pfw-proposal') {
-            wc_add_notice(__('Invalid proposal.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            \wc_add_notice(__('Invalid proposal.', 'arsol-pfw'), 'error');
+            \wp_safe_redirect(\wc_get_account_endpoint_url('projects'));
             exit;
         }
 
@@ -360,8 +359,8 @@ class Frontend_Endpoints {
         $can_view = \Arsol_Projects_For_Woo\Workflows\Standard::user_can_view_post($user_id, $proposal_id);
 
         if (!$can_view) {
-            wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            \wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
+            \wp_safe_redirect(\wc_get_account_endpoint_url('projects'));
             exit;
         }
 
@@ -369,9 +368,9 @@ class Frontend_Endpoints {
         $current_tab = 'proposal';
 
         // Stage handling with proper error checking
-        $stage_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
+        $stage_terms = \wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
         $current_stage = '';
-        if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+        if (!\is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
         }
 
@@ -379,7 +378,7 @@ class Frontend_Endpoints {
         $wrapper_data = compact('proposal_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Proposal View - ID: {$proposal->ID}, Title: '{$proposal->post_title}', Type: {$proposal->post_type}, Stage: '$current_stage'");
+        \error_log("ARSOL DEBUG: Proposal View - ID: {$proposal->ID}, Title: '{$proposal->post_title}', Type: {$proposal->post_type}, Stage: '$current_stage'");
 
         // Include the new project view proposal template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php';
@@ -391,21 +390,21 @@ class Frontend_Endpoints {
      * @return void
      */
     public function project_view_request_endpoint_content() {
-        $request_id = absint(get_query_var('view-request'));
+        $request_id = \absint(\get_query_var('view-request'));
         
         if (!$request_id) {
-            wc_add_notice(__('Invalid request ID.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            \wc_add_notice(__('Invalid request ID.', 'arsol-pfw'), 'error');
+            \wp_safe_redirect(\wc_get_account_endpoint_url('projects'));
             exit;
         }
 
         // Check if user has permission to view this request
-        $request = get_post($request_id);
-        $user_id = get_current_user_id();
+        $request = \get_post($request_id);
+        $user_id = \get_current_user_id();
         
         if (!$request || $request->post_type !== 'arsol-pfw-request') {
-            wc_add_notice(__('Invalid request.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            \wc_add_notice(__('Invalid request.', 'arsol-pfw'), 'error');
+            \wp_safe_redirect(\wc_get_account_endpoint_url('projects'));
             exit;
         }
 
@@ -413,8 +412,8 @@ class Frontend_Endpoints {
         $can_view = \Arsol_Projects_For_Woo\Workflows\Standard::user_can_view_post($user_id, $request_id);
 
         if (!$can_view) {
-            wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
+            \wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
+            \wp_safe_redirect(\wc_get_account_endpoint_url('projects'));
             exit;
         }
 
@@ -422,9 +421,9 @@ class Frontend_Endpoints {
         $current_tab = 'request';
 
         // Get request stage (with proper error handling)
-        $stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+        $stage_terms = \wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
         $current_stage = '';
-        if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
+        if (!\is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
         }
 
@@ -432,7 +431,7 @@ class Frontend_Endpoints {
         $wrapper_data = compact('request_id', 'current_stage');
         
         // Debug logging with object properties
-        error_log("ARSOL DEBUG: Request View - ID: {$request->ID}, Title: '{$request->post_title}', Type: {$request->post_type}, Stage: '$current_stage'");
+        \error_log("ARSOL DEBUG: Request View - ID: {$request->ID}, Title: '{$request->post_title}', Type: {$request->post_type}, Stage: '$current_stage'");
 
         // Include the new project view request template
         include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-request.php';
@@ -445,7 +444,7 @@ class Frontend_Endpoints {
      * @return bool Whether the user can access the project
      */
     private function validate_project_access($project_id) {
-        $user_id = get_current_user_id();
+        $user_id = \get_current_user_id();
         
         // Check if project exists and user has access
         if (!$project_id || !$this->user_can_view_project($user_id, $project_id)) {
@@ -464,7 +463,7 @@ class Frontend_Endpoints {
      * @return array Project data
      */
     private function get_project_data($project_id) {
-        $project = get_post($project_id);
+        $project = \get_post($project_id);
         if (!$project || $project->post_type !== 'arsol-pfw-project') {
             return null;
         }
@@ -488,11 +487,11 @@ class Frontend_Endpoints {
      * @return bool Whether the user can view the project
      */
     public static function user_can_view_project($user_id, $project_id) {
-        if (!is_user_logged_in()) {
+        if (!\is_user_logged_in()) {
             return false;
         }
 
-        $post = get_post($project_id);
+        $post = \get_post($project_id);
         if (!$post) {
             return false;
         }
@@ -518,14 +517,14 @@ class Frontend_Endpoints {
      * @return string Modified redirect URL
      */
     public function handle_comment_redirect($location, $comment) {
-        $post = get_post($comment->comment_post_ID);
+        $post = \get_post($comment->comment_post_ID);
         
         if (!$post) {
             return $location;
         }
 
         // Check if this is a project-related post type
-        if (in_array($post->post_type, ['arsol-pfw-project', 'arsol-pfw-proposal', 'arsol-pfw-request'])) {
+        if (\in_array($post->post_type, ['arsol-pfw-project', 'arsol-pfw-proposal', 'arsol-pfw-request'])) {
             // Determine the appropriate endpoint based on post type
             switch ($post->post_type) {
                 case 'arsol-pfw-project':
@@ -542,7 +541,7 @@ class Frontend_Endpoints {
             }
 
             // Redirect to the appropriate WooCommerce account endpoint
-            $redirect_url = wc_get_account_endpoint_url($endpoint, $post->ID);
+            $redirect_url = \wc_get_account_endpoint_url($endpoint, $post->ID);
             
             // Add comment anchor
             $redirect_url .= '#comment-' . $comment->comment_ID;

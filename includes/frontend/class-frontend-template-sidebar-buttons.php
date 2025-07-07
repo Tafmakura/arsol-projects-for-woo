@@ -8,13 +8,13 @@
  * @version 2.0.0
  */
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Frontend;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Frontend_Template_Sidebar_Buttons {
+class Template_Sidebar_Buttons {
 
     /**
      * Constructor
@@ -28,9 +28,9 @@ class Frontend_Template_Sidebar_Buttons {
      */
     private function init_hooks() {
         // CPT-specific button hooks
-        add_action('arsol_pfw_project_sidebar_buttons', array($this, 'display_project_buttons'), 10, 2);
-        add_action('arsol_pfw_project_proposal_sidebar_buttons', array($this, 'display_proposal_buttons'), 10, 2);
-        add_action('arsol_pfw_project_request_sidebar_buttons', array($this, 'display_request_buttons'), 10, 2);
+        \add_action('arsol_pfw_project_sidebar_buttons', array($this, 'display_project_buttons'), 10, 2);
+        \add_action('arsol_pfw_project_proposal_sidebar_buttons', array($this, 'display_proposal_buttons'), 10, 2);
+        \add_action('arsol_pfw_project_request_sidebar_buttons', array($this, 'display_request_buttons'), 10, 2);
     }
 
     /**
@@ -40,10 +40,10 @@ class Frontend_Template_Sidebar_Buttons {
      * @param int $project_id The project ID
      */
     public function display_project_buttons($current_stage, $project_id) {
-        error_log("ARSOL DEBUG: Project buttons - Stage: '$current_stage', Project ID: $project_id");
+        \error_log("ARSOL DEBUG: Project buttons - Stage: '$current_stage', Project ID: $project_id");
         
         if (empty($project_id)) {
-            error_log("ARSOL DEBUG: Project buttons - Empty project ID, returning");
+            \error_log("ARSOL DEBUG: Project buttons - Empty project ID, returning");
             return;
         }
 
@@ -59,10 +59,10 @@ class Frontend_Template_Sidebar_Buttons {
      * @param int $project_proposal_id The proposal ID
      */
     public function display_proposal_buttons($current_stage, $project_proposal_id) {
-        error_log("ARSOL DEBUG: Proposal buttons - Stage: '$current_stage', Proposal ID: $project_proposal_id");
+        \error_log("ARSOL DEBUG: Proposal buttons - Stage: '$current_stage', Proposal ID: $project_proposal_id");
         
         if (empty($project_proposal_id)) {
-            error_log("ARSOL DEBUG: Proposal buttons - Empty proposal ID, returning");
+            \error_log("ARSOL DEBUG: Proposal buttons - Empty proposal ID, returning");
             return;
         }
 
@@ -78,10 +78,10 @@ class Frontend_Template_Sidebar_Buttons {
      * @param int $project_request_id The request ID
      */
     public function display_request_buttons($current_stage, $project_request_id) {
-        error_log("ARSOL DEBUG: Request buttons - Stage: '$current_stage', Request ID: $project_request_id");
+        \error_log("ARSOL DEBUG: Request buttons - Stage: '$current_stage', Request ID: $project_request_id");
         
         if (empty($project_request_id)) {
-            error_log("ARSOL DEBUG: Request buttons - Empty request ID, returning");
+            \error_log("ARSOL DEBUG: Request buttons - Empty request ID, returning");
             return;
         }
 
@@ -97,7 +97,7 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $stage The current stage
      */
     private function add_proposal_buttons($post_id, $stage) {
-        error_log("ARSOL DEBUG: add_proposal_buttons called - Stage: '$stage', Post ID: $post_id");
+        \error_log("ARSOL DEBUG: add_proposal_buttons called - Stage: '$stage', Post ID: $post_id");
         
         // If no stage is set, show informational message
         if (empty($stage)) {
@@ -110,26 +110,26 @@ class Frontend_Template_Sidebar_Buttons {
         
         // Show approve/reject buttons for pending-approval stage (these use existing handlers)
         if ($stage === 'pending-approval') {
-            error_log("ARSOL DEBUG: Adding approve/reject buttons for pending-approval stage");
-            $approve_url = wp_nonce_url(
-                admin_url('admin-post.php?action=arsol_approve_proposal&proposal_id=' . $post_id),
+            \error_log("ARSOL DEBUG: Adding approve/reject buttons for pending-approval stage");
+            $approve_url = \wp_nonce_url(
+                \admin_url('admin-post.php?action=arsol_approve_proposal&proposal_id=' . $post_id),
                 'arsol_approve_proposal_nonce'
             );
             
             echo '<div class="button-item button-approve">';
-            echo '<a href="' . esc_url($approve_url) . '" class="button button-primary" ';
+            echo '<a href="' . \esc_url($approve_url) . '" class="button button-primary" ';
             echo 'onclick="return confirm(\'' . \esc_js(\__('Are you sure you want to approve this proposal? This will create a project and may generate WooCommerce orders.', 'arsol-pfw')) . '\')">';
             echo \esc_html__('Approve Proposal', 'arsol-pfw');
             echo '</a>';
             echo '</div>';
 
-            $reject_url = wp_nonce_url(
-                admin_url('admin-post.php?action=arsol_reject_proposal&proposal_id=' . $post_id),
+            $reject_url = \wp_nonce_url(
+                \admin_url('admin-post.php?action=arsol_reject_proposal&proposal_id=' . $post_id),
                 'arsol_reject_proposal_nonce'
             );
             
             echo '<div class="button-item button-reject">';
-            echo '<a href="' . esc_url($reject_url) . '" class="button button-secondary" ';
+            echo '<a href="' . \esc_url($reject_url) . '" class="button button-secondary" ';
             echo 'onclick="return confirm(\'' . \esc_js(\__('Are you sure you want to reject this proposal?', 'arsol-pfw')) . '\')">';
             echo \esc_html__('Reject Proposal', 'arsol-pfw');
             echo '</a>';
@@ -163,7 +163,7 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $stage The current stage
      */
     private function add_request_buttons($post_id, $stage) {
-        error_log("ARSOL DEBUG: add_request_buttons called - Stage: '$stage', Post ID: $post_id");
+        \error_log("ARSOL DEBUG: add_request_buttons called - Stage: '$stage', Post ID: $post_id");
         
         switch ($stage) {
             case 'pending-review':
@@ -183,7 +183,7 @@ class Frontend_Template_Sidebar_Buttons {
                 if (empty($stage)) {
                     echo '<button class="button button-warning" disabled>No Stage Set</button>';
                 } else {
-                    echo '<button class="button button-warning" disabled>Unknown Stage: ' . esc_html($stage) . '</button>';
+                    echo '<button class="button button-warning" disabled>Unknown Stage: ' . \esc_html($stage) . '</button>';
                 }
                 echo '</div>';
                 break;
@@ -197,7 +197,7 @@ class Frontend_Template_Sidebar_Buttons {
      * @param string $stage The current stage
      */
     private function add_project_buttons($post_id, $stage) {
-        error_log("ARSOL DEBUG: add_project_buttons called - Stage: '$stage', Post ID: $post_id");
+        \error_log("ARSOL DEBUG: add_project_buttons called - Stage: '$stage', Post ID: $post_id");
         
         // If no stage is set, show informational message
         if (empty($stage)) {
@@ -244,7 +244,7 @@ class Frontend_Template_Sidebar_Buttons {
                 
             default:
                 echo '<div class="button-item button-unknown">';
-                echo '<button class="button button-warning" disabled>Unknown Stage: ' . esc_html($stage) . '</button>';
+                echo '<button class="button button-warning" disabled>Unknown Stage: ' . \esc_html($stage) . '</button>';
                 echo '</div>';
                 break;
         }
@@ -264,12 +264,12 @@ class Frontend_Template_Sidebar_Buttons {
         echo '</div>';
 
         // Cancel Request button - properly linked to admin action
-        $cancel_url = wp_nonce_url(
-            admin_url('admin-post.php?action=arsol_cancel_request&request_id=' . $post_id),
+        $cancel_url = \wp_nonce_url(
+            \admin_url('admin-post.php?action=arsol_cancel_request&request_id=' . $post_id),
             'arsol_cancel_request_nonce'
         );
         echo '<div class="arsol-pfw-project-button">';
-        echo '<a href="' . esc_url($cancel_url) . '" class="brxe-button bricks-button sm outline bricks-color-primary" ';
+        echo '<a href="' . \esc_url($cancel_url) . '" class="brxe-button bricks-button sm outline bricks-color-primary" ';
         echo 'onclick="return confirm(\'' . \esc_js(\__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw')) . '\')">';
         echo \esc_html__('Cancel Request', 'arsol-pfw');
         echo '</a>';
@@ -311,12 +311,12 @@ class Frontend_Template_Sidebar_Buttons {
         echo '</div>';
 
         // Cancel Request button - properly linked to admin action
-        $cancel_url = wp_nonce_url(
-            admin_url('admin-post.php?action=arsol_cancel_request&request_id=' . $post_id),
+        $cancel_url = \wp_nonce_url(
+            \admin_url('admin-post.php?action=arsol_cancel_request&request_id=' . $post_id),
             'arsol_cancel_request_nonce'
         );
         echo '<div class="arsol-pfw-project-button">';
-        echo '<a href="' . esc_url($cancel_url) . '" class="brxe-button bricks-button sm outline bricks-color-primary" ';
+        echo '<a href="' . \esc_url($cancel_url) . '" class="brxe-button bricks-button sm outline bricks-color-primary" ';
         echo 'onclick="return confirm(\'' . \esc_js(\__('Are you sure you want to cancel this request? This action cannot be undone.', 'arsol-pfw')) . '\')">';
         echo \esc_html__('Cancel Request', 'arsol-pfw');
         echo '</a>';

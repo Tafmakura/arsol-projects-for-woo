@@ -40,14 +40,14 @@ class Setup {
      * Check if we're in frontend area
      */
     public function is_frontend_area() {
-        return !is_admin() || wp_doing_ajax();
+        return !\is_admin() || \wp_doing_ajax();
     }
 
     /**
      * Check if WooCommerce is active
      */
     public function is_woocommerce_active() {
-        return class_exists('WooCommerce');
+        return \class_exists('WooCommerce');
     }
 
     /**
@@ -71,7 +71,7 @@ class Setup {
         return [
             'frontend_area' => $this->is_frontend_area(),
             'woocommerce_active' => $this->is_woocommerce_active(),
-            'classes_loaded' => count($this->get_frontend_classes()),
+            'classes_loaded' => \count($this->get_frontend_classes()),
         ];
     }
 
@@ -85,7 +85,7 @@ class Setup {
             return false;
         }
         
-        return in_array($post->post_type, ['project', 'project-request', 'project-proposal']);
+        return \in_array($post->post_type, ['project', 'project-request', 'project-proposal']);
     }
 
     /**

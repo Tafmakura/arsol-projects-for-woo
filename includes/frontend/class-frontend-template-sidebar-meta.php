@@ -8,13 +8,13 @@
  * @version 2.0.0
  */
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Frontend;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Frontend_Template_Sidebar_Meta {
+class Template_Sidebar_Meta {
 
     /**
      * Constructor
@@ -28,9 +28,9 @@ class Frontend_Template_Sidebar_Meta {
      */
     private function init_hooks() {
         // CPT-specific meta hooks
-        add_action('arsol_pfw_project_sidebar_meta', array($this, 'display_project_meta'), 10, 2);
-        add_action('arsol_pfw_project_proposal_sidebar_meta', array($this, 'display_proposal_meta'), 10, 2);
-        add_action('arsol_pfw_project_request_sidebar_meta', array($this, 'display_request_meta'), 10, 2);
+        \add_action('arsol_pfw_project_sidebar_meta', array($this, 'display_project_meta'), 10, 2);
+        \add_action('arsol_pfw_project_proposal_sidebar_meta', array($this, 'display_proposal_meta'), 10, 2);
+        \add_action('arsol_pfw_project_request_sidebar_meta', array($this, 'display_request_meta'), 10, 2);
     }
 
     /**
@@ -149,14 +149,14 @@ class Frontend_Template_Sidebar_Meta {
                 'label' => __('Stage', 'arsol-pfw'),
                 'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+                'class' => 'status-badge status-' . \sanitize_html_class($actual_status)
             );
         }
         
         // Customer
-        $post = get_post($post_id);
+        $post = \get_post($post_id);
         if ($post && $post->post_author) {
-            $customer = get_userdata($post->post_author);
+            $customer = \get_userdata($post->post_author);
             if ($customer) {
                 $metadata['customer'] = array(
                     'label' => __('Customer', 'arsol-pfw'),
@@ -167,9 +167,9 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Project Lead
-        $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
+        $lead_id = \get_post_meta($post_id, '_arsol_pfw_project_lead', true);
         if (!empty($lead_id)) {
-            $lead = get_userdata($lead_id);
+            $lead = \get_userdata($lead_id);
             if ($lead) {
                 $metadata['project_lead'] = array(
                     'label' => __('Project Lead', 'arsol-pfw'),
@@ -180,7 +180,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = get_post_meta($post_id, '_arsol_pfw_project_start_date', true);
+        $start_date = \get_post_meta($post_id, '_arsol_pfw_project_start_date', true);
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -190,7 +190,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = get_post_meta($post_id, '_arsol_pfw_project_due_date', true);
+        $due_date = \get_post_meta($post_id, '_arsol_pfw_project_due_date', true);
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -221,14 +221,14 @@ class Frontend_Template_Sidebar_Meta {
                 'label' => __('Status', 'arsol-pfw'),
                 'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+                'class' => 'status-badge status-' . \sanitize_html_class($actual_status)
             );
         }
         
         // Customer
-        $post = get_post($post_id);
+        $post = \get_post($post_id);
         if ($post && $post->post_author) {
-            $customer = get_userdata($post->post_author);
+            $customer = \get_userdata($post->post_author);
             if ($customer) {
                 $metadata['customer'] = array(
                     'label' => __('Customer', 'arsol-pfw'),
@@ -239,9 +239,9 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Project Lead
-        $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
+        $lead_id = \get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
         if (!empty($lead_id)) {
-            $lead = get_userdata($lead_id);
+            $lead = \get_userdata($lead_id);
             if ($lead) {
                 $metadata['project_lead'] = array(
                     'label' => __('Project Lead', 'arsol-pfw'),
@@ -252,19 +252,19 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Budget
-        $budget = get_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
+        $budget = \get_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
         if (!empty($budget)) {
             if (is_array($budget) && isset($budget['amount'])) {
                 $metadata['budget'] = array(
                     'label' => __('Budget', 'arsol-pfw'),
-                    'value' => wc_price($budget['amount'], array('currency' => $budget['currency'] ?? get_woocommerce_currency())),
+                    'value' => \wc_price($budget['amount'], array('currency' => $budget['currency'] ?? \get_woocommerce_currency())),
                     'type' => 'currency'
                 );
             }
         }
         
         // Start Date
-        $start_date = get_post_meta($post_id, '_arsol_pfw_proposal_start_date', true);
+        $start_date = \get_post_meta($post_id, '_arsol_pfw_proposal_start_date', true);
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -274,7 +274,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Delivery Date
-        $delivery_date = get_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', true);
+        $delivery_date = \get_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', true);
         if (!empty($delivery_date)) {
             $metadata['delivery_date'] = array(
                 'label' => __('Delivery Date', 'arsol-pfw'),
@@ -284,7 +284,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Expiration Date
-        $expiration_date = get_post_meta($post_id, '_arsol_pfw_proposal_expiration_date', true);
+        $expiration_date = \get_post_meta($post_id, '_arsol_pfw_proposal_expiration_date', true);
         if (!empty($expiration_date)) {
             $metadata['expiration_date'] = array(
                 'label' => __('Expiration Date', 'arsol-pfw'),
@@ -315,7 +315,7 @@ class Frontend_Template_Sidebar_Meta {
                 'label' => __('Request Stage', 'arsol-pfw'),
                 'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($actual_status),
+                'class' => 'status-badge status-' . \sanitize_html_class($actual_status),
                 'description' => $this->get_request_stage_description($actual_status)
             );
             
@@ -333,19 +333,19 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Budget
-        $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
+        $budget = \get_post_meta($post_id, '_arsol_pfw_request_budget', true);
         if (!empty($budget)) {
             if (is_array($budget) && isset($budget['amount'])) {
                 $metadata['budget'] = array(
                     'label' => __('Budget', 'arsol-pfw'),
-                    'value' => wc_price($budget['amount'], array('currency' => $budget['currency'] ?? get_woocommerce_currency())),
+                    'value' => \wc_price($budget['amount'], array('currency' => $budget['currency'] ?? \get_woocommerce_currency())),
                     'type' => 'currency'
                 );
             }
         }
         
         // Start Date
-        $start_date = get_post_meta($post_id, '_arsol_pfw_request_start_date', true);
+        $start_date = \get_post_meta($post_id, '_arsol_pfw_request_start_date', true);
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Requested Start Date', 'arsol-pfw'),
@@ -355,7 +355,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Delivery Date
-        $delivery_date = get_post_meta($post_id, '_arsol_pfw_request_delivery_date', true);
+        $delivery_date = \get_post_meta($post_id, '_arsol_pfw_request_delivery_date', true);
         if (!empty($delivery_date)) {
             $metadata['delivery_date'] = array(
                 'label' => __('Requested Delivery Date', 'arsol-pfw'),
@@ -381,7 +381,7 @@ class Frontend_Template_Sidebar_Meta {
             }
 
             if (isset($meta['show_if']['status'])) {
-                return in_array($current_status, $meta['show_if']['status']);
+                return \in_array($current_status, $meta['show_if']['status']);
             }
 
             return true;
@@ -407,8 +407,8 @@ class Frontend_Template_Sidebar_Meta {
             $classes[] = $meta['class'];
         }
 
-        echo '<div class="' . esc_attr(implode(' ', $classes)) . '">';
-        echo '<strong>' . esc_html($meta['label']) . ':</strong> ';
+        echo '<div class="' . \esc_attr(\implode(' ', $classes)) . '">';
+        echo '<strong>' . \esc_html($meta['label']) . ':</strong> ';
         echo $this->format_metadata_value($meta['value'], $meta['type'], $meta);
         echo '</div>';
     }
@@ -424,22 +424,22 @@ class Frontend_Template_Sidebar_Meta {
     private function format_metadata_value($value, $type, $meta) {
         switch ($type) {
             case 'currency':
-                return wp_kses_post($value);
+                return \wp_kses_post($value);
                 
             case 'date':
                 if (!empty($value)) {
-                    $format = isset($meta['format']) ? $meta['format'] : get_option('date_format');
-                    return esc_html(date_i18n($format, strtotime($value)));
+                    $format = isset($meta['format']) ? $meta['format'] : \get_option('date_format');
+                    return \esc_html(\date_i18n($format, \strtotime($value)));
                 }
                 return '';
                 
             case 'badge':
                 $badge_class = isset($meta['class']) ? $meta['class'] : 'badge';
-                return '<span class="' . esc_attr($badge_class) . '">' . esc_html($value) . '</span>';
+                return '<span class="' . \esc_attr($badge_class) . '">' . \esc_html($value) . '</span>';
                 
             case 'text':
             default:
-                return esc_html($value);
+                return \esc_html($value);
         }
     }
 
@@ -451,7 +451,7 @@ class Frontend_Template_Sidebar_Meta {
      */
     private function get_taxonomy_status($post_id) {
         // Get the actual WordPress post type to determine the correct taxonomy
-        $wp_post_type = get_post_type($post_id);
+        $wp_post_type = \get_post_type($post_id);
         
         $taxonomy_map = array(
             'arsol-pfw-project' => 'arsol-pfw-project-stage',
@@ -460,25 +460,25 @@ class Frontend_Template_Sidebar_Meta {
         );
         
         if (!isset($taxonomy_map[$wp_post_type])) {
-            error_log("ARSOL DEBUG: Unknown post type '$wp_post_type' for post $post_id");
+            \error_log("ARSOL DEBUG: Unknown post type '$wp_post_type' for post $post_id");
             return '';
         }
         
         $taxonomy = $taxonomy_map[$wp_post_type];
-        $terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
+        $terms = \wp_get_object_terms($post_id, $taxonomy, array('fields' => 'slugs'));
         
-        if (is_wp_error($terms)) {
-            error_log("ARSOL DEBUG: Error getting terms for post $post_id, taxonomy $taxonomy: " . $terms->get_error_message());
+        if (\is_wp_error($terms)) {
+            \error_log("ARSOL DEBUG: Error getting terms for post $post_id, taxonomy $taxonomy: " . $terms->get_error_message());
             return '';
         }
         
         if (empty($terms)) {
-            error_log("ARSOL DEBUG: No terms found for post $post_id in taxonomy $taxonomy");
+            \error_log("ARSOL DEBUG: No terms found for post $post_id in taxonomy $taxonomy");
             return '';
         }
         
         $status = $terms[0];
-        error_log("ARSOL DEBUG: Found status '$status' for post $post_id (type: $wp_post_type, taxonomy: $taxonomy)");
+        \error_log("ARSOL DEBUG: Found status '$status' for post $post_id (type: $wp_post_type, taxonomy: $taxonomy)");
         
         return $status;
     }
@@ -497,7 +497,7 @@ class Frontend_Template_Sidebar_Meta {
 
         // If we have a post ID, determine the correct taxonomy first
         if ($post_id) {
-            $wp_post_type = get_post_type($post_id);
+            $wp_post_type = \get_post_type($post_id);
             $taxonomy_map = array(
                 'arsol-pfw-project' => 'arsol-pfw-project-stage',
                 'arsol-pfw-proposal' => 'arsol-pfw-proposal-stage',
@@ -505,8 +505,8 @@ class Frontend_Template_Sidebar_Meta {
             );
             
             if (isset($taxonomy_map[$wp_post_type])) {
-                $term = get_term_by('slug', $status, $taxonomy_map[$wp_post_type]);
-                if ($term && !is_wp_error($term)) {
+                $term = \get_term_by('slug', $status, $taxonomy_map[$wp_post_type]);
+                if ($term && !\is_wp_error($term)) {
                     return $term->name;
                 }
             }
@@ -516,14 +516,14 @@ class Frontend_Template_Sidebar_Meta {
         $taxonomies = array('arsol-pfw-project-stage', 'arsol-pfw-proposal-stage', 'arsol-pfw-request-stage');
         
         foreach ($taxonomies as $taxonomy) {
-            $term = get_term_by('slug', $status, $taxonomy);
-            if ($term && !is_wp_error($term)) {
+            $term = \get_term_by('slug', $status, $taxonomy);
+            if ($term && !\is_wp_error($term)) {
                 return $term->name;
             }
         }
         
         // Final fallback to formatted slug if term not found
-        return ucfirst(str_replace('-', ' ', $status));
+        return \ucfirst(\str_replace('-', ' ', $status));
     }
 
     /**

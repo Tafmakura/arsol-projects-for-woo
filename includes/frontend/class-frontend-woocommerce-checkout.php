@@ -1,19 +1,19 @@
 <?php
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Frontend;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Frontend_Woocommerce_Checkout {
+class WooCommerce_Checkout {
 
     public function __construct() {
         // Register the project checkout field when WordPress and WooCommerce are fully loaded
-        add_action('wp_loaded', array($this, 'register_project_checkout_field'));
+        \add_action('wp_loaded', array($this, 'register_project_checkout_field'));
         
         // This hook saves the data from both classic and block checkouts.
-        add_action('woocommerce_checkout_update_order_meta', array($this, 'save_project_from_checkout'), 10, 2);
+        \add_action('woocommerce_checkout_update_order_meta', array($this, 'save_project_from_checkout'), 10, 2);
     }
 
     /**
@@ -23,7 +23,7 @@ class Frontend_Woocommerce_Checkout {
      * @return bool
      */
     private function should_display_project_field() {
-        $settings = get_option('arsol_pfw_general_settings', array());
+        $settings = \get_option('arsol_pfw_general_settings', array());
         $project_products = !empty($settings['project_products']) ? (array) $settings['project_products'] : array();
         $project_categories = !empty($settings['project_categories']) ? (array) $settings['project_categories'] : array();
 
@@ -48,7 +48,7 @@ class Frontend_Woocommerce_Checkout {
      * @return bool Whether to show project field
      */
     private function handle_mixed_cart_behavior($project_products, $project_categories) {
-        $settings = get_option('arsol_pfw_general_settings', array());
+        $settings = \get_option('arsol_pfw_general_settings', array());
         $mixed_cart_behavior = isset($settings['mixed_cart_behavior']) ? $settings['mixed_cart_behavior'] : 'add_all';
         
         $project_items = array();
@@ -60,7 +60,7 @@ class Frontend_Woocommerce_Checkout {
             $is_project_item = false;
 
             // Check if the product is in the allowed list
-            if (!empty($project_products) && in_array($product_id, $project_products)) {
+            if (!empty($project_products) && \in_array($product_id, $project_products)) {
                 $is_project_item = true;
             }
 
@@ -117,8 +117,8 @@ class Frontend_Woocommerce_Checkout {
         
         // Add notice to inform user
         if (!empty($non_project_items)) {
-            $removed_count = count($non_project_items);
-            $message = sprintf(
+            $removed_count = \count($non_project_items);
+            $message = s\printf(
                 _n(
                     '%d non-project item was removed from your cart.',
                     '%d non-project items were removed from your cart.',
@@ -127,7 +127,7 @@ class Frontend_Woocommerce_Checkout {
                 ),
                 $removed_count
             );
-            wc_add_notice($message, 'notice');
+            \wc_add_notice($message, 'notice');
         }
     }
 
@@ -147,7 +147,7 @@ class Frontend_Woocommerce_Checkout {
         
         // Add author filtering if user ID provided
         if (!empty($user_id)) {
-            $args['author'] = absint($user_id);
+            $args['author'] = \absint($user_id);
         }
         
         return get_posts($args);
@@ -163,7 +163,7 @@ class Frontend_Woocommerce_Checkout {
         if (WC()->session) {
             $session_project = WC()->session->get('arsol_pre_assigned_project');
             if (!empty($session_project)) {
-                return intval($session_project);
+                return \intval($session_project);
             }
         }
         
@@ -171,7 +171,7 @@ class Frontend_Woocommerce_Checkout {
         if (WC()->cart) {
             foreach (WC()->cart->get_cart() as $cart_item) {
                 if (!empty($cart_item['arsol_project_id'])) {
-                    return intval($cart_item['arsol_project_id']);
+                    return \intval($cart_item['arsol_project_id']);
                 }
             }
         }
@@ -181,14 +181,14 @@ class Frontend_Woocommerce_Checkout {
 
     public function register_project_checkout_field() {
         // Use new Blocks-compatible registration if available
-        if (class_exists('Automattic\\WooCommerce\\Blocks\\Package')) {
+        if (\class_exists('Automattic\\WooCommerce\\Blocks\\Package')) {
             // Check if there's a pre-assigned project from cart/session
             $pre_assigned_project = $this->get_pre_assigned_project();
             
             // Show field if: pre-assigned project exists OR regular field should be displayed
             if ($pre_assigned_project || $this->should_display_project_field()) {
                 try {
-                    $settings = get_option('arsol_pfw_general_settings', array());
+                    $settings = \get_option('arsol_pfw_general_settings', array());
                     $is_required = !empty($settings['require_project_selection']);
 
                     $field_id = 'arsol-pfw/parent-project-id';
@@ -199,7 +199,7 @@ class Frontend_Woocommerce_Checkout {
                     
                     if ($pre_assigned_project) {
                         // Show read-only project information instead of selector
-                        $project = get_post($pre_assigned_project);
+                        $project = \get_post($pre_assigned_project);
                         if ($project) {
                             $checkout_fields_controller->register_checkout_field(
                                 array(
@@ -212,7 +212,7 @@ class Frontend_Woocommerce_Checkout {
                                         'readonly' => true,
                                         'disabled' => true,
                                     ),
-                                    'default' => esc_html($project->post_title),
+                                    'default' => \esc_html($project->post_title),
                                     'experimental_attributes' => array(),
                                 )
                             );
@@ -222,7 +222,7 @@ class Frontend_Woocommerce_Checkout {
                         }
                     } else {
                         // Show normal project selector
-                        $current_user_id = get_current_user_id();
+                        $current_user_id = \get_current_user_id();
                         $projects = $this->get_projects($current_user_id);
 
                         $options = array(
@@ -237,7 +237,7 @@ class Frontend_Woocommerce_Checkout {
                             if (Woocommerce::user_can_view_project($current_user_id, $project->ID)) {
                                 $options[] = array(
                                     'value' => (string) $project->ID,
-                                    'label' => esc_html($project->post_title),
+                                    'label' => \esc_html($project->post_title),
                                 );
                             }
                         }
@@ -262,7 +262,7 @@ class Frontend_Woocommerce_Checkout {
             }
         } else {
             // Fallback for classic checkout
-            add_action('woocommerce_after_order_notes', array($this, 'display_classic_project_field'));
+            \add_action('woocommerce_after_order_notes', array($this, 'display_classic_project_field'));
         }
     }
 
@@ -280,13 +280,13 @@ class Frontend_Woocommerce_Checkout {
         
         if ($pre_assigned_project) {
             // Show read-only project information
-            $project = get_post($pre_assigned_project);
+            $project = \get_post($pre_assigned_project);
             if ($project) {
                 echo '<div id="arsol-pfw-project-checkout-field">';
                 echo '<p class="form-row form-row-wide">';
-                echo '<label for="arsol_project_readonly"><strong>' . esc_html__('Project', 'arsol-pfw') . '</strong></label>';
-                echo '<input type="text" id="arsol_project_readonly" value="' . esc_attr($project->post_title) . '" readonly disabled />';
-                echo '<input type="hidden" name="arsol_project_id" value="' . esc_attr($pre_assigned_project) . '" />';
+                echo '<label for="arsol_project_readonly"><strong>' . \esc_html__('Project', 'arsol-pfw') . '</strong></label>';
+                echo '<input type="text" id="arsol_project_readonly" value="' . \esc_attr($project->post_title) . '" readonly disabled />';
+                echo '<input type="hidden" name="arsol_project_id" value="' . \esc_attr($pre_assigned_project) . '" />';
                 echo '</p>';
                 echo '</div>';
                 
@@ -297,16 +297,16 @@ class Frontend_Woocommerce_Checkout {
         }
 
         // Show normal project selector
-        $settings = get_option('arsol_pfw_general_settings', array());
+        $settings = \get_option('arsol_pfw_general_settings', array());
         $is_required = !empty($settings['require_project_selection']);
 
-        $current_user_id = get_current_user_id();
+        $current_user_id = \get_current_user_id();
         $projects = $this->get_projects($current_user_id);
 
         $options = array();
         foreach ($projects as $project) {
             if (Woocommerce::user_can_view_project($current_user_id, $project->ID)) {
-                $options[$project->ID] = esc_html($project->post_title);
+                $options[$project->ID] = \esc_html($project->post_title);
             }
         }
 

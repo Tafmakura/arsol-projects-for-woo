@@ -8,7 +8,7 @@
  * @version 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Frontend;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
  * the shortcode content is placed inside the <div class="project-content-wrapper">
  * rather than replacing the entire wrapper.
  */
-class Frontend_Template_Overrides {
+class Template_Overrides {
 
     /**
      * Map of template types to their corresponding advanced settings keys
@@ -52,7 +52,7 @@ class Frontend_Template_Overrides {
         $map = self::$template_map;
         
         // Only include subscription-related templates if WooCommerce Subscriptions is active
-        if (class_exists('WC_Subscriptions')) {
+        if (\class_exists('WC_Subscriptions')) {
             $map['project_subscriptions'] = 'project_subscriptions_shortcode';
         }
         
@@ -73,7 +73,7 @@ class Frontend_Template_Overrides {
      */
     public static function render_template($template_type, $default_template_path, $template_args = []) {
         // Get the advanced settings
-        $advanced_settings = get_option('arsol_pfw_advanced_settings', []);
+        $advanced_settings = \get_option('arsol_pfw_advanced_settings', []);
         
         // Check if there's a shortcode override for this template type
         $template_map = self::get_template_map();
@@ -81,12 +81,12 @@ class Frontend_Template_Overrides {
         $shortcode_override = '';
         
         if (!empty($setting_key) && isset($advanced_settings[$setting_key])) {
-            $shortcode_override = trim($advanced_settings[$setting_key]);
+            $shortcode_override = \trim($advanced_settings[$setting_key]);
         }
 
         // If there's a valid shortcode override, use it
         if (!empty($shortcode_override) && self::is_valid_shortcode($shortcode_override)) {
-            echo do_shortcode($shortcode_override);
+            echo \do_shortcode($shortcode_override);
         } else {
             // Use the default template
             self::load_default_template($default_template_path, $template_args);
@@ -124,15 +124,15 @@ class Frontend_Template_Overrides {
      */
     private static function load_default_template($template_path, $template_args = []) {
         if (!empty($template_args)) {
-            extract($template_args, EXTR_SKIP);
+            \extract($template_args, EXTR_SKIP);
         }
 
-        if (file_exists($template_path)) {
+        if (\file_exists($template_path)) {
             include $template_path;
         } else {
             // Log error or display fallback content
-            error_log("Arsol Projects: Template file not found: " . $template_path);
-            echo '<p>' . esc_html__('Template not found.', 'arsol-pfw') . '</p>';
+            \error_log("Arsol Projects: Template file not found: " . $template_path);
+            echo '<p>' . \esc_html__('Template not found.', 'arsol-pfw') . '</p>';
         }
     }
 
@@ -144,7 +144,7 @@ class Frontend_Template_Overrides {
      */
     private static function is_valid_shortcode($shortcode) {
         // Check if the shortcode is in the proper format [shortcode_name] or [shortcode_name attr="value"]
-        return preg_match('/^\[[\w\s_-]+.*\]$/', $shortcode);
+        return \preg_match('/^\[[\w\s_-]+.*\]$/', $shortcode);
     }
 
     /**
@@ -153,7 +153,7 @@ class Frontend_Template_Overrides {
      * @return array Array of template types
      */
     public static function get_template_types() {
-        return array_keys(self::get_template_map());
+        return \array_keys(self::get_template_map());
     }
 
     /**
@@ -163,7 +163,7 @@ class Frontend_Template_Overrides {
      * @return bool True if override exists, false otherwise
      */
     public static function has_template_override($template_type) {
-        $advanced_settings = get_option('arsol_pfw_advanced_settings', []);
+        $advanced_settings = \get_option('arsol_pfw_advanced_settings', []);
         $template_map = self::get_template_map();
         $setting_key = isset($template_map[$template_type]) ? $template_map[$template_type] : '';
         
@@ -171,7 +171,7 @@ class Frontend_Template_Overrides {
             return false;
         }
         
-        $shortcode = isset($advanced_settings[$setting_key]) ? trim($advanced_settings[$setting_key]) : '';
+        $shortcode = isset($advanced_settings[$setting_key]) ? \trim($advanced_settings[$setting_key]) : '';
         
         return !empty($shortcode) && self::is_valid_shortcode($shortcode);
     }
@@ -183,7 +183,7 @@ class Frontend_Template_Overrides {
      * @return string The rendered shortcode or empty string if none
      */
     public static function get_template_override($template_type) {
-        $advanced_settings = get_option('arsol_pfw_advanced_settings', []);
+        $advanced_settings = \get_option('arsol_pfw_advanced_settings', []);
         $template_map = self::get_template_map();
         $setting_key = isset($template_map[$template_type]) ? $template_map[$template_type] : '';
         
@@ -191,10 +191,10 @@ class Frontend_Template_Overrides {
             return '';
         }
         
-        $shortcode = isset($advanced_settings[$setting_key]) ? trim($advanced_settings[$setting_key]) : '';
+        $shortcode = isset($advanced_settings[$setting_key]) ? \trim($advanced_settings[$setting_key]) : '';
         
         if (!empty($shortcode) && self::is_valid_shortcode($shortcode)) {
-            return do_shortcode($shortcode);
+            return \do_shortcode($shortcode);
         }
         
         return '';
@@ -206,13 +206,13 @@ class Frontend_Template_Overrides {
      * @return array Array of active overrides with template type as key and shortcode as value
      */
     public static function get_active_overrides() {
-        $advanced_settings = get_option('arsol_pfw_advanced_settings', []);
+        $advanced_settings = \get_option('arsol_pfw_advanced_settings', []);
         $active_overrides = [];
         $template_map = self::get_template_map();
         
         foreach ($template_map as $template_type => $setting_key) {
             if (isset($advanced_settings[$setting_key])) {
-                $shortcode = trim($advanced_settings[$setting_key]);
+                $shortcode = \trim($advanced_settings[$setting_key]);
                 if (!empty($shortcode) && self::is_valid_shortcode($shortcode)) {
                     $active_overrides[$template_type] = $shortcode;
                 }
@@ -228,7 +228,7 @@ class Frontend_Template_Overrides {
      * @return array Debug information about template overrides
      */
     public static function debug_overrides() {
-        $advanced_settings = get_option('arsol_pfw_advanced_settings', []);
+        $advanced_settings = \get_option('arsol_pfw_advanced_settings', []);
         $template_map = self::get_template_map();
         $debug_info = [
             'settings_exist' => !empty($advanced_settings),
@@ -253,7 +253,7 @@ class Frontend_Template_Overrides {
     public static function get_shortcode_override($default_shortcode) {
         // Extract shortcode name from the full shortcode string
         $shortcode_name = '';
-        if (preg_match('/^\[([^\s\]]+)/', $default_shortcode, $matches)) {
+        if (\preg_match('/^\[([^\s\]]+)/', $default_shortcode, $matches)) {
             $shortcode_name = $matches[1];
         }
         
@@ -262,7 +262,7 @@ class Frontend_Template_Overrides {
         }
         
         // Get the advanced settings
-        $advanced_settings = get_option('arsol_pfw_advanced_settings', []);
+        $advanced_settings = \get_option('arsol_pfw_advanced_settings', []);
         
         // Map shortcode names to their setting keys
         $shortcode_to_setting_map = [
@@ -290,7 +290,7 @@ class Frontend_Template_Overrides {
         
         // Get the override shortcode from settings
         if (isset($advanced_settings[$setting_key])) {
-            $override_shortcode = trim($advanced_settings[$setting_key]);
+            $override_shortcode = \trim($advanced_settings[$setting_key]);
             
             // Validate it's a proper shortcode and return it
             if (!empty($override_shortcode) && self::is_valid_shortcode($override_shortcode)) {
@@ -311,7 +311,7 @@ class Frontend_Template_Overrides {
         global $shortcode_tags;
         
         // Extract just the shortcode name without brackets and attributes
-        if (preg_match('/^\[([^\s\]]+)/', $shortcode_name, $matches)) {
+        if (\preg_match('/^\[([^\s\]]+)/', $shortcode_name, $matches)) {
             $shortcode_name = $matches[1];
         }
         
@@ -328,10 +328,10 @@ class Frontend_Template_Overrides {
         $override = self::get_shortcode_override($default_shortcode);
         
         if ($override !== false) {
-            return do_shortcode($override);
+            return \do_shortcode($override);
         }
         
-        return do_shortcode($default_shortcode);
+        return \do_shortcode($default_shortcode);
     }
 
     /**
@@ -342,20 +342,20 @@ class Frontend_Template_Overrides {
      * @return bool Whether content should be displayed
      */
     public static function should_show_content($post_id, $current_stage_id) {
-        $post_type = get_post_type($post_id);
+        $post_type = \get_post_type($post_id);
         $phase_type = self::get_phase_type_from_post_type($post_type);
         
         if (!$phase_type) {
             return true; // Default to show if we can't determine phase type
         }
         
-        $settings = get_option('arsol_pfw_display_content_settings', array());
+        $settings = \get_option('arsol_pfw_display_content_settings', array());
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
         // Use explicit database values - no fallbacks (settings should always exist after initialization)
         if (!isset($settings[$visibility_key])) {
-            error_log('ARSOL PFW: Missing content display settings for ' . $phase_type . '. Please check plugin initialization.');
+            \error_log('ARSOL PFW: Missing content display settings for ' . $phase_type . '. Please check plugin initialization.');
             return false; // Safe fallback
         }
         
@@ -373,20 +373,20 @@ class Frontend_Template_Overrides {
      * @return bool Whether sidebar should be displayed
      */
     public static function should_show_sidebar($post_id, $current_stage_id) {
-        $post_type = get_post_type($post_id);
+        $post_type = \get_post_type($post_id);
         $phase_type = self::get_phase_type_from_post_type($post_type);
         
         if (!$phase_type) {
             return true; // Default to show if we can't determine phase type
         }
         
-        $settings = get_option('arsol_pfw_display_sidebar_settings', array());
+        $settings = \get_option('arsol_pfw_display_sidebar_settings', array());
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
         // Use explicit database values - no fallbacks (settings should always exist after initialization)
         if (!isset($settings[$visibility_key])) {
-            error_log('ARSOL PFW: Missing sidebar display settings for ' . $phase_type . '. Please check plugin initialization.');
+            \error_log('ARSOL PFW: Missing sidebar display settings for ' . $phase_type . '. Please check plugin initialization.');
             return false; // Safe fallback
         }
         
@@ -405,13 +405,13 @@ class Frontend_Template_Overrides {
      * @return bool Whether form should be displayed
      */
     public static function should_show_form($post_id, $current_stage_id, $form_type) {
-        $settings = get_option('arsol_pfw_display_forms_settings', array());
+        $settings = \get_option('arsol_pfw_display_forms_settings', array());
         $visibility_key = $form_type . '_visibility';
         $stages_key = $form_type . '_stages';
         
         // Use explicit database values - no fallbacks (settings should always exist after initialization)
         if (!isset($settings[$visibility_key])) {
-            error_log('ARSOL PFW: Missing form display settings for ' . $form_type . '. Please check plugin initialization.');
+            \error_log('ARSOL PFW: Missing form display settings for ' . $form_type . '. Please check plugin initialization.');
             return false; // Safe fallback: hide forms
         }
         
@@ -430,13 +430,13 @@ class Frontend_Template_Overrides {
      * @return bool Whether files should be displayed
      */
     public static function should_show_files($post_id, $current_stage_id, $file_type) {
-        $settings = get_option('arsol_pfw_display_files_settings', array());
+        $settings = \get_option('arsol_pfw_display_files_settings', array());
         $visibility_key = $file_type . '_visibility';
         $stages_key = $file_type . '_stages';
         
         // Use explicit database values - no fallbacks (settings should always exist after initialization)
         if (!isset($settings[$visibility_key])) {
-            error_log('ARSOL PFW: Missing file display settings for ' . $file_type . '. Please check plugin initialization.');
+            \error_log('ARSOL PFW: Missing file display settings for ' . $file_type . '. Please check plugin initialization.');
             return false; // Safe fallback: hide files
         }
         
@@ -454,7 +454,7 @@ class Frontend_Template_Overrides {
      * @return bool Whether comments should be displayed
      */
     public static function should_show_comments($post_id, $current_stage_id) {
-        $post_type = get_post_type($post_id);
+        $post_type = \get_post_type($post_id);
         
         // First check: CPT must support comments (WordPress native permission)
         if (!post_type_supports($post_type, 'comments')) {
@@ -468,13 +468,13 @@ class Frontend_Template_Overrides {
             return false; // If we can't determine phase type, don't show comments
         }
         
-        $settings = get_option('arsol_pfw_display_comments_settings', array());
+        $settings = \get_option('arsol_pfw_display_comments_settings', array());
         $visibility_key = $phase_type . '_visibility';
         $stages_key = $phase_type . '_stages';
         
         // Use explicit database values - no fallbacks (settings should always exist after initialization)
         if (!isset($settings[$visibility_key])) {
-            error_log('ARSOL PFW: Missing comments display settings for ' . $phase_type . '. Please check plugin initialization.');
+            \error_log('ARSOL PFW: Missing comments display settings for ' . $phase_type . '. Please check plugin initialization.');
             return false; // Safe fallback: hide comments
         }
         
@@ -517,20 +517,20 @@ class Frontend_Template_Overrides {
      */
     private static function apply_visibility_rules($visibility, $selected_stages, $current_stage_id) {
         // Convert selected stages to integers for comparison
-        $selected_stages = array_map('intval', $selected_stages);
-        $current_stage_id = intval($current_stage_id);
+        $selected_stages = \array_map('intval', $selected_stages);
+        $current_stage_id = \intval($current_stage_id);
         
         if ($visibility === 'hide') {
             if (empty($selected_stages)) {
                 return true; // Hide rule with no stages = show on all stages
             } else {
-                return !in_array($current_stage_id, $selected_stages); // Hide on selected stages
+                return !\in_array($current_stage_id, $selected_stages); // Hide on selected stages
             }
         } else { // 'show'
             if (empty($selected_stages)) {
                 return false; // Show rule with no stages = show on no stages (hidden everywhere)
             } else {
-                return in_array($current_stage_id, $selected_stages); // Show only on selected stages
+                return \in_array($current_stage_id, $selected_stages); // Show only on selected stages
             }
         }
     }
@@ -558,7 +558,7 @@ class Frontend_Template_Overrides {
      * @return int Stage term ID or 0 if not found
      */
     public static function get_current_stage_id($post_id) {
-        $post_type = get_post_type($post_id);
+        $post_type = \get_post_type($post_id);
         
         // Map post types to their stage taxonomies
         $taxonomy_map = array(
@@ -572,12 +572,12 @@ class Frontend_Template_Overrides {
         }
         
         $taxonomy = $taxonomy_map[$post_type];
-        $stage_terms = wp_get_object_terms($post_id, $taxonomy, array('fields' => 'ids'));
+        $stage_terms = \wp_get_object_terms($post_id, $taxonomy, array('fields' => 'ids'));
         
-        if (is_wp_error($stage_terms) || empty($stage_terms)) {
+        if (\is_wp_error($stage_terms) || empty($stage_terms)) {
             return 0;
         }
         
-        return intval($stage_terms[0]);
+        return \intval($stage_terms[0]);
     }
 } 
