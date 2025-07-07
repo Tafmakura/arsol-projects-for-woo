@@ -48,7 +48,7 @@ class Includes_Setup {
         // Core Files
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-assets.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-shortcodes.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-stages-handler.php';
+        // Note: class-stages-handler.php removed - functionality handled by taxonomy and workflow classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-pfw-core-setup.php';
         
         // Admin Files
@@ -135,7 +135,7 @@ class Includes_Setup {
         // Initialize Core Classes
         new Assets();
         new Shortcodes();
-        new Stages_Handler();
+        // Note: Stages_Handler removed - functionality handled by taxonomy and workflow classes
         new Core\Setup();
         
         // Initialize Admin Classes
