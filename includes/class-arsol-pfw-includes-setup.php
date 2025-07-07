@@ -165,26 +165,26 @@ class Includes_Setup {
         
         // Initialize Project CPT Classes
         new Custom_Post_Types\Project\Setup();
-        new Custom_Post_Types\Project\Admin_Project();
-        new Custom_Post_Types\Project\Admin_Projects();
+        new Custom_Post_Types\Project\Admin\Project();
+        new Custom_Post_Types\Project\Admin\Projects();
         new Custom_Post_Types\Project\Frontend_Handler();
         new Custom_Post_Types\Project\Project_CPT();
         new Custom_Post_Types\Project\Projects_CPT();
         
         // Initialize Project Request CPT Classes
         new Custom_Post_Types\ProjectRequest\Setup();
-        new Custom_Post_Types\ProjectRequest\Admin_Request();
-        new Custom_Post_Types\ProjectRequest\Admin_Requests();
+        new Custom_Post_Types\ProjectRequest\Admin\Request();
+        new Custom_Post_Types\ProjectRequest\Admin\Requests();
         new Custom_Post_Types\ProjectRequest\Frontend_Handler();
         new Custom_Post_Types\ProjectRequest\Project_Request_CPT();
         new Custom_Post_Types\ProjectRequest\Project_Requests_CPT();
         
         // Initialize Project Proposal CPT Classes
         new Custom_Post_Types\ProjectProposal\Setup();
-        new Custom_Post_Types\ProjectProposal\Admin_Proposal();
-        new Custom_Post_Types\ProjectProposal\Admin_Proposal_Budget();
-        new Custom_Post_Types\ProjectProposal\Admin_Proposal_Quotation();
-        new Custom_Post_Types\ProjectProposal\Admin_Proposals();
+        new Custom_Post_Types\ProjectProposal\Admin\Proposal();
+        new Custom_Post_Types\ProjectProposal\Admin\Proposal_Budget();
+        new Custom_Post_Types\ProjectProposal\Admin\Proposal_Quotation();
+        new Custom_Post_Types\ProjectProposal\Admin\Proposals();
         new Custom_Post_Types\ProjectProposal\Frontend_Handler();
         new Custom_Post_Types\ProjectProposal\Project_Proposal_CPT();
         new Custom_Post_Types\ProjectProposal\Project_Proposals_CPT();

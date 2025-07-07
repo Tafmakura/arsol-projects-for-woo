@@ -1,6 +1,6 @@
 <?php
 
-namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin;
+namespace Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -9,39 +9,39 @@ if (!defined('ABSPATH')) {
 class Setup {
     public function __construct() {
         // Add project proposal post type
-        add_action('init', array($this, 'register_post_type'), 15);
-        add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_proposals'), 10, 2);
-        add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
-        add_action('add_meta_boxes', array($this, 'remove_publish_metabox'));
+        \add_action('init', array($this, 'register_post_type'), 15);
+        \add_filter('use_block_editor_for_post_type', array($this, 'disable_gutenberg_for_project_proposals'), 10, 2);
+        \add_filter('wp_dropdown_users_args', array($this, 'modify_author_dropdown'), 10, 2);
+        \add_action('add_meta_boxes', array($this, 'remove_publish_metabox'));
         
         // Setup proposal header container
-        add_action('edit_form_after_title', array($this, 'render_proposal_header_container'));
+        \add_action('edit_form_after_title', array($this, 'render_proposal_header_container'));
         
         // Hook customer request details into the proposal header
-        add_action('arsol_proposal_request_content', array($this, 'render_customer_request_details_section'), 10);
+        \add_action('arsol_proposal_request_content', array($this, 'render_customer_request_details_section'), 10);
         
         // Save header fields including secondary status
-        add_action('save_post', array($this, 'save_proposal_header_fields'));
+        \add_action('save_post', array($this, 'save_proposal_header_fields'));
     }
 
     public function register_post_type() {
         // Debug logging
-        if (function_exists('error_log')) {
+        if (\function_exists('error_log')) {
             error_log('ARSOL DEBUG: Registering arsol-pfw-proposal post type');
         }
 
         $labels = array(
-            'name'               => __('Project Proposals', 'arsol-pfw'),
-            'singular_name'      => __('Project Proposal', 'arsol-pfw'),
-            'add_new'           => __('Add New', 'arsol-pfw'),
-            'add_new_item'      => __('Add New Project Proposal', 'arsol-pfw'),
-            'edit_item'         => __('Edit Project Proposal', 'arsol-pfw'),
-            'new_item'          => __('New Project Proposal', 'arsol-pfw'),
-            'search_items'      => __('Search Project Proposals', 'arsol-pfw'),
-            'not_found'         => __('No project proposals found', 'arsol-pfw'),
-            'not_found_in_trash'=> __('No project proposals found in trash', 'arsol-pfw'),
-            'menu_name'         => __('Project Proposals', 'arsol-pfw'),
-            'all_items'         => __('All Project Proposals', 'arsol-pfw'),
+            'name'               => \__('Project Proposals', 'arsol-pfw'),
+            'singular_name'      => \__('Project Proposal', 'arsol-pfw'),
+            'add_new'           => \__('Add New', 'arsol-pfw'),
+            'add_new_item'      => \__('Add New Project Proposal', 'arsol-pfw'),
+            'edit_item'         => \__('Edit Project Proposal', 'arsol-pfw'),
+            'new_item'          => \__('New Project Proposal', 'arsol-pfw'),
+            'search_items'      => \__('Search Project Proposals', 'arsol-pfw'),
+            'not_found'         => \__('No project proposals found', 'arsol-pfw'),
+            'not_found_in_trash'=> \__('No project proposals found in trash', 'arsol-pfw'),
+            'menu_name'         => \__('Project Proposals', 'arsol-pfw'),
+            'all_items'         => \__('All Project Proposals', 'arsol-pfw'),
         );
 
         // Get base supports array
@@ -92,11 +92,11 @@ class Setup {
             ),
         );
 
-        $result = register_post_type('arsol-pfw-proposal', $args);
+        $result = \register_post_type('arsol-pfw-proposal', $args);
         
         // Debug the result
-        if (function_exists('error_log')) {
-            if (is_wp_error($result)) {
+        if (\function_exists('error_log')) {
+            if (\is_wp_error($result)) {
                 error_log('ARSOL DEBUG: Failed to register arsol-pfw-proposal: ' . $result->get_error_message());
             } else {
                 error_log('ARSOL DEBUG: Successfully registered arsol-pfw-proposal post type');
@@ -118,11 +118,11 @@ class Setup {
      * Modify the author dropdown to include only WooCommerce customers
      */
     public function modify_author_dropdown($query_args, $r) {
-        if (!is_admin()) {
+        if (!\is_admin()) {
             return $query_args;
         }
 
-        $screen = get_current_screen();
+        $screen = \get_current_screen();
         if ($screen && $screen->post_type === 'arsol-pfw-proposal') {
             // Get all users who can make purchases
             $query_args['role__in'] = array('customer', 'subscriber');
@@ -136,7 +136,7 @@ class Setup {
      * Remove the publish metabox
      */
     public function remove_publish_metabox() {
-        remove_meta_box('submitdiv', 'arsol-pfw-proposal', 'side');
+        \remove_meta_box('submitdiv', 'arsol-pfw-proposal', 'side');
     }
 
     /**
@@ -152,7 +152,7 @@ class Setup {
         
         // Include the header container template
         $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header.php';
-        if (file_exists($template_path)) {
+        if (\file_exists($template_path)) {
             include $template_path;
         }
     }
@@ -178,14 +178,14 @@ class Setup {
         // Display in WooCommerce order column format
         if ($original_request_title) {
             echo '<p class="form-field form-field-wide">';
-            echo '<label><strong>' . __('Original title:', 'arsol-pfw') . '</strong></label>';
+            echo '<label><strong>' . \__('Original title:', 'arsol-pfw') . '</strong></label>';
             echo '<span>' . esc_html($original_request_title) . '</span>';
             echo '</p>';
         }
 
         if ($original_budget) {
             echo '<p class="form-field form-field-wide">';
-            echo '<label><strong>' . __('Requested budget:', 'arsol-pfw') . '</strong></label>';
+            echo '<label><strong>' . \__('Requested budget:', 'arsol-pfw') . '</strong></label>';
             if (is_array($original_budget)) {
                 $amount = isset($original_budget['amount']) ? $original_budget['amount'] : '';
                 $currency = isset($original_budget['currency']) ? $original_budget['currency'] : get_woocommerce_currency();
@@ -198,29 +198,29 @@ class Setup {
 
         if ($original_start_date) {
             echo '<p class="form-field form-field-wide">';
-            echo '<label><strong>' . __('Requested start date:', 'arsol-pfw') . '</strong></label>';
-            echo '<span>' . date_i18n(get_option('date_format'), strtotime($original_start_date)) . '</span>';
+            echo '<label><strong>' . \__('Requested start date:', 'arsol-pfw') . '</strong></label>';
+            echo '<span>' . \date_i18n(\get_option('date_format'), \strtotime($original_start_date)) . '</span>';
             echo '</p>';
         }
 
         if ($original_delivery_date) {
             echo '<p class="form-field form-field-wide">';
-            echo '<label><strong>' . __('Requested delivery date:', 'arsol-pfw') . '</strong></label>';
-            echo '<span>' . date_i18n(get_option('date_format'), strtotime($original_delivery_date)) . '</span>';
+            echo '<label><strong>' . \__('Requested delivery date:', 'arsol-pfw') . '</strong></label>';
+            echo '<span>' . \date_i18n(\get_option('date_format'), \strtotime($original_delivery_date)) . '</span>';
             echo '</p>';
         }
 
         if ($original_request_date) {
             echo '<p class="form-field form-field-wide">';
-            echo '<label><strong>' . __('Request submitted:', 'arsol-pfw') . '</strong></label>';
-            echo '<span>' . date_i18n(get_option('date_format'), strtotime($original_request_date)) . '</span>';
+            echo '<label><strong>' . \__('Request submitted:', 'arsol-pfw') . '</strong></label>';
+            echo '<span>' . \date_i18n(\get_option('date_format'), \strtotime($original_request_date)) . '</span>';
             echo '</p>';
         }
 
         if ($original_request_attachments && is_array($original_request_attachments) && !empty($original_request_attachments)) {
             echo '<p class="form-field form-field-wide">';
-            echo '<label><strong>' . __('Attachments:', 'arsol-pfw') . '</strong></label>';
-            echo '<span>' . count($original_request_attachments) . ' ' . __('file(s)', 'arsol-pfw') . '</span>';
+            echo '<label><strong>' . \__('Attachments:', 'arsol-pfw') . '</strong></label>';
+            echo '<span>' . count($original_request_attachments) . ' ' . \__('file(s)', 'arsol-pfw') . '</span>';
             echo '</p>';
         }
     }
@@ -259,17 +259,17 @@ class Setup {
         
         // Save proposal stage
         if (isset($_POST['proposal_stage'])) {
-            wp_set_object_terms($post_id, sanitize_text_field($_POST['proposal_stage']), 'arsol-pfw-proposal-stage', false);
+            \wp_set_object_terms($post_id, \sanitize_text_field($_POST['proposal_stage']), 'arsol-pfw-proposal-stage', false);
         }
         
         // Save project lead
         if (isset($_POST['proposal_project_lead'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_project_lead', sanitize_text_field($_POST['proposal_project_lead']));
+            update_post_meta($post_id, '_arsol_pfw_proposal_project_lead', \sanitize_text_field($_POST['proposal_project_lead']));
         }
         
         // Save secondary status (keeping existing functionality)
         if (isset($_POST['arsol_pfw_proposal_secondary_status'])) {
-            $secondary_status = sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
+            $secondary_status = \sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
             // Validate the value is one of the allowed options
             if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
                 update_post_meta($post_id, '_arsol_pfw_proposal_secondary_status', $secondary_status);
