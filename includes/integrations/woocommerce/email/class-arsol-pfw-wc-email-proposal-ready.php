@@ -1,6 +1,6 @@
 <?php
 /**
- * Project Completion Email
+ * Proposal Ready Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -14,22 +14,22 @@ if ( ! class_exists( 'WC_Email' ) ) {
 }
 
 /**
- * Project Completion Email Class
+ * Proposal Ready Email Class
  */
-class WC_Email_Project_Completion extends WC_Email {
+class WC_Email_Proposal_Ready extends WC_Email {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->id             = 'project_completion';
-        $this->title          = __( 'Project Customer: Project Completed', 'arsol-pfw' );
-        $this->description    = __( 'Customer notification when their project is completed.', 'arsol-pfw' );
-        $this->template_html  = 'email-project-completion.php';
-                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/';
+        $this->id             = 'proposal_ready';
+        $this->title          = __( 'Project Customer: Proposal Ready for Review', 'arsol-pfw' );
+        $this->description    = __( 'Customer notification when their proposal is ready for review.', 'arsol-pfw' );
+        $this->template_html  = 'email-proposal-ready.php';
+                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/templates/';
 
         // Triggers for this email
-        add_action( 'arsol_project_completed', array( $this, 'trigger' ), 10, 2 );
+        add_action( 'arsol_proposal_ready', array( $this, 'trigger' ), 10, 2 );
 
         // Call parent constructor
         parent::__construct();
@@ -45,7 +45,7 @@ class WC_Email_Project_Completion extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( '[{site_title}] Your Project is Complete - #{project_id}', 'arsol-pfw' );
+        return __( '[{site_title}] Your Proposal is Ready - #{proposal_id}', 'arsol-pfw' );
     }
 
     /**
@@ -54,23 +54,23 @@ class WC_Email_Project_Completion extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Your Project is Complete', 'arsol-pfw' );
+        return __( 'Your Proposal is Ready for Review', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
-     * @param int $project_id Project ID.
+     * @param int $proposal_id Proposal ID.
      * @param int $customer_id Customer ID.
      */
-    public function trigger( $project_id, $customer_id ) {
+    public function trigger( $proposal_id, $customer_id ) {
         $this->setup_locale();
 
-        if ( $project_id && $customer_id ) {
-            $this->object = get_post( $project_id );
+        if ( $proposal_id && $customer_id ) {
+            $this->object = get_post( $proposal_id );
             
             if ( $this->object ) {
-                $this->placeholders['{project_id}'] = $project_id;
+                $this->placeholders['{proposal_id}'] = $proposal_id;
                 $this->placeholders['{site_title}'] = $this->get_blogname();
                 
                 // Get customer email
@@ -97,7 +97,7 @@ class WC_Email_Project_Completion extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'project'       => $this->object,
+                'proposal'      => $this->object,
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => false,
@@ -123,7 +123,7 @@ class WC_Email_Project_Completion extends WC_Email {
                 'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {project_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {proposal_id}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
@@ -131,7 +131,7 @@ class WC_Email_Project_Completion extends WC_Email {
                 'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {project_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {proposal_id}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),

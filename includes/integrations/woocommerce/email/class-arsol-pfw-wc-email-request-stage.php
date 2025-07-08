@@ -1,6 +1,6 @@
 <?php
 /**
- * Proposal Ready Email
+ * Request Stage Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -14,28 +14,30 @@ if ( ! class_exists( 'WC_Email' ) ) {
 }
 
 /**
- * Proposal Ready Email Class
+ * Request Stage Email Class
  */
-class WC_Email_Proposal_Ready extends WC_Email {
+class WC_Email_Request_Stage extends WC_Email {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->id             = 'proposal_ready';
-        $this->title          = __( 'Project Customer: Proposal Ready for Review', 'arsol-pfw' );
-        $this->description    = __( 'Customer notification when their proposal is ready for review.', 'arsol-pfw' );
-        $this->template_html  = 'email-proposal-ready.php';
-                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/';
+        $this->id             = 'request_stage';
+        $this->title          = __( 'Project Customer: Request Stage Update', 'arsol-pfw' );
+        $this->description    = __( 'Customer notification when their request stage changes.', 'arsol-pfw' );
+        $this->template_html  = 'email-request-stage.php';
+                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/templates/';
 
         // Triggers for this email
-        add_action( 'arsol_proposal_ready', array( $this, 'trigger' ), 10, 2 );
+        add_action( 'arsol_request_stage_changed', array( $this, 'trigger' ), 10, 4 );
 
         // Call parent constructor
         parent::__construct();
 
-        // This email is sent to the customer
+        // This email is sent to the customer who owns the request
         $this->customer_email = true;
+
+        // Set default recipient for display in settings (will be overridden dynamically)
         $this->recipient = __( 'Customer', 'arsol-pfw' );
     }
 
@@ -45,7 +47,7 @@ class WC_Email_Proposal_Ready extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( '[{site_title}] Your Proposal is Ready - #{proposal_id}', 'arsol-pfw' );
+        return __( '[{site_title}] Request Stage Update - #{request_id}', 'arsol-pfw' );
     }
 
     /**
@@ -54,23 +56,27 @@ class WC_Email_Proposal_Ready extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Your Proposal is Ready for Review', 'arsol-pfw' );
+        return __( 'Request Stage Update', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
-     * @param int $proposal_id Proposal ID.
-     * @param int $customer_id Customer ID.
+     * @param int    $request_id Request ID.
+     * @param string $old_stage Old stage.
+     * @param string $new_stage New stage.
+     * @param int    $customer_id Customer ID.
      */
-    public function trigger( $proposal_id, $customer_id ) {
+    public function trigger( $request_id, $old_stage, $new_stage, $customer_id ) {
         $this->setup_locale();
 
-        if ( $proposal_id && $customer_id ) {
-            $this->object = get_post( $proposal_id );
+        if ( $request_id && $customer_id ) {
+            $this->object = get_post( $request_id );
             
             if ( $this->object ) {
-                $this->placeholders['{proposal_id}'] = $proposal_id;
+                $this->placeholders['{request_id}'] = $request_id;
+                $this->placeholders['{old_stage}'] = $old_stage;
+                $this->placeholders['{new_stage}'] = $new_stage;
                 $this->placeholders['{site_title}'] = $this->get_blogname();
                 
                 // Get customer email
@@ -97,7 +103,9 @@ class WC_Email_Proposal_Ready extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'proposal'      => $this->object,
+                'request'       => $this->object,
+                'old_stage'     => $this->placeholders['{old_stage}'] ?? '',
+                'new_stage'     => $this->placeholders['{new_stage}'] ?? '',
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => false,
@@ -123,7 +131,7 @@ class WC_Email_Proposal_Ready extends WC_Email {
                 'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {proposal_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {request_id}, {old_stage}, {new_stage}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
@@ -131,7 +139,7 @@ class WC_Email_Proposal_Ready extends WC_Email {
                 'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {proposal_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {request_id}, {old_stage}, {new_stage}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),

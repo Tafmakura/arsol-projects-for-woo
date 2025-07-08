@@ -61,30 +61,30 @@ class Setup {
     private function require_files() {
         // Core Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/core/class-shortcodes.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/class-arsol-pfw-wc-integration.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce-subscriptions/class-woocommerce-subscriptions.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/class-arsol-pfw-wc-logs.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/class-arsol-pfw-wc-biller-invoice.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/core/class-assets.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/frontend/class-frontend-woocommerce-endpoints.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/frontend/class-frontend-woocommerce-checkout.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/taxonomies/class-taxonomies-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/frontend/class-frontend-comments.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-shortcodes.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-arsol-pfw-wc-integration.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce-subscriptions/class-arsol-pfw-wc-subscriptions.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-arsol-pfw-wc-logs.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-arsol-pfw-wc-biller-invoice.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-assets.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-woocommerce-endpoints.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-woocommerce-checkout.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/class-taxonomies-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-comments.php';
         
         // Admin Settings Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-settings-general.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-settings-display.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-settings-files.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-settings-advanced.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-settings-tools.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-settings-integrations.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-setup-defaults.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/frontend/class-frontend-template-overrides.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-users.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-capabilities.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-general.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-display.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-files.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-advanced.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-tools.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-settings-integrations.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-setup-defaults.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-template-overrides.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-users.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-admin-capabilities.php';
 
         // Frontend Handlers
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-project-cpt-frontend-handler.php';

@@ -1,6 +1,6 @@
 <?php
 /**
- * Request Stage Email
+ * Shop Manager New Request Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -9,36 +9,34 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-if ( ! class_exists( 'WC_Email' ) ) {
-    return;
-}
-
 /**
- * Request Stage Email Class
+ * Shop Manager New Request Email Class
+ * Sent to shop managers when a new project request is created
  */
-class WC_Email_Request_Stage extends WC_Email {
+class WC_Email_Admin_New_Request extends WC_Email {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->id             = 'request_stage';
-        $this->title          = __( 'Project Customer: Request Stage Update', 'arsol-pfw' );
-        $this->description    = __( 'Customer notification when their request stage changes.', 'arsol-pfw' );
-        $this->template_html  = 'email-request-stage.php';
-                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/';
+        $this->id             = 'admin_new_request';
+        $this->title          = __( 'New Customer Project Request', 'arsol-pfw' );
+        $this->description    = __( 'Shop manager notification when a new project request is submitted.', 'arsol-pfw' );
+                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/templates/';
+        $this->template_html  = 'email-admin-new-request.php';
+        $this->placeholders   = array(
+            '{request_id}' => '',
+            '{customer_id}' => '',
+        );
 
-        // Triggers for this email
-        add_action( 'arsol_request_stage_changed', array( $this, 'trigger' ), 10, 4 );
+        // Listen to main workflow hook
+        add_action( 'arsol_new_request_created', array( $this, 'trigger' ), 10, 2 );
 
         // Call parent constructor
         parent::__construct();
 
-        // This email is sent to the customer who owns the request
-        $this->customer_email = true;
-
-        // Set default recipient for display in settings (will be overridden dynamically)
-        $this->recipient = __( 'Customer', 'arsol-pfw' );
+        // Target shop managers
+        $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
     }
 
     /**
@@ -47,7 +45,7 @@ class WC_Email_Request_Stage extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( '[{site_title}] Request Stage Update - #{request_id}', 'arsol-pfw' );
+        return __( '[Shop Manager] New Project Request #{request_id}', 'arsol-pfw' );
     }
 
     /**
@@ -56,35 +54,22 @@ class WC_Email_Request_Stage extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Request Stage Update', 'arsol-pfw' );
+        return __( 'New Project Request Submitted', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
-     * @param int    $request_id Request ID.
-     * @param string $old_stage Old stage.
-     * @param string $new_stage New stage.
-     * @param int    $customer_id Customer ID.
+     * @param int $request_id Request ID.
+     * @param int $customer_id Customer ID.
      */
-    public function trigger( $request_id, $old_stage, $new_stage, $customer_id ) {
+    public function trigger( $request_id, $customer_id ) {
         $this->setup_locale();
 
-        if ( $request_id && $customer_id ) {
+        if ( $request_id ) {
             $this->object = get_post( $request_id );
-            
-            if ( $this->object ) {
-                $this->placeholders['{request_id}'] = $request_id;
-                $this->placeholders['{old_stage}'] = $old_stage;
-                $this->placeholders['{new_stage}'] = $new_stage;
-                $this->placeholders['{site_title}'] = $this->get_blogname();
-                
-                // Get customer email
-                $customer = get_user_by( 'id', $customer_id );
-                if ( $customer ) {
-                    $this->recipient = $customer->user_email;
-                }
-            }
+            $this->placeholders['{request_id}'] = $request_id;
+            $this->placeholders['{customer_id}'] = $customer_id;
         }
 
         if ( $this->is_enabled() && $this->get_recipient() ) {
@@ -103,11 +88,10 @@ class WC_Email_Request_Stage extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'request'       => $this->object,
-                'old_stage'     => $this->placeholders['{old_stage}'] ?? '',
-                'new_stage'     => $this->placeholders['{new_stage}'] ?? '',
+                'request_id'    => $this->placeholders['{request_id}'],
+                'customer_id'   => $this->placeholders['{customer_id}'],
                 'email_heading' => $this->get_heading(),
-                'sent_to_admin' => false,
+                'sent_to_admin' => true,
                 'plain_text'    => false,
                 'email'         => $this,
             ),
@@ -121,25 +105,33 @@ class WC_Email_Request_Stage extends WC_Email {
      */
     public function init_form_fields() {
         $this->form_fields = array(
-            'enabled'    => array(
+            'enabled' => array(
                 'title'   => __( 'Enable/Disable', 'arsol-pfw' ),
                 'type'    => 'checkbox',
                 'label'   => __( 'Enable this email notification', 'arsol-pfw' ),
                 'default' => 'yes',
             ),
-            'subject'    => array(
+            'recipient' => array(
+                'title'       => __( 'Recipient(s)', 'arsol-pfw' ),
+                'type'        => 'text',
+                'description' => sprintf( __( 'Enter shop manager emails (comma separated). Defaults to %s.', 'arsol-pfw' ), '<code>' . esc_attr( get_option( 'admin_email' ) ) . '</code>' ),
+                'placeholder' => '',
+                'default'     => '',
+                'desc_tip'    => true,
+            ),
+            'subject' => array(
                 'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {request_id}, {old_stage}, {new_stage}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}, {customer_id}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
-            'heading'    => array(
+            'heading' => array(
                 'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {request_id}, {old_stage}, {new_stage}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}, {customer_id}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),
@@ -155,3 +147,4 @@ class WC_Email_Request_Stage extends WC_Email {
         );
     }
 }
+ 

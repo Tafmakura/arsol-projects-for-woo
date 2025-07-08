@@ -1,6 +1,6 @@
 <?php
 /**
- * Shop Manager New Project Email
+ * Project Completion Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -9,34 +9,34 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+if ( ! class_exists( 'WC_Email' ) ) {
+    return;
+}
+
 /**
- * Shop Manager New Project Email Class
- * Sent to shop managers when a new project is created on the frontend
+ * Project Completion Email Class
  */
-class WC_Email_Admin_New_Project extends WC_Email {
+class WC_Email_Project_Completion extends WC_Email {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->id             = 'admin_new_project';
-        $this->title          = __( 'New Customer Project', 'arsol-pfw' );
-        $this->description    = __( 'Shop manager notification when a new project is created on the frontend.', 'arsol-pfw' );
-                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/';
-        $this->template_html  = 'email-admin-new-project.php';
-        $this->placeholders   = array(
-            '{project_id}' => '',
-            '{customer_id}' => '',
-        );
+        $this->id             = 'project_completion';
+        $this->title          = __( 'Project Customer: Project Completed', 'arsol-pfw' );
+        $this->description    = __( 'Customer notification when their project is completed.', 'arsol-pfw' );
+        $this->template_html  = 'email-project-completion.php';
+                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/templates/';
 
-        // Listen to project creation hook
-        add_action( 'arsol_project_created', array( $this, 'trigger' ), 10, 2 );
+        // Triggers for this email
+        add_action( 'arsol_project_completed', array( $this, 'trigger' ), 10, 2 );
 
         // Call parent constructor
         parent::__construct();
 
-        // Target shop managers
-        $this->recipient = $this->get_option( 'recipient', get_option( 'admin_email' ) );
+        // This email is sent to the customer
+        $this->customer_email = true;
+        $this->recipient = __( 'Customer', 'arsol-pfw' );
     }
 
     /**
@@ -45,7 +45,7 @@ class WC_Email_Admin_New_Project extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( '[Shop Manager] New Project Created #{project_id}', 'arsol-pfw' );
+        return __( '[{site_title}] Your Project is Complete - #{project_id}', 'arsol-pfw' );
     }
 
     /**
@@ -54,7 +54,7 @@ class WC_Email_Admin_New_Project extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'New Project Created', 'arsol-pfw' );
+        return __( 'Your Project is Complete', 'arsol-pfw' );
     }
 
     /**
@@ -66,10 +66,19 @@ class WC_Email_Admin_New_Project extends WC_Email {
     public function trigger( $project_id, $customer_id ) {
         $this->setup_locale();
 
-        if ( $project_id ) {
+        if ( $project_id && $customer_id ) {
             $this->object = get_post( $project_id );
-            $this->placeholders['{project_id}'] = $project_id;
-            $this->placeholders['{customer_id}'] = $customer_id;
+            
+            if ( $this->object ) {
+                $this->placeholders['{project_id}'] = $project_id;
+                $this->placeholders['{site_title}'] = $this->get_blogname();
+                
+                // Get customer email
+                $customer = get_user_by( 'id', $customer_id );
+                if ( $customer ) {
+                    $this->recipient = $customer->user_email;
+                }
+            }
         }
 
         if ( $this->is_enabled() && $this->get_recipient() ) {
@@ -88,10 +97,9 @@ class WC_Email_Admin_New_Project extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'project_id'    => $this->placeholders['{project_id}'],
-                'customer_id'   => $this->placeholders['{customer_id}'],
+                'project'       => $this->object,
                 'email_heading' => $this->get_heading(),
-                'sent_to_admin' => true,
+                'sent_to_admin' => false,
                 'plain_text'    => false,
                 'email'         => $this,
             ),
@@ -105,33 +113,25 @@ class WC_Email_Admin_New_Project extends WC_Email {
      */
     public function init_form_fields() {
         $this->form_fields = array(
-            'enabled' => array(
+            'enabled'    => array(
                 'title'   => __( 'Enable/Disable', 'arsol-pfw' ),
                 'type'    => 'checkbox',
                 'label'   => __( 'Enable this email notification', 'arsol-pfw' ),
                 'default' => 'yes',
             ),
-            'recipient' => array(
-                'title'       => __( 'Recipient(s)', 'arsol-pfw' ),
-                'type'        => 'text',
-                'description' => sprintf( __( 'Enter shop manager emails (comma separated). Defaults to %s.', 'arsol-pfw' ), '<code>' . esc_attr( get_option( 'admin_email' ) ) . '</code>' ),
-                'placeholder' => '',
-                'default'     => '',
-                'desc_tip'    => true,
-            ),
-            'subject' => array(
+            'subject'    => array(
                 'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{project_id}, {customer_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {project_id}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
-            'heading' => array(
+            'heading'    => array(
                 'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{project_id}, {customer_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {project_id}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),

@@ -1,6 +1,6 @@
 <?php
 /**
- * Customer New Request Email
+ * Project Creation Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -9,35 +9,33 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
+if ( ! class_exists( 'WC_Email' ) ) {
+    return;
+}
+
 /**
- * Customer New Request Email Class
- * Sent to customers when their project request is created
+ * Project Creation Email Class
  */
-class WC_Email_New_Request extends WC_Email {
+class WC_Email_Project_Creation extends WC_Email {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->id             = 'new_request';
-        $this->title          = __( 'Project Customer: Request Submitted', 'arsol-pfw' );
-        $this->description    = __( 'Customer confirmation when their project request is submitted.', 'arsol-pfw' );
-                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/';
-        $this->template_html  = 'email-new-request.php';
-        $this->placeholders   = array(
-            '{request_id}' => '',
-        );
+        $this->id             = 'project_creation';
+        $this->title          = __( 'Project Customer: Your Project Order Is Ready', 'arsol-pfw' );
+        $this->description    = __( 'Customer notification when their project order is created and ready.', 'arsol-pfw' );
+        $this->template_html  = 'email-project-creation.php';
+                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/templates/';
 
-        // Listen to main workflow hook
-        add_action( 'arsol_new_request_created', array( $this, 'trigger' ), 10, 2 );
+        // Triggers for this email
+        add_action( 'arsol_project_created', array( $this, 'trigger' ), 10, 2 );
 
         // Call parent constructor
         parent::__construct();
 
-        // This email is sent to the customer who created the request
+        // This email is sent to the customer
         $this->customer_email = true;
-
-        // Set default recipient for display in settings (will be overridden dynamically)
         $this->recipient = __( 'Customer', 'arsol-pfw' );
     }
 
@@ -47,7 +45,7 @@ class WC_Email_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( 'Your Project Request Has Been Received #{request_id}', 'arsol-pfw' );
+        return __( '[{site_title}] Your Project Order is Ready - #{project_id}', 'arsol-pfw' );
     }
 
     /**
@@ -56,26 +54,30 @@ class WC_Email_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Request Submitted Successfully', 'arsol-pfw' );
+        return __( 'Your Project Order is Ready', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
-     * @param int $request_id Request ID.
+     * @param int $project_id Project ID.
      * @param int $customer_id Customer ID.
      */
-    public function trigger( $request_id, $customer_id ) {
+    public function trigger( $project_id, $customer_id ) {
         $this->setup_locale();
 
-        if ( $request_id && $customer_id ) {
-            $this->object = get_post( $request_id );
-            $this->placeholders['{request_id}'] = $request_id;
+        if ( $project_id && $customer_id ) {
+            $this->object = get_post( $project_id );
             
-            // Get customer email
-            $customer = get_user_by( 'id', $customer_id );
-            if ( $customer ) {
-                $this->recipient = $customer->user_email;
+            if ( $this->object ) {
+                $this->placeholders['{project_id}'] = $project_id;
+                $this->placeholders['{site_title}'] = $this->get_blogname();
+                
+                // Get customer email
+                $customer = get_user_by( 'id', $customer_id );
+                if ( $customer ) {
+                    $this->recipient = $customer->user_email;
+                }
             }
         }
 
@@ -95,7 +97,7 @@ class WC_Email_New_Request extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'request_id'    => $this->placeholders['{request_id}'],
+                'project'       => $this->object,
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => false,
@@ -111,25 +113,25 @@ class WC_Email_New_Request extends WC_Email {
      */
     public function init_form_fields() {
         $this->form_fields = array(
-            'enabled' => array(
+            'enabled'    => array(
                 'title'   => __( 'Enable/Disable', 'arsol-pfw' ),
                 'type'    => 'checkbox',
                 'label'   => __( 'Enable this email notification', 'arsol-pfw' ),
                 'default' => 'yes',
             ),
-            'subject' => array(
+            'subject'    => array(
                 'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {project_id}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
-            'heading' => array(
+            'heading'    => array(
                 'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{site_title}, {project_id}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),
