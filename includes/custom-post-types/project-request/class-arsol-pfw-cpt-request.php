@@ -114,8 +114,8 @@ class Project_Request_CPT {
         if (!isset($args['tax_input'])) {
             $args['tax_input'] = array();
         }
-        if (!isset($args['tax_input'][self::get_status_taxonomy()])) {
-            $args['tax_input'][self::get_status_taxonomy()] = 'pending-review';
+        if (!isset($args['tax_input'][self::get_stage_taxonomy()])) {
+            $args['tax_input'][self::get_stage_taxonomy()] = 'pending-review';
         }
 
         $request_id = wp_insert_post($args);
@@ -179,7 +179,7 @@ class Project_Request_CPT {
      * @param string $stage New stage slug
      * @return bool Success status
      */
-    public function set_status($stage) {
+    public function set_stage($stage) {
         // Use centralized stage manager
         return \Arsol_Projects_For_Woo\Core\Stage_Manager::set_stage($this->request_id, 'request', $stage);
     }
@@ -339,7 +339,7 @@ class Project_Request_CPT {
      *
      * @return string
      */
-    public function get_status_taxonomy() {
+    public function get_stage_taxonomy() {
         return 'arsol-pfw-request-stage';
     }
 
@@ -427,25 +427,6 @@ class Project_Request_CPT {
     public function set_deadline($deadline) {
         $this->set_prop('deadline', $deadline);
         return true;
-    }
-
-    /**
-     * Get stage (alias for get_status)
-     * 
-     * @return string Current stage
-     */
-    public function get_stage() {
-        return $this->get_status();
-    }
-
-    /**
-     * Set stage
-     * 
-     * @param string $stage New stage
-     * @return bool Success status
-     */
-    public function set_stage($stage) {
-        return $this->set_status($stage);
     }
 
     /**

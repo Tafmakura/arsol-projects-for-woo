@@ -32,6 +32,18 @@ class Project_Proposal_CPT {
     private static $setup_initialized = false;
 
     /**
+     * Data properties
+     * @var array
+     */
+    protected $data = array();
+
+    /**
+     * Changes tracking
+     * @var array
+     */
+    protected $changes = array();
+
+    /**
      * Constructor
      * 
      * @param int|WP_Post $proposal Proposal ID or post object
@@ -104,8 +116,8 @@ class Project_Proposal_CPT {
         if (!isset($args['tax_input'])) {
             $args['tax_input'] = array();
         }
-        if (!isset($args['tax_input'][self::get_status_taxonomy()])) {
-            $args['tax_input'][self::get_status_taxonomy()] = 'processing';
+        if (!isset($args['tax_input'][self::get_stage_taxonomy()])) {
+            $args['tax_input'][self::get_stage_taxonomy()] = 'processing';
         }
 
         $proposal_id = wp_insert_post($args);
@@ -154,40 +166,22 @@ class Project_Proposal_CPT {
     }
 
     /**
-     * Get proposal status
+     * Get stage
      * 
-     * @return string|null Status slug
+     * @return string Current stage
      */
-    public function get_status() {
-        if (!$this->proposal_id) {
-            return null;
-        }
-
-        $terms = wp_get_post_terms($this->proposal_id, self::get_status_taxonomy());
-        return !empty($terms) && !is_wp_error($terms) ? $terms[0]->slug : null;
+    public function get_stage() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($this->proposal_id, 'proposal');
     }
 
     /**
-     * Set proposal status
+     * Set stage
      * 
-     * @param string $status Status slug
+     * @param string $stage New stage
      * @return bool Success status
      */
-    public function set_status($status) {
-        if (!$this->proposal_id) {
-            return false;
-        }
-
-        $old_status = $this->get_status();
-        $result = wp_set_post_terms($this->proposal_id, array($status), self::get_status_taxonomy());
-        
-        if (!is_wp_error($result)) {
-            // Trigger status change action
-            do_action('arsol_proposal_stage_changed', $this->proposal_id, $old_status, $status);
-            return true;
-        }
-
-        return false;
+    public function set_stage($stage) {
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::set_stage($this->proposal_id, 'proposal', $stage);
     }
 
     /**
@@ -281,12 +275,12 @@ class Project_Proposal_CPT {
      * @return int|false Project ID or false on failure
      */
     public function approve() {
-        if (!$this->exists() || $this->get_status() !== 'pending-approval') {
+        if (!$this->exists() || $this->get_stage() !== 'pending-approval') {
             return false;
         }
 
         // Update status to approved
-        $this->set_status('approved');
+        $this->set_stage('approved');
 
         // Create project from proposal
         $project_data = array(
@@ -328,7 +322,7 @@ class Project_Proposal_CPT {
             return false;
         }
 
-        $success = $this->set_status('rejected');
+        $success = $this->set_stage('rejected');
         
         if ($success && $reason) {
             $this->set_meta('_arsol_pfw_proposal_rejection_reason', $reason);
@@ -403,7 +397,7 @@ class Project_Proposal_CPT {
      *
      * @return string
      */
-    public function get_status_taxonomy() {
+    public function get_stage_taxonomy() {
         return 'arsol-pfw-proposal-stage';
     }
 
@@ -429,5 +423,231 @@ class Project_Proposal_CPT {
         }
 
         return $proposals;
+    }
+
+    // ===== CRUD Enhancement Methods =====
+
+    /**
+     * Get proposal name (alias for get_title)
+     * 
+     * @return string
+     */
+    public function get_name() {
+        return $this->get_title();
+    }
+
+    /**
+     * Set proposal name
+     * 
+     * @param string $name Proposal name
+     * @return bool Success status
+     */
+    public function set_name($name) {
+        $this->set_prop('name', $name);
+        return true;
+    }
+
+    /**
+     * Get customer ID
+     * 
+     * @return int Customer ID
+     */
+    public function get_customer_id() {
+        return $this->proposal ? (int) $this->proposal->post_author : 0;
+    }
+
+    /**
+     * Set customer ID
+     * 
+     * @param int $customer_id Customer ID
+     * @return bool Success status
+     */
+    public function set_customer_id($customer_id) {
+        $this->set_prop('customer_id', (int) $customer_id);
+        return true;
+    }
+
+    /**
+     * Get quotation
+     * 
+     * @return array Quotation data
+     */
+    public function get_quotation() {
+        return $this->get_meta('_arsol_pfw_proposal_quotation');
+    }
+
+    /**
+     * Set quotation
+     * 
+     * @param array $quotation Quotation data
+     * @return bool Success status
+     */
+    public function set_quotation($quotation) {
+        $this->set_prop('quotation', $quotation);
+        return true;
+    }
+
+
+
+    /**
+     * Update stage with hooks
+     * 
+     * @param string $new_stage New stage
+     * @return bool|WP_Error Success status or error
+     */
+    public function update_stage($new_stage) {
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::update_stage($this->proposal_id, 'proposal', $new_stage);
+    }
+
+    /**
+     * Get available stages
+     * 
+     * @return array Available stages
+     */
+    public function get_available_stages() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_available_stages('proposal');
+    }
+
+    /**
+     * Approve proposal (enhanced)
+     * 
+     * @return bool|WP_Error Success status or error
+     */
+    public function approve_enhanced() {
+        return $this->update_stage('approved');
+    }
+
+    /**
+     * Reject proposal (enhanced)
+     * 
+     * @param string $reason Rejection reason
+     * @return bool|WP_Error Success status or error
+     */
+    public function reject_enhanced($reason = '') {
+        $result = $this->update_stage('rejected');
+        
+        if ($result && !is_wp_error($result) && $reason) {
+            $this->set_meta('_rejection_reason', $reason);
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Mark proposal as expired
+     * 
+     * @return bool|WP_Error Success status or error
+     */
+    public function mark_expired() {
+        return $this->update_stage('expired');
+    }
+
+    /**
+     * Extend deadline
+     * 
+     * @param string $new_deadline New deadline
+     * @return bool Success status
+     */
+    public function extend_deadline($new_deadline) {
+        return $this->set_meta('_arsol_pfw_proposal_expiration_date', $new_deadline);
+    }
+
+    /**
+     * Save proposal
+     * 
+     * @return bool|WP_Error Success status or error
+     */
+    public function save() {
+        $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Proposal_Data_Store();
+        
+        if ($this->proposal_id > 0) {
+            return $data_store->update($this);
+        } else {
+            $result = $data_store->create($this);
+            
+            if (!is_wp_error($result)) {
+                $this->proposal_id = $result;
+                $this->proposal = get_post($result);
+            }
+            
+            return $result;
+        }
+    }
+
+    /**
+     * Read proposal data
+     * 
+     * @return bool Success status
+     */
+    public function read() {
+        if (!$this->proposal_id) {
+            return false;
+        }
+        
+        $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Proposal_Data_Store();
+        return $data_store->read($this);
+    }
+
+    /**
+     * Delete proposal
+     * 
+     * @return bool Success status
+     */
+    public function delete() {
+        if (!$this->proposal_id) {
+            return false;
+        }
+        
+        $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Proposal_Data_Store();
+        return $data_store->delete($this);
+    }
+
+    /**
+     * Delete meta value
+     * 
+     * @param string $key Meta key
+     * @return bool Success status
+     */
+    public function delete_meta($key) {
+        if (!$this->proposal_id) {
+            return false;
+        }
+        
+        return delete_post_meta($this->proposal_id, $key);
+    }
+
+    /**
+     * Get property value
+     * 
+     * @param string $prop Property name
+     * @return mixed Property value
+     */
+    public function get_prop($prop) {
+        return isset($this->data[$prop]) ? $this->data[$prop] : null;
+    }
+
+    /**
+     * Set property value
+     * 
+     * @param string $prop Property name
+     * @param mixed $value Property value
+     * @return bool Success status
+     */
+    public function set_prop($prop, $value) {
+        if ($this->get_prop($prop) !== $value) {
+            $this->changes[$prop] = $value;
+            $this->data[$prop] = $value;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Get changes
+     * 
+     * @return array Changes array
+     */
+    public function get_changes() {
+        return $this->changes;
     }
 }
