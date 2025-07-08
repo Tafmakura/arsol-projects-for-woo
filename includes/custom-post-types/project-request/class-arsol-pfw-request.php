@@ -441,9 +441,10 @@ class ARSOL_PFW_Request extends WC_Data implements ARSOL_PFW_Stage_Interface {
      *
      * @param string $key Meta key
      * @param bool $single Whether to return single value
+     * @param string $context What the value is for. Valid values are 'view' and 'edit'.
      * @return mixed Meta value
      */
-    public function get_meta($key, $single = true) {
+    public function get_meta($key = '', $single = true, $context = 'view') {
         return get_post_meta($this->get_id(), $key, $single);
     }
     
