@@ -1,6 +1,6 @@
 <?php
 /**
- * Customer New Request Email
+ * Project Lead Proposal Decision Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -10,35 +10,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Customer New Request Email Class
- * Sent to customers when their project request is created
+ * Project Lead Proposal Decision Email Class
+ * Sent to project leads when a proposal decision is made
  */
-class WC_Email_New_Request extends WC_Email {
+class WC_Email_Proposal_Decision extends WC_Email {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->id             = 'new_request';
-        $this->title          = __( 'Project Customer: Request Submitted', 'arsol-pfw' );
-        $this->description    = __( 'Customer confirmation when their project request is submitted.', 'arsol-pfw' );
-        $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
-        $this->template_html  = 'email-new-request.php';
+        $this->id             = 'proposal_decision';
+        $this->title          = __( 'Project Lead: Proposal Decision', 'arsol-pfw' );
+        $this->description    = __( 'Project lead notification when a proposal decision is made.', 'arsol-pfw' );
+                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/';
+        $this->template_html  = 'email-proposal-decision.php';
         $this->placeholders   = array(
-            '{request_id}' => '',
+            '{proposal_id}' => '',
+            '{old_status}' => '',
+            '{new_status}' => '',
         );
 
         // Listen to main workflow hook
-        add_action( 'arsol_new_request_created', array( $this, 'trigger' ), 10, 2 );
+        add_action( 'arsol_proposal_stage_changed', array( $this, 'trigger' ), 10, 3 );
 
         // Call parent constructor
         parent::__construct();
 
-        // This email is sent to the customer who created the request
-        $this->customer_email = true;
-
         // Set default recipient for display in settings (will be overridden dynamically)
-        $this->recipient = __( 'Customer', 'arsol-pfw' );
+        $this->recipient = __( 'Project Lead', 'arsol-pfw' );
     }
 
     /**
@@ -47,7 +46,7 @@ class WC_Email_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( 'Your Project Request Has Been Received #{request_id}', 'arsol-pfw' );
+        return __( '[Project Lead] Proposal {new_status} #{proposal_id}', 'arsol-pfw' );
     }
 
     /**
@@ -56,26 +55,32 @@ class WC_Email_New_Request extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Request Submitted Successfully', 'arsol-pfw' );
+        return __( 'Proposal Status Update', 'arsol-pfw' );
     }
 
     /**
      * Trigger the sending of this email.
      *
-     * @param int $request_id Request ID.
-     * @param int $customer_id Customer ID.
+     * @param int    $proposal_id Proposal ID.
+     * @param string $old_status Old status.
+     * @param string $new_status New status.
      */
-    public function trigger( $request_id, $customer_id ) {
+    public function trigger( $proposal_id, $old_status, $new_status ) {
         $this->setup_locale();
 
-        if ( $request_id && $customer_id ) {
-            $this->object = get_post( $request_id );
-            $this->placeholders['{request_id}'] = $request_id;
+        if ( $proposal_id ) {
+            $this->object = get_post( $proposal_id );
+            $this->placeholders['{proposal_id}'] = $proposal_id;
+            $this->placeholders['{old_status}'] = ucfirst( str_replace( '-', ' ', $old_status ) );
+            $this->placeholders['{new_status}'] = ucfirst( str_replace( '-', ' ', $new_status ) );
             
-            // Get customer email
-            $customer = get_user_by( 'id', $customer_id );
-            if ( $customer ) {
-                $this->recipient = $customer->user_email;
+            // Get project lead from proposal meta
+            $project_lead_id = get_post_meta( $proposal_id, 'project_lead_id', true );
+            if ( $project_lead_id ) {
+                $project_lead = get_user_by( 'id', $project_lead_id );
+                if ( $project_lead ) {
+                    $this->recipient = $project_lead->user_email;
+                }
             }
         }
 
@@ -95,7 +100,9 @@ class WC_Email_New_Request extends WC_Email {
         return wc_get_template_html(
             $this->template_html,
             array(
-                'request_id'    => $this->placeholders['{request_id}'],
+                'proposal_id'   => $this->placeholders['{proposal_id}'],
+                'old_status'    => $this->placeholders['{old_status}'],
+                'new_status'    => $this->placeholders['{new_status}'],
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => false,
@@ -121,7 +128,7 @@ class WC_Email_New_Request extends WC_Email {
                 'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}, {old_status}, {new_status}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
@@ -129,7 +136,7 @@ class WC_Email_New_Request extends WC_Email {
                 'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{request_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}, {old_status}, {new_status}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),
@@ -144,4 +151,20 @@ class WC_Email_New_Request extends WC_Email {
             ),
         );
     }
+
+    /**
+     * Get recipient for display in email settings.
+     * Returns display text for settings, actual email set dynamically in trigger.
+     *
+     * @return string
+     */
+    public function get_recipient() {
+        // If we're in admin settings context, show display text
+        if ( is_admin() && ! wp_doing_ajax() ) {
+            return __( 'Project Lead', 'arsol-pfw' );
+        }
+        // Otherwise return the actual recipient email (set dynamically in trigger)
+        return $this->recipient;
+    }
 }
+ 

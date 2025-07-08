@@ -26,7 +26,7 @@ class WC_Email_Request_Stage extends WC_Email {
         $this->title          = __( 'Project Customer: Request Stage Update', 'arsol-pfw' );
         $this->description    = __( 'Customer notification when their request stage changes.', 'arsol-pfw' );
         $this->template_html  = 'email-request-stage.php';
-        $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
+                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/';
 
         // Triggers for this email
         add_action( 'arsol_request_stage_changed', array( $this, 'trigger' ), 10, 4 );

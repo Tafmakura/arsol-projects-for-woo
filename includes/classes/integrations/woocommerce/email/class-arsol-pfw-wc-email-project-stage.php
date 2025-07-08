@@ -103,7 +103,7 @@ class WC_Email_Project_Stage extends WC_Email {
                 'email'         => $this,
             ),
             'arsol-pfw/',
-            ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/'
+            ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/'
         );
     }
 
@@ -127,7 +127,7 @@ class WC_Email_Project_Stage extends WC_Email {
                 'email'         => $this,
             ),
             'arsol-pfw/',
-            ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/'
+            ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/'
         );
     }
 

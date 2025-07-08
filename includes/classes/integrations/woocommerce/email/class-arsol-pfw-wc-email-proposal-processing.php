@@ -22,7 +22,7 @@ class WC_Email_Proposal_Processing extends WC_Email {
         $this->id             = 'proposal_processing';
         $this->title          = __( 'Project Lead: Proposal Processing', 'arsol-pfw' );
         $this->description    = __( 'Project lead notification when proposal processing starts.', 'arsol-pfw' );
-        $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
+                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/';
         $this->template_html  = 'email-proposal-processing.php';
         $this->placeholders   = array(
             '{proposal_id}' => '',

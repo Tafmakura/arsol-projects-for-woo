@@ -62,11 +62,11 @@ class Setup {
         // Core Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-setup-custom-post-types.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/core/class-shortcodes.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/class-woocommerce.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/class-arsol-pfw-wc-integration.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce-subscriptions/class-woocommerce-subscriptions.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/class-woocommerce-logs.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/email/class-email-manager.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/class-woocommerce-biller-invoice.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/class-arsol-pfw-wc-logs.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/class-arsol-pfw-wc-biller-invoice.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/core/class-assets.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/frontend/class-frontend-woocommerce-endpoints.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/frontend/class-frontend-woocommerce-checkout.php';

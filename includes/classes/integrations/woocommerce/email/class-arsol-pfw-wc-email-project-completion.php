@@ -1,6 +1,6 @@
 <?php
 /**
- * Project Creation Email
+ * Project Completion Email
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -14,22 +14,22 @@ if ( ! class_exists( 'WC_Email' ) ) {
 }
 
 /**
- * Project Creation Email Class
+ * Project Completion Email Class
  */
-class WC_Email_Project_Creation extends WC_Email {
+class WC_Email_Project_Completion extends WC_Email {
 
     /**
      * Constructor.
      */
     public function __construct() {
-        $this->id             = 'project_creation';
-        $this->title          = __( 'Project Customer: Your Project Order Is Ready', 'arsol-pfw' );
-        $this->description    = __( 'Customer notification when their project order is created and ready.', 'arsol-pfw' );
-        $this->template_html  = 'email-project-creation.php';
-        $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/email/templates/';
+        $this->id             = 'project_completion';
+        $this->title          = __( 'Project Customer: Project Completed', 'arsol-pfw' );
+        $this->description    = __( 'Customer notification when their project is completed.', 'arsol-pfw' );
+        $this->template_html  = 'email-project-completion.php';
+                    $this->template_base  = ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/templates/';
 
         // Triggers for this email
-        add_action( 'arsol_project_created', array( $this, 'trigger' ), 10, 2 );
+        add_action( 'arsol_project_completed', array( $this, 'trigger' ), 10, 2 );
 
         // Call parent constructor
         parent::__construct();
@@ -45,7 +45,7 @@ class WC_Email_Project_Creation extends WC_Email {
      * @return string
      */
     public function get_default_subject() {
-        return __( '[{site_title}] Your Project Order is Ready - #{project_id}', 'arsol-pfw' );
+        return __( '[{site_title}] Your Project is Complete - #{project_id}', 'arsol-pfw' );
     }
 
     /**
@@ -54,7 +54,7 @@ class WC_Email_Project_Creation extends WC_Email {
      * @return string
      */
     public function get_default_heading() {
-        return __( 'Your Project Order is Ready', 'arsol-pfw' );
+        return __( 'Your Project is Complete', 'arsol-pfw' );
     }
 
     /**

@@ -43,20 +43,20 @@ class Arsol_Email_Manager {
         // Include role-based email classes (10 total)
         
         // Customer emails (6)
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-new-request.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-request-stage.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-ready.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-creation.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-stage.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-project-completion.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-new-request.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-request-stage.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-proposal-ready.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-project-creation.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-project-stage.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-project-completion.php';
         
         // Shop Manager emails (2)
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-request.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-admin-new-project.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-request.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-project.php';
         
         // Project Lead emails (2)
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-processing.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/email/class-wc-email-proposal-decision.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-proposal-processing.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/classes/integrations/woocommerce/email/class-arsol-pfw-wc-email-proposal-decision.php';
 
         // Register email classes by role (only if classes are available)
         
