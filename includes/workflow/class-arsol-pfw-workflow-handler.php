@@ -12,9 +12,34 @@ if (!defined('ABSPATH')) {
 
 /**
  * Workflow Handler Class
- * Handles all workflow operations for conversions and customer actions
+ * Handles all workflow operations, conversions, and creates default stages on activation
  */
 class Workflow_Handler {
+
+    // Default stage definitions - only created on plugin activation
+    protected static $default_stage_definitions = array(
+        'request' => array(
+            'pending-review' => 'Pending Review',
+            'under-review'   => 'Under Review', 
+            'on-hold'        => 'On Hold',
+            'approved'       => 'Approved',
+            'rejected'       => 'Rejected',
+        ),
+        'proposal' => array(
+            'processing' => 'Processing',
+            'approved'   => 'Approved',
+            'rejected'   => 'Rejected',
+            'expired'    => 'Expired',
+        ),
+        'project' => array(
+            'not-started' => 'Not Started',
+            'in-progress' => 'In Progress',
+            'on-hold'     => 'On Hold',
+            'completed'   => 'Completed',
+            'cancelled'   => 'Cancelled',
+        ),
+    );
+
     public function __construct() {
         // Hook into post status transitions
         add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
@@ -42,6 +67,91 @@ class Workflow_Handler {
         
         // Hook into general frontend pages
         add_action('wp_head', array($this, 'display_conversion_notices'), 1);
+
+        // Hook into plugin activation to create default stages
+        add_action('arsol_pfw_plugin_activated', array($this, 'create_default_stages_on_activation'));
+    }
+
+    /**
+     * Create default stages on plugin activation only
+     * Only creates stages if none exist
+     */
+    public function create_default_stages_on_activation() {
+        $taxonomies = array(
+            'request'  => 'arsol-pfw-request-stage',
+            'proposal' => 'arsol-pfw-proposal-stage',
+            'project'  => 'arsol-pfw-project-stage',
+        );
+
+        foreach ($taxonomies as $entity_type => $taxonomy) {
+            // Check if taxonomy exists
+            if (!taxonomy_exists($taxonomy)) {
+                continue;
+            }
+
+            // Check if any terms exist
+            $existing_terms = get_terms(array(
+                'taxonomy'   => $taxonomy,
+                'hide_empty' => false,
+                'number'     => 1,
+            ));
+
+            // Only create defaults if no terms exist
+            if (empty($existing_terms) || is_wp_error($existing_terms)) {
+                $this->create_default_stages($entity_type, $taxonomy);
+            }
+        }
+    }
+
+    /**
+     * Create default stages for entity type
+     *
+     * @param string $entity_type Entity type
+     * @param string $taxonomy Taxonomy name
+     */
+    protected function create_default_stages($entity_type, $taxonomy) {
+        if (!isset(self::$default_stage_definitions[$entity_type])) {
+            return;
+        }
+
+        $stages = self::$default_stage_definitions[$entity_type];
+        
+        foreach ($stages as $slug => $name) {
+            // Check if term already exists
+            if (!term_exists($slug, $taxonomy)) {
+                $result = wp_insert_term($name, $taxonomy, array(
+                    'slug' => $slug,
+                ));
+
+                if (is_wp_error($result)) {
+                    error_log("Failed to create default stage '{$slug}' for {$entity_type}: " . $result->get_error_message());
+                } else {
+                    // Log success
+                    error_log("Created default stage '{$slug}' for {$entity_type}");
+                }
+            }
+        }
+
+        // Clear any cached stage data
+        if (class_exists('\Arsol_Projects_For_Woo\Core\Stage_Manager')) {
+            \Arsol_Projects_For_Woo\Core\Stage_Manager::clear_stages_cache($entity_type);
+        }
+    }
+
+    /**
+     * Get default stage definitions (for reference only)
+     *
+     * @param string $entity_type Optional entity type
+     * @return array
+     */
+    public static function get_default_stage_definitions($entity_type = null) {
+        if ($entity_type) {
+            return isset(self::$default_stage_definitions[$entity_type]) 
+                ? self::$default_stage_definitions[$entity_type] 
+                : array();
+        }
+        
+        return self::$default_stage_definitions;
     }
 
     /**
@@ -202,202 +312,163 @@ class Workflow_Handler {
     public static function cleanup_stuck_workflows($max_age_minutes = 30) {
         global $wpdb;
         
-        $cutoff_time = date('Y-m-d H:i:s', strtotime("-{$max_age_minutes} minutes"));
+        $max_age_timestamp = current_time('timestamp') - ($max_age_minutes * 60);
+        $max_age_date = date('Y-m-d H:i:s', $max_age_timestamp);
         
-        // Find stuck conversions
+        // Find all posts with stuck workflows
         $stuck_posts = $wpdb->get_results($wpdb->prepare("
-            SELECT p.ID, pm1.meta_value as conversion_type, pm2.meta_value as started_time
-            FROM {$wpdb->posts} p
-            INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id AND pm1.meta_key = '_arsol_workflow_status'
-            INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id AND pm2.meta_key = '_arsol_workflow_started'
-            WHERE pm1.meta_value = 'in_progress'
-            AND pm2.meta_value < %s
-        ", $cutoff_time));
+            SELECT post_id, meta_value as workflow_started
+            FROM {$wpdb->postmeta}
+            WHERE meta_key = '_arsol_workflow_started'
+            AND meta_value < %s
+            ORDER BY meta_value ASC
+        ", $max_age_date));
         
-        $cleaned = 0;
-        foreach ($stuck_posts as $post) {
-            // Use appropriate converter to force rollback stuck conversion
-            $conversion_type = get_post_meta($post->ID, '_arsol_conversion_type', true);
+        $cleaned_count = 0;
+        
+        foreach ($stuck_posts as $stuck_post) {
+            $post_id = $stuck_post->post_id;
+            $workflow_started = $stuck_post->workflow_started;
             
-            switch ($conversion_type) {
-                case 'request_to_proposal':
-                    $converter = new Request_Conversion();
-                    $converter->force_clear_stuck_workflow($post->ID);
-                    break;
-                case 'proposal_to_project':
-                    $converter = new Proposal_Conversion();
-                    $converter->force_clear_stuck_workflow($post->ID);
-                    break;
-                default:
-                    // Fallback for unknown conversion types - just clear the metadata
-                    delete_post_meta($post->ID, '_arsol_workflow_status');
-                    delete_post_meta($post->ID, '_arsol_workflow_started');
-                    delete_post_meta($post->ID, '_arsol_conversion_type');
-                    delete_post_meta($post->ID, '_arsol_conversion_created_ids');
-                    delete_post_meta($post->ID, '_arsol_conversion_step');
-                    break;
-            }
-            
-            $cleaned++;
-            
+            // Log the stuck workflow
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
-                "Cleaned up stuck conversion: Post #{$post->ID}, Type: {$conversion_type}");
+                "Cleaning up stuck workflow for post #{$post_id}, started at: {$workflow_started}");
+            
+            // Clean up the workflow
+            delete_post_meta($post_id, '_arsol_workflow_started');
+            delete_post_meta($post_id, '_arsol_workflow_type');
+            delete_post_meta($post_id, '_arsol_conversion_type');
+            delete_post_meta($post_id, '_arsol_conversion_step');
+            delete_post_meta($post_id, '_arsol_created_entities');
+            
+            $cleaned_count++;
         }
         
-        return $cleaned;
+        if ($cleaned_count > 0) {
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                "Cleaned up {$cleaned_count} stuck workflow(s) older than {$max_age_minutes} minutes");
+        }
+        
+        return $cleaned_count;
     }
 
     /**
-     * Force clear stuck workflow for a specific post (public method for manual cleanup)
+     * Force clear a specific stuck workflow
      */
     public function force_clear_stuck_workflow($post_id) {
-        $conversion_type = get_post_meta($post_id, '_arsol_conversion_type', true);
+        $workflow_started = get_post_meta($post_id, '_arsol_workflow_started', true);
         
-        switch ($conversion_type) {
-            case 'request_to_proposal':
-                $converter = new Request_Conversion();
-                return $converter->force_clear_stuck_workflow($post_id);
-            case 'proposal_to_project':
-                $converter = new Proposal_Conversion();
-                return $converter->force_clear_stuck_workflow($post_id);
-            default:
-                // Fallback for unknown conversion types
-                $status = get_post_meta($post_id, '_arsol_workflow_status', true);
-        if ($status === 'in_progress') {
-                    delete_post_meta($post_id, '_arsol_workflow_status');
-                    delete_post_meta($post_id, '_arsol_workflow_started');
-                    delete_post_meta($post_id, '_arsol_conversion_type');
-                    delete_post_meta($post_id, '_arsol_conversion_created_ids');
-                    delete_post_meta($post_id, '_arsol_conversion_step');
+        if ($workflow_started) {
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+                "Force clearing stuck workflow for post #{$post_id}, started at: {$workflow_started}");
+            
+            // Clean up all workflow metadata
+            delete_post_meta($post_id, '_arsol_workflow_started');
+            delete_post_meta($post_id, '_arsol_workflow_type');
+            delete_post_meta($post_id, '_arsol_conversion_type');
+            delete_post_meta($post_id, '_arsol_conversion_step');
+            delete_post_meta($post_id, '_arsol_created_entities');
             
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
-                        "Manually cleared stuck workflow metadata for post #{$post_id}");
-            
-            return true;
-        }
-        return false;
+                "Successfully force cleared stuck workflow for post #{$post_id}");
         }
     }
 
     /**
-     * Clear all stuck workflows regardless of age (emergency cleanup)
+     * Emergency cleanup of all stuck workflows (for admin use)
      */
     public static function emergency_cleanup_all_stuck_workflows() {
         global $wpdb;
         
-        // Find all stuck conversions regardless of age
-        $stuck_posts = $wpdb->get_results("
-            SELECT p.ID, pm1.meta_value as conversion_type
-            FROM {$wpdb->posts} p
-            INNER JOIN {$wpdb->postmeta} pm1 ON p.ID = pm1.post_id AND pm1.meta_key = '_arsol_workflow_status'
-            WHERE pm1.meta_value = 'in_progress'
+        // Get all workflow metadata
+        $all_workflows = $wpdb->get_results("
+            SELECT post_id, meta_key, meta_value
+            FROM {$wpdb->postmeta}
+            WHERE meta_key IN ('_arsol_workflow_started', '_arsol_workflow_type', '_arsol_conversion_type', '_arsol_conversion_step', '_arsol_created_entities')
+            ORDER BY post_id
         ");
         
-        $cleaned = 0;
-        foreach ($stuck_posts as $post) {
-            // Use appropriate converter to force rollback stuck conversion
-            $conversion_type = get_post_meta($post->ID, '_arsol_conversion_type', true);
+        $affected_posts = array();
+        
+        foreach ($all_workflows as $workflow) {
+            $post_id = $workflow->post_id;
             
-            switch ($conversion_type) {
-                case 'request_to_proposal':
-                    $converter = new Request_Conversion();
-                    $converter->force_clear_stuck_workflow($post->ID);
-                    break;
-                case 'proposal_to_project':
-                    $converter = new Proposal_Conversion();
-                    $converter->force_clear_stuck_workflow($post->ID);
-                    break;
-                default:
-                    // Fallback for unknown conversion types - just clear the metadata
-                    delete_post_meta($post->ID, '_arsol_workflow_status');
-                    delete_post_meta($post->ID, '_arsol_workflow_started');
-                    delete_post_meta($post->ID, '_arsol_conversion_type');
-                    delete_post_meta($post->ID, '_arsol_conversion_created_ids');
-                    delete_post_meta($post->ID, '_arsol_conversion_step');
-                    break;
+            if (!in_array($post_id, $affected_posts)) {
+                $affected_posts[] = $post_id;
             }
             
-            $cleaned++;
-            
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
-                "Emergency cleanup: Post #{$post->ID}, Type: {$conversion_type}");
+            // Delete the metadata
+            delete_post_meta($post_id, $workflow->meta_key);
         }
         
-        return $cleaned;
+        $cleaned_count = count($affected_posts);
+        
+        if ($cleaned_count > 0) {
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+                "Emergency cleanup: cleared ALL workflow metadata for {$cleaned_count} posts");
+        }
+        
+        return $cleaned_count;
     }
 
     // ==========================================
-    // NOTICE SYSTEM METHODS
+    // ADMIN NOTICE METHODS
     // ==========================================
 
     /**
-     * Set admin notice for display after redirect
+     * Set an admin notice
      */
     private function set_admin_notice($type, $message, $details = array()) {
-        $notice_data = array(
-            'type' => $type, // 'success', 'error', 'warning', 'info'
+        $notices = get_transient('arsol_pfw_admin_notices') ?: array();
+        $notices[] = array(
+            'type' => $type,
             'message' => $message,
             'details' => $details,
             'timestamp' => current_time('timestamp')
         );
-        
-        $user_id = get_current_user_id();
-        set_transient('arsol_notice_' . $user_id, $notice_data, 300); // 5 minutes
+        set_transient('arsol_pfw_admin_notices', $notices, 300); // 5 minutes
     }
 
     /**
-     * Set conversion success notice
+     * Set a conversion success notice
      */
     private function set_conversion_success_notice($from_type, $to_type, $from_id, $to_id, $title) {
-        // Map types to proper display names
-        $type_names = array(
-            'request' => __('Project Request', 'arsol-pfw'),
-            'proposal' => __('Project Proposal', 'arsol-pfw'),
-            'project' => __('Project', 'arsol-pfw')
-        );
-        
-        $from_name = isset($type_names[$from_type]) ? $type_names[$from_type] : ucfirst(str_replace('_', ' ', $from_type));
-        $to_name = isset($type_names[$to_type]) ? $type_names[$to_type] : ucfirst(str_replace('_', ' ', $to_type));
-        
         $message = sprintf(
-            __('%s "%s" successfully converted to %s.', 'arsol-pfw'),
-            $from_name,
+            __('Successfully converted %s #%d "%s" to %s #%d', 'arsol-pfw'),
+            ucfirst($from_type),
+            $from_id,
             $title,
-            $to_name
+            ucfirst($to_type),
+            $to_id
         );
         
         $this->set_admin_notice('success', $message, array(
-            'conversion_type' => $from_type . '_to_' . $to_type,
+            'from_type' => $from_type,
+            'to_type' => $to_type,
             'from_id' => $from_id,
-            'to_id' => $to_id
+            'to_id' => $to_id,
+            'title' => $title
         ));
     }
 
     /**
-     * Set conversion failure notice
+     * Set a conversion failure notice
      */
     private function set_conversion_failure_notice($from_type, $to_type, $from_id, $title, $error) {
-        // Map types to proper display names
-        $type_names = array(
-            'request' => __('Project Request', 'arsol-pfw'),
-            'proposal' => __('Project Proposal', 'arsol-pfw'),
-            'project' => __('Project', 'arsol-pfw')
-        );
-        
-        $from_name = isset($type_names[$from_type]) ? $type_names[$from_type] : ucfirst(str_replace('_', ' ', $from_type));
-        $to_name = isset($type_names[$to_type]) ? $type_names[$to_type] : ucfirst(str_replace('_', ' ', $to_type));
-        
         $message = sprintf(
-            __('Failed to convert %s "%s" to %s. Error: %s', 'arsol-pfw'),
-            $from_name,
+            __('Failed to convert %s #%d "%s" to %s: %s', 'arsol-pfw'),
+            ucfirst($from_type),
+            $from_id,
             $title,
-            $to_name,
+            ucfirst($to_type),
             $error
         );
         
         $this->set_admin_notice('error', $message, array(
-            'conversion_type' => $from_type . '_to_' . $to_type,
+            'from_type' => $from_type,
+            'to_type' => $to_type,
             'from_id' => $from_id,
+            'title' => $title,
             'error' => $error
         ));
     }
@@ -406,17 +477,18 @@ class Workflow_Handler {
      * Display conversion notices
      */
     public function display_conversion_notices() {
-        $user_id = get_current_user_id();
-        $notice_data = get_transient('arsol_notice_' . $user_id);
+        $notices = get_transient('arsol_pfw_admin_notices');
         
-        if ($notice_data && is_array($notice_data)) {
-            $class = 'notice notice-' . $notice_data['type'] . ' is-dismissible';
-            echo '<div class="' . esc_attr($class) . '">';
-            echo '<p>' . wp_kses_post($notice_data['message']) . '</p>';
-            echo '</div>';
+        if ($notices) {
+            foreach ($notices as $notice) {
+                $class = 'notice notice-' . $notice['type'] . ' is-dismissible';
+                echo '<div class="' . esc_attr($class) . '">';
+                echo '<p>' . esc_html($notice['message']) . '</p>';
+                echo '</div>';
+            }
             
-            // Clear the transient after displaying
-            delete_transient('arsol_notice_' . $user_id);
+            // Clear notices after displaying
+            delete_transient('arsol_pfw_admin_notices');
         }
     }
 }
