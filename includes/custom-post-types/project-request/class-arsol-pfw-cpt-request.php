@@ -32,6 +32,18 @@ class Project_Request_CPT {
     private static $setup_initialized = false;
 
     /**
+     * Data properties
+     * @var array
+     */
+    protected $data = array();
+
+    /**
+     * Changes tracking
+     * @var array
+     */
+    protected $changes = array();
+
+    /**
      * Constructor
      * 
      * @param int|WP_Post $request Request ID or post object
@@ -157,8 +169,8 @@ class Project_Request_CPT {
      * @return string|null Current request stage slug
      */
     public function get_status() {
-        $statuses = wp_get_object_terms($this->request_id, $this->get_status_taxonomy(), array('fields' => 'slugs'));
-        return !empty($statuses) ? $statuses[0] : null;
+        // Use centralized stage manager
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($this->request_id, 'request');
     }
 
     /**
@@ -168,20 +180,8 @@ class Project_Request_CPT {
      * @return bool Success status
      */
     public function set_status($stage) {
-        $old_stage = $this->get_status();
-        
-        $result = wp_set_object_terms($this->request_id, $stage, $this->get_status_taxonomy(), false);
-        
-        if (is_wp_error($result)) {
-            return false;
-        }
-        
-        // Trigger stage change hook
-        if ($old_stage !== $stage) {
-            do_action('arsol_request_stage_changed', $this->request_id, $old_stage, $stage, $this->request->post_author);
-        }
-        
-        return true;
+        // Use centralized stage manager
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::set_stage($this->request_id, 'request', $stage);
     }
 
     /**
@@ -365,5 +365,247 @@ class Project_Request_CPT {
         }
 
         return $requests;
+    }
+
+    // ===== CRUD Enhancement Methods =====
+
+    /**
+     * Get request name (alias for get_title)
+     * 
+     * @return string
+     */
+    public function get_name() {
+        return $this->get_title();
+    }
+
+    /**
+     * Set request name
+     * 
+     * @param string $name Request name
+     * @return bool Success status
+     */
+    public function set_name($name) {
+        $this->set_prop('name', $name);
+        return true;
+    }
+
+    /**
+     * Get customer ID
+     * 
+     * @return int Customer ID
+     */
+    public function get_customer_id() {
+        return $this->request ? (int) $this->request->post_author : 0;
+    }
+
+    /**
+     * Set customer ID
+     * 
+     * @param int $customer_id Customer ID
+     * @return bool Success status
+     */
+    public function set_customer_id($customer_id) {
+        $this->set_prop('customer_id', (int) $customer_id);
+        return true;
+    }
+
+    /**
+     * Get deadline
+     * 
+     * @return string Deadline
+     */
+    public function get_deadline() {
+        return $this->get_meta('_arsol_pfw_request_deadline');
+    }
+
+    /**
+     * Set deadline
+     * 
+     * @param string $deadline Deadline
+     * @return bool Success status
+     */
+    public function set_deadline($deadline) {
+        $this->set_prop('deadline', $deadline);
+        return true;
+    }
+
+    /**
+     * Get stage (alias for get_status)
+     * 
+     * @return string Current stage
+     */
+    public function get_stage() {
+        return $this->get_status();
+    }
+
+    /**
+     * Set stage
+     * 
+     * @param string $stage New stage
+     * @return bool Success status
+     */
+    public function set_stage($stage) {
+        return $this->set_status($stage);
+    }
+
+    /**
+     * Update stage with hooks
+     * 
+     * @param string $new_stage New stage
+     * @return bool|WP_Error Success status or error
+     */
+    public function update_stage($new_stage) {
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::update_stage($this->request_id, 'request', $new_stage);
+    }
+
+    /**
+     * Get available stages
+     * 
+     * @return array Available stages
+     */
+    public function get_available_stages() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_available_stages('request');
+    }
+
+    /**
+     * Approve request
+     * 
+     * @return bool|WP_Error Success status or error
+     */
+    public function approve() {
+        return $this->update_stage('approved');
+    }
+
+    /**
+     * Reject request
+     * 
+     * @param string $reason Rejection reason
+     * @return bool|WP_Error Success status or error
+     */
+    public function reject($reason = '') {
+        $result = $this->update_stage('rejected');
+        
+        if ($result && !is_wp_error($result) && $reason) {
+            $this->set_meta('_rejection_reason', $reason);
+        }
+        
+        return $result;
+    }
+
+    /**
+     * Put request on hold
+     * 
+     * @return bool|WP_Error Success status or error
+     */
+    public function put_on_hold() {
+        return $this->update_stage('on-hold');
+    }
+
+    /**
+     * Resume request
+     * 
+     * @return bool|WP_Error Success status or error
+     */
+    public function resume() {
+        return $this->update_stage('under-review');
+    }
+
+    /**
+     * Save request
+     * 
+     * @return bool|WP_Error Success status or error
+     */
+    public function save() {
+        $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Request_Data_Store();
+        
+        if ($this->request_id > 0) {
+            return $data_store->update($this);
+        } else {
+            $result = $data_store->create($this);
+            
+            if (!is_wp_error($result)) {
+                $this->request_id = $result;
+                $this->request = get_post($result);
+            }
+            
+            return $result;
+        }
+    }
+
+    /**
+     * Read request data
+     * 
+     * @return bool Success status
+     */
+    public function read() {
+        if (!$this->request_id) {
+            return false;
+        }
+        
+        $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Request_Data_Store();
+        return $data_store->read($this);
+    }
+
+    /**
+     * Delete request
+     * 
+     * @return bool Success status
+     */
+    public function delete() {
+        if (!$this->request_id) {
+            return false;
+        }
+        
+        $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Request_Data_Store();
+        return $data_store->delete($this);
+    }
+
+    /**
+     * Delete meta value
+     * 
+     * @param string $key Meta key
+     * @return bool Success status
+     */
+    public function delete_meta($key) {
+        if (!$this->request_id) {
+            return false;
+        }
+        
+        return delete_post_meta($this->request_id, $key);
+    }
+
+    /**
+     * Get property value
+     * 
+     * @param string $prop Property name
+     * @return mixed Property value
+     */
+    public function get_prop($prop) {
+        return isset($this->data[$prop]) ? $this->data[$prop] : null;
+    }
+
+    /**
+     * Set property value
+     * 
+     * @param string $prop Property name
+     * @param mixed $value Property value
+     * @return bool Success status
+     */
+    public function set_prop($prop, $value) {
+        if ($this->get_prop($prop) !== $value) {
+            $this->changes[$prop] = $value;
+            $this->data[$prop] = $value;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Get changes
+     * 
+     * @return array Changes array
+     */
+    public function get_changes() {
+        return $this->changes;
     }
 }

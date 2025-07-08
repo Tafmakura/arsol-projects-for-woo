@@ -63,6 +63,15 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-permissions.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-arsol-pfw-cpt-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-shortcodes.php';
+        
+        // CRUD System
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-stage-manager.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-proposal.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-project.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-proposal.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-project.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-arsol-pfw-wc-integration.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce-subscriptions/class-arsol-pfw-wc-subscriptions.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-arsol-pfw-wc-logs.php';
@@ -109,6 +118,9 @@ class Setup {
     private function instantiate_classes() {
         // Initialize capabilities first
         new Admin\Admin_Capabilities();
+        
+        // Initialize CRUD system before CPTs
+        $this->initialize_crud_system();
         
         // Initialize other classes
         new Custom_Post_Types\Setup();
@@ -175,5 +187,15 @@ class Setup {
         
         // Flush rewrite rules on deactivation to clean up
         flush_rewrite_rules();
+    }
+    
+    /**
+     * Initialize CRUD system
+     */
+    private function initialize_crud_system() {
+        // Factory functions are automatically available after require_once
+        
+        // Fire hook for extensions
+        do_action('arsol_pfw_crud_system_initialized');
     }
 }
