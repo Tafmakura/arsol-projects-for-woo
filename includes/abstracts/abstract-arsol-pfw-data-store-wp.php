@@ -115,7 +115,7 @@ abstract class ARSOL_PFW_Data_Store_WP extends WC_Data_Store_WP implements ARSOL
         $updated_props = array();
         $meta_key_to_props = $this->get_props_to_meta_keys();
         
-        $props_to_update = $this->get_props_to_update($object, $meta_key_to_props);
+        $props_to_update = $this->get_props_to_update($object, $meta_key_to_props, $this->meta_type);
         
         foreach ($props_to_update as $meta_key => $prop) {
             $value = $object->{"get_$prop"}('edit');
@@ -146,15 +146,16 @@ abstract class ARSOL_PFW_Data_Store_WP extends WC_Data_Store_WP implements ARSOL
      *
      * @param WC_Data $object Object being updated
      * @param array $meta_key_to_props Mapping of meta keys to props
+     * @param string $meta_type Meta type (post, user, etc.)
      * @return array Props to update
      */
-    protected function get_props_to_update($object, $meta_key_to_props) {
+    protected function get_props_to_update($object, $meta_key_to_props, $meta_type = 'post') {
         $props_to_update = array();
         $changed_props = $object->get_changes();
         
         // Props should be updated if they are a part of the $changed array or don't exist yet
         foreach ($meta_key_to_props as $meta_key => $prop) {
-            if (array_key_exists($prop, $changed_props) || !metadata_exists($this->meta_type, $object->get_id(), $meta_key)) {
+            if (array_key_exists($prop, $changed_props) || !metadata_exists($meta_type, $object->get_id(), $meta_key)) {
                 $props_to_update[$meta_key] = $prop;
             }
         }
