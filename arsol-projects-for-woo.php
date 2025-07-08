@@ -58,11 +58,7 @@ use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Buttons;
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'class-arsol-pfw-setup.php';
 
-// Include the admin settings class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-settings-general.php';
-
-// Include the admin setup defaults class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-setup-defaults.php';
+// Note: Admin settings and setup defaults are now loaded by the main Setup class
 
 // Include the workflow handler class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-arsol-pfw-workflow-handler.php';
