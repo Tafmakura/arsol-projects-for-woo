@@ -6,6 +6,8 @@
  * @subpackage Interfaces
  */
 
+namespace Arsol_Projects_For_Woo;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -15,7 +17,7 @@ if (!defined('ABSPATH')) {
  * 
  * Extends WooCommerce's data store interface for our entities
  */
-interface ARSOL_PFW_Object_Data_Store_Interface extends WC_Object_Data_Store_Interface {
+interface ARSOL_PFW_Object_Data_Store_Interface extends \WC_Object_Data_Store_Interface {
     
     /**
      * Get available stages for the entity

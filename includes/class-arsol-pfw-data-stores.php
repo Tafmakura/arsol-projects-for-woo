@@ -8,6 +8,8 @@
  * @subpackage Classes
  */
 
+namespace Arsol_Projects_For_Woo;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -33,10 +35,10 @@ class ARSOL_PFW_Data_Stores {
      * @return array Modified data stores
      */
     public static function register_data_stores($stores) {
-        $stores['arsol-pfw-request'] = 'ARSOL_PFW_Request_Data_Store';
+        $stores['arsol-pfw-request'] = 'Arsol_Projects_For_Woo\ARSOL_PFW_Request_Data_Store';
         // TODO: Add other data stores in future phases
-        // $stores['arsol-pfw-proposal'] = 'ARSOL_PFW_Proposal_Data_Store';
-        // $stores['arsol-pfw-project'] = 'ARSOL_PFW_Project_Data_Store';
+        // $stores['arsol-pfw-proposal'] = 'Arsol_Projects_For_Woo\ARSOL_PFW_Proposal_Data_Store';
+        // $stores['arsol-pfw-project'] = 'Arsol_Projects_For_Woo\ARSOL_PFW_Project_Data_Store';
         
         return $stores;
     }

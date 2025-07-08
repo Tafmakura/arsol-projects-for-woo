@@ -6,6 +6,8 @@
  * @subpackage Data_Stores
  */
 
+namespace Arsol_Projects_For_Woo;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -18,42 +20,30 @@ if (!defined('ABSPATH')) {
 class ARSOL_PFW_Request_Data_Store extends ARSOL_PFW_Data_Store_WP implements ARSOL_PFW_Request_Data_Store_Interface {
     
     /**
-     * Internal meta keys which are handled by this data store
+     * Internal meta keys which are not saved to the database
      * @var array
      */
     protected $internal_meta_keys = array(
-        '_arsol_pfw_request_stage',
-        '_arsol_pfw_request_customer_id',
-        '_arsol_pfw_request_project_id',
-        '_arsol_pfw_request_budget',
-        '_arsol_pfw_request_deadline',
-        '_arsol_pfw_request_start_date',
-        '_arsol_pfw_request_notes',
+        '_arsol_pfw_request_version',
     );
     
     /**
-     * Maps object properties to meta keys
+     * Meta keys mapped to props
      * @var array
      */
-    protected $props_to_meta_keys = array(
-        'customer_id' => '_arsol_pfw_request_customer_id',
-        'project_id'  => '_arsol_pfw_request_project_id',
-        'budget'      => '_arsol_pfw_request_budget',
-        'deadline'    => '_arsol_pfw_request_deadline',
-        'start_date'  => '_arsol_pfw_request_start_date',
+    protected $meta_key_to_props = array(
+        '_arsol_pfw_request_customer_id' => 'customer_id',
+        '_arsol_pfw_request_project_id' => 'project_id',
+        '_arsol_pfw_request_budget' => 'budget',
+        '_arsol_pfw_request_deadline' => 'deadline',
+        '_arsol_pfw_request_start_date' => 'start_date',
     );
     
     /**
-     * Taxonomy name for request stages
+     * Request stage taxonomy
      * @var string
      */
     protected $stage_taxonomy = 'arsol-pfw-request-stage';
-    
-    /*
-    |--------------------------------------------------------------------------
-    | CRUD Operations
-    |--------------------------------------------------------------------------
-    */
     
     /**
      * Create a new request in the database
@@ -61,148 +51,211 @@ class ARSOL_PFW_Request_Data_Store extends ARSOL_PFW_Data_Store_WP implements AR
      * @param ARSOL_PFW_Request $request Request object
      */
     public function create(&$request) {
-        if (!$request->get_date_created('edit')) {
-            $request->set_date_created(current_time('timestamp', true));
-        }
+        $request->set_date_created(current_time('mysql'));
         
-        if (!$request->get_customer_id('edit')) {
-            $request->set_customer_id(get_current_user_id());
-        }
-        
-        $id = wp_insert_post(
-            apply_filters('arsol_pfw_new_request_data', array(
-                'post_type'   => 'arsol-pfw-request',
-                'post_status' => 'publish',
-                'post_title'  => $request->get_name('edit'),
-                'post_content' => $request->get_description('edit'),
-                'post_author' => $request->get_customer_id('edit'),
-                'post_date'   => gmdate('Y-m-d H:i:s', $request->get_date_created('edit')->getOffsetTimestamp()),
-                'post_date_gmt' => gmdate('Y-m-d H:i:s', $request->get_date_created('edit')->getTimestamp()),
-            ), $request)
+        $post_data = array(
+            'post_type'     => 'arsol-pfw-request',
+            'post_status'   => 'private',
+            'post_title'    => $request->get_name() ? $request->get_name() : 'Request',
+            'post_content'  => $request->get_description(),
+            'post_date'     => gmdate('Y-m-d H:i:s', $request->get_date_created('edit')->getOffsetTimestamp()),
+            'post_date_gmt' => gmdate('Y-m-d H:i:s', $request->get_date_created('edit')->getTimestamp()),
+            'post_author'   => $request->get_customer_id(),
         );
         
-        if ($id && !is_wp_error($id)) {
-            $request->set_id($id);
-            $this->update_post_meta($request);
-            $this->save_stage_to_taxonomy($id, $request->get_stage('edit'), $this->stage_taxonomy);
-            
-            // Clear any caches
-            $this->clear_caches($request);
-            
-            do_action('arsol_pfw_request_created', $id, $request);
-        } else {
-            throw new Exception('Failed to create request');
+        $post_id = wp_insert_post($post_data, true);
+        
+        if (is_wp_error($post_id)) {
+            throw new \WC_Data_Exception('db_insert_error', $post_id->get_error_message());
+        }
+        
+        $request->set_id($post_id);
+        
+        // Save stage to taxonomy
+        $this->save_stage_to_taxonomy($post_id, $request->get_stage(), $this->stage_taxonomy);
+        
+        $this->update_post_meta($request);
+        
+        $request->save_meta_data();
+        $request->apply_changes();
+        
+        // Clear cache
+        wp_cache_delete($post_id, $this->cache_group);
+        
+        do_action('arsol_pfw_request_created', $request);
+        
+        // Log creation
+        if (class_exists('Arsol_Projects_For_Woo\Woocommerce_Logs')) {
+            Woocommerce_Logs::log_request('info', 'Request created', $request->get_id());
         }
     }
     
     /**
-     * Read request data from the database
+     * Read a request from the database
      *
      * @param ARSOL_PFW_Request $request Request object
+     * @throws \WC_Data_Exception If request does not exist
      */
     public function read(&$request) {
+        $request->set_defaults();
+        
         $post_object = get_post($request->get_id());
         
         if (!$post_object || 'arsol-pfw-request' !== $post_object->post_type) {
-            throw new Exception('Invalid request.');
+            throw new \WC_Data_Exception('invalid_request', __('Invalid request.', 'arsol-pfw'));
         }
         
         $request->set_props(array(
-            'name'         => $post_object->post_title,
-            'description'  => $post_object->post_content,
-            'stage'        => $this->get_stage_from_taxonomy($request->get_id(), $this->stage_taxonomy, 'pending-review'),
-            'customer_id'  => absint($post_object->post_author),
-            'project_id'   => absint(get_post_meta($request->get_id(), '_arsol_pfw_request_project_id', true)),
-            'budget'       => get_post_meta($request->get_id(), '_arsol_pfw_request_budget', true),
-            'deadline'     => get_post_meta($request->get_id(), '_arsol_pfw_request_deadline', true),
-            'start_date'   => get_post_meta($request->get_id(), '_arsol_pfw_request_start_date', true),
-            'date_created' => $this->string_to_timestamp($post_object->post_date_gmt),
+            'name'          => $post_object->post_title,
+            'description'   => $post_object->post_content,
+            'customer_id'   => $post_object->post_author,
+            'date_created'  => $this->string_to_timestamp($post_object->post_date_gmt),
             'date_modified' => $this->string_to_timestamp($post_object->post_modified_gmt),
         ));
         
+        // Load stage from taxonomy
+        $stage = $this->get_stage_from_taxonomy($request->get_id(), $this->stage_taxonomy, 'pending-review');
+        $request->set_stage($stage);
+        
+        $this->read_request_data($request);
+        
+        $request->read_meta_data();
         $request->set_object_read(true);
         
         do_action('arsol_pfw_request_loaded', $request);
     }
     
     /**
-     * Update request data in the database
+     * Update a request in the database
      *
      * @param ARSOL_PFW_Request $request Request object
      */
     public function update(&$request) {
+        $request->save_meta_data();
         $changes = $request->get_changes();
         
-        $post_data_keys = array('name', 'description');
+        if (!$request->get_date_created('edit')) {
+            $request->set_date_created(current_time('mysql'));
+        }
         
-        // Update core post data if changed
-        if (array_intersect($post_data_keys, array_keys($changes))) {
-            $post_data = array('ID' => $request->get_id());
-            
-            if (array_key_exists('name', $changes)) {
-                $post_data['post_title'] = $request->get_name('edit');
-            }
-            
-            if (array_key_exists('description', $changes)) {
-                $post_data['post_content'] = $request->get_description('edit');
-            }
+        $request->set_date_modified(current_time('mysql'));
+        
+        // Update core post data if needed
+        if (array_intersect($this->core_data_keys, array_keys($changes))) {
+            $post_data = array(
+                'ID'            => $request->get_id(),
+                'post_title'    => $request->get_name(),
+                'post_content'  => $request->get_description(),
+                'post_modified' => gmdate('Y-m-d H:i:s', $request->get_date_modified('edit')->getOffsetTimestamp()),
+                'post_modified_gmt' => gmdate('Y-m-d H:i:s', $request->get_date_modified('edit')->getTimestamp()),
+            );
             
             wp_update_post($post_data);
         }
         
-        // Update stage taxonomy if changed
+        // Update stage if changed
         if (array_key_exists('stage', $changes)) {
-            $this->save_stage_to_taxonomy($request->get_id(), $request->get_stage('edit'), $this->stage_taxonomy);
+            $this->save_stage_to_taxonomy($request->get_id(), $request->get_stage(), $this->stage_taxonomy);
         }
         
-        // Update meta data
         $this->update_post_meta($request);
         
-        // Update modified date
-        $request->set_date_modified(current_time('timestamp', true));
+        $request->apply_changes();
         
-        // Clear any caches
-        $this->clear_caches($request);
+        // Clear cache
+        wp_cache_delete($request->get_id(), $this->cache_group);
         
-        do_action('arsol_pfw_request_updated', $request->get_id(), $request);
+        do_action('arsol_pfw_request_updated', $request);
+        
+        // Log update
+        if (class_exists('Arsol_Projects_For_Woo\Woocommerce_Logs')) {
+            Woocommerce_Logs::log_request('info', 'Request updated', $request->get_id());
+        }
     }
     
     /**
-     * Delete request from the database
+     * Delete a request from the database
      *
      * @param ARSOL_PFW_Request $request Request object
-     * @param array $args Additional arguments
+     * @param array $args Delete arguments
      */
     public function delete(&$request, $args = array()) {
-        $id = $request->get_id();
-        
-        if (!$id) {
-            return false;
-        }
-        
         $args = wp_parse_args($args, array(
             'force_delete' => false,
         ));
         
-        if ($args['force_delete']) {
-            wp_delete_post($id, true);
-        } else {
-            wp_trash_post($id);
+        $id = $request->get_id();
+        
+        if (!$id) {
+            return;
         }
         
-        // Clear any caches
-        $this->clear_caches($request);
+        if ($args['force_delete']) {
+            wp_delete_post($id, true);
+            $request->set_id(0);
+            
+            do_action('arsol_pfw_request_deleted', $id);
+            
+            // Log deletion
+            if (class_exists('Arsol_Projects_For_Woo\Woocommerce_Logs')) {
+                Woocommerce_Logs::log_request('info', 'Request deleted', $id);
+            }
+        } else {
+            wp_trash_post($id);
+            $request->set_status('trash');
+            
+            do_action('arsol_pfw_request_trashed', $id);
+        }
         
-        do_action('arsol_pfw_request_deleted', $id, $request);
-        
-        return true;
+        // Clear cache
+        wp_cache_delete($id, $this->cache_group);
     }
     
-    /*
-    |--------------------------------------------------------------------------
-    | Query Methods (ARSOL_PFW_Request_Data_Store_Interface Implementation)
-    |--------------------------------------------------------------------------
-    */
+    /**
+     * Read request-specific data
+     *
+     * @param ARSOL_PFW_Request $request Request object
+     */
+    private function read_request_data(&$request) {
+        $meta_values = get_post_meta($request->get_id());
+        
+        foreach ($this->meta_key_to_props as $meta_key => $prop) {
+            $meta_key = substr($meta_key, 1); // Remove leading underscore
+            $value = isset($meta_values[$meta_key]) ? $meta_values[$meta_key][0] : '';
+            
+            if ($prop === 'budget') {
+                $value = maybe_unserialize($value);
+                if (!is_array($value)) {
+                    $value = array();
+                }
+            }
+            
+            $request->set_prop($prop, $value);
+        }
+    }
+    
+    /**
+     * Convert string to timestamp
+     *
+     * @param string $time_string Time string
+     * @return \WC_DateTime|null
+     */
+    private function string_to_timestamp($time_string) {
+        if (empty($time_string)) {
+            return null;
+        }
+        
+        return new \WC_DateTime($time_string, new \DateTimeZone('UTC'));
+    }
+    
+    /**
+     * Get props to meta keys mapping
+     *
+     * @return array
+     */
+    protected function get_props_to_meta_keys() {
+        return $this->meta_key_to_props;
+    }
     
     /**
      * Get requests by stage
@@ -212,20 +265,23 @@ class ARSOL_PFW_Request_Data_Store extends ARSOL_PFW_Data_Store_WP implements AR
      * @return array Array of WP_Post objects
      */
     public function get_requests_by_stage($stage, $args = array()) {
-        $args = array_merge(array(
-            'post_type'      => 'arsol-pfw-request',
+        $defaults = array(
+            'post_type' => 'arsol-pfw-request',
+            'post_status' => 'private',
             'posts_per_page' => -1,
-            'post_status'    => 'publish',
-            'tax_query'      => array(
+            'tax_query' => array(
                 array(
                     'taxonomy' => $this->stage_taxonomy,
-                    'field'    => 'slug',
-                    'terms'    => $stage,
+                    'field' => 'slug',
+                    'terms' => $stage,
                 ),
             ),
-        ), $args);
+        );
         
-        return get_posts($args);
+        $args = wp_parse_args($args, $defaults);
+        
+        $query = new \WP_Query($args);
+        return $query->posts;
     }
     
     /**
@@ -236,14 +292,17 @@ class ARSOL_PFW_Request_Data_Store extends ARSOL_PFW_Data_Store_WP implements AR
      * @return array Array of WP_Post objects
      */
     public function get_requests_by_customer($customer_id, $args = array()) {
-        $args = array_merge(array(
-            'post_type'      => 'arsol-pfw-request',
+        $defaults = array(
+            'post_type' => 'arsol-pfw-request',
+            'post_status' => 'private',
             'posts_per_page' => -1,
-            'post_status'    => 'publish',
-            'author'         => absint($customer_id),
-        ), $args);
+            'author' => $customer_id,
+        );
         
-        return get_posts($args);
+        $args = wp_parse_args($args, $defaults);
+        
+        $query = new \WP_Query($args);
+        return $query->posts;
     }
     
     /**
@@ -254,106 +313,5 @@ class ARSOL_PFW_Request_Data_Store extends ARSOL_PFW_Data_Store_WP implements AR
      */
     public function get_requests_ready_for_conversion($args = array()) {
         return $this->get_requests_by_stage('approved', $args);
-    }
-    
-    /**
-     * Get requests by project ID
-     *
-     * @param int $project_id Project ID
-     * @param array $args Additional query arguments
-     * @return array Array of WP_Post objects
-     */
-    public function get_requests_by_project($project_id, $args = array()) {
-        $args = array_merge(array(
-            'post_type'      => 'arsol-pfw-request',
-            'posts_per_page' => -1,
-            'post_status'    => 'publish',
-            'meta_query'     => array(
-                array(
-                    'key'   => '_arsol_pfw_request_project_id',
-                    'value' => absint($project_id),
-                ),
-            ),
-        ), $args);
-        
-        return get_posts($args);
-    }
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Stage Management
-    |--------------------------------------------------------------------------
-    */
-    
-    /**
-     * Get available stages for requests
-     *
-     * @param string $taxonomy Taxonomy name (optional, will use default if empty)
-     * @return array Array of stage_slug => stage_name
-     */
-    public function get_available_stages($taxonomy = '') {
-        // If no taxonomy provided, use the default request stage taxonomy
-        if (empty($taxonomy)) {
-            $taxonomy = $this->stage_taxonomy;
-        }
-        return parent::get_available_stages($taxonomy);
-    }
-    
-    /**
-     * Get stage counts for requests
-     *
-     * @param string $taxonomy Taxonomy name (optional, will use default if empty)
-     * @return array Array of stage_slug => count
-     */
-    public function get_stage_counts($taxonomy = '') {
-        // If no taxonomy provided, use the default request stage taxonomy
-        if (empty($taxonomy)) {
-            $taxonomy = $this->stage_taxonomy;
-        }
-        return parent::get_stage_counts($taxonomy);
-    }
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Helper Methods
-    |--------------------------------------------------------------------------
-    */
-    
-    /**
-     * Get props to meta keys mapping
-     *
-     * @return array Array of prop => meta_key
-     */
-    protected function get_props_to_meta_keys() {
-        return $this->props_to_meta_keys;
-    }
-    
-    /**
-     * Clear caches for request
-     *
-     * @param ARSOL_PFW_Request $request Request object
-     */
-    protected function clear_caches($request) {
-        wp_cache_delete('arsol-pfw-request-' . $request->get_id(), $this->cache_group);
-        wp_cache_delete('arsol-pfw-requests-by-customer-' . $request->get_customer_id(), $this->cache_group);
-        wp_cache_delete('arsol-pfw-requests-by-stage-' . $request->get_stage(), $this->cache_group);
-    }
-    
-    /**
-     * Convert string to timestamp
-     *
-     * @param string $date_string Date string
-     * @return WC_DateTime|null
-     */
-    protected function string_to_timestamp($date_string) {
-        if (empty($date_string) || '0000-00-00 00:00:00' === $date_string) {
-            return null;
-        }
-        
-        try {
-            return new WC_DateTime($date_string, new DateTimeZone('UTC'));
-        } catch (Exception $e) {
-            return null;
-        }
     }
 } 

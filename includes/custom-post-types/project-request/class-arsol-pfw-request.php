@@ -6,6 +6,8 @@
  * @subpackage Entities
  */
 
+namespace Arsol_Projects_For_Woo;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -15,7 +17,7 @@ if (!defined('ABSPATH')) {
  * 
  * Represents a single project request with clean CRUD operations
  */
-class ARSOL_PFW_Request extends WC_Data implements ARSOL_PFW_Stage_Interface {
+class ARSOL_PFW_Request extends \WC_Data implements ARSOL_PFW_Stage_Interface {
     
     /**
      * Data array for the object
@@ -76,7 +78,7 @@ class ARSOL_PFW_Request extends WC_Data implements ARSOL_PFW_Stage_Interface {
             $this->set_object_read(true);
         }
         
-        $this->data_store = WC_Data_Store::load('arsol-pfw-request');
+        $this->data_store = \WC_Data_Store::load('arsol-pfw-request');
         
         if ($this->get_id() > 0) {
             $this->data_store->read($this);

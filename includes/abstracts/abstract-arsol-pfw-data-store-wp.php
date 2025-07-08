@@ -6,6 +6,8 @@
  * @subpackage Abstracts
  */
 
+namespace Arsol_Projects_For_Woo;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -15,7 +17,7 @@ if (!defined('ABSPATH')) {
  * 
  * Base class for all our data stores, extends WooCommerce's data store
  */
-abstract class ARSOL_PFW_Data_Store_WP extends WC_Data_Store_WP implements ARSOL_PFW_Object_Data_Store_Interface {
+abstract class ARSOL_PFW_Data_Store_WP extends \WC_Data_Store_WP implements ARSOL_PFW_Object_Data_Store_Interface {
     
     /**
      * Internal meta keys which are not saved to the database
@@ -109,7 +111,7 @@ abstract class ARSOL_PFW_Data_Store_WP extends WC_Data_Store_WP implements ARSOL
     /**
      * Update post meta data for an object
      *
-     * @param WC_Data $object Object to update meta for
+     * @param \WC_Data $object Object to update meta for
      */
     protected function update_post_meta(&$object) {
         $updated_props = array();
@@ -144,7 +146,7 @@ abstract class ARSOL_PFW_Data_Store_WP extends WC_Data_Store_WP implements ARSOL
     /**
      * Get props to update for meta
      *
-     * @param WC_Data $object Object being updated
+     * @param \WC_Data $object Object being updated
      * @param array $meta_key_to_props Mapping of meta keys to props
      * @param string $meta_type Meta type (post, user, etc.)
      * @return array Props to update
@@ -166,7 +168,7 @@ abstract class ARSOL_PFW_Data_Store_WP extends WC_Data_Store_WP implements ARSOL
     /**
      * Update or delete post meta
      *
-     * @param WC_Data $object Object being updated
+     * @param \WC_Data $object Object being updated
      * @param string $meta_key Meta key to update
      * @param mixed $meta_value Meta value to set
      * @return bool True if updated
