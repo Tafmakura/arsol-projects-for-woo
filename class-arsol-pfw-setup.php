@@ -59,6 +59,21 @@ class Setup {
      * Include necessary files.
      */
     private function require_files() {
+        // CRUD Infrastructure - Load in dependency order
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/abstracts/interface-arsol-pfw-object-data-store.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/abstracts/interface-arsol-pfw-stage-interface.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/abstracts/interface-arsol-pfw-request-data-store.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/abstracts/abstract-arsol-pfw-data-store-wp.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-arsol-pfw-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-request-data-store.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/arsol-pfw-core-functions.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/class-arsol-pfw-data-stores.php';
+        
+        // Development Testing (only loaded in debug mode)
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'test-crud-basic.php';
+        }
+        
         // Core Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-permissions.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-arsol-pfw-cpt-setup.php';
@@ -107,6 +122,9 @@ class Setup {
      * Instantiate plugin classes.
      */
     private function instantiate_classes() {
+        // Initialize CRUD infrastructure - Register data stores with WooCommerce
+        ARSOL_PFW_Data_Stores::init();
+        
         // Initialize capabilities first
         new Admin\Admin_Capabilities();
         
