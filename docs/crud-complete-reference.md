@@ -3,14 +3,15 @@
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Entity Classes](#entity-classes)
-3. [Data Store Classes](#data-store-classes)
-4. [Factory Functions](#factory-functions)
-5. [Stage Management](#stage-management)
-6. [Hooks and Filters](#hooks-and-filters)
-7. [Usage Examples](#usage-examples)
-8. [Migration Guide](#migration-guide)
-9. [API Reference](#api-reference)
+2. [Taxonomy Integration Strategy](#taxonomy-integration-strategy)
+3. [Entity Classes](#entity-classes)
+4. [Data Store Classes](#data-store-classes)
+5. [Factory Functions](#factory-functions)
+6. [Stage Management](#stage-management)
+7. [Hooks and Filters](#hooks-and-filters)
+8. [Usage Examples](#usage-examples)
+9. [Migration Guide](#migration-guide)
+10. [API Reference](#api-reference)
 
 ## Overview
 
@@ -21,7 +22,69 @@ The CRUD system provides a clean, object-oriented API for managing Projects, Pro
 - **Entity Classes**: `ARSOL_PFW_Project`, `ARSOL_PFW_Proposal`, `ARSOL_PFW_Request`
 - **Data Store Classes**: Handle database operations
 - **Factory Functions**: `arsol_pfw_get_project()`, `arsol_pfw_get_proposal()`, `arsol_pfw_get_request()`
-- **Stage Management**: WooCommerce-inspired status system
+- **Stage Management**: WooCommerce-inspired status system with centralized taxonomy integration
+
+## Taxonomy Integration Strategy
+
+### **Centralized Taxonomy Approach**
+
+We maintain the existing WordPress taxonomy structure while centralizing all taxonomy operations in the data store layer. This provides clean entity APIs while preserving WordPress integration and admin functionality.
+
+### **Preserved Taxonomy Structure**
+- **Request Stages**: `arsol-pfw-request-stage` taxonomy
+  - Terms: `pending-review`, `under-review`, `on-hold`, `approved`, `rejected`
+- **Proposal Stages**: `arsol-pfw-proposal-stage` taxonomy  
+  - Terms: `processing`, `approved`, `rejected`, `expired`, etc.
+- **Project Stages**: `arsol-pfw-project-stage` taxonomy
+  - Terms: `not-started`, `in-progress`, `on-hold`, `completed`, `cancelled`
+
+### **Layer Responsibilities**
+
+#### **Entity Layer**: Clean Stage API
+```php
+// Entities work with stages as simple string properties
+$request->get_stage();           // Returns 'pending-review'
+$request->set_stage('approved'); // Sets stage property
+$request->update_stage('approved'); // Sets stage + saves + fires hooks
+$request->approve();             // Business logic method
+```
+
+#### **Data Store Layer**: Taxonomy Operations  
+```php
+// Data stores handle taxonomy complexity internally
+private function get_stage_from_taxonomy($id) {
+    $terms = wp_get_object_terms($id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+    return !empty($terms) ? $terms[0] : 'pending-review';
+}
+
+private function save_stage_to_taxonomy($id, $stage) {
+    wp_set_object_terms($id, $stage, 'arsol-pfw-request-stage');
+}
+```
+
+#### **Wrapper Layer**: Preserved Interface
+```php
+// Existing CPT classes delegate to CRUD system
+public function get_status() {
+    $request = arsol_pfw_get_request($this->request_id);
+    return $request ? $request->get_stage() : null;
+}
+
+public function set_status($stage) {
+    $request = arsol_pfw_get_request($this->request_id);
+    if ($request) {
+        $request->update_stage($stage); // Handles taxonomy internally
+    }
+}
+```
+
+### **Benefits of This Approach**
+
+✅ **WordPress Native**: Admin filters, queries, and taxonomy screens work naturally  
+✅ **Clean APIs**: Entities work with simple properties and methods  
+✅ **Centralized**: All taxonomy operations in one place per entity  
+✅ **Zero Breaking Changes**: Existing taxonomies and admin functionality preserved  
+✅ **Performance**: Direct taxonomy operations, no extra abstraction  
 
 ## Entity Classes
 
