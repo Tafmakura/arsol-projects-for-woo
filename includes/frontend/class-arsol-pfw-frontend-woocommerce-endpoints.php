@@ -357,7 +357,7 @@ class Frontend_Endpoints {
         }
 
         // Allow access if user is the author or has project management capabilities
-        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $proposal_id);
+        $can_view = \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_proposal($user_id, $proposal_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
@@ -410,7 +410,7 @@ class Frontend_Endpoints {
         }
 
         // Allow access if user is the author or has project management capabilities
-        $can_view = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post($user_id, $request_id);
+        $can_view = \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_request($user_id, $request_id);
 
         if (!$can_view) {
             wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
@@ -448,7 +448,7 @@ class Frontend_Endpoints {
         $user_id = get_current_user_id();
         
         // Check if project exists and user has access
-        if (!$project_id || !$this->user_can_view_project($user_id, $project_id)) {
+        if (!$project_id || !\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($user_id, $project_id)) {
             // Use the no-access template for consistency
             include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
             return false;
@@ -488,26 +488,8 @@ class Frontend_Endpoints {
      * @return bool Whether the user can view the project
      */
     public static function user_can_view_project($user_id, $project_id) {
-        if (!is_user_logged_in()) {
-            return false;
-        }
-
-        $post = get_post($project_id);
-        if (!$post) {
-            return false;
-        }
-
-        // Project managers can view all projects
-        if (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id)) {
-            return true;
-        }
-
-        // Project creators can view their own projects
-        if (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id) && $post->post_author == $user_id) {
-            return true;
-        }
-
-        return false;
+        // This method is now deprecated - use \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project() instead
+        return \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($user_id, $project_id);
     }
 
     /**

@@ -37,7 +37,7 @@ class Proposal_Conversion {
                 throw new Exception(__('You do not have sufficient permissions to perform this action.', 'arsol-pfw'));
             }
 
-            if ($is_internal_call && !\Arsol_Projects_For_Woo\Workflow\Workflow_Handler::user_can_view_post(get_current_user_id(), $proposal_id)) {
+            if ($is_internal_call && !\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_post(get_current_user_id(), $proposal_id)) {
                 throw new Exception(__('You do not have sufficient permissions to perform this action.', 'arsol-pfw'));
             }
 

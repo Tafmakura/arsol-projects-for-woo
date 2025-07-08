@@ -60,6 +60,7 @@ class Setup {
      */
     private function require_files() {
         // Core Classes
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-permissions.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-arsol-pfw-cpt-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-shortcodes.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-arsol-pfw-wc-integration.php';

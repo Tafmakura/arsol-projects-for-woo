@@ -45,29 +45,6 @@ class Workflow_Handler {
     }
 
     /**
-     * Check if a user can view a specific post
-     * This method is used for security validation in conversions
-     */
-    public static function user_can_view_post($user_id, $post_id) {
-        $post = get_post($post_id);
-        if (!$post) {
-            return false;
-        }
-    
-        // The user can view their own posts
-        if ($post->post_author == $user_id) {
-            return true;
-        }
-    
-        // Admins can view everything
-        if (user_can($user_id, 'manage_options')) {
-            return true;
-        }
-        
-        return false;
-    }
-
-    /**
      * Legacy method to manage review status - currently not used
      */
     public function set_proposal_review_status($new_status, $old_status, $post) {

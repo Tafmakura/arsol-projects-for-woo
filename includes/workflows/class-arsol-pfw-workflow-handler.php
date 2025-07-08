@@ -40,23 +40,8 @@ class Workflow_Handler {
      * @return bool True if the user can view the post, false otherwise.
      */
     public static function user_can_view_post($user_id, $post_id) {
-        if (empty($user_id) || empty($post_id)) {
-            return false;
-        }
-    
-        $post = get_post($post_id);
-    
-        if (!$post) {
-            return false;
-        }
-    
-        // Check if the user is the author of the post
-        if ((int) $post->post_author === (int) $user_id) {
-            return true;
-        }
-    
-        // Fallback to the general project management capability check
-        return \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id);
+        // This method is now deprecated - use \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_post() instead
+        return \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_post($user_id, $post_id);
     }
 
     public function set_proposal_review_status($new_status, $old_status, $post) {

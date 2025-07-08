@@ -557,24 +557,8 @@ class Woocommerce {
      * @return bool
      */
     public static function user_can_view_project($user_id, $project_id) {
-        // Check if user is admin
-        if (user_can($user_id, 'manage_options')) {
-            return true;
-        }
-
-        // Check if user is project owner
-        $project_owner = get_post_field('post_author', $project_id);
-        if ($project_owner == $user_id) {
-            return true;
-        }
-
-        // Check if user is a collaborator
-        $collaborators = get_post_meta($project_id, '_arsol_pfw_project_collaborators', true);
-        if (is_array($collaborators) && in_array($user_id, $collaborators)) {
-            return true;
-        }
-
-        return false;
+        // This method is now deprecated - use \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project() instead
+        return \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($user_id, $project_id);
     }
 
     /**

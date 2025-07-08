@@ -234,7 +234,7 @@ class Frontend_Woocommerce_Checkout {
 
                         foreach ($projects as $project) {
                             // Only show projects that the user can view
-                            if (Woocommerce::user_can_view_project($current_user_id, $project->ID)) {
+                            if (\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($current_user_id, $project->ID)) {
                                 $options[] = array(
                                     'value' => (string) $project->ID,
                                     'label' => esc_html($project->post_title),
@@ -305,7 +305,7 @@ class Frontend_Woocommerce_Checkout {
 
         $options = array();
         foreach ($projects as $project) {
-            if (Woocommerce::user_can_view_project($current_user_id, $project->ID)) {
+            if (\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($current_user_id, $project->ID)) {
                 $options[$project->ID] = esc_html($project->post_title);
             }
         }

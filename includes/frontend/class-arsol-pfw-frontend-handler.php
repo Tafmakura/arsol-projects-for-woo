@@ -26,29 +26,6 @@ if (!defined('ABSPATH')) {
 abstract class Frontend_Handler {
 
     /**
-     * Check if a user can view a specific post
-     * This method is used for security validation in customer actions
-     */
-    public static function user_can_view_post($user_id, $post_id) {
-        $post = get_post($post_id);
-        if (!$post) {
-            return false;
-        }
-        
-        // The user can view their own posts
-        if ($post->post_author == $user_id) {
-            return true;
-        }
-        
-        // Admins can view everything
-        if (user_can($user_id, 'manage_options')) {
-            return true;
-        }
-        
-        return false;
-    }
-
-    /**
      * Safe redirect method that handles both header and JavaScript redirects
      */
     protected function safe_redirect($url) {
@@ -149,9 +126,7 @@ abstract class Frontend_Handler {
      * Validate nonce for security
      */
     protected function validate_nonce($nonce_field, $nonce_action) {
-        if (!isset($_GET[$nonce_field]) || !wp_verify_nonce($_GET[$nonce_field], $nonce_action)) {
-            wp_die(__('Invalid request or nonce.', 'arsol-pfw'));
-        }
+        \Arsol_Projects_For_Woo\Core\Permissions::validate_nonce_and_permissions($nonce_field, $nonce_action);
     }
 
     /**
@@ -160,7 +135,7 @@ abstract class Frontend_Handler {
     protected function check_user_permissions($post_id, $action = 'view') {
         $user_id = get_current_user_id();
         
-        if (!self::user_can_view_post($user_id, $post_id)) {
+        if (!\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_post($user_id, $post_id)) {
             wp_die(__('You do not have permission to perform this action.', 'arsol-pfw'));
         }
         
