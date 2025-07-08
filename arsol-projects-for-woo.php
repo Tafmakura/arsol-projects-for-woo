@@ -56,7 +56,7 @@ use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Meta;
 use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Buttons;
 
 // Include the Setup class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/class-arsol-pfw-setup.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'class-arsol-pfw-setup.php';
 
 // Include the admin settings class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-settings-general.php';

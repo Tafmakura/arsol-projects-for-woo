@@ -90,7 +90,7 @@ mkdir -p includes/workflows/default
 
 #### 1.2 Create Root Setup Class
 ```php
-// includes/class-arsol-pfw-setup.php
+// class-arsol-pfw-setup.php
 namespace Arsol_PFW;
 
 class Setup {
