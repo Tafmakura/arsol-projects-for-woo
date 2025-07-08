@@ -86,10 +86,20 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-users.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-capabilities.php';
 
-        // Frontend Handlers
+        // Frontend handlers
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-proposal.php';
+        
+        // Keep existing project frontend handler
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-arsol-pfw-cpt-project-frontend-handler.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-arsol-pfw-cpt-request-frontend-handler.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-arsol-pfw-cpt-proposal-frontend-handler.php';
+        
+        // Other includes...
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-arsol-pfw-workflow-handler.php';
+
+        // Conversion classes
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-arsol-pfw-cpt-request-conversion.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-arsol-pfw-cpt-proposal-conversion.php';
     }
 
     /**
@@ -130,8 +140,11 @@ class Setup {
 
         // Frontend Handlers
         new Custom_Post_Types\Project\Frontend_Handler();
-        new Custom_Post_Types\ProjectRequest\Frontend_Handler();
-        new Custom_Post_Types\ProjectProposal\Frontend_Handler();
+        new \Arsol_Projects_For_Woo\Frontend\Request_Frontend();
+        new \Arsol_Projects_For_Woo\Frontend\Proposal_Frontend();
+        
+        // Workflow Handler
+        new \Arsol_Projects_For_Woo\Workflow\Workflow_Handler();
     }
 
     public function woocommerce_notice() {
