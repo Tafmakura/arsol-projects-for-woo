@@ -18,24 +18,28 @@ if (!isset($post) || !$post) {
     return;
 }
 
-// Get request details
-$request_budget = get_post_meta($post->ID, '_arsol_pfw_request_budget', true);
-$request_timeline = get_post_meta($post->ID, '_arsol_pfw_request_timeline', true);
-$wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
-
-// Get request stage (with proper error handling)
-$stage_terms = wp_get_post_terms($post->ID, 'arsol-pfw-request-stage', ['fields' => 'slugs']);
-$current_stage = '';
-if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
-    $current_stage = $stage_terms[0];
+// Use factory function to get request object
+$request = arsol_pfw_get_request($post->ID);
+if (!$request) {
+    echo '<p>' . esc_html__('Request not found.', 'arsol-pfw') . '</p>';
+    return;
 }
 
-do_action('arsol_projects_before_request_state', $post->ID);
+// Get request details using CRUD methods
+$request_budget = $request->get_budget();
+$request_timeline = $request->get_prop('timeline');
+$request_stage = $request->get_stage();
+$request_deadline = $request->get_deadline();
+$request_priority = $request->get_prop('priority');
+
+$wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
+
+do_action('arsol_projects_before_request_state', $request->get_id());
 ?>
 
 <?php
 // 1. Customer Notice (first)
-$customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($post->ID, 'request');
+$customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($request->get_id(), 'request');
 if (!empty($customer_notice)) : ?>
     <div class="arsol-pfw-customer-notice">
         <div class="arsol-pfw-notice-content">
@@ -45,12 +49,33 @@ if (!empty($customer_notice)) : ?>
 <?php endif; ?>
 
 <?php
-// 2. Post Content (second)
-if (!empty($post->post_content)) : ?>
+// 2. Request Status and Details
+?>
+<div class="arsol-pfw-request-status">
+    <?php if ($request_stage) : ?>
+        <p><strong><?php _e('Status:', 'arsol-pfw'); ?></strong> <?php echo esc_html(\Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label('request', $request_stage)); ?></p>
+    <?php endif; ?>
+    
+    <?php if ($request_budget) : ?>
+        <p><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php echo wp_kses_post(wc_price($request_budget)); ?></p>
+    <?php endif; ?>
+    
+    <?php if ($request_deadline) : ?>
+        <p><strong><?php _e('Deadline:', 'arsol-pfw'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($request_deadline))); ?></p>
+    <?php endif; ?>
+    
+    <?php if ($request_priority) : ?>
+        <p><strong><?php _e('Priority:', 'arsol-pfw'); ?></strong> <?php echo esc_html($request_priority); ?></p>
+    <?php endif; ?>
+</div>
+
+<?php
+// 3. Post Content (request description)
+if (!empty($request->get_name()) && !empty($post->post_content)) : ?>
     <div class="arsol-pfw-post-content">
         <h4><?php _e('Request Details', 'arsol-pfw'); ?></h4>
         <?php echo wp_kses_post($post->post_content); ?>
     </div>
 <?php endif; ?>
 
-<?php do_action('arsol_projects_after_request_state', $post->ID); ?>
+<?php do_action('arsol_projects_after_request_state', $request->get_id()); ?>

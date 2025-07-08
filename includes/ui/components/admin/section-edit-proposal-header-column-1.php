@@ -9,15 +9,21 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
     return;
 }
 
-$proposal_id = $post->ID;
-$customer_id = $post->post_author;
+// Use factory function to get proposal object
+$proposal = arsol_pfw_get_proposal($post->ID);
+if (!$proposal) {
+    return;
+}
+
+$proposal_id = $proposal->get_id();
+$customer_id = $proposal->get_customer_id();
 $customer = get_userdata($customer_id);
 $proposal_status = get_post_status($post);
-$start_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_start_date', true);
-$delivery_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_delivery_date', true);
-$expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_date', true);
-$cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
-$proposal_project_lead = get_post_meta($proposal_id, '_arsol_pfw_proposal_project_lead', true);
+$start_date = $proposal->get_prop('start_date');
+$delivery_date = $proposal->get_prop('delivery_date');
+$expiration_date = $proposal->get_prop('expiration_date');
+$cost_proposal_type = $proposal->get_prop('costing_type');
+$proposal_project_lead = $proposal->get_prop('project_lead');
 
 // Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;
@@ -26,69 +32,65 @@ $parent_project_data = false;
 // ALWAYS check URL parameter first (for new proposals)
 if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
     $parent_project_id = intval($_GET['parent_project']);
-    $parent_project = get_post($parent_project_id);
+    $parent_project = arsol_pfw_get_project($parent_project_id);
     
-    if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
+    if ($parent_project) {
         $is_project_tied = true;
         
-        // Get parent project data - CORRECT FIELDS
-        $parent_customer_id = $parent_project->post_author; // Customer is post_author, not meta
-        $parent_lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead', true); // Correct meta key
+        // Get parent project data using CRUD methods
+        $parent_customer_id = $parent_project->get_customer_id();
+        $parent_lead_id = $parent_project->get_project_lead();
         
         $parent_project_data = array(
-            'id' => $parent_project_id,
-            'title' => $parent_project->post_title,
+            'id' => $parent_project->get_id(),
+            'title' => $parent_project->get_name(),
             'customer_id' => $parent_customer_id,
             'lead_id' => $parent_lead_id
         );
         
         // EXCLUSIVELY use parent project values - override completely
-            $customer_id = $parent_customer_id;
-            $customer = get_userdata($customer_id);
-            $proposal_project_lead = $parent_lead_id;
+        $customer_id = $parent_customer_id;
+        $customer = get_userdata($customer_id);
+        $proposal_project_lead = $parent_lead_id;
         $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
     }
 } 
 // Fallback to meta data check (for existing proposals)
 elseif ($proposal_id > 0) {
-    $parent_project_id = get_post_meta($proposal_id, '_arsol_pfw_parent_project_id', true);
+    $parent_project_id = $proposal->get_prop('parent_project_id');
     if (!empty($parent_project_id)) {
-        $parent_project = get_post($parent_project_id);
-        if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
+        $parent_project = arsol_pfw_get_project($parent_project_id);
+        if ($parent_project) {
             $is_project_tied = true;
             
-            // Get parent project data - CORRECT FIELDS
-            $parent_customer_id = $parent_project->post_author; // Customer is post_author, not meta
-            $parent_lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead', true); // Correct meta key
+            // Get parent project data using CRUD methods
+            $parent_customer_id = $parent_project->get_customer_id();
+            $parent_lead_id = $parent_project->get_project_lead();
             
             $parent_project_data = array(
-                'id' => $parent_project_id,
-                'title' => $parent_project->post_title,
+                'id' => $parent_project->get_id(),
+                'title' => $parent_project->get_name(),
                 'customer_id' => $parent_customer_id,
                 'lead_id' => $parent_lead_id
             );
             
             // EXCLUSIVELY use parent project values - override completely
-                $customer_id = $parent_customer_id;
-                $customer = get_userdata($customer_id);
-                $proposal_project_lead = $parent_lead_id;
+            $customer_id = $parent_customer_id;
+            $customer = get_userdata($customer_id);
+            $proposal_project_lead = $parent_lead_id;
             $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
         }
     }
 }
 
-// Get status terms
-$proposal_stage_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
-$current_proposal_stage = 'processing'; // Default to processing
-if (!is_wp_error($proposal_stage_terms) && !empty($proposal_stage_terms)) {
-    $current_proposal_stage = $proposal_stage_terms[0];
+// Get proposal stage using CRUD method
+$current_proposal_stage = $proposal->get_stage();
+if (empty($current_proposal_stage)) {
+    $current_proposal_stage = 'processing'; // Default to processing
 }
 
-// Get all available statuses
-$all_proposal_stages = get_terms(array(
-    'taxonomy' => 'arsol-pfw-proposal-stage',
-    'hide_empty' => false,
-));
+// Get available stages using Stage Manager
+$available_stages = arsol_pfw_get_proposal_available_stages();
 ?>
 
 <div class="form-field-row">
@@ -128,9 +130,9 @@ $all_proposal_stages = get_terms(array(
         <?php else: ?>
             <!-- Regular customer search field -->
             <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>" required>
-                <?php if ($post->post_author): ?>
+                <?php if ($customer_id): ?>
                     <?php 
-                    $customer_user = get_userdata($post->post_author);
+                    $customer_user = get_userdata($customer_id);
                     if ($customer_user) {
                         $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer_user);
                         
@@ -184,10 +186,10 @@ $all_proposal_stages = get_terms(array(
     <p class="form-field form-field-wide">
         <label for="proposal_stage"><?php _e('Proposal Stage:', 'arsol-pfw'); ?></label>
         <select id="proposal_stage" name="proposal_stage" class="wc-enhanced-select">
-            <?php if (!empty($all_proposal_stages) && !is_wp_error($all_proposal_stages)) : ?>
-                <?php foreach ($all_proposal_stages as $status) : ?>
-                    <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($current_proposal_stage, $status->slug); ?>>
-                        <?php echo esc_html($status->name); ?>
+            <?php if (!empty($available_stages)) : ?>
+                <?php foreach ($available_stages as $stage_slug => $stage_name) : ?>
+                    <option value="<?php echo esc_attr($stage_slug); ?>" <?php selected($current_proposal_stage, $stage_slug); ?>>
+                        <?php echo esc_html($stage_name); ?>
                     </option>
                 <?php endforeach; ?>
             <?php endif; ?>

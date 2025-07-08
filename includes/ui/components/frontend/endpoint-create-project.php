@@ -18,14 +18,22 @@ if (!defined('ABSPATH')) {
 
 $is_edit = isset($is_edit) && $is_edit;
 
-// If editing, populate fields from the post object
+// If editing, populate fields from the project object
 if ($is_edit && isset($post) && $post) {
-    $title = $post->post_title;
-    $content = $post->post_content;
-    $budget_data = get_post_meta($post->ID, '_arsol_pfw_project_budget', true);
-    $budget = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
-    $start_date = get_post_meta($post->ID, '_arsol_pfw_project_start_date', true);
-    $delivery_date = get_post_meta($post->ID, '_arsol_pfw_project_delivery_date', true);
+    $project = arsol_pfw_get_project($post->ID);
+    if ($project) {
+        $title = $project->get_name();
+        $content = $post->post_content; // Post content still comes from WP_Post
+        $budget = $project->get_budget();
+        $start_date = $project->get_prop('start_date');
+        $delivery_date = $project->get_deadline();
+    } else {
+        $title = '';
+        $content = '';
+        $budget = '';
+        $start_date = '';
+        $delivery_date = '';
+    }
 } else {
     $title = '';
     $content = '';

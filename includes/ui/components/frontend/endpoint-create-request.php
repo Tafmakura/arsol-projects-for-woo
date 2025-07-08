@@ -19,9 +19,9 @@ $parent_project_title = '';
 if (!$is_edit && isset($_GET['parent_project'])) {
     $parent_project_id = absint($_GET['parent_project']);
     if ($parent_project_id) {
-        $parent_project = get_post($parent_project_id);
-        if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
-            $parent_project_title = $parent_project->post_title;
+        $parent_project = arsol_pfw_get_project($parent_project_id);
+        if ($parent_project) {
+            $parent_project_title = $parent_project->get_name();
         } else {
             $parent_project_id = 0; // Invalid parent project
         }
@@ -30,23 +30,25 @@ if (!$is_edit && isset($_GET['parent_project'])) {
 
 // If editing, check if this is a project-tied request
 if ($is_edit) {
-    $parent_project_id = get_post_meta($post->ID, '_arsol_pfw_parent_project_id', true);
-    if ($parent_project_id) {
-        $parent_project = get_post($parent_project_id);
-        if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
-            $parent_project_title = $parent_project->post_title;
+    $request = arsol_pfw_get_request($post->ID);
+    if ($request) {
+        $parent_project_id = $request->get_prop('parent_project_id');
+        if ($parent_project_id) {
+            $parent_project = arsol_pfw_get_project($parent_project_id);
+            if ($parent_project) {
+                $parent_project_title = $parent_project->get_name();
+            }
         }
     }
 }
 
-// If editing, populate fields from the post object
-if ($is_edit) {
-    $title = $post->post_title;
-    $content = $post->post_content;
-    $budget_data = get_post_meta($post->ID, '_arsol_pfw_request_budget', true);
-    $budget = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
-    $start_date = get_post_meta($post->ID, '_arsol_pfw_request_start_date', true);
-    $delivery_date = get_post_meta($post->ID, '_arsol_pfw_request_delivery_date', true);
+// If editing, populate fields from the request object
+if ($is_edit && isset($request)) {
+    $title = $request->get_name();
+    $content = $post->post_content; // Post content still comes from WP_Post
+    $budget = $request->get_budget();
+    $start_date = $request->get_prop('start_date');
+    $delivery_date = $request->get_deadline();
 } else {
     $title = '';
     $content = '';

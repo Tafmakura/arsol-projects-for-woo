@@ -9,29 +9,26 @@ if (!$post || $post->post_type !== 'arsol-pfw-request') {
     return;
 }
 
-$request_id = $post->ID;
-$customer_id = $post->post_author;
-$customer = get_userdata($customer_id);
-// Get request stage (with proper error handling)
-$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
-$request_stage = 'pending-review'; // Default value
-if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
-    $request_stage = $request_stage_terms[0];
+// Use factory function to get request object
+$request = arsol_pfw_get_request($post->ID);
+if (!$request) {
+    return;
 }
 
-$budget_data = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
-$start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
-$delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', true);
+$request_id = $request->get_id();
+$customer_id = $request->get_customer_id();
+$customer = get_userdata($customer_id);
+$request_stage = $request->get_stage();
+$budget_data = $request->get_budget();
+$start_date = $request->get_prop('start_date');
+$delivery_date = $request->get_deadline();
 
-// Get all request stages (with proper error handling)
-$stages = get_terms(array(
-    'taxonomy' => 'arsol-pfw-request-stage',
-    'hide_empty' => false,
-));
+// Get available stages using Stage Manager
+$available_stages = arsol_pfw_get_request_available_stages();
 
-// Handle WP_Error from get_terms
-if (is_wp_error($stages)) {
-    $stages = array(); // Fallback to empty array
+// Set default stage if none set
+if (empty($request_stage)) {
+    $request_stage = 'pending-review';
 }
 ?>
 
@@ -49,9 +46,9 @@ if (is_wp_error($stages)) {
             <?php endif; ?>
         </label>
         <select class="arsol-disabled-select" name="post_author_override" disabled>
-            <?php if ($post->post_author): ?>
-        <?php
-                $customer_user = get_userdata($post->post_author);
+            <?php if ($customer_id): ?>
+                <?php
+                $customer_user = get_userdata($customer_id);
                 if ($customer_user) {
                     $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer_user);
                     
@@ -75,16 +72,34 @@ if (is_wp_error($stages)) {
     <p class="form-field form-field-wide">
         <label for="request-stage"><?php _e('Stage:', 'arsol-pfw'); ?></label>
         <select id="request-stage" name="request_stage" class="wc-enhanced-select">
-            <?php if (!empty($stages) && !is_wp_error($stages)): ?>
-                <?php foreach ($stages as $stage): ?>
-                    <option value="<?php echo esc_attr($stage->slug); ?>" <?php selected($request_stage, $stage->slug); ?>>
-                        <?php echo esc_html($stage->name); ?>
+            <?php if (!empty($available_stages)): ?>
+                <?php foreach ($available_stages as $stage_slug => $stage_name): ?>
+                    <option value="<?php echo esc_attr($stage_slug); ?>" <?php selected($request_stage, $stage_slug); ?>>
+                        <?php echo esc_html($stage_name); ?>
                     </option>
                 <?php endforeach; ?>
             <?php else: ?>
                 <option value=""><?php _e('No stages available', 'arsol-pfw'); ?></option>
             <?php endif; ?>
         </select>
+    </p>
+</div>
+
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
+        <label for="request_budget"><?php _e('Budget:', 'arsol-pfw'); ?></label>
+        <input type="number" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget_data); ?>" step="0.01" class="widefat">
+    </p>
+</div>
+
+<div class="form-field-row">
+    <p class="form-field form-field-half">
+        <label for="request_start_date"><?php _e('Start Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="request_start_date" name="request_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
+    </p>
+    <p class="form-field form-field-half">
+        <label for="request_delivery_date"><?php _e('Delivery Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
     </p>
 </div>
 

@@ -363,10 +363,10 @@ class Workflow_Handler {
                 "Force clearing stuck workflow for post #{$post_id}, started at: {$workflow_started}");
             
             // Clean up all workflow metadata
-            delete_post_meta($post_id, '_arsol_workflow_started');
+                    delete_post_meta($post_id, '_arsol_workflow_started');
             delete_post_meta($post_id, '_arsol_workflow_type');
-            delete_post_meta($post_id, '_arsol_conversion_type');
-            delete_post_meta($post_id, '_arsol_conversion_step');
+                    delete_post_meta($post_id, '_arsol_conversion_type');
+                    delete_post_meta($post_id, '_arsol_conversion_step');
             delete_post_meta($post_id, '_arsol_created_entities');
             
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
@@ -482,9 +482,9 @@ class Workflow_Handler {
         if ($notices) {
             foreach ($notices as $notice) {
                 $class = 'notice notice-' . $notice['type'] . ' is-dismissible';
-                echo '<div class="' . esc_attr($class) . '">';
+            echo '<div class="' . esc_attr($class) . '">';
                 echo '<p>' . esc_html($notice['message']) . '</p>';
-                echo '</div>';
+            echo '</div>';
             }
             
             // Clear notices after displaying

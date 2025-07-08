@@ -9,19 +9,22 @@ if (!$post || $post->post_type !== 'arsol-pfw-project') {
     return;
 }
 
-$project_id = $post->ID;
-$customer_id = $post->post_author;
-$customer = get_userdata($customer_id);
-        $project_stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
-$project_stage = !empty($project_stage_terms) ? $project_stage_terms[0] : 'not-started';
-$project_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
-$start_date = get_post_meta($project_id, '_arsol_pfw_project_start_date', true);
-$due_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
+// Use factory function to get project object
+$project = arsol_pfw_get_project($post->ID);
+if (!$project) {
+    return;
+}
 
-$all_statuses = get_terms(array(
-                'taxonomy' => 'arsol-pfw-project-stage',
-    'hide_empty' => false,
-));
+$project_id = $project->get_id();
+$customer_id = $project->get_customer_id();
+$customer = get_userdata($customer_id);
+$project_stage = $project->get_stage();
+$project_lead = $project->get_project_lead();
+$start_date = $project->get_prop('start_date');
+$due_date = $project->get_deadline();
+
+// Get available stages using Stage Manager
+$available_stages = arsol_pfw_get_project_available_stages();
 ?>
 
 <div class="form-field-row">
@@ -38,9 +41,9 @@ $all_statuses = get_terms(array(
             <?php endif; ?>
         </label>
         <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>" required>
-            <?php if ($post->post_author): ?>
+            <?php if ($customer_id): ?>
                 <?php 
-                $customer_user = get_userdata($post->post_author);
+                $customer_user = get_userdata($customer_id);
                 if ($customer_user) {
                     $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer_user);
                     
@@ -75,11 +78,13 @@ $all_statuses = get_terms(array(
     <p class="form-field form-field-wide">
         <label for="project_stage"><?php _e('Project Stage:', 'arsol-pfw'); ?></label>
         <select id="project_stage" name="project_stage" class="wc-enhanced-select">
-            <?php foreach ($all_statuses as $status) : ?>
-                <option value="<?php echo esc_attr($status->slug); ?>" <?php selected($project_stage, $status->slug); ?>>
-                    <?php echo esc_html($status->name); ?>
-                </option>
-            <?php endforeach; ?>
+            <?php if (!empty($available_stages)) : ?>
+                <?php foreach ($available_stages as $stage_slug => $stage_name) : ?>
+                    <option value="<?php echo esc_attr($stage_slug); ?>" <?php selected($project_stage, $stage_slug); ?>>
+                        <?php echo esc_html($stage_name); ?>
+                    </option>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </select>
     </p>
 </div>
