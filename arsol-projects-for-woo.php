@@ -59,17 +59,17 @@ use Arsol_Projects_For_Woo\Frontend_Template_Sidebar_Buttons;
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-setup.php';
 
 // Include the admin settings class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-settings-general.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-settings-general.php';
 
 // Include the admin setup defaults class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-admin-setup-defaults.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/admin/class-admin-setup-defaults.php';
 
 // Include the workflow handler class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-workflow-handler.php';
 
 // Include the frontend sidebar classes
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-meta.php';
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/class-frontend-template-sidebar-buttons.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/frontend/class-frontend-template-sidebar-meta.php';
+require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/classes/frontend/class-frontend-template-sidebar-buttons.php';
 
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');
