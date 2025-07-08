@@ -72,6 +72,7 @@ class Setup {
         // Development Testing (only loaded in debug mode)
         if (defined('WP_DEBUG') && WP_DEBUG) {
             require_once ARSOL_PROJECTS_PLUGIN_DIR . 'test-crud-basic.php';
+            require_once ARSOL_PROJECTS_PLUGIN_DIR . 'test-crud-compatibility.php';
         }
         
         // Core Classes

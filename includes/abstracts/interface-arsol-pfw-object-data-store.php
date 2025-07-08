@@ -20,14 +20,16 @@ interface ARSOL_PFW_Object_Data_Store_Interface extends WC_Object_Data_Store_Int
     /**
      * Get available stages for the entity
      *
+     * @param string $taxonomy Taxonomy name (optional)
      * @return array Array of stage_slug => stage_name
      */
-    public function get_available_stages();
+    public function get_available_stages($taxonomy = '');
     
     /**
      * Get count of entities by stage
      *
+     * @param string $taxonomy Taxonomy name (optional)
      * @return array Array of stage_slug => count
      */
-    public function get_stage_counts();
+    public function get_stage_counts($taxonomy = '');
 } 

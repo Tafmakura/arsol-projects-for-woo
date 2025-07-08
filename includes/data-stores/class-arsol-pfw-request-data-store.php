@@ -288,19 +288,29 @@ class ARSOL_PFW_Request_Data_Store extends ARSOL_PFW_Data_Store_WP implements AR
     /**
      * Get available stages for requests
      *
+     * @param string $taxonomy Taxonomy name (optional, will use default if empty)
      * @return array Array of stage_slug => stage_name
      */
-    public function get_available_stages() {
-        return parent::get_available_stages($this->stage_taxonomy);
+    public function get_available_stages($taxonomy = '') {
+        // If no taxonomy provided, use the default request stage taxonomy
+        if (empty($taxonomy)) {
+            $taxonomy = $this->stage_taxonomy;
+        }
+        return parent::get_available_stages($taxonomy);
     }
     
     /**
      * Get stage counts for requests
      *
+     * @param string $taxonomy Taxonomy name (optional, will use default if empty)
      * @return array Array of stage_slug => count
      */
-    public function get_stage_counts() {
-        return parent::get_stage_counts($this->stage_taxonomy);
+    public function get_stage_counts($taxonomy = '') {
+        // If no taxonomy provided, use the default request stage taxonomy
+        if (empty($taxonomy)) {
+            $taxonomy = $this->stage_taxonomy;
+        }
+        return parent::get_stage_counts($taxonomy);
     }
     
     /*
