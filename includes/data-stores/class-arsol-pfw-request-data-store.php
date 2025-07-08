@@ -46,6 +46,12 @@ class ARSOL_PFW_Request_Data_Store extends ARSOL_PFW_Data_Store_WP implements AR
     protected $stage_taxonomy = 'arsol-pfw-request-stage';
     
     /**
+     * Core data keys (properties that exist in wp_posts table)
+     * @var array
+     */
+    protected $core_data_keys = array('name', 'description', 'date_created', 'date_modified');
+    
+    /**
      * Create a new request in the database
      *
      * @param ARSOL_PFW_Request $request Request object
@@ -216,7 +222,7 @@ class ARSOL_PFW_Request_Data_Store extends ARSOL_PFW_Data_Store_WP implements AR
      *
      * @param ARSOL_PFW_Request $request Request object
      */
-    private function read_request_data(&$request) {
+    protected function read_request_data(&$request) {
         $meta_values = get_post_meta($request->get_id());
         
         foreach ($this->meta_key_to_props as $meta_key => $prop) {
@@ -240,7 +246,7 @@ class ARSOL_PFW_Request_Data_Store extends ARSOL_PFW_Data_Store_WP implements AR
      * @param string $time_string Time string
      * @return \WC_DateTime|null
      */
-    private function string_to_timestamp($time_string) {
+    protected function string_to_timestamp($time_string) {
         if (empty($time_string)) {
             return null;
         }
