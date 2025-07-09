@@ -700,13 +700,38 @@ class Users {
      *
      * @param int $user_id User ID
      * @param string $post_type Post type
-     * @return string Filter link URL
+     * @return string Formatted HTML link or fallback display
      */
     public static function create_project_lead_filter_link($user_id, $post_type = 'arsol-pfw-project') {
-        return add_query_arg(array(
+        if (!$user_id) {
+            return '<span class="na">&ndash;</span>';
+        }
+        
+        $user = get_userdata($user_id);
+        if (!$user) {
+            return '<span class="na">&ndash;</span>';
+        }
+        
+        $display_name = '';
+        if (!empty($user->display_name)) {
+            $display_name = $user->display_name;
+        } elseif (!empty($user->first_name) || !empty($user->last_name)) {
+            $display_name = trim($user->first_name . ' ' . $user->last_name);
+        } else {
+            $display_name = $user->user_email;
+        }
+        
+        // Create filter URL
+        $filter_url = add_query_arg(array(
             'post_type' => $post_type,
-            'author' => $user_id,
+            'project_lead' => $user_id,
         ), admin_url('edit.php'));
+        
+        return sprintf(
+            '<a href="%s">%s</a>',
+            esc_url($filter_url),
+            esc_html($display_name)
+        );
     }
 
     /**

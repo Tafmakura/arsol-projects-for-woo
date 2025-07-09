@@ -29,7 +29,7 @@ class Proposals {
         // Add columns in desired order
         $new_columns['cb'] = $columns['cb'];
         $new_columns['title'] = $columns['title'];
-        $new_columns['customer'] = __('Customer', 'arsol-pfw');        $new_columns['project'] = __('Project', 'arsol-pfw');
+        $new_columns['customer'] = __('Customer', 'arsol-pfw');
         $new_columns['project'] = __('Project', 'arsol-pfw');
         $new_columns['proposal_stage'] = __('Stage', 'arsol-pfw');
         $new_columns['project_lead'] = __('Project Lead', 'arsol-pfw');
