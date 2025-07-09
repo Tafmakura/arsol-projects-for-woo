@@ -456,11 +456,13 @@ class Workflow_Handler {
     }
 
     /**
-     * Display conversion notices using Settings API
+     * Display conversion notices using session-based approach
      */
     public function display_conversion_notices() {
-        // Display any settings errors/notices using WordPress Settings API
-        settings_errors('arsol_pfw_messages');
+        // Display any conversion notices stored in transient
+        if (class_exists('\Arsol_Projects_For_Woo\Core\Simple_Converter')) {
+            \Arsol_Projects_For_Woo\Core\Simple_Converter::display_admin_notices();
+        }
     }
 
     /**
@@ -469,7 +471,9 @@ class Workflow_Handler {
     public function display_post_edit_notices() {
         // Check if we're on a post edit screen and settings-updated parameter is present
         if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
-            settings_errors('arsol_pfw_messages');
+            if (class_exists('\Arsol_Projects_For_Woo\Core\Simple_Converter')) {
+                \Arsol_Projects_For_Woo\Core\Simple_Converter::display_admin_notices();
+            }
         }
     }
 }

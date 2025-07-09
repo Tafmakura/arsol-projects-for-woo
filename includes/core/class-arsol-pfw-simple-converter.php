@@ -67,7 +67,7 @@ class Simple_Converter {
             wp_delete_post($request_id, true);
             
             // 6. Success
-            $this->add_notice(__('Request converted to proposal successfully.', 'arsol-pfw'), 'updated');
+            $this->add_notice(__('Request converted to proposal successfully.', 'arsol-pfw'), 'success');
             
             // Use Settings API redirect pattern
             wp_redirect(add_query_arg('settings-updated', 'true', admin_url("post.php?post={$proposal_id}&action=edit")));
@@ -143,7 +143,7 @@ class Simple_Converter {
             wp_delete_post($proposal_id, true);
             
             // 7. Success
-            $this->add_notice(__('Proposal converted to project successfully.', 'arsol-pfw'), 'updated');
+            $this->add_notice(__('Proposal converted to project successfully.', 'arsol-pfw'), 'success');
             
             // Use Settings API redirect pattern
             wp_redirect(add_query_arg('settings-updated', 'true', admin_url("post.php?post={$project_id}&action=edit")));
@@ -313,27 +313,50 @@ class Simple_Converter {
     }
 
     /**
-     * Add a WordPress admin notice using Settings API best practice
+     * Add a WordPress admin notice using session-based approach for post edit screens
      * 
      * @param string $message Notice message
-     * @param string $type Notice type (updated, error, notice-warning, notice-info)
+     * @param string $type Notice type (success, error, warning, info)
      */
-    private function add_notice($message, $type = 'updated') {
-        // Use WordPress Settings API for admin notices
-        add_settings_error(
-            'arsol_pfw_messages', // slug
-            'arsol_pfw_conversion_notice', // unique ID
-            $message, // message
-            $type // type: 'updated', 'error', 'notice-warning', 'notice-info'
+    private function add_notice($message, $type = 'success') {
+        // Store notice in session for display after redirect
+        $notices = get_transient('arsol_pfw_conversion_notices') ?: array();
+        $notices[] = array(
+            'message' => $message,
+            'type' => $type,
+            'timestamp' => current_time('timestamp')
         );
+        set_transient('arsol_pfw_conversion_notices', $notices, 300); // 5 minutes
+        
+        // Debug: Log notice storage
+        error_log("ARSOL PFW: Stored notice - Type: {$type}, Message: {$message}");
+        error_log("ARSOL PFW: Total notices in transient: " . count($notices));
     }
 
     /**
-     * Display stored admin notices using Settings API
+     * Display stored admin notices
      */
     public static function display_admin_notices() {
-        // Display any settings errors/notices
-        settings_errors('arsol_pfw_messages');
+        $notices = get_transient('arsol_pfw_conversion_notices');
+        
+        // Debug: Log notice retrieval
+        error_log("ARSOL PFW: Retrieved notices from transient: " . print_r($notices, true));
+        
+        if (!$notices) {
+            error_log("ARSOL PFW: No notices found in transient");
+            return;
+        }
+
+        foreach ($notices as $notice) {
+            $notice_class = 'notice notice-' . $notice['type'] . ' is-dismissible';
+            echo '<div class="' . esc_attr($notice_class) . '">';
+            echo '<p>' . esc_html($notice['message']) . '</p>';
+            echo '</div>';
+        }
+
+        // Clear the notices after displaying
+        delete_transient('arsol_pfw_conversion_notices');
+        error_log("ARSOL PFW: Cleared notices from transient");
     }
 
     /**
