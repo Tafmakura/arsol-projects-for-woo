@@ -999,22 +999,7 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     flex-wrap: wrap;
 }
 
-#arsol-pfw-project-project-data .project_data_column {
-    flex: 1;
-    min-width: 250px;
-    background: #f9f9f9;
-    padding: 15px;
-    border-radius: 5px;
-    border: 1px solid #e5e5e5;
-}
 
-#arsol-pfw-project-project-data .project_data_column h3 {
-    margin: 0 0 10px 0;
-    font-size: 14px;
-    color: #555;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-}
 
 #arsol-pfw-project-project-data .project_data_column .form-field {
     margin-bottom: 10px;
