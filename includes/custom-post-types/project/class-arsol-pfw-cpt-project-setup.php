@@ -56,6 +56,21 @@ class Setup {
         }
 
         $args = array(
+            'labels'              => $labels,
+            'public'              => false,
+            'publicly_queryable'  => false,
+            'show_ui'            => true,
+            'show_in_menu'       => true,
+            'show_in_nav_menus'  => true,
+            'show_in_admin_bar'  => true,
+            'menu_position'      => 56.5,
+            'menu_icon'          => 'dashicons-clipboard',
+            'hierarchical'       => false,
+            'supports'           => $supports,
+            'has_archive'        => false,
+            'rewrite'           => array('slug' => 'project', 'with_front' => false),
+            'show_in_rest'      => false,
+            'taxonomies'         => array('arsol-pfw-project-stage'),
             // ✅ SIMPLIFIED: Use standard WordPress capabilities
             'capability_type'    => 'post',
         );

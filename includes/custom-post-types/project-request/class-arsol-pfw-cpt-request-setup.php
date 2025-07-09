@@ -57,6 +57,17 @@ class Setup {
             'public'              => false,
             'publicly_queryable'  => false,
             'show_ui'            => true,
+            'show_in_menu'       => 'edit.php?post_type=arsol-pfw-project',
+            'show_in_nav_menus'  => false,
+            'show_in_admin_bar'  => true,
+            'menu_position'      => null,
+            'menu_icon'          => 'dashicons-format-chat',
+            'hierarchical'       => false,
+            'supports'           => $supports,
+            'has_archive'        => false,
+            'rewrite'           => false,
+            'show_in_rest'      => false,
+            'taxonomies'         => array('arsol-pfw-request-stage'),
             // ✅ SIMPLIFIED: Use standard WordPress capabilities
             'capability_type'    => 'post',
         );
