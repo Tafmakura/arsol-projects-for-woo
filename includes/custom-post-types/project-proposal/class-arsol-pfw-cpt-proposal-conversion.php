@@ -17,10 +17,25 @@ class Proposal_Conversion {
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
         // Get proposal ID first if not provided
         if (empty($proposal_id)) {
-            if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce')) {
-                wp_die(__('Invalid proposal or nonce.', 'arsol-pfw'));
+            // Wrap parameter parsing in try/catch flow
+            try {
+                if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce')) {
+                    throw new Exception(__('Invalid proposal or nonce.', 'arsol-pfw'));
+                }
+                $proposal_id = intval($_GET['proposal_id']);
+            } catch (Exception $e) {
+                // Handle error via notice mechanism (same as other failures)
+                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('error', $e->getMessage());
+                // Set admin notice and redirect back if possible
+                if (!empty($_GET['proposal_id'])) {
+                    $redirect_back = admin_url('post.php?post=' . intval($_GET['proposal_id']) . '&action=edit');
+                    \Arsol_Projects_For_Woo\Core\Workflow\Workflow_Handler::set_static_conversion_failure_notice('proposal', 'project', intval($_GET['proposal_id']), __('Invalid Proposal', 'arsol-pfw'), $e->getMessage());
+                    wp_safe_redirect($redirect_back);
+                    exit;
+                }
+                // As last resort, rethrow to outer catch
+                throw $e;
             }
-            $proposal_id = intval($_GET['proposal_id']);
         }
 
         $proposal_post = null;
