@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Works with taxonomy terms dynamically - no hardcoded stages
  * Graceful behavior when no stages exist
  */
-class Stage_Manager {
+class Stage_Handler {
     
     // Entity type to taxonomy mapping
     protected static $taxonomies = array(
@@ -393,4 +393,5 @@ class Stage_Manager {
     protected static function get_taxonomy($entity_type) {
         return isset(self::$taxonomies[$entity_type]) ? self::$taxonomies[$entity_type] : '';
     }
-} 
+}
+?> 
