@@ -16,6 +16,12 @@ if (!defined('ABSPATH')) {
  */
 class Workflow_Handler {
 
+    /**
+     * Active workflow implementation instance
+     * @var \Arsol_Projects_For_Woo\Workflows\Workflow_Interface
+     */
+    private $workflow;
+
     // Default stage definitions - only created on plugin activation
     protected static $default_stage_definitions = array(
         'request' => array(
@@ -41,6 +47,21 @@ class Workflow_Handler {
     );
 
     public function __construct() {
+        // Load active workflow implementation (hard-coded to "standard" for now)
+        $workflow_slug = 'standard';
+        $workflow_file = ARSOL_PROJECTS_PLUGIN_DIR . "includes/workflows/{$workflow_slug}/class-arsol-pfw-workflow-{$workflow_slug}.php";
+        if (file_exists($workflow_file)) {
+            require_once $workflow_file;
+            $class = '\\Arsol_Projects_For_Woo\\Workflows\\Standard\\Workflow_Standard';
+            if (class_exists($class)) {
+                $this->workflow = new $class();
+                // Allow the workflow to add its own hooks
+                if (method_exists($this->workflow, 'register_hooks')) {
+                    $this->workflow->register_hooks();
+                }
+            }
+        }
+        
         // Hook into post status transitions
         add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
         
@@ -170,29 +191,21 @@ class Workflow_Handler {
     }
 
     public function convert_request_to_proposal() {
-        try {
-            // Use the dedicated conversion class with modern error handling
-            $converter = new Request_Conversion();
-            $converter->convert_request_to_proposal();
-        } catch (Exception $e) {
-            wp_die($e->getMessage());
+        if ($this->workflow && method_exists($this->workflow, 'convert_request_to_proposal')) {
+            return $this->workflow->convert_request_to_proposal();
         }
+        // Fallback to legacy behaviour
+        $converter = new Request_Conversion();
+        $converter->convert_request_to_proposal();
     }
+
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
-        try {
-            // Use the dedicated conversion class with modern error handling
-            $converter = new Proposal_Conversion();
-            $converter->convert_proposal_to_project($proposal_id, $is_internal_call);
-        } catch (Exception $e) {
-            if ($is_internal_call) {
-                // For internal calls, add WooCommerce notice
-                if (function_exists('wc_add_notice')) {
-                    wc_add_notice($e->getMessage(), 'error');
-                }
-            } else {
-                wp_die($e->getMessage());
-            }
+        if ($this->workflow && method_exists($this->workflow, 'convert_proposal_to_project')) {
+            return $this->workflow->convert_proposal_to_project($proposal_id, $is_internal_call);
         }
+        // Fallback to legacy behaviour
+        $converter = new Proposal_Conversion();
+        $converter->convert_proposal_to_project($proposal_id, $is_internal_call);
     }
     public function customer_cancel_request() {
         $request_frontend = new \Arsol_Projects_For_Woo\Frontend\Request_Frontend();
