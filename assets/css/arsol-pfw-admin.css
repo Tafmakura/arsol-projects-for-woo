@@ -1005,29 +1005,8 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     margin-bottom: 10px;
 }
 
-#arsol-pfw-project-project-data .project_data_column .form-field label {
-    display: block;
-    margin-bottom: 3px;
-    font-weight: 600;
-    color: #333;
-    font-size: 13px;
-}
 
-#arsol-pfw-project-project-data .project_data_column .form-field input,
-#arsol-pfw-project-project-data .project_data_column .form-field select,
-#arsol-pfw-project-project-data .project_data_column .form-field textarea {
-    width: 100%;
-    padding: 5px 8px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    font-size: 13px;
-    background: white;
-}
 
-#arsol-pfw-project-project-data .project_data_column .form-field textarea {
-    min-height: 60px;
-    resize: vertical;
-}
 
 #arsol-pfw-project-project-data .project_data_column .form-field .description {
     font-size: 12px;
