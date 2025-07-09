@@ -31,10 +31,10 @@ do_action('arsol_projects_before_user_requests', $has_items);
                 $request_id = get_the_ID();
                 
                 // Get request stage (with proper error handling)
-                $stage_terms = wp_get_post_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
+                $stage_slug = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($request_id, 'request');
                 $stage = '';
-                if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
-                    $stage = $stage_terms[0];
+                if (!empty($stage_slug)) {
+                    $stage = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label('request', $stage_slug);
                 }
                 
                 $view_url = wc_get_account_endpoint_url('view-request/' . $request_id);
