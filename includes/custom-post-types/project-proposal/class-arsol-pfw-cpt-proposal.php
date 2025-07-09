@@ -61,17 +61,11 @@ class Project_Proposal_CPT {
     }
 
     /**
-     * Initialize setup components for post type and taxonomy registration
+     * Initialize setup and admin components
      */
     private function initialize_setup() {
-        // Instantiate the setup class that handles post type and taxonomy registration
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
-        
-        // Instantiate admin components
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposals();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Quotation();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal_Budget();
+        // All admin class instantiations are now handled in the main CPT setup file
+        // This prevents duplicate instantiations and centralizes management
     }
 
     /**

@@ -61,15 +61,11 @@ class Project_Request_CPT {
     }
 
     /**
-     * Initialize setup components for post type and taxonomy registration
+     * Initialize setup and admin components
      */
     private function initialize_setup() {
-        // Instantiate the setup class that handles post type and taxonomy registration
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
-        
-        // Instantiate admin components
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Request();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Requests();
+        // All admin class instantiations are now handled in the main CPT setup file
+        // This prevents duplicate instantiations and centralizes management
     }
 
     /**

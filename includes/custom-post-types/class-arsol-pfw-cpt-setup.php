@@ -44,18 +44,26 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-arsol-pfw-cpt-proposal-admin-budget.php';
     }
 
+    /**
+     * Instantiate all admin classes for Custom Post Types
+     * 
+     * CENTRALIZED ADMIN MANAGEMENT:
+     * All admin class instantiations are handled here to prevent duplicate instantiations
+     * and ensure proper hook registration. Individual CPT files no longer instantiate
+     * their own admin classes to avoid double hook registration issues.
+     */
     private function instantiate_classes() {
-        // Project CPT
+        // Project CPT - Setup, Admin List, and Individual Admin
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Setup();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Projects();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Project();
         
-        // Project Request CPT
+        // Project Request CPT - Setup, Admin List, and Individual Admin
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Setup();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Request();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Admin\Requests();
         
-        // Project Proposal CPT
+        // Project Proposal CPT - Setup, Admin List, Individual Admin, and Specialized Admin
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Setup();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposal();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Admin\Proposals();
