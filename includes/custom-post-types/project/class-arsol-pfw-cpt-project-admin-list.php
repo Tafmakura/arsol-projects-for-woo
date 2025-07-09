@@ -40,6 +40,15 @@ class Projects {
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
+            case 'title':
+                $project = arsol_pfw_get_project($post_id);
+                if ($project) {
+                    echo $project->get_title_link();
+                } else {
+                    echo esc_html(get_the_title($post_id));
+                }
+                break;
+
             case 'project_stage':
                 $project = arsol_pfw_get_project($post_id);
                 if ($project) {

@@ -43,6 +43,15 @@ class Proposals {
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
+            case 'title':
+                $proposal = arsol_pfw_get_proposal($post_id);
+                if ($proposal) {
+                    echo $proposal->get_title_link();
+                } else {
+                    echo esc_html(get_the_title($post_id));
+                }
+                break;
+
             case 'proposal_stage':
                 $proposal = arsol_pfw_get_proposal($post_id);
                 if ($proposal) {

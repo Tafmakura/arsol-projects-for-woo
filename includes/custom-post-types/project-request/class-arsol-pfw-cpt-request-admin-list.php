@@ -43,6 +43,15 @@ class Requests {
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
+            case 'title':
+                $request = arsol_pfw_get_request($post_id);
+                if ($request) {
+                    echo $request->get_title_link();
+                } else {
+                    echo esc_html(get_the_title($post_id));
+                }
+                break;
+
             case 'request_stage':
                 $request = arsol_pfw_get_request($post_id);
                 if ($request) {
