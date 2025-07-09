@@ -69,7 +69,9 @@ class Workflow_Handler {
         add_action('wp_head', array($this, 'display_conversion_notices'), 1);
 
         // Hook into plugin activation to create default stages
-        add_action('arsol_pfw_plugin_activated', array($this, 'create_default_stages_on_activation'));
+        // Hook admin actions for conversions
+        add_action('admin_post_arsol_convert_to_proposal', array($this, 'convert_request_to_proposal'));
+        add_action('admin_post_arsol_convert_to_project', array($this, 'convert_proposal_to_project'));        add_action('arsol_pfw_plugin_activated', array($this, 'create_default_stages_on_activation'));
     }
 
     /**
@@ -168,17 +170,30 @@ class Workflow_Handler {
     }
 
     public function convert_request_to_proposal() {
-        // Use the dedicated conversion class
-        $converter = new Request_Conversion();
-        $converter->convert_request_to_proposal();
+        try {
+            // Use the dedicated conversion class with modern error handling
+            $converter = new Request_Conversion();
+            $converter->convert_request_to_proposal();
+        } catch (Exception $e) {
+            wp_die($e->getMessage());
+        }
     }
-
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
-        // Use the dedicated conversion class
-        $converter = new Proposal_Conversion();
-        $converter->convert_proposal_to_project($proposal_id, $is_internal_call);
+        try {
+            // Use the dedicated conversion class with modern error handling
+            $converter = new Proposal_Conversion();
+            $converter->convert_proposal_to_project($proposal_id, $is_internal_call);
+        } catch (Exception $e) {
+            if ($is_internal_call) {
+                // For internal calls, add WooCommerce notice
+                if (function_exists('wc_add_notice')) {
+                    wc_add_notice($e->getMessage(), 'error');
+                }
+            } else {
+                wp_die($e->getMessage());
+            }
+        }
     }
-
     public function customer_cancel_request() {
         $request_frontend = new \Arsol_Projects_For_Woo\Frontend\Request_Frontend();
         $request_frontend->customer_cancel_request();

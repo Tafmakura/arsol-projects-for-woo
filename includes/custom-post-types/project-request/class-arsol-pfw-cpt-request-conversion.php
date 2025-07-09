@@ -105,28 +105,25 @@ class Request_Conversion {
             // Creation step
             update_post_meta($request_id, '_arsol_conversion_step', 'creation');
 
-            // Create proposal args with filter for customization
-            $proposal_args = array(
-                'post_title'   => $request_post->post_title,
-                'post_content' => '', // ✅ CLEAN CONTENT FLOW: Empty slate for proposal writing
-                'post_status'  => 'publish',
-                'post_type'    => 'arsol-pfw-proposal',
-                'post_author'  => $request_post->post_author,
-            );
-
-            /**
-             * Filter: arsol_proposal_conversion_args
-             * Allows modification of proposal creation arguments
-             */
-            $proposal_args = apply_filters('arsol_proposal_conversion_args', $proposal_args, $request_id, $request_post, $conversion_data);
-
-            /**
-             * Hook: arsol_before_proposal_conversion_proposal_creation
-             * Fired immediately before the proposal post is created
-             */
-            do_action('arsol_before_proposal_conversion_proposal_creation', $proposal_args, $request_id, $conversion_data);
-
-            $new_proposal_id = wp_insert_post($proposal_args);
+            // NEW WAY - Factory functions and CRUD methods
+            $request = arsol_pfw_get_request($request_id);
+            if (!$request) {
+                throw new Exception(__('Request not found.', 'arsol-pfw'));
+            }
+            
+            $proposal = arsol_pfw_create_proposal(array(
+                'name'        => $request->get_name(),
+                'customer_id' => $request->get_customer_id(),
+                'budget'      => $request->get_budget(),
+                'description' => $request->get_prop('description'),
+                'stage'       => 'processing'
+            ));
+            
+            if (is_wp_error($proposal)) {
+                throw new Exception($proposal->get_error_message());
+            }
+            
+            $new_proposal_id = $proposal->save();
             if (is_wp_error($new_proposal_id)) {
                 throw new Exception($new_proposal_id->get_error_message());
             }
@@ -134,13 +131,12 @@ class Request_Conversion {
             // Record created entity
             $this->record_transaction_entity($request_id, $new_proposal_id);
             $conversion_data['new_proposal_id'] = $new_proposal_id;
-
+            
             /**
              * Hook: arsol_after_proposal_conversion_proposal_created
              * Fired after the proposal is successfully created, before metadata copy
              */
-            do_action('arsol_after_proposal_conversion_proposal_created', $new_proposal_id, $request_id, $request_post, $conversion_data);
-            
+            do_action('arsol_after_proposal_conversion_proposal_created', $new_proposal_id, $request_id, $request, $conversion_data);            
             // Metadata copy step
             update_post_meta($request_id, '_arsol_conversion_step', 'metadata_copy');
             
@@ -191,13 +187,20 @@ class Request_Conversion {
         }
     }
 
-    // Helper method to copy request metadata to proposal
+    // Helper method to copy request metadata to proposal using new CRUD methods
     private function copy_request_metadata_to_proposal($request_id, $proposal_id) {
+        // Get request and proposal objects using factory functions
+        $request = arsol_pfw_get_request($request_id);
+        $proposal = arsol_pfw_get_proposal($proposal_id);
+        
+        if (!$request || !$proposal) {
+            throw new Exception(__('Failed to load request or proposal for metadata copy.', 'arsol-pfw'));
+        }
+        
         // ✅ PHASE 1: COMPREHENSIVE META KEY RESTRUCTURING
         
         // 1. Preserve original request content in proposal meta
-        $request_post = get_post($request_id);
-        update_post_meta($proposal_id, '_arsol_pfw_proposal_request_details', $request_post->post_content);
+        update_post_meta($proposal_id, '_arsol_pfw_proposal_request_details', $request->get_prop('description'));
         
         // 2. Rename request meta keys with proposal context
         $meta_mapping = array(
@@ -217,7 +220,7 @@ class Request_Conversion {
         }
         
         // 3. Transfer request budget as proposed budget
-        $request_budget = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
+        $request_budget = $request->get_budget();
         if (!empty($request_budget)) {
             // Set proposal costing type to budget
             update_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', 'budget');
@@ -225,12 +228,12 @@ class Request_Conversion {
             // Transfer request budget as proposed budget
             update_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', $request_budget);
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_request_to_proposal_conversion('info', 
-                "Budget transferred: Request budget → Proposal budget");
+            Arsol_Projects_For_WooWoocommerce_Logs::log_request_to_proposal_conversion('info', 
+                'Budget transferred: Request budget → Proposal budget');
         }
         
-        // 4. Set proposal status to processing
-        wp_set_object_terms($proposal_id, 'processing', 'arsol-pfw-proposal-stage');
+        // 4. Set proposal status to processing using stage manager
+        arsol_pfw_update_proposal_stage($proposal_id, 'processing');
         
         // 5. Copy custom fields and taxonomies
         $custom_fields = get_post_meta($request_id);
@@ -242,8 +245,7 @@ class Request_Conversion {
             }
         }
         
-        // Copy taxonomies
-        $taxonomies = get_object_taxonomies('arsol-pfw-request');
+        // Copy taxonomies using stage manager        $taxonomies = get_object_taxonomies('arsol-pfw-request');
         foreach ($taxonomies as $taxonomy) {
             $terms = wp_get_object_terms($request_id, $taxonomy, array('fields' => 'slugs'));
             if (!empty($terms) && !is_wp_error($terms)) {

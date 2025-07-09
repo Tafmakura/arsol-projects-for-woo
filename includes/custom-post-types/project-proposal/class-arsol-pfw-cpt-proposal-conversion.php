@@ -119,28 +119,25 @@ class Proposal_Conversion {
             // Creation step
             update_post_meta($proposal_id, '_arsol_conversion_step', 'creation');
 
-            // Create project args with filter for customization
-            $project_args = array(
-                'post_title'   => $proposal_post->post_title,
-                'post_content' => $proposal_post->post_content,
-                'post_status'  => 'publish',
-                'post_type'    => 'arsol-pfw-project',
-                'post_author'  => $proposal_post->post_author,
-            );
-
-            /**
-             * Filter: arsol_project_conversion_args
-             * Allows modification of project creation arguments
-             */
-            $project_args = apply_filters('arsol_project_conversion_args', $project_args, $proposal_id, $proposal_post, $conversion_data);
-
-            /**
-             * Hook: arsol_before_project_conversion_project_creation
-             * Fired immediately before the project post is created
-             */
-            do_action('arsol_before_project_conversion_project_creation', $project_args, $proposal_id, $conversion_data);
-
-            $new_project_id = wp_insert_post($project_args);
+            // NEW WAY - Factory functions and CRUD methods
+            $proposal = arsol_pfw_get_proposal($proposal_id);
+            if (!$proposal) {
+                throw new Exception(__('Proposal not found.', 'arsol-pfw'));
+            }
+            
+            $project = arsol_pfw_create_project(array(
+                'name'        => $proposal->get_name(),
+                'customer_id' => $proposal->get_customer_id(),
+                'budget'      => $proposal->get_budget(),
+                'description' => $proposal->get_prop('description'),
+                'stage'       => 'not-started'
+            ));
+            
+            if (is_wp_error($project)) {
+                throw new Exception($project->get_error_message());
+            }
+            
+            $new_project_id = $project->save();
             if (is_wp_error($new_project_id)) {
                 throw new Exception($new_project_id->get_error_message());
             }
@@ -148,13 +145,12 @@ class Proposal_Conversion {
             // Record created entity
             $this->record_transaction_entity($proposal_id, $new_project_id);
             $conversion_data['new_project_id'] = $new_project_id;
-
+            
             /**
              * Hook: arsol_after_project_conversion_project_created
              * Fired after the project is successfully created, before metadata copy
              */
-            do_action('arsol_after_project_conversion_project_created', $new_project_id, $proposal_id, $proposal_post, $conversion_data);
-            
+            do_action('arsol_after_project_conversion_project_created', $new_project_id, $proposal_id, $proposal, $conversion_data);            
             // Metadata copy step
             update_post_meta($proposal_id, '_arsol_conversion_step', 'metadata_copy');
             
@@ -273,14 +269,20 @@ class Proposal_Conversion {
         }
     }
 
-    // Helper method to copy proposal metadata to project
+    // Helper method to copy proposal metadata to project using new CRUD methods
     private function copy_proposal_metadata_to_project($proposal_id, $project_id) {
+        // Get proposal and project objects using factory functions
+        $proposal = arsol_pfw_get_proposal($proposal_id);
+        $project = arsol_pfw_get_project($project_id);
+        
+        if (!$proposal || !$project) {
+            throw new Exception(__('Failed to load proposal or project for metadata copy.', 'arsol-pfw'));
+        }
+        
         // ✅ PHASE 2: COMPREHENSIVE META KEY RESTRUCTURING
         
         // 1. Preserve proposal content in project meta
-        $proposal_post = get_post($proposal_id);
-        update_post_meta($project_id, '_arsol_pfw_project_proposal_details', $proposal_post->post_content);
-        
+        update_post_meta($project_id, '_arsol_pfw_project_proposal_details', $proposal->get_prop('description'));        
         // 2. Rename request data with project context
         $request_meta_mapping = array(
             '_arsol_pfw_proposal_request_details' => '_arsol_pfw_project_request_details',
