@@ -474,7 +474,53 @@ class Project_Proposal_CPT {
         return true;
     }
 
+    /**
+     * Get proposal title with edit link
+     * 
+     * @return string HTML link to edit the proposal
+     */
+    public function get_title_link() {
+        return arsol_pfw_create_edit_link($this->proposal_id, $this->get_title());
+    }
 
+    /**
+     * Get customer link for admin display
+     * 
+     * @return string HTML link to customer
+     */
+    public function get_customer_link() {
+        $customer_id = $this->get_customer_id();
+        return arsol_pfw_create_customer_filter_link($customer_id, 'arsol-pfw-proposal');
+    }
+
+    /**
+     * Get project lead link for admin display
+     * 
+     * @return string HTML link to project lead
+     */
+    public function get_project_lead_link() {
+        $lead_id = $this->get_meta('_arsol_pfw_proposal_project_lead');
+        return arsol_pfw_create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
+    }
+
+    /**
+     * Get parent project link for admin display
+     * 
+     * @return string HTML link to parent project
+     */
+    public function get_parent_project_link() {
+        $parent_project_id = $this->get_meta('_arsol_pfw_parent_project_id');
+        if (!$parent_project_id) {
+            return '<span class="na">&ndash;</span>';
+        }
+        
+        $parent_project = arsol_pfw_get_project($parent_project_id);
+        if ($parent_project) {
+            return arsol_pfw_create_edit_link($parent_project_id, $parent_project->get_title());
+        }
+        
+        return '#' . esc_html($parent_project_id);
+    }
 
     /**
      * Update stage with hooks

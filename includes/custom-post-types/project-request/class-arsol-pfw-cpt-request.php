@@ -166,11 +166,20 @@ class Project_Request_CPT {
     /**
      * Get request stage
      * 
+     * @return string Current stage
+     */
+    public function get_stage() {
+        // Use centralized stage manager
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($this->request_id, 'request');
+    }
+
+    /**
+     * Get request status (alias for get_stage for backward compatibility)
+     * 
      * @return string|null Current request stage slug
      */
     public function get_status() {
-        // Use centralized stage manager
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($this->request_id, 'request');
+        return $this->get_stage();
     }
 
     /**
@@ -360,7 +369,7 @@ class Project_Request_CPT {
      *
      * @return string
      */
-    public function get_stage_taxonomy() {
+    public static function get_stage_taxonomy() {
         return 'arsol-pfw-request-stage';
     }
 
@@ -589,5 +598,24 @@ class Project_Request_CPT {
      */
     public function get_changes() {
         return $this->changes;
+    }
+
+    /**
+     * Get customer link for admin display
+     * 
+     * @return string HTML link to customer
+     */
+    public function get_customer_link() {
+        $customer_id = $this->get_customer_id();
+        return arsol_pfw_create_customer_filter_link($customer_id, 'arsol-pfw-request');
+    }
+
+    /**
+     * Get request title with edit link
+     * 
+     * @return string HTML link to edit the request
+     */
+    public function get_title_link() {
+        return arsol_pfw_create_edit_link($this->request_id, $this->get_title());
     }
 }

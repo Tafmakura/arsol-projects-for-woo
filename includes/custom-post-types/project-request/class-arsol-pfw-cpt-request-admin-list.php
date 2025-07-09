@@ -43,18 +43,22 @@ class Requests {
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
+            case 'title':
+                $request = arsol_pfw_get_request($post_id);
+                if ($request) {
+                    echo $request->get_title_link();
+                } else {
+                    echo esc_html(get_the_title($post_id));
+                }
+                break;
+
             case 'request_stage':
                 $request = arsol_pfw_get_request($post_id);
                 if ($request) {
                     $stage = $request->get_stage();
-                    if ($stage) {
-                        $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label($stage, 'request');
-                        echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
-                    } else {
-                        echo '<span class="stage stage-pending-review">Pending Review</span>';
-                    }
+                    echo arsol_pfw_create_stage_badge($stage, 'request', 'Pending Review');
                 } else {
-                    echo '<span class="stage stage-pending-review">Pending Review</span>';
+                    echo arsol_pfw_create_stage_badge('', 'request', 'Pending Review');
                 }
                 break;
                 
@@ -81,12 +85,7 @@ class Requests {
             case 'customer':
                 $request = arsol_pfw_get_request($post_id);
                 if ($request) {
-                    $customer_id = $request->get_customer_id();
-                    if ($customer_id) {
-                        echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-request');
-                    } else {
-                        echo '<span class="na">&ndash;</span>';
-                    }
+                    echo $request->get_customer_link();
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
