@@ -24,19 +24,15 @@ class Requests {
      * Add custom columns
      */
     public function add_custom_columns($columns) {
-        // Insert custom columns after title, preserving WordPress defaults
         $new_columns = array();
         
-        foreach ($columns as $key => $value) {
-            $new_columns[$key] = $value;
-            
-            // Add custom columns after title
-            if ($key === 'title') {
-                $new_columns['customer'] = __('Customer', 'arsol-pfw');
-                $new_columns['request_stage'] = __('Stage', 'arsol-pfw');
-                $new_columns['request_budget'] = __('Budget', 'arsol-pfw');
-            }
-        }
+        // Add columns in desired order
+        $new_columns['cb'] = $columns['cb'];
+        $new_columns['title'] = $columns['title'];
+        $new_columns['customer'] = __('Customer', 'arsol-pfw');
+        $new_columns['request_stage'] = __('Stage', 'arsol-pfw');
+        $new_columns['request_budget'] = __('Budget', 'arsol-pfw');
+        $new_columns['date'] = $columns['date'];
         
         return $new_columns;
     }
