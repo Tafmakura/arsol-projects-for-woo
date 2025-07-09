@@ -438,35 +438,6 @@ class Project_CPT {
     }
 
     /**
-     * Get project title with edit link
-     * 
-     * @return string HTML link to edit the project
-     */
-    public function get_title_link() {
-        return arsol_pfw_create_edit_link($this->project_id, $this->get_title());
-    }
-
-    /**
-     * Get customer link for admin display
-     * 
-     * @return string HTML link to customer
-     */
-    public function get_customer_link() {
-        $customer_id = $this->get_customer_id();
-        return arsol_pfw_create_customer_filter_link($customer_id, 'arsol-pfw-project');
-    }
-
-    /**
-     * Get project lead link for admin display
-     * 
-     * @return string HTML link to project lead
-     */
-    public function get_project_lead_link() {
-        $lead_id = $this->get_project_lead();
-        return arsol_pfw_create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
-    }
-
-    /**
      * Update stage with hooks
      * 
      * @param string $new_stage New stage

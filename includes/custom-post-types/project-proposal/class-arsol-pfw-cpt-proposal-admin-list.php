@@ -43,29 +43,30 @@ class Proposals {
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
-            case 'title':
-                $proposal = arsol_pfw_get_proposal($post_id);
-                if ($proposal) {
-                    echo $proposal->get_title_link();
-                } else {
-                    echo esc_html(get_the_title($post_id));
-                }
-                break;
-
             case 'proposal_stage':
                 $proposal = arsol_pfw_get_proposal($post_id);
                 if ($proposal) {
                     $stage = $proposal->get_stage();
-                    echo arsol_pfw_create_stage_badge($stage, 'proposal', 'Processing');
+                    if ($stage) {
+                        $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label($stage, 'proposal');
+                        echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
+                    } else {
+                        echo '<span class="stage stage-processing">Processing</span>';
+                    }
                 } else {
-                    echo arsol_pfw_create_stage_badge('', 'proposal', 'Processing');
+                    echo '<span class="stage stage-processing">Processing</span>';
                 }
                 break;
                 
             case 'customer':
                 $proposal = arsol_pfw_get_proposal($post_id);
                 if ($proposal) {
-                    echo $proposal->get_customer_link();
+                    $customer_id = $proposal->get_customer_id();
+                    if ($customer_id) {
+                        echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-proposal');
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
@@ -74,7 +75,19 @@ class Proposals {
             case 'project':
                 $proposal = arsol_pfw_get_proposal($post_id);
                 if ($proposal) {
-                    echo $proposal->get_parent_project_link();
+                    $parent_project_id = $proposal->get_meta('_arsol_pfw_parent_project_id');
+                    if ($parent_project_id) {
+                        $parent_project = arsol_pfw_get_project($parent_project_id);
+                        if ($parent_project) {
+                            echo '<a href="' . esc_url(get_edit_post_link($parent_project_id)) . '">';
+                            echo esc_html($parent_project->get_title());
+                            echo '</a>';
+                        } else {
+                            echo '#' . esc_html($parent_project_id);
+                        }
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
@@ -83,7 +96,8 @@ class Proposals {
             case 'project_lead':
                 $proposal = arsol_pfw_get_proposal($post_id);
                 if ($proposal) {
-                    echo $proposal->get_project_lead_link();
+                    $lead_id = $proposal->get_meta('_arsol_pfw_proposal_project_lead');
+                    echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
