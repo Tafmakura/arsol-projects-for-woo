@@ -66,7 +66,7 @@ class Setup {
         
         // CRUD System
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-stage-handler.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-conversion-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-simple-converter.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-request.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-proposal.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-project.php';
@@ -110,10 +110,6 @@ class Setup {
         
         // Other includes...
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-workflow-handler.php';
-
-        // Conversion classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-arsol-pfw-cpt-request-conversion.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-arsol-pfw-cpt-proposal-conversion.php';
     }
 
     /**

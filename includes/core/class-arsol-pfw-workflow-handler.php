@@ -192,11 +192,17 @@ class Workflow_Handler {
     }
 
     public function convert_request_to_proposal() {
-        Conversion_Handler::convert_request_to_proposal();
+        $request_id = intval($_GET['request_id']);
+        $converter = new \Arsol_Projects_For_Woo\Core\Simple_Converter();
+        $converter->convert_request_to_proposal($request_id);
     }
 
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
-        Conversion_Handler::convert_proposal_to_project($proposal_id, $is_internal_call);
+        if (empty($proposal_id)) {
+            $proposal_id = intval($_GET['proposal_id']);
+        }
+        $converter = new \Arsol_Projects_For_Woo\Core\Simple_Converter();
+        $converter->convert_proposal_to_project($proposal_id, $is_internal_call);
     }
     public function customer_cancel_request() {
         $request_frontend = new \Arsol_Projects_For_Woo\Frontend\Request_Frontend();
@@ -322,110 +328,64 @@ class Workflow_Handler {
     }
 
     // ==========================================
-    // TRANSACTION SYSTEM METHODS
+    // SIMPLIFIED WORKFLOW METHODS
     // ==========================================
 
     /**
-     * Cleanup stuck workflows (static method for cron)
+     * Cleanup stuck workflows (static method for cron) - Simplified version
      */
     public static function cleanup_stuck_workflows($max_age_minutes = 30) {
+        // Simplified cleanup - just remove old workflow metadata
         global $wpdb;
         
         $max_age_timestamp = current_time('timestamp') - ($max_age_minutes * 60);
         $max_age_date = date('Y-m-d H:i:s', $max_age_timestamp);
         
-        // Find all posts with stuck workflows
-        $stuck_posts = $wpdb->get_results($wpdb->prepare("
-            SELECT post_id, meta_value as workflow_started
-            FROM {$wpdb->postmeta}
-            WHERE meta_key = '_arsol_workflow_started'
+        // Find and clean up old workflow metadata
+        $cleaned_count = $wpdb->query($wpdb->prepare("
+            DELETE FROM {$wpdb->postmeta}
+            WHERE meta_key IN ('_arsol_workflow_started', '_arsol_workflow_type', '_arsol_conversion_type', '_arsol_conversion_step', '_arsol_conversion_created_ids', '_arsol_conversion_rollback_reason')
             AND meta_value < %s
-            ORDER BY meta_value ASC
         ", $max_age_date));
-        
-        $cleaned_count = 0;
-        
-        foreach ($stuck_posts as $stuck_post) {
-            $post_id = $stuck_post->post_id;
-            $workflow_started = $stuck_post->workflow_started;
-            
-            // Log the stuck workflow
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
-                "Cleaning up stuck workflow for post #{$post_id}, started at: {$workflow_started}");
-            
-            // Clean up the workflow
-            delete_post_meta($post_id, '_arsol_workflow_started');
-            delete_post_meta($post_id, '_arsol_workflow_type');
-            delete_post_meta($post_id, '_arsol_conversion_type');
-            delete_post_meta($post_id, '_arsol_conversion_step');
-            delete_post_meta($post_id, '_arsol_created_entities');
-            
-            $cleaned_count++;
-        }
         
         if ($cleaned_count > 0) {
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
-                "Cleaned up {$cleaned_count} stuck workflow(s) older than {$max_age_minutes} minutes");
+                "Cleaned up {$cleaned_count} old workflow metadata entries");
         }
         
         return $cleaned_count;
     }
 
     /**
-     * Force clear a specific stuck workflow
+     * Force clear a specific stuck workflow - Simplified version
      */
     public function force_clear_stuck_workflow($post_id) {
-        $workflow_started = get_post_meta($post_id, '_arsol_workflow_started', true);
+        // Simple cleanup of workflow metadata
+        delete_post_meta($post_id, '_arsol_workflow_started');
+        delete_post_meta($post_id, '_arsol_workflow_type');
+        delete_post_meta($post_id, '_arsol_conversion_type');
+        delete_post_meta($post_id, '_arsol_conversion_step');
+        delete_post_meta($post_id, '_arsol_conversion_created_ids');
+        delete_post_meta($post_id, '_arsol_conversion_rollback_reason');
         
-        if ($workflow_started) {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
-                "Force clearing stuck workflow for post #{$post_id}, started at: {$workflow_started}");
-            
-            // Clean up all workflow metadata
-                    delete_post_meta($post_id, '_arsol_workflow_started');
-            delete_post_meta($post_id, '_arsol_workflow_type');
-                    delete_post_meta($post_id, '_arsol_conversion_type');
-                    delete_post_meta($post_id, '_arsol_conversion_step');
-            delete_post_meta($post_id, '_arsol_created_entities');
-            
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
-                "Successfully force cleared stuck workflow for post #{$post_id}");
-        }
+        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+            "Cleared workflow metadata for post #{$post_id}");
     }
 
     /**
-     * Emergency cleanup of all stuck workflows (for admin use)
+     * Emergency cleanup of all stuck workflows (for admin use) - Simplified version
      */
     public static function emergency_cleanup_all_stuck_workflows() {
         global $wpdb;
         
-        // Get all workflow metadata
-        $all_workflows = $wpdb->get_results("
-            SELECT post_id, meta_key, meta_value
-            FROM {$wpdb->postmeta}
-            WHERE meta_key IN ('_arsol_workflow_started', '_arsol_workflow_type', '_arsol_conversion_type', '_arsol_conversion_step', '_arsol_created_entities')
-            ORDER BY post_id
+        // Remove all workflow metadata
+        $cleaned_count = $wpdb->query("
+            DELETE FROM {$wpdb->postmeta}
+            WHERE meta_key IN ('_arsol_workflow_started', '_arsol_workflow_type', '_arsol_conversion_type', '_arsol_conversion_step', '_arsol_conversion_created_ids', '_arsol_conversion_rollback_reason')
         ");
         
-        $affected_posts = array();
-        
-        foreach ($all_workflows as $workflow) {
-            $post_id = $workflow->post_id;
-            
-            if (!in_array($post_id, $affected_posts)) {
-                $affected_posts[] = $post_id;
-            }
-            
-            // Delete the metadata
-            delete_post_meta($post_id, $workflow->meta_key);
-        }
-        
-        $cleaned_count = count($affected_posts);
-        
-        if ($cleaned_count > 0) {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
-                "Emergency cleanup: cleared ALL workflow metadata for {$cleaned_count} posts");
-        }
+        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+            "Emergency cleanup: removed {$cleaned_count} workflow metadata entries");
         
         return $cleaned_count;
     }
