@@ -56,24 +56,30 @@ class Setup {
         }
 
         $args = array(
-            // ✅ SIMPLIFIED: Use standard WordPress capabilities
-            'capability_type'    => 'post',
+            'labels'              => $labels,
+            'public'              => false,
+            'publicly_queryable'  => false,
+            'show_ui'            => true,
+            'show_in_menu'       => true,
+            'show_in_nav_menus'  => true,
+            'show_in_admin_bar'  => true,
+            'menu_position'      => 56.5,
+            'menu_icon'          => 'dashicons-clipboard',
+            'hierarchical'       => false,
+            'supports'           => $supports,
+            'has_archive'        => false,
+            'rewrite'           => array('slug' => 'project', 'with_front' => false),
+            'show_in_rest'      => false,
+            
+            // ✅ WordPress-Native Capability Configuration
+            'capability_type'    => array('arsol_pfw_project', 'arsol_pfw_projects'),
+            'map_meta_cap'       => true,  // Let WordPress handle meta capability mapping
             'capabilities'       => array(
-                'edit_post'          => 'edit_posts',
-                'read_post'          => 'read',
-                'delete_post'        => 'delete_posts',
-                'edit_posts'         => 'edit_posts',
-                'edit_others_posts'  => 'edit_others_posts',
-                'publish_posts'      => 'publish_posts',
-                'read_private_posts' => 'read_private_posts',
-                'delete_posts'       => 'delete_posts',
-                'delete_private_posts' => 'delete_private_posts',
-                'delete_published_posts' => 'delete_published_posts',
-                'delete_others_posts' => 'delete_others_posts',
-                'edit_private_posts' => 'edit_private_posts',
-                'edit_published_posts' => 'edit_published_posts',
-                'create_posts'       => 'edit_posts',
-            ),
+                // Meta capabilities (mapped by WordPress)
+                'edit_post'          => 'edit_arsol_pfw_project',
+                'read_post'          => 'read_arsol_pfw_project',
+                'delete_post'        => 'delete_arsol_pfw_project',
+                
                 // Primitive capabilities
                 'edit_posts'         => 'edit_arsol_pfw_projects',
                 'edit_others_posts'  => 'edit_others_arsol_pfw_projects',

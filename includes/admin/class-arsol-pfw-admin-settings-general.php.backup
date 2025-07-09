@@ -589,76 +589,70 @@ class Settings_General {
      * @param mixed $old_value Old settings value
      * @param mixed $new_value New settings value
      */
-    /**
-     * Update capabilities when settings are saved
-     *
-     * @param mixed $old_value Old settings value
-     * @param mixed $new_value New settings value
-     */
     public function update_capabilities($old_value, $new_value) {
-        $manage_roles = isset($new_value["project_manager_roles"]) ? array_unique($new_value["project_manager_roles"]) : array("administrator");
-        $create_roles = isset($new_value["project_user_roles"]) ? array_unique($new_value["project_user_roles"]) : array("administrator");
+        $manage_roles = isset($new_value['project_manager_roles']) ? array_unique($new_value['project_manager_roles']) : array('administrator');
+        $create_roles = isset($new_value['project_user_roles']) ? array_unique($new_value['project_user_roles']) : array('administrator');
 
-        if (!in_array("administrator", $manage_roles)) {
-            $manage_roles[] = "administrator";
+        if (!in_array('administrator', $manage_roles)) {
+            $manage_roles[] = 'administrator';
         }
 
         $all_roles = wp_roles()->get_names();
 
-        // ✅ SIMPLIFIED: Use standard WordPress capabilities
+        // Define WordPress-native capabilities for each level
         $manage_capabilities = array(
-            "edit_posts",           // Can edit their own posts
-            "edit_others_posts",    // Can edit others" posts
-            "edit_private_posts",   // Can edit private posts
-            "edit_published_posts", // Can edit published posts
-            "publish_posts",        // Can publish posts
-            "delete_posts",         // Can delete their own posts
-            "delete_others_posts",  // Can delete others" posts
-            "delete_private_posts", // Can delete private posts
-            "delete_published_posts", // Can delete published posts
-            "read_private_posts",   // Can read private posts
+            'arsol_pfw_manage',
+            'edit_arsol_pfw_projects',
+            'edit_others_arsol_pfw_projects',
+            'publish_arsol_pfw_projects',
+            'read_private_arsol_pfw_projects',
+            'delete_arsol_pfw_projects',
+            'delete_others_arsol_pfw_projects',
+            'edit_arsol_pfw_proposals',
+            'edit_others_arsol_pfw_proposals',
+            'publish_arsol_pfw_proposals',
+            'read_private_arsol_pfw_proposals',
+            'delete_arsol_pfw_proposals',
+            'delete_others_arsol_pfw_proposals',
+            'edit_arsol_pfw_requests',
+            'edit_others_arsol_pfw_requests',
+            'publish_arsol_pfw_requests',
+            'read_private_arsol_pfw_requests',
+            'delete_arsol_pfw_requests',
+            'delete_others_arsol_pfw_requests',
         );
 
         $create_capabilities = array(
-            "edit_posts",           // Can edit their own posts
-            "publish_posts",        // Can publish posts
-            "delete_posts",         // Can delete their own posts
-            "read_private_posts",   // Can read private posts
+            'edit_arsol_pfw_projects',
+            'publish_arsol_pfw_projects',
+            'delete_arsol_pfw_projects',
+            'edit_arsol_pfw_proposals',
+            'publish_arsol_pfw_proposals',
+            'delete_arsol_pfw_proposals',
+            'edit_arsol_pfw_requests',
+            'publish_arsol_pfw_requests',
+            'delete_arsol_pfw_requests',
         );
 
-        // Clean up old custom capabilities first
-        $old_custom_capabilities = array(
-            "arsol_pfw_manage",
-            "edit_arsol_pfw_projects", "edit_others_arsol_pfw_projects", "publish_arsol_pfw_projects",
-            "read_private_arsol_pfw_projects", "delete_arsol_pfw_projects", "delete_others_arsol_pfw_projects",
-            "edit_arsol_pfw_proposals", "edit_others_arsol_pfw_proposals", "publish_arsol_pfw_proposals",
-            "read_private_arsol_pfw_proposals", "delete_arsol_pfw_proposals", "delete_others_arsol_pfw_proposals",
-            "edit_arsol_pfw_requests", "edit_others_arsol_pfw_requests", "publish_arsol_pfw_requests",
-            "read_private_arsol_pfw_requests", "delete_arsol_pfw_requests", "delete_others_arsol_pfw_requests",
-            "manage_projects", "create_projects", "request_projects"
-        );
-
+        // Clean up old capabilities first
+        $old_capabilities = array('manage_projects', 'create_projects', 'request_projects');
+        
         foreach ($all_roles as $role_slug => $role_name) {
             $role = get_role($role_slug);
             if (!$role) {
                 continue;
             }
-
-            // Remove old custom capabilities
-            foreach ($old_custom_capabilities as $old_cap) {
+            
+            // Remove old capabilities
+            foreach ($old_capabilities as $old_cap) {
                 $role->remove_cap($old_cap);
             }
-
-            // Don not mess with Administrator, Editor, Author default capabilities
-            if (in_array($role_slug, array("administrator", "editor", "author"))) {
-                continue;
-            }
-
-            // For other roles, remove standard capabilities first
+            
+            // Remove all PFW capabilities first
             foreach ($manage_capabilities as $cap) {
                 $role->remove_cap($cap);
             }
-
+            
             // Add capabilities based on role assignment
             if (in_array($role_slug, $manage_roles)) {
                 // Add all management capabilities

@@ -57,24 +57,30 @@ class Setup {
             'public'              => false,
             'publicly_queryable'  => false,
             'show_ui'            => true,
-            // ✅ SIMPLIFIED: Use standard WordPress capabilities
-            'capability_type'    => 'post',
+            'show_in_menu'       => 'edit.php?post_type=arsol-pfw-project',
+            'show_in_nav_menus'  => false,
+            'show_in_admin_bar'  => true,
+            'menu_position'      => null,
+            'menu_icon'          => 'dashicons-portfolio',
+            'hierarchical'       => false,
+            'supports'           => $supports,
+            'has_archive'        => false,
+            'rewrite'           => false,
+            'show_in_rest'      => false,
+            
+            // ✅ WordPress-Native Capability Configuration
+            'capability_type'    => array('arsol_pfw_proposal', 'arsol_pfw_proposals'),
+            'map_meta_cap'       => true,  // Let WordPress handle meta capability mapping
             'capabilities'       => array(
-                'edit_post'          => 'edit_posts',
-                'read_post'          => 'read',
-                'delete_post'        => 'delete_posts',
-                'edit_posts'         => 'edit_posts',
-                'edit_others_posts'  => 'edit_others_posts',
-                'publish_posts'      => 'publish_posts',
-                'read_private_posts' => 'read_private_posts',
-                'delete_posts'       => 'delete_posts',
-                'delete_private_posts' => 'delete_private_posts',
-                'delete_published_posts' => 'delete_published_posts',
-                'delete_others_posts' => 'delete_others_posts',
-                'edit_private_posts' => 'edit_private_posts',
-                'edit_published_posts' => 'edit_published_posts',
-                'create_posts'       => 'edit_posts',
-            ),
+                // Meta capabilities (mapped by WordPress)
+                'edit_post'          => 'edit_arsol_pfw_proposal',
+                'read_post'          => 'read_arsol_pfw_proposal',
+                'delete_post'        => 'delete_arsol_pfw_proposal',
+                
+                // Primitive capabilities
+                'edit_posts'         => 'edit_arsol_pfw_proposals',
+                'edit_others_posts'  => 'edit_others_arsol_pfw_proposals',
+                'publish_posts'      => 'publish_arsol_pfw_proposals',
                 'read_private_posts' => 'read_private_arsol_pfw_proposals',
                 'delete_posts'       => 'delete_arsol_pfw_proposals',
                 'delete_private_posts' => 'delete_private_arsol_pfw_proposals',
