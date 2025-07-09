@@ -58,35 +58,6 @@ class Setup {
         $args = array(
             // ✅ SIMPLIFIED: Use standard WordPress capabilities
             'capability_type'    => 'post',
-            'capabilities'       => array(
-                'edit_post'          => 'edit_posts',
-                'read_post'          => 'read',
-                'delete_post'        => 'delete_posts',
-                'edit_posts'         => 'edit_posts',
-                'edit_others_posts'  => 'edit_others_posts',
-                'publish_posts'      => 'publish_posts',
-                'read_private_posts' => 'read_private_posts',
-                'delete_posts'       => 'delete_posts',
-                'delete_private_posts' => 'delete_private_posts',
-                'delete_published_posts' => 'delete_published_posts',
-                'delete_others_posts' => 'delete_others_posts',
-                'edit_private_posts' => 'edit_private_posts',
-                'edit_published_posts' => 'edit_published_posts',
-                'create_posts'       => 'edit_posts',
-            ),
-                // Primitive capabilities
-                'edit_posts'         => 'edit_arsol_pfw_projects',
-                'edit_others_posts'  => 'edit_others_arsol_pfw_projects',
-                'publish_posts'      => 'publish_arsol_pfw_projects',
-                'read_private_posts' => 'read_private_arsol_pfw_projects',
-                'delete_posts'       => 'delete_arsol_pfw_projects',
-                'delete_private_posts' => 'delete_private_arsol_pfw_projects',
-                'delete_published_posts' => 'delete_published_arsol_pfw_projects',
-                'delete_others_posts' => 'delete_others_arsol_pfw_projects',
-                'edit_private_posts' => 'edit_private_arsol_pfw_projects',
-                'edit_published_posts' => 'edit_published_arsol_pfw_projects',
-                'create_posts'       => 'edit_arsol_pfw_projects',
-            ),
         );
 
         $result = register_post_type('arsol-pfw-project', $args);

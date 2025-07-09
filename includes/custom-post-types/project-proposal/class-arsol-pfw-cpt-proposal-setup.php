@@ -59,31 +59,6 @@ class Setup {
             'show_ui'            => true,
             // ✅ SIMPLIFIED: Use standard WordPress capabilities
             'capability_type'    => 'post',
-            'capabilities'       => array(
-                'edit_post'          => 'edit_posts',
-                'read_post'          => 'read',
-                'delete_post'        => 'delete_posts',
-                'edit_posts'         => 'edit_posts',
-                'edit_others_posts'  => 'edit_others_posts',
-                'publish_posts'      => 'publish_posts',
-                'read_private_posts' => 'read_private_posts',
-                'delete_posts'       => 'delete_posts',
-                'delete_private_posts' => 'delete_private_posts',
-                'delete_published_posts' => 'delete_published_posts',
-                'delete_others_posts' => 'delete_others_posts',
-                'edit_private_posts' => 'edit_private_posts',
-                'edit_published_posts' => 'edit_published_posts',
-                'create_posts'       => 'edit_posts',
-            ),
-                'read_private_posts' => 'read_private_arsol_pfw_proposals',
-                'delete_posts'       => 'delete_arsol_pfw_proposals',
-                'delete_private_posts' => 'delete_private_arsol_pfw_proposals',
-                'delete_published_posts' => 'delete_published_arsol_pfw_proposals',
-                'delete_others_posts' => 'delete_others_arsol_pfw_proposals',
-                'edit_private_posts' => 'edit_private_arsol_pfw_proposals',
-                'edit_published_posts' => 'edit_published_arsol_pfw_proposals',
-                'create_posts'       => 'edit_arsol_pfw_proposals',
-            ),
         );
 
         $result = register_post_type('arsol-pfw-proposal', $args);
