@@ -1298,7 +1298,7 @@ class Shortcodes {
 		// Check permissions based on mode
 		if ($is_edit) {
 			// For editing, check if user can edit projects and owns the project
-			$can_edit = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id);
+			$can_edit = \Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id);
 			if (!$can_edit) {
 				return '<p>' . __('You do not have permission to edit projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw') . '</p>';
 			}
@@ -1317,7 +1317,7 @@ class Shortcodes {
 			}
 		} else {
 			// For creating, check if user can create projects
-			$can_create = \Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id);
+			$can_create = \Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id);
 			if (!$can_create) {
 				return '<p>' . __('You do not have permission to create projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw') . '</p>';
 			}

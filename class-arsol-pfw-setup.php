@@ -94,7 +94,7 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-template-overrides.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-users.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-capabilities.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-capabilities.php';
 
         // Frontend handlers
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-handler.php';
@@ -117,7 +117,7 @@ class Setup {
      */
     private function instantiate_classes() {
         // Initialize capabilities first
-        new Admin\Admin_Capabilities();
+        new Core\Capabilities();
         
         // Initialize CRUD system before CPTs
         $this->initialize_crud_system();

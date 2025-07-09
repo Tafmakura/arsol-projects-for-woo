@@ -70,12 +70,12 @@ class Permissions {
         }
 
         // Check using Admin_Capabilities for project-specific permissions
-        if (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_manage_projects($user_id)) {
+        if (\Arsol_Projects_For_Woo\Core\Capabilities::can_manage_projects($user_id)) {
             return true;
         }
 
         // Users can view projects they created if they have project creation permissions
-        if (\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id) && $post->post_author == $user_id) {
+        if (\Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id) && $post->post_author == $user_id) {
             return true;
         }
 

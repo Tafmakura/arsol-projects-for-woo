@@ -424,13 +424,13 @@ class Users {
         
         // If global permission is "create", allow anyone with WordPress capabilities to create
         if ($global_permission === 'create') {
-            return Admin_Capabilities::can_create_projects($user_id);
+            return \Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id);
         }
         
         // If global permission is "request", don't allow creating projects (only requesting)
         if ($global_permission === 'request') {
             // Only allow if user has management capabilities
-            return Admin_Capabilities::can_manage_projects($user_id);
+            return \Arsol_Projects_For_Woo\Core\Capabilities::can_manage_projects($user_id);
         }
         
         // If global permission is "user_specific", check individual user permission
@@ -439,16 +439,16 @@ class Users {
             
             // If user permission is "create", check WordPress capabilities
             if ($user_permission === 'create') {
-                return Admin_Capabilities::can_create_projects($user_id);
+                return \Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id);
             }
             
             // If user permission is "request" or "none", don't allow creating
             // Only allow if user has management capabilities
-            return Admin_Capabilities::can_manage_projects($user_id);
+            return \Arsol_Projects_For_Woo\Core\Capabilities::can_manage_projects($user_id);
         }
         
         // Default fallback - use WordPress capabilities
-        return Admin_Capabilities::can_create_projects($user_id);
+        return \Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id);
     }
 
     /**
@@ -469,7 +469,7 @@ class Users {
         
         // If global permission is "request" or "create", allow anyone with WordPress capabilities to request
         if ($global_permission === 'request' || $global_permission === 'create') {
-            return Admin_Capabilities::can_create_project_requests($user_id);
+            return \Arsol_Projects_For_Woo\Core\Capabilities::can_create_project_requests($user_id);
         }
         
         // If global permission is "user_specific", check individual user permission
@@ -478,16 +478,16 @@ class Users {
             
             // If user permission is "request" or "create", check WordPress capabilities
             if ($user_permission === 'request' || $user_permission === 'create') {
-                return Admin_Capabilities::can_create_project_requests($user_id);
+                return \Arsol_Projects_For_Woo\Core\Capabilities::can_create_project_requests($user_id);
             }
             
             // If user permission is "none", don't allow requesting
             // Only allow if user has management capabilities
-            return Admin_Capabilities::can_manage_projects($user_id);
+            return \Arsol_Projects_For_Woo\Core\Capabilities::can_manage_projects($user_id);
         }
         
         // Default fallback - use WordPress capabilities
-        return Admin_Capabilities::can_create_project_requests($user_id);
+        return \Arsol_Projects_For_Woo\Core\Capabilities::can_create_project_requests($user_id);
     }
 
     /**
@@ -498,7 +498,7 @@ class Users {
      */
     public function get_effective_user_permission($user_id) {
         // First check if user has management capabilities
-        if (Admin_Capabilities::can_manage_projects($user_id)) {
+        if (\Arsol_Projects_For_Woo\Core\Capabilities::can_manage_projects($user_id)) {
             return 'manager';
         }
         
@@ -513,8 +513,8 @@ class Users {
         
         // If global permission is "request" or "create", check WordPress capabilities
         if ($global_permission === 'request' || $global_permission === 'create') {
-            if (Admin_Capabilities::can_create_projects($user_id) || 
-                Admin_Capabilities::can_create_project_requests($user_id)) {
+            if (\Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id) || 
+                \Arsol_Projects_For_Woo\Core\Capabilities::can_create_project_requests($user_id)) {
                 return 'creator';
             }
         }
@@ -525,8 +525,8 @@ class Users {
             
             // If user permission is "request" or "create", check WordPress capabilities
             if ($user_permission === 'request' || $user_permission === 'create') {
-                if (Admin_Capabilities::can_create_projects($user_id) || 
-                    Admin_Capabilities::can_create_project_requests($user_id)) {
+                if (\Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id) || 
+                    \Arsol_Projects_For_Woo\Core\Capabilities::can_create_project_requests($user_id)) {
                     return 'creator';
                 }
             }

@@ -59,7 +59,7 @@ class Frontend_Handler {
         $creation_data['user_id'] = $user_id;
 
         // Check if user can create projects
-        if (!\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id)) {
+        if (!\Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id)) {
             wc_add_notice(__('You do not have permission to create projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
@@ -272,7 +272,7 @@ class Frontend_Handler {
         }
 
         // Check if user can edit projects
-        if (!\Arsol_Projects_For_Woo\Admin\Admin_Capabilities::can_create_projects($user_id)) {
+        if (!\Arsol_Projects_For_Woo\Core\Capabilities::can_create_projects($user_id)) {
             wc_add_notice(__('You do not have permission to edit projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;

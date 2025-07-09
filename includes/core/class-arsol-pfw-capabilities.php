@@ -11,13 +11,13 @@
  * @since 2.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Admin;
+namespace Arsol_Projects_For_Woo\Core;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Admin_Capabilities {
+class Capabilities {
     /**
      * Constructor
      */
