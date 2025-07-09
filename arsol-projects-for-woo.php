@@ -48,16 +48,10 @@ define('ARSOL_PFW_PLUGIN_DIR', plugin_dir_path(__FILE__));
 // Define project meta key constant for WooCommerce integration
 define('ARSOL_PROJECT_META_KEY', 'arsol-pfw/parent-project-id');
 
-// Use correct namespace
 use Arsol_Projects_For_Woo\Setup;
-// Removed redundant class imports; all handled via Setup
 
 // Include the Setup class
 require_once ARSOL_PROJECTS_PLUGIN_DIR . 'class-arsol-pfw-setup.php';
-
-// Note: Admin settings and setup defaults are now loaded by the main Setup class
-
-// Workflow handler and frontend sidebar classes are now loaded by Setup
 
 // Register activation hook
 register_activation_hook(__FILE__, 'arsol_projects_activate');
