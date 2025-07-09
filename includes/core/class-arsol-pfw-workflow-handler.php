@@ -69,6 +69,9 @@ class Workflow_Handler {
         // Hook for admin notices
         add_action('admin_notices', array($this, 'display_conversion_notices'));
         
+        // Hook for post edit screens to display conversion notices
+        add_action('admin_notices', array($this, 'display_post_edit_notices'));
+        
         // Hook into woocommerce notices (for frontend)
         add_action('woocommerce_before_single_product_summary', array($this, 'display_conversion_notices'), 5);
         add_action('woocommerce_before_shop_loop', array($this, 'display_conversion_notices'), 5);
@@ -361,14 +364,14 @@ class Workflow_Handler {
      */
     public function force_clear_stuck_workflow($post_id) {
         // Simple cleanup of workflow metadata
-        delete_post_meta($post_id, '_arsol_workflow_started');
-        delete_post_meta($post_id, '_arsol_workflow_type');
-        delete_post_meta($post_id, '_arsol_conversion_type');
-        delete_post_meta($post_id, '_arsol_conversion_step');
+                    delete_post_meta($post_id, '_arsol_workflow_started');
+            delete_post_meta($post_id, '_arsol_workflow_type');
+                    delete_post_meta($post_id, '_arsol_conversion_type');
+                    delete_post_meta($post_id, '_arsol_conversion_step');
         delete_post_meta($post_id, '_arsol_conversion_created_ids');
         delete_post_meta($post_id, '_arsol_conversion_rollback_reason');
-        
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+            
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
             "Cleared workflow metadata for post #{$post_id}");
     }
 
@@ -384,7 +387,7 @@ class Workflow_Handler {
             WHERE meta_key IN ('_arsol_workflow_started', '_arsol_workflow_type', '_arsol_conversion_type', '_arsol_conversion_step', '_arsol_conversion_created_ids', '_arsol_conversion_rollback_reason')
         ");
         
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
             "Emergency cleanup: removed {$cleaned_count} workflow metadata entries");
         
         return $cleaned_count;
@@ -453,21 +456,20 @@ class Workflow_Handler {
     }
 
     /**
-     * Display conversion notices
+     * Display conversion notices using Settings API
      */
     public function display_conversion_notices() {
-        $notices = get_transient('arsol_pfw_admin_notices');
-        
-        if ($notices) {
-            foreach ($notices as $notice) {
-                $class = 'notice notice-' . $notice['type'] . ' is-dismissible';
-            echo '<div class="' . esc_attr($class) . '">';
-                echo '<p>' . esc_html($notice['message']) . '</p>';
-            echo '</div>';
-            }
-            
-            // Clear notices after displaying
-            delete_transient('arsol_pfw_admin_notices');
+        // Display any settings errors/notices using WordPress Settings API
+        settings_errors('arsol_pfw_messages');
+    }
+
+    /**
+     * Display notices on post edit screens when settings-updated parameter is present
+     */
+    public function display_post_edit_notices() {
+        // Check if we're on a post edit screen and settings-updated parameter is present
+        if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
+            settings_errors('arsol_pfw_messages');
         }
     }
 }

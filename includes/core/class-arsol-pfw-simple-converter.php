@@ -67,14 +67,16 @@ class Simple_Converter {
             wp_delete_post($request_id, true);
             
             // 6. Success
-            $this->add_notice(__('Request converted to proposal successfully.', 'arsol-pfw'), 'success');
-            wp_redirect(admin_url("post.php?post={$proposal_id}&action=edit"));
+            $this->add_notice(__('Request converted to proposal successfully.', 'arsol-pfw'), 'updated');
+            
+            // Use Settings API redirect pattern
+            wp_redirect(add_query_arg('settings-updated', 'true', admin_url("post.php?post={$proposal_id}&action=edit")));
             exit;
             
         } catch (Exception $e) {
             // Simple error handling
             $this->add_notice(__('Conversion failed: ', 'arsol-pfw') . $e->getMessage(), 'error');
-            wp_redirect(admin_url("post.php?post={$request_id}&action=edit"));
+            wp_redirect(add_query_arg('settings-updated', 'true', admin_url("post.php?post={$request_id}&action=edit")));
             exit;
         }
     }
@@ -141,13 +143,15 @@ class Simple_Converter {
             wp_delete_post($proposal_id, true);
             
             // 7. Success
-            $this->add_notice(__('Proposal converted to project successfully.', 'arsol-pfw'), 'success');
-            wp_redirect(admin_url("post.php?post={$project_id}&action=edit"));
+            $this->add_notice(__('Proposal converted to project successfully.', 'arsol-pfw'), 'updated');
+            
+            // Use Settings API redirect pattern
+            wp_redirect(add_query_arg('settings-updated', 'true', admin_url("post.php?post={$project_id}&action=edit")));
             exit;
             
         } catch (Exception $e) {
             $this->add_notice(__('Conversion failed: ', 'arsol-pfw') . $e->getMessage(), 'error');
-            wp_redirect(admin_url("post.php?post={$proposal_id}&action=edit"));
+            wp_redirect(add_query_arg('settings-updated', 'true', admin_url("post.php?post={$proposal_id}&action=edit")));
             exit;
         }
     }
@@ -309,19 +313,27 @@ class Simple_Converter {
     }
 
     /**
-     * Add a WordPress admin notice
+     * Add a WordPress admin notice using Settings API best practice
      * 
      * @param string $message Notice message
-     * @param string $type Notice type (success, error, warning, info)
+     * @param string $type Notice type (updated, error, notice-warning, notice-info)
      */
-    private function add_notice($message, $type = 'info') {
-        // Since we're in admin screens, just use WordPress admin notices
-        $notice_class = 'notice notice-' . $type . ' is-dismissible';
-        add_action('admin_notices', function() use ($message, $notice_class) {
-            echo '<div class="' . esc_attr($notice_class) . '">';
-            echo '<p>' . esc_html($message) . '</p>';
-            echo '</div>';
-        });
+    private function add_notice($message, $type = 'updated') {
+        // Use WordPress Settings API for admin notices
+        add_settings_error(
+            'arsol_pfw_messages', // slug
+            'arsol_pfw_conversion_notice', // unique ID
+            $message, // message
+            $type // type: 'updated', 'error', 'notice-warning', 'notice-info'
+        );
+    }
+
+    /**
+     * Display stored admin notices using Settings API
+     */
+    public static function display_admin_notices() {
+        // Display any settings errors/notices
+        settings_errors('arsol_pfw_messages');
     }
 
     /**
