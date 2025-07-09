@@ -195,8 +195,8 @@ class Workflow_Handler {
             return $this->workflow->convert_request_to_proposal();
         }
         // Fallback to legacy behaviour
-        $converter = new Request_Conversion();
-        $converter->convert_request_to_proposal();
+            $converter = new Request_Conversion();
+            $converter->convert_request_to_proposal();
     }
 
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
