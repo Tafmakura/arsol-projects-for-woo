@@ -59,19 +59,22 @@ class Request {
             <?php
             $convert_url = admin_url('admin-post.php?action=arsol_convert_to_proposal&request_id=' . $post->ID);
             $convert_url = wp_nonce_url($convert_url, 'arsol_convert_to_proposal_nonce');
-            $confirm_message = esc_js(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete your current request request.', 'arsol-pfw'));
+            $confirm_message = esc_attr(__('Are you sure you want to convert this request to a proposal? This action cannot be undone and will delete your current request.', 'arsol-pfw'));
             $tooltip_text = $is_disabled
                 ? __('The request must be published before it can be converted.', 'arsol-pfw')
                 : __('Converts this request into a new proposal.', 'arsol-pfw');
             ?>
-            <span title="<?php echo esc_attr($tooltip_text); ?>">
-                <input type="button" 
-                       class="button button-secondary arsol-confirm-conversion" 
-                       value="<?php _e('Convert to Proposal', 'arsol-pfw'); ?>" 
-                       data-url="<?php echo esc_url($convert_url); ?>" 
-                       data-message="<?php echo $confirm_message; ?>"
-                       <?php disabled($is_disabled, true); ?> />
-            </span>
+            <?php if (!$is_disabled): ?>
+                <a href="<?php echo esc_url($convert_url); ?>" 
+                   class="button button-secondary" 
+                   onclick="return confirm('<?php echo $confirm_message; ?>');">
+                    <?php _e('Convert to Proposal', 'arsol-pfw'); ?>
+                </a>
+            <?php else: ?>
+                <span title="<?php echo esc_attr($tooltip_text); ?>">
+                    <button class="button button-secondary" disabled><?php _e('Convert to Proposal', 'arsol-pfw'); ?></button>
+                </span>
+            <?php endif; ?>
         </div>
         <?php
     }
