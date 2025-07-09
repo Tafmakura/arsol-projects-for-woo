@@ -154,11 +154,12 @@ class Proposal {
                 : __('Converts this proposal into a new project.', 'arsol-pfw');
             ?>
             <?php if (!$is_disabled): ?>
-                <a href="<?php echo esc_url($convert_url); ?>" 
-                   class="button button-secondary" 
-                   onclick="return confirm('<?php echo $confirm_message; ?>');">
-                    <?php _e('Convert to Project', 'arsol-pfw'); ?>
-                </a>
+                <!-- Hidden redirect URL so save_post hook can redirect after saving -->
+                <input type="hidden" name="arsol_convert_after_save" value="<?php echo esc_url($convert_url); ?>" />
+                <input type="submit" 
+                       class="button button-secondary" 
+                       value="<?php _e('Convert to Project', 'arsol-pfw'); ?>" 
+                       onclick="return confirm('<?php echo $confirm_message; ?>');" />
             <?php else: ?>
                 <span title="<?php echo esc_attr($tooltip_text); ?>">
                     <button class="button button-secondary" disabled><?php _e('Convert to Project', 'arsol-pfw'); ?></button>
