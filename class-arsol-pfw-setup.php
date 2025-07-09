@@ -92,6 +92,9 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-settings-integrations.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-setup-defaults.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-template-overrides.php';
+        // Frontend sidebar template classes
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-template-sidebar-meta.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/class-arsol-pfw-frontend-template-sidebar-buttons.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/class-arsol-pfw-admin-users.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-capabilities.php';
@@ -105,7 +108,7 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-arsol-pfw-cpt-project-frontend-handler.php';
         
         // Other includes...
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/workflow/class-arsol-pfw-workflow-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-workflow-handler.php';
 
         // Conversion classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-arsol-pfw-cpt-request-conversion.php';
@@ -136,6 +139,10 @@ class Setup {
         
         // Frontend Comments Classes
         new Frontend_Comments();
+
+        // Initialize frontend sidebar template classes
+        new Frontend_Template_Sidebar_Meta();
+        new Frontend_Template_Sidebar_Buttons();
 
         // Initialize admin classes
         if (is_admin()) {
