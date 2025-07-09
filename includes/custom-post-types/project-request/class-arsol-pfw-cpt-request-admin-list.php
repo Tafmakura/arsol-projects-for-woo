@@ -43,15 +43,10 @@ class Requests {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'request_stage':
-                $request = arsol_pfw_get_request($post_id);
-                if ($request) {
-                    $stage = $request->get_stage();
-                    if ($stage) {
-                        $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label($stage, 'request');
-                        echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
-                    } else {
-                        echo '<span class="stage stage-pending-review">Pending Review</span>';
-                    }
+                $stage = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($post_id, 'request');
+                if ($stage) {
+                    $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label('request', $stage);
+                    echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
                 } else {
                     echo '<span class="stage stage-pending-review">Pending Review</span>';
                 }

@@ -41,15 +41,10 @@ class Projects {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'project_stage':
-                $project = arsol_pfw_get_project($post_id);
-                if ($project) {
-                    $stage = $project->get_stage();
-                    if ($stage) {
-                        $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label($stage, 'project');
-                        echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
-                    } else {
-                        echo '<span class="stage stage-not-started">Not Started</span>';
-                    }
+                $stage = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($post_id, 'project');
+                if ($stage) {
+                    $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label('project', $stage);
+                    echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
                 } else {
                     echo '<span class="stage stage-not-started">Not Started</span>';
                 }

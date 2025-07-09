@@ -170,6 +170,15 @@ class Project_Request_CPT {
     }
 
     /**
+     * Get request stage (convenience method for consistency with other CPT classes)
+     * 
+     * @return string|null Current request stage slug
+     */
+    public function get_stage() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($this->request_id, 'request');
+    }
+
+    /**
      * Set request stage
      * 
      * @param string $stage New stage slug
