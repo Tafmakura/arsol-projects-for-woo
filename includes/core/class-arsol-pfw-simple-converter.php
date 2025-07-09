@@ -67,13 +67,13 @@ class Simple_Converter {
             wp_delete_post($request_id, true);
             
             // 6. Success
-            wc_add_notice(__('Request converted to proposal successfully.', 'arsol-pfw'), 'success');
+            $this->add_notice(__('Request converted to proposal successfully.', 'arsol-pfw'), 'success');
             wp_redirect(admin_url("post.php?post={$proposal_id}&action=edit"));
             exit;
             
         } catch (Exception $e) {
             // Simple error handling
-            wc_add_notice(__('Conversion failed: ', 'arsol-pfw') . $e->getMessage(), 'error');
+            $this->add_notice(__('Conversion failed: ', 'arsol-pfw') . $e->getMessage(), 'error');
             wp_redirect(admin_url("post.php?post={$request_id}&action=edit"));
             exit;
         }
@@ -141,12 +141,12 @@ class Simple_Converter {
             wp_delete_post($proposal_id, true);
             
             // 7. Success
-            wc_add_notice(__('Proposal converted to project successfully.', 'arsol-pfw'), 'success');
+            $this->add_notice(__('Proposal converted to project successfully.', 'arsol-pfw'), 'success');
             wp_redirect(admin_url("post.php?post={$project_id}&action=edit"));
             exit;
             
         } catch (Exception $e) {
-            wc_add_notice(__('Conversion failed: ', 'arsol-pfw') . $e->getMessage(), 'error');
+            $this->add_notice(__('Conversion failed: ', 'arsol-pfw') . $e->getMessage(), 'error');
             wp_redirect(admin_url("post.php?post={$proposal_id}&action=edit"));
             exit;
         }
@@ -195,7 +195,7 @@ class Simple_Converter {
         }
         
         // 4. Set proposal status to processing
-        arsol_pfw_update_proposal_stage($proposal_id, 'processing');
+        wp_set_object_terms($proposal_id, 'processing', 'arsol-pfw-proposal-stage');
         
         // 5. Copy custom fields and taxonomies
         $custom_fields = get_post_meta($request_id);
@@ -309,6 +309,22 @@ class Simple_Converter {
     }
 
     /**
+     * Add a WordPress admin notice
+     * 
+     * @param string $message Notice message
+     * @param string $type Notice type (success, error, warning, info)
+     */
+    private function add_notice($message, $type = 'info') {
+        // Since we're in admin screens, just use WordPress admin notices
+        $notice_class = 'notice notice-' . $type . ' is-dismissible';
+        add_action('admin_notices', function() use ($message, $notice_class) {
+            echo '<div class="' . esc_attr($notice_class) . '">';
+            echo '<p>' . esc_html($message) . '</p>';
+            echo '</div>';
+        });
+    }
+
+    /**
      * Create WooCommerce orders from proposal
      * 
      * @param int $proposal_id Proposal ID
@@ -316,6 +332,11 @@ class Simple_Converter {
      */
     private function create_woocommerce_orders($proposal_id, $project_id) {
         try {
+            // Check if WooCommerce_Biller class exists
+            if (!class_exists('\Arsol_Projects_For_Woo\Woocommerce_Biller')) {
+                throw new Exception('WooCommerce billing system not available');
+            }
+            
             $biller = new \Arsol_Projects_For_Woo\Woocommerce_Biller();
             $result = $biller->convert_proposal_to_order($proposal_id, $project_id);
             
