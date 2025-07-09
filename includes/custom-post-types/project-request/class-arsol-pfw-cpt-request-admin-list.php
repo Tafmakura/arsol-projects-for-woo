@@ -39,10 +39,12 @@ class Requests {
 
     /**
      * Render custom column content
+     * Fixed: Now uses Stage Manager directly instead of calling get_stage() on request object
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'request_stage':
+                // Use Stage Manager directly - no need to instantiate request object
                 $stage = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($post_id, 'request');
                 if ($stage) {
                     $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label('request', $stage);

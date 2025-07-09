@@ -25,13 +25,6 @@ if (!$request) {
     return;
 }
 
-// Get request details using CRUD methods
-$request_budget = $request->get_budget();
-$request_timeline = $request->get_prop('timeline');
-$request_stage = $request->get_stage();
-$request_deadline = $request->get_deadline();
-$request_priority = $request->get_prop('priority');
-
 $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
 
 do_action('arsol_projects_before_request_state', $request->get_id());
@@ -49,28 +42,7 @@ if (!empty($customer_notice)) : ?>
 <?php endif; ?>
 
 <?php
-// 2. Request Status and Details
-?>
-<div class="arsol-pfw-request-status">
-    <?php if ($request_stage) : ?>
-        <p><strong><?php _e('Status:', 'arsol-pfw'); ?></strong> <?php echo esc_html(\Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label('request', $request_stage)); ?></p>
-    <?php endif; ?>
-    
-    <?php if ($request_budget) : ?>
-        <p><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php echo wp_kses_post(wc_price($request_budget)); ?></p>
-    <?php endif; ?>
-    
-    <?php if ($request_deadline) : ?>
-        <p><strong><?php _e('Deadline:', 'arsol-pfw'); ?></strong> <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($request_deadline))); ?></p>
-    <?php endif; ?>
-    
-    <?php if ($request_priority) : ?>
-        <p><strong><?php _e('Priority:', 'arsol-pfw'); ?></strong> <?php echo esc_html($request_priority); ?></p>
-    <?php endif; ?>
-</div>
-
-<?php
-// 3. Post Content (request description)
+// 2. Post Content (request description)
 if (!empty($request->get_name()) && !empty($post->post_content)) : ?>
     <div class="arsol-pfw-post-content">
         <h4><?php _e('Request Details', 'arsol-pfw'); ?></h4>

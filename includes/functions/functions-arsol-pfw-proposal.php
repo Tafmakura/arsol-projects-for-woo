@@ -30,7 +30,6 @@ function arsol_pfw_create_proposal($args = array()) {
         'name'        => '',
         'customer_id' => 0,
         'budget'      => 0,
-        'timeline'    => '',
         'description' => '',
         'quotation'   => array(),
         'stage'       => 'processing',
@@ -53,7 +52,6 @@ function arsol_pfw_create_proposal($args = array()) {
     $proposal->set_name($args['name']);
     $proposal->set_customer_id($args['customer_id']);
     $proposal->set_budget($args['budget']);
-    $proposal->set_timeline($args['timeline']);
     $proposal->set_quotation($args['quotation']);
     $proposal->set_prop('description', $args['description']);
     $proposal->set_stage($args['stage']);

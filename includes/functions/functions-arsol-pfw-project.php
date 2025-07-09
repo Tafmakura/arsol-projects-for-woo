@@ -31,7 +31,6 @@ function arsol_pfw_create_project($args = array()) {
         'customer_id' => 0,
         'budget'      => 0,
         'deadline'    => '',
-        'timeline'    => '',
         'description' => '',
         'progress'    => 0,
         'stage'       => 'not-started',
@@ -57,7 +56,6 @@ function arsol_pfw_create_project($args = array()) {
     $project->set_deadline($args['deadline']);
     $project->set_progress($args['progress']);
     $project->set_prop('description', $args['description']);
-    $project->set_prop('timeline', $args['timeline']);
     $project->set_stage($args['stage']);
     
     return $project;
