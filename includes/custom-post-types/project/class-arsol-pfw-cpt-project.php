@@ -158,7 +158,7 @@ class Project_CPT {
      */
     public function get_stage() {
         // Use centralized stage manager
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($this->project_id, 'project');
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($this->project_id, 'project');
     }
 
     /**
@@ -169,7 +169,7 @@ class Project_CPT {
      */
     public function set_stage($stage) {
         // Use centralized stage manager
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::set_stage($this->project_id, 'project', $stage);
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($this->project_id, 'project', $stage);
     }
 
     /**
@@ -440,7 +440,7 @@ class Project_CPT {
      * @return bool|WP_Error Success status or error
      */
     public function update_stage($new_stage) {
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::update_stage($this->project_id, 'project', $new_stage);
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::update_stage($this->project_id, 'project', $new_stage);
     }
 
     /**
@@ -449,7 +449,7 @@ class Project_CPT {
      * @return array Available stages
      */
     public function get_available_stages() {
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_available_stages('project');
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('project');
     }
 
     /**

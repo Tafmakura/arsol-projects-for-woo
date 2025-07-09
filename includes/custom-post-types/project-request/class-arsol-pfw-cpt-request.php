@@ -166,7 +166,7 @@ class Project_Request_CPT {
      */
     public function get_status() {
         // Use centralized stage manager
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($this->request_id, 'request');
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($this->request_id, 'request');
     }
 
     /**
@@ -175,7 +175,7 @@ class Project_Request_CPT {
      * @return string|null Current request stage slug
      */
     public function get_stage() {
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($this->request_id, 'request');
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($this->request_id, 'request');
     }
 
     /**
@@ -186,7 +186,7 @@ class Project_Request_CPT {
      */
     public function set_stage($stage) {
         // Use centralized stage manager
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::set_stage($this->request_id, 'request', $stage);
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($this->request_id, 'request', $stage);
     }
 
     /**
@@ -442,7 +442,7 @@ class Project_Request_CPT {
      * @return bool|WP_Error Success status or error
      */
     public function update_stage($new_stage) {
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::update_stage($this->request_id, 'request', $new_stage);
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::update_stage($this->request_id, 'request', $new_stage);
     }
 
     /**
@@ -451,7 +451,7 @@ class Project_Request_CPT {
      * @return array Available stages
      */
     public function get_available_stages() {
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_available_stages('request');
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('request');
     }
 
     /**

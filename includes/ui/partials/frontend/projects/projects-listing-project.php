@@ -32,8 +32,8 @@ do_action('arsol_projects_before_user_projects', $has_items);
         <tbody>
             <?php while ($query->have_posts()) : $query->the_post();
                 $project_id = get_the_ID();
-                $stage_slug = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($project_id, 'project');
-                $status = !empty($stage_slug) ? \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label('project', $stage_slug) : 'Not Started';
+                $stage_slug = \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($project_id, 'project');
+                $status = !empty($stage_slug) ? \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_label('project', $stage_slug) : 'Not Started';
                 $view_url = wc_get_account_endpoint_url('view-project/' . $project_id);
                 $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
             ?>

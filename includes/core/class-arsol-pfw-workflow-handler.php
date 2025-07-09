@@ -156,8 +156,8 @@ class Workflow_Handler {
         }
 
         // Clear any cached stage data
-        if (class_exists('\Arsol_Projects_For_Woo\Core\Stage_Manager')) {
-            \Arsol_Projects_For_Woo\Core\Stage_Manager::clear_stages_cache($entity_type);
+        if (class_exists('\Arsol_Projects_For_Woo\Core\Stage_Handler')) {
+            \Arsol_Projects_For_Woo\Core\Stage_Handler::clear_stages_cache($entity_type);
         }
     }
 

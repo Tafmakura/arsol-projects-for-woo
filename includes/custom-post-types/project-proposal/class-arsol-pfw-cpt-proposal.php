@@ -165,7 +165,7 @@ class Project_Proposal_CPT {
      * @return string Current stage
      */
     public function get_stage() {
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($this->proposal_id, 'proposal');
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($this->proposal_id, 'proposal');
     }
 
     /**
@@ -175,7 +175,7 @@ class Project_Proposal_CPT {
      * @return bool Success status
      */
     public function set_stage($stage) {
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::set_stage($this->proposal_id, 'proposal', $stage);
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($this->proposal_id, 'proposal', $stage);
     }
 
     /**
@@ -490,7 +490,7 @@ class Project_Proposal_CPT {
      * @return bool|WP_Error Success status or error
      */
     public function update_stage($new_stage) {
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::update_stage($this->proposal_id, 'proposal', $new_stage);
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::update_stage($this->proposal_id, 'proposal', $new_stage);
     }
 
     /**
@@ -499,7 +499,7 @@ class Project_Proposal_CPT {
      * @return array Available stages
      */
     public function get_available_stages() {
-        return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_available_stages('proposal');
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('proposal');
     }
 
     /**

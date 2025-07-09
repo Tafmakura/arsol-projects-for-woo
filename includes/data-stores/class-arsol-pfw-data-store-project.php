@@ -46,7 +46,7 @@ class Project_Data_Store {
         
         // Set initial stage
         $stage = $project->get_prop('stage') ?: 'not-started';
-        \Arsol_Projects_For_Woo\Core\Stage_Manager::set_stage($post_id, 'project', $stage);
+        \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($post_id, 'project', $stage);
         
         do_action('arsol_pfw_project_created', $post_id, $project);
         

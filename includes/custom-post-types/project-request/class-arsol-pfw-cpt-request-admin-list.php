@@ -45,9 +45,9 @@ class Requests {
         switch ($column) {
             case 'request_stage':
                 // Use Stage Manager directly - no need to instantiate request object
-                $stage = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage($post_id, 'request');
+                $stage = \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($post_id, 'request');
                 if ($stage) {
-                    $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label('request', $stage);
+                    $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_label('request', $stage);
                     echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
                 } else {
                     echo '<span class="stage stage-pending-review">Pending Review</span>';

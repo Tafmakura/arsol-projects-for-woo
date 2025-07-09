@@ -67,7 +67,7 @@ function arsol_pfw_create_proposal($args = array()) {
  * @return array
  */
 function arsol_pfw_get_proposals_by_stage($stage, $args = array()) {
-    return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_entities_by_stage('proposal', $stage, $args);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_entities_by_stage('proposal', $stage, $args);
 }
 
 /**
@@ -76,7 +76,7 @@ function arsol_pfw_get_proposals_by_stage($stage, $args = array()) {
  * @return array
  */
 function arsol_pfw_get_proposal_stage_counts() {
-    return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_counts('proposal');
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_counts('proposal');
 }
 
 /**
@@ -85,7 +85,7 @@ function arsol_pfw_get_proposal_stage_counts() {
  * @return array
  */
 function arsol_pfw_get_proposal_available_stages() {
-    return \Arsol_Projects_For_Woo\Core\Stage_Manager::get_available_stages('proposal');
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('proposal');
 }
 
 /**
@@ -96,7 +96,7 @@ function arsol_pfw_get_proposal_available_stages() {
  * @return bool|WP_Error
  */
 function arsol_pfw_update_proposal_stage($proposal_id, $new_stage) {
-    return \Arsol_Projects_For_Woo\Core\Stage_Manager::update_stage($proposal_id, 'proposal', $new_stage);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::update_stage($proposal_id, 'proposal', $new_stage);
 }
 
 /**
