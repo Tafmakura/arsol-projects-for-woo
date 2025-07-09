@@ -207,34 +207,21 @@ function arsol_debug_page() {
         <h2>🧪 Manual Capability Assignment (Alternative)</h2>
         <p>If the settings method doesn't work, you can manually assign capabilities using this button:</p>
         
-        <?php if (isset($_POST['assign_caps_manually']) && wp_verify_nonce($_POST['_wpnonce'], 'arsol_assign_caps')): ?>
+        <?php if (isset($_POST['assign_caps_manually'])): ?>
             <?php
             $admin_role = get_role('administrator');
             if ($admin_role) {
-                // Use the EXACT same capabilities as the plugin's settings system
-                $manage_capabilities = array(
+                $capabilities = [
                     'arsol_pfw_manage',
-                    'edit_arsol_pfw_projects',
-                    'edit_others_arsol_pfw_projects',
-                    'publish_arsol_pfw_projects',
-                    'read_private_arsol_pfw_projects',
-                    'delete_arsol_pfw_projects',
-                    'delete_others_arsol_pfw_projects',
-                    'edit_arsol_pfw_proposals',
-                    'edit_others_arsol_pfw_proposals',
-                    'publish_arsol_pfw_proposals',
-                    'read_private_arsol_pfw_proposals',
-                    'delete_arsol_pfw_proposals',
-                    'delete_others_arsol_pfw_proposals',
-                    'edit_arsol_pfw_requests',
-                    'edit_others_arsol_pfw_requests',
-                    'publish_arsol_pfw_requests',
-                    'read_private_arsol_pfw_requests',
-                    'delete_arsol_pfw_requests',
-                    'delete_others_arsol_pfw_requests',
-                );
+                    'edit_arsol_pfw_projects', 'edit_others_arsol_pfw_projects', 'publish_arsol_pfw_projects',
+                    'read_private_arsol_pfw_projects', 'delete_arsol_pfw_projects', 'delete_others_arsol_pfw_projects',
+                    'edit_arsol_pfw_proposals', 'edit_others_arsol_pfw_proposals', 'publish_arsol_pfw_proposals',
+                    'read_private_arsol_pfw_proposals', 'delete_arsol_pfw_proposals', 'delete_others_arsol_pfw_proposals',
+                    'edit_arsol_pfw_requests', 'edit_others_arsol_pfw_requests', 'publish_arsol_pfw_requests',
+                    'read_private_arsol_pfw_requests', 'delete_arsol_pfw_requests', 'delete_others_arsol_pfw_requests',
+                ];
 
-                foreach ($manage_capabilities as $cap) {
+                foreach ($capabilities as $cap) {
                     $admin_role->add_cap($cap);
                 }
                 
@@ -244,42 +231,8 @@ function arsol_debug_page() {
         <?php endif; ?>
         
         <form method="post" style="margin: 20px 0;">
-            <?php wp_nonce_field('arsol_assign_caps'); ?>
             <button type="submit" name="assign_caps_manually" class="button button-primary">
                 🔧 Manually Assign All Capabilities to Administrator
-            </button>
-        </form>
-        
-        <h2>🔧 Settings-Based Assignment (Recommended)</h2>
-        <p>OR trigger the settings-based assignment directly:</p>
-        
-        <?php if (isset($_POST['trigger_settings_assignment']) && wp_verify_nonce($_POST['_wpnonce'], 'arsol_trigger_settings')): ?>
-            <?php
-            // Get current settings
-            $settings = get_option('arsol_pfw_general_settings', array());
-            
-            // Ensure administrator is in both manager and user roles
-            $settings['project_manager_roles'] = isset($settings['project_manager_roles']) ? $settings['project_manager_roles'] : array();
-            $settings['project_user_roles'] = isset($settings['project_user_roles']) ? $settings['project_user_roles'] : array();
-            
-            if (!in_array('administrator', $settings['project_manager_roles'])) {
-                $settings['project_manager_roles'][] = 'administrator';
-            }
-            if (!in_array('administrator', $settings['project_user_roles'])) {
-                $settings['project_user_roles'][] = 'administrator';
-            }
-            
-            // Save settings to trigger capability assignment
-            update_option('arsol_pfw_general_settings', $settings);
-            
-            echo '<div class="notice notice-success"><p><strong>✅ Settings updated and capabilities assigned through the plugin system! Refresh this page to see the changes.</strong></p></div>';
-            ?>
-        <?php endif; ?>
-        
-        <form method="post" style="margin: 20px 0;">
-            <?php wp_nonce_field('arsol_trigger_settings'); ?>
-            <button type="submit" name="trigger_settings_assignment" class="button button-secondary">
-                ⚙️ Trigger Settings-Based Assignment
             </button>
         </form>
         
