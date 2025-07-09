@@ -19,7 +19,7 @@ class Proposal_Conversion {
         if (empty($proposal_id)) {
             // Wrap parameter parsing in try/catch flow
             try {
-                if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce')) {
+            if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce')) {
                     throw new Exception(__('Invalid proposal or nonce.', 'arsol-pfw'));
                 }
                 $proposal_id = intval($_GET['proposal_id']);

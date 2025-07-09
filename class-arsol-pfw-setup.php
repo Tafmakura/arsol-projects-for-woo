@@ -66,6 +66,7 @@ class Setup {
         
         // CRUD System
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-stage-handler.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-conversion-handler.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-request.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-proposal.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-project.php';

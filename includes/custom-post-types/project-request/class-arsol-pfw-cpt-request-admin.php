@@ -71,9 +71,9 @@ class Request {
                     <?php _e('Convert to Proposal', 'arsol-pfw'); ?>
                 </a>
             <?php else: ?>
-                <span title="<?php echo esc_attr($tooltip_text); ?>">
+            <span title="<?php echo esc_attr($tooltip_text); ?>">
                     <button class="button button-secondary" disabled><?php _e('Convert to Proposal', 'arsol-pfw'); ?></button>
-                </span>
+            </span>
             <?php endif; ?>
         </div>
         <?php

@@ -3,6 +3,7 @@
 namespace Arsol_Projects_For_Woo\Workflow;
 
 use Exception;
+use Arsol_Projects_For_Woo\Core\Conversion_Handler;
 use Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Request_Conversion;
 use Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Proposal_Conversion;
 
@@ -191,21 +192,11 @@ class Workflow_Handler {
     }
 
     public function convert_request_to_proposal() {
-        if ($this->workflow && method_exists($this->workflow, 'convert_request_to_proposal')) {
-            return $this->workflow->convert_request_to_proposal();
-        }
-        // Fallback to legacy behaviour
-            $converter = new Request_Conversion();
-            $converter->convert_request_to_proposal();
+        Conversion_Handler::convert_request_to_proposal();
     }
 
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
-        if ($this->workflow && method_exists($this->workflow, 'convert_proposal_to_project')) {
-            return $this->workflow->convert_proposal_to_project($proposal_id, $is_internal_call);
-        }
-        // Fallback to legacy behaviour
-        $converter = new Proposal_Conversion();
-        $converter->convert_proposal_to_project($proposal_id, $is_internal_call);
+        Conversion_Handler::convert_proposal_to_project($proposal_id, $is_internal_call);
     }
     public function customer_cancel_request() {
         $request_frontend = new \Arsol_Projects_For_Woo\Frontend\Request_Frontend();
