@@ -223,21 +223,8 @@ class Project_Proposal_CPT {
      * @return bool Success status
      */
     public function set_timeline($timeline) {
-        $success = true;
-        
-        if (isset($timeline['start_date'])) {
-            $success = $success && $this->set_meta('_arsol_pfw_proposal_start_date', $timeline['start_date']);
-        }
-        
-        if (isset($timeline['delivery_date'])) {
-            $success = $success && $this->set_meta('_arsol_pfw_proposal_delivery_date', $timeline['delivery_date']);
-        }
-
-        if (isset($timeline['expiration_date'])) {
-            $success = $success && $this->set_meta('_arsol_pfw_proposal_expiration_date', $timeline['expiration_date']);
-        }
-
-        return $success;
+        $this->set_prop('timeline', $timeline);
+        return true;
     }
 
     /**

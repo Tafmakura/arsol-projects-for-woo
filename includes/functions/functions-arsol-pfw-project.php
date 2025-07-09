@@ -8,14 +8,14 @@ if (!defined('ABSPATH')) {
  * Get project by ID
  *
  * @param int $project_id Project ID
- * @return ARSOL_PFW_CPT_Project|false
+ * @return \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT|false
  */
 function arsol_pfw_get_project($project_id) {
     if (!$project_id) {
         return false;
     }
     
-    $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\CPT_Project($project_id);
+    $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($project_id);
     return $project->get_id() ? $project : false;
 }
 
@@ -23,7 +23,7 @@ function arsol_pfw_get_project($project_id) {
  * Create new project
  *
  * @param array $args Project arguments
- * @return ARSOL_PFW_CPT_Project|WP_Error
+ * @return \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT|WP_Error
  */
 function arsol_pfw_create_project($args = array()) {
     $defaults = array(
@@ -48,7 +48,7 @@ function arsol_pfw_create_project($args = array()) {
         return new WP_Error('missing_customer', 'Customer ID is required');
     }
     
-    $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\CPT_Project();
+    $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT();
     
     // Set properties
     $project->set_name($args['name']);

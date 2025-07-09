@@ -187,7 +187,7 @@ class Project_Request_CPT {
     /**
      * Get request budget
      * 
-     * @return array|null Budget data
+     * @return float Request budget
      */
     public function get_budget() {
         return $this->get_meta('_arsol_pfw_request_budget');
@@ -196,11 +196,32 @@ class Project_Request_CPT {
     /**
      * Set request budget
      * 
-     * @param array $budget Budget data
+     * @param float $budget Request budget
      * @return bool Success status
      */
     public function set_budget($budget) {
-        return $this->set_meta('_arsol_pfw_request_budget', $budget);
+        $this->set_prop('budget', $budget);
+        return true;
+    }
+
+    /**
+     * Get request deadline
+     * 
+     * @return string Request deadline
+     */
+    public function get_deadline() {
+        return $this->get_meta('_arsol_pfw_request_delivery_date');
+    }
+
+    /**
+     * Set request deadline
+     * 
+     * @param string $deadline Request deadline
+     * @return bool Success status
+     */
+    public function set_deadline($deadline) {
+        $this->set_prop('deadline', $deadline);
+        return true;
     }
 
     /**
@@ -406,26 +427,6 @@ class Project_Request_CPT {
      */
     public function set_customer_id($customer_id) {
         $this->set_prop('customer_id', (int) $customer_id);
-        return true;
-    }
-
-    /**
-     * Get deadline
-     * 
-     * @return string Deadline
-     */
-    public function get_deadline() {
-        return $this->get_meta('_arsol_pfw_request_deadline');
-    }
-
-    /**
-     * Set deadline
-     * 
-     * @param string $deadline Deadline
-     * @return bool Success status
-     */
-    public function set_deadline($deadline) {
-        $this->set_prop('deadline', $deadline);
         return true;
     }
 

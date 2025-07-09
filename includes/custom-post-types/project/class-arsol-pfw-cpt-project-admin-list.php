@@ -41,26 +41,42 @@ class Projects {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'project_stage':
-                $status = wp_get_object_terms($post_id, 'arsol-pfw-project-stage', array('fields' => 'names'));
-                if (!empty($status) && !is_wp_error($status)) {
-                    echo '<span class="stage stage-' . esc_attr(strtolower(str_replace(' ', '-', $status[0]))) . '">' . esc_html($status[0]) . '</span>';
+                $project = arsol_pfw_get_project($post_id);
+                if ($project) {
+                    $stage = $project->get_stage();
+                    if ($stage) {
+                        $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label($stage, 'project');
+                        echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
+                    } else {
+                        echo '<span class="stage stage-not-started">Not Started</span>';
+                    }
                 } else {
                     echo '<span class="stage stage-not-started">Not Started</span>';
                 }
                 break;
                 
             case 'customer':
-                $post = get_post($post_id);
-                if ($post && $post->post_author) {
-                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($post->post_author, 'arsol-pfw-project');
+                $project = arsol_pfw_get_project($post_id);
+                if ($project) {
+                    $customer_id = $project->get_customer_id();
+                    if ($customer_id) {
+                        echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-project');
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
                 break;
                 
             case 'project_lead':
-                $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
-                echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
+                $project = arsol_pfw_get_project($post_id);
+                if ($project) {
+                    $lead_id = $project->get_project_lead();
+                    echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
+                } else {
+                    echo '<span class="na">&ndash;</span>';
+                }
                 break;
         }
     }

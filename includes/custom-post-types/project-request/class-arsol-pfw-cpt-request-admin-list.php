@@ -44,38 +44,51 @@ class Requests {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'request_stage':
-                $status = wp_get_object_terms($post_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
-                if (!empty($status) && !is_wp_error($status)) {
-                    echo esc_html($status[0]);
+                $request = arsol_pfw_get_request($post_id);
+                if ($request) {
+                    $stage = $request->get_stage();
+                    if ($stage) {
+                        $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label($stage, 'request');
+                        echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
+                    } else {
+                        echo '<span class="stage stage-pending-review">Pending Review</span>';
+                    }
+                } else {
+                    echo '<span class="stage stage-pending-review">Pending Review</span>';
                 }
                 break;
                 
             case 'request_budget':
-                $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
-                if ($budget) {
-                    if (is_array($budget) && isset($budget['amount'])) {
-                        $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();
-                        echo wc_price($budget['amount'], array('currency' => $currency));
+                $request = arsol_pfw_get_request($post_id);
+                if ($request) {
+                    $budget = $request->get_budget();
+                    if ($budget) {
+                        if (is_array($budget) && isset($budget['amount'])) {
+                            $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();
+                            echo wc_price($budget['amount'], array('currency' => $currency));
+                        } else {
+                            // Legacy support for simple numeric values
+                            echo wc_price($budget);
+                        }
                     } else {
-                        // Legacy support for simple numeric values
-                        echo wc_price($budget);
+                        echo '<span class="na">&ndash;</span>';
                     }
-                }
-                break;
-                
-            case 'customer':
-                $post = get_post($post_id);
-                if ($post && $post->post_author) {
-                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($post->post_author, 'arsol-pfw-request');
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
                 break;
-
-            case 'request_stage':
-                $stage = wp_get_object_terms($post_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
-                if (!empty($stage) && !is_wp_error($stage)) {
-                    echo esc_html($stage[0]);
+                
+            case 'customer':
+                $request = arsol_pfw_get_request($post_id);
+                if ($request) {
+                    $customer_id = $request->get_customer_id();
+                    if ($customer_id) {
+                        echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-request');
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
+                } else {
+                    echo '<span class="na">&ndash;</span>';
                 }
                 break;
         }

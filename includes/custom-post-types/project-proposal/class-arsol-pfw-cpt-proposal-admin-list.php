@@ -44,42 +44,63 @@ class Proposals {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'proposal_stage':
-                $stage_terms = wp_get_object_terms($post_id, 'arsol-pfw-proposal-stage', array('fields' => 'names'));
-                if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
-                    echo esc_html($stage_terms[0]);
+                $proposal = arsol_pfw_get_proposal($post_id);
+                if ($proposal) {
+                    $stage = $proposal->get_stage();
+                    if ($stage) {
+                        $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Manager::get_stage_label($stage, 'proposal');
+                        echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
+                    } else {
+                        echo '<span class="stage stage-processing">Processing</span>';
+                    }
+                } else {
+                    echo '<span class="stage stage-processing">Processing</span>';
                 }
                 break;
                 
             case 'customer':
-                $post = get_post($post_id);
-                if ($post && $post->post_author) {
-                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($post->post_author, 'arsol-pfw-proposal');
+                $proposal = arsol_pfw_get_proposal($post_id);
+                if ($proposal) {
+                    $customer_id = $proposal->get_customer_id();
+                    if ($customer_id) {
+                        echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-proposal');
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
                 break;
             
             case 'project':
-                $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
-                if ($parent_project_id) {
-                    echo '#' . $parent_project_id;
-                } else {
-                    echo '<span class="na">&ndash;</span>';
-                }
-                break;
-                
-            case 'project':
-                $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
-                if ($parent_project_id) {
-                    echo '#' . $parent_project_id;
+                $proposal = arsol_pfw_get_proposal($post_id);
+                if ($proposal) {
+                    $parent_project_id = $proposal->get_meta('_arsol_pfw_parent_project_id');
+                    if ($parent_project_id) {
+                        $parent_project = arsol_pfw_get_project($parent_project_id);
+                        if ($parent_project) {
+                            echo '<a href="' . esc_url(get_edit_post_link($parent_project_id)) . '">';
+                            echo esc_html($parent_project->get_title());
+                            echo '</a>';
+                        } else {
+                            echo '#' . esc_html($parent_project_id);
+                        }
+                    } else {
+                        echo '<span class="na">&ndash;</span>';
+                    }
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
                 break;
                 
             case 'project_lead':
-                $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
-                echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
+                $proposal = arsol_pfw_get_proposal($post_id);
+                if ($proposal) {
+                    $lead_id = $proposal->get_meta('_arsol_pfw_proposal_project_lead');
+                    echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
+                } else {
+                    echo '<span class="na">&ndash;</span>';
+                }
                 break;
         }
     }

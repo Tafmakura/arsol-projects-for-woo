@@ -398,6 +398,46 @@ class Project_CPT {
     }
 
     /**
+     * Get project deadline
+     * 
+     * @return string Project deadline
+     */
+    public function get_deadline() {
+        return $this->get_meta('_arsol_pfw_project_due_date');
+    }
+
+    /**
+     * Set project deadline
+     * 
+     * @param string $deadline Project deadline
+     * @return bool Success status
+     */
+    public function set_deadline($deadline) {
+        $this->set_prop('deadline', $deadline);
+        return true;
+    }
+
+    /**
+     * Get project progress
+     * 
+     * @return int Project progress percentage
+     */
+    public function get_progress() {
+        return (int) $this->get_meta('_arsol_pfw_project_progress');
+    }
+
+    /**
+     * Set project progress
+     * 
+     * @param int $progress Project progress percentage
+     * @return bool Success status
+     */
+    public function set_progress($progress) {
+        $this->set_prop('progress', (int) $progress);
+        return true;
+    }
+
+    /**
      * Update stage with hooks
      * 
      * @param string $new_stage New stage
