@@ -9,20 +9,6 @@ class Requests {
         // Add custom columns to requests table
         add_filter('manage_arsol-pfw-request_posts_columns', array($this, 'add_custom_columns'));
         add_action('manage_arsol-pfw-request_posts_custom_column', array($this, 'render_custom_column'), 10, 2);
-        // Add filtering logic for clickable columns
-        add_action('pre_get_posts', array($this, 'filter_by_custom_columns'));
-    }
-
-    /**
-     * Filter posts based on custom column clicks
-     */
-    public function filter_by_custom_columns($query) {
-        global $pagenow, $typenow;
-
-        if ($pagenow === 'edit.php' && $typenow === 'arsol-pfw-request' && $query->is_main_query()) {
-            // Customer filtering is handled by WordPress default 'author' parameter
-            // No additional filtering needed for basic columns
-        }
     }
 
     /**
@@ -56,11 +42,7 @@ class Requests {
                 if ($author_id) {
                     $user = get_userdata($author_id);
                     if ($user) {
-                        $filter_url = add_query_arg(array(
-                            'post_type' => 'arsol-pfw-request',
-                            'author' => $author_id
-                        ), admin_url('edit.php'));
-                        echo '<a href="' . esc_url($filter_url) . '">' . esc_html($user->display_name) . '</a>';
+                        echo esc_html($user->display_name);
                     } else {
                         echo '—';
                     }
@@ -74,14 +56,18 @@ class Requests {
                 if (!empty($terms) && !is_wp_error($terms)) {
                     echo esc_html($terms[0]->name);
                 } else {
-                    echo 'Pending';
+                    echo 'Pending Review';
                 }
                 break;
                 
             case 'request_budget':
                 $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
-                if ($budget) {
-                    echo '$' . number_format($budget, 2);
+                if ($budget && is_numeric($budget)) {
+                    if (function_exists('wc_price')) {
+                        echo wc_price($budget);
+                    } else {
+                        echo '$' . number_format($budget, 2);
+                    }
                 } else {
                     echo '—';
                 }
