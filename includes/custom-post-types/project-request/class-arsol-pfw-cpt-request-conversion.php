@@ -71,14 +71,7 @@ class Request_Conversion {
             // Validation step
             update_post_meta($request_id, '_arsol_conversion_step', 'validation');
 
-            // Server-side validation of the request stage
-            $current_stage = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
-            if (empty($current_stage) || $current_stage[0] !== 'approved') {
-                throw new Exception(sprintf(
-                    __('This request cannot be converted. The stage is "%s", must be "approved".', 'arsol-pfw'),
-                    empty($current_stage) ? 'none' : $current_stage[0]
-                ));
-            }
+            // No stage restriction – conversion allowed for any published request
 
             // Prepare conversion data for hooks
             $conversion_data = array(

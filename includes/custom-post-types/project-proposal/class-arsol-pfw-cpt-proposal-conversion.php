@@ -97,16 +97,7 @@ class Proposal_Conversion {
             // Validation step
             update_post_meta($proposal_id, '_arsol_conversion_step', 'validation');
 
-            // Server-side validation: Check proposal stage
-            $proposal_stage_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
-            $current_proposal_stage = !empty($proposal_stage_terms) ? $proposal_stage_terms[0] : '';
-
-            if ($current_proposal_stage !== 'approved') {
-                throw new Exception(sprintf(
-                    __('This proposal cannot be converted. The stage is "%s", must be "approved".', 'arsol-pfw'),
-                    $current_proposal_stage ?: 'none'
-                ));
-            }
+            // No stage restriction – conversion allowed for any published proposal
 
             // Prepare conversion data for hooks
             $conversion_data = array(
@@ -116,7 +107,7 @@ class Proposal_Conversion {
                 'user_id' => get_current_user_id(),
                 'conversion_method' => $is_internal_call ? 'customer_approval' : 'admin_conversion',
                 'timestamp' => current_time('timestamp'),
-                'proposal_stage' => $current_proposal_stage
+                'proposal_stage' => '' // No longer needed
             );
 
             /**
