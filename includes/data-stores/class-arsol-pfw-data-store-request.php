@@ -11,7 +11,7 @@ class Request_Data_Store {
     protected $meta_keys = array(
         'customer_id' => '_arsol_pfw_request_customer_id',
         'budget'      => '_arsol_pfw_request_budget',
-        'deadline'    => '_arsol_pfw_request_deadline',
+        'deadline'    => '_arsol_pfw_request_delivery_date',
         'description' => '_arsol_pfw_request_description',
         'priority'    => '_arsol_pfw_request_priority',
         'start_date'  => '_arsol_pfw_request_start_date',

@@ -17,6 +17,10 @@ class Proposal_Data_Store {
         'deadline'    => '_arsol_pfw_proposal_deadline',
         'start_date'  => '_arsol_pfw_proposal_start_date',
         'project_lead' => '_arsol_pfw_proposal_project_lead',
+        'delivery_date' => '_arsol_pfw_proposal_delivery_date',
+        'expiration_date' => '_arsol_pfw_proposal_expiration_date',
+        'costing_type' => '_arsol_pfw_proposal_costing_type',
+        'parent_project_id' => '_arsol_pfw_parent_project_id',
     );
     
     /**

@@ -11,7 +11,7 @@ class Project_Data_Store {
     protected $meta_keys = array(
         'customer_id' => '_arsol_pfw_project_customer_id',
         'budget'      => '_arsol_pfw_project_budget',
-        'deadline'    => '_arsol_pfw_project_deadline',
+        'deadline'    => '_arsol_pfw_project_due_date',
         'description' => '_arsol_pfw_project_description',
         'timeline'    => '_arsol_pfw_project_timeline',
         'progress'    => '_arsol_pfw_project_progress',
