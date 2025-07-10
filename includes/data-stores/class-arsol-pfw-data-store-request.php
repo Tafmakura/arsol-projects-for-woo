@@ -14,6 +14,8 @@ class Request_Data_Store {
         'deadline'    => '_arsol_pfw_request_deadline',
         'description' => '_arsol_pfw_request_description',
         'priority'    => '_arsol_pfw_request_priority',
+        'start_date'  => '_arsol_pfw_request_start_date',
+        'project_lead' => '_arsol_pfw_request_project_lead',
     );
     
     /**
