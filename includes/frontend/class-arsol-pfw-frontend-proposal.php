@@ -244,7 +244,7 @@ class Proposal_Frontend extends Frontend_Handler {
             wp_set_object_terms($proposal_id, 'approved', 'arsol-pfw-proposal-stage');
             
             // Use the conversion class to convert proposal to project
-            $converter = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Proposal_Conversion();
+            $converter = new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
             $converter->convert_proposal_to_project($proposal_id, true);
             
         } catch (Exception $e) {
