@@ -706,6 +706,8 @@ class Project_Proposal_CPT {
             if (!is_wp_error($result)) {
                 $this->proposal_id = $result;
                 $this->proposal = get_post($result);
+                // Load the data after creation
+                $this->read();
             }
             
             return $result;

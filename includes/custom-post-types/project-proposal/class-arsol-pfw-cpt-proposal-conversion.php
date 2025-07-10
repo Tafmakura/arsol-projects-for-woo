@@ -132,7 +132,7 @@ class Proposal_Conversion {
             }
             
             $project = arsol_pfw_create_project(array(
-                'name'        => $proposal->get_name(),
+                'name'        => $proposal->get_title(),
                 'customer_id' => $proposal->get_customer_id(),
                 'budget'      => $proposal->get_budget(),
                 'description' => $proposal->get_prop('description'),

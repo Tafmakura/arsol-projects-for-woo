@@ -105,7 +105,7 @@ class Request_Conversion {
             }
             
             $proposal = arsol_pfw_create_proposal(array(
-                'name'        => $request->get_name(),
+                'name'        => $request->get_title(),
                 'customer_id' => $request->get_customer_id(),
                 'budget'      => $request->get_budget(),
                 'description' => $request->get_prop('description'),

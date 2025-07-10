@@ -9,22 +9,20 @@ if (!defined('ABSPATH')) {
 class Proposal_Data_Store {
     
     protected $meta_keys = array(
-        'customer_id' => '_arsol_pfw_proposal_customer_id',
         'budget'      => '_arsol_pfw_proposal_budget',
-        'timeline'    => '_arsol_pfw_proposal_timeline',
         'description' => '_arsol_pfw_proposal_description',
-        'quotation'   => '_arsol_pfw_proposal_quotation',
-        'deadline'    => '_arsol_pfw_proposal_delivery_date',
-        'start_date'  => '_arsol_pfw_proposal_start_date',
+        'timeline'    => '_arsol_pfw_proposal_timeline',
         'project_lead' => '_arsol_pfw_proposal_project_lead',
+        'start_date'  => '_arsol_pfw_proposal_start_date',
         'delivery_date' => '_arsol_pfw_proposal_delivery_date',
         'expiration_date' => '_arsol_pfw_proposal_expiration_date',
         'costing_type' => '_arsol_pfw_proposal_costing_type',
-        'parent_project_id' => '_arsol_pfw_parent_project_id',
-        'name' => '_arsol_pfw_proposal_name',
-        'customer_notice' => '_arsol_pfw_proposal_customer_notice',
+        'parent_project_id' => '_arsol_pfw_proposal_parent_project_id',
         'budget_notes' => '_arsol_pfw_proposal_budget_notes',
         'quotation_notes' => '_arsol_pfw_proposal_quotation_notes',
+        'quotation'   => '_arsol_pfw_proposal_quotation',
+        'deadline'    => '_arsol_pfw_proposal_delivery_date',
+        'customer_notice' => '_arsol_pfw_proposal_customer_notice',
         'secondary_status' => '_arsol_pfw_proposal_secondary_status',
     );
     
@@ -37,7 +35,7 @@ class Proposal_Data_Store {
     public function create($proposal) {
         $post_data = array(
             'post_type'    => 'arsol-pfw-proposal',
-            'post_title'   => $proposal->get_name(),
+            'post_title'   => $proposal->get_title(),
             'post_content' => $proposal->get_prop('description'),
             'post_status'  => 'publish',
             'post_author'  => $proposal->get_customer_id(),

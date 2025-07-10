@@ -556,6 +556,8 @@ class Project_Request_CPT {
             if (!is_wp_error($result)) {
                 $this->request_id = $result;
                 $this->request = get_post($result);
+                // Load the data after creation
+                $this->read();
             }
             
             return $result;

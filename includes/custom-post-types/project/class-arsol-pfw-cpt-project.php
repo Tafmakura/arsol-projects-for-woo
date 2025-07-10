@@ -548,6 +548,8 @@ class Project_CPT {
             if (!is_wp_error($result)) {
                 $this->project_id = $result;
                 $this->project = get_post($result);
+                // Load the data after creation
+                $this->read();
             }
             
             return $result;

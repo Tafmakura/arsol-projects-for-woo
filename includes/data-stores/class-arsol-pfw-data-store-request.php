@@ -9,15 +9,12 @@ if (!defined('ABSPATH')) {
 class Request_Data_Store {
     
     protected $meta_keys = array(
-        'customer_id' => '_arsol_pfw_request_customer_id',
         'budget'      => '_arsol_pfw_request_budget',
-        'deadline'    => '_arsol_pfw_request_delivery_date',
+        'deadline'    => '_arsol_pfw_request_deadline',
         'description' => '_arsol_pfw_request_description',
-        'priority'    => '_arsol_pfw_request_priority',
-        'start_date'  => '_arsol_pfw_request_start_date',
+        'timeline'    => '_arsol_pfw_request_timeline',
         'project_lead' => '_arsol_pfw_request_project_lead',
-        'name' => '_arsol_pfw_request_name',
-        'customer_notice' => '_arsol_pfw_request_customer_notice',
+        'start_date'  => '_arsol_pfw_request_start_date',
     );
     
     /**
@@ -29,7 +26,7 @@ class Request_Data_Store {
     public function create($request) {
         $post_data = array(
             'post_type'    => 'arsol-pfw-request',
-            'post_title'   => $request->get_name(),
+            'post_title'   => $request->get_title(),
             'post_content' => $request->get_prop('description'),
             'post_status'  => 'publish',
             'post_author'  => $request->get_customer_id(),

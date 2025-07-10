@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
 class Project_Data_Store {
     
     protected $meta_keys = array(
-        'customer_id' => '_arsol_pfw_project_customer_id',
         'budget'      => '_arsol_pfw_project_budget',
         'deadline'    => '_arsol_pfw_project_due_date',
         'description' => '_arsol_pfw_project_description',
@@ -17,7 +16,6 @@ class Project_Data_Store {
         'progress'    => '_arsol_pfw_project_progress',
         'start_date'  => '_arsol_pfw_project_start_date',
         'project_lead' => '_arsol_pfw_project_lead',
-        'name' => '_arsol_pfw_project_name',
         'customer_notice' => '_arsol_pfw_project_customer_notice',
     );
     
@@ -30,7 +28,7 @@ class Project_Data_Store {
     public function create($project) {
         $post_data = array(
             'post_type'    => 'arsol-pfw-project',
-            'post_title'   => $project->get_name(),
+            'post_title'   => $project->get_title(),
             'post_content' => $project->get_prop('description'),
             'post_status'  => 'publish',
             'post_author'  => $project->get_customer_id(),
