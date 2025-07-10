@@ -76,6 +76,7 @@ if ($has_proposal_data) {
 ?>
 
 <div id="arsol-pfw-project-project-data" class="arsol-pfw-project postbox ">
+    <?php wp_nonce_field('arsol-pfw-project-actions-metabox', 'arsol_pfw_project_actions_metabox_nonce'); ?>
     <div id="proposal_metabox" class="panel-wrap woocommerce">
         <div id="order_data" class="panel woocommerce">
             <h2>

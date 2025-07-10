@@ -65,6 +65,7 @@ $container_class = 'arsol-header-grid';
 ?>
 
 <div id="arsol-pfw-project-request-data" class="arsol-pfw-project postbox ">
+    <?php wp_nonce_field('arsol-pfw-request-actions-metabox', 'arsol_pfw_request_actions_metabox_nonce'); ?>
     <div id="request_metabox" class="panel-wrap woocommerce">
         <div id="order_data" class="panel woocommerce">
             <h2>
