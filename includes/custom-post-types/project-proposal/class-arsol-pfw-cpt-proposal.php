@@ -288,6 +288,86 @@ class Project_Proposal_CPT {
     }
 
     /**
+     * Get proposal delivery date
+     * 
+     * @return string Proposal delivery date
+     */
+    public function get_delivery_date() {
+        return $this->get_prop('delivery_date');
+    }
+
+    /**
+     * Set proposal delivery date
+     * 
+     * @param string $delivery_date Proposal delivery date
+     * @return bool Success status
+     */
+    public function set_delivery_date($delivery_date) {
+        $this->set_prop('delivery_date', $delivery_date);
+        return true;
+    }
+
+    /**
+     * Get proposal expiration date
+     * 
+     * @return string Proposal expiration date
+     */
+    public function get_expiration_date() {
+        return $this->get_prop('expiration_date');
+    }
+
+    /**
+     * Set proposal expiration date
+     * 
+     * @param string $expiration_date Proposal expiration date
+     * @return bool Success status
+     */
+    public function set_expiration_date($expiration_date) {
+        $this->set_prop('expiration_date', $expiration_date);
+        return true;
+    }
+
+    /**
+     * Get proposal costing type
+     * 
+     * @return string Proposal costing type
+     */
+    public function get_costing_type() {
+        return $this->get_prop('costing_type');
+    }
+
+    /**
+     * Set proposal costing type
+     * 
+     * @param string $costing_type Proposal costing type
+     * @return bool Success status
+     */
+    public function set_costing_type($costing_type) {
+        $this->set_prop('costing_type', $costing_type);
+        return true;
+    }
+
+    /**
+     * Get parent project ID
+     * 
+     * @return int Parent project ID
+     */
+    public function get_parent_project_id() {
+        return $this->get_prop('parent_project_id');
+    }
+
+    /**
+     * Set parent project ID
+     * 
+     * @param int $parent_project_id Parent project ID
+     * @return bool Success status
+     */
+    public function set_parent_project_id($parent_project_id) {
+        $this->set_prop('parent_project_id', (int) $parent_project_id);
+        return true;
+    }
+
+    /**
      * Approve proposal and convert to project
      * 
      * @return int|false Project ID or false on failure

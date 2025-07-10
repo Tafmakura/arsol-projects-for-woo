@@ -9,12 +9,18 @@ if (!$post || $post->post_type !== 'arsol-pfw-request') {
     return;
 }
 
-$request_id = $post->ID;
-$request_content = get_post_field('post_content', $request_id);
+// Use factory function to get request object
+$request = arsol_pfw_get_request($post->ID);
+if (!$request) {
+    return;
+}
+
+$request_id = $request->get_id();
+$request_content = $request->get_content();
 $attachments = get_attached_media('', $request_id);
-$budget_data = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
-$start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
-$delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', true);
+$budget_data = $request->get_budget();
+$start_date = $request->get_start_date();
+$delivery_date = $request->get_deadline();
 
 // Get request stage (with proper error handling)
 $request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'names'));

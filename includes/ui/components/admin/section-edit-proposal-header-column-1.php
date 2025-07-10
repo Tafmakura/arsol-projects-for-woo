@@ -19,11 +19,12 @@ $proposal_id = $proposal->get_id();
 $customer_id = $proposal->get_customer_id();
 $customer = get_userdata($customer_id);
 $proposal_status = get_post_status($post);
-$start_date = $proposal->get_start_date();
-$delivery_date = $proposal->get_prop('delivery_date');
-$expiration_date = $proposal->get_prop('expiration_date');
-$cost_proposal_type = $proposal->get_prop('costing_type');
+$proposal_stage = $proposal->get_stage();
 $proposal_project_lead = $proposal->get_project_lead();
+$start_date = $proposal->get_start_date();
+$delivery_date = $proposal->get_delivery_date();
+$expiration_date = $proposal->get_expiration_date();
+$cost_proposal_type = $proposal->get_costing_type();
 
 // Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;
@@ -57,7 +58,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
 } 
 // Fallback to meta data check (for existing proposals)
 elseif ($proposal_id > 0) {
-    $parent_project_id = $proposal->get_prop('parent_project_id');
+    $parent_project_id = $proposal->get_parent_project_id();
     if (!empty($parent_project_id)) {
         $parent_project = arsol_pfw_get_project($parent_project_id);
         if ($parent_project) {

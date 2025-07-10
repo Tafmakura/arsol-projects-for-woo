@@ -9,9 +9,15 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
     return;
 }
 
-$proposal_id = $post->ID;
-$cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
-$expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_date', true);
+// Use factory function to get proposal object
+$proposal = arsol_pfw_get_proposal($post->ID);
+if (!$proposal) {
+    return;
+}
+
+$proposal_id = $proposal->get_id();
+$cost_proposal_type = $proposal->get_costing_type();
+$expiration_date = $proposal->get_expiration_date();
 ?>
 
 <!-- Cost Proposal Type Guidance -->
