@@ -368,6 +368,46 @@ class Project_Proposal_CPT {
     }
 
     /**
+     * Get budget notes
+     * 
+     * @return string Budget notes
+     */
+    public function get_budget_notes() {
+        return $this->get_prop('budget_notes');
+    }
+
+    /**
+     * Set budget notes
+     * 
+     * @param string $budget_notes Budget notes
+     * @return bool Success status
+     */
+    public function set_budget_notes($budget_notes) {
+        $this->set_prop('budget_notes', $budget_notes);
+        return true;
+    }
+
+    /**
+     * Get quotation notes
+     * 
+     * @return string Quotation notes
+     */
+    public function get_quotation_notes() {
+        return $this->get_prop('quotation_notes');
+    }
+
+    /**
+     * Set quotation notes
+     * 
+     * @param string $quotation_notes Quotation notes
+     * @return bool Success status
+     */
+    public function set_quotation_notes($quotation_notes) {
+        $this->set_prop('quotation_notes', $quotation_notes);
+        return true;
+    }
+
+    /**
      * Approve proposal and convert to project
      * 
      * @return int|false Project ID or false on failure

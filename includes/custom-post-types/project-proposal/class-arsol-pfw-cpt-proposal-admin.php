@@ -398,9 +398,25 @@ class Proposal {
             update_post_meta($post_id, '_arsol_pfw_proposal_expiration_date', sanitize_text_field($_POST['arsol_pfw_proposal_expiration_date']));
         }
         
-        // Save proposal notes (used by both budget and quotation types)
-        if (isset($_POST['arsol_pfw_proposal_notes'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_notes', wp_kses_post($_POST['arsol_pfw_proposal_notes']));
+        // Save proposal notes based on costing type
+        if ($cost_proposal_type === 'budget') {
+            // Save budget notes
+            if (isset($_POST['arsol_pfw_proposal_budget_notes'])) {
+                update_post_meta($post_id, '_arsol_pfw_proposal_budget_notes', wp_kses_post($_POST['arsol_pfw_proposal_budget_notes']));
+            }
+            // Clear quotation notes when switching to budget
+            delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_notes');
+        } elseif ($cost_proposal_type === 'quotation') {
+            // Save quotation notes
+            if (isset($_POST['arsol_pfw_proposal_quotation_notes'])) {
+                update_post_meta($post_id, '_arsol_pfw_proposal_quotation_notes', wp_kses_post($_POST['arsol_pfw_proposal_quotation_notes']));
+            }
+            // Clear budget notes when switching to quotation
+            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_notes');
+        } else {
+            // If no costing type, clear both note types
+            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_notes');
+            delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_notes');
         }
         
         // Save customer notice
