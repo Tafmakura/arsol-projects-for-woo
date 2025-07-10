@@ -23,7 +23,7 @@ if ($original_proposal_id) {
     $billing_interval = get_post_meta($project_id, '_arsol_pfw_project_billing_interval', true);
     $billing_period = get_post_meta($project_id, '_arsol_pfw_project_billing_period', true);
     $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_start_date', true);
-    $proposed_delivery_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
+    $proposed_delivery_date = get_post_meta($project_id, '_arsol_pfw_proposal_delivery_date', true);
     $proposed_expiration_date = get_post_meta($project_id, '_arsol_pfw_proposal_expiration_date', true);
 }
 
