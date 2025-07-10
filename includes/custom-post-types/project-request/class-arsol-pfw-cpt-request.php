@@ -448,6 +448,37 @@ class Project_Request_CPT {
     }
 
     /**
+     * Set request title
+     * 
+     * @param string $title Request title
+     * @return bool Success status
+     */
+    public function set_title($title) {
+        $this->set_prop('name', $title);
+        return true;
+    }
+
+    /**
+     * Get request description
+     * 
+     * @return string Request description
+     */
+    public function get_description() {
+        return $this->get_prop('description');
+    }
+
+    /**
+     * Set request description
+     * 
+     * @param string $description Request description
+     * @return bool Success status
+     */
+    public function set_description($description) {
+        $this->set_prop('description', $description);
+        return true;
+    }
+
+    /**
      * Get customer ID
      * 
      * @return int Customer ID

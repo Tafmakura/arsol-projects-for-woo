@@ -50,12 +50,12 @@ function arsol_pfw_create_project($args = array()) {
     $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT();
     
     // Set properties
-    $project->set_prop('name', $args['name']);
+    $project->set_title($args['name']);
     $project->set_customer_id($args['customer_id']);
     $project->set_budget($args['budget']);
     $project->set_deadline($args['deadline']);
     $project->set_progress($args['progress']);
-    $project->set_prop('description', $args['description']);
+    $project->set_description($args['description']);
     $project->set_stage($args['stage']);
     
     return $project;

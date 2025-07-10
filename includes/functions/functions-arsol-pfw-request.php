@@ -49,11 +49,11 @@ function arsol_pfw_create_request($args = array()) {
     $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT();
     
     // Set properties
-    $request->set_prop('name', $args['name']);
+    $request->set_title($args['name']);
     $request->set_customer_id($args['customer_id']);
     $request->set_budget($args['budget']);
     $request->set_deadline($args['deadline']);
-    $request->set_prop('description', $args['description']);
+    $request->set_description($args['description']);
     $request->set_stage($args['stage']);
     
     return $request;

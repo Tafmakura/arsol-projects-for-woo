@@ -575,6 +575,37 @@ class Project_Proposal_CPT {
     }
 
     /**
+     * Set proposal title
+     * 
+     * @param string $title Proposal title
+     * @return bool Success status
+     */
+    public function set_title($title) {
+        $this->set_prop('name', $title);
+        return true;
+    }
+
+    /**
+     * Get proposal description
+     * 
+     * @return string Proposal description
+     */
+    public function get_description() {
+        return $this->get_prop('description');
+    }
+
+    /**
+     * Set proposal description
+     * 
+     * @param string $description Proposal description
+     * @return bool Success status
+     */
+    public function set_description($description) {
+        $this->set_prop('description', $description);
+        return true;
+    }
+
+    /**
      * Get customer ID
      * 
      * @return int Customer ID

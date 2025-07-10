@@ -75,8 +75,9 @@ class Proposal_Data_Store {
             return false;
         }
         
-        $proposal->set_prop('name', $post->post_title);
-        $proposal->set_prop('description', $post->post_content);
+        // Set basic properties
+        $proposal->set_title($post->post_title);
+        $proposal->set_description($post->post_content);
         $proposal->set_prop('customer_id', $post->post_author);
         $proposal->set_prop('date_created', $post->post_date);
         $proposal->set_prop('date_modified', $post->post_modified);

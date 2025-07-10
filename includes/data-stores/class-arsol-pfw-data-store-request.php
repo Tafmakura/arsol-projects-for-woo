@@ -66,8 +66,9 @@ class Request_Data_Store {
             return false;
         }
         
-        $request->set_prop('name', $post->post_title);
-        $request->set_prop('description', $post->post_content);
+        // Set basic properties
+        $request->set_title($post->post_title);
+        $request->set_description($post->post_content);
         $request->set_prop('customer_id', $post->post_author);
         $request->set_prop('date_created', $post->post_date);
         $request->set_prop('date_modified', $post->post_modified);

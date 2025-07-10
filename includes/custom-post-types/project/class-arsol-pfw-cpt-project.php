@@ -349,6 +349,26 @@ class Project_CPT {
     }
 
     /**
+     * Get project description
+     * 
+     * @return string Project description
+     */
+    public function get_description() {
+        return $this->get_prop('description');
+    }
+
+    /**
+     * Set project description
+     * 
+     * @param string $description Project description
+     * @return bool Success status
+     */
+    public function set_description($description) {
+        $this->set_prop('description', $description);
+        return true;
+    }
+
+    /**
      * Get customer ID
      * 
      * @return int Customer ID
@@ -389,26 +409,6 @@ class Project_CPT {
     }
 
     /**
-     * Get project lead
-     * 
-     * @return int Project lead ID
-     */
-    public function get_project_lead() {
-        return $this->get_prop('project_lead');
-    }
-
-    /**
-     * Set project lead
-     * 
-     * @param int $lead_id Project lead ID
-     * @return bool Success status
-     */
-    public function set_project_lead($lead_id) {
-        $this->set_prop('project_lead', (int) $lead_id);
-        return true;
-    }
-
-    /**
      * Get project deadline
      * 
      * @return string Project deadline
@@ -425,6 +425,26 @@ class Project_CPT {
      */
     public function set_deadline($deadline) {
         $this->set_prop('deadline', $deadline);
+        return true;
+    }
+
+    /**
+     * Get project lead
+     * 
+     * @return int Project lead ID
+     */
+    public function get_project_lead() {
+        return $this->get_prop('project_lead');
+    }
+
+    /**
+     * Set project lead
+     * 
+     * @param int $lead_id Project lead ID
+     * @return bool Success status
+     */
+    public function set_project_lead($lead_id) {
+        $this->set_prop('project_lead', (int) $lead_id);
         return true;
     }
 

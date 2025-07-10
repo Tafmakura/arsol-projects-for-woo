@@ -68,8 +68,9 @@ class Project_Data_Store {
             return false;
         }
         
-        $project->set_prop('name', $post->post_title);
-        $project->set_prop('description', $post->post_content);
+        // Set basic properties
+        $project->set_title($post->post_title);
+        $project->set_description($post->post_content);
         $project->set_prop('customer_id', $post->post_author);
         $project->set_prop('date_created', $post->post_date);
         $project->set_prop('date_modified', $post->post_modified);
