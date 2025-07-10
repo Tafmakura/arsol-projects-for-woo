@@ -16,6 +16,7 @@ class Project_Data_Store {
         'timeline'    => '_arsol_pfw_project_timeline',
         'progress'    => '_arsol_pfw_project_progress',
         'start_date'  => '_arsol_pfw_project_start_date',
+        'project_lead' => '_arsol_pfw_project_lead',
     );
     
     /**
