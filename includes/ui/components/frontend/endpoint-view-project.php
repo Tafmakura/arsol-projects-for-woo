@@ -41,7 +41,7 @@ if (!empty($customer_notice)) : ?>
 
 <?php
 // 2. Post Content (project description)
-if (!empty($project->get_name()) && !empty($post->post_content)) : ?>
+if (!empty($project->get_title()) && !empty($post->post_content)) : ?>
     <div class="arsol-pfw-post-content">
         <h4><?php _e('Project Details', 'arsol-pfw'); ?></h4>
         <?php echo wp_kses_post($post->post_content); ?>

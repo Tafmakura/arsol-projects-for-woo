@@ -448,17 +448,6 @@ class Project_Request_CPT {
     }
 
     /**
-     * Set request name
-     * 
-     * @param string $name Request name
-     * @return bool Success status
-     */
-    public function set_name($name) {
-        $this->set_prop('name', $name);
-        return true;
-    }
-
-    /**
      * Get customer ID
      * 
      * @return int Customer ID

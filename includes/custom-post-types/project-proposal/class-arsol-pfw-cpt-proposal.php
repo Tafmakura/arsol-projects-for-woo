@@ -575,17 +575,6 @@ class Project_Proposal_CPT {
     }
 
     /**
-     * Set proposal name
-     * 
-     * @param string $name Proposal name
-     * @return bool Success status
-     */
-    public function set_name($name) {
-        $this->set_prop('name', $name);
-        return true;
-    }
-
-    /**
      * Get customer ID
      * 
      * @return int Customer ID

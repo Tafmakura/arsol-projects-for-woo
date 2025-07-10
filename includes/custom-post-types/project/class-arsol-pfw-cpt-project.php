@@ -338,13 +338,13 @@ class Project_CPT {
     }
 
     /**
-     * Set project name
+     * Set project title
      * 
-     * @param string $name Project name
+     * @param string $title Project title
      * @return bool Success status
      */
-    public function set_name($name) {
-        $this->set_prop('name', $name);
+    public function set_title($title) {
+        $this->set_prop('name', $title);
         return true;
     }
 

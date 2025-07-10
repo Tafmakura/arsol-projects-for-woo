@@ -21,7 +21,7 @@ if (!$is_edit && isset($_GET['parent_project'])) {
     if ($parent_project_id) {
         $parent_project = arsol_pfw_get_project($parent_project_id);
         if ($parent_project) {
-            $parent_project_title = $parent_project->get_name();
+            $parent_project_title = $parent_project->get_title();
         } else {
             $parent_project_id = 0; // Invalid parent project
         }
@@ -36,7 +36,7 @@ if ($is_edit) {
         if ($parent_project_id) {
             $parent_project = arsol_pfw_get_project($parent_project_id);
             if ($parent_project) {
-                $parent_project_title = $parent_project->get_name();
+                $parent_project_title = $parent_project->get_title();
             }
         }
     }
@@ -44,7 +44,7 @@ if ($is_edit) {
 
 // If editing, populate fields from the request object
 if ($is_edit && isset($request)) {
-    $title = $request->get_name();
+    $title = $request->get_title();
     $content = $post->post_content; // Post content still comes from WP_Post
     $budget = $request->get_budget();
     $start_date = $request->get_prop('start_date');

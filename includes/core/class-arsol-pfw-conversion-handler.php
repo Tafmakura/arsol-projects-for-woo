@@ -53,7 +53,7 @@ class Conversion_Handler {
             
             error_log("ARSOL PFW DEBUG: Creating proposal...");
             $proposal = arsol_pfw_create_proposal([
-                'name' => $request_obj->get_name(),
+                'name' => $request_obj->get_title(),
                 'customer_id' => $request_obj->get_customer_id(),
                 'budget' => $request_obj->get_budget(),
                 'description' => $request_obj->get_prop('description'),
@@ -141,7 +141,7 @@ class Conversion_Handler {
             
             error_log("ARSOL PFW DEBUG: Creating project...");
             $project = arsol_pfw_create_project([
-                'name' => $proposal_obj->get_name(),
+                'name' => $proposal_obj->get_title(),
                 'customer_id' => $proposal_obj->get_customer_id(),
                 'budget' => $proposal_obj->get_budget(),
                 'description' => $proposal_obj->get_prop('description'),

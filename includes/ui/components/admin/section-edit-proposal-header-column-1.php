@@ -44,7 +44,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
         
         $parent_project_data = array(
             'id' => $parent_project->get_id(),
-            'title' => $parent_project->get_name(),
+            'title' => $parent_project->get_title(),
             'customer_id' => $parent_customer_id,
             'lead_id' => $parent_lead_id
         );
@@ -70,7 +70,7 @@ elseif ($proposal_id > 0) {
             
             $parent_project_data = array(
                 'id' => $parent_project->get_id(),
-                'title' => $parent_project->get_name(),
+                'title' => $parent_project->get_title(),
                 'customer_id' => $parent_customer_id,
                 'lead_id' => $parent_lead_id
             );
