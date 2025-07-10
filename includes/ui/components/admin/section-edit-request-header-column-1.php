@@ -22,6 +22,7 @@ $request_stage = $request->get_stage();
 $budget_data = $request->get_budget();
 $start_date = $request->get_prop('start_date');
 $delivery_date = $request->get_deadline();
+$request_project_lead = $request->get_prop('project_lead');
 
 // Get available stages using Stage Manager
 $available_stages = arsol_pfw_get_request_available_stages();
@@ -82,6 +83,21 @@ if (empty($request_stage)) {
                 <option value=""><?php _e('No stages available', 'arsol-pfw'); ?></option>
             <?php endif; ?>
         </select>
+    </p>
+</div>
+
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
+        <label for="request_project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
+        <?php
+        // Use the Admin Users class method for project lead search field
+        \Arsol_Projects_For_Woo\Admin\Users::render_project_lead_search_field(array(
+            'name' => 'request_project_lead',
+            'id' => 'request_project_lead',
+            'selected' => $request_project_lead,
+            'placeholder' => __('Search for project lead...', 'arsol-pfw')
+        ));
+        ?>
     </p>
 </div>
 

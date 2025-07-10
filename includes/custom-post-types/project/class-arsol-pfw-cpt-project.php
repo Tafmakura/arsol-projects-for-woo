@@ -15,33 +15,45 @@ class Project_CPT {
 
     /**
      * Project ID
+     * 
      * @var int
      */
-    private $project_id;
+    protected $project_id = 0;
 
     /**
      * Project post object
-     * @var WP_Post
+     * 
+     * @var WP_Post|null
      */
-    private $project;
-
+    protected $project = null;
+    
     /**
-     * Static flag to ensure setup only runs once
-     * @var bool
-     */
-    private static $setup_initialized = false;
-
-    /**
-     * Data properties
+     * Project data
+     * 
      * @var array
      */
     protected $data = array();
 
     /**
-     * Changes tracking
+     * Changes to be saved
+     * 
      * @var array
      */
     protected $changes = array();
+    
+    /**
+     * Data store instance
+     * 
+     * @var \Arsol_Projects_For_Woo\Data_Stores\Project_Data_Store
+     */
+    protected $data_store;
+    
+    /**
+     * Setup initialization flag
+     * 
+     * @var bool
+     */
+    private static $setup_initialized = false;
 
     /**
      * Constructor

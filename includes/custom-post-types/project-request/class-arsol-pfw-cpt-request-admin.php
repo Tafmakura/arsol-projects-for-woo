@@ -163,6 +163,12 @@ class Request {
             update_post_meta($post_id, '_arsol_pfw_request_delivery_date', $delivery_date);
         }
         
+        // Save project lead
+        if (isset($_POST['request_project_lead'])) {
+            $project_lead = sanitize_text_field($_POST['request_project_lead']);
+            update_post_meta($post_id, '_arsol_pfw_request_project_lead', $project_lead);
+        }
+        
         // Save customer notice
         if (isset($_POST['request_customer_notice_section_nonce']) && wp_verify_nonce($_POST['request_customer_notice_section_nonce'], 'request_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_request_customer_notice'])) {
