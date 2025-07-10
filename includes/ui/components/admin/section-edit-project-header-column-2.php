@@ -11,6 +11,9 @@ if (!$post || $post->post_type !== 'arsol-pfw-project') {
 
 $project_id = $post->ID;
 
+// Create project instance to use getter methods
+$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($project_id);
+
 // Check for original proposal data first
 $original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_id', true);
 $has_proposal_data = false;
@@ -18,10 +21,10 @@ $has_proposal_data = false;
 // If from proposal, get proposal budget/date data
 if ($original_proposal_id) {
     $has_proposal_data = true;
-    $budget_data = get_post_meta($project_id, '_arsol_pfw_project_budget', true);
-    $recurring_budget_data = get_post_meta($project_id, '_arsol_pfw_project_recurring_budget', true);
-    $billing_interval = get_post_meta($project_id, '_arsol_pfw_project_billing_interval', true);
-    $billing_period = get_post_meta($project_id, '_arsol_pfw_project_billing_period', true);
+    $budget_data = $project->get_proposal_budget_onetime_amount();
+    $recurring_budget_data = $project->get_proposal_budget_recurring_amount();
+    $billing_interval = $project->get_proposal_budget_recurring_billing_interval();
+    $billing_period = $project->get_proposal_budget_recurring_billing_period();
     $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_start_date', true);
     $proposed_delivery_date = get_post_meta($project_id, '_arsol_pfw_proposal_delivery_date', true);
     $proposed_expiration_date = get_post_meta($project_id, '_arsol_pfw_proposal_expiration_date', true);

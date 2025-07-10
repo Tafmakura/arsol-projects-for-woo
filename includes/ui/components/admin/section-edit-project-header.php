@@ -26,9 +26,12 @@ $customer_id = $post->post_author;
 $customer = get_userdata($customer_id);
         $project_stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
 $project_stage = !empty($project_stage_terms) ? $project_stage_terms[0] : 'not-started';
-$project_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
-$start_date = get_post_meta($project_id, '_arsol_pfw_project_start_date', true);
-$due_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
+
+// Create project instance to use getter methods
+$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($project_id);
+$project_lead = $project->get_project_lead();
+$start_date = $project->get_start_date();
+$due_date = $project->get_deadline();
 
 // Get all project statuses
 $all_statuses = get_terms(array(
@@ -44,8 +47,8 @@ $original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_
 // Check for proposal data first (priority) - must have actual displayable data
 if ($original_proposal_id) {
     // Check if there's any actual proposal data to show (excluding expiration date)
-    $budget_data = get_post_meta($project_id, '_arsol_pfw_project_budget', true);
-    $recurring_budget_data = get_post_meta($project_id, '_arsol_pfw_project_recurring_budget', true);
+    $budget_data = $project->get_proposal_budget_onetime_amount();
+    $recurring_budget_data = $project->get_proposal_budget_recurring_amount();
     $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_start_date', true);
     $proposed_delivery_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
     

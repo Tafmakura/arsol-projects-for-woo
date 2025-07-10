@@ -630,4 +630,40 @@ class Project_CPT {
     public function get_changes() {
         return $this->changes;
     }
+
+    /**
+     * Get proposal budget onetime amount
+     * 
+     * @return array|string Proposal budget onetime amount
+     */
+    public function get_proposal_budget_onetime_amount() {
+        return $this->get_meta('_arsol_pfw_project_proposal_budget_onetime_amount');
+    }
+
+    /**
+     * Get proposal budget recurring amount
+     * 
+     * @return array|string Proposal budget recurring amount
+     */
+    public function get_proposal_budget_recurring_amount() {
+        return $this->get_meta('_arsol_pfw_project_proposal_budget_recurring_amount');
+    }
+
+    /**
+     * Get proposal budget recurring billing interval
+     * 
+     * @return string Proposal budget recurring billing interval
+     */
+    public function get_proposal_budget_recurring_billing_interval() {
+        return $this->get_meta('_arsol_pfw_project_proposal_budget_recurring_amount_billing_interval');
+    }
+
+    /**
+     * Get proposal budget recurring billing period
+     * 
+     * @return string Proposal budget recurring billing period
+     */
+    public function get_proposal_budget_recurring_billing_period() {
+        return $this->get_meta('_arsol_pfw_project_proposal_budget_recurring_amount_billing_period');
+    }
 }
