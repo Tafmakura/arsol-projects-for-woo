@@ -21,8 +21,8 @@ class Proposal_Conversion {
             try {
             if (!isset($_GET['proposal_id']) || !wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_project_nonce')) {
                     throw new Exception(__('Invalid proposal or nonce.', 'arsol-pfw'));
-                }
-                $proposal_id = intval($_GET['proposal_id']);
+            }
+            $proposal_id = intval($_GET['proposal_id']);
             } catch (Exception $e) {
                 // Handle error via notice mechanism (same as other failures)
                 \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('error', $e->getMessage());

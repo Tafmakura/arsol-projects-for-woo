@@ -268,6 +268,26 @@ class Project_Proposal_CPT {
     }
 
     /**
+     * Get proposal start date
+     * 
+     * @return string Proposal start date
+     */
+    public function get_start_date() {
+        return $this->get_prop('start_date');
+    }
+
+    /**
+     * Set proposal start date
+     * 
+     * @param string $start_date Proposal start date
+     * @return bool Success status
+     */
+    public function set_start_date($start_date) {
+        $this->set_prop('start_date', $start_date);
+        return true;
+    }
+
+    /**
      * Approve proposal and convert to project
      * 
      * @return int|false Project ID or false on failure

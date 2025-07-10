@@ -20,9 +20,9 @@ $customer_id = $request->get_customer_id();
 $customer = get_userdata($customer_id);
 $request_stage = $request->get_stage();
 $budget_data = $request->get_budget();
-$start_date = $request->get_prop('start_date');
+$start_date = $request->get_start_date();
 $delivery_date = $request->get_deadline();
-$request_project_lead = $request->get_prop('project_lead');
+$request_project_lead = $request->get_project_lead();
 
 // Get available stages using Stage Manager
 $available_stages = arsol_pfw_get_request_available_stages();

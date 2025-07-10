@@ -198,14 +198,14 @@ class Workflow_Handler {
         $request_id = intval($_GET['request_id']);
         $converter = new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
         $converter->convert_request_to_proposal($request_id);
-    }
+        }
 
     public function convert_proposal_to_project($proposal_id = 0, $is_internal_call = false) {
         if (empty($proposal_id)) {
             $proposal_id = intval($_GET['proposal_id']);
         }
         $converter = new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
-        $converter->convert_proposal_to_project($proposal_id, $is_internal_call);
+            $converter->convert_proposal_to_project($proposal_id, $is_internal_call);
     }
     public function customer_cancel_request() {
         $request_frontend = new \Arsol_Projects_For_Woo\Frontend\Request_Frontend();

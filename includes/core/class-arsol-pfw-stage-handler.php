@@ -393,5 +393,5 @@ class Stage_Handler {
     protected static function get_taxonomy($entity_type) {
         return isset(self::$taxonomies[$entity_type]) ? self::$taxonomies[$entity_type] : '';
     }
-}
+} 
 ?> 

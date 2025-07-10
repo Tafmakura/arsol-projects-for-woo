@@ -19,11 +19,11 @@ $proposal_id = $proposal->get_id();
 $customer_id = $proposal->get_customer_id();
 $customer = get_userdata($customer_id);
 $proposal_status = get_post_status($post);
-$start_date = $proposal->get_prop('start_date');
+$start_date = $proposal->get_start_date();
 $delivery_date = $proposal->get_prop('delivery_date');
 $expiration_date = $proposal->get_prop('expiration_date');
 $cost_proposal_type = $proposal->get_prop('costing_type');
-$proposal_project_lead = $proposal->get_prop('project_lead');
+$proposal_project_lead = $proposal->get_project_lead();
 
 // Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;

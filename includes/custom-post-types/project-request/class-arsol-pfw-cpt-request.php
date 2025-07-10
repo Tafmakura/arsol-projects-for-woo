@@ -253,6 +253,26 @@ class Project_Request_CPT {
     }
 
     /**
+     * Get request start date
+     * 
+     * @return string Request start date
+     */
+    public function get_start_date() {
+        return $this->get_prop('start_date');
+    }
+
+    /**
+     * Set request start date
+     * 
+     * @param string $start_date Request start date
+     * @return bool Success status
+     */
+    public function set_start_date($start_date) {
+        $this->set_prop('start_date', $start_date);
+        return true;
+    }
+
+    /**
      * Get request timeline
      * 
      * @return array|null Timeline data
