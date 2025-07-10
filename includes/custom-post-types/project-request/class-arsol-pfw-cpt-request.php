@@ -88,6 +88,9 @@ class Project_Request_CPT {
             return false;
         }
 
+        // Load data from data store
+        $this->read();
+
         return true;
     }
 
@@ -195,7 +198,7 @@ class Project_Request_CPT {
      * @return float Request budget
      */
     public function get_budget() {
-        return $this->get_meta('_arsol_pfw_request_budget');
+        return $this->get_prop('budget');
     }
 
     /**
@@ -215,7 +218,7 @@ class Project_Request_CPT {
      * @return string Request deadline
      */
     public function get_deadline() {
-        return $this->get_meta('_arsol_pfw_request_delivery_date');
+        return $this->get_prop('deadline');
     }
 
     /**
@@ -230,13 +233,33 @@ class Project_Request_CPT {
     }
 
     /**
+     * Get request project lead
+     * 
+     * @return int|null Project lead ID
+     */
+    public function get_project_lead() {
+        return $this->get_prop('project_lead');
+    }
+
+    /**
+     * Set request project lead
+     * 
+     * @param int $lead_id Project lead ID
+     * @return bool Success status
+     */
+    public function set_project_lead($lead_id) {
+        $this->set_prop('project_lead', (int) $lead_id);
+        return true;
+    }
+
+    /**
      * Get request timeline
      * 
      * @return array|null Timeline data
      */
     public function get_timeline() {
         return array(
-            'start_date' => $this->get_meta('_arsol_pfw_request_start_date'),
+            'start_date' => $this->get_prop('start_date'),
             'delivery_date' => $this->get_meta('_arsol_pfw_request_delivery_date')
         );
     }
@@ -251,7 +274,7 @@ class Project_Request_CPT {
         $success = true;
         
         if (isset($timeline['start_date'])) {
-            $success = $success && $this->set_meta('_arsol_pfw_request_start_date', $timeline['start_date']);
+            $this->set_prop('start_date', $timeline['start_date']);
         }
         
         if (isset($timeline['delivery_date'])) {

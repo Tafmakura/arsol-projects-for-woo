@@ -88,6 +88,9 @@ class Project_Proposal_CPT {
             return false;
         }
 
+        // Load data from data store
+        $this->read();
+
         return true;
     }
 
@@ -184,7 +187,7 @@ class Project_Proposal_CPT {
      * @return array|null Budget data
      */
     public function get_budget() {
-        return $this->get_meta('_arsol_pfw_proposal_budget');
+        return $this->get_prop('budget');
     }
 
     /**
@@ -194,7 +197,8 @@ class Project_Proposal_CPT {
      * @return bool Success status
      */
     public function set_budget($budget) {
-        return $this->set_meta('_arsol_pfw_proposal_budget', $budget);
+        $this->set_prop('budget', $budget);
+        return true;
     }
 
     /**
@@ -204,7 +208,7 @@ class Project_Proposal_CPT {
      */
     public function get_timeline() {
         return array(
-            'start_date' => $this->get_meta('_arsol_pfw_proposal_start_date'),
+            'start_date' => $this->get_prop('start_date'),
             'delivery_date' => $this->get_meta('_arsol_pfw_proposal_delivery_date'),
             'expiration_date' => $this->get_meta('_arsol_pfw_proposal_expiration_date')
         );
@@ -220,7 +224,7 @@ class Project_Proposal_CPT {
         $success = true;
         
         if (isset($timeline['start_date'])) {
-            $success = $success && $this->set_meta('_arsol_pfw_proposal_start_date', $timeline['start_date']);
+            $this->set_prop('start_date', $timeline['start_date']);
         }
         
         if (isset($timeline['delivery_date'])) {
@@ -246,11 +250,10 @@ class Project_Proposal_CPT {
     /**
      * Get project lead
      * 
-     * @return WP_User|null
+     * @return int|null Project lead ID
      */
     public function get_project_lead() {
-        $lead_id = $this->get_meta('_arsol_pfw_proposal_project_lead');
-        return $lead_id ? get_userdata($lead_id) : null;
+        return $this->get_prop('project_lead');
     }
 
     /**
@@ -260,7 +263,8 @@ class Project_Proposal_CPT {
      * @return bool Success status
      */
     public function set_project_lead($user_id) {
-        return $this->set_meta('_arsol_pfw_proposal_project_lead', $user_id);
+        $this->set_prop('project_lead', (int) $user_id);
+        return true;
     }
 
     /**

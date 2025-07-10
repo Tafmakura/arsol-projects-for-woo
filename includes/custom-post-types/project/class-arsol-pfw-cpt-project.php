@@ -88,6 +88,9 @@ class Project_CPT {
             return false;
         }
 
+        // Load data from data store
+        $this->read();
+
         return true;
     }
 
@@ -359,7 +362,7 @@ class Project_CPT {
      * @return array Project budget
      */
     public function get_budget() {
-        return $this->get_meta('_arsol_pfw_project_budget');
+        return $this->get_prop('budget');
     }
 
     /**
@@ -379,7 +382,7 @@ class Project_CPT {
      * @return int Project lead ID
      */
     public function get_project_lead() {
-        return $this->get_meta('_arsol_pfw_project_lead');
+        return $this->get_prop('project_lead');
     }
 
     /**
@@ -399,7 +402,7 @@ class Project_CPT {
      * @return string Project deadline
      */
     public function get_deadline() {
-        return $this->get_meta('_arsol_pfw_project_due_date');
+        return $this->get_prop('deadline');
     }
 
     /**
@@ -419,7 +422,7 @@ class Project_CPT {
      * @return int Project progress percentage
      */
     public function get_progress() {
-        return (int) $this->get_meta('_arsol_pfw_project_progress');
+        return (int) $this->get_prop('progress');
     }
 
     /**
