@@ -13,6 +13,8 @@ class Proposal {
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
         // Save proposal data
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
+        // Set default stage when proposal is published
+        add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
         // Prevent proposal deletion if tied projects exist
         add_action('before_delete_post', array($this, 'prevent_proposal_deletion_with_projects'));
     }
