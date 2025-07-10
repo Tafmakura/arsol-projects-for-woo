@@ -20,7 +20,7 @@ $customer_id = $project->get_customer_id();
 $customer = get_userdata($customer_id);
 $project_stage = $project->get_stage();
 $project_lead = $project->get_project_lead();
-$start_date = $project->get_prop('start_date');
+$start_date = $project->get_start_date();
 $due_date = $project->get_deadline();
 
 // Get available stages using Stage Manager

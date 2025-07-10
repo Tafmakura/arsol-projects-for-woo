@@ -429,6 +429,26 @@ class Project_CPT {
     }
 
     /**
+     * Get project start date
+     * 
+     * @return string Project start date
+     */
+    public function get_start_date() {
+        return $this->get_prop('start_date');
+    }
+
+    /**
+     * Set project start date
+     * 
+     * @param string $start_date Project start date
+     * @return bool Success status
+     */
+    public function set_start_date($start_date) {
+        $this->set_prop('start_date', $start_date);
+        return true;
+    }
+
+    /**
      * Get project progress
      * 
      * @return int Project progress percentage
