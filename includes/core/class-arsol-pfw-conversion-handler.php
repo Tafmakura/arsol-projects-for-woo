@@ -9,10 +9,10 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Simple Converter Class
+ * Conversion Handler Class
  * Handles conversions with minimal complexity while maintaining reliability
  */
-class Simple_Converter {
+class Conversion_Handler {
 
     /**
      * Convert a Request to a Proposal

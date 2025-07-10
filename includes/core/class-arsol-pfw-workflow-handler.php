@@ -196,7 +196,7 @@ class Workflow_Handler {
 
     public function convert_request_to_proposal() {
         $request_id = intval($_GET['request_id']);
-        $converter = new \Arsol_Projects_For_Woo\Core\Simple_Converter();
+        $converter = new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
         $converter->convert_request_to_proposal($request_id);
     }
 
@@ -204,7 +204,7 @@ class Workflow_Handler {
         if (empty($proposal_id)) {
             $proposal_id = intval($_GET['proposal_id']);
         }
-        $converter = new \Arsol_Projects_For_Woo\Core\Simple_Converter();
+        $converter = new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
         $converter->convert_proposal_to_project($proposal_id, $is_internal_call);
     }
     public function customer_cancel_request() {
@@ -460,8 +460,8 @@ class Workflow_Handler {
      */
     public function display_conversion_notices() {
         // Display any conversion notices stored in transient
-        if (class_exists('\Arsol_Projects_For_Woo\Core\Simple_Converter')) {
-            \Arsol_Projects_For_Woo\Core\Simple_Converter::display_admin_notices();
+        if (class_exists('\Arsol_Projects_For_Woo\Core\Conversion_Handler')) {
+            \Arsol_Projects_For_Woo\Core\Conversion_Handler::display_admin_notices();
         }
     }
 
@@ -471,8 +471,8 @@ class Workflow_Handler {
     public function display_post_edit_notices() {
         // Check if we're on a post edit screen and settings-updated parameter is present
         if (isset($_GET['settings-updated']) && $_GET['settings-updated'] === 'true') {
-            if (class_exists('\Arsol_Projects_For_Woo\Core\Simple_Converter')) {
-                \Arsol_Projects_For_Woo\Core\Simple_Converter::display_admin_notices();
+            if (class_exists('\Arsol_Projects_For_Woo\Core\Conversion_Handler')) {
+                \Arsol_Projects_For_Woo\Core\Conversion_Handler::display_admin_notices();
             }
         }
     }
