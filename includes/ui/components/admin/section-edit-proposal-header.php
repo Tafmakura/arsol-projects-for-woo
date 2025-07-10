@@ -80,7 +80,6 @@ if ($has_request_data) {
 ?>
 
 <div id="arsol-pfw-project-proposal-data" class="arsol-pfw-project postbox ">
-    <?php wp_nonce_field('arsol-pfw-proposal-actions-metabox', 'arsol_pfw_proposal_actions_metabox_nonce'); ?>
     <div id="proposal_metabox" class="panel-wrap woocommerce">
         <div id="order_data" class="panel woocommerce">
             <h2>

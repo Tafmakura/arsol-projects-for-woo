@@ -175,16 +175,6 @@ class Proposal {
      * Save proposal details
      */
     public function save_proposal_details($post_id) {
-        // Check if our nonce is set.
-        if (!isset($_POST['arsol_pfw_proposal_actions_metabox_nonce'])) {
-            return;
-        }
-
-        // Verify that the nonce is valid.
-        if (!wp_verify_nonce($_POST['arsol_pfw_proposal_actions_metabox_nonce'], 'arsol-pfw-proposal-actions-metabox')) {
-            return;
-        }
-
         // If this is an autosave, our form has not been submitted, so we don't want to do anything.
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;

@@ -129,16 +129,6 @@ class Request {
      * Save request details
      */
     public function save_request_details($post_id) {
-        // Check if our nonce is set
-        if (!isset($_POST['arsol_pfw_request_actions_metabox_nonce'])) {
-            return;
-        }
-
-        // Verify that the nonce is valid
-        if (!wp_verify_nonce($_POST['arsol_pfw_request_actions_metabox_nonce'], 'arsol-pfw-request-actions-metabox')) {
-            return;
-        }
-
         // If this is an autosave, our form has not been submitted, so we don't want to do anything
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
