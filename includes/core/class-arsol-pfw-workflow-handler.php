@@ -347,7 +347,7 @@ class Workflow_Handler {
         // Find and clean up old workflow metadata
         $cleaned_count = $wpdb->query($wpdb->prepare("
             DELETE FROM {$wpdb->postmeta}
-            WHERE meta_key IN ('_arsol_workflow_started', '_arsol_workflow_type', '_arsol_conversion_type', '_arsol_conversion_step', '_arsol_conversion_created_ids', '_arsol_conversion_rollback_reason')
+            WHERE meta_key IN ('_arsol_pfw_workflow_started', '_arsol_pfw_workflow_type', '_arsol_pfw_conversion_type', '_arsol_pfw_conversion_step', '_arsol_pfw_conversion_created_ids', '_arsol_pfw_conversion_rollback_reason')
             AND meta_value < %s
         ", $max_age_date));
         
@@ -364,12 +364,12 @@ class Workflow_Handler {
      */
     public function force_clear_stuck_workflow($post_id) {
         // Simple cleanup of workflow metadata
-                    delete_post_meta($post_id, '_arsol_workflow_started');
-            delete_post_meta($post_id, '_arsol_workflow_type');
-                    delete_post_meta($post_id, '_arsol_conversion_type');
-                    delete_post_meta($post_id, '_arsol_conversion_step');
-        delete_post_meta($post_id, '_arsol_conversion_created_ids');
-        delete_post_meta($post_id, '_arsol_conversion_rollback_reason');
+                    delete_post_meta($post_id, '_arsol_pfw_workflow_started');
+            delete_post_meta($post_id, '_arsol_pfw_workflow_type');
+                    delete_post_meta($post_id, '_arsol_pfw_conversion_type');
+                    delete_post_meta($post_id, '_arsol_pfw_conversion_step');
+        delete_post_meta($post_id, '_arsol_pfw_conversion_created_ids');
+        delete_post_meta($post_id, '_arsol_pfw_conversion_rollback_reason');
             
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
             "Cleared workflow metadata for post #{$post_id}");
@@ -384,7 +384,7 @@ class Workflow_Handler {
         // Remove all workflow metadata
         $cleaned_count = $wpdb->query("
             DELETE FROM {$wpdb->postmeta}
-            WHERE meta_key IN ('_arsol_workflow_started', '_arsol_workflow_type', '_arsol_conversion_type', '_arsol_conversion_step', '_arsol_conversion_created_ids', '_arsol_conversion_rollback_reason')
+            WHERE meta_key IN ('_arsol_pfw_workflow_started', '_arsol_pfw_workflow_type', '_arsol_pfw_conversion_type', '_arsol_pfw_conversion_step', '_arsol_pfw_conversion_created_ids', '_arsol_pfw_conversion_rollback_reason')
         ");
         
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 

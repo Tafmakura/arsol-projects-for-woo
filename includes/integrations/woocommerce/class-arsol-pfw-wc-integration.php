@@ -248,19 +248,8 @@ class Woocommerce {
                 return false;
         }
         
-        // Try WooCommerce meta first (HPOS compatible)
-        $project_id = $order->get_meta('_arsol_project_id');
-        
-        // Fallback to legacy meta
-        if (!$project_id) {
-            $project_id = get_post_meta($order->get_id(), '_arsol_project_id', true);
-            
-            if ($project_id) {
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('warning',
-                    sprintf('Used legacy meta for order #%d project lookup', $order->get_id()));
-            }
-        }
-        
+        // Use only the new standardized meta key
+        $project_id = $order->get_meta('_arsol_pfw_project_id');
         return $project_id ? intval($project_id) : false;
     }
 
@@ -278,10 +267,8 @@ class Woocommerce {
         }
         
         // Use WooCommerce meta methods for HPOS compatibility
-        $order->add_meta_data('_arsol_project_id', $project_id);
-        
-        // Legacy meta for backward compatibility
-        update_post_meta($order->get_id(), '_arsol_project_id', $project_id);
+        $order->add_meta_data('_arsol_pfw_project_id', $project_id);
+        update_post_meta($order->get_id(), '_arsol_pfw_project_id', $project_id);
         
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info',
             sprintf('Project #%d linked to order #%d', $project_id, $order->get_id()));

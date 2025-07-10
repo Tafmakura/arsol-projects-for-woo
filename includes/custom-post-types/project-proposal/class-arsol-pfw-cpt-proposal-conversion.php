@@ -63,7 +63,7 @@ class Proposal_Conversion {
             // Prevent concurrent conversions and handle stuck workflows
             if ($this->is_workflow_in_progress($proposal_id)) {
                 // Check if this is a stuck workflow (older than 5 minutes)
-                $workflow_started = get_post_meta($proposal_id, '_arsol_workflow_started', true);
+                $workflow_started = get_post_meta($proposal_id, '_arsol_pfw_workflow_started', true);
                 $is_stuck = false;
                 
                 if ($workflow_started) {
@@ -95,7 +95,7 @@ class Proposal_Conversion {
                 "Starting conversion: Proposal #{$proposal_id} to Project");
             
             // Validation step
-            update_post_meta($proposal_id, '_arsol_conversion_step', 'validation');
+            update_post_meta($proposal_id, '_arsol_pfw_conversion_step', 'validation');
 
             // No stage restriction – conversion allowed for any published proposal
 
@@ -123,7 +123,7 @@ class Proposal_Conversion {
             do_action('arsol_after_project_conversion_validated', $proposal_id, $proposal_post, $conversion_data);
             
             // Creation step
-            update_post_meta($proposal_id, '_arsol_conversion_step', 'creation');
+            update_post_meta($proposal_id, '_arsol_pfw_conversion_step', 'creation');
 
             // NEW WAY - Factory functions and CRUD methods
             $proposal = arsol_pfw_get_proposal($proposal_id);
@@ -158,13 +158,13 @@ class Proposal_Conversion {
              */
             do_action('arsol_after_project_conversion_project_created', $new_project_id, $proposal_id, $proposal, $conversion_data);            
             // Metadata copy step
-            update_post_meta($proposal_id, '_arsol_conversion_step', 'metadata_copy');
+            update_post_meta($proposal_id, '_arsol_pfw_conversion_step', 'metadata_copy');
             
             // Copy metadata from proposal to project
             $this->copy_proposal_metadata_to_project($proposal_id, $new_project_id);
 
             // Order creation step  
-            update_post_meta($proposal_id, '_arsol_conversion_step', 'order_creation');
+            update_post_meta($proposal_id, '_arsol_pfw_conversion_step', 'order_creation');
 
             // Handle WooCommerce order creation
             $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
@@ -392,34 +392,34 @@ class Proposal_Conversion {
      */
     private function start_workflow_transaction($source_id, $workflow_type, $conversion_type) {
         // Set workflow metadata
-        update_post_meta($source_id, '_arsol_workflow_status', 'in_progress');
-        update_post_meta($source_id, '_arsol_workflow_type', $workflow_type);
-        update_post_meta($source_id, '_arsol_workflow_started', current_time('mysql'));
-        update_post_meta($source_id, '_arsol_conversion_type', $conversion_type);
-        update_post_meta($source_id, '_arsol_conversion_created_ids', array());
+        update_post_meta($source_id, '_arsol_pfw_workflow_status', 'in_progress');
+        update_post_meta($source_id, '_arsol_pfw_workflow_type', $workflow_type);
+        update_post_meta($source_id, '_arsol_pfw_workflow_started', current_time('mysql'));
+        update_post_meta($source_id, '_arsol_pfw_conversion_type', $conversion_type);
+        update_post_meta($source_id, '_arsol_pfw_conversion_created_ids', array());
         
         // Clear any previous rollback reason
-        delete_post_meta($source_id, '_arsol_conversion_rollback_reason');
+        delete_post_meta($source_id, '_arsol_pfw_conversion_rollback_reason');
     }
 
     /**
      * Record a created entity in the transaction
      */
     private function record_transaction_entity($source_id, $entity_id) {
-        $created_ids = get_post_meta($source_id, '_arsol_conversion_created_ids', true) ?: array();
+        $created_ids = get_post_meta($source_id, '_arsol_pfw_conversion_created_ids', true) ?: array();
         $created_ids[] = $entity_id;
-        update_post_meta($source_id, '_arsol_conversion_created_ids', $created_ids);
+        update_post_meta($source_id, '_arsol_pfw_conversion_created_ids', $created_ids);
     }
 
     /**
      * Complete a workflow transaction successfully
      */
     private function complete_workflow_transaction($source_id) {
-        update_post_meta($source_id, '_arsol_workflow_status', 'completed');
+        update_post_meta($source_id, '_arsol_pfw_workflow_status', 'completed');
         
         // Clean up transaction metadata but keep audit trail
-        delete_post_meta($source_id, '_arsol_conversion_created_ids');
-        delete_post_meta($source_id, '_arsol_conversion_step');
+        delete_post_meta($source_id, '_arsol_pfw_conversion_created_ids');
+        delete_post_meta($source_id, '_arsol_pfw_conversion_step');
         
         // Delete the source post (conversion completed successfully)
         wp_delete_post($source_id, true);
@@ -430,8 +430,8 @@ class Proposal_Conversion {
      */
     private function rollback_workflow_transaction($source_id, $reason) {
         // Store rollback reason
-        update_post_meta($source_id, '_arsol_conversion_rollback_reason', $reason);
-        update_post_meta($source_id, '_arsol_workflow_status', 'failed');
+        update_post_meta($source_id, '_arsol_pfw_conversion_rollback_reason', $reason);
+        update_post_meta($source_id, '_arsol_pfw_workflow_status', 'failed');
         
         // Delete created entities
         $this->rollback_proposal_to_project($source_id);
@@ -441,8 +441,8 @@ class Proposal_Conversion {
             "Rollback completed for proposal_to_project. Reason: {$reason}");
         
         // Clean up transaction metadata
-        delete_post_meta($source_id, '_arsol_conversion_created_ids');
-        delete_post_meta($source_id, '_arsol_conversion_step');
+        delete_post_meta($source_id, '_arsol_pfw_conversion_created_ids');
+        delete_post_meta($source_id, '_arsol_pfw_conversion_step');
     }
 
     /**
@@ -450,7 +450,7 @@ class Proposal_Conversion {
      */
     private function rollback_proposal_to_project($source_id) {
         $deleted_count = 0;
-        $created_ids = get_post_meta($source_id, '_arsol_conversion_created_ids', true) ?: array();
+        $created_ids = get_post_meta($source_id, '_arsol_pfw_conversion_created_ids', true) ?: array();
         
         foreach ($created_ids as $entity_id) {
             $post = get_post($entity_id);
@@ -527,7 +527,7 @@ class Proposal_Conversion {
      * Check if a workflow is in progress
      */
     private function is_workflow_in_progress($source_id) {
-        $status = get_post_meta($source_id, '_arsol_workflow_status', true);
+        $status = get_post_meta($source_id, '_arsol_pfw_workflow_status', true);
         return $status === 'in_progress';
     }
 
@@ -535,7 +535,7 @@ class Proposal_Conversion {
      * Force clear stuck workflow for a specific post
      */
     public function force_clear_stuck_workflow($post_id) {
-        $status = get_post_meta($post_id, '_arsol_workflow_status', true);
+        $status = get_post_meta($post_id, '_arsol_pfw_workflow_status', true);
         
         if ($status === 'in_progress') {
             // Force rollback the stuck transaction

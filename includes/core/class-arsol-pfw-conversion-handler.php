@@ -219,7 +219,7 @@ class Conversion_Handler {
         // 1. Preserve original request content in proposal meta
         $request_description = $request->get_prop('description');
         update_post_meta($proposal_id, '_arsol_pfw_proposal_request_details', $request_description);
-        error_log("ARSOL PFW DEBUG: Copied request description to proposal: " . substr($request_description, 0, 50) . "...");
+        error_log("ARSOL PFW DEBUG: Copied request description to proposal: " . ($request_description ? substr($request_description, 0, 50) . "..." : "null"));
         
         // 2. Rename request meta keys with proposal context
         $meta_mapping = array(
@@ -312,7 +312,7 @@ class Conversion_Handler {
         // 1. Preserve proposal content in project meta
         $proposal_description = $proposal->get_prop('description');
         update_post_meta($project_id, '_arsol_pfw_project_proposal_details', $proposal_description);
-        error_log("ARSOL PFW DEBUG: Copied proposal description to project: " . substr($proposal_description, 0, 50) . "...");
+        error_log("ARSOL PFW DEBUG: Copied proposal description to project: " . ($proposal_description ? substr($proposal_description, 0, 50) . "..." : "null"));
         
         // 2. Rename request data with project context
         $request_meta_mapping = array(

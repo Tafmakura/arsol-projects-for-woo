@@ -398,6 +398,11 @@ class Proposal {
             update_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', sanitize_text_field($_POST['arsol_pfw_proposal_delivery_date']));
         }
 
+        // Save project lead
+        if (isset($_POST['proposal_project_lead'])) {
+            update_post_meta($post_id, '_arsol_pfw_proposal_project_lead', sanitize_text_field($_POST['proposal_project_lead']));
+        }
+
         // Save expiration date
         if (isset($_POST['arsol_pfw_proposal_expiration_date'])) {
             update_post_meta($post_id, '_arsol_pfw_proposal_expiration_date', sanitize_text_field($_POST['arsol_pfw_proposal_expiration_date']));

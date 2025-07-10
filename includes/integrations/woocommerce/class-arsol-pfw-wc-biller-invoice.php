@@ -130,7 +130,7 @@ class Woocommerce_Biller {
                 // Save project using both methods to ensure compatibility
                 \Arsol_Projects_For_Woo\Woocommerce::save_project_to_order($order, $project_id);
             }
-            $order->add_meta_data('_arsol_conversion_date', current_time('mysql'));
+            $order->add_meta_data('_arsol_pfw_conversion_date', current_time('mysql'));
             
             // Set currency if specified
             if (!empty($proposal_data['currency'])) {
@@ -218,7 +218,7 @@ class Woocommerce_Biller {
                 // Save project using both methods to ensure compatibility
                 \Arsol_Projects_For_Woo\Woocommerce::save_project_to_order($subscription, $project_id);
             }
-            $subscription->add_meta_data('_arsol_conversion_date', current_time('mysql'));
+            $subscription->add_meta_data('_arsol_pfw_conversion_date', current_time('mysql'));
             
             // Set currency if specified
             if (!empty($proposal_data['currency'])) {

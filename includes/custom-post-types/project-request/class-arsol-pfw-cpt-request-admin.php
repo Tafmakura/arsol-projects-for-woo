@@ -154,6 +154,25 @@ class Request {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['request_stage']), 'arsol-pfw-request-stage', false);
         }
         
+        // ✅ ADD MISSING FIELD SAVES
+        // Save budget
+        if (isset($_POST['request_budget'])) {
+            $budget = sanitize_text_field($_POST['request_budget']);
+            update_post_meta($post_id, '_arsol_pfw_request_budget', $budget);
+        }
+        
+        // Save start date
+        if (isset($_POST['request_start_date'])) {
+            $start_date = sanitize_text_field($_POST['request_start_date']);
+            update_post_meta($post_id, '_arsol_pfw_request_start_date', $start_date);
+        }
+        
+        // Save delivery date
+        if (isset($_POST['request_delivery_date'])) {
+            $delivery_date = sanitize_text_field($_POST['request_delivery_date']);
+            update_post_meta($post_id, '_arsol_pfw_request_delivery_date', $delivery_date);
+        }
+        
         // Save customer notice
         if (isset($_POST['request_customer_notice_section_nonce']) && wp_verify_nonce($_POST['request_customer_notice_section_nonce'], 'request_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_request_customer_notice'])) {
