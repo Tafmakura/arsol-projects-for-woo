@@ -24,12 +24,15 @@ class Request_Data_Store {
      * @return int|WP_Error Post ID or error
      */
     public function create($request) {
+        $user_id = get_current_user_id();
+        $customer_id = $request->get_customer_id();
+        
         $post_data = array(
             'post_type'    => 'arsol-pfw-request',
             'post_title'   => $request->get_title(),
             'post_content' => $request->get_prop('description'),
             'post_status'  => 'publish',
-            'post_author'  => $request->get_customer_id(),
+            'post_author'  => $user_id, // Creator (post_author)
         );
         
         $post_id = wp_insert_post($post_data);
@@ -40,6 +43,10 @@ class Request_Data_Store {
         
         // Set ID
         $request->set_prop('id', $post_id);
+        
+        // Store customer_id in meta (like WooCommerce)
+        update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
+        update_post_meta($post_id, '_arsol_pfw_created_via', 'admin_creation');
         
         // Save meta
         $this->save_meta($request);
@@ -69,9 +76,19 @@ class Request_Data_Store {
         // Set basic properties
         $request->set_title($post->post_title);
         $request->set_description($post->post_content);
-        $request->set_prop('customer_id', $post->post_author);
         $request->set_prop('date_created', $post->post_date);
         $request->set_prop('date_modified', $post->post_modified);
+        
+        // Load customer_id from meta (like WooCommerce)
+        $customer_id = get_post_meta($post->ID, '_arsol_pfw_customer_id', true);
+        $created_via = get_post_meta($post->ID, '_arsol_pfw_created_via', true);
+        
+        if ($customer_id) {
+            $request->set_prop('customer_id', $customer_id);
+        }
+        if ($created_via) {
+            $request->set_prop('created_via', $created_via);
+        }
         
         // Load meta data
         foreach ($this->meta_keys as $prop => $meta_key) {
@@ -106,10 +123,6 @@ class Request_Data_Store {
             $post_updates['post_content'] = $changes['description'];
         }
         
-        if (isset($changes['customer_id'])) {
-            $post_updates['post_author'] = $changes['customer_id'];
-        }
-        
         if (!empty($post_updates)) {
             $post_updates['ID'] = $request->get_id();
             $result = wp_update_post($post_updates);
@@ -117,6 +130,15 @@ class Request_Data_Store {
             if (is_wp_error($result)) {
                 return $result;
             }
+        }
+        
+        // Update customer_id in meta (like WooCommerce)
+        if (isset($changes['customer_id'])) {
+            update_post_meta($request->get_id(), '_arsol_pfw_customer_id', $changes['customer_id']);
+        }
+        
+        if (isset($changes['created_via'])) {
+            update_post_meta($request->get_id(), '_arsol_pfw_created_via', $changes['created_via']);
         }
         
         // Update meta

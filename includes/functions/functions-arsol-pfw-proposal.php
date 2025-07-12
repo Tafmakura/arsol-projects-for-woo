@@ -32,7 +32,7 @@ function arsol_pfw_get_proposal($the_proposal = false) {
         return false;
     }
     
-    return new Arsol_PFW_Proposal($the_proposal);
+    return new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($the_proposal);
 }
 
 /**
@@ -57,15 +57,86 @@ function arsol_pfw_get_proposals($args = array()) {
 }
 
 /**
- * Get proposals by user
+ * Get proposals by customer ID
  * 
- * @param int $user_id User ID
- * @param array $args Additional query arguments
+ * @param int $customer_id Customer ID
  * @return array Array of Arsol_PFW_Proposal objects
  */
-function arsol_pfw_get_proposals_by_user($user_id, $args = array()) {
-    $args['author'] = $user_id;
-    return arsol_pfw_get_proposals($args);
+function arsol_pfw_get_proposals_by_customer($customer_id) {
+    $args = array(
+        'post_type' => 'arsol-pfw-proposal',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => '_arsol_pfw_customer_id',
+                'value' => $customer_id,
+                'compare' => '='
+            )
+        )
+    );
+    
+    $posts = get_posts($args);
+    $proposals = array();
+    
+    foreach ($posts as $post) {
+        $proposals[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post);
+    }
+    
+    return $proposals;
+}
+
+/**
+ * Get proposals by post author
+ * 
+ * @param int $user_id User ID
+ * @return array Array of Arsol_PFW_Proposal objects
+ */
+function arsol_pfw_get_proposals_by_post_author($user_id) {
+    $args = array(
+        'post_type' => 'arsol-pfw-proposal',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'author' => $user_id, // Query by post_author
+    );
+    
+    $posts = get_posts($args);
+    $proposals = array();
+    
+    foreach ($posts as $post) {
+        $proposals[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post);
+    }
+    
+    return $proposals;
+}
+
+/**
+ * Get proposals by user (customer or post author)
+ * 
+ * @param int $user_id User ID
+ * @param string $role 'customer' or 'post_author' or 'both'
+ * @return array Array of Arsol_PFW_Proposal objects
+ */
+function arsol_pfw_get_proposals_by_user($user_id, $role = 'both') {
+    if ($role === 'customer') {
+        return arsol_pfw_get_proposals_by_customer($user_id);
+    } elseif ($role === 'post_author') {
+        return arsol_pfw_get_proposals_by_post_author($user_id);
+    } else {
+        // Get both customer and post author proposals
+        $customer_proposals = arsol_pfw_get_proposals_by_customer($user_id);
+        $post_author_proposals = arsol_pfw_get_proposals_by_post_author($user_id);
+        
+        // Merge and remove duplicates
+        $all_proposals = array_merge($customer_proposals, $post_author_proposals);
+        $unique_proposals = array();
+        
+        foreach ($all_proposals as $proposal) {
+            $unique_proposals[$proposal->get_id()] = $proposal;
+        }
+        
+        return array_values($unique_proposals);
+    }
 }
 
 /**
@@ -81,181 +152,6 @@ function arsol_pfw_get_proposals_by_stage($stage, $args = array()) {
             'taxonomy' => 'arsol-pfw-proposal-stage',
             'field' => 'slug',
             'terms' => $stage,
-        ),
-    );
-    return arsol_pfw_get_proposals($args);
-}
-
-/**
- * Get proposals by customer
- * 
- * @param int $customer_id Customer ID
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_proposals_by_customer($customer_id, $args = array()) {
-    $args['meta_query'] = array(
-        array(
-            'key' => '_arsol_pfw_proposal_customer_id',
-            'value' => $customer_id,
-            'compare' => '=',
-        ),
-    );
-    return arsol_pfw_get_proposals($args);
-}
-
-/**
- * Search proposals
- * 
- * @param string $search_term Search term
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_search_proposals($search_term, $args = array()) {
-    $args['s'] = $search_term;
-    return arsol_pfw_get_proposals($args);
-}
-
-/**
- * Get proposal count
- * 
- * @param array $args Query arguments
- * @return int Number of proposals
- */
-function arsol_pfw_get_proposal_count($args = array()) {
-    $args['posts_per_page'] = -1;
-    $args['fields'] = 'ids';
-    $posts = get_posts($args);
-    return count($posts);
-}
-
-/**
- * Get count by user
- * 
- * @param int $user_id User ID
- * @param array $args Additional query arguments
- * @return int Number of proposals
- */
-function arsol_pfw_get_proposal_count_by_user($user_id, $args = array()) {
-    $args['author'] = $user_id;
-    return arsol_pfw_get_proposal_count($args);
-}
-
-/**
- * Get recent proposals
- * 
- * @param int $limit Number of proposals to return
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_recent_proposals($limit = 5, $args = array()) {
-    $args['posts_per_page'] = $limit;
-    return arsol_pfw_get_proposals($args);
-}
-
-/**
- * Get processing proposals
- * 
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_processing_proposals($args = array()) {
-    return arsol_pfw_get_proposals_by_stage('processing', $args);
-}
-
-/**
- * Get pending approval proposals
- * 
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_pending_approval_proposals($args = array()) {
-    return arsol_pfw_get_proposals_by_stage('pending-approval', $args);
-}
-
-/**
- * Get approved proposals
- * 
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_approved_proposals($args = array()) {
-    return arsol_pfw_get_proposals_by_stage('approved', $args);
-}
-
-/**
- * Get rejected proposals
- * 
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_rejected_proposals($args = array()) {
-    return arsol_pfw_get_proposals_by_stage('rejected', $args);
-}
-
-/**
- * Get expired proposals
- * 
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_expired_proposals($args = array()) {
-    return arsol_pfw_get_proposals_by_stage('expired', $args);
-}
-
-/**
- * Get ready for conversion proposals
- * 
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_ready_for_conversion_proposals($args = array()) {
-    return arsol_pfw_get_proposals_by_stage('approved', $args);
-}
-
-/**
- * Get converted proposals
- * 
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_converted_proposals($args = array()) {
-    $args['meta_query'] = array(
-        array(
-            'key' => '_arsol_pfw_proposal_converted_to_project',
-            'compare' => 'EXISTS',
-        ),
-    );
-    return arsol_pfw_get_proposals($args);
-}
-
-/**
- * Get not converted proposals
- * 
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_not_converted_proposals($args = array()) {
-    $args['meta_query'] = array(
-        array(
-            'key' => '_arsol_pfw_proposal_converted_to_project',
-            'compare' => 'NOT EXISTS',
-        ),
-    );
-    return arsol_pfw_get_proposals($args);
-}
-
-/**
- * Get proposals with quotations
- * 
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Proposal objects
- */
-function arsol_pfw_get_proposals_with_quotations($args = array()) {
-    $args['meta_query'] = array(
-        array(
-            'key' => '_arsol_pfw_proposal_quotation',
-            'compare' => 'EXISTS',
         ),
     );
     return arsol_pfw_get_proposals($args);
@@ -365,7 +261,7 @@ function arsol_pfw_bulk_update_proposal_stages($proposal_ids, $stage_slug) {
     $updated = 0;
     
     foreach ($proposal_ids as $proposal_id) {
-        $proposal = arsol_pfw_get_proposal($proposal_id);
+    $proposal = arsol_pfw_get_proposal($proposal_id);
         if ($proposal) {
             $proposal->update_stage($stage_slug);
             $updated++;

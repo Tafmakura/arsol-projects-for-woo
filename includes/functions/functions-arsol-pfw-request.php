@@ -32,7 +32,7 @@ function arsol_pfw_get_request($the_request = false) {
         return false;
     }
     
-    return new Arsol_PFW_Request($the_request);
+    return new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($the_request);
 }
 
 /**
@@ -57,15 +57,86 @@ function arsol_pfw_get_requests($args = array()) {
 }
 
 /**
- * Get requests by user
+ * Get requests by customer ID
  * 
- * @param int $user_id User ID
- * @param array $args Additional query arguments
+ * @param int $customer_id Customer ID
  * @return array Array of Arsol_PFW_Request objects
  */
-function arsol_pfw_get_requests_by_user($user_id, $args = array()) {
-    $args['author'] = $user_id;
-    return arsol_pfw_get_requests($args);
+function arsol_pfw_get_requests_by_customer($customer_id) {
+    $args = array(
+        'post_type' => 'arsol-pfw-request',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => '_arsol_pfw_customer_id',
+                'value' => $customer_id,
+                'compare' => '='
+            )
+        )
+    );
+    
+    $posts = get_posts($args);
+    $requests = array();
+    
+    foreach ($posts as $post) {
+        $requests[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post);
+    }
+    
+    return $requests;
+}
+
+/**
+ * Get requests by post author
+ * 
+ * @param int $user_id User ID
+ * @return array Array of Arsol_PFW_Request objects
+ */
+function arsol_pfw_get_requests_by_post_author($user_id) {
+    $args = array(
+        'post_type' => 'arsol-pfw-request',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'author' => $user_id, // Query by post_author
+    );
+    
+    $posts = get_posts($args);
+    $requests = array();
+    
+    foreach ($posts as $post) {
+        $requests[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post);
+    }
+    
+    return $requests;
+}
+
+/**
+ * Get requests by user (customer or post author)
+ * 
+ * @param int $user_id User ID
+ * @param string $role 'customer' or 'post_author' or 'both'
+ * @return array Array of Arsol_PFW_Request objects
+ */
+function arsol_pfw_get_requests_by_user($user_id, $role = 'both') {
+    if ($role === 'customer') {
+        return arsol_pfw_get_requests_by_customer($user_id);
+    } elseif ($role === 'post_author') {
+        return arsol_pfw_get_requests_by_post_author($user_id);
+    } else {
+        // Get both customer and post author requests
+        $customer_requests = arsol_pfw_get_requests_by_customer($user_id);
+        $post_author_requests = arsol_pfw_get_requests_by_post_author($user_id);
+        
+        // Merge and remove duplicates
+        $all_requests = array_merge($customer_requests, $post_author_requests);
+        $unique_requests = array();
+        
+        foreach ($all_requests as $request) {
+            $unique_requests[$request->get_id()] = $request;
+        }
+        
+        return array_values($unique_requests);
+    }
 }
 
 /**
@@ -81,24 +152,6 @@ function arsol_pfw_get_requests_by_stage($stage, $args = array()) {
             'taxonomy' => 'arsol-pfw-request-stage',
             'field' => 'slug',
             'terms' => $stage,
-        ),
-    );
-    return arsol_pfw_get_requests($args);
-}
-
-/**
- * Get requests by customer
- * 
- * @param int $customer_id Customer ID
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Request objects
- */
-function arsol_pfw_get_requests_by_customer($customer_id, $args = array()) {
-    $args['meta_query'] = array(
-        array(
-            'key' => '_arsol_pfw_request_customer_id',
-            'value' => $customer_id,
-            'compare' => '=',
         ),
     );
     return arsol_pfw_get_requests($args);

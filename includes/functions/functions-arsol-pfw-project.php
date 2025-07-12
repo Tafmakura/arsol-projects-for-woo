@@ -32,7 +32,7 @@ function arsol_pfw_get_project($the_project = false) {
         return false;
     }
     
-    return new Arsol_PFW_Project($the_project);
+    return new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($the_project);
 }
 
 /**
@@ -57,15 +57,86 @@ function arsol_pfw_get_projects($args = array()) {
 }
 
 /**
- * Get projects by user
+ * Get projects by customer ID
  * 
- * @param int $user_id User ID
- * @param array $args Additional query arguments
+ * @param int $customer_id Customer ID
  * @return array Array of Arsol_PFW_Project objects
  */
-function arsol_pfw_get_projects_by_user($user_id, $args = array()) {
-    $args['author'] = $user_id;
-    return arsol_pfw_get_projects($args);
+function arsol_pfw_get_projects_by_customer($customer_id) {
+    $args = array(
+        'post_type' => 'arsol-pfw-project',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => '_arsol_pfw_customer_id',
+                'value' => $customer_id,
+                'compare' => '='
+            )
+        )
+    );
+    
+    $posts = get_posts($args);
+    $projects = array();
+    
+    foreach ($posts as $post) {
+        $projects[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($post);
+    }
+    
+    return $projects;
+}
+
+/**
+ * Get projects by post author
+ * 
+ * @param int $user_id User ID
+ * @return array Array of Arsol_PFW_Project objects
+ */
+function arsol_pfw_get_projects_by_post_author($user_id) {
+    $args = array(
+        'post_type' => 'arsol-pfw-project',
+        'post_status' => 'publish',
+        'posts_per_page' => -1,
+        'author' => $user_id, // Query by post_author
+    );
+    
+    $posts = get_posts($args);
+    $projects = array();
+    
+    foreach ($posts as $post) {
+        $projects[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($post);
+    }
+    
+    return $projects;
+}
+
+/**
+ * Get projects by user (customer or post author)
+ * 
+ * @param int $user_id User ID
+ * @param string $role 'customer' or 'post_author' or 'both'
+ * @return array Array of Arsol_PFW_Project objects
+ */
+function arsol_pfw_get_projects_by_user($user_id, $role = 'both') {
+    if ($role === 'customer') {
+        return arsol_pfw_get_projects_by_customer($user_id);
+    } elseif ($role === 'post_author') {
+        return arsol_pfw_get_projects_by_post_author($user_id);
+    } else {
+        // Get both customer and post author projects
+        $customer_projects = arsol_pfw_get_projects_by_customer($user_id);
+        $post_author_projects = arsol_pfw_get_projects_by_post_author($user_id);
+        
+        // Merge and remove duplicates
+        $all_projects = array_merge($customer_projects, $post_author_projects);
+        $unique_projects = array();
+        
+        foreach ($all_projects as $project) {
+            $unique_projects[$project->get_id()] = $project;
+        }
+        
+        return array_values($unique_projects);
+    }
 }
 
 /**
@@ -81,24 +152,6 @@ function arsol_pfw_get_projects_by_stage($stage, $args = array()) {
             'taxonomy' => 'arsol-pfw-project-stage',
             'field' => 'slug',
             'terms' => $stage,
-        ),
-    );
-    return arsol_pfw_get_projects($args);
-}
-
-/**
- * Get projects by customer
- * 
- * @param int $customer_id Customer ID
- * @param array $args Additional query arguments
- * @return array Array of Arsol_PFW_Project objects
- */
-function arsol_pfw_get_projects_by_customer($customer_id, $args = array()) {
-    $args['meta_query'] = array(
-        array(
-            'key' => '_arsol_pfw_project_customer_id',
-            'value' => $customer_id,
-            'compare' => '=',
         ),
     );
     return arsol_pfw_get_projects($args);

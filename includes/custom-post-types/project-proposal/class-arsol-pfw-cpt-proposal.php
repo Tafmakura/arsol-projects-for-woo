@@ -500,16 +500,104 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal customer
+     * Get customer ID (from meta, like WooCommerce)
+     * 
+     * @return int Customer ID
+     */
+    public function get_customer_id() {
+        return (int) $this->get_meta('_arsol_pfw_customer_id');
+    }
+
+    /**
+     * Set customer ID (to meta, like WooCommerce)
+     * 
+     * @param int $customer_id Customer ID
+     * @return bool Success status
+     */
+    public function set_customer_id($customer_id) {
+        return $this->set_meta('_arsol_pfw_customer_id', (int) $customer_id);
+    }
+
+    /**
+     * Get post author ID (who created the proposal) - from post_author
+     * 
+     * @return int Post author ID
+     */
+    public function get_post_author_id() {
+        return $this->proposal ? (int) $this->proposal->post_author : 0;
+    }
+
+    /**
+     * Set post author ID (who created the proposal) - updates post_author
+     * 
+     * @param int $post_author_id Post author ID
+     * @return bool Success status
+     */
+    public function set_post_author_id($post_author_id) {
+        if (!$this->proposal_id) {
+            return false;
+        }
+        
+        $result = wp_update_post(array(
+            'ID' => $this->proposal_id,
+            'post_author' => (int) $post_author_id
+        ));
+        
+        if (!is_wp_error($result)) {
+            $this->proposal = get_post($this->proposal_id);
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get proposal post author (WP_User object) - from post_author
+     * 
+     * @return WP_User|null
+     */
+    public function get_post_author() {
+        $post_author_id = $this->get_post_author_id();
+        return $post_author_id ? get_userdata($post_author_id) : null;
+    }
+
+    /**
+     * Get how the proposal was created
+     * 
+     * @return string Creation method
+     */
+    public function get_created_via() {
+        return $this->get_meta('_arsol_pfw_created_via');
+    }
+
+    /**
+     * Set how the proposal was created
+     * 
+     * @param string $method Creation method
+     * @return bool Success status
+     */
+    public function set_created_via($method) {
+        return $this->set_meta('_arsol_pfw_created_via', $method);
+    }
+
+    /**
+     * Get proposal customer (WP_User object)
      * 
      * @return WP_User|null
      */
     public function get_customer() {
-        if (!$this->proposal || !$this->proposal->post_author) {
-            return null;
-        }
+        $customer_id = $this->get_customer_id();
+        return $customer_id ? get_userdata($customer_id) : null;
+    }
 
-        return get_userdata($this->proposal->post_author);
+    /**
+     * Get proposal creator (WP_User object)
+     * 
+     * @return WP_User|null
+     */
+    public function get_creator() {
+        $creator_id = $this->get_creator_id();
+        return $creator_id ? get_userdata($creator_id) : null;
     }
 
     /**
@@ -602,26 +690,6 @@ class Arsol_PFW_Proposal {
      */
     public function set_description($description) {
         $this->set_prop('description', $description);
-        return true;
-    }
-
-    /**
-     * Get customer ID
-     * 
-     * @return int Customer ID
-     */
-    public function get_customer_id() {
-        return $this->proposal ? (int) $this->proposal->post_author : 0;
-    }
-
-    /**
-     * Set customer ID
-     * 
-     * @param int $customer_id Customer ID
-     * @return bool Success status
-     */
-    public function set_customer_id($customer_id) {
-        $this->set_prop('customer_id', (int) $customer_id);
         return true;
     }
 

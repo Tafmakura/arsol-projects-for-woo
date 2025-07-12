@@ -373,16 +373,104 @@ class Arsol_PFW_Request {
     }
 
     /**
-     * Get request customer
+     * Get customer ID (from meta, like WooCommerce)
+     * 
+     * @return int Customer ID
+     */
+    public function get_customer_id() {
+        return (int) $this->get_meta('_arsol_pfw_customer_id');
+    }
+
+    /**
+     * Set customer ID (to meta, like WooCommerce)
+     * 
+     * @param int $customer_id Customer ID
+     * @return bool Success status
+     */
+    public function set_customer_id($customer_id) {
+        return $this->set_meta('_arsol_pfw_customer_id', (int) $customer_id);
+    }
+
+    /**
+     * Get post author ID (who created the request) - from post_author
+     * 
+     * @return int Post author ID
+     */
+    public function get_post_author_id() {
+        return $this->request ? (int) $this->request->post_author : 0;
+    }
+
+    /**
+     * Set post author ID (who created the request) - updates post_author
+     * 
+     * @param int $post_author_id Post author ID
+     * @return bool Success status
+     */
+    public function set_post_author_id($post_author_id) {
+        if (!$this->request_id) {
+            return false;
+        }
+        
+        $result = wp_update_post(array(
+            'ID' => $this->request_id,
+            'post_author' => (int) $post_author_id
+        ));
+        
+        if (!is_wp_error($result)) {
+            $this->request = get_post($this->request_id);
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get request post author (WP_User object) - from post_author
+     * 
+     * @return WP_User|null
+     */
+    public function get_post_author() {
+        $post_author_id = $this->get_post_author_id();
+        return $post_author_id ? get_userdata($post_author_id) : null;
+    }
+
+    /**
+     * Get how the request was created
+     * 
+     * @return string Creation method
+     */
+    public function get_created_via() {
+        return $this->get_meta('_arsol_pfw_created_via');
+    }
+
+    /**
+     * Set how the request was created
+     * 
+     * @param string $method Creation method
+     * @return bool Success status
+     */
+    public function set_created_via($method) {
+        return $this->set_meta('_arsol_pfw_created_via', $method);
+    }
+
+    /**
+     * Get request customer (WP_User object)
      * 
      * @return WP_User|null
      */
     public function get_customer() {
-        if (!$this->request || !$this->request->post_author) {
-            return null;
-        }
+        $customer_id = $this->get_customer_id();
+        return $customer_id ? get_userdata($customer_id) : null;
+    }
 
-        return get_userdata($this->request->post_author);
+    /**
+     * Get request creator (WP_User object)
+     * 
+     * @return WP_User|null
+     */
+    public function get_creator() {
+        $creator_id = $this->get_creator_id();
+        return $creator_id ? get_userdata($creator_id) : null;
     }
 
     /**
@@ -475,26 +563,6 @@ class Arsol_PFW_Request {
      */
     public function set_description($description) {
         $this->set_prop('description', $description);
-        return true;
-    }
-
-    /**
-     * Get customer ID
-     * 
-     * @return int Customer ID
-     */
-    public function get_customer_id() {
-        return $this->request ? (int) $this->request->post_author : 0;
-    }
-
-    /**
-     * Set customer ID
-     * 
-     * @param int $customer_id Customer ID
-     * @return bool Success status
-     */
-    public function set_customer_id($customer_id) {
-        $this->set_prop('customer_id', (int) $customer_id);
         return true;
     }
 
