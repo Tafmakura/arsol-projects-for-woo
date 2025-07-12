@@ -21,10 +21,10 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-arsol-pfw-cpt-request.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-arsol-pfw-cpt-proposal.php';
         
-        // Project Collection Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-arsol-pfw-cpt-project-list.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-arsol-pfw-cpt-request-list.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-arsol-pfw-cpt-proposal-list.php';
+        // Project Collection Classes - REMOVED: Now using global functions
+        // require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-arsol-pfw-cpt-project-list.php';
+        // require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-request/class-arsol-pfw-cpt-request-list.php';
+        // require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project-proposal/class-arsol-pfw-cpt-proposal-list.php';
         
         // Project Setup Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/class-arsol-pfw-cpt-project-setup.php';
