@@ -1,15 +1,22 @@
 <?php
+/**
+ * Admin Template: Edit Proposal Header - Request Details Column
+ *
+ * Variables passed from parent template:
+ * $proposal (Arsol_PFW_Proposal object) - The proposal entity instance
+ *
+ * @package Arsol_Projects_For_Woo
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
-global $post;
-
-if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
+// Ensure we have the proposal entity instance
+if (!isset($proposal) || !is_object($proposal)) {
     return;
 }
 
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Arsol_PFW_CPT_Proposal($post->ID);
         $budget = $proposal->get_budget();
         $delivery_date = $proposal->get_delivery_date();
         $expiration_date = $proposal->get_expiration_date();

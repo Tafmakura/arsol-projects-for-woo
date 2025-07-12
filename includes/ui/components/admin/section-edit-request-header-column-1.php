@@ -1,17 +1,19 @@
 <?php
+/**
+ * Admin Template: Edit Request Header - General Settings Column
+ *
+ * Variables passed from parent template:
+ * $request (Arsol_PFW_Request object) - The request entity instance
+ *
+ * @package Arsol_Projects_For_Woo
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
-global $post;
-
-if (!$post || $post->post_type !== 'arsol-pfw-request') {
-    return;
-}
-
-// Use factory function to get request object
-$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post->ID);
-if (!$request) {
+// Ensure we have the request entity instance
+if (!isset($request) || !is_object($request)) {
     return;
 }
 

@@ -1,17 +1,19 @@
 <?php
+/**
+ * Admin Template: Edit Request Header - Details Column
+ *
+ * Variables passed from parent template:
+ * $request (Arsol_PFW_Request object) - The request entity instance
+ *
+ * @package Arsol_Projects_For_Woo
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
-global $post;
-
-if (!$post || $post->post_type !== 'arsol-pfw-request') {
-    return;
-}
-
-// Use factory function to get request object
-$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post->ID);
-if (!$request) {
+// Ensure we have the request entity instance
+if (!isset($request) || !is_object($request)) {
     return;
 }
 
@@ -29,8 +31,8 @@ if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
     $request_stage = $request_stage_terms[0];
 }
 
-$customer = get_userdata($post->post_author);
-$submission_date = get_the_time('l j F \a\t g:ia', $post);
+$customer = get_userdata($request->get_author());
+$submission_date = get_the_time('l j F \a\t g:ia', $request->get_post());
 ?>
 
 <div class="form-field-row">

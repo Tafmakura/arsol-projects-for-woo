@@ -1,17 +1,19 @@
 <?php
+/**
+ * Admin Template: Edit Project Header - General Settings Column
+ *
+ * Variables passed from parent template:
+ * $project (Arsol_PFW_Project object) - The project entity instance
+ *
+ * @package Arsol_Projects_For_Woo
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
-global $post;
-
-if (!$post || $post->post_type !== 'arsol-pfw-project') {
-    return;
-}
-
-// Use factory function to get project object
-$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_CPT_Project($post->ID);
-if (!$project) {
+// Ensure we have the project entity instance
+if (!isset($project) || !is_object($project)) {
     return;
 }
 

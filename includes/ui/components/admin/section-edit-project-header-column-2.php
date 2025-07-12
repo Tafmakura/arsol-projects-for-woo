@@ -1,18 +1,23 @@
 <?php
+/**
+ * Admin Template: Edit Project Header - Details Column
+ *
+ * Variables passed from parent template:
+ * $project (Arsol_PFW_Project object) - The project entity instance
+ *
+ * @package Arsol_Projects_For_Woo
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
-global $post;
-
-if (!$post || $post->post_type !== 'arsol-pfw-project') {
+// Ensure we have the project entity instance
+if (!isset($project) || !is_object($project)) {
     return;
 }
 
-$project_id = $post->ID;
-
-// Create project instance to use getter methods
-$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
+$project_id = $project->get_id();
 
 // Check for original proposal data first
 $original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_id', true);

@@ -1,17 +1,19 @@
 <?php
+/**
+ * Admin Template: Edit Proposal Header - Summary Column
+ *
+ * Variables passed from parent template:
+ * $proposal (Arsol_PFW_Proposal object) - The proposal entity instance
+ *
+ * @package Arsol_Projects_For_Woo
+ */
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
-global $post;
-
-if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
-    return;
-}
-
-// Use factory function to get proposal object
-$proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post->ID);
-if (!$proposal) {
+// Ensure we have the proposal entity instance
+if (!isset($proposal) || !is_object($proposal)) {
     return;
 }
 
