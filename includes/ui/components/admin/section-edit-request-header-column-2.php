@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-request') {
 }
 
 // Use factory function to get request object
-$request = arsol_pfw_get_request($post->ID);
+$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT($post->ID);
 if (!$request) {
     return;
 }

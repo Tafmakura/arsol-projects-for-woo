@@ -55,7 +55,7 @@ class Requests {
                 break;
                 
             case 'request_budget':
-                $request = arsol_pfw_get_request($post_id);
+                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT($post_id);
                 if ($request) {
                     $budget = $request->get_budget();
                     if ($budget) {
@@ -75,7 +75,7 @@ class Requests {
                 break;
                 
             case 'customer':
-                $request = arsol_pfw_get_request($post_id);
+                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT($post_id);
                 if ($request) {
                     $customer_id = $request->get_customer_id();
                     if ($customer_id) {

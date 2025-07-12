@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
 }
 
 // Use factory function to get proposal object
-$proposal = arsol_pfw_get_proposal($post->ID);
+$proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT($post->ID);
 if (!$proposal) {
     return;
 }
@@ -33,7 +33,7 @@ $parent_project_data = false;
 // ALWAYS check URL parameter first (for new proposals)
 if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
     $parent_project_id = intval($_GET['parent_project']);
-    $parent_project = arsol_pfw_get_project($parent_project_id);
+    $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($parent_project_id);
     
     if ($parent_project) {
         $is_project_tied = true;
@@ -60,7 +60,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
 elseif ($proposal_id > 0) {
     $parent_project_id = $proposal->get_parent_project_id();
     if (!empty($parent_project_id)) {
-        $parent_project = arsol_pfw_get_project($parent_project_id);
+        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($parent_project_id);
         if ($parent_project) {
             $is_project_tied = true;
             
@@ -91,7 +91,7 @@ if (empty($current_proposal_stage)) {
 }
 
 // Get available stages using Stage Manager
-$available_stages = arsol_pfw_get_proposal_available_stages();
+$available_stages = \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposals_CPT::get_available_stages();
 ?>
 
 <div class="form-field-row">

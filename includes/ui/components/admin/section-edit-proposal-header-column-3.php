@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
 }
 
 // Use factory function to get proposal object
-$proposal = arsol_pfw_get_proposal($post->ID);
+$proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT($post->ID);
 if (!$proposal) {
     return;
 }

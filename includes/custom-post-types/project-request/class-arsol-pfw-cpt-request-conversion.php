@@ -98,19 +98,18 @@ class Request_Conversion {
             // Creation step
             update_post_meta($request_id, '_arsol_pfw_conversion_step', 'creation');
 
-            // NEW WAY - Factory functions and CRUD methods
-            $request = arsol_pfw_get_request($request_id);
+            // NEW WAY - Direct class instantiation
+            $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT($request_id);
             if (!$request) {
                 throw new Exception(__('Request not found.', 'arsol-pfw'));
             }
             
-            $proposal = arsol_pfw_create_proposal(array(
-                'name'        => $request->get_title(),
-                'customer_id' => $request->get_customer_id(),
-                'budget'      => $request->get_budget(),
-                'description' => $request->get_prop('description'),
-                'stage'       => 'processing'
-            ));
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT();
+            $proposal->set_title($request->get_title());
+            $proposal->set_customer_id($request->get_customer_id());
+            $proposal->set_budget($request->get_budget());
+            $proposal->set_description($request->get_prop('description'));
+            $proposal->set_stage('processing');
             
             if (is_wp_error($proposal)) {
                 throw new Exception($proposal->get_error_message());
@@ -182,9 +181,9 @@ class Request_Conversion {
 
     // Helper method to copy request metadata to proposal using new CRUD methods
     private function copy_request_metadata_to_proposal($request_id, $proposal_id) {
-        // Get request and proposal objects using factory functions
-        $request = arsol_pfw_get_request($request_id);
-        $proposal = arsol_pfw_get_proposal($proposal_id);
+        // Get request and proposal objects using direct instantiation
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT($request_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT($proposal_id);
         
         if (!$request || !$proposal) {
             throw new Exception(__('Failed to load request or proposal for metadata copy.', 'arsol-pfw'));

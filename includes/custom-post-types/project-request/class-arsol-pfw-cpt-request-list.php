@@ -108,6 +108,29 @@ class Project_Requests_CPT {
         return self::get_all($args);
     }
     
+    // === ADD MISSING METHODS FROM FUNCTIONS FILE ===
+
+    /**
+     * Get requests by stage (alias for get_by_status)
+     */
+    public static function get_by_stage($stage, $args = array()) {
+        return self::get_by_status($stage, $args);
+    }
+    
+    /**
+     * Get request stage counts
+     */
+    public static function get_stage_counts() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_counts('request');
+    }
+    
+    /**
+     * Get available request stages
+     */
+    public static function get_available_stages() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('request');
+    }
+    
     /**
      * Get pending review requests
      */
@@ -127,6 +150,13 @@ class Project_Requests_CPT {
      */
     public static function get_approved($args = array()) {
         return self::get_by_status('approved', $args);
+    }
+    
+    /**
+     * Get rejected requests
+     */
+    public static function get_rejected($args = array()) {
+        return self::get_by_status('rejected', $args);
     }
     
     /**

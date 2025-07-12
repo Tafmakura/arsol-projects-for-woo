@@ -196,4 +196,62 @@ class Projects_CPT {
         );
         return self::get_all($args);
     }
+
+    // === ADD MISSING METHODS FROM FUNCTIONS FILE ===
+
+    /**
+     * Get projects by stage (alias for get_by_status)
+     */
+    public static function get_by_stage($stage, $args = array()) {
+        return self::get_by_status($stage, $args);
+    }
+    
+    /**
+     * Get project stage counts
+     */
+    public static function get_stage_counts() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_counts('project');
+    }
+    
+    /**
+     * Get available project stages
+     */
+    public static function get_available_stages() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('project');
+    }
+    
+    /**
+     * Get active projects (in-progress)
+     */
+    public static function get_active($args = array()) {
+        return self::get_by_status('in-progress', $args);
+    }
+    
+    /**
+     * Get completed projects
+     */
+    public static function get_completed($args = array()) {
+        return self::get_by_status('completed', $args);
+    }
+    
+    /**
+     * Get not started projects
+     */
+    public static function get_not_started($args = array()) {
+        return self::get_by_status('not-started', $args);
+    }
+    
+    /**
+     * Get cancelled projects
+     */
+    public static function get_cancelled($args = array()) {
+        return self::get_by_status('cancelled', $args);
+    }
+    
+    /**
+     * Get paused projects
+     */
+    public static function get_paused($args = array()) {
+        return self::get_by_status('paused', $args);
+    }
 }

@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-request') {
 }
 
 // Use factory function to get request object
-$request = arsol_pfw_get_request($post->ID);
+$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT($post->ID);
 if (!$request) {
     return;
 }
@@ -25,7 +25,7 @@ $delivery_date = $request->get_deadline();
 $request_project_lead = $request->get_project_lead();
 
 // Get available stages using Stage Manager
-$available_stages = arsol_pfw_get_request_available_stages();
+$available_stages = \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Requests_CPT::get_available_stages();
 
 // Set default stage if none set
 if (empty($request_stage)) {

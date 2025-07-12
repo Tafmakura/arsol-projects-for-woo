@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-project') {
 }
 
 // Use factory function to get project object
-$project = arsol_pfw_get_project($post->ID);
+$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($post->ID);
 if (!$project) {
     return;
 }
@@ -24,7 +24,7 @@ $start_date = $project->get_start_date();
 $due_date = $project->get_deadline();
 
 // Get available stages using Stage Manager
-$available_stages = arsol_pfw_get_project_available_stages();
+$available_stages = \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_Requests_CPT::get_available_stages();
 ?>
 
 <div class="form-field-row">

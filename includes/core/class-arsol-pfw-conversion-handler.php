@@ -45,7 +45,7 @@ class Conversion_Handler {
             error_log("ARSOL PFW DEBUG: Request validation passed");
             
             // 3. Create proposal using factory
-            $request_obj = arsol_pfw_get_request($request_id);
+            $request_obj = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT($request_id);
             if (!$request_obj) {
                 error_log("ARSOL PFW DEBUG: Failed to get request object");
                 throw new Exception(__('Request not found.', 'arsol-pfw'));
@@ -140,13 +140,12 @@ class Conversion_Handler {
             }
             
             error_log("ARSOL PFW DEBUG: Creating project...");
-            $project = arsol_pfw_create_project([
-                'name' => $proposal_obj->get_title(),
-                'customer_id' => $proposal_obj->get_customer_id(),
-                'budget' => $proposal_obj->get_budget(),
-                'description' => $proposal_obj->get_prop('description'),
-                'stage' => 'not-started'
-            ]);
+            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT();
+            $project->set_title($proposal_obj->get_title());
+            $project->set_customer_id($proposal_obj->get_customer_id());
+            $project->set_budget($proposal_obj->get_budget());
+            $project->set_description($proposal_obj->get_prop('description'));
+            $project->set_stage('not-started');
             
             if (is_wp_error($project)) {
                 error_log("ARSOL PFW DEBUG: Failed to create project: " . $project->get_error_message());
@@ -206,8 +205,8 @@ class Conversion_Handler {
         error_log("ARSOL PFW DEBUG: Starting metadata copy from request #{$request_id} to proposal #{$proposal_id}");
         
         // Get request and proposal objects using factory functions
-        $request = arsol_pfw_get_request($request_id);
-        $proposal = arsol_pfw_get_proposal($proposal_id);
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT($request_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT($proposal_id);
         
         if (!$request || !$proposal) {
             error_log("ARSOL PFW DEBUG: Failed to load request or proposal objects");
@@ -299,8 +298,8 @@ class Conversion_Handler {
         error_log("ARSOL PFW DEBUG: Starting metadata copy from proposal #{$proposal_id} to project #{$project_id}");
         
         // Get proposal and project objects using factory functions
-        $proposal = arsol_pfw_get_proposal($proposal_id);
-        $project = arsol_pfw_get_project($project_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT($proposal_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($project_id);
         
         if (!$proposal || !$project) {
             error_log("ARSOL PFW DEBUG: Failed to load proposal or project objects");

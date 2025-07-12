@@ -266,4 +266,32 @@ class Project_Proposals_CPT {
         
         return self::get_all($args);
     }
+
+    /**
+     * Get proposals by stage (alias for get_by_status)
+     */
+    public static function get_by_stage($stage, $args = array()) {
+        return self::get_by_status($stage, $args);
+    }
+    
+    /**
+     * Get proposal stage counts
+     */
+    public static function get_stage_counts() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_counts('proposal');
+    }
+    
+    /**
+     * Get available proposal stages
+     */
+    public static function get_available_stages() {
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('proposal');
+    }
+    
+    /**
+     * Get expired proposals
+     */
+    public static function get_expired($args = array()) {
+        return self::get_by_status('expired', $args);
+    }
 } 

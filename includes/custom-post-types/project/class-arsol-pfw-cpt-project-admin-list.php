@@ -51,7 +51,7 @@ class Projects {
                 break;
                 
             case 'customer':
-                $project = arsol_pfw_get_project($post_id);
+                $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($post_id);
                 if ($project) {
                     $customer_id = $project->get_customer_id();
                     if ($customer_id) {
@@ -65,7 +65,7 @@ class Projects {
                 break;
                 
             case 'project_lead':
-                $project = arsol_pfw_get_project($post_id);
+                $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($post_id);
                 if ($project) {
                     $lead_id = $project->get_project_lead();
                     echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
