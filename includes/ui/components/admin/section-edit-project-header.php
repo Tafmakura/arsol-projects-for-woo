@@ -28,7 +28,7 @@ $customer = get_userdata($customer_id);
 $project_stage = !empty($project_stage_terms) ? $project_stage_terms[0] : 'not-started';
 
 // Create project instance to use getter methods
-$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($project_id);
+$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
 $project_lead = $project->get_project_lead();
 $start_date = $project->get_start_date();
 $due_date = $project->get_deadline();

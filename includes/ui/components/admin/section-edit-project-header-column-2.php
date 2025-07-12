@@ -12,7 +12,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-project') {
 $project_id = $post->ID;
 
 // Create project instance to use getter methods
-$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($project_id);
+$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
 
 // Check for original proposal data first
 $original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_id', true);

@@ -12,15 +12,15 @@ if (!defined('ABSPATH')) {
 /**
  * Get a single project
  * 
- * @param int|WP_Post|Arsol_Pfw_CPT_Project $the_project Project ID, post object, or project object
- * @return Arsol_Pfw_CPT_Project|false Project object or false if not found
+ * @param int|WP_Post|Arsol_PFW_Project $the_project Project ID, post object, or project object
+ * @return Arsol_PFW_Project|false Project object or false if not found
  */
 function arsol_pfw_get_project($the_project = false) {
     if (empty($the_project)) {
         return false;
     }
     
-    if ($the_project instanceof Arsol_Pfw_CPT_Project) {
+    if ($the_project instanceof Arsol_PFW_Project) {
         return $the_project;
     }
     
@@ -32,14 +32,14 @@ function arsol_pfw_get_project($the_project = false) {
         return false;
     }
     
-    return new Arsol_Pfw_CPT_Project($the_project);
+    return new Arsol_PFW_Project($the_project);
 }
 
 /**
  * Get multiple projects
  * 
  * @param array $args Query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_projects($args = array()) {
     $defaults = array(
@@ -61,7 +61,7 @@ function arsol_pfw_get_projects($args = array()) {
  * 
  * @param int $user_id User ID
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_projects_by_user($user_id, $args = array()) {
     $args['author'] = $user_id;
@@ -73,7 +73,7 @@ function arsol_pfw_get_projects_by_user($user_id, $args = array()) {
  * 
  * @param string $stage Stage slug
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_projects_by_stage($stage, $args = array()) {
     $args['tax_query'] = array(
@@ -91,7 +91,7 @@ function arsol_pfw_get_projects_by_stage($stage, $args = array()) {
  * 
  * @param int $customer_id Customer ID
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_projects_by_customer($customer_id, $args = array()) {
     $args['meta_query'] = array(
@@ -109,7 +109,7 @@ function arsol_pfw_get_projects_by_customer($customer_id, $args = array()) {
  * 
  * @param string $search_term Search term
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_search_projects($search_term, $args = array()) {
     $args['s'] = $search_term;
@@ -146,7 +146,7 @@ function arsol_pfw_get_project_count_by_user($user_id, $args = array()) {
  * 
  * @param int $limit Number of projects to return
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_recent_projects($limit = 5, $args = array()) {
     $args['posts_per_page'] = $limit;
@@ -157,7 +157,7 @@ function arsol_pfw_get_recent_projects($limit = 5, $args = array()) {
  * Get projects with orders
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_projects_with_orders($args = array()) {
     $args['meta_query'] = array(
@@ -173,7 +173,7 @@ function arsol_pfw_get_projects_with_orders($args = array()) {
  * Get projects with subscriptions
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_projects_with_subscriptions($args = array()) {
     $args['meta_query'] = array(
@@ -227,7 +227,7 @@ function arsol_pfw_get_available_project_stages() {
  * Get active projects
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_active_projects($args = array()) {
     return arsol_pfw_get_projects_by_stage('in-progress', $args);
@@ -237,7 +237,7 @@ function arsol_pfw_get_active_projects($args = array()) {
  * Get completed projects
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_completed_projects($args = array()) {
     return arsol_pfw_get_projects_by_stage('completed', $args);
@@ -247,7 +247,7 @@ function arsol_pfw_get_completed_projects($args = array()) {
  * Get not started projects
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_not_started_projects($args = array()) {
     return arsol_pfw_get_projects_by_stage('not-started', $args);
@@ -257,7 +257,7 @@ function arsol_pfw_get_not_started_projects($args = array()) {
  * Get cancelled projects
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_cancelled_projects($args = array()) {
     return arsol_pfw_get_projects_by_stage('cancelled', $args);
@@ -267,7 +267,7 @@ function arsol_pfw_get_cancelled_projects($args = array()) {
  * Get paused projects
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_paused_projects($args = array()) {
     return arsol_pfw_get_projects_by_stage('on-hold', $args);
@@ -279,7 +279,7 @@ function arsol_pfw_get_paused_projects($args = array()) {
  * @param string $start_date Start date
  * @param string $end_date End date
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Project objects
+ * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_projects_by_date_range($start_date, $end_date, $args = array()) {
     $args['date_query'] = array(

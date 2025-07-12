@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * 
  * Responsible for creating and managing individual project proposal instances
  */
-class Project_Proposal_CPT {
+class Arsol_PFW_Proposal {
 
     /**
      * Proposal ID
@@ -98,7 +98,7 @@ class Project_Proposal_CPT {
      * Create a new proposal instance
      * 
      * @param array $args Proposal creation arguments
-     * @return Project_Proposal_CPT|false New proposal instance or false on failure
+     * @return Arsol_PFW_Proposal|false New proposal instance or false on failure
      */
     public static function create($args = array()) {
         $defaults = array(
@@ -543,7 +543,7 @@ class Project_Proposal_CPT {
      * Find proposals by criteria
      * 
      * @param array $args Query arguments
-     * @return array Array of Project_Proposal_CPT instances
+     * @return array Array of Arsol_PFW_Proposal instances
      */
     public static function find($args = array()) {
         $defaults = array(

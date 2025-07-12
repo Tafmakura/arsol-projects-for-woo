@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * 
  * Responsible for creating and managing individual project request instances
  */
-class Project_Request_CPT {
+class Arsol_PFW_Request {
 
     /**
      * Request ID
@@ -98,7 +98,7 @@ class Project_Request_CPT {
      * Create a new request instance
      * 
      * @param array $args Request creation arguments
-     * @return Project_Request_CPT|false New request instance or false on failure
+     * @return Arsol_PFW_Request|false New request instance or false on failure
      */
     public static function create($args = array()) {
         $defaults = array(
@@ -416,7 +416,7 @@ class Project_Request_CPT {
      * Find requests by criteria
      * 
      * @param array $args Query arguments
-     * @return array Array of Project_Request_CPT instances
+     * @return array Array of Arsol_PFW_Request instances
      */
     public static function find($args = array()) {
         $defaults = array(

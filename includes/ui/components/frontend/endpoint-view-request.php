@@ -19,7 +19,7 @@ if (!isset($post) || !$post) {
 }
 
 // Use factory function to get request object
-$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Request_CPT($post->ID);
+$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post->ID);
 if (!$request) {
     echo '<p>' . esc_html__('Request not found.', 'arsol-pfw') . '</p>';
     return;

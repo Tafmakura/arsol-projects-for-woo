@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
 }
 
 // Use factory function to get proposal object
-$proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT($post->ID);
+$proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post->ID);
 if (!$proposal) {
     return;
 }
@@ -33,7 +33,7 @@ $parent_project_data = false;
 // ALWAYS check URL parameter first (for new proposals)
 if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
     $parent_project_id = intval($_GET['parent_project']);
-    $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($parent_project_id);
+    $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($parent_project_id);
     
     if ($parent_project) {
         $is_project_tied = true;
@@ -60,7 +60,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
 elseif ($proposal_id > 0) {
     $parent_project_id = $proposal->get_parent_project_id();
     if (!empty($parent_project_id)) {
-        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($parent_project_id);
+        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($parent_project_id);
         if ($parent_project) {
             $is_project_tied = true;
             

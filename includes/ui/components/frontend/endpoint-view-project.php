@@ -19,7 +19,7 @@ if (!isset($post) || !$post) {
 }
 
 // Use factory function to get project object
-$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($post->ID);
+$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($post->ID);
 if (!$project) {
     echo '<p>' . esc_html__('Project not found.', 'arsol-pfw') . '</p>';
     return;

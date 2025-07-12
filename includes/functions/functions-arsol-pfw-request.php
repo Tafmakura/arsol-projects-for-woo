@@ -12,15 +12,15 @@ if (!defined('ABSPATH')) {
 /**
  * Get a single request
  * 
- * @param int|WP_Post|Arsol_Pfw_CPT_Request $the_request Request ID, post object, or request object
- * @return Arsol_Pfw_CPT_Request|false Request object or false if not found
+ * @param int|WP_Post|Arsol_PFW_Request $the_request Request ID, post object, or request object
+ * @return Arsol_PFW_Request|false Request object or false if not found
  */
 function arsol_pfw_get_request($the_request = false) {
     if (empty($the_request)) {
         return false;
     }
     
-    if ($the_request instanceof Arsol_Pfw_CPT_Request) {
+    if ($the_request instanceof Arsol_PFW_Request) {
         return $the_request;
     }
     
@@ -32,14 +32,14 @@ function arsol_pfw_get_request($the_request = false) {
         return false;
     }
     
-    return new Arsol_Pfw_CPT_Request($the_request);
+    return new Arsol_PFW_Request($the_request);
 }
 
 /**
  * Get multiple requests
  * 
  * @param array $args Query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_requests($args = array()) {
     $defaults = array(
@@ -61,7 +61,7 @@ function arsol_pfw_get_requests($args = array()) {
  * 
  * @param int $user_id User ID
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_requests_by_user($user_id, $args = array()) {
     $args['author'] = $user_id;
@@ -73,7 +73,7 @@ function arsol_pfw_get_requests_by_user($user_id, $args = array()) {
  * 
  * @param string $stage Stage slug
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_requests_by_stage($stage, $args = array()) {
     $args['tax_query'] = array(
@@ -91,7 +91,7 @@ function arsol_pfw_get_requests_by_stage($stage, $args = array()) {
  * 
  * @param int $customer_id Customer ID
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_requests_by_customer($customer_id, $args = array()) {
     $args['meta_query'] = array(
@@ -109,7 +109,7 @@ function arsol_pfw_get_requests_by_customer($customer_id, $args = array()) {
  * 
  * @param string $search_term Search term
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_search_requests($search_term, $args = array()) {
     $args['s'] = $search_term;
@@ -146,7 +146,7 @@ function arsol_pfw_get_request_count_by_user($user_id, $args = array()) {
  * 
  * @param int $limit Number of requests to return
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_recent_requests($limit = 5, $args = array()) {
     $args['posts_per_page'] = $limit;
@@ -157,7 +157,7 @@ function arsol_pfw_get_recent_requests($limit = 5, $args = array()) {
  * Get pending review requests
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_pending_review_requests($args = array()) {
     return arsol_pfw_get_requests_by_stage('pending-review', $args);
@@ -167,7 +167,7 @@ function arsol_pfw_get_pending_review_requests($args = array()) {
  * Get under review requests
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_under_review_requests($args = array()) {
     return arsol_pfw_get_requests_by_stage('under-review', $args);
@@ -177,7 +177,7 @@ function arsol_pfw_get_under_review_requests($args = array()) {
  * Get approved requests
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_approved_requests($args = array()) {
     return arsol_pfw_get_requests_by_stage('approved', $args);
@@ -187,7 +187,7 @@ function arsol_pfw_get_approved_requests($args = array()) {
  * Get rejected requests
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_rejected_requests($args = array()) {
     return arsol_pfw_get_requests_by_stage('rejected', $args);
@@ -197,7 +197,7 @@ function arsol_pfw_get_rejected_requests($args = array()) {
  * Get on hold requests
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_on_hold_requests($args = array()) {
     return arsol_pfw_get_requests_by_stage('on-hold', $args);
@@ -207,7 +207,7 @@ function arsol_pfw_get_on_hold_requests($args = array()) {
  * Get ready for conversion requests
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_ready_for_conversion_requests($args = array()) {
     return arsol_pfw_get_requests_by_stage('approved', $args);
@@ -217,7 +217,7 @@ function arsol_pfw_get_ready_for_conversion_requests($args = array()) {
  * Get converted requests
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_converted_requests($args = array()) {
     $args['meta_query'] = array(
@@ -233,7 +233,7 @@ function arsol_pfw_get_converted_requests($args = array()) {
  * Get not converted requests
  * 
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_not_converted_requests($args = array()) {
     $args['meta_query'] = array(
@@ -251,7 +251,7 @@ function arsol_pfw_get_not_converted_requests($args = array()) {
  * @param string $start_date Start date
  * @param string $end_date End date
  * @param array $args Additional query arguments
- * @return array Array of Arsol_Pfw_CPT_Request objects
+ * @return array Array of Arsol_PFW_Request objects
  */
 function arsol_pfw_get_requests_by_date_range($start_date, $end_date, $args = array()) {
     $args['date_query'] = array(

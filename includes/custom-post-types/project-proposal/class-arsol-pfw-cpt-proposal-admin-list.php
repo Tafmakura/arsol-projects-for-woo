@@ -54,7 +54,7 @@ class Proposals {
                 break;
                 
             case 'customer':
-                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT($post_id);
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
                 if ($proposal) {
                     $customer_id = $proposal->get_customer_id();
                     if ($customer_id) {
@@ -68,11 +68,11 @@ class Proposals {
                 break;
             
             case 'project':
-                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposal_CPT($post_id);
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
                 if ($proposal) {
                     $parent_project_id = $proposal->get_meta('_arsol_pfw_parent_project_id');
                     if ($parent_project_id) {
-                        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_CPT($parent_project_id);
+                        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($parent_project_id);
                         if ($parent_project) {
                             echo '<a href="' . esc_url(get_edit_post_link($parent_project_id)) . '">';
                             echo esc_html($parent_project->get_title());

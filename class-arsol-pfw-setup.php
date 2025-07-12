@@ -70,9 +70,7 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-request.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-proposal.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/class-arsol-pfw-data-store-project.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-request.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-proposal.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-project.php';
+        // Function files moved to load after CPT classes to avoid class not found errors
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-arsol-pfw-wc-integration.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce-subscriptions/class-arsol-pfw-wc-subscriptions.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/class-arsol-pfw-wc-logs.php';
@@ -122,8 +120,15 @@ class Setup {
         // Initialize CRUD system before CPTs
         $this->initialize_crud_system();
         
-        // Initialize other classes
+        // Initialize CPT classes first (so function files can use them)
         new Custom_Post_Types\Setup();
+        
+        // Load function files after CPT classes are available
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-proposal.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-project.php';
+        
+        // Initialize other classes
         new Shortcodes();
         new Woocommerce();
         new Woocommerce_Subscriptions();

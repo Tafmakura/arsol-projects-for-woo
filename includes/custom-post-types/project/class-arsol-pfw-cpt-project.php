@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * 
  * Responsible for creating and managing individual project instances
  */
-class Project_CPT {
+class Arsol_PFW_Project {
 
     /**
      * Project ID
@@ -110,7 +110,7 @@ class Project_CPT {
      * Create a new project instance
      * 
      * @param array $args Project creation arguments
-     * @return Project_CPT|false New project instance or false on failure
+     * @return Arsol_PFW_Project|false New project instance or false on failure
      */
     public static function create($args = array()) {
         $defaults = array(
@@ -306,7 +306,7 @@ class Project_CPT {
      * Find projects by criteria
      * 
      * @param array $args Query arguments
-     * @return array Array of Project_CPT instances
+     * @return array Array of Arsol_PFW_Project instances
      */
     public static function find($args = array()) {
         $defaults = array(
