@@ -28,9 +28,9 @@ class Frontend_Template_Sidebar_Meta {
      */
     private function init_hooks() {
         // CPT-specific meta hooks
-        add_action('arsol_pfw_project_sidebar_meta', array($this, 'display_project_meta'), 10, 2);
-        add_action('arsol_pfw_project_proposal_sidebar_meta', array($this, 'display_proposal_meta'), 10, 2);
-        add_action('arsol_pfw_project_request_sidebar_meta', array($this, 'display_request_meta'), 10, 2);
+        add_action('arsol_pfw_project_sidebar_meta', array($this, 'display_project_meta'), 10, 3);
+        add_action('arsol_pfw_project_proposal_sidebar_meta', array($this, 'display_proposal_meta'), 10, 3);
+        add_action('arsol_pfw_project_request_sidebar_meta', array($this, 'display_request_meta'), 10, 3);
     }
 
     /**
@@ -38,15 +38,14 @@ class Frontend_Template_Sidebar_Meta {
      *
      * @param string $status The current status
      * @param int $post_id The post ID
+     * @param object $entity Optional entity instance from endpoint
      */
-    public function display_project_meta($status, $post_id) {
-        if (empty($post_id)) {
+    public function display_project_meta($status, $post_id, $entity = null) {
+        if (empty($post_id) || !$entity || !method_exists($entity, 'get_id') || $entity->get_id() != $post_id) {
             return;
         }
-
-        $metadata = $this->get_project_metadata($post_id, $status);
+        $metadata = $this->get_project_metadata_from_entity($entity, $status);
         $metadata = apply_filters('arsol_pfw_project_sidebar_metadata', $metadata, $status, $post_id);
-        
         $this->render_metadata($metadata, 'active', $status, $post_id);
     }
 
@@ -55,15 +54,14 @@ class Frontend_Template_Sidebar_Meta {
      *
      * @param string $status The current status
      * @param int $post_id The post ID
+     * @param object $entity Optional entity instance from endpoint
      */
-    public function display_proposal_meta($status, $post_id) {
-        if (empty($post_id)) {
+    public function display_proposal_meta($status, $post_id, $entity = null) {
+        if (empty($post_id) || !$entity || !method_exists($entity, 'get_id') || $entity->get_id() != $post_id) {
             return;
         }
-
-        $metadata = $this->get_proposal_metadata($post_id, $status);
+        $metadata = $this->get_proposal_metadata_from_entity($entity, $status);
         $metadata = apply_filters('arsol_pfw_proposal_sidebar_metadata', $metadata, $status, $post_id);
-        
         $this->render_metadata($metadata, 'proposal', $status, $post_id);
     }
 
@@ -72,15 +70,14 @@ class Frontend_Template_Sidebar_Meta {
      *
      * @param string $status The current status
      * @param int $post_id The post ID
+     * @param object $entity Optional entity instance from endpoint
      */
-    public function display_request_meta($status, $post_id) {
-        if (empty($post_id)) {
+    public function display_request_meta($status, $post_id, $entity = null) {
+        if (empty($post_id) || !$entity || !method_exists($entity, 'get_id') || $entity->get_id() != $post_id) {
             return;
         }
-
-        $metadata = $this->get_request_metadata($post_id, $status);
+        $metadata = $this->get_request_metadata_from_entity($entity, $status);
         $metadata = apply_filters('arsol_pfw_request_sidebar_metadata', $metadata, $status, $post_id);
-        
         $this->render_metadata($metadata, 'request', $status, $post_id);
     }
 
@@ -521,6 +518,213 @@ class Frontend_Template_Sidebar_Meta {
         );
 
         return isset($descriptions[$stage]) ? $descriptions[$stage] : '';
+    }
+
+    /**
+     * Get project metadata from entity instance
+     *
+     * @param object $project Project entity instance
+     * @param string $status The current status
+     * @return array Array of metadata items
+     */
+    private function get_project_metadata_from_entity($project, $status) {
+        $metadata = array();
+        
+        // Get actual taxonomy status instead of using passed status
+        $actual_status = $this->get_taxonomy_status($project->get_id());
+        
+        // Only add status if we have an actual status
+        if (!empty($actual_status)) {
+            $metadata['status'] = array(
+                'label' => __('Stage', 'arsol-pfw'),
+                'value' => $this->format_status_display($actual_status, $project->get_id()),
+                'type' => 'badge',
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+            );
+        }
+        
+        // Customer
+        $customer = $project->get_customer();
+        if ($customer) {
+            $metadata['customer'] = array(
+                'label' => __('Customer', 'arsol-pfw'),
+                'value' => $customer->display_name,
+                'type' => 'text'
+            );
+        }
+        
+        // Project Lead
+        $project_lead = $project->get_project_lead();
+        if (!empty($project_lead)) {
+            $lead = get_userdata($project_lead);
+            if ($lead) {
+                $metadata['project_lead'] = array(
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
+                );
+            }
+        }
+        
+        // Start Date
+        $start_date = $project->get_start_date();
+        if (!empty($start_date)) {
+            $metadata['start_date'] = array(
+                'label' => __('Start Date', 'arsol-pfw'),
+                'value' => $start_date,
+                'type' => 'date'
+            );
+        }
+        
+        // Due Date
+        $due_date = $project->get_due_date();
+        if (!empty($due_date)) {
+            $metadata['due_date'] = array(
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
+                'type' => 'date'
+            );
+        }
+        
+        return $metadata;
+    }
+
+    /**
+     * Get proposal metadata from entity instance
+     *
+     * @param object $proposal Proposal entity instance
+     * @param string $status The current status
+     * @return array Array of metadata items
+     */
+    private function get_proposal_metadata_from_entity($proposal, $status) {
+        $metadata = array();
+        
+        // Get actual taxonomy status instead of using passed status
+        $actual_status = $this->get_taxonomy_status($proposal->get_id());
+        
+        // Only add status if we have an actual status
+        if (!empty($actual_status)) {
+            $metadata['status'] = array(
+                'label' => __('Stage', 'arsol-pfw'),
+                'value' => $this->format_status_display($actual_status, $proposal->get_id()),
+                'type' => 'badge',
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+            );
+        }
+        
+        // Customer
+        $customer = $proposal->get_customer();
+        if ($customer) {
+            $metadata['customer'] = array(
+                'label' => __('Customer', 'arsol-pfw'),
+                'value' => $customer->display_name,
+                'type' => 'text'
+            );
+        }
+        
+        // Project Lead
+        $project_lead = $proposal->get_project_lead();
+        if (!empty($project_lead)) {
+            $lead = get_userdata($project_lead);
+            if ($lead) {
+                $metadata['project_lead'] = array(
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
+                );
+            }
+        }
+        
+        // Start Date
+        $start_date = $proposal->get_start_date();
+        if (!empty($start_date)) {
+            $metadata['start_date'] = array(
+                'label' => __('Start Date', 'arsol-pfw'),
+                'value' => $start_date,
+                'type' => 'date'
+            );
+        }
+        
+        // Due Date
+        $due_date = $proposal->get_due_date();
+        if (!empty($due_date)) {
+            $metadata['due_date'] = array(
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
+                'type' => 'date'
+            );
+        }
+        
+        return $metadata;
+    }
+
+    /**
+     * Get request metadata from entity instance
+     *
+     * @param object $request Request entity instance
+     * @param string $status The current status
+     * @return array Array of metadata items
+     */
+    private function get_request_metadata_from_entity($request, $status) {
+        $metadata = array();
+        
+        // Get actual taxonomy status instead of using passed status
+        $actual_status = $this->get_taxonomy_status($request->get_id());
+        
+        // Only add status if we have an actual status
+        if (!empty($actual_status)) {
+            $metadata['status'] = array(
+                'label' => __('Stage', 'arsol-pfw'),
+                'value' => $this->format_status_display($actual_status, $request->get_id()),
+                'type' => 'badge',
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
+            );
+        }
+        
+        // Customer
+        $customer = $request->get_customer();
+        if ($customer) {
+            $metadata['customer'] = array(
+                'label' => __('Customer', 'arsol-pfw'),
+                'value' => $customer->display_name,
+                'type' => 'text'
+            );
+        }
+        
+        // Project Lead
+        $project_lead = $request->get_project_lead();
+        if (!empty($project_lead)) {
+            $lead = get_userdata($project_lead);
+            if ($lead) {
+                $metadata['project_lead'] = array(
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
+                );
+            }
+        }
+        
+        // Start Date
+        $start_date = $request->get_start_date();
+        if (!empty($start_date)) {
+            $metadata['start_date'] = array(
+                'label' => __('Start Date', 'arsol-pfw'),
+                'value' => $start_date,
+                'type' => 'date'
+            );
+        }
+        
+        // Due Date
+        $due_date = $request->get_due_date();
+        if (!empty($due_date)) {
+            $metadata['due_date'] = array(
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
+                'type' => 'date'
+            );
+        }
+        
+        return $metadata;
     }
 }
 

@@ -13,10 +13,10 @@ if (!defined('ABSPATH')) {
 }
 
 // Variables passed from the endpoint class:
-// $proposal (WP_Post object), $proposal_id, $current_tab, $statuses, $current_status, $wrapper_data
+// $proposal (Arsol_PFW_CPT_Proposal object), $proposal_id, $current_tab, $statuses, $current_status, $wrapper_data
 
 // Set variables for the header component
-$proposal_title = $proposal->post_title ?? '';
+$proposal_title = $proposal->get_title() ?? '';
 
 // Basic validation
 if (!$proposal) {
@@ -49,7 +49,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
 
 <div class="arsol-pfw-proposal">
     <div class="arsol-pfw-header">
-        <h3 class="arsol-pfw-title"><?php echo esc_html($proposal->post_title); ?></h3>
+        <h3 class="arsol-pfw-title"><?php echo esc_html($proposal->get_title()); ?></h3>
     </div>
     
     <div class="arsol-pfw-content-wrapper" id="proposal-wrapper">

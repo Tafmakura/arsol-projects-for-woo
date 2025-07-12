@@ -13,10 +13,10 @@ if (!defined('ABSPATH')) {
 }
 
 // Variables passed from the endpoint class:
-// $request (WP_Post object), $request_id, $current_tab, $current_stage, $wrapper_data
+// $request (Arsol_PFW_CPT_Request object), $request_id, $current_tab, $current_stage, $wrapper_data
 
 // Set variables for the header component
-$request_title = $request->post_title ?? '';
+$request_title = $request->get_title() ?? '';
 
 // Basic validation
 if (!$request) {
@@ -110,7 +110,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
 
 <div class="arsol-pfw-request">
     <div class="arsol-pfw-header">
-        <h3 class="arsol-pfw-title"><?php echo esc_html($request->post_title); ?></h3>
+        <h3 class="arsol-pfw-title"><?php echo esc_html($request->get_title()); ?></h3>
     </div>
     
     <div class="arsol-pfw-content-wrapper" id="request-wrapper">

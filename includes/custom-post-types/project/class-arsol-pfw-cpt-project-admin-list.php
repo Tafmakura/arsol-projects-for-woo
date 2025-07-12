@@ -51,27 +51,19 @@ class Projects {
                 break;
                 
             case 'customer':
-                $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($post_id);
-                if ($project) {
-                    $customer_id = $project->get_customer_id();
-                    if ($customer_id) {
-                        echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-project');
-                    } else {
-                        echo '<span class="na">&ndash;</span>';
-                    }
+                // Use direct meta access for performance in admin columns
+                $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
+                if ($customer_id) {
+                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-project');
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
                 break;
                 
             case 'project_lead':
-                $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($post_id);
-                if ($project) {
-                    $lead_id = $project->get_project_lead();
-                    echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
-                } else {
-                    echo '<span class="na">&ndash;</span>';
-                }
+                // Use direct meta access for performance in admin columns
+                $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
+                echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
                 break;
         }
     }

@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Variables passed from the endpoint class:
-// $project (WP_Post object), $project_id, $current_tab, $statuses, $current_status, $wrapper_data
+// $project (Arsol_PFW_CPT_Project object), $project_id, $current_tab, $statuses, $current_status, $wrapper_data
 
 // Include unified project header
 include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
@@ -25,7 +25,7 @@ if (!$project) {
 }
 
 // Set project type for hook compatibility - use actual CPT slug
-$project_type = $project->post_type; // 'arsol-pfw-project'
+$project_type = $project->get_post()->post_type; // 'arsol-pfw-project'
 
 // === PURE STAGE-BASED DISPLAY LOGIC ===
 $current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($project_id);
@@ -70,7 +70,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
 
 <div class="arsol-pfw-project">
     <div class="arsol-pfw-header">
-        <h3 class="arsol-pfw-title"><?php echo esc_html($project->post_title); ?></h3>
+        <h3 class="arsol-pfw-title"><?php echo esc_html($project->get_title()); ?></h3>
     </div>
     
     <div class="arsol-pfw-content-wrapper" id="project-overview-wrapper">

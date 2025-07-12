@@ -39,7 +39,7 @@ class Requests {
 
     /**
      * Render custom column content
-     * Fixed: Now uses Stage Manager directly instead of calling get_stage() on request object
+     * Fixed: Now uses direct meta access for performance in admin columns
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
@@ -55,19 +55,15 @@ class Requests {
                 break;
                 
             case 'request_budget':
-                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post_id);
-                if ($request) {
-                    $budget = $request->get_budget();
-                    if ($budget) {
-                        if (is_array($budget) && isset($budget['amount'])) {
-                            $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();
-                            echo wc_price($budget['amount'], array('currency' => $currency));
-                        } else {
-                            // Legacy support for simple numeric values
-                            echo wc_price($budget);
-                        }
+                // Use direct meta access for performance in admin columns
+                $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
+                if ($budget) {
+                    if (is_array($budget) && isset($budget['amount'])) {
+                        $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();
+                        echo wc_price($budget['amount'], array('currency' => $currency));
                     } else {
-                        echo '<span class="na">&ndash;</span>';
+                        // Legacy support for simple numeric values
+                        echo wc_price($budget);
                     }
                 } else {
                     echo '<span class="na">&ndash;</span>';
@@ -75,14 +71,10 @@ class Requests {
                 break;
                 
             case 'customer':
-                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post_id);
-                if ($request) {
-                    $customer_id = $request->get_customer_id();
-                    if ($customer_id) {
-                        echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-request');
-                    } else {
-                        echo '<span class="na">&ndash;</span>';
-                    }
+                // Use direct meta access for performance in admin columns
+                $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
+                if ($customer_id) {
+                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-request');
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }

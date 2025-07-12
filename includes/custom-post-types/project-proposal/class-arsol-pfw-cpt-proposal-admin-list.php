@@ -54,34 +54,26 @@ class Proposals {
                 break;
                 
             case 'customer':
-                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
-                if ($proposal) {
-                    $customer_id = $proposal->get_customer_id();
-                    if ($customer_id) {
-                        echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-proposal');
-                    } else {
-                        echo '<span class="na">&ndash;</span>';
-                    }
+                // Use direct meta access for performance in admin columns
+                $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
+                if ($customer_id) {
+                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-proposal');
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
                 break;
             
             case 'project':
-                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
-                if ($proposal) {
-                    $parent_project_id = $proposal->get_meta('_arsol_pfw_parent_project_id');
-                    if ($parent_project_id) {
-                        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($parent_project_id);
-                        if ($parent_project) {
-                            echo '<a href="' . esc_url(get_edit_post_link($parent_project_id)) . '">';
-                            echo esc_html($parent_project->get_title());
-                            echo '</a>';
-                        } else {
-                            echo '#' . esc_html($parent_project_id);
-                        }
+                // Use direct meta access for performance in admin columns
+                $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
+                if ($parent_project_id) {
+                    $parent_project_title = get_the_title($parent_project_id);
+                    if ($parent_project_title) {
+                        echo '<a href="' . esc_url(get_edit_post_link($parent_project_id)) . '">';
+                        echo esc_html($parent_project_title);
+                        echo '</a>';
                     } else {
-                        echo '<span class="na">&ndash;</span>';
+                        echo '#' . esc_html($parent_project_id);
                     }
                 } else {
                     echo '<span class="na">&ndash;</span>';
@@ -89,13 +81,9 @@ class Proposals {
                 break;
                 
             case 'project_lead':
-                $proposal = arsol_pfw_get_proposal($post_id);
-                if ($proposal) {
-                    $lead_id = $proposal->get_meta('_arsol_pfw_proposal_project_lead');
-                    echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
-                } else {
-                    echo '<span class="na">&ndash;</span>';
-                }
+                // Use direct meta access for performance in admin columns
+                $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
+                echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
                 break;
         }
     }

@@ -19,9 +19,9 @@ if (!class_exists('WC_Subscriptions')) {
 }
 
 // The following variables are passed from the endpoint function:
-// $project
-$project_id = $project->ID;
-$project_title = $project->post_title;
+// $project (Arsol_PFW_CPT_Project object)
+$project_id = $project->get_id();
+$project_title = $project->get_title();
 $current_tab = 'subscriptions';
 
 // Include unified project header
