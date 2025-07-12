@@ -153,6 +153,9 @@ class Setup {
             return;
         }
         
+        // Instantiate the project entity
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($post->ID);
+        
         $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header.php';
         if (file_exists($template_path)) {
             include $template_path;

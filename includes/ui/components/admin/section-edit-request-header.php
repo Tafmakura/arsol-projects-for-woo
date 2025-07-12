@@ -1,9 +1,12 @@
 <?php
 /**
- * Admin Template: Edit Project Request Header Container
+ * Admin Template: Edit Request Header Container
  *
  * This container appears below the title and above the WYSIWYG editor.
  * Inspired by WooCommerce order data panel structure.
+ *
+ * Variables passed from controller:
+ * $request (Arsol_PFW_Request object) - The request entity instance
  *
  * @package Arsol_Projects_For_Woo
  * @version 1.0.0
@@ -13,16 +16,19 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get the current post
 global $post;
 
 if (!$post || $post->post_type !== 'arsol-pfw-request') {
     return;
 }
 
-// Get request data
-$request_id = $post->ID;
-$customer_id = $post->post_author;
+// Ensure we have the request entity instance
+if (!isset($request) || !is_object($request)) {
+    return;
+}
+
+$request_id = $request->get_id();
+$customer_id = $request->get_customer_id();
 $customer = get_userdata($customer_id);
 
 // Get request stage (with proper error handling)
@@ -32,7 +38,6 @@ if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
     $request_stage = $request_stage_terms[0];
 }
 
-        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($request_id);
         $budget = $request->get_budget();
         $delivery_date = $request->get_due_date();
         $start_date = $request->get_start_date();
@@ -50,7 +55,7 @@ if (is_wp_error($stages)) {
 }
 
 // Check for parent project
-$parent_project_id = get_post_meta($request_id, '_arsol_pfw_parent_project_id', true);
+$parent_project_id = $request->get_parent_project_id();
 $parent_project_data = null;
 if ($parent_project_id) {
     $parent_project = get_post($parent_project_id);

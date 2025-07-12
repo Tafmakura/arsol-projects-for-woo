@@ -5,6 +5,9 @@
  * This container appears below the title and above the WYSIWYG editor.
  * Inspired by WooCommerce order data panel structure.
  *
+ * Variables passed from controller:
+ * $project (Arsol_PFW_Project object) - The project entity instance
+ *
  * @package Arsol_Projects_For_Woo
  * @version 1.0.0
  */
@@ -13,16 +16,19 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Get the current post
 global $post;
 
-    if (!$post || $post->post_type !== 'arsol-pfw-project') {
+if (!$post || $post->post_type !== 'arsol-pfw-project') {
     return;
 }
 
-// Get project data
-$project_id = $post->ID;
-$customer_id = $post->post_author;
+// Ensure we have the project entity instance
+if (!isset($project) || !is_object($project)) {
+    return;
+}
+
+$project_id = $project->get_id();
+$customer_id = $project->get_customer_id();
 $customer = get_userdata($customer_id);
         $project_stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
 $project_stage = !empty($project_stage_terms) ? $project_stage_terms[0] : 'not-started';

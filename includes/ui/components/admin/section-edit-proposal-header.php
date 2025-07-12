@@ -5,6 +5,9 @@
  * This container appears below the title and above the WYSIWYG editor.
  * Inspired by WooCommerce order data panel structure.
  *
+ * Variables passed from controller:
+ * $proposal (Arsol_PFW_Proposal object) - The proposal entity instance
+ *
  * @package Arsol_Projects_For_Woo
  * @version 1.0.0
  */
@@ -20,16 +23,21 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
     return;
 }
 
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Arsol_PFW_CPT_Proposal($post->ID);
-        $budget = $proposal->get_budget();
-        $delivery_date = $proposal->get_delivery_date();
-        $expiration_date = $proposal->get_expiration_date();
-        $start_date = $proposal->get_start_date();
-        $project_lead = $proposal->get_project_lead();
-        $costing_type = $proposal->get_costing_type();
-        $budget_notes = $proposal->get_budget_notes();
-        $quotation_notes = $proposal->get_quotation_notes();
-        $quotation = $proposal->get_quotation();
+// Ensure we have the proposal entity instance
+if (!isset($proposal) || !is_object($proposal)) {
+    return;
+}
+
+$proposal_id = $proposal->get_id();
+$budget = $proposal->get_budget();
+$delivery_date = $proposal->get_due_date();
+$expiration_date = $proposal->get_expiration_date();
+$start_date = $proposal->get_start_date();
+$project_lead = $proposal->get_project_lead();
+$costing_type = $proposal->get_costing_type();
+$budget_notes = $proposal->get_budget_notes();
+$quotation_notes = $proposal->get_quotation_notes();
+$quotation = $proposal->get_quotation();
 
 // Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;
