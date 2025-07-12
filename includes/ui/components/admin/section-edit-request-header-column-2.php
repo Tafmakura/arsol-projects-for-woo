@@ -20,7 +20,7 @@ $request_content = $request->get_content();
 $attachments = get_attached_media('', $request_id);
 $budget_data = $request->get_budget();
 $start_date = $request->get_start_date();
-$delivery_date = $request->get_deadline();
+$delivery_date = $request->get_due_date();
 
 // Get request stage (with proper error handling)
 $request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'names'));

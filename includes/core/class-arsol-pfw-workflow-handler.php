@@ -262,7 +262,7 @@ class Workflow_Handler {
             update_post_meta($post_id, '_arsol_pfw_request_start_date', sanitize_text_field($data['request_start_date']));
         }
         if (isset($data['request_delivery_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_request_delivery_date', sanitize_text_field($data['request_delivery_date']));
+            update_post_meta($post_id, '_arsol_pfw_request_due_date', sanitize_text_field($data['request_delivery_date']));
         }
     }
 

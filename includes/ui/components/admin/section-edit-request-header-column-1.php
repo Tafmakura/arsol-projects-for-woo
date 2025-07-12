@@ -21,7 +21,7 @@ $customer = get_userdata($customer_id);
 $request_stage = $request->get_stage();
 $budget_data = $request->get_budget();
 $start_date = $request->get_start_date();
-$delivery_date = $request->get_deadline();
+$delivery_date = $request->get_due_date();
 $request_project_lead = $request->get_project_lead();
 
 // Get available stages using Stage Manager

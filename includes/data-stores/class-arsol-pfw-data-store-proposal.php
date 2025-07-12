@@ -21,7 +21,7 @@ class Proposal_Data_Store {
         'budget_notes' => '_arsol_pfw_proposal_budget_notes',
         'quotation_notes' => '_arsol_pfw_proposal_quotation_notes',
         'quotation'   => '_arsol_pfw_proposal_quotation',
-        'deadline'    => '_arsol_pfw_proposal_delivery_date',
+        'due_date'    => '_arsol_pfw_proposal_due_date',
         'customer_notice' => '_arsol_pfw_proposal_customer_notice',
         'secondary_status' => '_arsol_pfw_proposal_secondary_status',
     );

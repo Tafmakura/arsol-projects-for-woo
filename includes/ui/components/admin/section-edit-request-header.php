@@ -34,7 +34,7 @@ if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
 
 $budget_data = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
 $start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
-$delivery_date = get_post_meta($request_id, '_arsol_pfw_request_delivery_date', true);
+$delivery_date = get_post_meta($request_id, '_arsol_pfw_request_due_date', true);
 
 // Get all request stages (with proper error handling)
 $stages = get_terms(array(

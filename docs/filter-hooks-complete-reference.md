@@ -631,7 +631,7 @@ add_filter('arsol_admin_columns', function($columns, $post_type) {
     if ($post_type === 'arsol-pfw-project') {
         // Add custom columns
         $columns['project_value'] = 'Project Value';
-        $columns['completion_percentage'] = 'Progress';
+        $columns['completion_percentage'] = 'Completion';
         
         // Reorder columns
         $new_order = array('title', 'project_value', 'completion_percentage', 'date');
@@ -816,8 +816,8 @@ class CustomEmailManager {
         // Add project-specific variables
         if (isset($data['project_id'])) {
             $project_id = $data['project_id'];
-            $variables['project_progress'] = $this->calculate_project_progress($project_id);
-            $variables['project_milestones'] = get_post_meta($project_id, '_project_milestones', true);
+            $variables['project_budget'] = $this->get_project_budget($project_id);
+            $variables['project_due_date'] = $this->get_project_due_date($project_id);
         }
         
         return $variables;

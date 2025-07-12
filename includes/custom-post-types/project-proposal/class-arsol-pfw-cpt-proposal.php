@@ -209,7 +209,7 @@ class Arsol_PFW_Proposal {
     public function get_timeline() {
         return array(
             'start_date' => $this->get_prop('start_date'),
-            'delivery_date' => $this->get_meta('_arsol_pfw_proposal_delivery_date'),
+            'due_date' => $this->get_prop('due_date'),
             'expiration_date' => $this->get_meta('_arsol_pfw_proposal_expiration_date')
         );
     }
@@ -227,8 +227,8 @@ class Arsol_PFW_Proposal {
             $this->set_prop('start_date', $timeline['start_date']);
         }
         
-        if (isset($timeline['delivery_date'])) {
-            $success = $success && $this->set_meta('_arsol_pfw_proposal_delivery_date', $timeline['delivery_date']);
+        if (isset($timeline['due_date'])) {
+            $this->set_prop('due_date', $timeline['due_date']);
         }
         
         if (isset($timeline['expiration_date'])) {
@@ -305,6 +305,25 @@ class Arsol_PFW_Proposal {
     public function set_delivery_date($delivery_date) {
         $this->set_prop('delivery_date', $delivery_date);
         return true;
+    }
+
+    /**
+     * Get proposal due date
+     * 
+     * @return string Proposal due date
+     */
+    public function get_due_date() {
+        return $this->get_prop('due_date');
+    }
+    
+    /**
+     * Set proposal due date
+     * 
+     * @param string $due_date Proposal due date
+     * @return bool Success status
+     */
+    public function set_due_date($due_date) {
+        return $this->set_prop('due_date', $due_date);
     }
 
     /**
@@ -431,7 +450,7 @@ class Arsol_PFW_Proposal {
                 '_arsol_pfw_source_proposal_id' => $this->proposal_id,
                 '_arsol_pfw_project_budget' => $this->get_budget(),
                 '_arsol_pfw_project_start_date' => $this->get_meta('_arsol_pfw_proposal_start_date'),
-                '_arsol_pfw_project_delivery_date' => $this->get_meta('_arsol_pfw_proposal_delivery_date'),
+                '_arsol_pfw_project_due_date' => $this->get_meta('_arsol_pfw_proposal_due_date'),
                 '_arsol_pfw_project_lead' => $this->get_meta('_arsol_pfw_proposal_project_lead')
             )
         );

@@ -200,7 +200,7 @@ class Request_Conversion {
             '_arsol_pfw_request_date' => '_arsol_pfw_proposal_request_date',
             '_arsol_pfw_request_budget' => '_arsol_pfw_proposal_request_budget',
             '_arsol_pfw_request_start_date' => '_arsol_pfw_proposal_request_start_date',
-            '_arsol_pfw_request_delivery_date' => '_arsol_pfw_proposal_request_delivery_date',
+            '_arsol_pfw_request_due_date' => '_arsol_pfw_proposal_request_due_date',
             '_arsol_pfw_request_attachments' => '_arsol_pfw_proposal_request_attachments',
         );
         

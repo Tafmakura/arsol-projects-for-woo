@@ -10,7 +10,7 @@ class Request_Data_Store {
     
     protected $meta_keys = array(
         'budget'      => '_arsol_pfw_request_budget',
-        'deadline'    => '_arsol_pfw_request_deadline',
+        'due_date'    => '_arsol_pfw_request_due_date',
         'description' => '_arsol_pfw_request_description',
         'timeline'    => '_arsol_pfw_request_timeline',
         'project_lead' => '_arsol_pfw_request_project_lead',

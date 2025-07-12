@@ -383,7 +383,7 @@ class Request_Frontend extends Frontend_Handler {
 
         // Save delivery date
         if (!empty($data['request_delivery_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_request_delivery_date', sanitize_text_field($data['request_delivery_date']));
+            update_post_meta($post_id, '_arsol_pfw_request_due_date', sanitize_text_field($data['request_delivery_date']));
         }
 
         // Save any additional custom fields

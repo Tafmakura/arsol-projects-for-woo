@@ -221,13 +221,11 @@ class Conversion_Handler {
         error_log("ARSOL PFW DEBUG: Copied request description to proposal: " . ($request_description ? substr($request_description, 0, 50) . "..." : "null"));
         
         // 2. Rename request meta keys with proposal context
+        // Map request meta to proposal meta
         $meta_mapping = array(
-            '_arsol_pfw_request_title' => '_arsol_pfw_proposal_request_title',
-            '_arsol_pfw_request_date' => '_arsol_pfw_proposal_request_date',
             '_arsol_pfw_request_budget' => '_arsol_pfw_proposal_request_budget',
             '_arsol_pfw_request_start_date' => '_arsol_pfw_proposal_request_start_date',
-            '_arsol_pfw_request_delivery_date' => '_arsol_pfw_proposal_request_delivery_date',
-            '_arsol_pfw_request_attachments' => '_arsol_pfw_proposal_request_attachments',
+            '_arsol_pfw_request_due_date' => '_arsol_pfw_proposal_request_due_date',
         );
         
         $copied_count = 0;
@@ -320,7 +318,7 @@ class Conversion_Handler {
             '_arsol_pfw_proposal_request_date' => '_arsol_pfw_project_request_date',
             '_arsol_pfw_proposal_request_budget' => '_arsol_pfw_project_request_budget',
             '_arsol_pfw_proposal_request_start_date' => '_arsol_pfw_project_request_start_date',
-            '_arsol_pfw_proposal_request_delivery_date' => '_arsol_pfw_project_request_delivery_date',
+            '_arsol_pfw_proposal_request_due_date' => '_arsol_pfw_project_request_due_date',
             '_arsol_pfw_proposal_request_attachments' => '_arsol_pfw_project_request_attachments',
         );
         
@@ -329,7 +327,7 @@ class Conversion_Handler {
             '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
             '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
             '_arsol_pfw_proposal_project_lead' => '_arsol_pfw_project_lead',
-            '_arsol_pfw_proposal_delivery_date' => '_arsol_pfw_project_due_date', // Map delivery date to project due date
+            '_arsol_pfw_proposal_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
         );
         
         // 4. Get proposal type for type-aware handling

@@ -159,8 +159,7 @@ class Request {
         
         // Save delivery date
         if (isset($_POST['request_delivery_date'])) {
-            $delivery_date = sanitize_text_field($_POST['request_delivery_date']);
-            update_post_meta($post_id, '_arsol_pfw_request_delivery_date', $delivery_date);
+            update_post_meta($post_id, '_arsol_pfw_request_due_date', sanitize_text_field($_POST['request_delivery_date']));
         }
         
         // Save project lead

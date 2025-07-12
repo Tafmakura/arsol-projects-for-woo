@@ -21,7 +21,7 @@ $customer = get_userdata($customer_id);
 $project_stage = $project->get_stage();
 $project_lead = $project->get_project_lead();
 $start_date = $project->get_start_date();
-$due_date = $project->get_deadline();
+$due_date = $project->get_due_date();
 
 // Get available stages using Stage Manager
 $available_stages = \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_Requests_CPT::get_available_stages();

@@ -31,7 +31,7 @@ $project_stage = !empty($project_stage_terms) ? $project_stage_terms[0] : 'not-s
 $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
 $project_lead = $project->get_project_lead();
 $start_date = $project->get_start_date();
-$due_date = $project->get_deadline();
+$due_date = $project->get_due_date();
 
 // Get all project statuses
 $all_statuses = get_terms(array(

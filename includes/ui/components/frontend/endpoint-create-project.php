@@ -26,7 +26,7 @@ if ($is_edit && isset($post) && $post) {
         $content = $post->post_content; // Post content still comes from WP_Post
         $budget = $project->get_budget();
         $start_date = $project->get_prop('start_date');
-        $delivery_date = $project->get_deadline();
+        $delivery_date = $project->get_due_date();
     } else {
         $title = '';
         $content = '';

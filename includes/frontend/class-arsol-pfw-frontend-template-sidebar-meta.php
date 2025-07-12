@@ -355,7 +355,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Delivery Date
-        $delivery_date = get_post_meta($post_id, '_arsol_pfw_request_delivery_date', true);
+        $delivery_date = get_post_meta($post_id, '_arsol_pfw_request_due_date', true);
         if (!empty($delivery_date)) {
             $metadata['delivery_date'] = array(
                 'label' => __('Requested Delivery Date', 'arsol-pfw'),

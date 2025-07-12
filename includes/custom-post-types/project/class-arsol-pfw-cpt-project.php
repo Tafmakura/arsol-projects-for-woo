@@ -467,23 +467,22 @@ class Arsol_PFW_Project {
     }
 
     /**
-     * Get project deadline
+     * Get project due date
      * 
-     * @return string Project deadline
+     * @return string Project due date
      */
-    public function get_deadline() {
-        return $this->get_prop('deadline');
+    public function get_due_date() {
+        return $this->get_prop('due_date');
     }
-
+    
     /**
-     * Set project deadline
+     * Set project due date
      * 
-     * @param string $deadline Project deadline
+     * @param string $due_date Project due date
      * @return bool Success status
      */
-    public function set_deadline($deadline) {
-        $this->set_prop('deadline', $deadline);
-        return true;
+    public function set_due_date($due_date) {
+        return $this->set_prop('due_date', $due_date);
     }
 
     /**
@@ -516,33 +515,13 @@ class Arsol_PFW_Project {
     }
 
     /**
-     * Set project start date
+     * Set start date
      * 
      * @param string $start_date Project start date
      * @return bool Success status
      */
     public function set_start_date($start_date) {
         $this->set_prop('start_date', $start_date);
-        return true;
-    }
-
-    /**
-     * Get project progress
-     * 
-     * @return int Project progress percentage
-     */
-    public function get_progress() {
-        return (int) $this->get_prop('progress');
-    }
-
-    /**
-     * Set project progress
-     * 
-     * @param int $progress Project progress percentage
-     * @return bool Success status
-     */
-    public function set_progress($progress) {
-        $this->set_prop('progress', (int) $progress);
         return true;
     }
 
