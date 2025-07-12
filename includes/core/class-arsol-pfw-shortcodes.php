@@ -225,7 +225,7 @@ class Shortcodes {
 		}
 		
 		// Check if project is publicly viewable
-		$is_public = get_post_meta($project_id, '_arsol_project_public', true);
+		        $is_public = get_post_meta($project_id, '_arsol_pfw_project_public', true);
 		return $is_public === 'yes';
 	}
 
@@ -932,7 +932,7 @@ class Shortcodes {
 			'order' => $params['order'],
 			'meta_query' => array(
 				array(
-					'key' => '_arsol_project_public',
+					            'key' => '_arsol_pfw_project_public',
 					'value' => 'yes',
 					'compare' => '='
 				)
@@ -1105,7 +1105,7 @@ class Shortcodes {
 			'order' => $params['order'],
 			'meta_query' => array(
 				array(
-					'key' => '_arsol_proposal_public',
+					            'key' => '_arsol_pfw_proposal_public',
 					'value' => 'yes',
 					'compare' => '='
 				)
@@ -1240,7 +1240,7 @@ class Shortcodes {
 			'order' => $params['order'],
 			'meta_query' => array(
 				array(
-					'key' => '_arsol_request_public',
+					            'key' => '_arsol_pfw_request_public',
 					'value' => 'yes',
 					'compare' => '='
 				)

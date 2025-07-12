@@ -125,7 +125,7 @@ class Woocommerce_Biller {
             $this->add_line_items_to_order($order, $proposal_data['line_items']);
             
             // Set order meta
-            $order->add_meta_data('_arsol_proposal_id', $proposal_data['proposal_id']);
+            $order->add_meta_data('_arsol_pfw_proposal_id', $proposal_data['proposal_id']);
             if ($project_id) {
                 // Save project using both methods to ensure compatibility
                 \Arsol_Projects_For_Woo\Woocommerce::save_project_to_order($order, $project_id);
@@ -213,7 +213,7 @@ class Woocommerce_Biller {
             $this->add_recurring_items_to_subscription($subscription, $proposal_data['line_items']);
             
             // Set subscription meta
-            $subscription->add_meta_data('_arsol_proposal_id', $proposal_data['proposal_id']);
+            $subscription->add_meta_data('_arsol_pfw_proposal_id', $proposal_data['proposal_id']);
             if ($project_id) {
                 // Save project using both methods to ensure compatibility
                 \Arsol_Projects_For_Woo\Woocommerce::save_project_to_order($subscription, $project_id);
@@ -477,7 +477,7 @@ class Woocommerce_Biller {
         }
         
         // Check if proposal has a customer (post_author)
-        $customer_id = $proposal->post_author;
+        $customer_id = get_post_meta($proposal_id, '_arsol_pfw_customer_id', true);
         if (empty($customer_id)) {
             return false;
         }

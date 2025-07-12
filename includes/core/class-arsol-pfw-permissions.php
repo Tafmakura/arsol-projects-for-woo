@@ -112,7 +112,7 @@ class Permissions {
         }
 
         // Check if user is the assigned customer for the proposal
-        $customer_id = get_post_meta($proposal_id, '_arsol_pfw_proposal_customer_id', true);
+        $customer_id = get_post_meta($proposal_id, '_arsol_pfw_customer_id', true);
         if (!empty($customer_id) && $customer_id == $user_id) {
             return true;
         }

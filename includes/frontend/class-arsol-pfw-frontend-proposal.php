@@ -43,7 +43,7 @@ class Proposal_Frontend extends Frontend_Handler {
 
         global $post;
         $current_user_id = get_current_user_id();
-        $customer_id = get_post_meta($post->ID, '_arsol_pfw_proposal_customer_id', true);
+        $customer_id = get_post_meta($post->ID, '_arsol_pfw_customer_id', true);
 
         // Check if current user is the assigned customer
         if ($current_user_id != $customer_id) {
