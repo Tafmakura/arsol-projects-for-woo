@@ -62,6 +62,12 @@ class Setup {
         // Core Classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-permissions.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/class-arsol-pfw-cpt-setup.php';
+        
+        // Load function files after CPT setup file is required but before instantiation
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-request.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-proposal.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-project.php';
+        
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/class-arsol-pfw-shortcodes.php';
         
         // CRUD System
@@ -122,11 +128,6 @@ class Setup {
         
         // Initialize CPT classes first (so function files can use them)
         new Custom_Post_Types\Setup();
-        
-        // Load function files after CPT classes are available
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-request.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-proposal.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/functions-arsol-pfw-project.php';
         
         // Initialize other classes
         new Shortcodes();

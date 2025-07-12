@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Get a single proposal
- * 
+ *
  * @param int|WP_Post|Arsol_PFW_Proposal $the_proposal Proposal ID, post object, or proposal object
  * @return Arsol_PFW_Proposal|false Proposal object or false if not found
  */
@@ -70,7 +70,7 @@ function arsol_pfw_get_proposals_by_user($user_id, $args = array()) {
 
 /**
  * Get proposals by stage
- * 
+ *
  * @param string $stage Stage slug
  * @param array $args Additional query arguments
  * @return array Array of Arsol_PFW_Proposal objects

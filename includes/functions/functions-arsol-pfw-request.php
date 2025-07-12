@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Get a single request
- * 
+ *
  * @param int|WP_Post|Arsol_PFW_Request $the_request Request ID, post object, or request object
  * @return Arsol_PFW_Request|false Request object or false if not found
  */
@@ -70,7 +70,7 @@ function arsol_pfw_get_requests_by_user($user_id, $args = array()) {
 
 /**
  * Get requests by stage
- * 
+ *
  * @param string $stage Stage slug
  * @param array $args Additional query arguments
  * @return array Array of Arsol_PFW_Request objects

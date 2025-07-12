@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Get a single project
- * 
+ *
  * @param int|WP_Post|Arsol_PFW_Project $the_project Project ID, post object, or project object
  * @return Arsol_PFW_Project|false Project object or false if not found
  */
@@ -70,7 +70,7 @@ function arsol_pfw_get_projects_by_user($user_id, $args = array()) {
 
 /**
  * Get projects by stage
- * 
+ *
  * @param string $stage Stage slug
  * @param array $args Additional query arguments
  * @return array Array of Arsol_PFW_Project objects
@@ -225,7 +225,7 @@ function arsol_pfw_get_available_project_stages() {
 
 /**
  * Get active projects
- * 
+ *
  * @param array $args Additional query arguments
  * @return array Array of Arsol_PFW_Project objects
  */
@@ -235,7 +235,7 @@ function arsol_pfw_get_active_projects($args = array()) {
 
 /**
  * Get completed projects
- * 
+ *
  * @param array $args Additional query arguments
  * @return array Array of Arsol_PFW_Project objects
  */
