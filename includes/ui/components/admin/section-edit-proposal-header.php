@@ -56,9 +56,9 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
         );
     }
 } 
-// Fallback to meta data check (for existing proposals)
+// Fallback to getter method check (for existing proposals)
 elseif ($proposal_id > 0) {
-    $parent_project_id = get_post_meta($proposal_id, '_arsol_pfw_parent_project_id', true);
+    $parent_project_id = $proposal->get_parent_project_id();
     if (!empty($parent_project_id)) {
         $parent_project = get_post($parent_project_id);
         if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
@@ -73,11 +73,12 @@ elseif ($proposal_id > 0) {
 
 // Check if has original request data
 $has_request_data = false;
-$original_request_id = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_id', true);
-if ($original_request_id || 
-    get_post_meta($proposal_id, '_arsol_pfw_proposal_request_budget', true) ||
-    get_post_meta($proposal_id, '_arsol_pfw_proposal_request_start_date', true) ||
-    get_post_meta($proposal_id, '_arsol_pfw_proposal_request_delivery_date', true)) {
+$original_request_id = $proposal->get_source_request_id();
+$original_request_budget = $proposal->get_requested_budget();
+$original_request_start_date = $proposal->get_meta('_arsol_pfw_proposal_request_start_date');
+$original_request_delivery_date = $proposal->get_meta('_arsol_pfw_proposal_request_delivery_date');
+
+if ($original_request_id || $original_request_budget || $original_request_start_date || $original_request_delivery_date) {
     $has_request_data = true;
 }
 
@@ -113,9 +114,9 @@ if ($has_request_data) {
                     );
                 }
             } 
-            // Fallback to meta data check (for existing proposals)
+            // Fallback to getter method check (for existing proposals)
             elseif ($proposal_id > 0) {
-                $parent_project_id = get_post_meta($proposal_id, '_arsol_pfw_parent_project_id', true);
+                $parent_project_id = $proposal->get_parent_project_id();
                 if (!empty($parent_project_id)) {
                     $parent_project = get_post($parent_project_id);
                     if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {

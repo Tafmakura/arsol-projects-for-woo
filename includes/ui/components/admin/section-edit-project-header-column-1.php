@@ -25,8 +25,8 @@ $project_lead = $project->get_project_lead();
 $start_date = $project->get_start_date();
 $due_date = $project->get_due_date();
 
-// Get available stages using Stage Manager
-$available_stages = \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project_Requests_CPT::get_available_stages();
+// Get available stages using the project entity
+$available_stages = $project->get_available_stages();
 ?>
 
 <div class="form-field-row">

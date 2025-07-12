@@ -26,8 +26,8 @@ $start_date = $request->get_start_date();
 $delivery_date = $request->get_due_date();
 $request_project_lead = $request->get_project_lead();
 
-// Get available stages using Stage Manager
-$available_stages = \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Project_Requests_CPT::get_available_stages();
+// Get available stages using the request entity
+$available_stages = $request->get_available_stages();
 
 // Set default stage if none set
 if (empty($request_stage)) {

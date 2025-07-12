@@ -474,7 +474,7 @@ class Arsol_PFW_Project {
     public function get_due_date() {
         return $this->get_prop('due_date');
     }
-    
+
     /**
      * Set project due date
      * 

@@ -92,8 +92,8 @@ if (empty($current_proposal_stage)) {
     $current_proposal_stage = 'processing'; // Default to processing
 }
 
-// Get available stages using Stage Manager
-$available_stages = \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Project_Proposals_CPT::get_available_stages();
+// Get available stages using the proposal entity
+$available_stages = $proposal->get_available_stages();
 ?>
 
 <div class="form-field-row">

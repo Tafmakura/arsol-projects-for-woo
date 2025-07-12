@@ -427,6 +427,25 @@ class Arsol_PFW_Proposal {
     }
 
     /**
+     * Get requested budget (from original request)
+     * 
+     * @return array|string|null
+     */
+    public function get_requested_budget() {
+        return get_post_meta($this->proposal_id, '_arsol_pfw_proposal_request_budget', true);
+    }
+
+    /**
+     * Set requested budget (from original request)
+     * 
+     * @param array|string $requested_budget
+     * @return bool Success status
+     */
+    public function set_requested_budget($requested_budget) {
+        return update_post_meta($this->proposal_id, '_arsol_pfw_proposal_request_budget', $requested_budget);
+    }
+
+    /**
      * Approve proposal and convert to project
      * 
      * @return int|false Project ID or false on failure

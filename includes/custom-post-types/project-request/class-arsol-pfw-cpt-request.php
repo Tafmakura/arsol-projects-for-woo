@@ -220,7 +220,7 @@ class Arsol_PFW_Request {
     public function get_due_date() {
         return $this->get_prop('due_date');
     }
-    
+
     /**
      * Set request due date
      * 
