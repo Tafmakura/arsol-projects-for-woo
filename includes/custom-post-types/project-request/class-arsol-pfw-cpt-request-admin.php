@@ -144,28 +144,23 @@ class Request {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['request_stage']), 'arsol-pfw-request-stage', false);
         }
         
-        // ✅ ADD MISSING FIELD SAVES
-        // Save budget
+        // Get request object to use setter methods
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post_id);
+        
         if (isset($_POST['request_budget'])) {
-            $budget = sanitize_text_field($_POST['request_budget']);
-            update_post_meta($post_id, '_arsol_pfw_request_budget', $budget);
+            $request->set_budget(sanitize_text_field($_POST['request_budget']));
         }
         
-        // Save start date
         if (isset($_POST['request_start_date'])) {
-            $start_date = sanitize_text_field($_POST['request_start_date']);
-            update_post_meta($post_id, '_arsol_pfw_request_start_date', $start_date);
+            $request->set_start_date(sanitize_text_field($_POST['request_start_date']));
         }
         
-        // Save delivery date
         if (isset($_POST['request_delivery_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_request_due_date', sanitize_text_field($_POST['request_delivery_date']));
+            $request->set_due_date(sanitize_text_field($_POST['request_delivery_date']));
         }
         
-        // Save project lead
         if (isset($_POST['request_project_lead'])) {
-            $project_lead = sanitize_text_field($_POST['request_project_lead']);
-            update_post_meta($post_id, '_arsol_pfw_request_project_lead', $project_lead);
+            $request->set_project_lead(sanitize_text_field($_POST['request_project_lead']));
         }
         
         // Save customer notice

@@ -20,15 +20,16 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
     return;
 }
 
-// Get proposal data
-$proposal_id = $post->ID;
-$customer_id = $post->post_author;
-$customer = get_userdata($customer_id);
-$proposal_status = get_post_status($post);
-$start_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_start_date', true);
-$delivery_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_delivery_date', true);
-$expiration_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_expiration_date', true);
-$cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Arsol_PFW_CPT_Proposal($post->ID);
+        $budget = $proposal->get_budget();
+        $delivery_date = $proposal->get_delivery_date();
+        $expiration_date = $proposal->get_expiration_date();
+        $start_date = $proposal->get_start_date();
+        $project_lead = $proposal->get_project_lead();
+        $costing_type = $proposal->get_costing_type();
+        $budget_notes = $proposal->get_budget_notes();
+        $quotation_notes = $proposal->get_quotation_notes();
+        $quotation = $proposal->get_quotation();
 
 // Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;

@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-request') {
 }
 
 // Use factory function to get request object
-$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post->ID);
+$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post->ID);
 if (!$request) {
     return;
 }
@@ -18,7 +18,7 @@ if (!$request) {
 $request_id = $request->get_id();
 $request_content = $request->get_content();
 $attachments = get_attached_media('', $request_id);
-$budget_data = $request->get_budget();
+$budget = $request->get_budget();
 $start_date = $request->get_start_date();
 $delivery_date = $request->get_due_date();
 
@@ -41,9 +41,9 @@ $submission_date = get_the_time('l j F \a\t g:ia', $post);
     <p class="form-field form-field-half">
         <label><strong><?php _e('Requested Budget:', 'arsol-pfw'); ?></strong></label>
         <?php 
-        if (!empty($budget_data['amount'])) {
-            $currency = !empty($budget_data['currency']) ? $budget_data['currency'] : get_woocommerce_currency();
-            echo get_woocommerce_currency_symbol($currency) . number_format((float)$budget_data['amount'], 2);
+        if (!empty($budget['amount'])) {
+            $currency = !empty($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();
+            echo get_woocommerce_currency_symbol($currency) . number_format((float)$budget['amount'], 2);
         } else {
             echo __('N/A', 'arsol-pfw');
         }

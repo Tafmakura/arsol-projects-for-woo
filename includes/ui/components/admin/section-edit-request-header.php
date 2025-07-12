@@ -32,9 +32,11 @@ if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
     $request_stage = $request_stage_terms[0];
 }
 
-$budget_data = get_post_meta($request_id, '_arsol_pfw_request_budget', true);
-$start_date = get_post_meta($request_id, '_arsol_pfw_request_start_date', true);
-$delivery_date = get_post_meta($request_id, '_arsol_pfw_request_due_date', true);
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($request_id);
+        $budget = $request->get_budget();
+        $delivery_date = $request->get_due_date();
+        $start_date = $request->get_start_date();
+        $project_lead = $request->get_project_lead();
 
 // Get all request stages (with proper error handling)
 $stages = get_terms(array(

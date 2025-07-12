@@ -153,23 +153,23 @@ class Frontend_Template_Sidebar_Meta {
             );
         }
         
+        // Get project object to use getter methods
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_CPT_Project($post_id);
+        
         // Customer
-        $post = get_post($post_id);
-        if ($post && $post->post_author) {
-            $customer = get_userdata($post->post_author);
-            if ($customer) {
-                $metadata['customer'] = array(
-                    'label' => __('Customer', 'arsol-pfw'),
-                    'value' => $customer->display_name,
-                    'type' => 'text'
-                );
-            }
+        $customer = $project->get_customer();
+        if ($customer) {
+            $metadata['customer'] = array(
+                'label' => __('Customer', 'arsol-pfw'),
+                'value' => $customer->display_name,
+                'type' => 'text'
+            );
         }
         
         // Project Lead
-        $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
-        if (!empty($lead_id)) {
-            $lead = get_userdata($lead_id);
+        $project_lead = $project->get_project_lead();
+        if (!empty($project_lead)) {
+            $lead = get_userdata($project_lead);
             if ($lead) {
                 $metadata['project_lead'] = array(
                     'label' => __('Project Lead', 'arsol-pfw'),
@@ -180,7 +180,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = get_post_meta($post_id, '_arsol_pfw_project_start_date', true);
+        $start_date = $project->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -190,7 +190,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = get_post_meta($post_id, '_arsol_pfw_project_due_date', true);
+        $due_date = $project->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -218,30 +218,30 @@ class Frontend_Template_Sidebar_Meta {
         // Only add status if we have an actual status
         if (!empty($actual_status)) {
             $metadata['status'] = array(
-                'label' => __('Status', 'arsol-pfw'),
+                'label' => __('Stage', 'arsol-pfw'),
                 'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
                 'class' => 'status-badge status-' . sanitize_html_class($actual_status)
             );
         }
         
+        // Get proposal object to use getter methods
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Arsol_PFW_CPT_Proposal($post_id);
+        
         // Customer
-        $post = get_post($post_id);
-        if ($post && $post->post_author) {
-            $customer = get_userdata($post->post_author);
-            if ($customer) {
-                $metadata['customer'] = array(
-                    'label' => __('Customer', 'arsol-pfw'),
-                    'value' => $customer->display_name,
-                    'type' => 'text'
-                );
-            }
+        $customer = $proposal->get_customer();
+        if ($customer) {
+            $metadata['customer'] = array(
+                'label' => __('Customer', 'arsol-pfw'),
+                'value' => $customer->display_name,
+                'type' => 'text'
+            );
         }
         
         // Project Lead
-        $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
-        if (!empty($lead_id)) {
-            $lead = get_userdata($lead_id);
+        $project_lead = $proposal->get_project_lead();
+        if (!empty($project_lead)) {
+            $lead = get_userdata($project_lead);
             if ($lead) {
                 $metadata['project_lead'] = array(
                     'label' => __('Project Lead', 'arsol-pfw'),
@@ -251,20 +251,8 @@ class Frontend_Template_Sidebar_Meta {
             }
         }
         
-        // Budget
-        $budget = get_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
-        if (!empty($budget)) {
-            if (is_array($budget) && isset($budget['amount'])) {
-                $metadata['budget'] = array(
-                    'label' => __('Budget', 'arsol-pfw'),
-                    'value' => wc_price($budget['amount'], array('currency' => $budget['currency'] ?? get_woocommerce_currency())),
-                    'type' => 'currency'
-                );
-            }
-        }
-        
         // Start Date
-        $start_date = get_post_meta($post_id, '_arsol_pfw_proposal_start_date', true);
+        $start_date = $proposal->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -273,22 +261,12 @@ class Frontend_Template_Sidebar_Meta {
             );
         }
         
-        // Delivery Date
-        $delivery_date = get_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', true);
-        if (!empty($delivery_date)) {
-            $metadata['delivery_date'] = array(
-                'label' => __('Delivery Date', 'arsol-pfw'),
-                'value' => $delivery_date,
-                'type' => 'date'
-            );
-        }
-        
-        // Expiration Date
-        $expiration_date = get_post_meta($post_id, '_arsol_pfw_proposal_expiration_date', true);
-        if (!empty($expiration_date)) {
-            $metadata['expiration_date'] = array(
-                'label' => __('Expiration Date', 'arsol-pfw'),
-                'value' => $expiration_date,
+        // Due Date
+        $due_date = $proposal->get_due_date();
+        if (!empty($due_date)) {
+            $metadata['due_date'] = array(
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
                 'type' => 'date'
             );
         }
@@ -312,54 +290,55 @@ class Frontend_Template_Sidebar_Meta {
         // Only add status if we have an actual status
         if (!empty($actual_status)) {
             $metadata['status'] = array(
-                'label' => __('Request Stage', 'arsol-pfw'),
+                'label' => __('Stage', 'arsol-pfw'),
                 'value' => $this->format_status_display($actual_status, $post_id),
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($actual_status),
-                'description' => $this->get_request_stage_description($actual_status)
+                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
             );
-            
-            // Add status-specific descriptions
-            $status_description = $this->get_request_stage_description($actual_status);
-            if (!empty($status_description)) {
-                $metadata['status_description'] = array(
-                    'label' => '',
-                    'value' => $status_description,
-                    'type' => 'text',
-                    'class' => 'status-description'
-                );
-            }
-            
         }
         
-        // Budget
-        $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
-        if (!empty($budget)) {
-            if (is_array($budget) && isset($budget['amount'])) {
-                $metadata['budget'] = array(
-                    'label' => __('Budget', 'arsol-pfw'),
-                    'value' => wc_price($budget['amount'], array('currency' => $budget['currency'] ?? get_woocommerce_currency())),
-                    'type' => 'currency'
+        // Get request object to use getter methods
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post_id);
+        
+        // Customer
+        $customer = $request->get_customer();
+        if ($customer) {
+            $metadata['customer'] = array(
+                'label' => __('Customer', 'arsol-pfw'),
+                'value' => $customer->display_name,
+                'type' => 'text'
+            );
+        }
+        
+        // Project Lead
+        $project_lead = $request->get_project_lead();
+        if (!empty($project_lead)) {
+            $lead = get_userdata($project_lead);
+            if ($lead) {
+                $metadata['project_lead'] = array(
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
                 );
             }
         }
         
         // Start Date
-        $start_date = get_post_meta($post_id, '_arsol_pfw_request_start_date', true);
+        $start_date = $request->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
-                'label' => __('Requested Start Date', 'arsol-pfw'),
+                'label' => __('Start Date', 'arsol-pfw'),
                 'value' => $start_date,
                 'type' => 'date'
             );
         }
         
-        // Delivery Date
-        $delivery_date = get_post_meta($post_id, '_arsol_pfw_request_due_date', true);
-        if (!empty($delivery_date)) {
-            $metadata['delivery_date'] = array(
-                'label' => __('Requested Delivery Date', 'arsol-pfw'),
-                'value' => $delivery_date,
+        // Due Date
+        $due_date = $request->get_due_date();
+        if (!empty($due_date)) {
+            $metadata['due_date'] = array(
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
                 'type' => 'date'
             );
         }

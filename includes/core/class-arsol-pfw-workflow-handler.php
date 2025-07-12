@@ -233,36 +233,23 @@ class Workflow_Handler {
     }
 
     private function update_request_meta($post_id, $data) {
-        // Save parent project if provided
-        if (isset($data['parent_project_id']) && !empty($data['parent_project_id'])) {
-            $parent_project_id = absint($data['parent_project_id']);
-            if ($parent_project_id) {
-                // Validate parent project exists
-                $parent_project = get_post($parent_project_id);
-                if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
-                    // Save parent project ID
-                    update_post_meta($post_id, '_arsol_pfw_parent_project_id', $parent_project_id);
-                    
-                    // Mark as project-tied request
-                    update_post_meta($post_id, '_arsol_pfw_is_project_tied_request', 1);
-                }
-            }
-        }
+        // Get request object to use setter methods
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post_id);
         
         if (isset($data['request_budget'])) {
-            $amount = wc_clean(wp_unslash($data['request_budget']));
-            // Remove commas and other non-numeric characters except decimal point
-            $amount = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($amount);
-            // Convert to proper decimal format
-            $amount = wc_format_decimal($amount);
-            $currency = get_woocommerce_currency();
-            update_post_meta($post_id, '_arsol_pfw_request_budget', ['amount' => $amount, 'currency' => $currency]);
+            $request->set_budget(sanitize_text_field($data['request_budget']));
         }
+        
         if (isset($data['request_start_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_request_start_date', sanitize_text_field($data['request_start_date']));
+            $request->set_start_date(sanitize_text_field($data['request_start_date']));
         }
+        
         if (isset($data['request_delivery_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_request_due_date', sanitize_text_field($data['request_delivery_date']));
+            $request->set_due_date(sanitize_text_field($data['request_delivery_date']));
+        }
+        
+        if (isset($data['request_project_lead'])) {
+            $request->set_project_lead(sanitize_text_field($data['request_project_lead']));
         }
     }
 

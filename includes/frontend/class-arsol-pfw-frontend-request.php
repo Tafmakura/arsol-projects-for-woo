@@ -361,29 +361,23 @@ class Request_Frontend extends Frontend_Handler {
      * Update request metadata
      */
     private function update_request_meta($post_id, $data) {
-        // Save budget
+        // Get request object to use setter methods
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post_id);
+        
         if (!empty($data['request_budget'])) {
-            // Remove formatting from budget amount (commas, etc.)
-            $amount = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($data['request_budget']);
-            $currency = get_woocommerce_currency();
-            
-            if (!empty($amount)) {
-                $budget_data = array(
-                    'amount'   => $amount,
-                    'currency' => $currency
-                );
-                update_post_meta($post_id, '_arsol_pfw_request_budget', $budget_data);
-            }
+            $request->set_budget(sanitize_text_field($data['request_budget']));
         }
-
-        // Save start date
+        
         if (!empty($data['request_start_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_request_start_date', sanitize_text_field($data['request_start_date']));
+            $request->set_start_date(sanitize_text_field($data['request_start_date']));
         }
-
-        // Save delivery date
+        
         if (!empty($data['request_delivery_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_request_due_date', sanitize_text_field($data['request_delivery_date']));
+            $request->set_due_date(sanitize_text_field($data['request_delivery_date']));
+        }
+        
+        if (!empty($data['request_project_lead'])) {
+            $request->set_project_lead(sanitize_text_field($data['request_project_lead']));
         }
 
         // Save any additional custom fields

@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-request') {
 }
 
 // Use factory function to get request object
-$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post->ID);
+$request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post->ID);
 if (!$request) {
     return;
 }
@@ -19,7 +19,7 @@ $request_id = $request->get_id();
 $customer_id = $request->get_customer_id();
 $customer = get_userdata($customer_id);
 $request_stage = $request->get_stage();
-$budget_data = $request->get_budget();
+$budget = $request->get_budget();
 $start_date = $request->get_start_date();
 $delivery_date = $request->get_due_date();
 $request_project_lead = $request->get_project_lead();
@@ -104,7 +104,7 @@ if (empty($request_stage)) {
 <div class="form-field-row">
     <p class="form-field form-field-wide">
         <label for="request_budget"><?php _e('Budget:', 'arsol-pfw'); ?></label>
-        <input type="number" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget_data); ?>" step="0.01" class="widefat">
+        <input type="number" id="request_budget" name="request_budget" value="<?php echo esc_attr($budget); ?>" step="0.01" class="widefat">
     </p>
 </div>
 

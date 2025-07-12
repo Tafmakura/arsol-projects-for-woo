@@ -28,10 +28,12 @@ $customer = get_userdata($customer_id);
 $project_stage = !empty($project_stage_terms) ? $project_stage_terms[0] : 'not-started';
 
 // Create project instance to use getter methods
-$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
-$project_lead = $project->get_project_lead();
-$start_date = $project->get_start_date();
-$due_date = $project->get_due_date();
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_CPT_Project($post->ID);
+        $budget = $project->get_budget();
+        $due_date = $project->get_due_date();
+        $start_date = $project->get_start_date();
+        $project_lead = $project->get_project_lead();
+        $customer_notice = $project->get_customer_notice();
 
 // Get all project statuses
 $all_statuses = get_terms(array(

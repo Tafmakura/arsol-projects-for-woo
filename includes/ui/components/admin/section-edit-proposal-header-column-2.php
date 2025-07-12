@@ -9,11 +9,12 @@ if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
     return;
 }
 
-$proposal_id = $post->ID;
-$original_request_id = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_id', true);
-$original_request_budget = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_budget', true);
-$original_request_start_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_start_date', true);
-$original_request_delivery_date = get_post_meta($proposal_id, '_arsol_pfw_proposal_request_delivery_date', true);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Arsol_PFW_CPT_Proposal($post->ID);
+        $budget = $proposal->get_budget();
+        $delivery_date = $proposal->get_delivery_date();
+        $expiration_date = $proposal->get_expiration_date();
+        $start_date = $proposal->get_start_date();
+        $costing_type = $proposal->get_costing_type();
 
 $has_original_data = $original_request_id || $original_request_budget || $original_request_start_date || $original_request_delivery_date;
 ?>

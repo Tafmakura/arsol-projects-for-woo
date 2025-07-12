@@ -10,7 +10,7 @@ if (!$post || $post->post_type !== 'arsol-pfw-project') {
 }
 
 // Use factory function to get project object
-$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($post->ID);
+$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_CPT_Project($post->ID);
 if (!$project) {
     return;
 }
