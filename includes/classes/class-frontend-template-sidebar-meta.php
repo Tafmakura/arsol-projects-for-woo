@@ -272,7 +272,8 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = get_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', true);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Proposal($post_id);
+        $due_date = $proposal->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),

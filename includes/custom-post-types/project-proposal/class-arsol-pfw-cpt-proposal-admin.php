@@ -64,7 +64,8 @@ class Proposal {
         }
 
         $start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_start_date', true);
-        $delivery_date = get_post_meta($post->ID, '_arsol_pfw_proposal_delivery_date', true);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Proposal($post->ID);
+        $delivery_date = $proposal->get_due_date();
         $expiration_date = get_post_meta($post->ID, '_arsol_pfw_proposal_expiration_date', true);
 
         // Get original request data for comparison
@@ -399,8 +400,8 @@ class Proposal {
         }
 
         // Save due date
-        if (isset($_POST['arsol_pfw_proposal_delivery_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', sanitize_text_field($_POST['arsol_pfw_proposal_delivery_date']));
+        if (isset($_POST['arsol_pfw_proposal_due_date'])) {
+            update_post_meta($post_id, '_arsol_pfw_proposal_due_date', sanitize_text_field($_POST['arsol_pfw_proposal_due_date']));
         }
 
         // Save project lead
