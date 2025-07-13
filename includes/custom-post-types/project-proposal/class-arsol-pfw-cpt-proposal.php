@@ -172,34 +172,569 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Set stage
+     * Set proposal stage
      * 
-     * @param string $stage New stage
+     * @param string $stage Stage slug
      * @return bool Success status
      */
     public function set_stage($stage) {
         return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($this->proposal_id, 'proposal', $stage);
     }
 
+    // ========================================
+    // COMPLEX DATA STRUCTURE METHODS (Entity-Specific)
+    // ========================================
+
     /**
-     * Get proposal budget
+     * Get complete proposal budget as array
      * 
-     * @return array|null Budget data
+     * @return array Complete proposal budget structure
      */
-    public function get_budget() {
-        return $this->get_prop('budget');
+    public function get_proposal_budget() {
+        return $this->get_prop('budget_data') ?: array();
     }
 
     /**
-     * Set proposal budget
+     * Set complete proposal budget as array
      * 
-     * @param array $budget Budget data
+     * @param array $budget_data Complete proposal budget structure
      * @return bool Success status
      */
-    public function set_budget($budget) {
-        $this->set_prop('budget', $budget);
+    public function set_proposal_budget($budget_data) {
+        $this->set_prop('budget_data', $budget_data);
         return true;
     }
+
+    /**
+     * Get specific budget field
+     * 
+     * @param string $field Field name (onetime, recurring, notes, type)
+     * @return mixed Field value
+     */
+    public function get_budget_field($field) {
+        $budget_data = $this->get_proposal_budget();
+        return isset($budget_data[$field]) ? $budget_data[$field] : null;
+    }
+
+    /**
+     * Set specific budget field
+     * 
+     * @param string $field Field name
+     * @param mixed $value Field value
+     * @return bool Success status
+     */
+    public function set_budget_field($field, $value) {
+        $budget_data = $this->get_proposal_budget();
+        $budget_data[$field] = $value;
+        return $this->set_proposal_budget($budget_data);
+    }
+
+    /**
+     * Get complete proposal quotation as array
+     * 
+     * @return array Complete proposal quotation structure
+     */
+    public function get_proposal_quotation() {
+        return $this->get_prop('quotation_data') ?: array();
+    }
+
+    /**
+     * Set complete proposal quotation as array
+     * 
+     * @param array $quotation_data Complete proposal quotation structure
+     * @return bool Success status
+     */
+    public function set_proposal_quotation($quotation_data) {
+        $this->set_prop('quotation_data', $quotation_data);
+        return true;
+    }
+
+    /**
+     * Get specific quotation field
+     * 
+     * @param string $field Field name (line_items, currency, totals, notes)
+     * @return mixed Field value
+     */
+    public function get_quotation_field($field) {
+        $quotation_data = $this->get_proposal_quotation();
+        return isset($quotation_data[$field]) ? $quotation_data[$field] : null;
+    }
+
+    /**
+     * Set specific quotation field
+     * 
+     * @param string $field Field name
+     * @param mixed $value Field value
+     * @return bool Success status
+     */
+    public function set_quotation_field($field, $value) {
+        $quotation_data = $this->get_proposal_quotation();
+        $quotation_data[$field] = $value;
+        return $this->set_proposal_quotation($quotation_data);
+    }
+
+    /**
+     * Get complete original request as array
+     * 
+     * @return array Complete original request structure
+     */
+    public function get_original_request() {
+        return $this->get_prop('original_request_data') ?: array();
+    }
+
+    /**
+     * Set complete original request as array
+     * 
+     * @param array $request_data Complete original request structure
+     * @return bool Success status
+     */
+    public function set_original_request($request_data) {
+        $this->set_prop('original_request_data', $request_data);
+        return true;
+    }
+
+    /**
+     * Get specific original request field
+     * 
+     * @param string $field Field name (budget, start_date, delivery_date, title, content, attachments)
+     * @return mixed Field value
+     */
+    public function get_original_request_field($field) {
+        $request_data = $this->get_original_request();
+        return isset($request_data[$field]) ? $request_data[$field] : null;
+    }
+
+    /**
+     * Set specific original request field
+     * 
+     * @param string $field Field name
+     * @param mixed $value Field value
+     * @return bool Success status
+     */
+    public function set_original_request_field($field, $value) {
+        $request_data = $this->get_original_request();
+        $request_data[$field] = $value;
+        return $this->set_original_request($request_data);
+    }
+
+    /**
+     * Get complete WooCommerce integration as array
+     * 
+     * @return array Complete WooCommerce integration structure
+     */
+    public function get_woocommerce_integration() {
+        return $this->get_prop('woocommerce_data') ?: array();
+    }
+
+    /**
+     * Set complete WooCommerce integration as array
+     * 
+     * @param array $woocommerce_data Complete WooCommerce integration structure
+     * @return bool Success status
+     */
+    public function set_woocommerce_integration($woocommerce_data) {
+        $this->set_prop('woocommerce_data', $woocommerce_data);
+        return true;
+    }
+
+    /**
+     * Get specific WooCommerce field
+     * 
+     * @param string $field Field name (order_id, subscription_id, conversion_date)
+     * @return mixed Field value
+     */
+    public function get_woocommerce_field($field) {
+        $woocommerce_data = $this->get_woocommerce_integration();
+        return isset($woocommerce_data[$field]) ? $woocommerce_data[$field] : null;
+    }
+
+    /**
+     * Set specific WooCommerce field
+     * 
+     * @param string $field Field name
+     * @param mixed $value Field value
+     * @return bool Success status
+     */
+    public function set_woocommerce_field($field, $value) {
+        $woocommerce_data = $this->get_woocommerce_integration();
+        $woocommerce_data[$field] = $value;
+        return $this->set_woocommerce_integration($woocommerce_data);
+    }
+
+    /**
+     * Get complete workflow history as array
+     * 
+     * @return array Complete workflow history structure
+     */
+    public function get_workflow_history() {
+        return $this->get_prop('workflow_data') ?: array();
+    }
+
+    /**
+     * Set complete workflow history as array
+     * 
+     * @param array $workflow_data Complete workflow history structure
+     * @return bool Success status
+     */
+    public function set_workflow_history($workflow_data) {
+        $this->set_prop('workflow_data', $workflow_data);
+        return true;
+    }
+
+    /**
+     * Get specific workflow field
+     * 
+     * @param string $field Field name (rejection_reason, conversion_type, workflow_started)
+     * @return mixed Field value
+     */
+    public function get_workflow_field($field) {
+        $workflow_data = $this->get_workflow_history();
+        return isset($workflow_data[$field]) ? $workflow_data[$field] : null;
+    }
+
+    /**
+     * Set specific workflow field
+     * 
+     * @param string $field Field name
+     * @param mixed $value Field value
+     * @return bool Success status
+     */
+    public function set_workflow_field($field, $value) {
+        $workflow_data = $this->get_workflow_history();
+        $workflow_data[$field] = $value;
+        return $this->set_workflow_history($workflow_data);
+    }
+
+    // ========================================
+    // INDIVIDUAL FIELD METHODS (Entity-Specific)
+    // ========================================
+
+    /**
+     * Get budget onetime amount
+     * 
+     * @return array|null Onetime amount data
+     */
+    public function get_budget_onetime_amount() {
+        return $this->get_budget_field('onetime');
+    }
+
+    /**
+     * Set budget onetime amount
+     * 
+     * @param array $amount_data Onetime amount data
+     * @return bool Success status
+     */
+    public function set_budget_onetime_amount($amount_data) {
+        return $this->set_budget_field('onetime', $amount_data);
+    }
+
+    /**
+     * Get budget recurring amount
+     * 
+     * @return array|null Recurring amount data
+     */
+    public function get_budget_recurring_amount() {
+        return $this->get_budget_field('recurring');
+    }
+
+    /**
+     * Set budget recurring amount
+     * 
+     * @param array $amount_data Recurring amount data
+     * @return bool Success status
+     */
+    public function set_budget_recurring_amount($amount_data) {
+        return $this->set_budget_field('recurring', $amount_data);
+    }
+
+    /**
+     * Get budget notes
+     * 
+     * @return string|null Budget notes
+     */
+    public function get_budget_notes() {
+        return $this->get_budget_field('notes');
+    }
+
+    /**
+     * Set budget notes
+     * 
+     * @param string $notes Budget notes
+     * @return bool Success status
+     */
+    public function set_budget_notes($notes) {
+        return $this->set_budget_field('notes', $notes);
+    }
+
+    /**
+     * Get budget type
+     * 
+     * @return string|null Budget type
+     */
+    public function get_budget_type() {
+        return $this->get_budget_field('type');
+    }
+
+    /**
+     * Set budget type
+     * 
+     * @param string $type Budget type
+     * @return bool Success status
+     */
+    public function set_budget_type($type) {
+        return $this->set_budget_field('type', $type);
+    }
+
+    /**
+     * Get quotation currency
+     * 
+     * @return string|null Quotation currency
+     */
+    public function get_quotation_currency() {
+        return $this->get_quotation_field('currency');
+    }
+
+    /**
+     * Set quotation currency
+     * 
+     * @param string $currency Quotation currency
+     * @return bool Success status
+     */
+    public function set_quotation_currency($currency) {
+        return $this->set_quotation_field('currency', $currency);
+    }
+
+    /**
+     * Get quotation total
+     * 
+     * @return array|null Quotation totals
+     */
+    public function get_quotation_total() {
+        return $this->get_quotation_field('totals');
+    }
+
+    /**
+     * Set quotation total
+     * 
+     * @param array $totals Quotation totals
+     * @return bool Success status
+     */
+    public function set_quotation_total($totals) {
+        return $this->set_quotation_field('totals', $totals);
+    }
+
+    /**
+     * Get quotation notes
+     * 
+     * @return string|null Quotation notes
+     */
+    public function get_quotation_notes() {
+        return $this->get_quotation_field('notes');
+    }
+
+    /**
+     * Set quotation notes
+     * 
+     * @param string $notes Quotation notes
+     * @return bool Success status
+     */
+    public function set_quotation_notes($notes) {
+        return $this->set_quotation_field('notes', $notes);
+    }
+
+    /**
+     * Get quotation line items
+     * 
+     * @return array|null Quotation line items
+     */
+    public function get_quotation_line_items() {
+        return $this->get_quotation_field('line_items');
+    }
+
+    /**
+     * Set quotation line items
+     * 
+     * @param array $line_items Quotation line items
+     * @return bool Success status
+     */
+    public function set_quotation_line_items($line_items) {
+        return $this->set_quotation_field('line_items', $line_items);
+    }
+
+    /**
+     * Get original request budget
+     * 
+     * @return array|null Original request budget
+     */
+    public function get_original_request_budget() {
+        return $this->get_original_request_field('budget');
+    }
+
+    /**
+     * Set original request budget
+     * 
+     * @param array $budget Original request budget
+     * @return bool Success status
+     */
+    public function set_original_request_budget($budget) {
+        return $this->set_original_request_field('budget', $budget);
+    }
+
+    /**
+     * Get original request start date
+     * 
+     * @return string|null Original request start date
+     */
+    public function get_original_request_start_date() {
+        return $this->get_original_request_field('start_date');
+    }
+
+    /**
+     * Set original request start date
+     * 
+     * @param string $start_date Original request start date
+     * @return bool Success status
+     */
+    public function set_original_request_start_date($start_date) {
+        return $this->set_original_request_field('start_date', $start_date);
+    }
+
+    /**
+     * Get original request title
+     * 
+     * @return string|null Original request title
+     */
+    public function get_original_request_title() {
+        return $this->get_original_request_field('title');
+    }
+
+    /**
+     * Set original request title
+     * 
+     * @param string $title Original request title
+     * @return bool Success status
+     */
+    public function set_original_request_title($title) {
+        return $this->set_original_request_field('title', $title);
+    }
+
+    /**
+     * Get WooCommerce order ID
+     * 
+     * @return int|null WooCommerce order ID
+     */
+    public function get_woocommerce_order_id() {
+        return $this->get_woocommerce_field('order_id');
+    }
+
+    /**
+     * Set WooCommerce order ID
+     * 
+     * @param int $order_id WooCommerce order ID
+     * @return bool Success status
+     */
+    public function set_woocommerce_order_id($order_id) {
+        return $this->set_woocommerce_field('order_id', $order_id);
+    }
+
+    /**
+     * Get WooCommerce subscription ID
+     * 
+     * @return int|null WooCommerce subscription ID
+     */
+    public function get_woocommerce_subscription_id() {
+        return $this->get_woocommerce_field('subscription_id');
+    }
+
+    /**
+     * Set WooCommerce subscription ID
+     * 
+     * @param int $subscription_id WooCommerce subscription ID
+     * @return bool Success status
+     */
+    public function set_woocommerce_subscription_id($subscription_id) {
+        return $this->set_woocommerce_field('subscription_id', $subscription_id);
+    }
+
+    /**
+     * Get WooCommerce conversion date
+     * 
+     * @return string|null WooCommerce conversion date
+     */
+    public function get_woocommerce_conversion_date() {
+        return $this->get_woocommerce_field('conversion_date');
+    }
+
+    /**
+     * Set WooCommerce conversion date
+     * 
+     * @param string $conversion_date WooCommerce conversion date
+     * @return bool Success status
+     */
+    public function set_woocommerce_conversion_date($conversion_date) {
+        return $this->set_woocommerce_field('conversion_date', $conversion_date);
+    }
+
+    /**
+     * Get workflow rejection reason
+     * 
+     * @return string|null Workflow rejection reason
+     */
+    public function get_workflow_rejection_reason() {
+        return $this->get_workflow_field('rejection_reason');
+    }
+
+    /**
+     * Set workflow rejection reason
+     * 
+     * @param string $reason Workflow rejection reason
+     * @return bool Success status
+     */
+    public function set_workflow_rejection_reason($reason) {
+        return $this->set_workflow_field('rejection_reason', $reason);
+    }
+
+    /**
+     * Get workflow approval date
+     * 
+     * @return string|null Workflow approval date
+     */
+    public function get_workflow_approval_date() {
+        return $this->get_workflow_field('approval_date');
+    }
+
+    /**
+     * Set workflow approval date
+     * 
+     * @param string $approval_date Workflow approval date
+     * @return bool Success status
+     */
+    public function set_workflow_approval_date($approval_date) {
+        return $this->set_workflow_field('approval_date', $approval_date);
+    }
+
+    /**
+     * Get workflow approver ID
+     * 
+     * @return int|null Workflow approver ID
+     */
+    public function get_workflow_approver_id() {
+        return $this->get_workflow_field('approver_id');
+    }
+
+    /**
+     * Set workflow approver ID
+     * 
+     * @param int $approver_id Workflow approver ID
+     * @return bool Success status
+     */
+    public function set_workflow_approver_id($approver_id) {
+        return $this->set_workflow_field('approver_id', $approver_id);
+    }
+
+    // ========================================
+    // SIMPLE FIELD METHODS (Individual fields)
+    // ========================================
 
     /**
      * Get proposal timeline
@@ -210,7 +745,7 @@ class Arsol_PFW_Proposal {
         return array(
             'start_date' => $this->get_prop('start_date'),
             'due_date' => $this->get_prop('due_date'),
-            'expiration_date' => $this->get_meta('_arsol_pfw_proposal_expiration_date')
+            'expiration_date' => $this->get_prop('expiration_date')
         );
     }
 
@@ -232,7 +767,7 @@ class Arsol_PFW_Proposal {
         }
         
         if (isset($timeline['expiration_date'])) {
-            $success = $success && $this->set_meta('_arsol_pfw_proposal_expiration_date', $timeline['expiration_date']);
+            $this->set_prop('expiration_date', $timeline['expiration_date']);
         }
 
         return $success;
@@ -386,69 +921,14 @@ class Arsol_PFW_Proposal {
         return true;
     }
 
-    /**
-     * Get budget notes
-     * 
-     * @return string Budget notes
-     */
-    public function get_budget_notes() {
-        return $this->get_prop('budget_notes');
-    }
-
-    /**
-     * Set budget notes
-     * 
-     * @param string $budget_notes Budget notes
-     * @return bool Success status
-     */
-    public function set_budget_notes($budget_notes) {
-        $this->set_prop('budget_notes', $budget_notes);
-        return true;
-    }
-
-    /**
-     * Get quotation notes
-     * 
-     * @return string Quotation notes
-     */
-    public function get_quotation_notes() {
-        return $this->get_prop('quotation_notes');
-    }
-
-    /**
-     * Set quotation notes
-     * 
-     * @param string $quotation_notes Quotation notes
-     * @return bool Success status
-     */
-    public function set_quotation_notes($quotation_notes) {
-        $this->set_prop('quotation_notes', $quotation_notes);
-        return true;
-    }
-
-    /**
-     * Get requested budget (from original request)
-     * 
-     * @return array|string|null
-     */
-    public function get_requested_budget() {
-        return get_post_meta($this->proposal_id, '_arsol_pfw_proposal_request_budget', true);
-    }
-
-    /**
-     * Set requested budget (from original request)
-     * 
-     * @param array|string $requested_budget
-     * @return bool Success status
-     */
-    public function set_requested_budget($requested_budget) {
-        return update_post_meta($this->proposal_id, '_arsol_pfw_proposal_request_budget', $requested_budget);
-    }
+    // ========================================
+    // WORKFLOW METHODS
+    // ========================================
 
     /**
      * Approve proposal and convert to project
      * 
-     * @return int|false Project ID or false on failure
+     * @return int|WP_Error New project ID or error
      */
     public function approve() {
         if (!$this->exists() || $this->get_stage() !== 'pending-approval') {
@@ -730,28 +1210,6 @@ class Arsol_PFW_Proposal {
         $this->set_prop('description', $description);
         return true;
     }
-
-    /**
-     * Get quotation
-     * 
-     * @return array Quotation data
-     */
-    public function get_quotation() {
-        return $this->get_meta('_arsol_pfw_proposal_quotation');
-    }
-
-    /**
-     * Set quotation
-     * 
-     * @param array $quotation Quotation data
-     * @return bool Success status
-     */
-    public function set_quotation($quotation) {
-        $this->set_prop('quotation', $quotation);
-        return true;
-    }
-
-
 
     /**
      * Update stage with hooks

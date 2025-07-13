@@ -1,814 +1,469 @@
-# CRUD System Complete Reference - Arsol Projects for WooCommerce
-
-## Table of Contents
-
-1. [Overview](#overview)
-2. [Taxonomy Integration Strategy](#taxonomy-integration-strategy)
-3. [Entity Classes](#entity-classes)
-4. [Data Store Classes](#data-store-classes)
-5. [Factory Functions](#factory-functions)
-6. [Stage Management](#stage-management)
-7. [Hooks and Filters](#hooks-and-filters)
-8. [Usage Examples](#usage-examples)
-9. [Migration Guide](#migration-guide)
-10. [API Reference](#api-reference)
+# CRUD Complete Reference
 
 ## Overview
 
-The CRUD system provides a clean, object-oriented API for managing Projects, Proposals, and Requests. It follows WooCommerce patterns exactly, ensuring familiarity for developers already working with WooCommerce.
+This document provides a complete reference for the CRUD (Create, Read, Update, Delete) operations in Arsol Projects for WooCommerce. The system follows WooCommerce patterns with array-based data structures and entity-specific naming conventions.
 
-### Key Components
+## Current Implementation Status
 
-- **Entity Classes**: `ARSOL_PFW_Project`, `ARSOL_PFW_Proposal`, `ARSOL_PFW_Request`
-- **Data Store Classes**: Handle database operations
-- **Factory Functions**: `arsol_pfw_get_project()`, `arsol_pfw_get_proposal()`, `arsol_pfw_get_request()`
-- **Stage Management**: WooCommerce-inspired status system with centralized taxonomy integration
+### ✅ **Implemented (Current)**
+- Array-based complex data structures
+- **Entity-specific naming convention** (WooCommerce-aligned)
+- Individual field methods for common operations
+- Data store with complex meta key support
+- Comprehensive getter/setter methods
 
-## Taxonomy Integration Strategy
+### 🔄 **Next Steps**
+- Implement same pattern for Project entity
+- Implement same pattern for Request entity
+- Update all templates and handlers to use new API
+- Create migration scripts for existing data
+- Update global functions to use new methods
 
-### **Centralized Taxonomy Approach**
+## Core Principles
 
-We maintain the existing WordPress taxonomy structure while centralizing all taxonomy operations in the data store layer. This provides clean entity APIs while preserving WordPress integration and admin functionality.
+### 1. Array-Based Complex Data
+Complex data structures (like budgets, quotations, workflow data) are stored as complete arrays in single meta fields, following WooCommerce patterns.
 
-### **Preserved Taxonomy Structure**
-- **Request Stages**: `arsol-pfw-request-stage` taxonomy
-  - Terms: `pending-review`, `under-review`, `on-hold`, `approved`, `rejected`
-- **Proposal Stages**: `arsol-pfw-proposal-stage` taxonomy  
-  - Terms: `processing`, `approved`, `rejected`, `expired`, etc.
-- **Project Stages**: `arsol-pfw-project-stage` taxonomy
-  - Terms: `not-started`, `in-progress`, `on-hold`, `completed`, `cancelled`
+### 2. Entity-Specific Naming
+Methods use entity-specific names that clearly indicate what they operate on, following WooCommerce patterns.
 
-### **Layer Responsibilities**
-
-#### **Entity Layer**: Clean Stage API
-```php
-// Entities work with stages as simple string properties
-$request->get_stage();           // Returns 'pending-review'
-$request->set_stage('approved'); // Sets stage property
-$request->update_stage('approved'); // Sets stage + saves + fires hooks
-$request->approve();             // Business logic method
-```
-
-#### **Data Store Layer**: Taxonomy Operations  
-```php
-// Data stores handle taxonomy complexity internally
-private function get_stage_from_taxonomy($id) {
-    $terms = wp_get_object_terms($id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
-    return !empty($terms) ? $terms[0] : 'pending-review';
-}
-
-private function save_stage_to_taxonomy($id, $stage) {
-    wp_set_object_terms($id, $stage, 'arsol-pfw-request-stage');
-}
-```
-
-#### **Wrapper Layer**: Preserved Interface
-```php
-// Existing CPT classes delegate to CRUD system
-public function get_status() {
-    $request = arsol_pfw_get_request($this->request_id);
-    return $request ? $request->get_stage() : null;
-}
-
-public function set_status($stage) {
-    $request = arsol_pfw_get_request($this->request_id);
-    if ($request) {
-        $request->update_stage($stage); // Handles taxonomy internally
-    }
-}
-```
-
-### **Benefits of This Approach**
-
-✅ **WordPress Native**: Admin filters, queries, and taxonomy screens work naturally  
-✅ **Clean APIs**: Entities work with simple properties and methods  
-✅ **Centralized**: All taxonomy operations in one place per entity  
-✅ **Zero Breaking Changes**: Existing taxonomies and admin functionality preserved  
-✅ **Performance**: Direct taxonomy operations, no extra abstraction  
+### 3. Individual Field Access
+Common fields have dedicated getter/setter methods for easy access.
 
 ## Entity Classes
 
-### ARSOL_PFW_Project
+### Arsol_PFW_Proposal
 
-**File**: `includes/custom-post-types/project/class-arsol-pfw-project.php`
-
+#### Constructor
 ```php
-class ARSOL_PFW_Project extends WC_Data implements ARSOL_PFW_Stage_Interface {
-    
-    protected $data = array(
-        'name'        => '',
-        'stage'       => 'not-started',
-        'lead_id'     => 0,
-        'customer_id' => 0,
-        'start_date'  => null,
-        'due_date'    => null,
-    );
-    
-    protected $object_type = 'arsol-pfw-project';
-    
-    // Basic getters/setters
-    public function get_name($context = 'view') { return $this->get_prop('name', $context); }
-    public function set_name($name) { $this->set_prop('name', $name); }
-    
-    public function get_stage($context = 'view') { return $this->get_prop('stage', $context); }
-    public function set_stage($stage) { $this->set_prop('stage', $stage); }
-    
-    public function get_lead_id($context = 'view') { return $this->get_prop('lead_id', $context); }
-    public function set_lead_id($lead_id) { $this->set_prop('lead_id', absint($lead_id)); }
-    
-    public function get_customer_id($context = 'view') { return $this->get_prop('customer_id', $context); }
-    public function set_customer_id($customer_id) { $this->set_prop('customer_id', absint($customer_id)); }
-    
-    public function get_start_date($context = 'view') { return $this->get_prop('start_date', $context); }
-    public function set_start_date($date) { $this->set_prop('start_date', $date); }
-    
-    public function get_due_date($context = 'view') { return $this->get_prop('due_date', $context); }
-    public function set_due_date($date) { $this->set_prop('due_date', $date); }
-    
-    // Stage management
-    public function update_stage($new_stage, $note = '') {
-        $old_stage = $this->get_stage();
-        $this->set_stage($new_stage);
-        $this->save();
-        
-        do_action('arsol_pfw_project_stage_changed', $this->get_id(), $old_stage, $new_stage, $this);
-        do_action("arsol_pfw_project_stage_{$old_stage}_to_{$new_stage}", $this->get_id(), $this);
-    }
-    
-    public function get_available_stages() {
-        return array(
-            'not-started' => 'Not Started',
-            'in-progress' => 'In Progress',
-            'on-hold'     => 'On Hold',
-            'completed'   => 'Completed',
-            'cancelled'   => 'Cancelled',
-        );
-    }
-    
-    // WooCommerce integration
-    public function get_orders() {
-        return wc_get_orders(array(
-            'meta_key'   => '_arsol_pfw_project_id',
-            'meta_value' => $this->get_id(),
-        ));
-    }
-    
-    public function get_subscriptions() {
-        if (class_exists('WC_Subscriptions')) {
-            return wcs_get_subscriptions(array(
-                'meta_key'   => '_arsol_pfw_project_id',
-                'meta_value' => $this->get_id(),
-            ));
-        }
-        return array();
-    }
-}
+$proposal = new Arsol_PFW_Proposal($proposal_id);
+$proposal = new Arsol_PFW_Proposal($post_object);
+$proposal = new Arsol_PFW_Proposal(); // Empty instance
 ```
 
-### ARSOL_PFW_Proposal
-
-**File**: `includes/custom-post-types/project-proposal/class-arsol-pfw-proposal.php`
-
+#### Creation
 ```php
-class ARSOL_PFW_Proposal extends WC_Data implements ARSOL_PFW_Stage_Interface {
-    
-    protected $data = array(
-        'name'         => '',
-        'stage'        => 'draft',
-        'project_id'   => 0,
-        'request_id'   => 0,
-        'customer_id'  => 0,
-        'costing_type' => 'fixed',
-        'quotation'    => array(),
-        'total_amount' => 0,
-    );
-    
-    protected $object_type = 'arsol-pfw-proposal';
-    
-    // Basic getters/setters
-    public function get_name($context = 'view') { return $this->get_prop('name', $context); }
-    public function set_name($name) { $this->set_prop('name', $name); }
-    
-    public function get_stage($context = 'view') { return $this->get_prop('stage', $context); }
-    public function set_stage($stage) { $this->set_prop('stage', $stage); }
-    
-    public function get_project_id($context = 'view') { return $this->get_prop('project_id', $context); }
-    public function set_project_id($project_id) { $this->set_prop('project_id', absint($project_id)); }
-    
-    public function get_request_id($context = 'view') { return $this->get_prop('request_id', $context); }
-    public function set_request_id($request_id) { $this->set_prop('request_id', absint($request_id)); }
-    
-    public function get_customer_id($context = 'view') { return $this->get_prop('customer_id', $context); }
-    public function set_customer_id($customer_id) { $this->set_prop('customer_id', absint($customer_id)); }
-    
-    public function get_costing_type($context = 'view') { return $this->get_prop('costing_type', $context); }
-    public function set_costing_type($type) { $this->set_prop('costing_type', $type); }
-    
-    public function get_quotation($context = 'view') { return $this->get_prop('quotation', $context); }
-    public function set_quotation($quotation) { $this->set_prop('quotation', $quotation); }
-    
-    public function get_total_amount($context = 'view') { return $this->get_prop('total_amount', $context); }
-    public function set_total_amount($amount) { $this->set_prop('total_amount', floatval($amount)); }
-    
-    // Stage management
-    public function update_stage($new_stage, $note = '') {
-        $old_stage = $this->get_stage();
-        $this->set_stage($new_stage);
-        $this->save();
-        
-        do_action('arsol_pfw_proposal_stage_changed', $this->get_id(), $old_stage, $new_stage, $this);
-        do_action("arsol_pfw_proposal_stage_{$old_stage}_to_{$new_stage}", $this->get_id(), $this);
-    }
-    
-    public function get_available_stages() {
-        return array(
-            'draft'      => 'Draft',
-            'sent'       => 'Sent to Customer',
-            'approved'   => 'Approved',
-            'rejected'   => 'Rejected',
-            'expired'    => 'Expired',
-        );
-    }
-    
-    // Proposal-specific methods
-    public function approve() {
-        $this->update_stage('approved');
-        
-        // Trigger project creation if approved
-        do_action('arsol_pfw_proposal_approved', $this->get_id(), $this);
-    }
-    
-    public function reject($reason = '') {
-        $this->update_stage('rejected');
-        
-        if ($reason) {
-            update_post_meta($this->get_id(), '_arsol_pfw_rejection_reason', sanitize_text_field($reason));
-        }
-        
-        do_action('arsol_pfw_proposal_rejected', $this->get_id(), $this, $reason);
-    }
-}
-```
-
-### ARSOL_PFW_Request
-
-**File**: `includes/custom-post-types/project-request/class-arsol-pfw-request.php`
-
-```php
-class ARSOL_PFW_Request extends WC_Data implements ARSOL_PFW_Stage_Interface {
-    
-    protected $data = array(
-        'name'        => '',
-        'stage'       => 'new',
-        'customer_id' => 0,
-        'project_id'  => 0,
-        'budget'      => array(),
-        'deadline'    => null,
-        'description' => '',
-    );
-    
-    protected $object_type = 'arsol-pfw-request';
-    
-    // Basic getters/setters
-    public function get_name($context = 'view') { return $this->get_prop('name', $context); }
-    public function set_name($name) { $this->set_prop('name', $name); }
-    
-    public function get_stage($context = 'view') { return $this->get_prop('stage', $context); }
-    public function set_stage($stage) { $this->set_prop('stage', $stage); }
-    
-    public function get_customer_id($context = 'view') { return $this->get_prop('customer_id', $context); }
-    public function set_customer_id($customer_id) { $this->set_prop('customer_id', absint($customer_id)); }
-    
-    public function get_project_id($context = 'view') { return $this->get_prop('project_id', $context); }
-    public function set_project_id($project_id) { $this->set_prop('project_id', absint($project_id)); }
-    
-    public function get_budget($context = 'view') { return $this->get_prop('budget', $context); }
-    public function set_budget($budget) { $this->set_prop('budget', $budget); }
-    
-    public function get_deadline($context = 'view') { return $this->get_prop('deadline', $context); }
-    public function set_deadline($deadline) { $this->set_prop('deadline', $deadline); }
-    
-    public function get_description($context = 'view') { return $this->get_prop('description', $context); }
-    public function set_description($description) { $this->set_prop('description', $description); }
-    
-    // Stage management
-    public function update_stage($new_stage, $note = '') {
-        $old_stage = $this->get_stage();
-        $this->set_stage($new_stage);
-        $this->save();
-        
-        do_action('arsol_pfw_request_stage_changed', $this->get_id(), $old_stage, $new_stage, $this);
-        do_action("arsol_pfw_request_stage_{$old_stage}_to_{$new_stage}", $this->get_id(), $this);
-    }
-    
-    public function get_available_stages() {
-        return array(
-            'new'        => 'New',
-            'reviewing'  => 'Under Review',
-            'approved'   => 'Approved',
-            'rejected'   => 'Rejected',
-            'on-hold'    => 'On Hold',
-        );
-    }
-    
-    // Request-specific methods
-    public function approve() {
-        $this->update_stage('approved');
-        
-        // Trigger proposal creation if approved
-        do_action('arsol_pfw_request_approved', $this->get_id(), $this);
-    }
-    
-    public function reject($reason = '') {
-        $this->update_stage('rejected');
-        
-        if ($reason) {
-            update_post_meta($this->get_id(), '_arsol_pfw_rejection_reason', sanitize_text_field($reason));
-        }
-        
-        do_action('arsol_pfw_request_rejected', $this->get_id(), $this, $reason);
-    }
-}
-```
-
-## Data Store Classes
-
-### ARSOL_PFW_Project_Data_Store
-
-**File**: `includes/data-stores/class-arsol-pfw-project-data-store.php`
-
-```php
-class ARSOL_PFW_Project_Data_Store extends ARSOL_PFW_Data_Store_WP implements ARSOL_PFW_Project_Data_Store_Interface {
-    
-    protected $internal_meta_keys = array(
-        '_arsol_pfw_project_stage',
-        '_arsol_pfw_project_lead_id',
-        '_arsol_pfw_project_customer_id',
-        '_arsol_pfw_project_start_date',
-        '_arsol_pfw_project_due_date',
-    );
-    
-    public function create(&$project) {
-        $project->set_date_created(current_time('timestamp', true));
-        
-        $id = wp_insert_post(
-            apply_filters('arsol_pfw_new_project_data', array(
-                'post_type'   => 'arsol-pfw-project',
-                'post_status' => 'publish',
-                'post_title'  => $project->get_name(),
-                'post_author' => get_current_user_id(),
-                'meta_input'  => $this->get_wp_meta_data($project),
-            ))
-        );
-        
-        if ($id && !is_wp_error($id)) {
-            $project->set_id($id);
-            $this->update_post_meta($project);
-            $this->set_stage_term($project);
-            
-            do_action('arsol_pfw_project_created', $id, $project);
-        }
-    }
-    
-    public function read(&$project) {
-        $post_object = get_post($project->get_id());
-        
-        if (!$post_object || 'arsol-pfw-project' !== $post_object->post_type) {
-            throw new Exception('Invalid project.');
-        }
-        
-        $project->set_props(array(
-            'name'        => $post_object->post_title,
-            'stage'       => $this->get_stage_from_terms($project->get_id()),
-            'lead_id'     => get_post_meta($project->get_id(), '_arsol_pfw_project_lead_id', true),
-            'customer_id' => get_post_meta($project->get_id(), '_arsol_pfw_project_customer_id', true),
-            'start_date'  => get_post_meta($project->get_id(), '_arsol_pfw_project_start_date', true),
-            'due_date'    => get_post_meta($project->get_id(), '_arsol_pfw_project_due_date', true),
-        ));
-        
-        $project->set_object_read(true);
-    }
-    
-    public function update(&$project) {
-        $changes = $project->get_changes();
-        
-        if (array_intersect(array('name'), array_keys($changes))) {
-            wp_update_post(array(
-                'ID'         => $project->get_id(),
-                'post_title' => $project->get_name(),
-            ));
-        }
-        
-        $this->update_post_meta($project);
-        $this->set_stage_term($project);
-        
-        do_action('arsol_pfw_project_updated', $project->get_id(), $project);
-    }
-    
-    public function delete(&$project, $args = array()) {
-        $id = $project->get_id();
-        
-        if (!$id) {
-            return false;
-        }
-        
-        wp_delete_post($id, true);
-        
-        do_action('arsol_pfw_project_deleted', $id, $project);
-        
-        return true;
-    }
-    
-    public function get_projects_by_stage($stage, $args = array()) {
-        $args = array_merge(array(
-            'post_type'      => 'arsol-pfw-project',
-            'posts_per_page' => -1,
-            'tax_query'      => array(
-                array(
-                    'taxonomy' => 'arsol-pfw-project-stage',
-                    'field'    => 'slug',
-                    'terms'    => $stage,
-                ),
+$proposal = Arsol_PFW_Proposal::create(array(
+    'post_title' => 'Proposal Title',
+    'post_content' => 'Proposal content',
+    'post_author' => 123, // Creator ID
+    'meta_input' => array(
+        '_arsol_pfw_proposal_customer_id' => 456,
+        '_arsol_pfw_proposal_description' => 'Description',
+        '_arsol_pfw_proposal_timeline' => '2 weeks',
+        '_arsol_pfw_proposal_project_lead' => 789,
+        '_arsol_pfw_proposal_start_date' => '2024-01-15',
+        '_arsol_pfw_proposal_delivery_date' => '2024-01-30',
+        '_arsol_pfw_proposal_expiration_date' => '2024-02-15',
+        '_arsol_pfw_proposal_costing_type' => 'fixed',
+        '_arsol_pfw_proposal_parent_project_id' => 101,
+        '_arsol_pfw_proposal_due_date' => '2024-01-25',
+        '_arsol_pfw_proposal_customer_notice' => 'Customer notice',
+        '_arsol_pfw_proposal_secondary_status' => 'pending_review',
+        '_arsol_pfw_proposal_budget_data' => array(
+            'onetime' => array(
+                'amount' => 1000.00,
+                'currency' => 'USD',
+                'details' => 'One-time setup fee'
             ),
-        ), $args);
-        
-        return get_posts($args);
-    }
-    
-    public function get_available_stages() {
-        $terms = get_terms(array(
-            'taxonomy'   => 'arsol-pfw-project-stage',
-            'hide_empty' => false,
-        ));
-        
-        $stages = array();
-        foreach ($terms as $term) {
-            $stages[$term->slug] = $term->name;
-        }
-        
-        return $stages;
-    }
-    
-    public function get_stage_counts() {
-        $counts = wp_count_terms(array(
-            'taxonomy' => 'arsol-pfw-project-stage',
-        ));
-        
-        return $counts;
-    }
-    
-    protected function set_stage_term($project) {
-        wp_set_object_terms($project->get_id(), $project->get_stage(), 'arsol-pfw-project-stage');
-    }
-    
-    protected function get_stage_from_terms($project_id) {
-        $terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
-        
-        return !empty($terms) ? $terms[0] : 'not-started';
-    }
-}
-```
-
-## Factory Functions
-
-### Core Factory Functions
-
-**File**: `includes/arsol-pfw-core-functions.php`
-
-```php
-/**
- * Get project by ID
- *
- * @param int $project_id Project ID
- * @return ARSOL_PFW_Project|false
- */
-function arsol_pfw_get_project($project_id) {
-    return arsol_pfw_get_project_factory()->get_project($project_id);
-}
-
-/**
- * Get proposal by ID
- *
- * @param int $proposal_id Proposal ID
- * @return ARSOL_PFW_Proposal|false
- */
-function arsol_pfw_get_proposal($proposal_id) {
-    return arsol_pfw_get_proposal_factory()->get_proposal($proposal_id);
-}
-
-/**
- * Get request by ID
- *
- * @param int $request_id Request ID
- * @return ARSOL_PFW_Request|false
- */
-function arsol_pfw_get_request($request_id) {
-    return arsol_pfw_get_request_factory()->get_request($request_id);
-}
-
-/**
- * Create new project
- *
- * @param array $args Project data
- * @return ARSOL_PFW_Project
- */
-function arsol_pfw_create_project($args = array()) {
-    $project = new ARSOL_PFW_Project();
-    
-    foreach ($args as $key => $value) {
-        if (is_callable(array($project, "set_{$key}"))) {
-            $project->{"set_{$key}"}($value);
-        }
-    }
-    
-    return $project;
-}
-
-/**
- * Create new proposal
- *
- * @param array $args Proposal data
- * @return ARSOL_PFW_Proposal
- */
-function arsol_pfw_create_proposal($args = array()) {
-    $proposal = new ARSOL_PFW_Proposal();
-    
-    foreach ($args as $key => $value) {
-        if (is_callable(array($proposal, "set_{$key}"))) {
-            $proposal->{"set_{$key}"}($value);
-        }
-    }
-    
-    return $proposal;
-}
-
-/**
- * Create new request
- *
- * @param array $args Request data
- * @return ARSOL_PFW_Request
- */
-function arsol_pfw_create_request($args = array()) {
-    $request = new ARSOL_PFW_Request();
-    
-    foreach ($args as $key => $value) {
-        if (is_callable(array($request, "set_{$key}"))) {
-            $request->{"set_{$key}"}($value);
-        }
-    }
-    
-    return $request;
-}
-```
-
-## Stage Management
-
-### Stage Transitions
-
-All entities support consistent stage management:
-
-```php
-// Get current stage
-$current_stage = $project->get_stage();
-
-// Set stage (no save)
-$project->set_stage('in-progress');
-
-// Update stage (with hooks and save)
-$project->update_stage('completed');
-
-// Get available stages
-$stages = $project->get_available_stages();
-```
-
-### Stage Hooks
-
-```php
-// General stage change hooks
-add_action('arsol_pfw_project_stage_changed', 'handle_project_stage_change', 10, 4);
-add_action('arsol_pfw_proposal_stage_changed', 'handle_proposal_stage_change', 10, 4);
-add_action('arsol_pfw_request_stage_changed', 'handle_request_stage_change', 10, 4);
-
-// Specific transition hooks
-add_action('arsol_pfw_project_stage_not_started_to_in_progress', 'project_started', 10, 2);
-add_action('arsol_pfw_project_stage_in_progress_to_completed', 'project_completed', 10, 2);
-add_action('arsol_pfw_proposal_stage_draft_to_sent', 'proposal_sent', 10, 2);
-add_action('arsol_pfw_proposal_stage_sent_to_approved', 'proposal_approved', 10, 2);
-```
-
-## Hooks and Filters
-
-### Entity Hooks
-
-```php
-// Creation hooks
-do_action('arsol_pfw_project_created', $project_id, $project);
-do_action('arsol_pfw_proposal_created', $proposal_id, $proposal);
-do_action('arsol_pfw_request_created', $request_id, $request);
-
-// Update hooks
-do_action('arsol_pfw_project_updated', $project_id, $project);
-do_action('arsol_pfw_proposal_updated', $proposal_id, $proposal);
-do_action('arsol_pfw_request_updated', $request_id, $request);
-
-// Deletion hooks
-do_action('arsol_pfw_project_deleted', $project_id, $project);
-do_action('arsol_pfw_proposal_deleted', $proposal_id, $proposal);
-do_action('arsol_pfw_request_deleted', $request_id, $request);
-```
-
-### Data Filters
-
-```php
-// Filter data before saving
-add_filter('arsol_pfw_new_project_data', 'modify_project_data');
-add_filter('arsol_pfw_new_proposal_data', 'modify_proposal_data');
-add_filter('arsol_pfw_new_request_data', 'modify_request_data');
-
-// Filter available stages
-add_filter('arsol_pfw_project_available_stages', 'modify_project_stages');
-add_filter('arsol_pfw_proposal_available_stages', 'modify_proposal_stages');
-add_filter('arsol_pfw_request_available_stages', 'modify_request_stages');
-```
-
-## Usage Examples
-
-### Creating Entities
-
-```php
-// Create a new project
-$project = arsol_pfw_create_project(array(
-    'name'        => 'Website Redesign',
-    'lead_id'     => 123,
-    'customer_id' => 456,
-    'start_date'  => '2024-01-01',
-    'due_date'    => '2024-03-01',
+            'recurring' => array(
+                'amount' => 500.00,
+                'currency' => 'USD',
+                'frequency' => 'monthly',
+                'details' => 'Monthly maintenance'
+            ),
+            'notes' => 'Budget notes here',
+            'type' => 'mixed'
+        ),
+        '_arsol_pfw_proposal_quotation_data' => array(
+            'line_items' => array(
+                array(
+                    'name' => 'Design Services',
+                    'quantity' => 1,
+                    'price' => 500.00,
+                    'total' => 500.00
+                )
+            ),
+            'currency' => 'USD',
+            'totals' => array(
+                'subtotal' => 500.00,
+                'tax' => 50.00,
+                'total' => 550.00
+            ),
+            'notes' => 'Quotation notes here'
+        ),
+        '_arsol_pfw_proposal_original_request_data' => array(
+            'request_id' => 123,
+            'budget' => array(
+                'min' => 1000,
+                'max' => 5000,
+                'currency' => 'USD'
+            ),
+            'start_date' => '2024-01-15',
+            'delivery_date' => '2024-03-15',
+            'title' => 'Original Request Title',
+            'content' => 'Original request content',
+            'attachments' => array(456, 789)
+        ),
+        '_arsol_pfw_proposal_woocommerce_data' => array(
+            'order_id' => 456,
+            'subscription_id' => 789,
+            'conversion_date' => '2024-01-20 10:30:00',
+            'payment_method' => 'stripe',
+            'billing_address' => array(
+                'first_name' => 'John',
+                'last_name' => 'Doe',
+                'email' => 'john@example.com'
+            )
+        ),
+        '_arsol_pfw_proposal_workflow_data' => array(
+            'rejection_reason' => 'Budget too high',
+            'conversion_type' => 'manual',
+            'workflow_started' => '2024-01-15 09:00:00',
+            'approval_date' => '2024-01-20 14:30:00',
+            'approver_id' => 123,
+            'notes' => 'Workflow notes here'
+        )
+    ),
+    'tax_input' => array(
+        'arsol-pfw-proposal-stage' => array('draft')
+    )
 ));
-$project->save();
-
-// Create a new proposal
-$proposal = arsol_pfw_create_proposal(array(
-    'name'         => 'Website Redesign Proposal',
-    'project_id'   => $project->get_id(),
-    'customer_id'  => 456,
-    'costing_type' => 'fixed',
-    'total_amount' => 5000,
-));
-$proposal->save();
-
-// Create a new request
-$request = arsol_pfw_create_request(array(
-    'name'        => 'Website Redesign Request',
-    'customer_id' => 456,
-    'budget'      => array('amount' => 5000, 'currency' => 'USD'),
-    'deadline'    => '2024-02-15',
-));
-$request->save();
 ```
 
-### Reading Entities
+#### Reading Data
 
+##### Simple Fields (Individual Meta)
 ```php
-// Load existing entities
-$project = arsol_pfw_get_project($project_id);
-$proposal = arsol_pfw_get_proposal($proposal_id);
-$request = arsol_pfw_get_request($request_id);
-
-// Get properties
-$project_name = $project->get_name();
-$project_stage = $project->get_stage();
-$lead_id = $project->get_lead_id();
+// Direct getter methods
+$description = $proposal->get_description();
+$timeline = $proposal->get_timeline();
+$project_lead = $proposal->get_project_lead();
+$start_date = $proposal->get_start_date();
+$delivery_date = $proposal->get_delivery_date();
+$expiration_date = $proposal->get_expiration_date();
+$costing_type = $proposal->get_costing_type();
+$parent_project_id = $proposal->get_parent_project_id();
+$due_date = $proposal->get_due_date();
+$customer_notice = $proposal->get_customer_notice();
+$secondary_status = $proposal->get_secondary_status();
 ```
 
-### Updating Entities
+##### Complex Fields (Array-Based)
 
+**Budget Data (Entity-Specific Methods - Recommended):**
 ```php
-// Update properties
-$project->set_name('Updated Project Name');
-$project->set_stage('in-progress');
-$project->save();
+// Get complete proposal budget
+$budget_data = $proposal->get_proposal_budget();
 
-// Update with stage transitions
-$project->update_stage('completed');
-$proposal->approve();
-$request->reject('Budget too high');
+// Individual field access (recommended)
+$onetime_amount = $proposal->get_budget_onetime_amount();
+$recurring_amount = $proposal->get_budget_recurring_amount();
+$budget_notes = $proposal->get_budget_notes();
+$budget_type = $proposal->get_budget_type();
+
+// Generic field access (for custom fields)
+$custom_field = $proposal->get_budget_field('custom_field');
 ```
 
-### Querying Entities
-
+**Quotation Data (Entity-Specific Methods - Recommended):**
 ```php
-// Get projects by stage
-$data_store = new ARSOL_PFW_Project_Data_Store();
-$active_projects = $data_store->get_projects_by_stage('in-progress');
+// Get complete proposal quotation
+$quotation_data = $proposal->get_proposal_quotation();
 
-// Get stage counts
-$stage_counts = $data_store->get_stage_counts();
+// Individual field access (recommended)
+$currency = $proposal->get_quotation_currency();
+$totals = $proposal->get_quotation_total();
+$notes = $proposal->get_quotation_notes();
+$line_items = $proposal->get_quotation_line_items();
 
-// Get available stages
-$stages = $project->get_available_stages();
+// Generic field access (for custom fields)
+$custom_field = $proposal->get_quotation_field('custom_field');
 ```
 
-## Migration Guide
-
-### From Old Pattern to New CRUD
-
-**Old Pattern:**
+**Original Request Data (Entity-Specific Methods - Recommended):**
 ```php
-// Old way - scattered calls
-$project_id = wp_insert_post(array(
-    'post_type'  => 'arsol-pfw-project',
-    'post_title' => $name,
-));
+// Get complete original request
+$request_data = $proposal->get_original_request();
 
-update_post_meta($project_id, '_arsol_pfw_project_lead_id', $lead_id);
-update_post_meta($project_id, '_arsol_pfw_project_customer_id', $customer_id);
-wp_set_object_terms($project_id, 'in-progress', 'arsol-pfw-project-stage');
+// Individual field access (recommended)
+$original_budget = $proposal->get_original_request_budget();
+$original_start_date = $proposal->get_original_request_start_date();
+$original_title = $proposal->get_original_request_title();
+
+// Generic field access (for custom fields)
+$custom_field = $proposal->get_original_request_field('custom_field');
 ```
 
-**New CRUD Pattern:**
+**WooCommerce Integration Data (Entity-Specific Methods - Recommended):**
 ```php
-// New way - clean OOP
-$project = arsol_pfw_create_project(array(
-    'name'        => $name,
-    'lead_id'     => $lead_id,
-    'customer_id' => $customer_id,
-    'stage'       => 'in-progress',
-));
-$project->save();
+// Get complete WooCommerce integration
+$woocommerce_data = $proposal->get_woocommerce_integration();
+
+// Individual field access (recommended)
+$order_id = $proposal->get_woocommerce_order_id();
+$subscription_id = $proposal->get_woocommerce_subscription_id();
+$conversion_date = $proposal->get_woocommerce_conversion_date();
+
+// Generic field access (for custom fields)
+$custom_field = $proposal->get_woocommerce_field('custom_field');
 ```
 
-### Migration Steps
+**Workflow History Data (Entity-Specific Methods - Recommended):**
+```php
+// Get complete workflow history
+$workflow_data = $proposal->get_workflow_history();
 
-1. **Identify current patterns** in your code
-2. **Replace with CRUD methods** using the examples above
-3. **Test thoroughly** to ensure data integrity
-4. **Remove old helper functions** once migration is complete
+// Individual field access (recommended)
+$rejection_reason = $proposal->get_workflow_rejection_reason();
+$approval_date = $proposal->get_workflow_approval_date();
+$approver_id = $proposal->get_workflow_approver_id();
 
-## API Reference
+// Generic field access (for custom fields)
+$custom_field = $proposal->get_workflow_field('custom_field');
+```
 
-### Entity Methods
+#### Updating Data
 
-**Common Methods (All Entities)**
-- `get_id()` - Get entity ID
-- `get_name()` - Get entity name
-- `set_name($name)` - Set entity name
-- `get_stage()` - Get current stage
-- `set_stage($stage)` - Set stage
-- `update_stage($stage)` - Update stage with hooks
-- `get_available_stages()` - Get available stages
-- `save()` - Save entity
-- `delete()` - Delete entity
+##### Simple Fields (Individual Meta)
+```php
+// Direct setter methods
+$proposal->set_description('Updated description');
+$proposal->set_timeline('3 weeks');
+$proposal->set_project_lead(789);
+$proposal->set_start_date('2024-02-01');
+$proposal->set_delivery_date('2024-02-15');
+$proposal->set_expiration_date('2024-03-01');
+$proposal->set_costing_type('hourly');
+$proposal->set_parent_project_id(202);
+$proposal->set_due_date('2024-02-10');
+$proposal->set_customer_notice('Updated customer notice');
+$proposal->set_secondary_status('approved');
+```
 
-**Project-Specific Methods**
-- `get_lead_id()` / `set_lead_id($id)`
-- `get_customer_id()` / `set_customer_id($id)`
-- `get_start_date()` / `set_start_date($date)`
-- `get_due_date()` / `set_due_date($date)`
-- `get_orders()` - Get related WooCommerce orders
-- `get_subscriptions()` - Get related WooCommerce subscriptions
+##### Complex Fields (Array-Based)
 
-**Proposal-Specific Methods**
-- `get_project_id()` / `set_project_id($id)`
-- `get_request_id()` / `set_request_id($id)`
-- `get_costing_type()` / `set_costing_type($type)`
-- `get_quotation()` / `set_quotation($quotation)`
-- `get_total_amount()` / `set_total_amount($amount)`
-- `approve()` - Approve proposal
-- `reject($reason)` - Reject proposal
+**Budget Data (Entity-Specific Methods - Recommended):**
+```php
+// Set complete proposal budget
+$proposal->set_proposal_budget($budget_data);
 
-**Request-Specific Methods**
-- `get_customer_id()` / `set_customer_id($id)`
-- `get_project_id()` / `set_project_id($id)`
-- `get_budget()` / `set_budget($budget)`
-- `get_deadline()` / `set_deadline($deadline)`
-- `get_description()` / `set_description($description)`
-- `approve()` - Approve request
-- `reject($reason)` - Reject request
+// Individual field access (recommended)
+$proposal->set_budget_onetime_amount(array('amount' => 2000.00, 'currency' => 'USD'));
+$proposal->set_budget_recurring_amount(array('amount' => 750.00, 'currency' => 'USD'));
+$proposal->set_budget_notes('Updated budget notes');
+$proposal->set_budget_type('mixed');
 
-### Data Store Methods
+// Generic field access (for custom fields)
+$proposal->set_budget_field('custom_field', $value);
+```
 
-**Common Methods (All Data Stores)**
-- `create(&$entity)` - Create entity
-- `read(&$entity)` - Read entity
-- `update(&$entity)` - Update entity
-- `delete(&$entity)` - Delete entity
-- `get_available_stages()` - Get available stages
-- `get_stage_counts()` - Get stage counts
+**Quotation Data (Entity-Specific Methods - Recommended):**
+```php
+// Set complete proposal quotation
+$proposal->set_proposal_quotation($quotation_data);
 
-**Query Methods**
-- `get_projects_by_stage($stage, $args)`
-- `get_proposals_by_stage($stage, $args)`
-- `get_requests_by_stage($stage, $args)`
+// Individual field access (recommended)
+$proposal->set_quotation_currency('EUR');
+$proposal->set_quotation_total(array('subtotal' => 1500.00, 'total' => 1650.00));
+$proposal->set_quotation_notes('Updated quotation notes');
+$proposal->set_quotation_line_items($line_items);
 
-### Factory Functions
+// Generic field access (for custom fields)
+$proposal->set_quotation_field('custom_field', $value);
+```
 
-- `arsol_pfw_get_project($id)` - Get project by ID
-- `arsol_pfw_get_proposal($id)` - Get proposal by ID
-- `arsol_pfw_get_request($id)` - Get request by ID
-- `arsol_pfw_create_project($args)` - Create new project
-- `arsol_pfw_create_proposal($args)` - Create new proposal
-- `arsol_pfw_create_request($args)` - Create new request
+**Original Request Data (Entity-Specific Methods - Recommended):**
+```php
+// Set complete original request
+$proposal->set_original_request($request_data);
 
----
+// Individual field access (recommended)
+$proposal->set_original_request_budget(array('min' => 2000, 'max' => 8000));
+$proposal->set_original_request_start_date('2024-02-01');
+$proposal->set_original_request_title('Updated Request Title');
 
-This complete reference provides everything needed to implement and use the CRUD system effectively. The API is designed to be familiar to WooCommerce developers while providing the specific functionality needed for project management workflows. 
+// Generic field access (for custom fields)
+$proposal->set_original_request_field('custom_field', $value);
+```
+
+**WooCommerce Integration Data (Entity-Specific Methods - Recommended):**
+```php
+// Set complete WooCommerce integration
+$proposal->set_woocommerce_integration($woocommerce_data);
+
+// Individual field access (recommended)
+$proposal->set_woocommerce_order_id(999);
+$proposal->set_woocommerce_subscription_id(888);
+$proposal->set_woocommerce_conversion_date('2024-01-25 15:30:00');
+
+// Generic field access (for custom fields)
+$proposal->set_woocommerce_field('custom_field', $value);
+```
+
+**Workflow History Data (Entity-Specific Methods - Recommended):**
+```php
+// Set complete workflow history
+$proposal->set_workflow_history($workflow_data);
+
+// Individual field access (recommended)
+$proposal->set_workflow_rejection_reason('Timeline too short');
+$proposal->set_workflow_approval_date('2024-01-25 16:00:00');
+$proposal->set_workflow_approver_id(456);
+
+// Generic field access (for custom fields)
+$proposal->set_workflow_field('custom_field', $value);
+```
+
+#### Saving Changes
+```php
+// Save all changes
+$result = $proposal->save();
+
+if (is_wp_error($result)) {
+    // Handle error
+    $error_message = $result->get_error_message();
+} else {
+    // Success
+    $proposal_id = $proposal->get_id();
+}
+```
+
+#### Deleting
+```php
+// Delete proposal
+$result = $proposal->delete();
+
+if ($result) {
+    // Successfully deleted
+} else {
+    // Failed to delete
+}
+```
+
+#### Generic Meta Access
+```php
+// Get any meta value
+$value = $proposal->get_meta('_custom_meta_key');
+
+// Set any meta value
+$proposal->set_meta('_custom_meta_key', 'custom_value');
+
+// Delete meta value
+$proposal->delete_meta('_custom_meta_key');
+```
+
+## Data Store Pattern
+
+### Proposal Data Store
+```php
+class Proposal_Data_Store {
+    // Meta key mappings
+    private $meta_keys = array(
+        // Simple fields
+        'description' => '_arsol_pfw_proposal_description',
+        'timeline' => '_arsol_pfw_proposal_timeline',
+        'project_lead' => '_arsol_pfw_proposal_project_lead',
+        'start_date' => '_arsol_pfw_proposal_start_date',
+        'delivery_date' => '_arsol_pfw_proposal_delivery_date',
+        'expiration_date' => '_arsol_pfw_proposal_expiration_date',
+        'costing_type' => '_arsol_pfw_proposal_costing_type',
+        'parent_project_id' => '_arsol_pfw_proposal_parent_project_id',
+        'due_date' => '_arsol_pfw_proposal_due_date',
+        'customer_notice' => '_arsol_pfw_proposal_customer_notice',
+        'secondary_status' => '_arsol_pfw_proposal_secondary_status',
+        
+        // Complex data structures
+        'budget_data' => '_arsol_pfw_proposal_budget_data',
+        'quotation_data' => '_arsol_pfw_proposal_quotation_data',
+        'original_request_data' => '_arsol_pfw_proposal_original_request_data',
+        'woocommerce_data' => '_arsol_pfw_proposal_woocommerce_data',
+        'workflow_data' => '_arsol_pfw_proposal_workflow_data',
+    );
+}
+```
+
+## WooCommerce Alignment
+
+### WooCommerce Pattern
+```php
+// WooCommerce uses entity-specific names
+$order->get_billing_address()      // Not get_billing_data()
+$order->set_billing_address()      // Not set_billing_data()
+$order->get_billing_first_name()   // Individual field access
+$order->set_billing_first_name()   // Individual field access
+```
+
+### Our Implementation
+```php
+// Entity-specific methods (matches WooCommerce)
+$proposal->get_proposal_budget()           // Instead of get_budget_data()
+$proposal->set_proposal_budget()           // Instead of set_budget_data()
+$proposal->get_proposal_quotation()        // Instead of get_quotation_data()
+$proposal->set_proposal_quotation()        // Instead of set_quotation_data()
+
+// Individual field methods (matches WooCommerce)
+$proposal->get_budget_onetime_amount();    // Direct field access
+$proposal->set_budget_onetime_amount();    // Direct field access
+$proposal->get_quotation_currency();       // Direct field access
+$proposal->set_quotation_currency();       // Direct field access
+```
+
+## Best Practices
+
+### 1. Use Entity-Specific Methods (Recommended)
+```php
+// ✅ Good - Entity-specific methods
+$budget_data = $proposal->get_proposal_budget();
+$proposal->set_budget_notes('New notes');
+```
+
+### 2. Use Individual Field Methods for Common Fields
+```php
+// ✅ Good - Individual field methods
+$notes = $proposal->get_budget_notes();
+$proposal->set_budget_notes('Updated notes');
+
+// ✅ Good - Generic field methods for custom fields
+$custom_field = $proposal->get_budget_field('custom_field');
+$proposal->set_budget_field('custom_field', $value);
+```
+
+### 3. Use Complete Data Methods for Bulk Operations
+```php
+// ✅ Good for bulk operations
+$budget_data = $proposal->get_proposal_budget();
+$budget_data['onetime']['amount'] = 2000.00;
+$budget_data['recurring']['amount'] = 750.00;
+$proposal->set_proposal_budget($budget_data);
+```
+
+### 4. Handle Empty Data Gracefully
+```php
+// ✅ Good
+$budget_data = $proposal->get_proposal_budget() ?: array();
+$notes = $proposal->get_budget_notes() ?: '';
+
+// ❌ Avoid
+$budget_data = $proposal->get_proposal_budget();
+if (!$budget_data) {
+    $budget_data = array();
+}
+```
+
+## Implementation Status
+
+### ✅ Completed
+- Proposal entity with array-based data structures
+- **Entity-specific naming convention implemented**
+- Individual field methods for common operations
+- Data store with complex meta key support
+- Comprehensive getter/setter methods
+
+### 🔄 Next Steps
+- Implement same pattern for Project entity
+- Implement same pattern for Request entity
+- Update all templates and handlers to use new API
+- Create migration scripts for existing data
+- Update global functions to use new methods 

@@ -8,8 +8,8 @@ if (!defined('ABSPATH')) {
 
 class Proposal_Data_Store {
     
+    // Simple meta keys (individual fields)
     protected $meta_keys = array(
-        'budget'      => '_arsol_pfw_proposal_budget',
         'description' => '_arsol_pfw_proposal_description',
         'timeline'    => '_arsol_pfw_proposal_timeline',
         'project_lead' => '_arsol_pfw_proposal_project_lead',
@@ -18,12 +18,18 @@ class Proposal_Data_Store {
         'expiration_date' => '_arsol_pfw_proposal_expiration_date',
         'costing_type' => '_arsol_pfw_proposal_costing_type',
         'parent_project_id' => '_arsol_pfw_proposal_parent_project_id',
-        'budget_notes' => '_arsol_pfw_proposal_budget_notes',
-        'quotation_notes' => '_arsol_pfw_proposal_quotation_notes',
-        'quotation'   => '_arsol_pfw_proposal_quotation',
         'due_date'    => '_arsol_pfw_proposal_due_date',
         'customer_notice' => '_arsol_pfw_proposal_customer_notice',
         'secondary_status' => '_arsol_pfw_proposal_secondary_status',
+    );
+    
+    // Complex data structure meta keys (array-based)
+    protected $complex_meta_keys = array(
+        'budget_data' => '_arsol_pfw_proposal_budget_data',
+        'quotation_data' => '_arsol_pfw_proposal_quotation_data',
+        'original_request_data' => '_arsol_pfw_proposal_original_request_data',
+        'woocommerce_data' => '_arsol_pfw_proposal_woocommerce_data',
+        'workflow_data' => '_arsol_pfw_proposal_workflow_data',
     );
     
     /**
@@ -57,8 +63,11 @@ class Proposal_Data_Store {
         update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
         update_post_meta($post_id, '_arsol_pfw_created_via', 'admin_creation');
         
-        // Save meta
-        $this->save_meta($proposal);
+        // Save simple meta
+        $this->save_simple_meta($proposal);
+        
+        // Save complex meta
+        $this->save_complex_meta($proposal);
         
         // Set initial stage
         $stage = $proposal->get_prop('stage') ?: 'processing';
@@ -99,10 +108,16 @@ class Proposal_Data_Store {
             $proposal->set_prop('created_via', $created_via);
         }
         
-        // Load meta data
+        // Load simple meta data
         foreach ($this->meta_keys as $prop => $meta_key) {
             $value = get_post_meta($post->ID, $meta_key, true);
             $proposal->set_prop($prop, $value);
+        }
+        
+        // Load complex meta data
+        foreach ($this->complex_meta_keys as $prop => $meta_key) {
+            $value = get_post_meta($post->ID, $meta_key, true);
+            $proposal->set_prop($prop, $value ?: array());
         }
         
         return true;
@@ -150,8 +165,11 @@ class Proposal_Data_Store {
             update_post_meta($proposal->get_id(), '_arsol_pfw_created_via', $changes['created_via']);
         }
         
-        // Update meta
-        $this->save_meta($proposal);
+        // Update simple meta
+        $this->save_simple_meta($proposal);
+        
+        // Update complex meta
+        $this->save_complex_meta($proposal);
         
         do_action('arsol_pfw_proposal_updated', $proposal->get_id(), $proposal);
         
@@ -179,11 +197,11 @@ class Proposal_Data_Store {
     }
     
     /**
-     * Save meta data
+     * Save simple meta data (individual fields)
      *
      * @param object $proposal Proposal object
      */
-    protected function save_meta($proposal) {
+    protected function save_simple_meta($proposal) {
         foreach ($this->meta_keys as $prop => $meta_key) {
             $value = $proposal->get_prop($prop);
             if ($value !== null) {
@@ -193,11 +211,43 @@ class Proposal_Data_Store {
     }
     
     /**
-     * Get meta keys mapping
+     * Save complex meta data (array-based structures)
+     *
+     * @param object $proposal Proposal object
+     */
+    protected function save_complex_meta($proposal) {
+        foreach ($this->complex_meta_keys as $prop => $meta_key) {
+            $value = $proposal->get_prop($prop);
+            if ($value !== null) {
+                update_post_meta($proposal->get_id(), $meta_key, $value);
+            }
+        }
+    }
+    
+    /**
+     * Get simple meta keys mapping
      *
      * @return array
      */
     public function get_meta_keys() {
         return $this->meta_keys;
+    }
+    
+    /**
+     * Get complex meta keys mapping
+     *
+     * @return array
+     */
+    public function get_complex_meta_keys() {
+        return $this->complex_meta_keys;
+    }
+    
+    /**
+     * Get all meta keys mapping
+     *
+     * @return array
+     */
+    public function get_all_meta_keys() {
+        return array_merge($this->meta_keys, $this->complex_meta_keys);
     }
 } 
