@@ -438,6 +438,12 @@ class Proposal {
             }
         }
         
+        // Save customer ID from post_author_override field
+        if (isset($_POST['post_author_override']) && !empty($_POST['post_author_override'])) {
+            $customer_id = intval($_POST['post_author_override']);
+            update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
+        }
+        
         // Handle parent project ID for project-tied proposals
         // Check if this is a new proposal created from a project
         if (get_post_status($post_id) === 'auto-draft' || (get_post_status($post_id) === 'draft' && !get_post_meta($post_id, '_arsol_pfw_parent_project_id', true))) {

@@ -189,6 +189,12 @@ class Project {
             }
         }
         
+        // Save customer ID from post_author_override field
+        if (isset($_POST['post_author_override']) && !empty($_POST['post_author_override'])) {
+            $customer_id = intval($_POST['post_author_override']);
+            update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
+        }
+        
         // Handle create proposal after save
         if (isset($_POST['arsol_create_after_save']) && !empty($_POST['arsol_create_after_save'])) {
             // Direct PHP redirect to create new proposal

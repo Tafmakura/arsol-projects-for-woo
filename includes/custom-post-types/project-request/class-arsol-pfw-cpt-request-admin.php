@@ -171,6 +171,12 @@ class Request {
             }
         }
         
+        // Save customer ID from post_author_override field
+        if (isset($_POST['post_author_override']) && !empty($_POST['post_author_override'])) {
+            $customer_id = intval($_POST['post_author_override']);
+            update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
+        }
+        
         // Handle conversion after save (WordPress-native approach)
         if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
             // Check if request is published for conversion
