@@ -59,7 +59,7 @@ $submission_date = get_the_time('l j F \a\t g:ia', $request->get_post());
         <?php echo $start_date ? esc_html(date_i18n(get_option('date_format'), strtotime($start_date))) : __('N/A', 'arsol-pfw'); ?>
     </p>
     <p class="form-field form-field-half">
-        <label><strong><?php _e('Requested Delivery Date:', 'arsol-pfw'); ?></strong></label>
+        <label><strong><?php _e('Requested Due Date:', 'arsol-pfw'); ?></strong></label>
         <?php echo $delivery_date ? esc_html(date_i18n(get_option('date_format'), strtotime($delivery_date))) : __('N/A', 'arsol-pfw'); ?>
     </p>
 </div>

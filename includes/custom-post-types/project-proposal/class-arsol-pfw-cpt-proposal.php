@@ -814,26 +814,6 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal delivery date
-     * 
-     * @return string Proposal delivery date
-     */
-    public function get_delivery_date() {
-        return $this->get_prop('delivery_date');
-    }
-
-    /**
-     * Set proposal delivery date
-     * 
-     * @param string $delivery_date Proposal delivery date
-     * @return bool Success status
-     */
-    public function set_delivery_date($delivery_date) {
-        $this->set_prop('delivery_date', $delivery_date);
-        return true;
-    }
-
-    /**
      * Get proposal due date
      * 
      * @return string Proposal due date

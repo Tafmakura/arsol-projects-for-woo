@@ -116,7 +116,7 @@ if (empty($request_stage)) {
         <input type="date" id="request_start_date" name="request_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
     </p>
     <p class="form-field form-field-half">
-        <label for="request_delivery_date"><?php _e('Delivery Date:', 'arsol-pfw'); ?></label>
+        <label for="request_delivery_date"><?php _e('Due Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
     </p>
 </div>

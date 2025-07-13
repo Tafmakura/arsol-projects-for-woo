@@ -84,7 +84,7 @@ if ($proposal_id) {
 
     <?php if (!empty($proposed_delivery_date)): ?>
     <p class="form-field form-field-wide">
-        <label><strong><?php _e('Proposed Delivery Date:', 'arsol-pfw'); ?></strong></label>
+        <label><strong><?php _e('Proposed Due Date:', 'arsol-pfw'); ?></strong></label>
         <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($proposed_delivery_date))); ?>
     </p>
     <?php endif; ?>

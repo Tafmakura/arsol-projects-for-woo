@@ -7,7 +7,7 @@
  * $request_id - Source request ID
  * $request_budget - Request budget data
  * $request_start_date - Request start date
- * $request_delivery_date - Request delivery date
+ * $request_due_date - Request due date
  * $has_request_data - Whether request data exists
  *
  * @package Arsol_Projects_For_Woo

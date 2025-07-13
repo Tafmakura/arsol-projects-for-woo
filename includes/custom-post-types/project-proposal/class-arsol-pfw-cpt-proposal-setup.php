@@ -188,10 +188,10 @@ class Setup {
             echo '</div>';
         }
 
-        // Display request delivery date if available
+        // Display request due date if available
         if ($request_delivery_date) {
             echo '<div class="arsol-meta-item">';
-            echo '<strong>' . __('Request Delivery Date:', 'arsol-pfw') . '</strong>';
+            echo '<strong>' . __('Request Due Date:', 'arsol-pfw') . '</strong>';
             echo '<span>' . date_i18n(get_option('date_format'), strtotime($request_delivery_date)) . '</span>';
             echo '</div>';
         }

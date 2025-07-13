@@ -398,7 +398,7 @@ class Proposal {
             update_post_meta($post_id, '_arsol_pfw_proposal_start_date', sanitize_text_field($_POST['arsol_pfw_proposal_start_date']));
         }
 
-        // Save delivery date
+        // Save due date
         if (isset($_POST['arsol_pfw_proposal_delivery_date'])) {
             update_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', sanitize_text_field($_POST['arsol_pfw_proposal_delivery_date']));
         }

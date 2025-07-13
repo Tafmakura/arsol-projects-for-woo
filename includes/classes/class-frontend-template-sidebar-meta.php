@@ -190,7 +190,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = get_post_meta($post_id, '_arsol_pfw_project_due_date', true);
+        $due_date = $project->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -271,12 +271,12 @@ class Frontend_Template_Sidebar_Meta {
             );
         }
         
-        // Delivery Date
-        $delivery_date = get_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', true);
-        if (!empty($delivery_date)) {
-            $metadata['delivery_date'] = array(
-                'label' => __('Delivery Date', 'arsol-pfw'),
-                'value' => $delivery_date,
+        // Due Date
+        $due_date = get_post_meta($post_id, '_arsol_pfw_proposal_delivery_date', true);
+        if (!empty($due_date)) {
+            $metadata['due_date'] = array(
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
                 'type' => 'date'
             );
         }
@@ -352,12 +352,12 @@ class Frontend_Template_Sidebar_Meta {
             );
         }
         
-        // Delivery Date
-        $delivery_date = get_post_meta($post_id, '_arsol_pfw_request_delivery_date', true);
-        if (!empty($delivery_date)) {
-            $metadata['delivery_date'] = array(
-                'label' => __('Requested Delivery Date', 'arsol-pfw'),
-                'value' => $delivery_date,
+        // Due Date
+        $due_date = $request->get_due_date();
+        if (!empty($due_date)) {
+            $metadata['due_date'] = array(
+                'label' => __('Requested Due Date', 'arsol-pfw'),
+                'value' => $due_date,
                 'type' => 'date'
             );
         }

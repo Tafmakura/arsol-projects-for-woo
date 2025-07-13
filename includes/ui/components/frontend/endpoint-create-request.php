@@ -105,7 +105,7 @@ if (!$is_edit) {
             <input type="text" id="request_title" name="request_title" value="<?php echo esc_attr($title); ?>" required>
         </div>
         
-        <!-- Three column row for Budget, Start Date, and Delivery Date -->
+        <!-- Three column row for Budget, Start Date, and Due Date -->
         <div class="form-row form-row-wide arsol-pfw-project-meta-row">
             <div class="arsol-pfw-project-field-col arsol-budget-col">
                 <label for="request_budget"><?php echo sprintf(__('Budget (%s)', 'arsol-pfw'), $currency_code); ?> <span class="required">*</span></label>
@@ -118,7 +118,7 @@ if (!$is_edit) {
             </div>
             
             <div class="arsol-pfw-project-field-col arsol-date-col">
-                <label for="request_delivery_date"><?php _e('Required Delivery Date', 'arsol-pfw'); ?></label>
+                <label for="request_delivery_date"><?php _e('Required Due Date', 'arsol-pfw'); ?></label>
                 <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="arsol-date-input">
             </div>
         </div>

@@ -7,7 +7,7 @@
  * $request_id - Source request ID
  * $request_budget - Request budget data
  * $request_start_date - Request start date
- * $request_delivery_date - Request delivery date
+ * $request_due_date - Request due date
  * $has_request_data - Whether request data exists
  *
  * @package Arsol_Projects_For_Woo
@@ -52,7 +52,7 @@ $has_request_data = $request_id || $request_budget || $request_start_date || $re
                 <td><?php echo !empty($request_start_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($request_start_date))) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?></td>
             </tr>
             <tr>
-                <th><?php _e('Delivery Date:', 'arsol-pfw'); ?></th>
+                <th><?php _e('Due Date:', 'arsol-pfw'); ?></th>
                 <td><?php echo !empty($request_delivery_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($request_delivery_date))) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?></td>
             </tr>
             <tr>

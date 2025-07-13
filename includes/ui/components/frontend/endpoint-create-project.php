@@ -82,7 +82,7 @@ $nonce_action = $is_edit ? 'edit_project' : 'create_project';
                    required>
         </div>
         
-        <!-- Three column row for Budget, Start Date, and Delivery Date -->
+        <!-- Three column row for Budget, Start Date, and Due Date -->
         <div class="form-row form-row-wide arsol-pfw-project-meta-row">
             <div class="arsol-pfw-project-field-col arsol-budget-col">
                 <label for="project_budget"><?php echo sprintf(__('Budget (%s)', 'arsol-pfw'), $currency_code); ?> <span class="required">*</span></label>
@@ -105,7 +105,7 @@ $nonce_action = $is_edit ? 'edit_project' : 'create_project';
             </div>
             
             <div class="arsol-pfw-project-field-col arsol-date-col">
-                <label for="project_delivery_date"><?php _e('Delivery Date', 'arsol-pfw'); ?></label>
+                <label for="project_delivery_date"><?php _e('Due Date', 'arsol-pfw'); ?></label>
                 <input type="date" 
                        id="project_delivery_date" 
                        name="project_delivery_date"
