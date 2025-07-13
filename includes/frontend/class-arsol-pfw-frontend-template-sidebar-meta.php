@@ -151,7 +151,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Get project object to use getter methods
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_CPT_Project($post_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($post_id);
         
         // Customer
         $customer = $project->get_customer();
@@ -223,7 +223,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Get proposal object to use getter methods
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Arsol_PFW_CPT_Proposal($post_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
         
         // Customer
         $customer = $proposal->get_customer();
@@ -295,7 +295,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Get request object to use getter methods
-        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post_id);
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post_id);
         
         // Customer
         $customer = $request->get_customer();

@@ -4,7 +4,7 @@
  * Shows project metadata and action buttons for active projects
  * 
  * Variables passed from endpoint class:
- * $project_id, $project (Arsol_PFW_CPT_Project object), $current_tab, $current_stage, $wrapper_data
+ * $project_id, $project (Arsol_PFW_Project object), $current_tab, $current_stage, $wrapper_data
  */
 
 if (!defined('ABSPATH')) {

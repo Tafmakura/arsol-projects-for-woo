@@ -234,7 +234,7 @@ class Workflow_Handler {
 
     private function update_request_meta($post_id, $data) {
         // Get request object to use setter methods
-        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($post_id);
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post_id);
         
         if (isset($data['request_budget'])) {
             $request->set_budget(sanitize_text_field($data['request_budget']));

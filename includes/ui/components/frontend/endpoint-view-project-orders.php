@@ -10,7 +10,7 @@
 
 defined('ABSPATH') || exit;
 
-// The $project variable is passed from the page template as an Arsol_PFW_CPT_Project object
+// The $project variable is passed from the page template as an Arsol_PFW_Project object
 $project_id = isset($project) ? $project->get_id() : 0;
 
 if (!$project_id) {

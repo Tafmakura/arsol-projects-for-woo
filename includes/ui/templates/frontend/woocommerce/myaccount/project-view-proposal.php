@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Variables passed from the endpoint class:
-// $proposal (Arsol_PFW_CPT_Proposal object), $proposal_id, $current_tab, $statuses, $current_status, $wrapper_data
+// $proposal (Arsol_PFW_Proposal object), $proposal_id, $current_tab, $statuses, $current_status, $wrapper_data
 
 // Set variables for the header component
 $proposal_title = $proposal->get_title() ?? '';

@@ -3,7 +3,7 @@
  * Project Sidebar - Proposals
  *
  * Variables passed from endpoint class:
- * $proposal_id, $proposal (Arsol_PFW_CPT_Proposal object), $current_tab, $current_stage, $wrapper_data
+ * $proposal_id, $proposal (Arsol_PFW_Proposal object), $current_tab, $current_stage, $wrapper_data
  * 
  * @package Arsol_Projects_For_Woo
  * @version 2.0.0

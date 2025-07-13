@@ -3,7 +3,7 @@
  * Project Sidebar - Requests
  *
  * Variables passed from endpoint class:
- * $request_id, $request (Arsol_PFW_CPT_Request object), $current_tab, $current_stage, $wrapper_data
+ * $request_id, $request (Arsol_PFW_Request object), $current_tab, $current_stage, $wrapper_data
  * 
  * @package Arsol_Projects_For_Woo
  * @version 2.0.0

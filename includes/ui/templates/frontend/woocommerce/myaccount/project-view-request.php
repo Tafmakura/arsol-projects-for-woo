@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Variables passed from the endpoint class:
-// $request (Arsol_PFW_CPT_Request object), $request_id, $current_tab, $current_stage, $wrapper_data
+// $request (Arsol_PFW_Request object), $request_id, $current_tab, $current_stage, $wrapper_data
 
 // Set variables for the header component
 $request_title = $request->get_title() ?? '';

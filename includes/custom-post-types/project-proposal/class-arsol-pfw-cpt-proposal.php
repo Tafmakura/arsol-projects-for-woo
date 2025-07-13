@@ -274,135 +274,126 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get complete original request as array
+     * Get complete request data as array
      * 
-     * @return array Complete original request structure
+     * @return array Complete request data structure
      */
-    public function get_original_request() {
+    public function get_request() {
         return $this->get_prop('original_request_data') ?: array();
     }
 
     /**
-     * Set complete original request as array
+     * Set complete request data as array
      * 
-     * @param array $request_data Complete original request structure
-     * @return bool Success status
+     * @param array $request_data Complete request data structure
      */
-    public function set_original_request($request_data) {
+    public function set_request($request_data) {
         $this->set_prop('original_request_data', $request_data);
-        return true;
     }
 
     /**
-     * Get specific original request field
+     * Get individual request field
      * 
-     * @param string $field Field name (budget, start_date, delivery_date, title, content, attachments)
+     * @param string $field Field name
      * @return mixed Field value
      */
-    public function get_original_request_field($field) {
-        $request_data = $this->get_original_request();
+    public function get_request_field($field) {
+        $request_data = $this->get_request();
         return isset($request_data[$field]) ? $request_data[$field] : null;
     }
 
     /**
-     * Set specific original request field
+     * Set individual request field
      * 
      * @param string $field Field name
      * @param mixed $value Field value
-     * @return bool Success status
      */
-    public function set_original_request_field($field, $value) {
-        $request_data = $this->get_original_request();
+    public function set_request_field($field, $value) {
+        $request_data = $this->get_request();
         $request_data[$field] = $value;
-        return $this->set_original_request($request_data);
+        $this->set_request($request_data);
     }
 
     /**
-     * Get complete WooCommerce integration as array
+     * Get complete WooCommerce data as array
      * 
-     * @return array Complete WooCommerce integration structure
+     * @return array Complete WooCommerce data structure
      */
-    public function get_woocommerce_integration() {
+    public function get_woocommerce() {
         return $this->get_prop('woocommerce_data') ?: array();
     }
 
     /**
-     * Set complete WooCommerce integration as array
+     * Set complete WooCommerce data as array
      * 
-     * @param array $woocommerce_data Complete WooCommerce integration structure
-     * @return bool Success status
+     * @param array $woocommerce_data Complete WooCommerce data structure
      */
-    public function set_woocommerce_integration($woocommerce_data) {
+    public function set_woocommerce($woocommerce_data) {
         $this->set_prop('woocommerce_data', $woocommerce_data);
-        return true;
     }
 
     /**
-     * Get specific WooCommerce field
+     * Get individual WooCommerce field
      * 
-     * @param string $field Field name (order_id, subscription_id, conversion_date)
+     * @param string $field Field name
      * @return mixed Field value
      */
     public function get_woocommerce_field($field) {
-        $woocommerce_data = $this->get_woocommerce_integration();
+        $woocommerce_data = $this->get_woocommerce();
         return isset($woocommerce_data[$field]) ? $woocommerce_data[$field] : null;
     }
 
     /**
-     * Set specific WooCommerce field
+     * Set individual WooCommerce field
      * 
      * @param string $field Field name
      * @param mixed $value Field value
-     * @return bool Success status
      */
     public function set_woocommerce_field($field, $value) {
-        $woocommerce_data = $this->get_woocommerce_integration();
+        $woocommerce_data = $this->get_woocommerce();
         $woocommerce_data[$field] = $value;
-        return $this->set_woocommerce_integration($woocommerce_data);
+        $this->set_woocommerce($woocommerce_data);
     }
 
     /**
-     * Get complete workflow history as array
+     * Get complete workflow data as array
      * 
-     * @return array Complete workflow history structure
+     * @return array Complete workflow data structure
      */
-    public function get_workflow_history() {
+    public function get_workflow() {
         return $this->get_prop('workflow_data') ?: array();
     }
 
     /**
-     * Set complete workflow history as array
+     * Set complete workflow data as array
      * 
-     * @param array $workflow_data Complete workflow history structure
-     * @return bool Success status
+     * @param array $workflow_data Complete workflow data structure
      */
-    public function set_workflow_history($workflow_data) {
+    public function set_workflow($workflow_data) {
         $this->set_prop('workflow_data', $workflow_data);
-        return true;
     }
 
     /**
-     * Get specific workflow field
+     * Get individual workflow field
      * 
-     * @param string $field Field name (rejection_reason, conversion_type, workflow_started)
+     * @param string $field Field name
      * @return mixed Field value
      */
     public function get_workflow_field($field) {
-        $workflow_data = $this->get_workflow_history();
+        $workflow_data = $this->get_workflow();
         return isset($workflow_data[$field]) ? $workflow_data[$field] : null;
     }
 
     /**
-     * Set specific workflow field
+     * Set individual workflow field
      * 
      * @param string $field Field name
      * @param mixed $value Field value
-     * @return bool Success status
      */
     public function set_workflow_field($field, $value) {
-        $workflow_data = $this->get_workflow_history();
+        $workflow_data = $this->get_workflow();
         $workflow_data[$field] = $value;
-        return $this->set_workflow_history($workflow_data);
+        $this->set_workflow($workflow_data);
     }
 
     // ========================================
@@ -562,60 +553,60 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get original request budget
+     * Get request budget
      * 
-     * @return array|null Original request budget
+     * @return array|null Request budget
      */
-    public function get_original_request_budget() {
-        return $this->get_original_request_field('budget');
+    public function get_request_budget() {
+        return $this->get_request_field('budget');
     }
 
     /**
-     * Set original request budget
+     * Set request budget
      * 
-     * @param array $budget Original request budget
+     * @param array $budget Request budget
      * @return bool Success status
      */
-    public function set_original_request_budget($budget) {
-        return $this->set_original_request_field('budget', $budget);
+    public function set_request_budget($budget) {
+        return $this->set_request_field('budget', $budget);
     }
 
     /**
-     * Get original request start date
+     * Get request start date
      * 
-     * @return string|null Original request start date
+     * @return string|null Request start date
      */
-    public function get_original_request_start_date() {
-        return $this->get_original_request_field('start_date');
+    public function get_request_start_date() {
+        return $this->get_request_field('start_date');
     }
 
     /**
-     * Set original request start date
+     * Set request start date
      * 
-     * @param string $start_date Original request start date
+     * @param string $start_date Request start date
      * @return bool Success status
      */
-    public function set_original_request_start_date($start_date) {
-        return $this->set_original_request_field('start_date', $start_date);
+    public function set_request_start_date($start_date) {
+        return $this->set_request_field('start_date', $start_date);
     }
 
     /**
-     * Get original request title
+     * Get request title
      * 
-     * @return string|null Original request title
+     * @return string|null Request title
      */
-    public function get_original_request_title() {
-        return $this->get_original_request_field('title');
+    public function get_request_title() {
+        return $this->get_request_field('title');
     }
 
     /**
-     * Set original request title
+     * Set request title
      * 
-     * @param string $title Original request title
+     * @param string $title Request title
      * @return bool Success status
      */
-    public function set_original_request_title($title) {
-        return $this->set_original_request_field('title', $title);
+    public function set_request_title($title) {
+        return $this->set_request_field('title', $title);
     }
 
     /**
@@ -1455,7 +1446,7 @@ class Arsol_PFW_Proposal {
         update_post_meta($this->proposal_id, $meta_key, $value);
         
         // Update the cached data structure
-        $request_data = $this->get_original_request();
+        $request_data = $this->get_request();
         $request_data[$field] = $value;
         $this->set_prop('original_request_data', $request_data);
     }
@@ -1482,7 +1473,7 @@ class Arsol_PFW_Proposal {
         update_post_meta($this->proposal_id, $meta_key, $value);
         
         // Update the cached data structure
-        $woocommerce_data = $this->get_woocommerce_integration();
+        $woocommerce_data = $this->get_woocommerce();
         $woocommerce_data[$field] = $value;
         $this->set_prop('woocommerce_data', $woocommerce_data);
     }
@@ -1509,7 +1500,7 @@ class Arsol_PFW_Proposal {
         update_post_meta($this->proposal_id, $meta_key, $value);
         
         // Update the cached data structure
-        $workflow_data = $this->get_workflow_history();
+        $workflow_data = $this->get_workflow();
         $workflow_data[$field] = $value;
         $this->set_prop('workflow_data', $workflow_data);
     }

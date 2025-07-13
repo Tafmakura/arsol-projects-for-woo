@@ -4,6 +4,11 @@
  *
  * Variables passed from parent template:
  * $proposal (Arsol_PFW_Proposal object) - The proposal entity instance
+ * $request_id - Source request ID
+ * $request_budget - Request budget data
+ * $request_start_date - Request start date
+ * $request_delivery_date - Request delivery date
+ * $has_request_data - Whether request data exists
  *
  * @package Arsol_Projects_For_Woo
  */
@@ -17,16 +22,15 @@ if (!isset($proposal) || !is_object($proposal)) {
     return;
 }
 
-        $budget_data = $proposal->get_proposal_budget();
-        $delivery_date = $proposal->get_due_date();
-        $expiration_date = $proposal->get_expiration_date();
-        $start_date = $proposal->get_start_date();
-        $costing_type = $proposal->get_costing_type();
-
-$has_original_data = $original_request_id || $original_request_budget || $original_request_start_date || $original_request_delivery_date;
+// Use variables passed from parent template
+$budget_data = $proposal->get_proposal_budget();
+$delivery_date = $proposal->get_due_date();
+$expiration_date = $proposal->get_expiration_date();
+$start_date = $proposal->get_start_date();
+$costing_type = $proposal->get_costing_type();
 ?>
 
-<?php if ($has_original_data): ?>
+<?php if ($has_request_data): ?>
     <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/subsection-edit-project-proposal-details.php'; ?>
 <?php else: ?>
     <p><?php _e('This proposal was created directly without an initial customer request.', 'arsol-pfw'); ?></p>

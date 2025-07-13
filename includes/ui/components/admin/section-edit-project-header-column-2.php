@@ -19,12 +19,12 @@ if (!isset($project) || !is_object($project)) {
 
 $project_id = $project->get_id();
 
-// Check for original proposal data first
-$original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_id', true);
+// Check for proposal data first
+$proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_id', true);
 $has_proposal_data = false;
 
 // If from proposal, get proposal budget/date data
-if ($original_proposal_id) {
+if ($proposal_id) {
     $has_proposal_data = true;
     $budget_data = $project->get_proposal_budget_onetime_amount();
     $recurring_budget_data = $project->get_proposal_budget_recurring_amount();
@@ -35,15 +35,16 @@ if ($original_proposal_id) {
     $proposed_expiration_date = get_post_meta($project_id, '_arsol_pfw_proposal_expiration_date', true);
 }
 
-// Check for original request data (fallback if no proposal data)
-$original_request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
-$original_request_title = get_post_meta($project_id, '_arsol_pfw_project_request_title', true);
-$original_request_content = get_post_meta($project_id, '_arsol_pfw_project_request_details', true);
-$original_request_budget = get_post_meta($project_id, '_arsol_pfw_project_request_budget', true);
-$original_request_start_date = get_post_meta($project_id, '_arsol_pfw_project_request_start_date', true);
-$original_request_delivery_date = get_post_meta($project_id, '_arsol_pfw_project_request_delivery_date', true);
+        // Check if has request data
+        $has_request_data = false;
+        $request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
+        $request_title = get_post_meta($project_id, '_arsol_pfw_project_request_title', true);
+        $request_content = get_post_meta($project_id, '_arsol_pfw_project_request_content', true);
+        $request_budget = get_post_meta($project_id, '_arsol_pfw_project_request_budget', true);
+        $request_start_date = get_post_meta($project_id, '_arsol_pfw_project_request_start_date', true);
+        $request_delivery_date = get_post_meta($project_id, '_arsol_pfw_project_request_delivery_date', true);
 
-$has_original_data = $original_request_id || $original_request_budget || $original_request_start_date || $original_request_delivery_date;
+        $has_request_data = $request_id || $request_budget || $request_start_date || $request_delivery_date;
 ?>
 
 <?php if ($has_proposal_data): ?>
@@ -90,6 +91,6 @@ $has_original_data = $original_request_id || $original_request_budget || $origin
 
     <?php /* Proposal Expiration Date removed from project post type display */ ?>
 
-<?php elseif ($has_original_data): ?>
+<?php elseif ($has_request_data): ?>
     <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/subsection-edit-project-proposal-details.php'; ?>
 <?php endif; ?>

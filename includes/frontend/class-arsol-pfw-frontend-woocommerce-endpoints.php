@@ -207,7 +207,7 @@ class Frontend_Endpoints {
         }
         
         // Create single project instance using our entity class
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_CPT_Project($project_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
         $current_tab = 'overview';
         
         // Stage handling with proper error checking
@@ -239,7 +239,7 @@ class Frontend_Endpoints {
         }
         
         // Create single project instance using our entity class
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_CPT_Project($project_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
         $current_tab = 'orders';
         
         // Stage handling with proper error checking
@@ -278,7 +278,7 @@ class Frontend_Endpoints {
         }
         
         // Create single project instance using our entity class
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_CPT_Project($project_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
         $current_tab = 'subscriptions';
         
         // Stage handling with proper error checking
@@ -347,7 +347,7 @@ class Frontend_Endpoints {
         }
 
         // Check if user has permission to view this proposal
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Arsol_PFW_CPT_Proposal($proposal_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
         $user_id = get_current_user_id();
         
         if (!$proposal || $proposal->get_post()->post_type !== 'arsol-pfw-proposal') {
@@ -400,7 +400,7 @@ class Frontend_Endpoints {
         }
 
         // Check if user has permission to view this request
-        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_CPT_Request($request_id);
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($request_id);
         $user_id = get_current_user_id();
         
         if (!$request || $request->get_post()->post_type !== 'arsol-pfw-request') {
@@ -448,7 +448,8 @@ class Frontend_Endpoints {
         $user_id = get_current_user_id();
         
         // Check if project exists and user has access
-        if (!$project_id || !\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($user_id, $project_id)) {
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
+        if (!$project || !\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($user_id, $project_id)) {
             // Use the no-access template for consistency
             include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
             return false;

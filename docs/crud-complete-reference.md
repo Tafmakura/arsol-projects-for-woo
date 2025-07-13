@@ -146,27 +146,27 @@ $proposal->set_quotation_meta('currency', $currency);
 
 #### Complete Request Data
 ```php
-// Get complete original request structure
-$request_data = $proposal->get_original_request();
+// Get complete request structure
+$request_data = $proposal->get_request();
 // Returns: array with 'title', 'budget', 'start_date', 'details' keys
 
-// Set complete original request structure
-$proposal->set_original_request($request_data);
+// Set complete request structure
+$proposal->set_request($request_data);
 ```
 
 #### Individual Request Fields
 ```php
 // Request title
-$title = $proposal->get_original_request_title();
-$proposal->set_original_request_title($title);
+$title = $proposal->get_request_title();
+$proposal->set_request_title($title);
 
 // Request budget
-$budget = $proposal->get_original_request_budget();
-$proposal->set_original_request_budget($budget);
+$budget = $proposal->get_request_budget();
+$proposal->set_request_budget($budget);
 
 // Start date
-$start_date = $proposal->get_original_request_start_date();
-$proposal->set_original_request_start_date($start_date);
+$start_date = $proposal->get_request_start_date();
+$proposal->set_request_start_date($start_date);
 ```
 
 #### Individual Meta Access (WooCommerce Pattern)
@@ -186,12 +186,12 @@ $proposal->set_request_meta('details', $details);
 
 #### Complete WooCommerce Data
 ```php
-// Get complete WooCommerce integration structure
-$woocommerce_data = $proposal->get_woocommerce_integration();
+// Get complete WooCommerce structure
+$woocommerce_data = $proposal->get_woocommerce();
 // Returns: array with 'order_id', 'subscription_id', 'conversion_date' keys
 
-// Set complete WooCommerce integration structure
-$proposal->set_woocommerce_integration($woocommerce_data);
+// Set complete WooCommerce structure
+$proposal->set_woocommerce($woocommerce_data);
 ```
 
 #### Individual WooCommerce Fields
@@ -226,12 +226,12 @@ $proposal->set_woocommerce_meta('created_via', $created_via);
 
 #### Complete Workflow Data
 ```php
-// Get complete workflow history structure
-$workflow_data = $proposal->get_workflow_history();
+// Get complete workflow structure
+$workflow_data = $proposal->get_workflow();
 // Returns: array with 'status', 'type', 'step', 'approval_date' keys
 
-// Set complete workflow history structure
-$proposal->set_workflow_history($workflow_data);
+// Set complete workflow structure
+$proposal->set_workflow($workflow_data);
 ```
 
 #### Individual Workflow Fields

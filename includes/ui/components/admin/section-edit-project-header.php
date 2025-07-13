@@ -46,41 +46,22 @@ $all_statuses = get_terms(array(
     'hide_empty' => false,
 ));
 
-// Check if has original proposal data
-$has_proposal_data = false;
-$column_2_title = __('Project Details', 'arsol-pfw');
-$original_proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_id', true);
+// Check if has request data
+$has_request_data = false;
+$request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
+$request_title = get_post_meta($project_id, '_arsol_pfw_project_request_title', true);
+$request_content = get_post_meta($project_id, '_arsol_pfw_project_request_content', true);
+$request_budget = get_post_meta($project_id, '_arsol_pfw_proposal_request_budget', true);
+$request_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_start_date', true);
+$request_delivery_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_delivery_date', true);
 
-// Check for proposal data first (priority) - must have actual displayable data
-if ($original_proposal_id) {
-    // Check if there's any actual proposal data to show (excluding expiration date)
-    $budget_data = $project->get_proposal_budget_onetime_amount();
-    $recurring_budget_data = $project->get_proposal_budget_recurring_amount();
-    $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_start_date', true);
-    $proposed_delivery_date = get_post_meta($project_id, '_arsol_pfw_project_due_date', true);
-    
-    if ($budget_data || $recurring_budget_data || $proposed_start_date || $proposed_delivery_date) {
-        $has_proposal_data = true;
-        $column_2_title = __('Proposal Details', 'arsol-pfw');
-    }
-} else {
-    // Check for original request data as fallback - must have actual displayable data
-    $original_request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
-    $original_request_title = get_post_meta($project_id, '_arsol_pfw_proposal_request_title', true);
-    $original_request_content = get_post_meta($project_id, '_arsol_pfw_proposal_request_details', true);
-    $original_request_budget = get_post_meta($project_id, '_arsol_pfw_proposal_request_budget', true);
-    $original_request_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_start_date', true);
-    $original_request_delivery_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_delivery_date', true);
-    
-    if ($original_request_id || $original_request_title || $original_request_content || $original_request_budget || $original_request_start_date || $original_request_delivery_date) {
-        $has_proposal_data = true;
-        $column_2_title = __('Original Request Details', 'arsol-pfw');
-    }
+if ($request_id || $request_title || $request_content || $request_budget || $request_start_date || $request_delivery_date) {
+    $has_request_data = true;
 }
 
 // Determine layout classes - only add has-col-2 if there's actually original data
 $container_class = 'arsol-header-grid';
-if ($has_proposal_data) {
+if ($has_request_data) {
     $container_class .= ' has-col-2';
 }
 ?>
@@ -105,9 +86,9 @@ if ($has_proposal_data) {
                     ?>
                 </div>
 
-                <?php if ($has_proposal_data): ?>
+                <?php if ($has_request_data): ?>
                 <div class="project_data_column column_2">
-                    <h3><?php echo esc_html($column_2_title); ?></h3>
+                    <h3><?php _e('Project Details', 'arsol-pfw'); ?></h3>
                     
                     <?php
                     // Load the project details template

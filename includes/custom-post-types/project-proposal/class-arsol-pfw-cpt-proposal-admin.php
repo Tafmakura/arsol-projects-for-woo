@@ -67,10 +67,10 @@ class Proposal {
         $delivery_date = get_post_meta($post->ID, '_arsol_pfw_proposal_delivery_date', true);
         $expiration_date = get_post_meta($post->ID, '_arsol_pfw_proposal_expiration_date', true);
 
-        // Get original request data
-        $original_budget = get_post_meta($post->ID, '_arsol_pfw_proposal_request_budget', true);
-        $original_start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_start_date', true);
-        $original_delivery_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_delivery_date', true);
+        // Get original request data for comparison
+        $request_budget = get_post_meta($post->ID, '_arsol_pfw_proposal_request_budget', true);
+        $request_start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_start_date', true);
+        $request_delivery_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_delivery_date', true);
 
         // WordPress automatically preserves form data on validation failures - no temporary storage needed
 
