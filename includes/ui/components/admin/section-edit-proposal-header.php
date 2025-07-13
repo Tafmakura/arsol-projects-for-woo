@@ -29,7 +29,7 @@ if (!isset($proposal) || !is_object($proposal)) {
 }
 
 $proposal_id = $proposal->get_id();
-$budget = $proposal->get_budget();
+$budget_data = $proposal->get_proposal_budget();
 $delivery_date = $proposal->get_due_date();
 $expiration_date = $proposal->get_expiration_date();
 $start_date = $proposal->get_start_date();
@@ -37,7 +37,7 @@ $project_lead = $proposal->get_project_lead();
 $costing_type = $proposal->get_costing_type();
 $budget_notes = $proposal->get_budget_notes();
 $quotation_notes = $proposal->get_quotation_notes();
-$quotation = $proposal->get_quotation();
+$quotation_data = $proposal->get_proposal_quotation();
 
 // Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;
