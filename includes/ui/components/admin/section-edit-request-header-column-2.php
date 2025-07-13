@@ -31,7 +31,7 @@ if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
     $request_stage = $request_stage_terms[0];
 }
 
-$customer = get_userdata($request->get_author());
+$customer = $request->get_customer();
 $submission_date = get_the_time('l j F \a\t g:ia', $request->get_post());
 ?>
 
