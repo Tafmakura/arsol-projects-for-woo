@@ -50,7 +50,7 @@ if ($is_dashboard) {
                 // Full intro with subscriptions
                 echo sprintf(
                     esc_html__('This is your %s project dashboard. The %s tab shows project details, the %s tab displays your project %s, and the %s tab displays all your project %s.', 'arsol-pfw'),
-                    '<strong>' . esc_html($project->post_title) . '</strong>',
+                    '<strong>' . esc_html(method_exists($project, 'get_title') ? $project->get_title() : $project->post_title) . '</strong>',
                     '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
                     '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
                     esc_html__('orders', 'woocommerce'),
@@ -61,7 +61,7 @@ if ($is_dashboard) {
                 // Simplified intro without subscriptions
                 echo sprintf(
                     esc_html__('This is your %s project dashboard. The %s tab shows project details and the %s tab displays your project %s.', 'arsol-pfw'),
-                    '<strong>' . esc_html($project->post_title) . '</strong>',
+                    '<strong>' . esc_html(method_exists($project, 'get_title') ? $project->get_title() : $project->post_title) . '</strong>',
                     '<strong>' . esc_html__('Overview', 'arsol-pfw') . '</strong>',
                     '<strong>' . esc_html__('Orders', 'woocommerce') . '</strong>',
                     esc_html__('orders', 'woocommerce')
@@ -136,7 +136,7 @@ if (empty($main_title)) {
             <?php if ($is_page_mode && !empty($project_id) && !empty($project)): ?>
                 <span class="breadcrumb-separator">/</span>
                 <a href="<?php echo esc_url(wc_get_account_endpoint_url('view-project') . '/' . $project_id); ?>">
-                    <?php echo esc_html($project->post_title); ?>
+                    <?php echo esc_html(method_exists($project, 'get_title') ? $project->get_title() : $project->post_title); ?>
                 </a>
             <?php endif; ?>
         </div>

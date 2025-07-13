@@ -527,8 +527,8 @@ class Arsol_PFW_Project {
 
     /**
      * Get project customer notice
-     * 
-     * @return string Project customer notice
+     *
+     * @return string|null
      */
     public function get_customer_notice() {
         return $this->get_prop('customer_notice');
@@ -536,13 +536,12 @@ class Arsol_PFW_Project {
 
     /**
      * Set project customer notice
-     * 
-     * @param string $customer_notice Project customer notice
-     * @return bool Success status
+     *
+     * @param string $notice
+     * @return void
      */
-    public function set_customer_notice($customer_notice) {
-        $this->set_prop('customer_notice', $customer_notice);
-        return true;
+    public function set_customer_notice($notice) {
+        $this->set_prop('customer_notice', $notice);
     }
 
     /**
