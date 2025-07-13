@@ -526,6 +526,26 @@ class Arsol_PFW_Project {
     }
 
     /**
+     * Get project customer notice
+     * 
+     * @return string Project customer notice
+     */
+    public function get_customer_notice() {
+        return $this->get_prop('customer_notice');
+    }
+
+    /**
+     * Set project customer notice
+     * 
+     * @param string $customer_notice Project customer notice
+     * @return bool Success status
+     */
+    public function set_customer_notice($customer_notice) {
+        $this->set_prop('customer_notice', $customer_notice);
+        return true;
+    }
+
+    /**
      * Update stage with hooks
      * 
      * @param string $new_stage New stage
