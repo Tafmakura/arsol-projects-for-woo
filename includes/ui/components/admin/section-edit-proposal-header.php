@@ -74,7 +74,7 @@ elseif ($proposal_id > 0) {
 // Check if has original request data
 $has_request_data = false;
 $original_request_id = $proposal->get_source_request_id();
-$original_request_budget = $proposal->get_requested_budget();
+$original_request_budget = $proposal->get_original_request_budget();
 $original_request_start_date = $proposal->get_meta('_arsol_pfw_proposal_request_start_date');
 $original_request_delivery_date = $proposal->get_meta('_arsol_pfw_proposal_request_delivery_date');
 
