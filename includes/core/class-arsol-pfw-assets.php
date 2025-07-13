@@ -272,6 +272,45 @@ class Assets {
     }
 
     /**
+     * Enqueue admin scripts for proposal quotation
+     */
+    public function enqueue_proposal_quotation_scripts() {
+        global $post;
+        
+        if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
+            return;
+        }
+        
+        // Get proposal entity for data access
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post->ID);
+        $line_items = $proposal->get_quotation_line_items() ?: array();
+        
+        wp_enqueue_script(
+            'arsol-pfw-proposal-quotation',
+            plugin_dir_url(ARSOL_PROJECTS_PLUGIN_FILE) . 'assets/js/arsol-pfw-admin-cpt-proposal.js',
+            array('jquery', 'jquery-ui-sortable'),
+            ARSOL_PROJECTS_VERSION,
+            true
+        );
+        
+        wp_localize_script('arsol-pfw-proposal-quotation', 'arsol_pfw_quotation_data', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('arsol_pfw_quotation_nonce'),
+            'post_id' => $post->ID,
+            'line_items' => $line_items,
+            'currency' => $proposal->get_quotation_currency() ?: get_woocommerce_currency(),
+            'currency_symbol' => $proposal->get_quotation_currency_symbol() ?: get_woocommerce_currency_symbol(),
+            'strings' => array(
+                'confirm_delete' => __('Are you sure you want to delete this item?', 'arsol-pfw'),
+                'invalid_amount' => __('Please enter a valid amount.', 'arsol-pfw'),
+                'invalid_quantity' => __('Please enter a valid quantity.', 'arsol-pfw'),
+                'select_product' => __('Please select a product.', 'arsol-pfw'),
+                'enter_description' => __('Please enter a description.', 'arsol-pfw')
+            )
+        ));
+    }
+
+    /**
      * Check if we're on an order or project screen
      *
      * @param \WP_Screen $screen Current screen object

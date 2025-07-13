@@ -499,28 +499,33 @@ class Woocommerce_Biller {
                 
             case 'budget':
                 // Budget type requires at least one-time budget with amount > 0
-                $budget_data = get_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
-                if (empty($budget_data) || !is_array($budget_data)) {
+                $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+                $onetime_data = $proposal_entity->get_budget_onetime_amount();
+                
+                if (empty($onetime_data) || !is_array($onetime_data)) {
                     return false;
                 }
                 
-                $budget_amount = !empty($budget_data['amount']) ? floatval($budget_data['amount']) : 0;
+                $budget_amount = !empty($onetime_data['amount']) ? floatval($onetime_data['amount']) : 0;
                 if ($budget_amount <= 0) {
                     return false;
                 }
                 
                 // If amount is provided, description is required
-                $budget_details = get_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount_details', true);
+                $budget_details = !empty($onetime_data['details']) ? $onetime_data['details'] : '';
                 if (empty($budget_details)) {
-            return false;
-        }
-        
-        return true;
+                    return false;
+                }
+                
+                return true;
                 
             case 'quotation':
                 // Quotation type requires at least one quotation line item with description and amount
-                $quotation_line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
-                if (empty($quotation_line_items) || !is_array($quotation_line_items)) {
+                $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+                $quotation_data = $proposal_entity->get_proposal_quotation();
+                $line_items = $proposal_entity->get_quotation_line_items();
+                
+                if (empty($line_items) || !is_array($line_items)) {
                     return false;
                 }
                 
@@ -528,8 +533,8 @@ class Woocommerce_Biller {
                 $has_valid_item = false;
                 
                 // Check products
-                if (!empty($quotation_line_items['products'])) {
-                    foreach ($quotation_line_items['products'] as $item) {
+                if (!empty($line_items['products'])) {
+                    foreach ($line_items['products'] as $item) {
                         if (!empty($item['description']) && isset($item['regular_price']) && floatval($item['regular_price']) > 0) {
                             $has_valid_item = true;
                             break;
@@ -538,8 +543,8 @@ class Woocommerce_Biller {
                 }
                 
                 // Check one-time fees
-                if (!$has_valid_item && !empty($quotation_line_items['one_time_fees'])) {
-                    foreach ($quotation_line_items['one_time_fees'] as $item) {
+                if (!$has_valid_item && !empty($line_items['one_time_fees'])) {
+                    foreach ($line_items['one_time_fees'] as $item) {
                         if (!empty($item['description']) && !empty($item['amount']) && floatval($item['amount']) > 0) {
                             $has_valid_item = true;
                             break;
@@ -548,8 +553,8 @@ class Woocommerce_Biller {
                 }
                 
                 // Check recurring fees
-                if (!$has_valid_item && !empty($quotation_line_items['recurring_fees'])) {
-                    foreach ($quotation_line_items['recurring_fees'] as $item) {
+                if (!$has_valid_item && !empty($line_items['recurring_fees'])) {
+                    foreach ($line_items['recurring_fees'] as $item) {
                         if (!empty($item['description']) && !empty($item['amount']) && floatval($item['amount']) > 0) {
                             $has_valid_item = true;
                             break;
@@ -558,11 +563,11 @@ class Woocommerce_Biller {
                 }
                 
                 // Check shipping fees
-                if (!$has_valid_item && !empty($quotation_line_items['shipping_fees'])) {
-                    foreach ($quotation_line_items['shipping_fees'] as $item) {
+                if (!$has_valid_item && !empty($line_items['shipping_fees'])) {
+                    foreach ($line_items['shipping_fees'] as $item) {
                         if (!empty($item['description']) && !empty($item['amount']) && floatval($item['amount']) > 0) {
-                        $has_valid_item = true;
-                        break;
+                            $has_valid_item = true;
+                            break;
                         }
                     }
                 }
@@ -588,17 +593,15 @@ class Woocommerce_Biller {
         }
         
         $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
-        $currency = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_currency', true) ?: get_woocommerce_currency();
+        $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+        $currency = $proposal_entity->get_quotation_currency() ?: get_woocommerce_currency();
         $line_items = array();
         
         // Get line items based on proposal type
         switch ($cost_proposal_type) {
             case 'quotation':
                 // Get quotation line items
-                $quotation_line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
-                if (!empty($quotation_line_items) && is_array($quotation_line_items)) {
-                    $line_items = $quotation_line_items;
-                }
+                $line_items = $proposal_entity->get_quotation_line_items() ?: array();
                 break;
                 
             case 'budget':

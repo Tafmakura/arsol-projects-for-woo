@@ -361,4 +361,46 @@ class Woocommerce_Logs {
         
         return $debug_info;
     }
+
+    /**
+     * Log quotation line items for debugging
+     * 
+     * @param int $proposal_id
+     * @param string $context
+     */
+    public static function log_quotation_line_items($proposal_id, $context = '') {
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+        $line_items = $proposal->get_quotation_line_items() ?: array();
+        
+        $log_message = sprintf(
+            'Quotation line items for proposal #%d (%s): %s',
+            $proposal_id,
+            $context,
+            json_encode($line_items, JSON_PRETTY_PRINT)
+        );
+        
+        self::log_woocommerce_billing('debug', $log_message);
+    }
+    
+    /**
+     * Log quotation totals for debugging
+     * 
+     * @param int $proposal_id
+     * @param string $context
+     */
+    public static function log_quotation_totals($proposal_id, $context = '') {
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+        $onetime_total = $proposal->get_quotation_onetime_total() ?: 0;
+        $recurring_totals = $proposal->get_quotation_recurring_totals() ?: array();
+        
+        $log_message = sprintf(
+            'Quotation totals for proposal #%d (%s): One-time: %s, Recurring: %s',
+            $proposal_id,
+            $context,
+            $onetime_total,
+            json_encode($recurring_totals, JSON_PRETTY_PRINT)
+        );
+        
+        self::log_woocommerce_billing('debug', $log_message);
+    }
 } 

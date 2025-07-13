@@ -317,6 +317,56 @@ class Workflow_Handler {
         return $debug_info;
     }
 
+    /**
+     * Check if proposal has valid quotation data
+     * 
+     * @param int $proposal_id
+     * @return bool
+     */
+    private function has_valid_quotation_data($proposal_id) {
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+        $line_items = $proposal->get_quotation_line_items() ?: array();
+        
+        if (empty($line_items) || !is_array($line_items)) {
+            return false;
+        }
+        
+        // Check that at least one valid line item exists across all item types
+        $has_valid_item = false;
+        
+        // Check products
+        if (!empty($line_items['products'])) {
+            foreach ($line_items['products'] as $item) {
+                if (!empty($item['description']) && isset($item['regular_price']) && floatval($item['regular_price']) > 0) {
+                    $has_valid_item = true;
+                    break;
+                }
+            }
+        }
+        
+        // Check one-time fees
+        if (!$has_valid_item && !empty($line_items['one_time_fees'])) {
+            foreach ($line_items['one_time_fees'] as $item) {
+                if (!empty($item['description']) && !empty($item['amount']) && floatval($item['amount']) > 0) {
+                    $has_valid_item = true;
+                    break;
+                }
+            }
+        }
+        
+        // Check recurring fees
+        if (!$has_valid_item && !empty($line_items['recurring_fees'])) {
+            foreach ($line_items['recurring_fees'] as $item) {
+                if (!empty($item['description']) && !empty($item['amount']) && floatval($item['amount']) > 0) {
+                    $has_valid_item = true;
+                    break;
+                }
+            }
+        }
+        
+        return $has_valid_item;
+    }
+
     // ==========================================
     // SIMPLIFIED WORKFLOW METHODS
     // ==========================================

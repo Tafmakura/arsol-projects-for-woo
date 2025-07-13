@@ -276,7 +276,7 @@ class Proposal_Conversion {
 
     // Helper method to copy proposal metadata to project using new CRUD methods
     private function copy_proposal_metadata_to_project($proposal_id, $project_id) {
-        // Get proposal and project objects using factory functions
+        // Get proposal and project objects using entity classes
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
         $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
         
@@ -284,11 +284,10 @@ class Proposal_Conversion {
             throw new Exception(__('Failed to load proposal or project for metadata copy.', 'arsol-pfw'));
         }
         
-        // ✅ PHASE 2: COMPREHENSIVE META KEY RESTRUCTURING
-        
-        // 1. Preserve proposal content in project meta
+        // Copy basic proposal data
         update_post_meta($project_id, '_arsol_pfw_project_proposal_details', $proposal->get_prop('description'));        
-        // 2. Rename request data with project context
+        
+        // Copy request data with project context
         $request_meta_mapping = array(
             '_arsol_pfw_proposal_request_details' => '_arsol_pfw_project_request_details',
             '_arsol_pfw_proposal_request_title' => '_arsol_pfw_project_request_title',
@@ -299,7 +298,7 @@ class Proposal_Conversion {
             '_arsol_pfw_proposal_request_attachments' => '_arsol_pfw_project_request_attachments',
         );
         
-        // 3. Rename proposal data with project context
+        // Copy proposal data with project context
         $proposal_meta_mapping = array(
             '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
             '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
@@ -307,36 +306,29 @@ class Proposal_Conversion {
             '_arsol_pfw_proposal_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
         );
         
-        // 4. Get proposal type for type-aware handling
-        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+        // Get proposal type for type-aware handling
+        $cost_proposal_type = $proposal->get_costing_type();
         
-        // 5. Type-aware meta mapping
-        $type_specific_mapping = array();
-        
+        // Copy type-specific data using entity methods
         if ($cost_proposal_type === 'budget') {
-            // Budget proposals: Preserve ALL budget details
-            $type_specific_mapping = array(
-                '_arsol_pfw_proposal_budget_onetime_amount' => '_arsol_pfw_project_proposal_budget_onetime_amount',
-                '_arsol_pfw_proposal_budget_onetime_amount_details' => '_arsol_pfw_project_proposal_budget_onetime_amount_details',
-                '_arsol_pfw_proposal_budget_recurring_amount' => '_arsol_pfw_project_proposal_budget_recurring_amount',
-                '_arsol_pfw_proposal_budget_recurring_amount_details' => '_arsol_pfw_project_proposal_budget_recurring_amount_details',
-                '_arsol_pfw_proposal_budget_recurring_amount_billing_interval' => '_arsol_pfw_project_proposal_budget_recurring_amount_billing_interval',
-                '_arsol_pfw_proposal_budget_recurring_amount_billing_period' => '_arsol_pfw_project_proposal_budget_recurring_amount_billing_period',
-                '_arsol_pfw_proposal_budget_recurring_billing_start_date' => '_arsol_pfw_project_proposal_budget_recurring_billing_start_date',
-            );
+            // Copy budget data using entity methods
+            $budget_data = $proposal->get_proposal_budget();
+            if (!empty($budget_data)) {
+                $project->set_project_budget($budget_data);
+            }
         } elseif ($cost_proposal_type === 'quotation') {
-            // Quotation proposals: Preserve quotation details with key totals
-            $type_specific_mapping = array(
-                '_arsol_pfw_proposal_quotation_line_items' => '_arsol_pfw_project_proposal_quotation_line_items',
-                '_arsol_pfw_proposal_quotation_onetime_total' => '_arsol_pfw_project_proposal_quotation_onetime_total',
-                '_arsol_pfw_proposal_quotation_recurring_totals_grouped' => '_arsol_pfw_project_proposal_quotation_recurring_average_total',
-                '_arsol_pfw_proposal_quotation_currency' => '_arsol_pfw_project_proposal_quotation_currency',
-                '_arsol_pfw_proposal_quotation_currency_symbol' => '_arsol_pfw_project_proposal_quotation_currency_symbol',
-            );
+            // Copy quotation data using entity methods
+            $quotation_data = $proposal->get_proposal_quotation();
+            if (!empty($quotation_data)) {
+                $project->set_project_quotation($quotation_data);
+            }
         }
         
-        // 6. Combine all mappings
-        $meta_to_copy = array_merge($request_meta_mapping, $proposal_meta_mapping, $type_specific_mapping);
+        // Save project entity to persist the copied data
+        $project->save();
+        
+        // Combine all mappings for remaining meta
+        $meta_to_copy = array_merge($request_meta_mapping, $proposal_meta_mapping);
 
         /**
          * Filter: arsol_project_conversion_meta_mapping
@@ -344,7 +336,7 @@ class Proposal_Conversion {
          */
         $meta_to_copy = apply_filters('arsol_project_conversion_meta_mapping', $meta_to_copy, $project_id, $proposal_id, $cost_proposal_type, array());
 
-        // 7. Copy all meta data
+        // Copy all remaining meta data
         foreach ($meta_to_copy as $proposal_key => $project_key) {
             $value = get_post_meta($proposal_id, $proposal_key, true);
             if ($value) {
@@ -352,7 +344,7 @@ class Proposal_Conversion {
             }
         }
 
-        // 8. Historical preservation - keep original proposal field names for reference
+        // Historical preservation - keep original proposal field names for reference
         $historical_fields = array(
             '_arsol_pfw_proposal_start_date',
             '_arsol_pfw_proposal_delivery_date',

@@ -2,468 +2,482 @@
 
 ## Overview
 
-This document provides a complete reference for the CRUD (Create, Read, Update, Delete) operations in Arsol Projects for WooCommerce. The system follows WooCommerce patterns with array-based data structures and entity-specific naming conventions.
-
-## Current Implementation Status
-
-### ✅ **Implemented (Current)**
-- Array-based complex data structures
-- **Entity-specific naming convention** (WooCommerce-aligned)
-- Individual field methods for common operations
-- Data store with complex meta key support
-- Comprehensive getter/setter methods
-
-### 🔄 **Next Steps**
-- Implement same pattern for Project entity
-- Implement same pattern for Request entity
-- Update all templates and handlers to use new API
-- Create migration scripts for existing data
-- Update global functions to use new methods
+The Arsol Projects for Woo plugin implements a comprehensive CRUD (Create, Read, Update, Delete) system using WordPress-native patterns with WooCommerce-inspired entity methods. This system provides a clean, consistent API for managing projects, proposals, and requests.
 
 ## Core Principles
 
-### 1. Array-Based Complex Data
-Complex data structures (like budgets, quotations, workflow data) are stored as complete arrays in single meta fields, following WooCommerce patterns.
+### 1. Array-Based Data Storage
+All core plugin data is stored as arrays in single meta fields, following WooCommerce patterns:
+- **Budget data**: Stored as complete arrays with onetime/recurring structures
+- **Quotation data**: Stored as complete arrays with line items and totals
+- **Request data**: Stored as complete arrays with budget and requirements
+- **Workflow data**: Stored as complete arrays with stage and conversion information
 
-### 2. Entity-Specific Naming
-Methods use entity-specific names that clearly indicate what they operate on, following WooCommerce patterns.
+### 2. Entity-Specific Method Names
+All getter/setter methods use entity-specific naming for clarity:
+- `get_proposal_budget()` / `set_proposal_budget()`
+- `get_quotation_line_items()` / `set_quotation_line_items()`
+- `get_request_budget()` / `set_request_budget()`
 
-### 3. Individual Field Access
-Common fields have dedicated getter/setter methods for easy access.
+### 3. No Backward Compatibility
+The plugin uses a clean slate approach with no legacy meta key support:
+- No individual meta key access for core data
+- No migration from old data structures
+- No deprecated methods or backward compatibility layers
 
 ## Entity Classes
 
 ### Arsol_PFW_Proposal
 
-#### Constructor
+#### Core Properties
+- `post_author`: Creator (admin) ID
+- `customer_id`: Customer ID (stored in meta)
+- `costing_type`: 'budget', 'quotation', or 'none'
+- `start_date`: Project start date
+- `due_date`: Project due date
+- `project_lead`: Project lead user ID
+
+#### Budget Methods
 ```php
-$proposal = new Arsol_PFW_Proposal($proposal_id);
-$proposal = new Arsol_PFW_Proposal($post_object);
-$proposal = new Arsol_PFW_Proposal(); // Empty instance
+// Complete budget data
+$proposal->get_proposal_budget() : array
+$proposal->set_proposal_budget(array $data) : void
+
+// Individual budget components
+$proposal->get_budget_onetime_amount() : array
+$proposal->set_budget_onetime_amount(array $data) : void
+$proposal->get_budget_recurring_amount() : array
+$proposal->set_budget_recurring_amount(array $data) : void
+$proposal->get_budget_notes() : string
+$proposal->set_budget_notes(string $notes) : void
 ```
 
-#### Creation
+#### Quotation Methods
 ```php
-$proposal = Arsol_PFW_Proposal::create(array(
-    'post_title' => 'Proposal Title',
-    'post_content' => 'Proposal content',
-    'post_author' => 123, // Creator ID
-    'meta_input' => array(
-        '_arsol_pfw_proposal_customer_id' => 456,
-        '_arsol_pfw_proposal_description' => 'Description',
-        '_arsol_pfw_proposal_timeline' => '2 weeks',
-        '_arsol_pfw_proposal_project_lead' => 789,
-        '_arsol_pfw_proposal_start_date' => '2024-01-15',
-        '_arsol_pfw_proposal_delivery_date' => '2024-01-30',
-        '_arsol_pfw_proposal_expiration_date' => '2024-02-15',
-        '_arsol_pfw_proposal_costing_type' => 'fixed',
-        '_arsol_pfw_proposal_parent_project_id' => 101,
-        '_arsol_pfw_proposal_due_date' => '2024-01-25',
-        '_arsol_pfw_proposal_customer_notice' => 'Customer notice',
-        '_arsol_pfw_proposal_secondary_status' => 'pending_review',
-        '_arsol_pfw_proposal_budget_data' => array(
-            'onetime' => array(
-                'amount' => 1000.00,
-                'currency' => 'USD',
-                'details' => 'One-time setup fee'
-            ),
-            'recurring' => array(
-                'amount' => 500.00,
-                'currency' => 'USD',
-                'frequency' => 'monthly',
-                'details' => 'Monthly maintenance'
-            ),
-            'notes' => 'Budget notes here',
-            'type' => 'mixed'
-        ),
-        '_arsol_pfw_proposal_quotation_data' => array(
-            'line_items' => array(
-                array(
-                    'name' => 'Design Services',
-                    'quantity' => 1,
-                    'price' => 500.00,
-                    'total' => 500.00
-                )
-            ),
-            'currency' => 'USD',
-            'totals' => array(
-                'subtotal' => 500.00,
-                'tax' => 50.00,
-                'total' => 550.00
-            ),
-            'notes' => 'Quotation notes here'
-        ),
-        '_arsol_pfw_proposal_original_request_data' => array(
-            'request_id' => 123,
-            'budget' => array(
-                'min' => 1000,
-                'max' => 5000,
-                'currency' => 'USD'
-            ),
-            'start_date' => '2024-01-15',
-            'delivery_date' => '2024-03-15',
-            'title' => 'Original Request Title',
-            'content' => 'Original request content',
-            'attachments' => array(456, 789)
-        ),
-        '_arsol_pfw_proposal_woocommerce_data' => array(
-            'order_id' => 456,
-            'subscription_id' => 789,
-            'conversion_date' => '2024-01-20 10:30:00',
-            'payment_method' => 'stripe',
-            'billing_address' => array(
-                'first_name' => 'John',
-                'last_name' => 'Doe',
-                'email' => 'john@example.com'
+// Complete quotation data
+$proposal->get_proposal_quotation() : array
+$proposal->set_proposal_quotation(array $data) : void
+
+// Individual quotation components
+$proposal->get_quotation_line_items() : array
+$proposal->set_quotation_line_items(array $items) : void
+$proposal->get_quotation_onetime_total() : float
+$proposal->set_quotation_onetime_total(float $total) : void
+$proposal->get_quotation_recurring_totals() : array
+$proposal->set_quotation_recurring_totals(array $totals) : void
+$proposal->get_quotation_currency() : string
+$proposal->set_quotation_currency(string $currency) : void
+$proposal->get_quotation_currency_symbol() : string
+$proposal->set_quotation_currency_symbol(string $symbol) : void
+$proposal->get_quotation_notes() : string
+$proposal->set_quotation_notes(string $notes) : void
+```
+
+#### Request Methods
+```php
+// Complete request data
+$proposal->get_original_request() : array
+$proposal->set_original_request(array $data) : void
+
+// Individual request components
+$proposal->get_request_details() : string
+$proposal->set_request_details(string $details) : void
+$proposal->get_request_title() : string
+$proposal->set_request_title(string $title) : void
+$proposal->get_request_date() : string
+$proposal->set_request_date(string $date) : void
+$proposal->get_request_budget() : array
+$proposal->set_request_budget(array $budget) : void
+$proposal->get_request_start_date() : string
+$proposal->set_request_start_date(string $date) : void
+$proposal->get_request_due_date() : string
+$proposal->set_request_due_date(string $date) : void
+$proposal->get_request_attachments() : array
+$proposal->set_request_attachments(array $attachments) : void
+```
+
+#### WooCommerce Integration Methods
+```php
+// Complete WooCommerce data
+$proposal->get_woocommerce_integration() : array
+$proposal->set_woocommerce_integration(array $data) : void
+
+// Individual WooCommerce components
+$proposal->get_woocommerce_order_id() : int
+$proposal->set_woocommerce_order_id(int $order_id) : void
+$proposal->get_woocommerce_subscription_id() : int
+$proposal->set_woocommerce_subscription_id(int $subscription_id) : void
+$proposal->get_woocommerce_created_via() : string
+$proposal->set_woocommerce_created_via(string $method) : void
+```
+
+#### Workflow Methods
+```php
+// Complete workflow data
+$proposal->get_workflow_data() : array
+$proposal->set_workflow_data(array $data) : void
+
+// Individual workflow components
+$proposal->get_workflow_status() : string
+$proposal->set_workflow_status(string $status) : void
+$proposal->get_workflow_type() : string
+$proposal->set_workflow_type(string $type) : void
+$proposal->get_conversion_step() : string
+$proposal->set_conversion_step(string $step) : void
+$proposal->get_conversion_created_ids() : array
+$proposal->set_conversion_created_ids(array $ids) : void
+$proposal->get_conversion_rollback_reason() : string
+$proposal->set_conversion_rollback_reason(string $reason) : void
+```
+
+### Arsol_PFW_Project
+
+#### Core Properties
+- `post_author`: Creator (admin) ID
+- `customer_id`: Customer ID (stored in meta)
+- `start_date`: Project start date
+- `due_date`: Project due date
+- `project_lead`: Project lead user ID
+
+#### Budget Methods
+```php
+// Complete budget data
+$project->get_project_budget() : array
+$project->set_project_budget(array $data) : void
+
+// Individual budget components
+$project->get_budget_onetime_amount() : array
+$project->set_budget_onetime_amount(array $data) : void
+$project->get_budget_recurring_amount() : array
+$project->set_budget_recurring_amount(array $data) : void
+$project->get_budget_notes() : string
+$project->set_budget_notes(string $notes) : void
+```
+
+#### Quotation Methods
+```php
+// Complete quotation data
+$project->get_project_quotation() : array
+$project->set_project_quotation(array $data) : void
+
+// Individual quotation components
+$project->get_quotation_line_items() : array
+$project->set_quotation_line_items(array $items) : void
+$project->get_quotation_onetime_total() : float
+$project->set_quotation_onetime_total(float $total) : void
+$project->get_quotation_recurring_totals() : array
+$project->set_quotation_recurring_totals(array $totals) : void
+$project->get_quotation_currency() : string
+$project->set_quotation_currency(string $currency) : void
+$project->get_quotation_currency_symbol() : string
+$project->set_quotation_currency_symbol(string $symbol) : void
+$project->get_quotation_notes() : string
+$project->set_quotation_notes(string $notes) : void
+```
+
+### Arsol_PFW_Request
+
+#### Core Properties
+- `post_author`: Creator (admin) ID
+- `customer_id`: Customer ID (stored in meta)
+- `costing_type`: 'budget', 'quotation', or 'none'
+- `start_date`: Requested start date
+- `due_date`: Requested due date
+- `project_lead`: Project lead user ID
+
+#### Budget Methods
+```php
+// Complete budget data
+$request->get_request_budget() : array
+$request->set_request_budget(array $data) : void
+
+// Individual budget components
+$request->get_budget_onetime_amount() : array
+$request->set_budget_onetime_amount(array $data) : void
+$request->get_budget_recurring_amount() : array
+$request->set_budget_recurring_amount(array $data) : void
+$request->get_budget_notes() : string
+$request->set_budget_notes(string $notes) : void
+```
+
+#### Quotation Methods
+```php
+// Complete quotation data
+$request->get_request_quotation() : array
+$request->set_request_quotation(array $data) : void
+
+// Individual quotation components
+$request->get_quotation_line_items() : array
+$request->set_quotation_line_items(array $items) : void
+$request->get_quotation_onetime_total() : float
+$request->set_quotation_onetime_total(float $total) : void
+$request->get_quotation_recurring_totals() : array
+$request->set_quotation_recurring_totals(array $totals) : void
+$request->get_quotation_currency() : string
+$request->set_quotation_currency(string $currency) : void
+$request->get_quotation_currency_symbol() : string
+$request->set_quotation_currency_symbol(string $symbol) : void
+$request->get_quotation_notes() : string
+$request->set_quotation_notes(string $notes) : void
+```
+
+## Data Store Classes
+
+### Arsol_PFW_Data_Store_Proposal
+
+#### Meta Key Mappings
+```php
+protected $meta_keys = array(
+    // Core data
+    '_arsol_pfw_customer_id' => 'customer_id',
+    '_arsol_pfw_proposal_costing_type' => 'costing_type',
+    '_arsol_pfw_proposal_start_date' => 'start_date',
+    '_arsol_pfw_proposal_due_date' => 'due_date',
+    '_arsol_pfw_proposal_project_lead' => 'project_lead',
+    '_arsol_pfw_proposal_expiration_date' => 'expiration_date',
+    '_arsol_pfw_proposal_customer_notice' => 'customer_notice',
+    
+    // Array-based data structures
+    '_arsol_pfw_proposal_budget' => 'proposal_budget',
+    '_arsol_pfw_proposal_quotation' => 'proposal_quotation',
+    '_arsol_pfw_original_request' => 'original_request',
+    '_arsol_pfw_woocommerce_integration' => 'woocommerce_integration',
+    '_arsol_pfw_workflow_data' => 'workflow_data',
+);
+```
+
+### Arsol_PFW_Data_Store_Project
+
+#### Meta Key Mappings
+```php
+protected $meta_keys = array(
+    // Core data
+    '_arsol_pfw_customer_id' => 'customer_id',
+    '_arsol_pfw_project_start_date' => 'start_date',
+    '_arsol_pfw_project_due_date' => 'due_date',
+    '_arsol_pfw_project_lead' => 'project_lead',
+    '_arsol_pfw_project_customer_notice' => 'customer_notice',
+    
+    // Array-based data structures
+    '_arsol_pfw_project_budget' => 'project_budget',
+    '_arsol_pfw_project_quotation' => 'project_quotation',
+    '_arsol_pfw_woocommerce_integration' => 'woocommerce_integration',
+    '_arsol_pfw_workflow_data' => 'workflow_data',
+);
+```
+
+### Arsol_PFW_Data_Store_Request
+
+#### Meta Key Mappings
+```php
+protected $meta_keys = array(
+    // Core data
+    '_arsol_pfw_customer_id' => 'customer_id',
+    '_arsol_pfw_request_costing_type' => 'costing_type',
+    '_arsol_pfw_request_start_date' => 'start_date',
+    '_arsol_pfw_request_due_date' => 'due_date',
+    '_arsol_pfw_request_project_lead' => 'project_lead',
+    '_arsol_pfw_request_customer_notice' => 'customer_notice',
+    
+    // Array-based data structures
+    '_arsol_pfw_request_budget' => 'request_budget',
+    '_arsol_pfw_request_quotation' => 'request_quotation',
+    '_arsol_pfw_woocommerce_integration' => 'woocommerce_integration',
+    '_arsol_pfw_workflow_data' => 'workflow_data',
+);
+```
+
+## Usage Examples
+
+### Creating a Proposal with Budget
+```php
+$proposal = new Arsol_PFW_Proposal();
+$proposal->set_title('Website Redesign Proposal');
+$proposal->set_customer_id(123);
+$proposal->set_costing_type('budget');
+
+// Set budget data as complete array
+$budget_data = array(
+    'onetime' => array(
+        'amount' => 5000.00,
+        'currency' => 'USD',
+        'details' => 'Complete website redesign including responsive design'
+    ),
+    'recurring' => array(
+        'amount' => 500.00,
+        'currency' => 'USD',
+        'details' => 'Monthly maintenance and updates',
+        'billing_interval' => '1',
+        'billing_period' => 'month',
+        'start_date' => '2024-01-01'
+    ),
+    'notes' => 'All prices include tax and delivery',
+    'type' => 'mixed'
+);
+
+$proposal->set_proposal_budget($budget_data);
+$proposal->save();
+```
+
+### Creating a Proposal with Quotation
+```php
+$proposal = new Arsol_PFW_Proposal();
+$proposal->set_title('E-commerce Platform Proposal');
+$proposal->set_customer_id(456);
+$proposal->set_costing_type('quotation');
+
+// Set quotation data as complete array
+$quotation_data = array(
+    'line_items' => array(
+        'products' => array(
+            array(
+                'product_id' => 789,
+                'description' => 'WooCommerce Premium',
+                'quantity' => 1,
+                'regular_price' => 299.00,
+                'sale_price' => 249.00
             )
         ),
-        '_arsol_pfw_proposal_workflow_data' => array(
-            'rejection_reason' => 'Budget too high',
-            'conversion_type' => 'manual',
-            'workflow_started' => '2024-01-15 09:00:00',
-            'approval_date' => '2024-01-20 14:30:00',
-            'approver_id' => 123,
-            'notes' => 'Workflow notes here'
+        'one_time_fees' => array(
+            array(
+                'description' => 'Custom theme development',
+                'amount' => 2000.00,
+                'tax_class' => 'standard'
+            )
+        ),
+        'recurring_fees' => array(
+            array(
+                'description' => 'Monthly hosting and support',
+                'amount' => 99.00,
+                'interval' => '1',
+                'period' => 'month'
+            )
         )
     ),
-    'tax_input' => array(
-        'arsol-pfw-proposal-stage' => array('draft')
-    )
-));
-```
+    'onetime_total' => 2299.00,
+    'recurring_totals' => array(
+        'monthly' => 99.00,
+        'yearly' => 1188.00
+    ),
+    'currency' => 'USD',
+    'currency_symbol' => '$',
+    'notes' => 'All prices include setup and configuration'
+);
 
-#### Reading Data
-
-##### Simple Fields (Individual Meta)
-```php
-// Direct getter methods
-$description = $proposal->get_description();
-$timeline = $proposal->get_timeline();
-$project_lead = $proposal->get_project_lead();
-$start_date = $proposal->get_start_date();
-$delivery_date = $proposal->get_delivery_date();
-$expiration_date = $proposal->get_expiration_date();
-$costing_type = $proposal->get_costing_type();
-$parent_project_id = $proposal->get_parent_project_id();
-$due_date = $proposal->get_due_date();
-$customer_notice = $proposal->get_customer_notice();
-$secondary_status = $proposal->get_secondary_status();
-```
-
-##### Complex Fields (Array-Based)
-
-**Budget Data (Entity-Specific Methods - Recommended):**
-```php
-// Get complete proposal budget
-$budget_data = $proposal->get_proposal_budget();
-
-// Individual field access (recommended)
-$onetime_amount = $proposal->get_budget_onetime_amount();
-$recurring_amount = $proposal->get_budget_recurring_amount();
-$budget_notes = $proposal->get_budget_notes();
-$budget_type = $proposal->get_budget_type();
-
-// Generic field access (for custom fields)
-$custom_field = $proposal->get_budget_field('custom_field');
-```
-
-**Quotation Data (Entity-Specific Methods - Recommended):**
-```php
-// Get complete proposal quotation
-$quotation_data = $proposal->get_proposal_quotation();
-
-// Individual field access (recommended)
-$currency = $proposal->get_quotation_currency();
-$totals = $proposal->get_quotation_total();
-$notes = $proposal->get_quotation_notes();
-$line_items = $proposal->get_quotation_line_items();
-
-// Generic field access (for custom fields)
-$custom_field = $proposal->get_quotation_field('custom_field');
-```
-
-**Original Request Data (Entity-Specific Methods - Recommended):**
-```php
-// Get complete original request
-$request_data = $proposal->get_original_request();
-
-// Individual field access (recommended)
-$original_budget = $proposal->get_original_request_budget();
-$original_start_date = $proposal->get_original_request_start_date();
-$original_title = $proposal->get_original_request_title();
-
-// Generic field access (for custom fields)
-$custom_field = $proposal->get_original_request_field('custom_field');
-```
-
-**WooCommerce Integration Data (Entity-Specific Methods - Recommended):**
-```php
-// Get complete WooCommerce integration
-$woocommerce_data = $proposal->get_woocommerce_integration();
-
-// Individual field access (recommended)
-$order_id = $proposal->get_woocommerce_order_id();
-$subscription_id = $proposal->get_woocommerce_subscription_id();
-$conversion_date = $proposal->get_woocommerce_conversion_date();
-
-// Generic field access (for custom fields)
-$custom_field = $proposal->get_woocommerce_field('custom_field');
-```
-
-**Workflow History Data (Entity-Specific Methods - Recommended):**
-```php
-// Get complete workflow history
-$workflow_data = $proposal->get_workflow_history();
-
-// Individual field access (recommended)
-$rejection_reason = $proposal->get_workflow_rejection_reason();
-$approval_date = $proposal->get_workflow_approval_date();
-$approver_id = $proposal->get_workflow_approver_id();
-
-// Generic field access (for custom fields)
-$custom_field = $proposal->get_workflow_field('custom_field');
-```
-
-#### Updating Data
-
-##### Simple Fields (Individual Meta)
-```php
-// Direct setter methods
-$proposal->set_description('Updated description');
-$proposal->set_timeline('3 weeks');
-$proposal->set_project_lead(789);
-$proposal->set_start_date('2024-02-01');
-$proposal->set_delivery_date('2024-02-15');
-$proposal->set_expiration_date('2024-03-01');
-$proposal->set_costing_type('hourly');
-$proposal->set_parent_project_id(202);
-$proposal->set_due_date('2024-02-10');
-$proposal->set_customer_notice('Updated customer notice');
-$proposal->set_secondary_status('approved');
-```
-
-##### Complex Fields (Array-Based)
-
-**Budget Data (Entity-Specific Methods - Recommended):**
-```php
-// Set complete proposal budget
-$proposal->set_proposal_budget($budget_data);
-
-// Individual field access (recommended)
-$proposal->set_budget_onetime_amount(array('amount' => 2000.00, 'currency' => 'USD'));
-$proposal->set_budget_recurring_amount(array('amount' => 750.00, 'currency' => 'USD'));
-$proposal->set_budget_notes('Updated budget notes');
-$proposal->set_budget_type('mixed');
-
-// Generic field access (for custom fields)
-$proposal->set_budget_field('custom_field', $value);
-```
-
-**Quotation Data (Entity-Specific Methods - Recommended):**
-```php
-// Set complete proposal quotation
 $proposal->set_proposal_quotation($quotation_data);
+$proposal->save();
+```
 
-// Individual field access (recommended)
-$proposal->set_quotation_currency('EUR');
-$proposal->set_quotation_total(array('subtotal' => 1500.00, 'total' => 1650.00));
-$proposal->set_quotation_notes('Updated quotation notes');
+### Reading Proposal Data
+```php
+$proposal = new Arsol_PFW_Proposal(123);
+
+// Get complete budget data
+$budget = $proposal->get_proposal_budget();
+$onetime_amount = $budget['onetime']['amount'] ?? 0;
+$recurring_amount = $budget['recurring']['amount'] ?? 0;
+
+// Get individual budget components
+$onetime_data = $proposal->get_budget_onetime_amount();
+$recurring_data = $proposal->get_budget_recurring_amount();
+
+// Get complete quotation data
+$quotation = $proposal->get_proposal_quotation();
+$line_items = $quotation['line_items'] ?? array();
+$onetime_total = $quotation['onetime_total'] ?? 0;
+
+// Get individual quotation components
+$products = $proposal->get_quotation_line_items()['products'] ?? array();
+$onetime_total = $proposal->get_quotation_onetime_total();
+```
+
+### Updating Individual Fields
+```php
+$proposal = new Arsol_PFW_Proposal(123);
+
+// Update individual budget field
+$onetime_data = $proposal->get_budget_onetime_amount();
+$onetime_data['amount'] = 6000.00;
+$proposal->set_budget_onetime_amount($onetime_data);
+
+// Update individual quotation field
+$line_items = $proposal->get_quotation_line_items();
+$line_items['one_time_fees'][0]['amount'] = 2500.00;
 $proposal->set_quotation_line_items($line_items);
 
-// Generic field access (for custom fields)
-$proposal->set_quotation_field('custom_field', $value);
-```
-
-**Original Request Data (Entity-Specific Methods - Recommended):**
-```php
-// Set complete original request
-$proposal->set_original_request($request_data);
-
-// Individual field access (recommended)
-$proposal->set_original_request_budget(array('min' => 2000, 'max' => 8000));
-$proposal->set_original_request_start_date('2024-02-01');
-$proposal->set_original_request_title('Updated Request Title');
-
-// Generic field access (for custom fields)
-$proposal->set_original_request_field('custom_field', $value);
-```
-
-**WooCommerce Integration Data (Entity-Specific Methods - Recommended):**
-```php
-// Set complete WooCommerce integration
-$proposal->set_woocommerce_integration($woocommerce_data);
-
-// Individual field access (recommended)
-$proposal->set_woocommerce_order_id(999);
-$proposal->set_woocommerce_subscription_id(888);
-$proposal->set_woocommerce_conversion_date('2024-01-25 15:30:00');
-
-// Generic field access (for custom fields)
-$proposal->set_woocommerce_field('custom_field', $value);
-```
-
-**Workflow History Data (Entity-Specific Methods - Recommended):**
-```php
-// Set complete workflow history
-$proposal->set_workflow_history($workflow_data);
-
-// Individual field access (recommended)
-$proposal->set_workflow_rejection_reason('Timeline too short');
-$proposal->set_workflow_approval_date('2024-01-25 16:00:00');
-$proposal->set_workflow_approver_id(456);
-
-// Generic field access (for custom fields)
-$proposal->set_workflow_field('custom_field', $value);
-```
-
-#### Saving Changes
-```php
-// Save all changes
-$result = $proposal->save();
-
-if (is_wp_error($result)) {
-    // Handle error
-    $error_message = $result->get_error_message();
-} else {
-    // Success
-    $proposal_id = $proposal->get_id();
-}
-```
-
-#### Deleting
-```php
-// Delete proposal
-$result = $proposal->delete();
-
-if ($result) {
-    // Successfully deleted
-} else {
-    // Failed to delete
-}
-```
-
-#### Generic Meta Access
-```php
-// Get any meta value
-$value = $proposal->get_meta('_custom_meta_key');
-
-// Set any meta value
-$proposal->set_meta('_custom_meta_key', 'custom_value');
-
-// Delete meta value
-$proposal->delete_meta('_custom_meta_key');
-```
-
-## Data Store Pattern
-
-### Proposal Data Store
-```php
-class Proposal_Data_Store {
-    // Meta key mappings
-    private $meta_keys = array(
-        // Simple fields
-        'description' => '_arsol_pfw_proposal_description',
-        'timeline' => '_arsol_pfw_proposal_timeline',
-        'project_lead' => '_arsol_pfw_proposal_project_lead',
-        'start_date' => '_arsol_pfw_proposal_start_date',
-        'delivery_date' => '_arsol_pfw_proposal_delivery_date',
-        'expiration_date' => '_arsol_pfw_proposal_expiration_date',
-        'costing_type' => '_arsol_pfw_proposal_costing_type',
-        'parent_project_id' => '_arsol_pfw_proposal_parent_project_id',
-        'due_date' => '_arsol_pfw_proposal_due_date',
-        'customer_notice' => '_arsol_pfw_proposal_customer_notice',
-        'secondary_status' => '_arsol_pfw_proposal_secondary_status',
-        
-        // Complex data structures
-        'budget_data' => '_arsol_pfw_proposal_budget_data',
-        'quotation_data' => '_arsol_pfw_proposal_quotation_data',
-        'original_request_data' => '_arsol_pfw_proposal_original_request_data',
-        'woocommerce_data' => '_arsol_pfw_proposal_woocommerce_data',
-        'workflow_data' => '_arsol_pfw_proposal_workflow_data',
-    );
-}
-```
-
-## WooCommerce Alignment
-
-### WooCommerce Pattern
-```php
-// WooCommerce uses entity-specific names
-$order->get_billing_address()      // Not get_billing_data()
-$order->set_billing_address()      // Not set_billing_data()
-$order->get_billing_first_name()   // Individual field access
-$order->set_billing_first_name()   // Individual field access
-```
-
-### Our Implementation
-```php
-// Entity-specific methods (matches WooCommerce)
-$proposal->get_proposal_budget()           // Instead of get_budget_data()
-$proposal->set_proposal_budget()           // Instead of set_budget_data()
-$proposal->get_proposal_quotation()        // Instead of get_quotation_data()
-$proposal->set_proposal_quotation()        // Instead of set_quotation_data()
-
-// Individual field methods (matches WooCommerce)
-$proposal->get_budget_onetime_amount();    // Direct field access
-$proposal->set_budget_onetime_amount();    // Direct field access
-$proposal->get_quotation_currency();       // Direct field access
-$proposal->set_quotation_currency();       // Direct field access
+$proposal->save();
 ```
 
 ## Best Practices
 
-### 1. Use Entity-Specific Methods (Recommended)
+### 1. Always Use Entity Methods
 ```php
-// ✅ Good - Entity-specific methods
-$budget_data = $proposal->get_proposal_budget();
-$proposal->set_budget_notes('New notes');
+// ✅ Correct - Use entity methods
+$proposal = new Arsol_PFW_Proposal(123);
+$budget = $proposal->get_proposal_budget();
+
+// ❌ Incorrect - Direct meta access for core data
+$budget = get_post_meta(123, '_arsol_pfw_proposal_budget_onetime_amount', true);
 ```
 
-### 2. Use Individual Field Methods for Common Fields
+### 2. Use Complete Array Operations
 ```php
-// ✅ Good - Individual field methods
-$notes = $proposal->get_budget_notes();
-$proposal->set_budget_notes('Updated notes');
+// ✅ Correct - Set complete data structure
+$proposal->set_proposal_budget($complete_budget_array);
 
-// ✅ Good - Generic field methods for custom fields
-$custom_field = $proposal->get_budget_field('custom_field');
-$proposal->set_budget_field('custom_field', $value);
+// ✅ Correct - Update individual fields
+$onetime_data = $proposal->get_budget_onetime_amount();
+$onetime_data['amount'] = 5000.00;
+$proposal->set_budget_onetime_amount($onetime_data);
 ```
 
-### 3. Use Complete Data Methods for Bulk Operations
+### 3. Handle Missing Data Gracefully
 ```php
-// ✅ Good for bulk operations
-$budget_data = $proposal->get_proposal_budget();
-$budget_data['onetime']['amount'] = 2000.00;
-$budget_data['recurring']['amount'] = 750.00;
-$proposal->set_proposal_budget($budget_data);
+// ✅ Correct - Use null coalescing
+$amount = $proposal->get_budget_onetime_amount()['amount'] ?? 0;
+$details = $proposal->get_budget_onetime_amount()['details'] ?? '';
+
+// ✅ Correct - Check for empty arrays
+$line_items = $proposal->get_quotation_line_items() ?: array();
+$products = $line_items['products'] ?? array();
 ```
 
-### 4. Handle Empty Data Gracefully
+### 4. Save After Changes
 ```php
-// ✅ Good
-$budget_data = $proposal->get_proposal_budget() ?: array();
-$notes = $proposal->get_budget_notes() ?: '';
+// ✅ Correct - Always save after changes
+$proposal->set_proposal_budget($new_budget);
+$proposal->save();
 
-// ❌ Avoid
-$budget_data = $proposal->get_proposal_budget();
-if (!$budget_data) {
-    $budget_data = array();
-}
+// ❌ Incorrect - Changes not persisted
+$proposal->set_proposal_budget($new_budget);
+// Missing save() call
 ```
 
-## Implementation Status
+## Migration Notes
 
-### ✅ Completed
-- Proposal entity with array-based data structures
-- **Entity-specific naming convention implemented**
-- Individual field methods for common operations
-- Data store with complex meta key support
-- Comprehensive getter/setter methods
+### No Backward Compatibility
+The plugin implements a clean slate approach:
+- No support for old individual meta keys
+- No migration from legacy data structures
+- No deprecated methods or backward compatibility layers
 
-### 🔄 Next Steps
-- Implement same pattern for Project entity
-- Implement same pattern for Request entity
-- Update all templates and handlers to use new API
-- Create migration scripts for existing data
-- Update global functions to use new methods 
+### Custom Meta Fields
+Developers can still use `get_post_meta()` for custom fields:
+```php
+// ✅ Correct - Custom meta fields
+$custom_field = get_post_meta($proposal_id, '_my_custom_field', true);
+update_post_meta($proposal_id, '_my_custom_field', $value);
+
+// ❌ Incorrect - Core plugin data
+$budget = get_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
+```
+
+## Integration with WooCommerce
+
+The plugin follows WooCommerce patterns for data storage and retrieval:
+- Array-based line items (similar to WC orders)
+- Array-based addresses (similar to WC customer addresses)
+- Entity-specific method names (similar to WC products, orders)
+- Single meta field storage for complex data structures
+
+This ensures consistency with WooCommerce development patterns and makes the plugin familiar to WooCommerce developers. 

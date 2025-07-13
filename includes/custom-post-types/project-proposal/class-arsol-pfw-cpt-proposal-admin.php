@@ -272,14 +272,25 @@ class Proposal {
 
         // Conditionally save/delete budget data
         if ($cost_proposal_type === 'budget') {
-            // Sanitize and save the budget amount
+            // Create proposal entity for saving
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+            
+            // Prepare budget data structure
+            $budget_data = array(
+                'onetime' => array(),
+                'recurring' => array(),
+                'notes' => '',
+                'type' => 'mixed'
+            );
+            
+            // Handle one-time budget
             if (isset($_POST['arsol_pfw_proposal_budget_onetime_amount'])) {
                 $budget_input = $_POST['arsol_pfw_proposal_budget_onetime_amount'];
                 
                 // Handle both form input (string) and conversion data (array)
                 if (is_array($budget_input) && isset($budget_input['amount'])) {
                     // Data is already in correct format from conversion
-                    $budget_data = array(
+                    $budget_data['onetime'] = array(
                         'amount' => $budget_input['amount'],
                         'currency' => isset($budget_input['currency']) ? $budget_input['currency'] : $currency
                     );
@@ -288,28 +299,27 @@ class Proposal {
                     if (!empty($budget_input)) {
                         $cleaned_input = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($budget_input);
                         $budget_amount = wc_format_decimal($cleaned_input);
-                        $budget_data = array(
+                        $budget_data['onetime'] = array(
                             'amount' => $budget_amount,
                             'currency' => $currency
                         );
                     }
                 }
-                update_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount', $budget_data);
-            }
-            
-            // Save budget details
-            if (isset($_POST['arsol_pfw_proposal_budget_onetime_amount_details'])) {
-                update_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount_details', sanitize_text_field($_POST['arsol_pfw_proposal_budget_onetime_amount_details']));
+                
+                // Add details if provided
+                if (isset($_POST['arsol_pfw_proposal_budget_onetime_amount_details'])) {
+                    $budget_data['onetime']['details'] = sanitize_text_field($_POST['arsol_pfw_proposal_budget_onetime_amount_details']);
+                }
             }
 
-            // Sanitize and save the recurring budget amount
+            // Handle recurring budget
             if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount'])) {
                 $recurring_budget_input = $_POST['arsol_pfw_proposal_budget_recurring_amount'];
                 
                 // Handle both form input (string) and conversion data (array)
                 if (is_array($recurring_budget_input) && isset($recurring_budget_input['amount'])) {
                     // Data is already in correct format from conversion
-                    $recurring_budget_data = array(
+                    $budget_data['recurring'] = array(
                         'amount' => $recurring_budget_input['amount'],
                         'currency' => isset($recurring_budget_input['currency']) ? $recurring_budget_input['currency'] : $currency
                     );
@@ -318,59 +328,50 @@ class Proposal {
                     if (!empty($recurring_budget_input)) {
                         $cleaned_recurring_input = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($recurring_budget_input);
                         $recurring_budget_amount = wc_format_decimal($cleaned_recurring_input);
-                        $recurring_budget_data = array(
+                        $budget_data['recurring'] = array(
                             'amount' => $recurring_budget_amount,
                             'currency' => $currency
                         );
                     }
                 }
-                update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount', $recurring_budget_data);
-            } else {
-                delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount');
-            }
-        
-            // Save recurring budget details
-            if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_details'])) {
-                update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_details', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_details']));
-            }
-
-            // Save billing cycle if recurring budget is set
-            $recurring_budget_value = $_POST['arsol_pfw_proposal_budget_recurring_amount'] ?? null;
-            $has_recurring_budget = false;
-            
-            if ($recurring_budget_value) {
-                if (is_array($recurring_budget_value) && isset($recurring_budget_value['amount'])) {
-                    $has_recurring_budget = $recurring_budget_value['amount'] > 0;
-                } else {
-                    $has_recurring_budget = $recurring_budget_value > 0;
+                
+                // Add details if provided
+                if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_details'])) {
+                    $budget_data['recurring']['details'] = sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_details']);
+                }
+                
+                // Add billing cycle if recurring budget is set
+                $recurring_budget_value = $_POST['arsol_pfw_proposal_budget_recurring_amount'] ?? null;
+                $has_recurring_budget = false;
+                
+                if ($recurring_budget_value) {
+                    if (is_array($recurring_budget_value) && isset($recurring_budget_value['amount'])) {
+                        $has_recurring_budget = $recurring_budget_value['amount'] > 0;
+                    } else {
+                        $has_recurring_budget = $recurring_budget_value > 0;
+                    }
+                }
+                
+                if ($has_recurring_budget) {
+                    if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_interval'])) {
+                        $budget_data['recurring']['billing_interval'] = sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_interval']);
+                    }
+                    if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_period'])) {
+                        $budget_data['recurring']['billing_period'] = sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_period']);
+                    }
+                    if (isset($_POST['arsol_pfw_proposal_budget_recurring_billing_start_date'])) {
+                        $budget_data['recurring']['start_date'] = sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_billing_start_date']);
+                    }
                 }
             }
             
-            if ($has_recurring_budget) {
-                if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_interval'])) {
-                    update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_interval', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_interval']));
-                }
-                if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_period'])) {
-                    update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_period', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_amount_billing_period']));
-                }
-                if (isset($_POST['arsol_pfw_proposal_budget_recurring_billing_start_date'])) {
-                    update_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_start_date', sanitize_text_field($_POST['arsol_pfw_proposal_budget_recurring_billing_start_date']));
-                }
-            } else {
-                // If there's no recurring budget, delete the meta
-                delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_interval');
-                delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_period');
-                delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_start_date');
-            }
+            // Save budget data using entity method
+            $proposal->set_proposal_budget($budget_data);
+            
         } else {
-            // If not budget estimates, delete all budget meta to keep things clean
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount');
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount_details');
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount');
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_details');
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_interval');
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_period');
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_start_date');
+            // If not budget estimates, clear budget data
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+            $proposal->set_proposal_budget(array());
         }
 
         // Conditionally delete quotation data if it's not the selected type
@@ -402,23 +403,19 @@ class Proposal {
         
         // Save proposal notes based on costing type
         if ($cost_proposal_type === 'budget') {
-            // Save budget notes
-            if (isset($_POST['arsol_pfw_proposal_budget_notes'])) {
-                update_post_meta($post_id, '_arsol_pfw_proposal_budget_notes', wp_kses_post($_POST['arsol_pfw_proposal_budget_notes']));
+            // Save budget notes using entity method
+            if (isset($_POST['arsol_pfw_proposal_notes'])) {
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+                $proposal->set_budget_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
+                $proposal->save();
             }
-            // Clear quotation notes when switching to budget
-            delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_notes');
         } elseif ($cost_proposal_type === 'quotation') {
-            // Save quotation notes
+            // Save quotation notes using entity method
             if (isset($_POST['arsol_pfw_proposal_quotation_notes'])) {
-                update_post_meta($post_id, '_arsol_pfw_proposal_quotation_notes', wp_kses_post($_POST['arsol_pfw_proposal_quotation_notes']));
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+                $proposal->set_quotation_notes(wp_kses_post($_POST['arsol_pfw_proposal_quotation_notes']));
+                $proposal->save();
             }
-            // Clear budget notes when switching to quotation
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_notes');
-        } else {
-            // If no costing type, clear both note types
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_notes');
-            delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_notes');
         }
         
         // Save customer notice
@@ -541,8 +538,9 @@ class Proposal {
     private function validate_quotation_fields($post_id) {
         $errors = array();
         
-        // Get quotation line items
-        $quotation_line_items = get_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items', true);
+        // Get quotation line items using entity method
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+        $quotation_line_items = $proposal->get_quotation_line_items();
         
         if (empty($quotation_line_items) || !is_array($quotation_line_items)) {
             $errors[] = __('Quotation proposals must have at least one line item.', 'arsol-pfw');
@@ -581,18 +579,8 @@ class Proposal {
             }
         }
         
-        // Check shipping fees
-        if (!$has_valid_item && !empty($quotation_line_items['shipping_fees']) && is_array($quotation_line_items['shipping_fees'])) {
-            foreach ($quotation_line_items['shipping_fees'] as $item) {
-                if (!empty($item['description']) && !empty($item['amount']) && $item['amount'] > 0) {
-                    $has_valid_item = true;
-                    break;
-                }
-            }
-        }
-        
         if (!$has_valid_item) {
-            $errors[] = __('Quotation proposals must have at least one valid line item with description and amount greater than zero.', 'arsol-pfw');
+            $errors[] = __('Quotation proposals must have at least one valid line item with description and amount.', 'arsol-pfw');
         }
         
         return $errors;

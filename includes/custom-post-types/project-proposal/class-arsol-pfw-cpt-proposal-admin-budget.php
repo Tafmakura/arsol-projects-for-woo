@@ -32,21 +32,27 @@ class Proposal_Budget {
     public function render_budget_estimates_meta_box($post) {
         wp_nonce_field('arsol_proposal_budget_save', 'arsol_proposal_budget_nonce');
         
-        // Get current values
-        $budget_data = get_post_meta($post->ID, '_arsol_pfw_proposal_budget_onetime_amount', true);
-        $recurring_budget_data = get_post_meta($post->ID, '_arsol_pfw_proposal_budget_recurring_amount', true);
+        // Get current values using entity methods
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post->ID);
+        $budget_data = $proposal->get_proposal_budget();
+        
+        $onetime_data = $proposal->get_budget_onetime_amount() ?: array();
+        $recurring_data = $proposal->get_budget_recurring_amount() ?: array();
+        $budget_notes = $proposal->get_budget_notes() ?: '';
 
-        $budget_amount = !empty($budget_data['amount']) ? $budget_data['amount'] : '';
-        $recurring_budget_amount = !empty($recurring_budget_data['amount']) ? $recurring_budget_data['amount'] : '';
+        $budget_amount = !empty($onetime_data['amount']) ? $onetime_data['amount'] : '';
+        $recurring_budget_amount = !empty($recurring_data['amount']) ? $recurring_data['amount'] : '';
+        $onetime_details = !empty($onetime_data['details']) ? $onetime_data['details'] : '';
+        $recurring_details = !empty($recurring_data['details']) ? $recurring_data['details'] : '';
 
         // Determine currency
-        $currency_code = !empty($budget_data['currency']) 
-            ? $budget_data['currency'] 
-            : (!empty($recurring_budget_data['currency']) ? $recurring_budget_data['currency'] : get_woocommerce_currency());
+        $currency_code = !empty($onetime_data['currency']) 
+            ? $onetime_data['currency'] 
+            : (!empty($recurring_data['currency']) ? $recurring_data['currency'] : get_woocommerce_currency());
 
-        $billing_interval = get_post_meta($post->ID, '_arsol_pfw_proposal_budget_recurring_amount_billing_interval', true) ?: '1';
-        $billing_period = get_post_meta($post->ID, '_arsol_pfw_proposal_budget_recurring_amount_billing_period', true) ?: 'month';
-        $recurring_start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_budget_recurring_billing_start_date', true);
+        $billing_interval = !empty($recurring_data['billing_interval']) ? $recurring_data['billing_interval'] : '1';
+        $billing_period = !empty($recurring_data['billing_period']) ? $recurring_data['billing_period'] : 'month';
+        $recurring_start_date = !empty($recurring_data['start_date']) ? $recurring_data['start_date'] : '';
         ?>
         <div id="proposal_budget_builder">
             <!-- Budget Section -->
@@ -67,7 +73,7 @@ class Proposal_Budget {
                             <td class="arsol-description-column">
                                 <div class="arsol-flex-container">
                                     <strong class="arsol-flex-fixed arsol-budget-description"><?php _e('One-Time Budget', 'arsol-pfw'); ?></strong>
-                                    <input type="text" class="arsol-description-input js-details-input" name="arsol_pfw_proposal_budget_onetime_amount_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_arsol_pfw_proposal_budget_onetime_amount_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>" required>
+                                    <input type="text" class="arsol-description-input js-details-input" name="arsol_pfw_proposal_budget_onetime_amount_details" value="<?php echo esc_attr($onetime_details); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>" required>
                                 </div>
                             </td>
                             <td class="arsol-date-column">
@@ -89,7 +95,7 @@ class Proposal_Budget {
                             <td class="arsol-description-column">
                                 <div class="arsol-flex-container">
                                     <strong class="arsol-flex-fixed arsol-budget-description"><?php _e('Recurring Budget', 'arsol-pfw'); ?></strong>
-                                    <input type="text" class="arsol-description-input js-details-input" name="arsol_pfw_proposal_budget_recurring_amount_details" value="<?php echo esc_attr(get_post_meta($post->ID, '_arsol_pfw_proposal_budget_recurring_amount_details', true)); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
+                                    <input type="text" class="arsol-description-input js-details-input" name="arsol_pfw_proposal_budget_recurring_amount_details" value="<?php echo esc_attr($recurring_details); ?>" placeholder="<?php esc_attr_e('Additional details...', 'arsol-pfw'); ?>">
                                 </div>
                             </td>
                             <td class="arsol-date-column">
@@ -153,9 +159,8 @@ class Proposal_Budget {
             <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
             <p class="description"><?php _e('These notes will be displayed to the customer on the project proposal.', 'arsol-pfw'); ?></p>
             <?php
-            $notes_content = get_post_meta($post->ID, '_arsol_pfw_proposal_notes', true);
             wp_editor(
-                $notes_content,
+                $budget_notes,
                     'arsol_proposal_notes_budget',
                 array(
                         'textarea_name' => 'arsol_pfw_proposal_notes',

@@ -15,88 +15,80 @@ if (!defined('ABSPATH')) {
 class Conversion_Handler {
 
     /**
-     * Convert a Request to a Proposal
+     * Convert request to proposal
      * 
-     * @param int $request_id Request ID to convert
-     * @return void
+     * @param int $request_id
+     * @return int|WP_Error Proposal ID on success, WP_Error on failure
      */
     public function convert_request_to_proposal($request_id) {
-        error_log("ARSOL PFW DEBUG: Starting request to proposal conversion for request #{$request_id}");
-        
-        try {
-            // 1. Security check
-            if (!wp_verify_nonce($_GET['_wpnonce'], 'arsol_convert_to_proposal_nonce')) {
-                error_log("ARSOL PFW DEBUG: Security check failed");
-                throw new Exception(__('Security check failed.', 'arsol-pfw'));
-            }
-            
-            // 2. Basic validation
-            $request = get_post($request_id);
-            if (!$request || $request->post_type !== 'arsol-pfw-request') {
-                error_log("ARSOL PFW DEBUG: Invalid request - post type: " . ($request ? $request->post_type : 'null'));
-                throw new Exception(__('Invalid request.', 'arsol-pfw'));
-            }
-            
-            if ($request->post_status !== 'publish') {
-                error_log("ARSOL PFW DEBUG: Request not published - status: " . $request->post_status);
-                throw new Exception(__('Only published requests can be converted.', 'arsol-pfw'));
-            }
-            
-            error_log("ARSOL PFW DEBUG: Request validation passed");
-            
-            // 3. Create proposal using factory
-            $request_obj = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($request_id);
-            if (!$request_obj) {
-                error_log("ARSOL PFW DEBUG: Failed to get request object");
-                throw new Exception(__('Request not found.', 'arsol-pfw'));
-            }
-            
-            error_log("ARSOL PFW DEBUG: Creating proposal...");
-            $proposal = arsol_pfw_create_proposal([
-                'name' => $request_obj->get_title(),
-                'customer_id' => $request_obj->get_customer_id(),
-                'budget' => $request_obj->get_budget(),
-                'description' => $request_obj->get_prop('description'),
-                'stage' => 'processing'
-            ]);
-            
-            if (is_wp_error($proposal)) {
-                error_log("ARSOL PFW DEBUG: Failed to create proposal: " . $proposal->get_error_message());
-                throw new Exception($proposal->get_error_message());
-            }
-            
-            $proposal_id = $proposal->save();
-            if (is_wp_error($proposal_id)) {
-                error_log("ARSOL PFW DEBUG: Failed to save proposal: " . $proposal_id->get_error_message());
-                throw new Exception($proposal_id->get_error_message());
-            }
-            
-            error_log("ARSOL PFW DEBUG: Proposal created with ID: {$proposal_id}");
-            
-            // 4. Copy additional metadata
-            error_log("ARSOL PFW DEBUG: Starting metadata copy...");
-            $this->copy_request_metadata_to_proposal($request_id, $proposal_id);
-            error_log("ARSOL PFW DEBUG: Metadata copy completed");
-            
-            // 5. Delete original
-            error_log("ARSOL PFW DEBUG: Deleting original request...");
-            wp_delete_post($request_id, true);
-            
-            // 6. Success
-            error_log("ARSOL PFW DEBUG: Conversion successful");
-            $this->add_notice(__('Request converted to proposal successfully.', 'arsol-pfw'), 'success');
-            
-            // Use Settings API redirect pattern
-            wp_redirect(add_query_arg('settings-updated', 'true', admin_url("post.php?post={$proposal_id}&action=edit")));
-            exit;
-            
-        } catch (Exception $e) {
-            error_log("ARSOL PFW DEBUG: Conversion failed: " . $e->getMessage());
-            // Simple error handling
-            $this->add_notice(__('Conversion failed: ', 'arsol-pfw') . $e->getMessage(), 'error');
-            wp_redirect(add_query_arg('settings-updated', 'true', admin_url("post.php?post={$request_id}&action=edit")));
-            exit;
+        // Verify request exists and is valid
+        $request = get_post($request_id);
+        if (!$request || $request->post_type !== 'arsol-pfw-request') {
+            return new \WP_Error('invalid_request', __('Invalid request ID.', 'arsol-pfw'));
         }
+        
+        // Get request entity for data access
+        $request_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($request_id);
+        
+        // Prepare proposal data
+        $proposal_data = array(
+            'post_type' => 'arsol-pfw-proposal',
+            'post_title' => $request->post_title,
+            'post_content' => $request->post_content,
+            'post_status' => 'draft',
+            'post_author' => $request->post_author, // Creator (admin)
+            'meta_input' => array(
+                '_arsol_pfw_customer_id' => $request_entity->get_customer_id(), // Customer
+                '_arsol_pfw_proposal_start_date' => $request_entity->get_start_date(),
+                '_arsol_pfw_proposal_due_date' => $request_entity->get_due_date(),
+                '_arsol_pfw_proposal_project_lead' => $request_entity->get_project_lead(),
+                '_arsol_pfw_parent_request_id' => $request_id,
+                '_arsol_pfw_created_via' => 'request_conversion'
+            )
+        );
+        
+        // Create the proposal
+        $proposal_id = wp_insert_post($proposal_data);
+        
+        if (is_wp_error($proposal_id)) {
+            return $proposal_id;
+        }
+        
+        // Copy request data based on type
+        $cost_request_type = $request_entity->get_costing_type();
+        
+        switch ($cost_request_type) {
+            case 'budget':
+                // Copy budget data
+                $budget_data = $request_entity->get_request_budget();
+                if (!empty($budget_data)) {
+                    $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+                    $proposal_entity->set_proposal_budget($budget_data);
+                    $proposal_entity->save();
+                }
+                break;
+                
+            case 'quotation':
+                // Copy quotation data
+                $quotation_data = $request_entity->get_request_quotation();
+                if (!empty($quotation_data)) {
+                    $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+                    $proposal_entity->set_proposal_quotation($quotation_data);
+                    $proposal_entity->save();
+                }
+                break;
+        }
+        
+        // Copy taxonomies
+        $this->copy_taxonomies($request_id, $proposal_id);
+        
+        // Set initial stage
+        $this->set_initial_proposal_stage($proposal_id);
+        
+        // Trigger conversion hooks
+        do_action('arsol_pfw_request_converted_to_proposal', $request_id, $proposal_id);
+        
+        return $proposal_id;
     }
 
     /**
@@ -295,7 +287,7 @@ class Conversion_Handler {
         // Debug: Log the start of metadata copy
         error_log("ARSOL PFW DEBUG: Starting metadata copy from proposal #{$proposal_id} to project #{$project_id}");
         
-        // Get proposal and project objects using factory functions
+        // Get proposal and project objects using entity classes
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
         $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
         
@@ -331,36 +323,35 @@ class Conversion_Handler {
         );
         
         // 4. Get proposal type for type-aware handling
-        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+        $cost_proposal_type = $proposal->get_costing_type();
         error_log("ARSOL PFW DEBUG: Proposal costing type: {$cost_proposal_type}");
         
-        // 5. Type-specific mapping
-        $type_specific_mapping = array();
+        // 5. Copy type-specific data using entity methods
         if ($cost_proposal_type === 'budget') {
-            $type_specific_mapping = array(
-                '_arsol_pfw_proposal_budget_onetime_amount' => '_arsol_pfw_project_proposal_budget_onetime_amount',
-                '_arsol_pfw_proposal_budget_recurring_amount' => '_arsol_pfw_project_proposal_budget_recurring_amount',
-                '_arsol_pfw_proposal_budget_recurring_amount_billing_interval' => '_arsol_pfw_project_billing_interval',
-                '_arsol_pfw_proposal_budget_recurring_amount_billing_period' => '_arsol_pfw_project_billing_period',
-                '_arsol_pfw_proposal_budget_recurring_billing_start_date' => '_arsol_pfw_project_recurring_start_date',
-            );
-            error_log("ARSOL PFW DEBUG: Using budget-specific mapping");
+            // Copy budget data using entity methods
+            $budget_data = $proposal->get_proposal_budget();
+            if (!empty($budget_data)) {
+                $project->set_project_budget($budget_data);
+                error_log("ARSOL PFW DEBUG: Copied budget data using entity methods");
+            }
         } elseif ($cost_proposal_type === 'quotation') {
-            $type_specific_mapping = array(
-                '_arsol_pfw_proposal_quotation_line_items' => '_arsol_pfw_project_proposal_quotation_line_items',
-                '_arsol_pfw_proposal_quotation_onetime_total' => '_arsol_pfw_project_proposal_quotation_onetime_total',
-                '_arsol_pfw_proposal_quotation_recurring_totals_grouped' => '_arsol_pfw_project_proposal_quotation_recurring_average_total',
-                '_arsol_pfw_proposal_quotation_currency' => '_arsol_pfw_project_proposal_quotation_currency',
-                '_arsol_pfw_proposal_quotation_currency_symbol' => '_arsol_pfw_project_proposal_quotation_currency_symbol',
-            );
-            error_log("ARSOL PFW DEBUG: Using quotation-specific mapping");
+            // Copy quotation data using entity methods
+            $quotation_data = $proposal->get_proposal_quotation();
+            if (!empty($quotation_data)) {
+                $project->set_project_quotation($quotation_data);
+                error_log("ARSOL PFW DEBUG: Copied quotation data using entity methods");
+            }
         }
         
-        // 6. Combine all mappings
-        $meta_to_copy = array_merge($request_meta_mapping, $proposal_meta_mapping, $type_specific_mapping);
+        // Save project entity to persist the copied data
+        $project->save();
+        error_log("ARSOL PFW DEBUG: Saved project entity with copied data");
+        
+        // 6. Combine all mappings for remaining meta
+        $meta_to_copy = array_merge($request_meta_mapping, $proposal_meta_mapping);
         error_log("ARSOL PFW DEBUG: Total meta keys to copy: " . count($meta_to_copy));
         
-        // 7. Copy all meta data
+        // 7. Copy all remaining meta data
         $copied_count = 0;
         foreach ($meta_to_copy as $proposal_key => $project_key) {
             $value = get_post_meta($proposal_id, $proposal_key, true);
