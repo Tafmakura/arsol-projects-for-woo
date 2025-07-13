@@ -272,6 +272,26 @@ class Arsol_PFW_Request {
     }
 
     /**
+     * Get parent project ID
+     * 
+     * @return int|null Parent project ID
+     */
+    public function get_parent_project_id() {
+        return $this->get_prop('parent_project_id');
+    }
+
+    /**
+     * Set parent project ID
+     * 
+     * @param int $parent_project_id Parent project ID
+     * @return bool Success status
+     */
+    public function set_parent_project_id($parent_project_id) {
+        $this->set_prop('parent_project_id', (int) $parent_project_id);
+        return true;
+    }
+
+    /**
      * Get request timeline
      * 
      * @return array|null Timeline data

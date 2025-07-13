@@ -15,6 +15,7 @@ class Request_Data_Store {
         'timeline'    => '_arsol_pfw_request_timeline',
         'project_lead' => '_arsol_pfw_request_project_lead',
         'start_date'  => '_arsol_pfw_request_start_date',
+        'parent_project_id' => '_arsol_pfw_request_parent_project_id',
     );
     
     /**
