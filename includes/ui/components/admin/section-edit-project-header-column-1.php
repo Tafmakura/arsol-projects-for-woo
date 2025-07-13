@@ -31,31 +31,14 @@ $available_stages = $project->get_available_stages();
 
 <div class="form-field-row">
     <p class="form-field form-field-wide wc-customer-user">
-        <label for="post_author_override">
+        <label for="customer_id">
             <?php _e('Customer:', 'arsol-pfw'); ?>
-            <?php if ($customer): ?>
-                <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-project&author=' . $customer_id); ?>">
-                    <?php _e('View other projects →', 'arsol-pfw'); ?>
-                </a>
-                <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
-                    <?php _e('Profile →', 'arsol-pfw'); ?>
-                </a>
-            <?php endif; ?>
         </label>
-        <select class="wc-customer-search" name="post_author_override" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>" required>
+        <select class="wc-customer-search" name="customer_id" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>">
             <?php if ($customer_id): ?>
-                <?php 
-                $customer_user = get_userdata($customer_id);
-                if ($customer_user) {
-                    $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer_user);
-                    
-                    printf(
-                        '<option value="%s" selected="selected">%s</option>',
-                        esc_attr($customer_user->ID),
-                        esc_html($customer_display)
-                    );
-                }
-                ?>
+                <option value="<?php echo esc_attr($customer_id); ?>" selected>
+                    <?php echo esc_html($customer->display_name); ?>
+                </option>
             <?php endif; ?>
         </select>
     </p>

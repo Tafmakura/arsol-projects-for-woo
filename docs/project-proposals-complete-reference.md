@@ -125,7 +125,7 @@ The following fields are automatically inherited and locked:
 <select class="arsol-disabled-select" disabled>
     <option selected>Customer Name (email@example.com)</option>
 </select>
-<input type="hidden" name="post_author_override" value="123">
+<input type="hidden" name="customer_id" value="123">
 ```
 
 #### Project Lead Field

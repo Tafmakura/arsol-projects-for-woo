@@ -76,7 +76,7 @@ class Proposal {
 
         // Get author dropdown
         $author_dropdown = wp_dropdown_users(array(
-            'name' => 'post_author_override',
+            'name' => 'customer_id',
             'selected' => $post->post_author,
             'include_selected' => true,
             'echo' => false,
@@ -405,7 +405,8 @@ class Proposal {
 
         // Save project lead
         if (isset($_POST['proposal_project_lead'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_project_lead', sanitize_text_field($_POST['proposal_project_lead']));
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+            $proposal->set_project_lead(sanitize_text_field($_POST['proposal_project_lead']));
         }
 
         // Save expiration date
@@ -438,9 +439,9 @@ class Proposal {
             }
         }
         
-        // Save customer ID from post_author_override field
-        if (isset($_POST['post_author_override']) && !empty($_POST['post_author_override'])) {
-            $customer_id = intval($_POST['post_author_override']);
+        // Save customer ID from customer_id field
+        if (isset($_POST['customer_id']) && !empty($_POST['customer_id'])) {
+            $customer_id = intval($_POST['customer_id']);
             update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
         }
         

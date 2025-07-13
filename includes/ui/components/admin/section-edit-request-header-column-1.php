@@ -37,36 +37,13 @@ if (empty($request_stage)) {
 
 <div class="form-field-row">
     <p class="form-field form-field-wide wc-customer-user">
-        <label for="post_author_override">
+        <label for="customer_id">
             <?php _e('Customer:', 'arsol-pfw'); ?>
-            <?php if ($customer): ?>
-                <a href="<?php echo admin_url('edit.php?post_status=all&post_type=arsol-pfw-request&author=' . $customer_id); ?>">
-                    <?php _e('View other requests →', 'arsol-pfw'); ?>
-                </a>
-                <a href="<?php echo admin_url('user-edit.php?user_id=' . $customer_id); ?>">
-                    <?php _e('Profile →', 'arsol-pfw'); ?>
-                </a>
-            <?php endif; ?>
         </label>
-        <select class="arsol-disabled-select" name="post_author_override" disabled>
-            <?php if ($customer_id): ?>
-                <?php
-                $customer_user = get_userdata($customer_id);
-                if ($customer_user) {
-                    $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer_user);
-                    
-                    printf(
-                        '<option value="%s" selected="selected">%s</option>',
-                        esc_attr($customer_user->ID),
-                        esc_html($customer_display)
-                    );
-                } else {
-                    echo '<option value="">' . esc_html__('Customer not found', 'arsol-pfw') . '</option>';
-                }
-                ?>
-            <?php else: ?>
-                <option value=""><?php esc_html_e('No customer assigned', 'arsol-pfw'); ?></option>
-            <?php endif; ?>
+        <select class="arsol-disabled-select" name="customer_id" disabled>
+            <option value="<?php echo esc_attr($customer_id); ?>" selected>
+                <?php echo esc_html($customer->display_name); ?>
+            </option>
         </select>
     </p>
 </div>

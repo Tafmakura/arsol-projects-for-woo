@@ -54,7 +54,7 @@
             }
 
             // Update required fields on input changes
-            $(document).on('input change', 'select[name="post_author_override"], input[name="arsol_pfw_proposal_budget_onetime_amount"], input[name="arsol_pfw_proposal_budget_onetime_amount_details"]', function() {
+            $(document).on('input change', 'select[name="customer_id"], input[name="arsol_pfw_proposal_budget_onetime_amount"], input[name="arsol_pfw_proposal_budget_onetime_amount_details"]', function() {
                 ArsolProposal.updateRequiredFields();
             });
 
@@ -80,7 +80,7 @@
             var proposalType = $('#arsol_pfw_proposal_costing_type').val();
 
             // Customer is always required
-            var customerSelect = $('select[name="post_author_override"]');
+            var customerSelect = $('select[name="customer_id"]');
             customerSelect.attr('required', true);
 
             // Clear all field requirements first - budget fields
