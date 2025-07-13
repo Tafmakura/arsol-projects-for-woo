@@ -1374,4 +1374,201 @@ class Arsol_PFW_Proposal {
     public function get_changes() {
         return $this->changes;
     }
+
+    // ========================================
+    // INDIVIDUAL META KEY ACCESS (WooCommerce Pattern)
+    // ========================================
+
+    /**
+     * Get individual budget meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'onetime_amount', 'recurring_amount', 'notes')
+     * @return mixed Field value
+     */
+    public function get_budget_meta($field) {
+        $meta_key = '_arsol_pfw_proposal_budget_' . $field;
+        return get_post_meta($this->proposal_id, $meta_key, true);
+    }
+
+    /**
+     * Set individual budget meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'onetime_amount', 'recurring_amount', 'notes')
+     * @param mixed $value Field value
+     */
+    public function set_budget_meta($field, $value) {
+        $meta_key = '_arsol_pfw_proposal_budget_' . $field;
+        update_post_meta($this->proposal_id, $meta_key, $value);
+        
+        // Update the cached data structure
+        $budget_data = $this->get_proposal_budget();
+        $budget_data[$field] = $value;
+        $this->set_prop('budget_data', $budget_data);
+    }
+
+    /**
+     * Get individual quotation meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'line_items', 'onetime_total', 'currency')
+     * @return mixed Field value
+     */
+    public function get_quotation_meta($field) {
+        $meta_key = '_arsol_pfw_proposal_quotation_' . $field;
+        return get_post_meta($this->proposal_id, $meta_key, true);
+    }
+
+    /**
+     * Set individual quotation meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'line_items', 'onetime_total', 'currency')
+     * @param mixed $value Field value
+     */
+    public function set_quotation_meta($field, $value) {
+        $meta_key = '_arsol_pfw_proposal_quotation_' . $field;
+        update_post_meta($this->proposal_id, $meta_key, $value);
+        
+        // Update the cached data structure
+        $quotation_data = $this->get_proposal_quotation();
+        $quotation_data[$field] = $value;
+        $this->set_prop('quotation_data', $quotation_data);
+    }
+
+    /**
+     * Get individual request meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'details', 'title', 'budget')
+     * @return mixed Field value
+     */
+    public function get_request_meta($field) {
+        $meta_key = '_arsol_pfw_proposal_request_' . $field;
+        return get_post_meta($this->proposal_id, $meta_key, true);
+    }
+
+    /**
+     * Set individual request meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'details', 'title', 'budget')
+     * @param mixed $value Field value
+     */
+    public function set_request_meta($field, $value) {
+        $meta_key = '_arsol_pfw_proposal_request_' . $field;
+        update_post_meta($this->proposal_id, $meta_key, $value);
+        
+        // Update the cached data structure
+        $request_data = $this->get_original_request();
+        $request_data[$field] = $value;
+        $this->set_prop('original_request_data', $request_data);
+    }
+
+    /**
+     * Get individual WooCommerce meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'order_id', 'subscription_id', 'created_via')
+     * @return mixed Field value
+     */
+    public function get_woocommerce_meta($field) {
+        $meta_key = '_arsol_pfw_woocommerce_' . $field;
+        return get_post_meta($this->proposal_id, $meta_key, true);
+    }
+
+    /**
+     * Set individual WooCommerce meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'order_id', 'subscription_id', 'created_via')
+     * @param mixed $value Field value
+     */
+    public function set_woocommerce_meta($field, $value) {
+        $meta_key = '_arsol_pfw_woocommerce_' . $field;
+        update_post_meta($this->proposal_id, $meta_key, $value);
+        
+        // Update the cached data structure
+        $woocommerce_data = $this->get_woocommerce_integration();
+        $woocommerce_data[$field] = $value;
+        $this->set_prop('woocommerce_data', $woocommerce_data);
+    }
+
+    /**
+     * Get individual workflow meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'status', 'type', 'step')
+     * @return mixed Field value
+     */
+    public function get_workflow_meta($field) {
+        $meta_key = '_arsol_pfw_workflow_' . $field;
+        return get_post_meta($this->proposal_id, $meta_key, true);
+    }
+
+    /**
+     * Set individual workflow meta field (WooCommerce pattern)
+     * 
+     * @param string $field Field name (e.g., 'status', 'type', 'step')
+     * @param mixed $value Field value
+     */
+    public function set_workflow_meta($field, $value) {
+        $meta_key = '_arsol_pfw_workflow_' . $field;
+        update_post_meta($this->proposal_id, $meta_key, $value);
+        
+        // Update the cached data structure
+        $workflow_data = $this->get_workflow_history();
+        $workflow_data[$field] = $value;
+        $this->set_prop('workflow_data', $workflow_data);
+    }
+
+    // ========================================
+    // LEGACY META KEY ACCESS (Backward Compatibility)
+    // ========================================
+
+    /**
+     * Get legacy budget onetime amount (backward compatibility)
+     * 
+     * @return array|mixed Legacy format
+     */
+    public function get_legacy_budget_onetime_amount() {
+        return get_post_meta($this->proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
+    }
+
+    /**
+     * Set legacy budget onetime amount (backward compatibility)
+     * 
+     * @param array|mixed $data Legacy format
+     */
+    public function set_legacy_budget_onetime_amount($data) {
+        update_post_meta($this->proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', $data);
+    }
+
+    /**
+     * Get legacy budget recurring amount (backward compatibility)
+     * 
+     * @return array|mixed Legacy format
+     */
+    public function get_legacy_budget_recurring_amount() {
+        return get_post_meta($this->proposal_id, '_arsol_pfw_proposal_budget_recurring_amount', true);
+    }
+
+    /**
+     * Set legacy budget recurring amount (backward compatibility)
+     * 
+     * @param array|mixed $data Legacy format
+     */
+    public function set_legacy_budget_recurring_amount($data) {
+        update_post_meta($this->proposal_id, '_arsol_pfw_proposal_budget_recurring_amount', $data);
+    }
+
+    /**
+     * Get legacy quotation line items (backward compatibility)
+     * 
+     * @return array|mixed Legacy format
+     */
+    public function get_legacy_quotation_line_items() {
+        return get_post_meta($this->proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
+    }
+
+    /**
+     * Set legacy quotation line items (backward compatibility)
+     * 
+     * @param array|mixed $data Legacy format
+     */
+    public function set_legacy_quotation_line_items($data) {
+        update_post_meta($this->proposal_id, '_arsol_pfw_proposal_quotation_line_items', $data);
+    }
 }

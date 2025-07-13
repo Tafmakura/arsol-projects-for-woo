@@ -365,13 +365,25 @@ class Proposal {
                 }
             }
             
-            // Save budget data using entity method
+            // Save budget data using entity method (primary approach)
             $proposal->set_proposal_budget($budget_data);
+            
+            // Also save individual meta fields for backward compatibility (WooCommerce pattern)
+            if (!empty($budget_data['onetime'])) {
+                $proposal->set_legacy_budget_onetime_amount($budget_data['onetime']);
+            }
+            if (!empty($budget_data['recurring'])) {
+                $proposal->set_legacy_budget_recurring_amount($budget_data['recurring']);
+            }
             
         } else {
             // If not budget estimates, clear budget data
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
             $proposal->set_proposal_budget(array());
+            
+            // Also clear individual meta fields
+            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount');
+            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount');
         }
 
         // Conditionally delete quotation data if it's not the selected type
