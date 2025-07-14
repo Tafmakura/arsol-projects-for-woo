@@ -51,11 +51,11 @@ $has_request_data = false;
 $request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
 $request_title = get_post_meta($project_id, '_arsol_pfw_project_request_title', true);
 $request_content = get_post_meta($project_id, '_arsol_pfw_project_request_content', true);
-$request_budget = get_post_meta($project_id, '_arsol_pfw_proposal_request_budget', true);
-$request_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_start_date', true);
-$request_delivery_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_delivery_date', true);
+$requested_budget = get_post_meta($project_id, '_arsol_pfw_proposal_requested_budget', true);
+$requested_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_requested_start_date', true);
+$requested_due_date = get_post_meta($project_id, '_arsol_pfw_proposal_request_delivery_date', true);
 
-if ($request_id || $request_title || $request_content || $request_budget || $request_start_date || $request_delivery_date) {
+if ($request_id || $request_title || $request_content || $requested_budget || $requested_start_date || $requested_due_date) {
     $has_request_data = true;
 }
 

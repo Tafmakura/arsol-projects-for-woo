@@ -303,7 +303,7 @@ class Proposal_Conversion {
             '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
             '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
             '_arsol_pfw_proposal_project_lead' => '_arsol_pfw_project_lead',
-            '_arsol_pfw_proposal_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
+            '_arsol_pfw_proposed_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
         );
         
         // Get proposal type for type-aware handling
@@ -346,8 +346,8 @@ class Proposal_Conversion {
 
         // Historical preservation - keep original proposal field names for reference
         $historical_fields = array(
-            '_arsol_pfw_proposal_start_date',
-            '_arsol_pfw_proposal_delivery_date',
+            '_arsol_pfw_proposed_start_date',
+            '_arsol_pfw_proposed_due_date',
         );
         
         foreach ($historical_fields as $field) {

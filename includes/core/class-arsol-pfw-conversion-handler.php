@@ -39,8 +39,8 @@ class Conversion_Handler {
             'post_author' => $request->post_author, // Creator (admin)
             'meta_input' => array(
                 '_arsol_pfw_customer_id' => $request_entity->get_customer_id(), // Customer
-                '_arsol_pfw_proposal_start_date' => $request_entity->get_start_date(),
-                '_arsol_pfw_proposal_due_date' => $request_entity->get_due_date(),
+                '_arsol_pfw_proposed_start_date' => $request_entity->get_start_date(),
+                '_arsol_pfw_proposed_due_date' => $request_entity->get_due_date(),
                 '_arsol_pfw_proposal_project_lead' => $request_entity->get_project_lead(),
                 '_arsol_pfw_parent_request_id' => $request_id,
                 '_arsol_pfw_created_via' => 'request_conversion'
@@ -319,7 +319,7 @@ class Conversion_Handler {
             '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
             '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
             '_arsol_pfw_proposal_project_lead' => '_arsol_pfw_project_lead',
-            '_arsol_pfw_proposal_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
+            '_arsol_pfw_proposed_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
         );
         
         // 4. Get proposal type for type-aware handling
@@ -367,8 +367,8 @@ class Conversion_Handler {
         
         // 8. Historical preservation - keep original proposal field names for reference
         $historical_fields = array(
-            '_arsol_pfw_proposal_start_date',
-            '_arsol_pfw_proposal_delivery_date',
+            '_arsol_pfw_proposed_start_date',
+            '_arsol_pfw_proposed_due_date',
         );
         
         $historical_copied_count = 0;

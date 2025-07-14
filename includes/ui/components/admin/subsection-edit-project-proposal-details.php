@@ -24,18 +24,18 @@ $post_id = get_the_ID();
 if ($post_type === 'arsol-pfw-proposal') {
     // For proposals, get request data from proposal meta
     $request_id = get_post_meta($post_id, '_arsol_pfw_proposal_request_id', true);
-    $request_budget = get_post_meta($post_id, '_arsol_pfw_proposal_request_budget', true);
-    $request_start_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_start_date', true);
-    $request_delivery_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_delivery_date', true);
+    $requested_budget = get_post_meta($post_id, '_arsol_pfw_proposal_request_budget', true);
+    $requested_start_date = get_post_meta($post_id, '_arsol_pfw_proposal_requested_start_date', true);
+    $requested_due_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_delivery_date', true);
 } else {
     // For projects, get request data from project meta
     $request_id = get_post_meta($post_id, '_arsol_pfw_project_request_id', true);
-    $request_budget = get_post_meta($post_id, '_arsol_pfw_project_request_budget', true);
-    $request_start_date = get_post_meta($post_id, '_arsol_pfw_project_request_start_date', true);
-    $request_delivery_date = get_post_meta($post_id, '_arsol_pfw_project_request_delivery_date', true);
+    $requested_budget = get_post_meta($post_id, '_arsol_pfw_project_request_budget', true);
+    $requested_start_date = get_post_meta($post_id, '_arsol_pfw_project_requested_start_date', true);
+    $requested_due_date = get_post_meta($post_id, '_arsol_pfw_project_request_delivery_date', true);
 }
 
-$has_request_data = $request_id || $request_budget || $request_start_date || $request_delivery_date;
+$has_request_data = $request_id || $requested_budget || $requested_start_date || $requested_due_date;
 ?>
 
 <?php if ($has_request_data): ?>
@@ -49,23 +49,23 @@ $has_request_data = $request_id || $request_budget || $request_start_date || $re
             </tr>
             <tr>
                 <th><?php _e('Start Date:', 'arsol-pfw'); ?></th>
-                <td><?php echo !empty($request_start_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($request_start_date))) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?></td>
+                <td><?php echo !empty($requested_start_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($requested_start_date))) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?></td>
             </tr>
             <tr>
                 <th><?php _e('Due Date:', 'arsol-pfw'); ?></th>
-                <td><?php echo !empty($request_delivery_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($request_delivery_date))) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?></td>
+                <td><?php echo !empty($requested_due_date) ? esc_html(date_i18n(get_option('date_format'), strtotime($requested_due_date))) : '<em>' . __('Not provided', 'arsol-pfw') . '</em>'; ?></td>
             </tr>
             <tr>
                 <th><?php _e('Budget:', 'arsol-pfw'); ?></th>
                 <td>
-                    <?php if (!empty($request_budget)): ?>
-                        <?php if (is_array($request_budget) && isset($request_budget['amount'])): ?>
+                    <?php if (!empty($requested_budget)): ?>
+                        <?php if (is_array($requested_budget) && isset($requested_budget['amount'])): ?>
                             <?php 
-                            $currency = isset($request_budget['currency']) ? $request_budget['currency'] : get_woocommerce_currency();
-                            echo wc_price($request_budget['amount'], array('currency' => $currency));
+                            $currency = isset($requested_budget['currency']) ? $requested_budget['currency'] : get_woocommerce_currency();
+                            echo wc_price($requested_budget['amount'], array('currency' => $currency));
                             ?>
                         <?php else: ?>
-                            <?php echo wc_price($request_budget); ?>
+                            <?php echo wc_price($requested_budget); ?>
                         <?php endif; ?>
                     <?php else: ?>
                         <em><?php _e('Not provided', 'arsol-pfw'); ?></em>

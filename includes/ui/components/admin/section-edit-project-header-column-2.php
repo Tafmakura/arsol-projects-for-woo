@@ -30,8 +30,8 @@ if ($proposal_id) {
     $recurring_budget_data = $project->get_proposal_budget_recurring_amount();
     $billing_interval = $project->get_proposal_budget_recurring_billing_interval();
     $billing_period = $project->get_proposal_budget_recurring_billing_period();
-    $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposal_start_date', true);
-    $proposed_delivery_date = get_post_meta($project_id, '_arsol_pfw_proposal_delivery_date', true);
+    $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposed_start_date', true);
+    $proposed_due_date = get_post_meta($project_id, '_arsol_pfw_proposed_due_date', true);
     $proposed_expiration_date = get_post_meta($project_id, '_arsol_pfw_proposal_expiration_date', true);
 }
 
@@ -40,11 +40,11 @@ if ($proposal_id) {
         $request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
         $request_title = get_post_meta($project_id, '_arsol_pfw_project_request_title', true);
         $request_content = get_post_meta($project_id, '_arsol_pfw_project_request_content', true);
-        $request_budget = get_post_meta($project_id, '_arsol_pfw_project_request_budget', true);
-        $request_start_date = get_post_meta($project_id, '_arsol_pfw_project_request_start_date', true);
-        $request_delivery_date = get_post_meta($project_id, '_arsol_pfw_project_request_delivery_date', true);
+        $requested_budget = get_post_meta($project_id, '_arsol_pfw_project_requested_budget', true);
+        $requested_start_date = get_post_meta($project_id, '_arsol_pfw_project_requested_start_date', true);
+        $requested_due_date = get_post_meta($project_id, '_arsol_pfw_project_request_delivery_date', true);
 
-        $has_request_data = $request_id || $request_budget || $request_start_date || $request_delivery_date;
+        $has_request_data = $request_id || $requested_budget || $requested_start_date || $requested_due_date;
 ?>
 
 <?php if ($has_proposal_data): ?>
@@ -82,10 +82,10 @@ if ($proposal_id) {
     </p>
     <?php endif; ?>
 
-    <?php if (!empty($proposed_delivery_date)): ?>
+    <?php if (!empty($proposed_due_date)): ?>
     <p class="form-field form-field-wide">
         <label><strong><?php _e('Proposed Due Date:', 'arsol-pfw'); ?></strong></label>
-        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($proposed_delivery_date))); ?>
+        <?php echo esc_html(date_i18n(get_option('date_format'), strtotime($proposed_due_date))); ?>
     </p>
     <?php endif; ?>
 

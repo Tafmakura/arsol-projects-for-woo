@@ -42,9 +42,9 @@ foreach ($requests as $request) {
     $expected_keys = array(
         '_arsol_pfw_request_title',
         '_arsol_pfw_request_date',
-        '_arsol_pfw_request_budget',
-        '_arsol_pfw_request_start_date',
-        '_arsol_pfw_request_delivery_date',
+        '_arsol_pfw_requested_budget',
+        '_arsol_pfw_requested_start_date',
+        '_arsol_pfw_requested_due_date',
         '_arsol_pfw_request_attachments',
         '_arsol_pfw_request_customer_notice'
     );

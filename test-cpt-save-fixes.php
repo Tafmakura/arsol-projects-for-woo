@@ -88,7 +88,7 @@ if (!current_user_can('manage_options')) {
         
         $tests = array(
             'arsol_pfw_proposal_start_date' => 'Start date field save',
-            'arsol_pfw_proposal_delivery_date' => 'Delivery date field save',
+            'arsol_pfw_proposal_due_date' => 'Due date field save',
             'proposal_project_lead' => 'Project lead field save'
         );
         
@@ -136,13 +136,13 @@ if (!current_user_can('manage_options')) {
     
     $meta_mapping = array(
         'Request' => array(
-            'request_budget' => '_arsol_pfw_request_budget',
-            'request_start_date' => '_arsol_pfw_request_start_date',
-            'request_delivery_date' => '_arsol_pfw_request_delivery_date'
+            'requested_budget' => '_arsol_pfw_requested_budget',
+            'requested_start_date' => '_arsol_pfw_requested_start_date',
+            'requested_due_date' => '_arsol_pfw_requested_due_date'
         ),
         'Proposal' => array(
-            'arsol_pfw_proposal_start_date' => '_arsol_pfw_proposal_start_date',
-            'arsol_pfw_proposal_delivery_date' => '_arsol_pfw_proposal_delivery_date',
+            'arsol_pfw_proposal_start_date' => '_arsol_pfw_proposed_start_date',
+            'arsol_pfw_proposal_due_date' => '_arsol_pfw_proposed_due_date',
             'proposal_project_lead' => '_arsol_pfw_proposal_project_lead'
         ),
         'Project' => array(

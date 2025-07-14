@@ -13,12 +13,12 @@ class Proposal_Data_Store {
         'description' => '_arsol_pfw_proposal_description',
         'timeline'    => '_arsol_pfw_proposal_timeline',
         'project_lead' => '_arsol_pfw_proposal_project_lead',
-        'start_date'  => '_arsol_pfw_proposal_start_date',
+        'start_date'  => '_arsol_pfw_proposed_start_date',
         // Removed delivery_date mapping - now using due_date consistently
         'expiration_date' => '_arsol_pfw_proposal_expiration_date',
         'costing_type' => '_arsol_pfw_proposal_costing_type',
         'parent_project_id' => '_arsol_pfw_proposal_parent_project_id',
-        'due_date'    => '_arsol_pfw_proposal_due_date',
+        'due_date'    => '_arsol_pfw_proposed_due_date',
         'customer_notice' => '_arsol_pfw_proposal_customer_notice',
         'secondary_status' => '_arsol_pfw_proposal_secondary_status',
     );

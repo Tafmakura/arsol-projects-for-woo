@@ -169,7 +169,7 @@ $meta_mapping = array(
     // Core request data
     '_arsol_pfw_request_budget' => '_arsol_pfw_proposal_request_budget',
     '_arsol_pfw_request_start_date' => '_arsol_pfw_proposal_request_start_date',
-    '_arsol_pfw_request_delivery_date' => '_arsol_pfw_proposal_request_delivery_date',
+    '_arsol_pfw_request_delivery_date' => '_arsol_pfw_proposed_due_date',
     
     // Request details
     'request_title' => '_arsol_pfw_proposal_request_title',
@@ -290,8 +290,8 @@ do_action('arsol_after_project_conversion_metadata_copied', $project_id, $propos
 $meta_mapping = array(
     // Direct proposal data
     '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
-    '_arsol_pfw_proposal_start_date' => '_arsol_pfw_project_proposal_start_date',
-    '_arsol_pfw_proposal_delivery_date' => '_arsol_pfw_project_proposal_delivery_date',
+    '_arsol_pfw_proposal_start_date' => '_arsol_pfw_project_proposed_start_date',
+    '_arsol_pfw_proposal_due_date' => '_arsol_pfw_project_proposed_due_date',
     '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
     '_arsol_pfw_proposal_timeline' => '_arsol_pfw_project_proposal_timeline',
     

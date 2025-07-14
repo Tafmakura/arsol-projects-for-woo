@@ -74,11 +74,11 @@ elseif ($proposal_id > 0) {
 // Check if has request data
 $has_request_data = false;
 $request_id = $proposal->get_source_request_id();
-$request_budget = $proposal->get_request_budget();
-$request_start_date = $proposal->get_meta('_arsol_pfw_proposal_request_start_date');
-$request_delivery_date = $proposal->get_meta('_arsol_pfw_proposal_request_delivery_date');
+$requested_budget = $proposal->get_requested_budget();
+$requested_start_date = $proposal->get_meta('_arsol_pfw_proposal_requested_start_date');
+$requested_due_date = $proposal->get_meta('_arsol_pfw_proposal_request_delivery_date');
 
-if ($request_id || $request_budget || $request_start_date || $request_delivery_date) {
+if ($request_id || $requested_budget || $requested_start_date || $requested_due_date) {
     $has_request_data = true;
 }
 

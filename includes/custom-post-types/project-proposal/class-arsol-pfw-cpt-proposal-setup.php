@@ -150,9 +150,9 @@ class Setup {
         }
 
         // Get request data for display
-        $request_budget = get_post_meta($post->ID, '_arsol_pfw_proposal_request_budget', true);
-        $request_start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_start_date', true);
-        $request_delivery_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_delivery_date', true);
+        $requested_budget = get_post_meta($post->ID, '_arsol_pfw_proposal_requested_budget', true);
+        $requested_start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_requested_start_date', true);
+        $requested_due_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_delivery_date', true);
         $request_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_date', true);
         $request_title = get_post_meta($post->ID, '_arsol_pfw_proposal_request_title', true);
         $request_content = get_post_meta($post->ID, '_arsol_pfw_proposal_request_details', true);
@@ -167,32 +167,32 @@ class Setup {
         }
 
         // Display request budget if available
-        if ($request_budget) {
+        if ($requested_budget) {
             echo '<div class="arsol-meta-item">';
             echo '<strong>' . __('Request Budget:', 'arsol-pfw') . '</strong>';
-            if (is_array($request_budget)) {
-                $amount = isset($request_budget['amount']) ? $request_budget['amount'] : '';
-                $currency = isset($request_budget['currency']) ? $request_budget['currency'] : get_woocommerce_currency();
+            if (is_array($requested_budget)) {
+                $amount = isset($requested_budget['amount']) ? $requested_budget['amount'] : '';
+                $currency = isset($requested_budget['currency']) ? $requested_budget['currency'] : get_woocommerce_currency();
                 echo '<span>' . wc_price($amount, array('currency' => $currency)) . '</span>';
             } else {
-                echo '<span>' . esc_html($request_budget) . '</span>';
+                echo '<span>' . esc_html($requested_budget) . '</span>';
             }
             echo '</div>';
         }
 
         // Display request start date if available
-        if ($request_start_date) {
+        if ($requested_start_date) {
             echo '<div class="arsol-meta-item">';
             echo '<strong>' . __('Request Start Date:', 'arsol-pfw') . '</strong>';
-            echo '<span>' . date_i18n(get_option('date_format'), strtotime($request_start_date)) . '</span>';
+            echo '<span>' . date_i18n(get_option('date_format'), strtotime($requested_start_date)) . '</span>';
             echo '</div>';
         }
 
         // Display request due date if available
-        if ($request_delivery_date) {
+        if ($requested_due_date) {
             echo '<div class="arsol-meta-item">';
             echo '<strong>' . __('Request Due Date:', 'arsol-pfw') . '</strong>';
-            echo '<span>' . date_i18n(get_option('date_format'), strtotime($request_delivery_date)) . '</span>';
+            echo '<span>' . date_i18n(get_option('date_format'), strtotime($requested_due_date)) . '</span>';
             echo '</div>';
         }
 
@@ -217,13 +217,13 @@ class Setup {
      * Check if proposal has request data
      */
     private function has_request_data($post_id) {
-        $request_budget = get_post_meta($post_id, '_arsol_pfw_proposal_request_budget', true);
-        $request_start_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_start_date', true);
-        $request_delivery_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_delivery_date', true);
+        $requested_budget = get_post_meta($post_id, '_arsol_pfw_proposal_requested_budget', true);
+        $requested_start_date = get_post_meta($post_id, '_arsol_pfw_proposal_requested_start_date', true);
+        $requested_due_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_delivery_date', true);
         $request_date = get_post_meta($post_id, '_arsol_pfw_proposal_request_date', true);
         $request_attachments = get_post_meta($post_id, '_arsol_pfw_proposal_request_attachments', true);
         
-        return !empty($request_budget) || !empty($request_start_date) || !empty($request_delivery_date) || !empty($request_date) || !empty($request_attachments);
+        return !empty($requested_budget) || !empty($requested_start_date) || !empty($requested_due_date) || !empty($request_date) || !empty($request_attachments);
     }
 
     /**

@@ -119,9 +119,9 @@ class Request_Frontend extends Frontend_Handler {
             
             $title = sanitize_text_field($_POST['request_title']);
             $description = wp_kses_post($_POST['request_description']);
-            $budget = isset($_POST['request_budget']) ? sanitize_text_field($_POST['request_budget']) : '';
-            $start_date = isset($_POST['request_start_date']) ? sanitize_text_field($_POST['request_start_date']) : '';
-            $delivery_date = isset($_POST['request_delivery_date']) ? sanitize_text_field($_POST['request_delivery_date']) : '';
+            $requested_budget = isset($_POST['requested_budget']) ? sanitize_text_field($_POST['requested_budget']) : '';
+            $requested_start_date = isset($_POST['requested_start_date']) ? sanitize_text_field($_POST['requested_start_date']) : '';
+            $requested_due_date = isset($_POST['requested_due_date']) ? sanitize_text_field($_POST['requested_due_date']) : '';
             
             // Prepare creation data for hooks
             $creation_data = array(
@@ -364,16 +364,16 @@ class Request_Frontend extends Frontend_Handler {
         // Get request object to use setter methods
         $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post_id);
         
-        if (!empty($data['request_budget'])) {
-            $request->set_budget(sanitize_text_field($data['request_budget']));
+        if (!empty($data['requested_budget'])) {
+            $request->set_budget(sanitize_text_field($data['requested_budget']));
         }
         
-        if (!empty($data['request_start_date'])) {
-            $request->set_start_date(sanitize_text_field($data['request_start_date']));
+        if (!empty($data['requested_start_date'])) {
+            $request->set_start_date(sanitize_text_field($data['requested_start_date']));
         }
         
-        if (!empty($data['request_delivery_date'])) {
-            $request->set_due_date(sanitize_text_field($data['request_delivery_date']));
+        if (!empty($data['requested_due_date'])) {
+            $request->set_due_date(sanitize_text_field($data['requested_due_date']));
         }
         
         if (!empty($data['request_project_lead'])) {
@@ -382,9 +382,9 @@ class Request_Frontend extends Frontend_Handler {
 
         // Save any additional custom fields
         $custom_fields = array(
-            '_arsol_pfw_request_title' => 'request_title',
-            '_arsol_pfw_request_priority' => 'request_priority',
-            '_arsol_pfw_request_category' => 'request_category',
+            '_arsol_pfw_requested_budget' => 'requested_budget',
+            '_arsol_pfw_requested_start_date' => 'requested_start_date',
+            '_arsol_pfw_requested_due_date' => 'requested_due_date',
         );
 
         foreach ($custom_fields as $meta_key => $form_field) {

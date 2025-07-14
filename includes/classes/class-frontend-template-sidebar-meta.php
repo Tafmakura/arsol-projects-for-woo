@@ -190,6 +190,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project($post_id);
         $due_date = $project->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
@@ -262,7 +263,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = get_post_meta($post_id, '_arsol_pfw_proposal_start_date', true);
+        $start_date = get_post_meta($post_id, '_arsol_pfw_proposed_start_date', true);
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -332,7 +333,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Budget
-        $budget = get_post_meta($post_id, '_arsol_pfw_request_budget', true);
+        $budget = get_post_meta($post_id, '_arsol_pfw_requested_budget', true);
         if (!empty($budget)) {
             if (is_array($budget) && isset($budget['amount'])) {
                 $metadata['budget'] = array(
@@ -354,6 +355,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Request\Arsol_PFW_Project_Request($post_id);
         $due_date = $request->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(

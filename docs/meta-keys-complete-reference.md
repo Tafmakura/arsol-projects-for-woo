@@ -117,8 +117,8 @@ update_post_meta($request_id, '_arsol_pfw_request_delivery_date', sanitize_text_
 
 | Meta Key | Type | Description | Usage |
 |----------|------|-------------|-------|
-| `_arsol_pfw_proposal_start_date` | String | Proposed start date | `'2024-01-15'` |
-| `_arsol_pfw_proposal_delivery_date` | String | Proposed delivery date | `'2024-03-15'` |
+| `_arsol_pfw_proposed_start_date` | String | Proposed start date | `'2024-01-15'` |
+| `_arsol_pfw_proposed_due_date` | String | Proposed due date | `'2024-03-15'` |
 | `_arsol_pfw_proposal_expiration_date` | String | Proposal expiration | `'2024-01-01'` |
 
 ### Budget-Type Proposals
@@ -335,9 +335,9 @@ These were successfully migrated to standardized format:
 |------------|---------------------|
 | `_cost_proposal_type` | `_arsol_pfw_proposal_costing_type` |
 | `_proposal_secondary_status` | `_arsol_pfw_proposal_secondary_status` |
-| `_proposal_start_date` | `_arsol_pfw_proposal_start_date` |
-| `_proposal_budget` | `_arsol_pfw_proposal_budget_onetime_amount` |
-| `_proposal_notes` | `_arsol_pfw_proposal_notes` |
+| `_arsol_pfw_proposed_start_date` | `_arsol_pfw_proposal_start_date` |
+| `_arsol_pfw_proposal_budget_onetime_amount` | `_arsol_pfw_proposal_budget_onetime_amount` |
+| `_arsol_pfw_proposal_notes` | `_arsol_pfw_proposal_notes` |
 
 ---
 

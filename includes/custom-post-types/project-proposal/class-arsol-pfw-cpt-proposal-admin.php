@@ -63,15 +63,15 @@ class Proposal {
             $cost_proposal_type = 'none'; // Default to none
         }
 
-        $start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_start_date', true);
+        $start_date = get_post_meta($post->ID, '_arsol_pfw_proposed_start_date', true);
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Proposal($post->ID);
         $delivery_date = $proposal->get_due_date();
         $expiration_date = get_post_meta($post->ID, '_arsol_pfw_proposal_expiration_date', true);
 
         // Get original request data for comparison
-        $request_budget = get_post_meta($post->ID, '_arsol_pfw_proposal_request_budget', true);
-        $request_start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_start_date', true);
-        $request_delivery_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_delivery_date', true);
+        $requested_budget = get_post_meta($post->ID, '_arsol_pfw_proposal_requested_budget', true);
+        $requested_start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_requested_start_date', true);
+        $request_due_date = get_post_meta($post->ID, '_arsol_pfw_proposal_request_delivery_date', true);
 
         // WordPress automatically preserves form data on validation failures - no temporary storage needed
 
@@ -396,12 +396,12 @@ class Proposal {
 
         // Save start date
         if (isset($_POST['arsol_pfw_proposal_start_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_start_date', sanitize_text_field($_POST['arsol_pfw_proposal_start_date']));
+            update_post_meta($post_id, '_arsol_pfw_proposed_start_date', sanitize_text_field($_POST['arsol_pfw_proposal_start_date']));
         }
 
         // Save due date
         if (isset($_POST['arsol_pfw_proposal_due_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_due_date', sanitize_text_field($_POST['arsol_pfw_proposal_due_date']));
+            update_post_meta($post_id, '_arsol_pfw_proposed_due_date', sanitize_text_field($_POST['arsol_pfw_proposal_due_date']));
         }
 
         // Save project lead

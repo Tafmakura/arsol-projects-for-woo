@@ -247,8 +247,8 @@ $form.attr('action', currentAction + separator + 'parent_project=' + parentProje
 |----------|-------------|---------|--------------|
 | `_arsol_pfw_proposal_project_lead` | Project lead user ID | Editable | Locked |
 | `_arsol_pfw_proposal_costing_type` | Cost proposal type | Editable | Locked (quotation) |
-| `_arsol_pfw_proposal_start_date` | Proposed start date | Editable | Editable |
-| `_arsol_pfw_proposal_delivery_date` | Proposed delivery date | Editable | Editable |
+| `_arsol_pfw_proposed_start_date` | Proposed start date | Editable | Editable |
+| `_arsol_pfw_proposed_due_date` | Proposed due date | Editable | Editable |
 | `_arsol_pfw_proposal_expiration_date` | Proposal expiration | Editable | Editable |
 | `_arsol_pfw_parent_project_id` | Parent project ID | N/A | Auto-set |
 | `_arsol_pfw_is_project_tied_proposal` | Project-tied flag | N/A | Auto-set (1) |
@@ -343,8 +343,8 @@ Project-tied proposals **cannot** be converted as they're already linked to exis
 // Basic proposal information
 '_arsol_pfw_proposal_project_lead'        // User ID of project lead
 '_arsol_pfw_proposal_costing_type'        // none|budget|quotation
-'_arsol_pfw_proposal_start_date'          // Y-m-d format
-'_arsol_pfw_proposal_delivery_date'       // Y-m-d format
+'_arsol_pfw_proposed_start_date'          // Y-m-d format
+'_arsol_pfw_proposed_due_date'            // Y-m-d format
 '_arsol_pfw_proposal_expiration_date'     // Y-m-d format
 '_arsol_pfw_proposal_notes'               // Additional notes
 
@@ -356,7 +356,7 @@ Project-tied proposals **cannot** be converted as they're already linked to exis
 '_arsol_pfw_proposal_request_id'          // Original request ID
 '_arsol_pfw_proposal_request_budget'      // Request budget data
 '_arsol_pfw_proposal_request_start_date'  // Request start date
-'_arsol_pfw_proposal_request_delivery_date' // Request delivery date
+'_arsol_pfw_proposed_due_date'            // Y-m-d format
 ```
 
 ### Budget Meta Keys
