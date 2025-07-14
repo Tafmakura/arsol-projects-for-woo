@@ -76,7 +76,7 @@ $has_request_data = false;
 $request_id = $proposal->get_source_request_id();
 $requested_budget = $proposal->get_requested_budget();
 $requested_start_date = $proposal->get_meta('_arsol_pfw_proposal_requested_start_date');
-$requested_due_date = $proposal->get_meta('_arsol_pfw_proposal_request_delivery_date');
+$requested_due_date = $proposal->get_meta('_arsol_pfw_requested_project_due_date');
 
 if ($request_id || $requested_budget || $requested_start_date || $requested_due_date) {
     $has_request_data = true;

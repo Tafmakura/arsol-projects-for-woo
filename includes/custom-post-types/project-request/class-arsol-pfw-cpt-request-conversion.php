@@ -198,7 +198,7 @@ class Request_Conversion {
         $meta_mapping = array(
             '_arsol_pfw_request_title' => '_arsol_pfw_proposal_request_title',
             '_arsol_pfw_request_date' => '_arsol_pfw_proposal_request_date',
-            '_arsol_pfw_requested_budget' => '_arsol_pfw_proposal_requested_budget',
+            '_arsol_pfw_requested_budget' => '_arsol_pfw_requested_budget',
             '_arsol_pfw_requested_start_date' => '_arsol_pfw_proposal_requested_start_date',
             '_arsol_pfw_requested_due_date' => '_arsol_pfw_proposal_requested_due_date',
             '_arsol_pfw_request_attachments' => '_arsol_pfw_proposal_request_attachments',

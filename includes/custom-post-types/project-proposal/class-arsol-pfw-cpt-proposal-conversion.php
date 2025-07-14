@@ -292,9 +292,9 @@ class Proposal_Conversion {
             '_arsol_pfw_proposal_request_details' => '_arsol_pfw_project_request_details',
             '_arsol_pfw_proposal_request_title' => '_arsol_pfw_project_request_title',
             '_arsol_pfw_proposal_request_date' => '_arsol_pfw_project_request_date',
-            '_arsol_pfw_proposal_request_budget' => '_arsol_pfw_project_request_budget',
-            '_arsol_pfw_proposal_request_start_date' => '_arsol_pfw_project_request_start_date',
-            '_arsol_pfw_proposal_request_delivery_date' => '_arsol_pfw_project_request_delivery_date',
+            '_arsol_pfw_proposal_request_budget' => '_arsol_pfw_requested_budget',
+            '_arsol_pfw_proposal_request_start_date' => '_arsol_pfw_requested_start_date',
+            '_arsol_pfw_requested_due_date' => '_arsol_pfw_requested_due_date',
             '_arsol_pfw_proposal_request_attachments' => '_arsol_pfw_project_request_attachments',
         );
         
@@ -303,7 +303,8 @@ class Proposal_Conversion {
             '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
             '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
             '_arsol_pfw_proposal_project_lead' => '_arsol_pfw_project_lead',
-            '_arsol_pfw_proposed_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
+            '_arsol_pfw_proposed_budget' => '_arsol_pfw_proposed_budget',
+            '_arsol_pfw_proposed_due_date' => '_arsol_pfw_proposed_due_date', // Map due date to project due date
         );
         
         // Get proposal type for type-aware handling

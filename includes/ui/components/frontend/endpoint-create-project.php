@@ -26,20 +26,20 @@ if ($is_edit && isset($post) && $post) {
         $content = $post->post_content; // Post content still comes from WP_Post
         $budget = $project->get_budget();
         $start_date = $project->get_prop('start_date');
-        $delivery_date = $project->get_due_date();
+        $due_date = $project->get_due_date();
     } else {
         $title = '';
         $content = '';
         $budget = '';
         $start_date = '';
-        $delivery_date = '';
+        $due_date = '';
     }
 } else {
     $title = '';
     $content = '';
     $budget = '';
     $start_date = '';
-    $delivery_date = '';
+    $due_date = '';
 }
 
 // Check if user can create/edit projects
@@ -105,11 +105,11 @@ $nonce_action = $is_edit ? 'edit_project' : 'create_project';
             </div>
             
             <div class="arsol-pfw-project-field-col arsol-date-col">
-                <label for="project_delivery_date"><?php _e('Due Date', 'arsol-pfw'); ?></label>
+                <label for="project_due_date"><?php _e('Due Date', 'arsol-pfw'); ?></label>
                 <input type="date" 
-                       id="project_delivery_date" 
-                       name="project_delivery_date"
-                       value="<?php echo esc_attr($delivery_date); ?>"
+                       id="project_due_date"
+                       name="project_due_date"
+                       value="<?php echo esc_attr($due_date); ?>"
                        class="arsol-date-input">
             </div>
         </div>

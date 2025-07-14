@@ -42,7 +42,7 @@ if ($proposal_id) {
         $request_content = get_post_meta($project_id, '_arsol_pfw_project_request_content', true);
         $requested_budget = get_post_meta($project_id, '_arsol_pfw_project_requested_budget', true);
         $requested_start_date = get_post_meta($project_id, '_arsol_pfw_project_requested_start_date', true);
-        $requested_due_date = get_post_meta($project_id, '_arsol_pfw_project_request_delivery_date', true);
+        $requested_due_date = get_post_meta($project_id, '_arsol_pfw_requested_project_due_date', true);
 
         $has_request_data = $request_id || $requested_budget || $requested_start_date || $requested_due_date;
 ?>

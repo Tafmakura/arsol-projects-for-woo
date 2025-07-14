@@ -215,9 +215,9 @@ class Conversion_Handler {
         // 2. Rename request meta keys with proposal context
         // Map request meta to proposal meta
         $meta_mapping = array(
-            '_arsol_pfw_request_budget' => '_arsol_pfw_proposal_request_budget',
-            '_arsol_pfw_request_start_date' => '_arsol_pfw_proposal_request_start_date',
-            '_arsol_pfw_request_due_date' => '_arsol_pfw_proposal_request_due_date',
+            '_arsol_pfw_request_budget' => '_arsol_pfw_requested_budget',
+            '_arsol_pfw_request_start_date' => '_arsol_pfw_requested_start_date',
+            '_arsol_pfw_request_due_date' => '_arsol_pfw_requested_due_date',
         );
         
         $copied_count = 0;

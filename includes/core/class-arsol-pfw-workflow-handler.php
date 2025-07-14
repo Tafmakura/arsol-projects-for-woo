@@ -244,8 +244,8 @@ class Workflow_Handler {
             $request->set_start_date(sanitize_text_field($data['request_start_date']));
         }
         
-        if (isset($data['request_delivery_date'])) {
-            $request->set_due_date(sanitize_text_field($data['request_delivery_date']));
+        if (isset($data['request_due_date'])) {
+            $request->set_due_date(sanitize_text_field($data['request_due_date']));
         }
         
         if (isset($data['request_project_lead'])) {

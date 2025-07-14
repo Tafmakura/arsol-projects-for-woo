@@ -48,13 +48,13 @@ if ($is_edit && isset($request)) {
     $content = $post->post_content; // Post content still comes from WP_Post
     $budget = $request->get_budget();
     $start_date = $request->get_prop('start_date');
-    $delivery_date = $request->get_due_date();
+    $due_date = $request->get_due_date();
 } else {
     $title = '';
     $content = '';
     $budget = '';
     $start_date = '';
-    $delivery_date = '';
+    $due_date = '';
 }
 
 // Get currency information
@@ -118,8 +118,8 @@ if (!$is_edit) {
             </div>
             
             <div class="arsol-pfw-project-field-col arsol-date-col">
-                <label for="request_delivery_date"><?php _e('Required Due Date', 'arsol-pfw'); ?></label>
-                <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="arsol-date-input">
+                <label for="request_due_date"><?php _e('Required Due Date', 'arsol-pfw'); ?></label>
+                <input type="date" id="request_due_date" name="request_due_date" value="<?php echo esc_attr($due_date); ?>" class="arsol-date-input">
             </div>
         </div>
         

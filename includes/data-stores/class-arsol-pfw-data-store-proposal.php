@@ -14,6 +14,7 @@ class Proposal_Data_Store {
         'timeline'    => '_arsol_pfw_proposal_timeline',
         'project_lead' => '_arsol_pfw_proposal_project_lead',
         'start_date'  => '_arsol_pfw_proposed_start_date',
+        'budget'      => '_arsol_pfw_proposed_budget',
         // Removed delivery_date mapping - now using due_date consistently
         'expiration_date' => '_arsol_pfw_proposal_expiration_date',
         'costing_type' => '_arsol_pfw_proposal_costing_type',

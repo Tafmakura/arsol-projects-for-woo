@@ -155,8 +155,8 @@ class Request {
             $request->set_start_date(sanitize_text_field($_POST['request_start_date']));
         }
         
-        if (isset($_POST['request_delivery_date'])) {
-            $request->set_due_date(sanitize_text_field($_POST['request_delivery_date']));
+        if (isset($_POST['request_due_date'])) {
+            $request->set_due_date(sanitize_text_field($_POST['request_due_date']));
         }
         
         if (isset($_POST['request_project_lead'])) {

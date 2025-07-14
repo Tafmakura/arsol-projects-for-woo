@@ -23,7 +23,7 @@ $customer = get_userdata($customer_id);
 $request_stage = $request->get_stage();
 $budget = $request->get_budget();
 $start_date = $request->get_start_date();
-$delivery_date = $request->get_due_date();
+$due_date = $request->get_due_date();
 $request_project_lead = $request->get_project_lead();
 
 // Get available stages using the request entity
@@ -93,8 +93,8 @@ if (empty($request_stage)) {
         <input type="date" id="request_start_date" name="request_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
     </p>
     <p class="form-field form-field-half">
-        <label for="request_delivery_date"><?php _e('Due Date:', 'arsol-pfw'); ?></label>
-        <input type="date" id="request_delivery_date" name="request_delivery_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
+        <label for="request_due_date"><?php _e('Due Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="request_due_date" name="request_due_date" value="<?php echo esc_attr($due_date); ?>" class="widefat">
     </p>
 </div>
 

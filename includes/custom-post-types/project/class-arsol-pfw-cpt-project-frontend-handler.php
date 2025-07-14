@@ -70,7 +70,7 @@ class Frontend_Handler {
         $description = isset($_POST['project_description']) ? wp_kses_post($_POST['project_description']) : '';
         $budget = isset($_POST['project_budget']) ? sanitize_text_field($_POST['project_budget']) : '';
         $start_date = isset($_POST['project_start_date']) ? sanitize_text_field($_POST['project_start_date']) : '';
-        $delivery_date = isset($_POST['project_delivery_date']) ? sanitize_text_field($_POST['project_delivery_date']) : '';
+        $due_date = isset($_POST['project_due_date']) ? sanitize_text_field($_POST['project_due_date']) : '';
         
         // Validate required fields
         if (empty($title)) {
@@ -192,8 +192,8 @@ class Frontend_Handler {
         if (!empty($start_date)) {
             update_post_meta($project_id, '_arsol_pfw_project_start_date', $start_date);
         }
-        if (!empty($delivery_date)) {
-            update_post_meta($project_id, '_arsol_pfw_project_delivery_date', $delivery_date);
+        if (!empty($due_date)) {
+            update_post_meta($project_id, '_arsol_pfw_project_due_date', $due_date);
         }
 
         /**
@@ -301,7 +301,7 @@ class Frontend_Handler {
         $description = isset($_POST['project_description']) ? wp_kses_post($_POST['project_description']) : '';
         $budget = isset($_POST['project_budget']) ? sanitize_text_field($_POST['project_budget']) : '';
         $start_date = isset($_POST['project_start_date']) ? sanitize_text_field($_POST['project_start_date']) : '';
-        $delivery_date = isset($_POST['project_delivery_date']) ? sanitize_text_field($_POST['project_delivery_date']) : '';
+        $due_date = isset($_POST['project_due_date']) ? sanitize_text_field($_POST['project_due_date']) : '';
         
         // Validate required fields
         if (empty($title)) {
@@ -394,8 +394,8 @@ class Frontend_Handler {
             update_post_meta($project_id, '_arsol_pfw_project_start_date', $start_date);
         }
 
-        if (!empty($delivery_date)) {
-            update_post_meta($project_id, '_arsol_pfw_project_delivery_date', $delivery_date);
+        if (!empty($due_date)) {
+            update_post_meta($project_id, '_arsol_pfw_project_due_date', $due_date);
         }
 
         /**

@@ -345,7 +345,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = get_post_meta($post_id, '_arsol_pfw_request_start_date', true);
+        $start_date = get_post_meta($post_id, '_arsol_pfw_requested_project_start_date', true);
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Requested Start Date', 'arsol-pfw'),
