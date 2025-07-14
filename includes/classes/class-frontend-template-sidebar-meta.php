@@ -240,7 +240,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Project Lead
-        $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
+        $lead_id = get_post_meta($post_id, '_arsol_pfw_proposed_project_lead', true);
         if (!empty($lead_id)) {
             $lead = get_userdata($lead_id);
             if ($lead) {
@@ -263,7 +263,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = get_post_meta($post_id, '_arsol_pfw_proposed_start_date', true);
+        $start_date = get_post_meta($post_id, '_arsol_pfw_proposed_project_start_date', true);
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),

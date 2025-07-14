@@ -38,22 +38,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <?php
 // Get custom fields
 $budget = get_post_meta($request->ID, '_arsol_pfw_requested_budget', true);
-$timeline = get_post_meta($request->ID, '_arsol_pfw_request_timeline', true);
-$priority = get_post_meta($request->ID, '_arsol_pfw_request_priority', true);
-
-if ($budget || $timeline || $priority):
 ?>
+
+<?php if ($budget): ?>
 <h3><?php _e('Additional Details', 'arsol-pfw'); ?></h3>
 <ul>
-    <?php if ($budget): ?>
     <li><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php echo esc_html($budget); ?></li>
-    <?php endif; ?>
-    <?php if ($timeline): ?>
-    <li><strong><?php _e('Timeline:', 'arsol-pfw'); ?></strong> <?php echo esc_html($timeline); ?></li>
-    <?php endif; ?>
-    <?php if ($priority): ?>
-    <li><strong><?php _e('Priority:', 'arsol-pfw'); ?></strong> <?php echo esc_html(ucfirst($priority)); ?></li>
-    <?php endif; ?>
 </ul>
 <?php endif; ?>
 

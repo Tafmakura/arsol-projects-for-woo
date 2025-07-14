@@ -11,23 +11,20 @@ class Proposal_Data_Store {
     // Simple meta keys (individual fields)
     protected $meta_keys = array(
         'description' => '_arsol_pfw_proposal_description',
-        'timeline'    => '_arsol_pfw_proposal_timeline',
-        'project_lead' => '_arsol_pfw_proposal_project_lead',
-        'start_date'  => '_arsol_pfw_proposed_start_date',
-        'budget'      => '_arsol_pfw_proposed_budget',
-        // Removed delivery_date mapping - now using due_date consistently
+        'project_lead' => '_arsol_pfw_proposed_project_lead',
+        'start_date'  => '_arsol_pfw_proposed_project_start_date',
+        'due_date'    => '_arsol_pfw_proposed_project_due_date',
         'expiration_date' => '_arsol_pfw_proposal_expiration_date',
         'costing_type' => '_arsol_pfw_proposal_costing_type',
-        'parent_project_id' => '_arsol_pfw_proposal_parent_project_id',
-        'due_date'    => '_arsol_pfw_proposed_due_date',
+        'parent_project_id' => '_arsol_pfw_parent_project_id',
         'customer_notice' => '_arsol_pfw_proposal_customer_notice',
         'secondary_status' => '_arsol_pfw_proposal_secondary_status',
     );
     
     // Complex data structure meta keys (array-based)
     protected $complex_meta_keys = array(
-        'budget_data' => '_arsol_pfw_proposal_budget_data',
-        'quotation_data' => '_arsol_pfw_proposal_quotation_data',
+        'budget_data' => '_arsol_pfw_proposed_project_budget_line_items',
+        'quotation_data' => '_arsol_pfw_proposed_project_quotation_line_items',
         'original_request_data' => '_arsol_pfw_proposal_original_request_data',
         'woocommerce_data' => '_arsol_pfw_proposal_woocommerce_data',
         'workflow_data' => '_arsol_pfw_proposal_workflow_data',
@@ -64,14 +61,12 @@ class Proposal_Data_Store {
         update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
         update_post_meta($post_id, '_arsol_pfw_created_via', 'admin_creation');
         
-        // Save simple meta
+        // Save meta
         $this->save_simple_meta($proposal);
-        
-        // Save complex meta
         $this->save_complex_meta($proposal);
         
         // Set initial stage
-        $stage = $proposal->get_prop('stage') ?: 'processing';
+        $stage = $proposal->get_prop('stage') ?: 'draft';
         \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($post_id, 'proposal', $stage);
         
         do_action('arsol_pfw_proposal_created', $post_id, $proposal);
@@ -166,10 +161,8 @@ class Proposal_Data_Store {
             update_post_meta($proposal->get_id(), '_arsol_pfw_created_via', $changes['created_via']);
         }
         
-        // Update simple meta
+        // Update meta
         $this->save_simple_meta($proposal);
-        
-        // Update complex meta
         $this->save_complex_meta($proposal);
         
         do_action('arsol_pfw_proposal_updated', $proposal->get_id(), $proposal);

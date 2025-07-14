@@ -35,18 +35,12 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <?php
 // Get proposal details
 $estimated_cost = get_post_meta($proposal->ID, '_arsol_pfw_proposal_estimated_cost', true);
-$estimated_timeline = get_post_meta($proposal->ID, '_arsol_pfw_proposal_timeline', true);
-
-if ($estimated_cost || $estimated_timeline):
 ?>
+
+<?php if ($estimated_cost): ?>
 <h3><?php _e('Quick Overview', 'arsol-pfw'); ?></h3>
 <ul>
-    <?php if ($estimated_cost): ?>
-    <li><strong><?php _e('Estimated Investment:', 'arsol-pfw'); ?></strong> <?php echo esc_html($estimated_cost); ?></li>
-    <?php endif; ?>
-    <?php if ($estimated_timeline): ?>
-    <li><strong><?php _e('Estimated Timeline:', 'arsol-pfw'); ?></strong> <?php echo esc_html($estimated_timeline); ?></li>
-    <?php endif; ?>
+    <li><strong><?php _e('Estimated Cost:', 'arsol-pfw'); ?></strong> <?php echo esc_html($estimated_cost); ?></li>
 </ul>
 <?php endif; ?>
 

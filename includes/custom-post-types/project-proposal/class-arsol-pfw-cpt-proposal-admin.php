@@ -70,7 +70,7 @@ class Proposal {
 
         // Get original request data for comparison
         $requested_budget = get_post_meta($post->ID, '_arsol_pfw_requested_budget', true);
-        $requested_start_date = get_post_meta($post->ID, '_arsol_pfw_proposal_requested_start_date', true);
+        $requested_start_date = get_post_meta($post->ID, '_arsol_pfw_requested_project_start_date', true);
         $request_due_date = get_post_meta($post->ID, '_arsol_pfw_requested_project_due_date', true);
 
         // WordPress automatically preserves form data on validation failures - no temporary storage needed

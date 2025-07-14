@@ -12,10 +12,9 @@ class Request_Data_Store {
         'budget'      => '_arsol_pfw_requested_budget',
         'due_date'    => '_arsol_pfw_requested_due_date',
         'description' => '_arsol_pfw_request_description',
-        'timeline'    => '_arsol_pfw_request_timeline',
         'project_lead' => '_arsol_pfw_request_project_lead',
         'start_date'  => '_arsol_pfw_requested_start_date',
-        'parent_project_id' => '_arsol_pfw_request_parent_project_id',
+        'parent_project_id' => '_arsol_pfw_parent_project_id',
     );
     
     /**

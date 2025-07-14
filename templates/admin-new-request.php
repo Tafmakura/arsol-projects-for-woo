@@ -73,28 +73,12 @@ if (!defined('ABSPATH')) {
                 <?php
                 // Get custom fields
                 $budget = get_post_meta($request->ID, '_arsol_pfw_request_budget', true);
-                $timeline = get_post_meta($request->ID, '_arsol_pfw_request_timeline', true);
-                $priority = get_post_meta($request->ID, '_arsol_pfw_request_priority', true);
                 ?>
 
                 <?php if ($budget): ?>
                 <div class="detail-row">
                     <span class="detail-label">Budget:</span>
                     <span class="detail-value"><?php echo esc_html($budget); ?></span>
-                </div>
-                <?php endif; ?>
-
-                <?php if ($timeline): ?>
-                <div class="detail-row">
-                    <span class="detail-label">Timeline:</span>
-                    <span class="detail-value"><?php echo esc_html($timeline); ?></span>
-                </div>
-                <?php endif; ?>
-
-                <?php if ($priority): ?>
-                <div class="detail-row">
-                    <span class="detail-label">Priority:</span>
-                    <span class="detail-value"><?php echo esc_html(ucfirst($priority)); ?></span>
                 </div>
                 <?php endif; ?>
             </div>

@@ -406,7 +406,8 @@ class Arsol_PFW_Proposal {
      * @return array|null Onetime amount data
      */
     public function get_budget_onetime_amount() {
-        return $this->get_budget_field('onetime');
+        $budget_data = $this->get_proposal_budget();
+        return isset($budget_data['onetime']) ? $budget_data['onetime'] : null;
     }
 
     /**
@@ -416,7 +417,9 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_budget_onetime_amount($amount_data) {
-        return $this->set_budget_field('onetime', $amount_data);
+        $budget_data = $this->get_proposal_budget();
+        $budget_data['onetime'] = $amount_data;
+        return $this->set_proposal_budget($budget_data);
     }
 
     /**
@@ -425,7 +428,8 @@ class Arsol_PFW_Proposal {
      * @return array|null Recurring amount data
      */
     public function get_budget_recurring_amount() {
-        return $this->get_budget_field('recurring');
+        $budget_data = $this->get_proposal_budget();
+        return isset($budget_data['recurring']) ? $budget_data['recurring'] : null;
     }
 
     /**
@@ -435,7 +439,9 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_budget_recurring_amount($amount_data) {
-        return $this->set_budget_field('recurring', $amount_data);
+        $budget_data = $this->get_proposal_budget();
+        $budget_data['recurring'] = $amount_data;
+        return $this->set_proposal_budget($budget_data);
     }
 
     /**
@@ -444,7 +450,8 @@ class Arsol_PFW_Proposal {
      * @return string|null Budget notes
      */
     public function get_budget_notes() {
-        return $this->get_budget_field('notes');
+        $budget_data = $this->get_proposal_budget();
+        return isset($budget_data['notes']) ? $budget_data['notes'] : null;
     }
 
     /**
@@ -454,7 +461,9 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_budget_notes($notes) {
-        return $this->set_budget_field('notes', $notes);
+        $budget_data = $this->get_proposal_budget();
+        $budget_data['notes'] = $notes;
+        return $this->set_proposal_budget($budget_data);
     }
 
     /**
@@ -463,7 +472,8 @@ class Arsol_PFW_Proposal {
      * @return string|null Budget type
      */
     public function get_budget_type() {
-        return $this->get_budget_field('type');
+        $budget_data = $this->get_proposal_budget();
+        return isset($budget_data['type']) ? $budget_data['type'] : null;
     }
 
     /**
@@ -473,7 +483,9 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_budget_type($type) {
-        return $this->set_budget_field('type', $type);
+        $budget_data = $this->get_proposal_budget();
+        $budget_data['type'] = $type;
+        return $this->set_proposal_budget($budget_data);
     }
 
     /**
@@ -727,42 +739,7 @@ class Arsol_PFW_Proposal {
     // SIMPLE FIELD METHODS (Individual fields)
     // ========================================
 
-    /**
-     * Get proposal timeline
-     * 
-     * @return array Timeline data
-     */
-    public function get_timeline() {
-        return array(
-            'start_date' => $this->get_prop('start_date'),
-            'due_date' => $this->get_prop('due_date'),
-            'expiration_date' => $this->get_prop('expiration_date')
-        );
-    }
 
-    /**
-     * Set proposal timeline
-     * 
-     * @param array $timeline Timeline data
-     * @return bool Success status
-     */
-    public function set_timeline($timeline) {
-        $success = true;
-        
-        if (isset($timeline['start_date'])) {
-            $this->set_prop('start_date', $timeline['start_date']);
-        }
-        
-        if (isset($timeline['due_date'])) {
-            $this->set_prop('due_date', $timeline['due_date']);
-        }
-        
-        if (isset($timeline['expiration_date'])) {
-            $this->set_prop('expiration_date', $timeline['expiration_date']);
-        }
-
-        return $success;
-    }
 
     /**
      * Get source request ID

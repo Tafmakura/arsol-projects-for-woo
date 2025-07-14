@@ -12,10 +12,17 @@ class Project_Data_Store {
         'budget'      => '_arsol_pfw_project_budget',
         'due_date'    => '_arsol_pfw_project_due_date',
         'description' => '_arsol_pfw_project_description',
-        'timeline'    => '_arsol_pfw_project_timeline',
         'start_date'  => '_arsol_pfw_project_start_date',
         'project_lead' => '_arsol_pfw_project_lead',
         'customer_notice' => '_arsol_pfw_project_customer_notice',
+    );
+    
+    // Complex data structure meta keys (array-based) - inherited from proposal
+    protected $complex_meta_keys = array(
+        'proposal_budget_data' => '_arsol_pfw_proposed_project_budget_line_items',
+        'proposal_quotation_data' => '_arsol_pfw_proposed_project_quotation_line_items',
+        'woocommerce_data' => '_arsol_pfw_project_woocommerce_data',
+        'workflow_data' => '_arsol_pfw_project_workflow_data',
     );
     
     /**
@@ -50,7 +57,8 @@ class Project_Data_Store {
         update_post_meta($post_id, '_arsol_pfw_created_via', 'admin_creation');
         
         // Save meta
-        $this->save_meta($project);
+        $this->save_simple_meta($project);
+        $this->save_complex_meta($project);
         
         // Set initial stage
         $stage = $project->get_prop('stage') ?: 'not-started';
@@ -91,10 +99,16 @@ class Project_Data_Store {
             $project->set_prop('created_via', $created_via);
         }
         
-        // Load meta data
+        // Load simple meta data
         foreach ($this->meta_keys as $prop => $meta_key) {
             $value = get_post_meta($post->ID, $meta_key, true);
             $project->set_prop($prop, $value);
+        }
+        
+        // Load complex meta data
+        foreach ($this->complex_meta_keys as $prop => $meta_key) {
+            $value = get_post_meta($post->ID, $meta_key, true);
+            $project->set_prop($prop, $value ?: array());
         }
         
         return true;
@@ -143,7 +157,8 @@ class Project_Data_Store {
         }
         
         // Update meta
-        $this->save_meta($project);
+        $this->save_simple_meta($project);
+        $this->save_complex_meta($project);
         
         do_action('arsol_pfw_project_updated', $project->get_id(), $project);
         
@@ -171,11 +186,11 @@ class Project_Data_Store {
     }
     
     /**
-     * Save meta data
+     * Save simple meta data
      *
      * @param object $project Project object
      */
-    protected function save_meta($project) {
+    protected function save_simple_meta($project) {
         foreach ($this->meta_keys as $prop => $meta_key) {
             $value = $project->get_prop($prop);
             if ($value !== null) {
@@ -185,11 +200,43 @@ class Project_Data_Store {
     }
     
     /**
-     * Get meta keys mapping
+     * Save complex meta data (array-based structures)
+     *
+     * @param object $project Project object
+     */
+    protected function save_complex_meta($project) {
+        foreach ($this->complex_meta_keys as $prop => $meta_key) {
+            $value = $project->get_prop($prop);
+            if ($value !== null) {
+                update_post_meta($project->get_id(), $meta_key, $value);
+            }
+        }
+    }
+    
+    /**
+     * Get simple meta keys mapping
      *
      * @return array
      */
     public function get_meta_keys() {
         return $this->meta_keys;
+    }
+    
+    /**
+     * Get complex meta keys mapping
+     *
+     * @return array
+     */
+    public function get_complex_meta_keys() {
+        return $this->complex_meta_keys;
+    }
+    
+    /**
+     * Get all meta keys mapping
+     *
+     * @return array
+     */
+    public function get_all_meta_keys() {
+        return array_merge($this->meta_keys, $this->complex_meta_keys);
     }
 } 

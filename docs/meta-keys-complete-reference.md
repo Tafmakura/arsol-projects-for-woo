@@ -1,6 +1,6 @@
 # Arsol Projects for Woo - Meta Keys Complete Reference
 
-**Version**: 1.0  
+**Version**: 2.0  
 **Date**: 2024  
 **Purpose**: Complete documentation of all meta keys used in the Arsol Projects for Woo plugin
 
@@ -14,14 +14,17 @@
 4. [Project Proposal Meta Keys](#project-proposal-meta-keys)
 5. [Active Project Meta Keys](#active-project-meta-keys)
 6. [WooCommerce Integration Meta Keys](#woocommerce-integration-meta-keys)
-7. [Legacy Meta Keys](#legacy-meta-keys)
-8. [Migration Reference](#migration-reference)
+7. [Data Access Patterns](#data-access-patterns)
+8. [Migration Status](#migration-status)
 
 ---
 
 ## Overview
 
-The Arsol Projects for Woo plugin uses a comprehensive meta key system to store custom data across three main custom post types (CPTs) and their integration with WooCommerce orders and subscriptions.
+The Arsol Projects for Woo plugin uses a comprehensive meta key system with standardized naming conventions across three main custom post types (CPTs):
+- **Projects** (`arsol-pfw-project`)
+- **Proposals** (`arsol-pfw-proposal`) 
+- **Requests** (`arsol-pfw-request`)
 
 ### Naming Convention
 
@@ -39,9 +42,9 @@ Where:
 
 | Category | Count | Prefix Pattern | Purpose |
 |----------|-------|----------------|---------|
-| **Request Keys** | 5 | `_arsol_pfw_request_*` | Project request data |
-| **Proposal Keys** | 25+ | `_arsol_pfw_proposal_*` | Proposal details & quotations |
-| **Project Keys** | 10+ | `_arsol_pfw_project_*` | Active project management |
+| **Request Keys** | 6 | `_arsol_pfw_request_*` | Project request data |
+| **Proposal Keys** | 15+ | `_arsol_pfw_proposal_*` | Proposal details & quotations |
+| **Project Keys** | 8+ | `_arsol_pfw_project_*` | Active project management |
 | **Integration Keys** | 3 | Various | WooCommerce integration |
 
 ---
@@ -50,38 +53,36 @@ Where:
 
 ### Current Status
 
-- ✅ **Proposal Meta Keys**: Fully standardized (25+ keys)
-- 🔄 **Project Meta Keys**: Partially standardized (ongoing migration)
-- 🔄 **Request Meta Keys**: Partially standardized (ongoing migration)
-- ❌ **Legacy Keys**: Being phased out
+- ✅ **Proposal Meta Keys**: Fully standardized with array-based structures
+- ✅ **Project Meta Keys**: Standardized with inherited array structures
+- ✅ **Request Meta Keys**: Standardized with simplified structure
+- ✅ **Timeline Fields**: Removed from all CPTs
+- ✅ **Priority Fields**: Removed from all CPTs
 
 ### Standardization Benefits
 
 1. **Consistent Naming**: Easy to understand and maintain
 2. **Namespace Protection**: Prevents conflicts with other plugins
 3. **Logical Grouping**: Related fields grouped by context
-4. **Future-Proof**: Scalable naming structure
+4. **Array-Based Structures**: Complex data stored as arrays (WooCommerce pattern)
+5. **Future-Proof**: Scalable naming structure
 
 ---
 
 ## Project Request Meta Keys
 
-*Total: 5 standardized keys*
+*Total: 6 standardized keys*
 
 ### Core Request Data
 
 | Meta Key | Type | Description | Usage |
 |----------|------|-------------|-------|
-| `_arsol_pfw_request_budget` | Array | Customer budget information | `{'amount': 1000, 'currency': 'USD'}` |
-| `_arsol_pfw_request_start_date` | String | Requested start date | `'2024-01-15'` |
-| `_arsol_pfw_request_delivery_date` | String | Requested delivery date | `'2024-03-15'` |
-
-### Admin Feedback Fields
-
-| Meta Key | Type | Description | Usage |
-|----------|------|-------------|-------|
-| `_arsol_pfw_request_onhold_feedback` | String | Admin feedback when on hold | Reason for hold status |
-| `_arsol_pfw_request_underreview_feedback` | String | Admin notes during review | Review progress notes |
+| `_arsol_pfw_requested_budget` | Array | Customer budget information | `{'amount': 1000, 'currency': 'USD'}` |
+| `_arsol_pfw_requested_start_date` | String | Requested start date | `'2024-01-15'` |
+| `_arsol_pfw_requested_due_date` | String | Requested delivery date | `'2024-03-15'` |
+| `_arsol_pfw_request_description` | String | Request description | Text content |
+| `_arsol_pfw_request_project_lead` | String | Assigned project lead | User ID |
+| `_arsol_pfw_parent_project_id` | String | Parent project ID | Post ID |
 
 ### Implementation Example
 
@@ -91,78 +92,53 @@ $budget_data = array(
     'amount' => floatval($_POST['budget_amount']),
     'currency' => get_woocommerce_currency()
 );
-update_post_meta($request_id, '_arsol_pfw_request_budget', $budget_data);
+update_post_meta($request_id, '_arsol_pfw_requested_budget', $budget_data);
 
 // Saving dates
-update_post_meta($request_id, '_arsol_pfw_request_start_date', sanitize_text_field($_POST['start_date']));
-update_post_meta($request_id, '_arsol_pfw_request_delivery_date', sanitize_text_field($_POST['delivery_date']));
+update_post_meta($request_id, '_arsol_pfw_requested_start_date', sanitize_text_field($_POST['start_date']));
+update_post_meta($request_id, '_arsol_pfw_requested_due_date', sanitize_text_field($_POST['due_date']));
 ```
 
 ---
 
 ## Project Proposal Meta Keys
 
-*Total: 25+ standardized keys*
+*Total: 15+ standardized keys*
 
-### Core Proposal Data
+### Core Proposal Data (Simple Meta Keys)
 
 | Meta Key | Type | Description | Usage |
 |----------|------|-------------|-------|
+| `_arsol_pfw_proposal_description` | String | Proposal description | Text content |
+| `_arsol_pfw_proposed_project_lead` | String | Assigned project lead | User ID |
+| `_arsol_pfw_proposed_project_start_date` | String | Proposed start date | `'2024-01-15'` |
+| `_arsol_pfw_proposed_project_due_date` | String | Proposed due date | `'2024-03-15'` |
+| `_arsol_pfw_proposal_expiration_date` | String | Proposal expiration date | `'2024-02-15'` |
 | `_arsol_pfw_proposal_costing_type` | String | Proposal type | `'budget'` or `'quotation'` |
+| `_arsol_pfw_parent_project_id` | String | Parent project ID | Post ID |
+| `_arsol_pfw_proposal_customer_notice` | String | Customer notice | HTML content |
 | `_arsol_pfw_proposal_secondary_status` | String | Internal status | `'ready_for_review'`, `'processing'` |
-| `_arsol_pfw_proposal_project_lead` | String | Assigned project lead | User ID |
-| `_arsol_pfw_proposal_customer_id` | String | Customer ID | User ID |
 
-### Timeline & Dates
+### Complex Data Structure Meta Keys (Array-Based)
 
 | Meta Key | Type | Description | Usage |
 |----------|------|-------------|-------|
-| `_arsol_pfw_proposed_start_date` | String | Proposed start date | `'2024-01-15'` |
-| `_arsol_pfw_proposed_due_date` | String | Proposed due date | `'2024-03-15'` |
-| `_arsol_pfw_proposal_expiration_date` | String | Proposal expiration | `'2024-01-01'` |
+| `_arsol_pfw_proposed_project_budget_line_items` | Array | Complete budget data structure | Array of budget items |
+| `_arsol_pfw_proposed_project_quotation_line_items` | Array | Complete quotation data structure | Array of quotation items |
+| `_arsol_pfw_proposal_original_request_data` | Array | Original request data structure | Inherited request data |
+| `_arsol_pfw_proposal_woocommerce_data` | Array | WooCommerce integration data | Order/subscription data |
+| `_arsol_pfw_proposal_workflow_data` | Array | Workflow management data | Approval/rejection data |
 
-### Budget-Type Proposals
-
-| Meta Key | Type | Description | Usage |
-|----------|------|-------------|-------|
-| `_arsol_pfw_proposal_budget_onetime_amount` | Array | One-time amount | `{'amount': 5000, 'currency': 'USD'}` |
-| `_arsol_pfw_proposal_budget_onetime_amount_details` | String | One-time description | Text description |
-| `_arsol_pfw_proposal_budget_recurring_amount` | Array | Recurring amount | `{'amount': 100, 'currency': 'USD'}` |
-| `_arsol_pfw_proposal_budget_recurring_amount_details` | String | Recurring description | Text description |
-| `_arsol_pfw_proposal_budget_recurring_amount_billing_interval` | String | Billing interval | `'1'`, `'2'`, `'3'` |
-| `_arsol_pfw_proposal_budget_recurring_amount_billing_period` | String | Billing period | `'month'`, `'year'` |
-| `_arsol_pfw_proposal_budget_recurring_billing_start_date` | String | Billing start date | `'2024-01-15'` |
-
-### Quotation-Type Proposals
+### Inherited from Request (Original Request Data)
 
 | Meta Key | Type | Description | Usage |
 |----------|------|-------------|-------|
-| `_arsol_pfw_proposal_quotation_line_items` | Array | Detailed line items | Complex array structure |
-| `_arsol_pfw_proposal_quotation_onetime_total` | String | Total one-time amount | `'5000.00'` |
-| `_arsol_pfw_proposal_quotation_recurring_totals_grouped` | Array | Grouped recurring totals | Array by billing period |
-| `_arsol_pfw_proposal_quotation_currency` | String | Quotation currency | `'USD'`, `'EUR'` |
-| `_arsol_pfw_proposal_quotation_currency_symbol` | String | Currency symbol | `'$'`, `'€'` |
-
-### Additional Proposal Fields
-
-| Meta Key | Type | Description | Usage |
-|----------|------|-------------|-------|
-| `_arsol_pfw_proposal_notes` | String | Proposal notes | HTML content |
-| `_arsol_pfw_proposal_timeline` | String | Project timeline | Text description |
-| `_arsol_pfw_proposal_attachments` | Array | File attachments | Array of file IDs |
-
-### Original Request Data (Inherited)
-
-| Meta Key | Type | Description | Usage |
-|----------|------|-------------|-------|
-| `_arsol_pfw_proposal_request_id` | String | Original request ID | Post ID |
-| `_arsol_pfw_proposal_request_date` | String | Original request date | `'2024-01-01'` |
-| `_arsol_pfw_proposal_request_title` | String | Original request title | Text |
-| `_arsol_pfw_proposal_request_details` | String | Original request content | HTML content |
-| `_arsol_pfw_proposal_request_budget` | Array | Original budget | `{'amount': 1000, 'currency': 'USD'}` |
-| `_arsol_pfw_proposal_request_start_date` | String | Original start date | `'2024-01-15'` |
-| `_arsol_pfw_proposal_request_delivery_date` | String | Original delivery date | `'2024-03-15'` |
-| `_arsol_pfw_proposal_request_attachments` | Array | Original attachments | Array of file IDs |
+| `_arsol_pfw_request_id` | String | Original request ID | Post ID |
+| `_arsol_pfw_request_details` | String | Original request content | HTML content |
+| `_arsol_pfw_requested_project_budget` | Array | Original request budget | `{'amount': 1000, 'currency': 'USD'}` |
+| `_arsol_pfw_requested_project_start_date` | String | Original requested start date | `'2024-01-15'` |
+| `_arsol_pfw_requested_project_due_date` | String | Original requested due date | `'2024-03-15'` |
+| `_arsol_pfw_request_attachments` | Array | Original request attachments | Array of file IDs |
 
 ### Implementation Example
 
@@ -170,100 +146,75 @@ update_post_meta($request_id, '_arsol_pfw_request_delivery_date', sanitize_text_
 // Saving proposal costing type
 update_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', 'budget');
 
-// Saving budget data
+// Saving budget data as array
 $budget_data = array(
-    'amount' => floatval($_POST['onetime_amount']),
-    'currency' => get_woocommerce_currency()
+    'onetime' => array(
+        'amount' => 5000,
+        'currency' => 'USD',
+        'description' => 'One-time development'
+    ),
+    'recurring' => array(
+        'amount' => 500,
+        'currency' => 'USD',
+        'period' => 'month',
+        'description' => 'Monthly maintenance'
+    ),
+    'notes' => 'Budget includes all development and maintenance costs'
 );
-update_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', $budget_data);
+update_post_meta($proposal_id, '_arsol_pfw_proposed_project_budget_line_items', $budget_data);
 
 // Saving quotation line items
-$line_items = array(
-    array(
-        'description' => 'Web Development',
-        'quantity' => 1,
-        'rate' => 5000,
-        'total' => 5000,
-        'type' => 'onetime'
+$quotation_data = array(
+    'line_items' => array(
+        array(
+            'description' => 'Web Development',
+            'quantity' => 1,
+            'rate' => 5000,
+            'total' => 5000,
+            'type' => 'onetime'
+        )
+    ),
+    'currency' => 'USD',
+    'totals' => array(
+        'onetime' => 5000,
+        'recurring' => 0
     )
 );
-update_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', $line_items);
+update_post_meta($proposal_id, '_arsol_pfw_proposed_project_quotation_line_items', $quotation_data);
 ```
 
 ---
 
 ## Active Project Meta Keys
 
-*Total: 10+ standardized keys*
+*Total: 8+ standardized keys*
 
-### Core Project Data
+### Core Project Data (Simple Meta Keys)
 
 | Meta Key | Type | Description | Usage |
 |----------|------|-------------|-------|
-| `_arsol_pfw_project_lead` | String | Project lead | User ID |
-| `_arsol_pfw_project_start_date` | String | Project start date | `'2024-01-15'` |
+| `_arsol_pfw_project_budget` | Array | Project budget information | `{'amount': 1000, 'currency': 'USD'}` |
 | `_arsol_pfw_project_due_date` | String | Project due date | `'2024-03-15'` |
-| `_arsol_pfw_project_proposal_id` | String | Source proposal ID | Post ID |
+| `_arsol_pfw_project_description` | String | Project description | Text content |
+| `_arsol_pfw_project_start_date` | String | Project start date | `'2024-01-15'` |
+| `_arsol_pfw_project_lead` | String | Assigned project lead | User ID |
+| `_arsol_pfw_project_customer_notice` | String | Customer notice | HTML content |
 
-### WooCommerce Integration
-
-| Meta Key | Type | Description | Usage |
-|----------|------|-------------|-------|
-| `_arsol_pfw_project_woocommerce_order_id` | String | Created order ID | WC Order ID |
-| `_arsol_pfw_project_woocommerce_subscription_id` | String | Created subscription ID | WC Subscription ID |
-| `_arsol_pfw_project_order_creation_note` | String | Order creation success note | Success message |
-| `_arsol_pfw_project_order_creation_error` | String | Order creation error | Error message |
-
-### Billing Configuration
+### Complex Data Structure Meta Keys (Inherited from Proposal)
 
 | Meta Key | Type | Description | Usage |
 |----------|------|-------------|-------|
-| `_arsol_pfw_project_billing_interval` | String | Billing interval | `'1'`, `'2'`, `'3'` |
-| `_arsol_pfw_project_billing_period` | String | Billing period | `'month'`, `'year'` |
-| `_arsol_pfw_project_recurring_start_date` | String | Recurring billing start | `'2024-01-15'` |
+| `_arsol_pfw_proposed_project_budget_line_items` | Array | Inherited budget data structure | Array of budget items |
+| `_arsol_pfw_proposed_project_quotation_line_items` | Array | Inherited quotation data structure | Array of quotation items |
+| `_arsol_pfw_project_woocommerce_data` | Array | WooCommerce integration data | Order/subscription data |
+| `_arsol_pfw_project_workflow_data` | Array | Workflow management data | Project status data |
 
-### Inherited Data from Proposal
+### Inherited from Proposal (No "project" prefix)
 
-During proposal → project conversion, these fields are created:
-
-#### From Request (via Proposal)
-
-| Meta Key | Type | Description |
-|----------|------|-------------|
-| `_arsol_pfw_project_request_details` | String | Original request content |
-| `_arsol_pfw_project_request_title` | String | Original request title |
-| `_arsol_pfw_project_request_date` | String | Original request date |
-| `_arsol_pfw_project_request_budget` | Array | Original request budget |
-| `_arsol_pfw_project_request_start_date` | String | Original requested start date |
-| `_arsol_pfw_project_request_delivery_date` | String | Original requested delivery |
-| `_arsol_pfw_project_request_attachments` | Array | Original request attachments |
-
-#### From Proposal
-
-| Meta Key | Type | Description |
-|----------|------|-------------|
-| `_arsol_pfw_project_proposal_details` | String | Proposal content |
-| `_arsol_pfw_project_proposal_start_date` | String | Proposed start date |
-| `_arsol_pfw_project_proposal_delivery_date` | String | Proposed delivery date |
-| `_arsol_pfw_project_proposal_notes` | String | Proposal notes |
-| `_arsol_pfw_project_proposal_timeline` | String | Proposal timeline |
-| `_arsol_pfw_project_proposal_costing_type` | String | Budget or quotation type |
-
-#### Budget-Specific (if proposal was budget type)
-
-| Meta Key | Type | Description |
-|----------|------|-------------|
-| `_arsol_pfw_project_proposal_budget_onetime_amount` | Array | One-time amount |
-| `_arsol_pfw_project_proposal_budget_recurring_amount` | Array | Recurring amount |
-| `_arsol_pfw_project_proposal_budget_*` | Various | All budget fields |
-
-#### Quotation-Specific (if proposal was quotation type)
-
-| Meta Key | Type | Description |
-|----------|------|-------------|
-| `_arsol_pfw_project_proposal_quotation_line_items` | Array | Line items |
-| `_arsol_pfw_project_proposal_quotation_onetime_total` | String | Total one-time |
-| `_arsol_pfw_project_proposal_quotation_*` | Various | All quotation fields |
+| Meta Key | Type | Description | Usage |
+|----------|------|-------------|-------|
+| `_arsol_pfw_proposal_id` | String | Original proposal ID | Post ID |
+| `_arsol_pfw_request_id` | String | Original request ID | Post ID |
 
 ### Implementation Example
 
@@ -272,13 +223,12 @@ During proposal → project conversion, these fields are created:
 update_post_meta($project_id, '_arsol_pfw_project_lead', $lead_user_id);
 update_post_meta($project_id, '_arsol_pfw_project_start_date', current_time('mysql'));
 
+// Inherit proposal budget data
+$proposal_budget = get_post_meta($proposal_id, '_arsol_pfw_proposed_project_budget_line_items', true);
+update_post_meta($project_id, '_arsol_pfw_proposed_project_budget_line_items', $proposal_budget);
+
 // WooCommerce integration
 update_post_meta($project_id, '_arsol_pfw_project_woocommerce_order_id', $order_id);
-update_post_meta($project_id, '_arsol_pfw_project_order_creation_note', 'Order created successfully');
-
-// Billing configuration
-update_post_meta($project_id, '_arsol_pfw_project_billing_interval', '1');
-update_post_meta($project_id, '_arsol_pfw_project_billing_period', 'month');
 ```
 
 ---
@@ -290,7 +240,16 @@ update_post_meta($project_id, '_arsol_pfw_project_billing_period', 'month');
 | Meta Key | Type | Description | Usage |
 |----------|------|-------------|-------|
 | `ARSOL_PROJECT_META_KEY` | String | Links order to project | Project post ID |
-| `_arsol_project_id` | String | Project ID (legacy) | Project post ID |
+| `_arsol_pfw_project_id` | String | Project ID in orders | Project post ID |
+| `_arsol_pfw_proposal_id` | String | Proposal ID in orders | Proposal post ID |
+| `_arsol_pfw_conversion_date` | String | Date of conversion to order | `'2024-01-15 10:30:00'` |
+
+### Subscription Meta Keys
+
+| Meta Key | Type | Description | Usage |
+|----------|------|-------------|-------|
+| `_arsol_pfw_proposal_id` | String | Proposal ID in subscriptions | Proposal post ID |
+| `_arsol_pfw_conversion_date` | String | Date of conversion to subscription | `'2024-01-15 10:30:00'` |
 
 **Constant Definition:**
 ```php
@@ -310,114 +269,82 @@ $project_id = get_post_meta($order_id, ARSOL_PROJECT_META_KEY, true);
 
 ---
 
-## Legacy Meta Keys
+## Data Access Patterns
 
-### Being Phased Out
+### 1. Entity Methods (Primary Approach)
+Entity methods provide a clean, object-oriented interface for accessing and modifying data.
 
-These older meta keys are being replaced with standardized versions:
-
-| Legacy Key | New Standardized Key | Status |
-|------------|---------------------|---------|
-| `_project_lead` | `_arsol_pfw_project_lead` | 🔄 Migrating |
-| `_project_start_date` | `_arsol_pfw_project_start_date` | 🔄 Migrating |
-| `_project_due_date` | `_arsol_pfw_project_due_date` | 🔄 Migrating |
-| `_project_budget` | `_arsol_pfw_project_proposal_budget_*` | 🔄 Migrating |
-| `_project_recurring_budget` | `_arsol_pfw_project_proposal_budget_recurring_*` | 🔄 Migrating |
-| `_request_budget` | `_arsol_pfw_request_budget` | 🔄 Migrating |
-| `_request_start_date` | `_arsol_pfw_request_start_date` | 🔄 Migrating |
-| `_request_delivery_date` | `_arsol_pfw_request_delivery_date` | 🔄 Migrating |
-
-### Legacy Proposal Keys (Already Migrated)
-
-These were successfully migrated to standardized format:
-
-| Legacy Key | New Standardized Key |
-|------------|---------------------|
-| `_cost_proposal_type` | `_arsol_pfw_proposal_costing_type` |
-| `_proposal_secondary_status` | `_arsol_pfw_proposal_secondary_status` |
-| `_arsol_pfw_proposed_start_date` | `_arsol_pfw_proposal_start_date` |
-| `_arsol_pfw_proposal_budget_onetime_amount` | `_arsol_pfw_proposal_budget_onetime_amount` |
-| `_arsol_pfw_proposal_notes` | `_arsol_pfw_proposal_notes` |
-
----
-
-## Migration Reference
-
-### Migration Strategy
-
-1. **Gradual Migration**: Both old and new keys work during transition
-2. **Data Preservation**: Original data maintained during migration
-3. **Fallback Logic**: Code checks both old and new keys
-4. **Clean Data Flow**: New conversions use only standardized keys
-
-### Migration Functions
-
+**Examples:**
 ```php
-// Example migration function
-function migrate_project_meta_keys($project_id) {
-    $legacy_mappings = array(
-        '_project_lead' => '_arsol_pfw_project_lead',
-        '_project_start_date' => '_arsol_pfw_project_start_date',
-        '_project_due_date' => '_arsol_pfw_project_due_date'
-    );
-    
-    foreach ($legacy_mappings as $old_key => $new_key) {
-        $value = get_post_meta($project_id, $old_key, true);
-        if (!empty($value)) {
-            update_post_meta($project_id, $new_key, $value);
-            // Optionally delete old key after migration
-            // delete_post_meta($project_id, $old_key);
-        }
-    }
-}
+// Get complete budget data as array
+$budget_data = $proposal->get_proposal_budget();
+
+// Set complete budget data as array
+$proposal->set_proposal_budget($budget_data);
+
+// Get individual fields from array data
+$onetime_amount = $proposal->get_budget_onetime_amount();
+$project_lead = $proposal->get_project_lead();
 ```
 
-### Fallback Reading
+### 2. Individual Meta Key Access (WooCommerce Pattern)
+Following WooCommerce's pattern, the plugin also supports direct meta key access for individual fields.
 
+**Examples:**
 ```php
-// Function to read meta with fallback to legacy keys
-function get_project_meta_with_fallback($project_id, $standard_key, $legacy_key) {
-    $value = get_post_meta($project_id, $standard_key, true);
-    
-    if (empty($value)) {
-        $value = get_post_meta($project_id, $legacy_key, true);
-    }
-    
-    return $value;
-}
+// Get individual budget meta field
+$onetime_amount = $proposal->get_budget_meta('onetime');
+$project_lead = $proposal->get_meta('_arsol_pfw_proposed_project_lead');
 
-// Usage example
-$project_lead = get_project_meta_with_fallback(
-    $project_id, 
-    '_arsol_pfw_project_lead', 
-    '_project_lead'
-);
+// Set individual budget meta field
+$proposal->set_budget_meta('onetime', $amount);
+$proposal->set_meta('_arsol_pfw_proposed_project_lead', $lead_id);
+```
+
+### 3. Generic Meta Access
+For custom meta fields not managed by the plugin, developers can use WordPress's native functions.
+
+**Examples:**
+```php
+// Get custom meta field
+$custom_field = get_post_meta($proposal->get_id(), '_custom_field', true);
+
+// Set custom meta field
+update_post_meta($proposal->get_id(), '_custom_field', $value);
 ```
 
 ---
 
-## Data Flow Summary
+## Migration Status
 
-### Request → Proposal → Project
+### ✅ Completed Migrations
 
-```
-1. REQUEST CREATION
-   ├── _arsol_pfw_request_budget
-   ├── _arsol_pfw_request_start_date
-   └── _arsol_pfw_request_delivery_date
+1. **Proposal Meta Keys**: Fully standardized with array-based structures
+2. **Project Meta Keys**: Standardized with inherited array structures
+3. **Request Meta Keys**: Standardized with simplified structure
+4. **Timeline Fields**: Removed from all CPTs
+5. **Priority Fields**: Removed from all CPTs
+6. **Budget Consolidation**: Proposal budgets now use array structure
+7. **Meta Key Naming**: Consistent naming across all CPTs
 
-2. PROPOSAL CREATION (inherits request data)
-   ├── _arsol_pfw_proposal_request_* (inherited)
-   ├── _arsol_pfw_proposal_costing_type
-   ├── _arsol_pfw_proposal_budget_* OR _arsol_pfw_proposal_quotation_*
-   └── _arsol_pfw_proposal_notes
+### 🔄 In Progress
 
-3. PROJECT CREATION (inherits all previous data)
-   ├── _arsol_pfw_project_request_* (from request via proposal)
-   ├── _arsol_pfw_project_proposal_* (from proposal)
-   ├── _arsol_pfw_project_lead
-   ├── _arsol_pfw_project_woocommerce_order_id
-   └── _arsol_pfw_project_billing_*
-```
+1. **Template Updates**: Updating all templates to use new meta keys
+2. **Admin Handler Updates**: Updating admin save/read methods
+3. **Conversion Handler Updates**: Updating conversion logic
+4. **Documentation Updates**: Updating all documentation
 
-This comprehensive meta key system ensures data integrity and traceability throughout the complete project lifecycle while maintaining backward compatibility during the standardization process. 
+### ❌ Removed Features
+
+1. **Timeline Fields**: No longer supported in any CPT
+2. **Priority Fields**: No longer supported in any CPT
+3. **Legacy Budget Fields**: Individual budget fields replaced with arrays
+4. **Redundant Flags**: Removed `_arsol_pfw_is_project_tied_proposal`
+
+### Benefits of New Structure
+
+1. **Consistency**: All CPTs follow the same naming patterns
+2. **Simplicity**: Removed unnecessary fields (timeline, priority)
+3. **Performance**: Array-based structures are more efficient
+4. **Maintainability**: Cleaner, more organized meta key structure
+5. **WooCommerce Alignment**: Follows WooCommerce patterns for complex data 
