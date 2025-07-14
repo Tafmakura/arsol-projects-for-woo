@@ -82,7 +82,7 @@ class Proposals {
                 
             case 'project_lead':
                 // Use direct meta access for performance in admin columns
-                $lead_id = get_post_meta($post_id, '_arsol_pfw_proposal_project_lead', true);
+                $lead_id = get_post_meta($post_id, '_arsol_pfw_proposed_project_lead', true);
                 echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
                 break;
         }
@@ -161,7 +161,7 @@ class Proposals {
             if (!empty($_GET['project_lead'])) {
                 $meta_query = $query->get('meta_query') ?: [];
                 $meta_query[] = [
-                    'key'     => '_arsol_pfw_proposal_project_lead',
+                    'key'     => '_arsol_pfw_proposed_project_lead',
                     'value'   => sanitize_text_field($_GET['project_lead']),
                     'compare' => '='
                 ];

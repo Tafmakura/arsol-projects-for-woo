@@ -244,9 +244,6 @@ class Proposal {
             if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
                 // Save parent project ID with proper naming convention
                 update_post_meta($post_id, '_arsol_pfw_parent_project_id', $parent_project_id);
-                
-                // Mark as project-tied proposal
-                update_post_meta($post_id, '_arsol_pfw_is_project_tied_proposal', 1);
             }
         }
         
@@ -382,9 +379,9 @@ class Proposal {
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
             $proposal->set_proposal_budget(array());
             
-            // Also clear individual meta fields
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount');
-            delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount');
+            // Clear old budget fields (no longer needed with array structure)
+            // Budget data is now stored in _arsol_pfw_proposed_project_budget_line_items
+            // Quotation data is now stored in _arsol_pfw_proposed_project_quotation_line_items
         }
 
         // Conditionally delete quotation data if it's not the selected type

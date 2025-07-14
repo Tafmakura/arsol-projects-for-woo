@@ -30,8 +30,8 @@ if ($proposal_id) {
     $recurring_budget_data = $project->get_proposal_budget_recurring_amount();
     $billing_interval = $project->get_proposal_budget_recurring_billing_interval();
     $billing_period = $project->get_proposal_budget_recurring_billing_period();
-    $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposed_start_date', true);
-    $proposed_due_date = get_post_meta($project_id, '_arsol_pfw_proposed_due_date', true);
+    $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposed_project_start_date', true);
+    $proposed_due_date = get_post_meta($project_id, '_arsol_pfw_proposed_project_due_date', true);
     $proposed_expiration_date = get_post_meta($project_id, '_arsol_pfw_proposal_expiration_date', true);
 }
 

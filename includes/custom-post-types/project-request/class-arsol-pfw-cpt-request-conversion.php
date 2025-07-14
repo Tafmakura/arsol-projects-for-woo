@@ -192,16 +192,16 @@ class Request_Conversion {
         // ✅ PHASE 1: COMPREHENSIVE META KEY RESTRUCTURING
         
         // 1. Preserve original request content in proposal meta
-        update_post_meta($proposal_id, '_arsol_pfw_proposal_request_details', $request->get_prop('description'));
+        update_post_meta($proposal_id, '_arsol_pfw_request_details', $request->get_prop('description'));
         
         // 2. Rename request meta keys with proposal context
         $meta_mapping = array(
-            '_arsol_pfw_request_title' => '_arsol_pfw_proposal_request_title',
-            '_arsol_pfw_request_date' => '_arsol_pfw_proposal_request_date',
-            '_arsol_pfw_requested_budget' => '_arsol_pfw_requested_budget',
-            '_arsol_pfw_requested_start_date' => '_arsol_pfw_proposal_requested_start_date',
-            '_arsol_pfw_requested_due_date' => '_arsol_pfw_proposal_requested_due_date',
-            '_arsol_pfw_request_attachments' => '_arsol_pfw_proposal_request_attachments',
+            '_arsol_pfw_request_title' => '_arsol_pfw_request_title',
+            '_arsol_pfw_request_date' => '_arsol_pfw_request_date',
+            '_arsol_pfw_requested_budget' => '_arsol_pfw_requested_project_budget',
+            '_arsol_pfw_requested_start_date' => '_arsol_pfw_requested_project_start_date',
+            '_arsol_pfw_requested_due_date' => '_arsol_pfw_requested_project_due_date',
+            '_arsol_pfw_request_attachments' => '_arsol_pfw_request_attachments',
         );
         
         foreach ($meta_mapping as $old_key => $new_key) {
@@ -214,14 +214,11 @@ class Request_Conversion {
         // 3. Transfer request budget as proposed budget
         $request_budget = $request->get_budget();
         if (!empty($request_budget)) {
-            // Set proposal costing type to budget
-            update_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', 'budget');
-            
-            // Transfer request budget as proposed budget
-            update_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', $request_budget);
-            
-            Arsol_Projects_For_WooWoocommerce_Logs::log_request_to_proposal_conversion('info', 
-                'Budget transferred: Request budget → Proposal budget');
+            $budget_data = array(
+                'onetime' => $request_budget,
+                'type' => 'budget'
+            );
+            update_post_meta($proposal_id, '_arsol_pfw_proposed_project_budget_line_items', $budget_data);
         }
         
         // 4. Set proposal status to processing using stage manager

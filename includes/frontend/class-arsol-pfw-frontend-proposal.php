@@ -205,7 +205,7 @@ class Proposal_Frontend extends Frontend_Handler {
                 update_post_meta($proposal_id, '_arsol_pfw_proposal_budget', sanitize_text_field($budget));
             }
             if (!empty($request_id)) {
-                update_post_meta($proposal_id, '_arsol_pfw_proposal_request_id', $request_id);
+                update_post_meta($proposal_id, '_arsol_pfw_request_id', $request_id);
             }
 
             /**

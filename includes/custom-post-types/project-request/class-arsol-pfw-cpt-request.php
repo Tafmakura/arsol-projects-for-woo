@@ -343,8 +343,8 @@ class Arsol_PFW_Request {
             'meta_input' => array(
                 '_arsol_pfw_source_request_id' => $this->request_id,
                 '_arsol_pfw_proposal_budget' => $this->get_budget(),
-                '_arsol_pfw_proposed_start_date' => $this->get_meta('_arsol_pfw_requested_start_date'),
-                '_arsol_pfw_proposed_due_date' => $this->get_meta('_arsol_pfw_requested_due_date')
+                '_arsol_pfw_proposed_project_start_date' => $this->get_meta('_arsol_pfw_requested_start_date'),
+                '_arsol_pfw_proposed_project_due_date' => $this->get_meta('_arsol_pfw_requested_due_date')
             )
         );
 

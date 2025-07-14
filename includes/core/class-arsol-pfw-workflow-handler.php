@@ -293,7 +293,7 @@ class Workflow_Handler {
         $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
         
         // Check line items
-        $line_items = get_post_meta($proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
+        $line_items = get_post_meta($proposal_id, '_arsol_pfw_proposed_project_quotation_line_items', true);
         $debug_info['has_line_items'] = !empty($line_items);
         $debug_info['line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
         

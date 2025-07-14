@@ -378,29 +378,11 @@ class Proposal_Quotation {
             return;
         }
 
-        // Clean up budget data when saving quotation
-        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount');
-        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_onetime_amount_details');
-        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount');
-        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_details');
-        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_interval');
-        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_amount_billing_period');
-        delete_post_meta($post_id, '_arsol_pfw_proposal_budget_recurring_billing_start_date');
-
-        $line_items = isset($_POST['line_items']) ? (array) $_POST['line_items'] : array();
+        // Clear old quotation fields (no longer needed with array structure)
+        // Quotation data is now stored in _arsol_pfw_proposed_project_quotation_line_items
         
-        $sanitized_line_items = array();
-        if (!empty($line_items)) {
-            foreach ( $line_items as $group_key => $group_value ) {
-                if (!empty($group_value)) {
-                    $sanitized_line_items[$group_key] = array_map( function( $item ) {
-                        return array_map( 'sanitize_text_field', $item );
-                    }, (array) $group_value );
-                }
-            }
-        }
-        
-        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items', $sanitized_line_items);
+        // Save quotation line items to new array structure
+        update_post_meta($post_id, '_arsol_pfw_proposed_project_quotation_line_items', $sanitized_line_items);
         
         // Save line items to database
         

@@ -287,24 +287,23 @@ class Proposal_Conversion {
         // Copy basic proposal data
         update_post_meta($project_id, '_arsol_pfw_project_proposal_details', $proposal->get_prop('description'));        
         
-        // Copy request data with project context
+        // 2. Rename request data with project context
         $request_meta_mapping = array(
-            '_arsol_pfw_proposal_request_details' => '_arsol_pfw_project_request_details',
-            '_arsol_pfw_proposal_request_title' => '_arsol_pfw_project_request_title',
-            '_arsol_pfw_proposal_request_date' => '_arsol_pfw_project_request_date',
-            '_arsol_pfw_proposal_request_budget' => '_arsol_pfw_requested_budget',
-            '_arsol_pfw_proposal_request_start_date' => '_arsol_pfw_requested_start_date',
-            '_arsol_pfw_requested_due_date' => '_arsol_pfw_requested_due_date',
-            '_arsol_pfw_proposal_request_attachments' => '_arsol_pfw_project_request_attachments',
+            '_arsol_pfw_request_details' => '_arsol_pfw_project_request_details',
+            '_arsol_pfw_request_title' => '_arsol_pfw_project_request_title',
+            '_arsol_pfw_request_date' => '_arsol_pfw_project_request_date',
+            '_arsol_pfw_requested_project_budget' => '_arsol_pfw_project_request_budget',
+            '_arsol_pfw_requested_project_start_date' => '_arsol_pfw_project_request_start_date',
+            '_arsol_pfw_requested_project_due_date' => '_arsol_pfw_project_request_due_date',
+            '_arsol_pfw_request_attachments' => '_arsol_pfw_project_request_attachments',
         );
         
-        // Copy proposal data with project context
+        // 3. Rename proposal data with project context
         $proposal_meta_mapping = array(
             '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
             '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
-            '_arsol_pfw_proposal_project_lead' => '_arsol_pfw_project_lead',
-            '_arsol_pfw_proposed_budget' => '_arsol_pfw_proposed_budget',
-            '_arsol_pfw_proposed_due_date' => '_arsol_pfw_proposed_due_date', // Map due date to project due date
+            '_arsol_pfw_proposed_project_lead' => '_arsol_pfw_project_lead',
+            '_arsol_pfw_proposed_project_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
         );
         
         // Get proposal type for type-aware handling

@@ -209,15 +209,17 @@ class Conversion_Handler {
         
         // 1. Preserve original request content in proposal meta
         $request_description = $request->get_prop('description');
-        update_post_meta($proposal_id, '_arsol_pfw_proposal_request_details', $request_description);
+        update_post_meta($proposal_id, '_arsol_pfw_request_details', $request_description);
         error_log("ARSOL PFW DEBUG: Copied request description to proposal: " . ($request_description ? substr($request_description, 0, 50) . "..." : "null"));
         
         // 2. Rename request meta keys with proposal context
-        // Map request meta to proposal meta
         $meta_mapping = array(
-            '_arsol_pfw_request_budget' => '_arsol_pfw_requested_budget',
-            '_arsol_pfw_request_start_date' => '_arsol_pfw_requested_start_date',
-            '_arsol_pfw_request_due_date' => '_arsol_pfw_requested_due_date',
+            '_arsol_pfw_request_title' => '_arsol_pfw_request_title',
+            '_arsol_pfw_request_date' => '_arsol_pfw_request_date',
+            '_arsol_pfw_requested_budget' => '_arsol_pfw_requested_project_budget',
+            '_arsol_pfw_requested_start_date' => '_arsol_pfw_requested_project_start_date',
+            '_arsol_pfw_requested_due_date' => '_arsol_pfw_requested_project_due_date',
+            '_arsol_pfw_request_attachments' => '_arsol_pfw_request_attachments',
         );
         
         $copied_count = 0;
@@ -331,7 +333,7 @@ class Conversion_Handler {
             // Copy budget data using entity methods
             $budget_data = $proposal->get_proposal_budget();
             if (!empty($budget_data)) {
-                $project->set_project_budget($budget_data);
+                update_post_meta($project_id, '_arsol_pfw_proposed_project_budget_line_items', $budget_data);
                 error_log("ARSOL PFW DEBUG: Copied budget data using entity methods");
             }
         } elseif ($cost_proposal_type === 'quotation') {
@@ -367,8 +369,8 @@ class Conversion_Handler {
         
         // 8. Historical preservation - keep original proposal field names for reference
         $historical_fields = array(
-            '_arsol_pfw_proposed_start_date',
-            '_arsol_pfw_proposed_due_date',
+            '_arsol_pfw_proposed_project_start_date',
+            '_arsol_pfw_proposed_project_due_date',
         );
         
         $historical_copied_count = 0;

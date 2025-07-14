@@ -898,7 +898,7 @@ class Arsol_PFW_Proposal {
                 '_arsol_pfw_project_budget' => $this->get_budget(),
                 '_arsol_pfw_project_start_date' => $this->get_meta('_arsol_pfw_proposed_project_start_date'),
                 '_arsol_pfw_project_due_date' => $this->get_meta('_arsol_pfw_proposed_project_due_date'),
-                '_arsol_pfw_project_lead' => $this->get_meta('_arsol_pfw_proposal_project_lead')
+                '_arsol_pfw_project_lead' => $this->get_meta('_arsol_pfw_proposed_project_lead')
             )
         );
 
@@ -908,7 +908,7 @@ class Arsol_PFW_Proposal {
             // Set project to not-started status
             wp_set_post_terms($project_id, array('not-started'), 'arsol-pfw-project-stage');
             
-            do_action('arsol_proposal_approved_project_created', $project_id, $this->proposal_id, $this->proposal->post_author, $this->get_meta('_arsol_pfw_proposal_project_lead'));
+            do_action('arsol_proposal_approved_project_created', $project_id, $this->proposal_id, $this->proposal->post_author, $this->get_meta('_arsol_pfw_proposed_project_lead'));
             return $project_id;
         }
 
@@ -1388,7 +1388,7 @@ class Arsol_PFW_Proposal {
      * @return mixed Field value
      */
     public function get_request_meta($field) {
-        $meta_key = '_arsol_pfw_proposal_request_' . $field;
+        $meta_key = '_arsol_pfw_request_' . $field;
         return get_post_meta($this->proposal_id, $meta_key, true);
     }
 
@@ -1399,7 +1399,7 @@ class Arsol_PFW_Proposal {
      * @param mixed $value Field value
      */
     public function set_request_meta($field, $value) {
-        $meta_key = '_arsol_pfw_proposal_request_' . $field;
+        $meta_key = '_arsol_pfw_request_' . $field;
         update_post_meta($this->proposal_id, $meta_key, $value);
         
         // Update the cached data structure
@@ -1472,7 +1472,8 @@ class Arsol_PFW_Proposal {
      * @return array|mixed Legacy format
      */
     public function get_legacy_budget_onetime_amount() {
-        return get_post_meta($this->proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', true);
+        $budget_data = $this->get_proposal_budget();
+        return isset($budget_data['onetime']) ? $budget_data['onetime'] : null;
     }
 
     /**
@@ -1481,7 +1482,9 @@ class Arsol_PFW_Proposal {
      * @param array|mixed $data Legacy format
      */
     public function set_legacy_budget_onetime_amount($data) {
-        update_post_meta($this->proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', $data);
+        $budget_data = $this->get_proposal_budget();
+        $budget_data['onetime'] = $data;
+        $this->set_proposal_budget($budget_data);
     }
 
     /**
@@ -1490,7 +1493,8 @@ class Arsol_PFW_Proposal {
      * @return array|mixed Legacy format
      */
     public function get_legacy_budget_recurring_amount() {
-        return get_post_meta($this->proposal_id, '_arsol_pfw_proposal_budget_recurring_amount', true);
+        $budget_data = $this->get_proposal_budget();
+        return isset($budget_data['recurring']) ? $budget_data['recurring'] : null;
     }
 
     /**
@@ -1499,7 +1503,9 @@ class Arsol_PFW_Proposal {
      * @param array|mixed $data Legacy format
      */
     public function set_legacy_budget_recurring_amount($data) {
-        update_post_meta($this->proposal_id, '_arsol_pfw_proposal_budget_recurring_amount', $data);
+        $budget_data = $this->get_proposal_budget();
+        $budget_data['recurring'] = $data;
+        $this->set_proposal_budget($budget_data);
     }
 
     /**
@@ -1508,7 +1514,8 @@ class Arsol_PFW_Proposal {
      * @return array|mixed Legacy format
      */
     public function get_legacy_quotation_line_items() {
-        return get_post_meta($this->proposal_id, '_arsol_pfw_proposal_quotation_line_items', true);
+        $quotation_data = $this->get_proposal_quotation();
+        return isset($quotation_data['line_items']) ? $quotation_data['line_items'] : null;
     }
 
     /**
@@ -1517,6 +1524,8 @@ class Arsol_PFW_Proposal {
      * @param array|mixed $data Legacy format
      */
     public function set_legacy_quotation_line_items($data) {
-        update_post_meta($this->proposal_id, '_arsol_pfw_proposal_quotation_line_items', $data);
+        $quotation_data = $this->get_proposal_quotation();
+        $quotation_data['line_items'] = $data;
+        $this->set_proposal_quotation($quotation_data);
     }
 }
