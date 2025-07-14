@@ -333,7 +333,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Budget
-        $budget = get_post_meta($post_id, '_arsol_pfw_requested_budget', true);
+        $budget = get_post_meta($post_id, '_arsol_pfw_requested_project_budget', true);
         if (!empty($budget)) {
             if (is_array($budget) && isset($budget['amount'])) {
                 $metadata['budget'] = array(

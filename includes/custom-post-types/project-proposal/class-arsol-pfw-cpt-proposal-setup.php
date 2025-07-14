@@ -150,7 +150,7 @@ class Setup {
         }
 
         // Get request data for display
-        $requested_budget = get_post_meta($post->ID, '_arsol_pfw_requested_budget', true);
+        $requested_budget = get_post_meta($post->ID, '_arsol_pfw_requested_project_budget', true);
         $requested_start_date = get_post_meta($post->ID, '_arsol_pfw_requested_project_start_date', true);
         $requested_due_date = get_post_meta($post->ID, '_arsol_pfw_requested_project_due_date', true);
         $request_date = get_post_meta($post->ID, '_arsol_pfw_request_date', true);
@@ -217,7 +217,7 @@ class Setup {
      * Check if proposal has request data
      */
     private function has_request_data($post_id) {
-        $requested_budget = get_post_meta($post_id, '_arsol_pfw_requested_budget', true);
+        $requested_budget = get_post_meta($post_id, '_arsol_pfw_requested_project_budget', true);
         $requested_start_date = get_post_meta($post_id, '_arsol_pfw_requested_project_start_date', true);
         $requested_due_date = get_post_meta($post_id, '_arsol_pfw_requested_project_due_date', true);
         $request_date = get_post_meta($post_id, '_arsol_pfw_request_date', true);

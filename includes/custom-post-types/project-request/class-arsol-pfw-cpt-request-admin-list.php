@@ -56,7 +56,7 @@ class Requests {
                 
             case 'request_budget':
                 // Use direct meta access for performance in admin columns
-                $budget = get_post_meta($post_id, '_arsol_pfw_requested_budget', true);
+                $budget = get_post_meta($post_id, '_arsol_pfw_requested_project_budget', true);
                 if ($budget) {
                     if (is_array($budget) && isset($budget['amount'])) {
                         $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();

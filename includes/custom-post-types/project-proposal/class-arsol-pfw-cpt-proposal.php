@@ -1330,55 +1330,47 @@ class Arsol_PFW_Proposal {
     /**
      * Get individual budget meta field (WooCommerce pattern)
      * 
-     * @param string $field Field name (e.g., 'onetime_amount', 'recurring_amount', 'notes')
+     * @param string $field Field name (e.g., 'onetime', 'recurring', 'notes')
      * @return mixed Field value
      */
     public function get_budget_meta($field) {
-        $meta_key = '_arsol_pfw_proposal_budget_' . $field;
-        return get_post_meta($this->proposal_id, $meta_key, true);
+        $budget_data = $this->get_proposal_budget();
+        return isset($budget_data[$field]) ? $budget_data[$field] : null;
     }
 
     /**
      * Set individual budget meta field (WooCommerce pattern)
      * 
-     * @param string $field Field name (e.g., 'onetime_amount', 'recurring_amount', 'notes')
+     * @param string $field Field name (e.g., 'onetime', 'recurring', 'notes')
      * @param mixed $value Field value
      */
     public function set_budget_meta($field, $value) {
-        $meta_key = '_arsol_pfw_proposal_budget_' . $field;
-        update_post_meta($this->proposal_id, $meta_key, $value);
-        
-        // Update the cached data structure
         $budget_data = $this->get_proposal_budget();
         $budget_data[$field] = $value;
-        $this->set_prop('budget_data', $budget_data);
+        $this->set_proposal_budget($budget_data);
     }
 
     /**
      * Get individual quotation meta field (WooCommerce pattern)
      * 
-     * @param string $field Field name (e.g., 'line_items', 'onetime_total', 'currency')
+     * @param string $field Field name (e.g., 'line_items', 'currency', 'notes')
      * @return mixed Field value
      */
     public function get_quotation_meta($field) {
-        $meta_key = '_arsol_pfw_proposal_quotation_' . $field;
-        return get_post_meta($this->proposal_id, $meta_key, true);
+        $quotation_data = $this->get_proposal_quotation();
+        return isset($quotation_data[$field]) ? $quotation_data[$field] : null;
     }
 
     /**
      * Set individual quotation meta field (WooCommerce pattern)
      * 
-     * @param string $field Field name (e.g., 'line_items', 'onetime_total', 'currency')
+     * @param string $field Field name (e.g., 'line_items', 'currency', 'notes')
      * @param mixed $value Field value
      */
     public function set_quotation_meta($field, $value) {
-        $meta_key = '_arsol_pfw_proposal_quotation_' . $field;
-        update_post_meta($this->proposal_id, $meta_key, $value);
-        
-        // Update the cached data structure
         $quotation_data = $this->get_proposal_quotation();
         $quotation_data[$field] = $value;
-        $this->set_prop('quotation_data', $quotation_data);
+        $this->set_proposal_quotation($quotation_data);
     }
 
     /**

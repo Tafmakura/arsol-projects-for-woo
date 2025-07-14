@@ -9,12 +9,10 @@ if (!defined('ABSPATH')) {
 class Request_Data_Store {
     
     protected $meta_keys = array(
-        'budget'      => '_arsol_pfw_requested_budget',
-        'due_date'    => '_arsol_pfw_requested_due_date',
-        'description' => '_arsol_pfw_request_description',
-        'project_lead' => '_arsol_pfw_request_project_lead',
-        'start_date'  => '_arsol_pfw_requested_start_date',
-        'parent_project_id' => '_arsol_pfw_parent_project_id',
+        'budget'      => '_arsol_pfw_requested_project_budget',
+        'due_date'    => '_arsol_pfw_requested_project_due_date',
+        'customer_id' => '_arsol_pfw_customer_id',
+        'start_date'  => '_arsol_pfw_requested_project_start_date',
     );
     
     /**

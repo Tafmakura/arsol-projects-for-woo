@@ -381,21 +381,24 @@ class Proposal_Quotation {
         // Clear old quotation fields (no longer needed with array structure)
         // Quotation data is now stored in _arsol_pfw_proposed_project_quotation_line_items
         
-        // Save quotation line items to new array structure
-        update_post_meta($post_id, '_arsol_pfw_proposed_project_quotation_line_items', $sanitized_line_items);
+        // Save line items to database using entity methods
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
         
-        // Save line items to database
-        
-        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_onetime_total', sanitize_text_field($_POST['arsol_pfw_proposal_quotation_onetime_total']));
+        // Save totals to quotation data structure
+        $quotation_data = $proposal->get_proposal_quotation();
+        $quotation_data['onetime_total'] = sanitize_text_field($_POST['arsol_pfw_proposal_quotation_onetime_total']);
         
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
         $recurring_totals = json_decode($recurring_totals_json, true);
-        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_recurring_totals_grouped', $recurring_totals);
+        $quotation_data['recurring_totals_grouped'] = $recurring_totals;
         
         // Save currency ISO code as the primary source of truth
         $currency_code = get_woocommerce_currency();
-        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_currency', $currency_code);
-        update_post_meta($post_id, '_arsol_pfw_proposal_quotation_currency_symbol', get_woocommerce_currency_symbol($currency_code));
+        $quotation_data['currency'] = $currency_code;
+        $quotation_data['currency_symbol'] = get_woocommerce_currency_symbol($currency_code);
+        
+        $proposal->set_proposal_quotation($quotation_data);
+        $proposal->save();
     }
 
     /**

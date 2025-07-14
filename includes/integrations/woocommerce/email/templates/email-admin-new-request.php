@@ -37,7 +37,7 @@ do_action('woocommerce_email_header', $email_heading, $email);
 
 <?php
 // Get custom fields
-$budget = get_post_meta($request->ID, '_arsol_pfw_requested_budget', true);
+$budget = get_post_meta($request->ID, '_arsol_pfw_requested_project_budget', true);
 ?>
 
 <?php if ($budget): ?>

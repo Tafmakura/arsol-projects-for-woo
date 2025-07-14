@@ -239,8 +239,14 @@ class Conversion_Handler {
         $request_budget = $request->get_budget();
         if (!empty($request_budget)) {
             update_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', 'budget');
-            update_post_meta($proposal_id, '_arsol_pfw_proposal_budget_onetime_amount', $request_budget);
-            error_log("ARSOL PFW DEBUG: Copied request budget: " . print_r($request_budget, true));
+            
+            // Use array-based budget structure
+            $budget_data = array(
+                'onetime' => $request_budget,
+                'type' => 'budget'
+            );
+            update_post_meta($proposal_id, '_arsol_pfw_proposed_project_budget_line_items', $budget_data);
+            error_log("ARSOL PFW DEBUG: Copied request budget using array structure: " . print_r($budget_data, true));
         } else {
             error_log("ARSOL PFW DEBUG: Request budget was empty");
         }

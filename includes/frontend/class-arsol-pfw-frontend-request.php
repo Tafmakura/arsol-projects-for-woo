@@ -382,9 +382,9 @@ class Request_Frontend extends Frontend_Handler {
 
         // Save any additional custom fields
         $custom_fields = array(
-            '_arsol_pfw_requested_budget' => 'requested_budget',
-            '_arsol_pfw_requested_start_date' => 'requested_start_date',
-            '_arsol_pfw_requested_due_date' => 'requested_due_date',
+            '_arsol_pfw_requested_project_budget' => 'requested_budget',
+            '_arsol_pfw_requested_project_start_date' => 'requested_start_date',
+            '_arsol_pfw_requested_project_due_date' => 'requested_due_date',
         );
 
         foreach ($custom_fields as $meta_key => $form_field) {
