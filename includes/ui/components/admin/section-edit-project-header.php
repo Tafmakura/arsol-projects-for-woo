@@ -34,9 +34,9 @@ $project_stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage
 $project_stage = !empty($project_stage_terms) ? $project_stage_terms[0] : 'not-started';
 
 // Use existing project instance to get data via getter methods
-$budget = $project->get_budget();
-$due_date = $project->get_due_date();
-$start_date = $project->get_start_date();
+$budget = $project->get_project_budget();
+$due_date = $project->get_project_due_date();
+$start_date = $project->get_project_start_date();
 $project_lead = $project->get_project_lead();
 $customer_notice = $project->get_customer_notice();
 

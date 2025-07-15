@@ -29,15 +29,15 @@ if (!isset($proposal) || !is_object($proposal)) {
 }
 
 $proposal_id = $proposal->get_id();
-$budget_data = $proposal->get_proposal_budget();
-$delivery_date = $proposal->get_due_date();
+$budget_data = $proposal->get_proposed_project_budget();
+$delivery_date = $proposal->get_proposed_project_due_date();
 $expiration_date = $proposal->get_expiration_date();
-$start_date = $proposal->get_start_date();
-$project_lead = $proposal->get_project_lead();
+$start_date = $proposal->get_proposed_project_start_date();
+$project_lead = $proposal->get_proposed_project_lead();
 $costing_type = $proposal->get_costing_type();
 $budget_notes = $proposal->get_budget_notes();
 $quotation_notes = $proposal->get_quotation_notes();
-$quotation_data = $proposal->get_proposal_quotation();
+$quotation_data = $proposal->get_proposed_project_quotation();
 
 // Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;
@@ -74,9 +74,9 @@ elseif ($proposal_id > 0) {
 // Check if has request data
 $has_request_data = false;
 $request_id = $proposal->get_source_request_id();
-$requested_budget = $proposal->get_requested_budget();
-$requested_start_date = $proposal->get_meta('_arsol_pfw_requested_project_start_date');
-$requested_due_date = $proposal->get_meta('_arsol_pfw_requested_project_due_date');
+$requested_budget = $proposal->get_requested_project_budget();
+$requested_start_date = $proposal->get_requested_project_start_date();
+$requested_due_date = $proposal->get_requested_project_due_date();
 
 if ($request_id || $requested_budget || $requested_start_date || $requested_due_date) {
     $has_request_data = true;

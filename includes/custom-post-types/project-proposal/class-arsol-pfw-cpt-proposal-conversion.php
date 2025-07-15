@@ -314,7 +314,7 @@ class Proposal_Conversion {
             // Copy budget data using entity methods
             $budget_data = $proposal->get_proposal_budget();
             if (!empty($budget_data)) {
-                $project->set_project_budget($budget_data);
+                $project->set_project_budget($proposal->get_proposed_project_budget());
             }
         } elseif ($cost_proposal_type === 'quotation') {
             // Copy quotation data using entity methods

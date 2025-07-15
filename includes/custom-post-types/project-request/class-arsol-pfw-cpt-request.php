@@ -193,85 +193,6 @@ class Arsol_PFW_Request {
     }
 
     /**
-     * Get request budget
-     * 
-     * @return float Request budget
-     */
-    public function get_budget() {
-        return $this->get_prop('budget');
-    }
-
-    /**
-     * Set request budget
-     * 
-     * @param float $budget Request budget
-     * @return bool Success status
-     */
-    public function set_budget($budget) {
-        $this->set_prop('budget', $budget);
-        return true;
-    }
-
-    /**
-     * Get request due date
-     * 
-     * @return string Request due date
-     */
-    public function get_due_date() {
-        return $this->get_prop('due_date');
-    }
-
-    /**
-     * Set request due date
-     * 
-     * @param string $due_date Request due date
-     * @return bool Success status
-     */
-    public function set_due_date($due_date) {
-        return $this->set_prop('due_date', $due_date);
-    }
-
-    /**
-     * Get request project lead
-     * 
-     * @return int|null Project lead ID
-     */
-    public function get_project_lead() {
-        return $this->get_prop('project_lead');
-    }
-
-    /**
-     * Set request project lead
-     * 
-     * @param int $lead_id Project lead ID
-     * @return bool Success status
-     */
-    public function set_project_lead($lead_id) {
-        $this->set_prop('project_lead', (int) $lead_id);
-        return true;
-    }
-
-    /**
-     * Get request start date
-     * 
-     * @return string Request start date
-     */
-    public function get_start_date() {
-        return $this->get_prop('start_date');
-    }
-
-    /**
-     * Set request start date
-     * 
-     * @param string $start_date Request start date
-     * @return bool Success status
-     */
-    public function set_start_date($start_date) {
-        $this->set_prop('start_date', $start_date);
-        return true;
-    }
-
-    /**
      * Get parent project ID
      * 
      * @return int|null Parent project ID
@@ -746,5 +667,84 @@ class Arsol_PFW_Request {
      */
     public function get_changes() {
         return $this->changes;
+    }
+
+    /**
+     * Get requested project budget
+     * 
+     * @return float Requested project budget
+     */
+    public function get_requested_project_budget() {
+        return $this->get_prop('budget');
+    }
+
+    /**
+     * Set requested project budget
+     * 
+     * @param float $budget Requested project budget
+     * @return bool Success status
+     */
+    public function set_requested_project_budget($budget) {
+        $this->set_prop('budget', $budget);
+        return true;
+    }
+
+    /**
+     * Get requested project due date
+     * 
+     * @return string Requested project due date
+     */
+    public function get_requested_project_due_date() {
+        return $this->get_prop('due_date');
+    }
+
+    /**
+     * Set requested project due date
+     * 
+     * @param string $due_date Requested project due date
+     * @return bool Success status
+     */
+    public function set_requested_project_due_date($due_date) {
+        return $this->set_prop('due_date', $due_date);
+    }
+
+    /**
+     * Get requested project lead
+     * 
+     * @return int|null Requested project lead ID
+     */
+    public function get_requested_project_lead() {
+        return $this->get_prop('project_lead');
+    }
+
+    /**
+     * Set requested project lead
+     * 
+     * @param int $lead_id Requested project lead ID
+     * @return bool Success status
+     */
+    public function set_requested_project_lead($lead_id) {
+        $this->set_prop('project_lead', (int) $lead_id);
+        return true;
+    }
+
+    /**
+     * Get requested project start date
+     * 
+     * @return string Requested project start date
+     */
+    public function get_requested_project_start_date() {
+        return $this->get_prop('start_date');
+    }
+
+    /**
+     * Set requested project start date
+     * 
+     * @param string $start_date Requested project start date
+     * @return bool Success status
+     */
+    public function set_requested_project_start_date($start_date) {
+        $this->set_prop('start_date', $start_date);
+        return true;
     }
 }

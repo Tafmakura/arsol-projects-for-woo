@@ -21,10 +21,10 @@ $request_id = $request->get_id();
 $customer_id = $request->get_customer_id();
 $customer = get_userdata($customer_id);
 $request_stage = $request->get_stage();
-$budget = $request->get_budget();
-$start_date = $request->get_start_date();
-$due_date = $request->get_due_date();
-$request_project_lead = $request->get_project_lead();
+$budget = $request->get_requested_project_budget();
+$start_date = $request->get_requested_project_start_date();
+$due_date = $request->get_requested_project_due_date();
+$request_project_lead = $request->get_requested_project_lead();
 
 // Get available stages using the request entity
 $available_stages = $request->get_available_stages();

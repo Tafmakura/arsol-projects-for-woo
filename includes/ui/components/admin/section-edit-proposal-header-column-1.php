@@ -22,9 +22,9 @@ $customer_id = $proposal->get_customer_id();
 $customer = get_userdata($customer_id);
 $proposal_status = get_post_status($post);
 $proposal_stage = $proposal->get_stage();
-$proposal_project_lead = $proposal->get_project_lead();
-$start_date = $proposal->get_start_date();
-$delivery_date = $proposal->get_due_date();
+$proposal_project_lead = $proposal->get_proposed_project_lead();
+$start_date = $proposal->get_proposed_project_start_date();
+$delivery_date = $proposal->get_proposed_project_due_date();
 $expiration_date = $proposal->get_expiration_date();
 $cost_proposal_type = $proposal->get_costing_type();
 

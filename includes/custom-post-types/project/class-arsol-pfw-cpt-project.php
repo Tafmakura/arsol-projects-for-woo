@@ -449,19 +449,19 @@ class Arsol_PFW_Project {
     /**
      * Get project budget
      * 
-     * @return array Project budget
+     * @return array Project budget data
      */
-    public function get_budget() {
+    public function get_project_budget() {
         return $this->get_prop('budget');
     }
 
     /**
      * Set project budget
      * 
-     * @param array $budget Project budget
+     * @param array $budget Project budget data
      * @return bool Success status
      */
-    public function set_budget($budget) {
+    public function set_project_budget($budget) {
         $this->set_prop('budget', $budget);
         return true;
     }
@@ -471,7 +471,7 @@ class Arsol_PFW_Project {
      * 
      * @return string Project due date
      */
-    public function get_due_date() {
+    public function get_project_due_date() {
         return $this->get_prop('due_date');
     }
 
@@ -481,14 +481,14 @@ class Arsol_PFW_Project {
      * @param string $due_date Project due date
      * @return bool Success status
      */
-    public function set_due_date($due_date) {
+    public function set_project_due_date($due_date) {
         return $this->set_prop('due_date', $due_date);
     }
 
     /**
      * Get project lead
      * 
-     * @return int Project lead ID
+     * @return int|null Project lead ID
      */
     public function get_project_lead() {
         return $this->get_prop('project_lead');
@@ -510,17 +510,17 @@ class Arsol_PFW_Project {
      * 
      * @return string Project start date
      */
-    public function get_start_date() {
+    public function get_project_start_date() {
         return $this->get_prop('start_date');
     }
 
     /**
-     * Set start date
+     * Set project start date
      * 
      * @param string $start_date Project start date
      * @return bool Success status
      */
-    public function set_start_date($start_date) {
+    public function set_project_start_date($start_date) {
         $this->set_prop('start_date', $start_date);
         return true;
     }

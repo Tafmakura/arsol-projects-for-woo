@@ -177,7 +177,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = $project->get_start_date();
+        $start_date = $project->get_project_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -187,7 +187,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = $project->get_due_date();
+        $due_date = $project->get_project_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -236,7 +236,10 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Project Lead
-        $project_lead = $proposal->get_project_lead();
+        $project_lead = $proposal->get_proposed_project_lead();
+        $start_date = $proposal->get_proposed_start_date();
+        $due_date = $proposal->get_proposed_due_date();
+        
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
             if ($lead) {
@@ -248,8 +251,6 @@ class Frontend_Template_Sidebar_Meta {
             }
         }
         
-        // Start Date
-        $start_date = $proposal->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -258,8 +259,6 @@ class Frontend_Template_Sidebar_Meta {
             );
         }
         
-        // Due Date
-        $due_date = $proposal->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -308,7 +307,10 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Project Lead
-        $project_lead = $request->get_project_lead();
+        $project_lead = $request->get_requested_project_lead();
+        $start_date = $request->get_requested_start_date();
+        $due_date = $request->get_requested_due_date();
+        
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
             if ($lead) {
@@ -321,7 +323,6 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = $request->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -331,7 +332,6 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = $request->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -567,7 +567,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = $project->get_start_date();
+        $start_date = $project->get_project_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -577,7 +577,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = $project->get_due_date();
+        $due_date = $project->get_project_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -623,7 +623,10 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Project Lead
-        $project_lead = $proposal->get_project_lead();
+        $project_lead = $proposal->get_proposed_project_lead();
+        $start_date = $proposal->get_proposed_start_date();
+        $due_date = $proposal->get_proposed_due_date();
+        
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
             if ($lead) {
@@ -635,8 +638,6 @@ class Frontend_Template_Sidebar_Meta {
             }
         }
         
-        // Start Date
-        $start_date = $proposal->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -645,8 +646,6 @@ class Frontend_Template_Sidebar_Meta {
             );
         }
         
-        // Due Date
-        $due_date = $proposal->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -692,7 +691,10 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Project Lead
-        $project_lead = $request->get_project_lead();
+        $project_lead = $request->get_requested_project_lead();
+        $start_date = $request->get_requested_start_date();
+        $due_date = $request->get_requested_due_date();
+        
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
             if ($lead) {
@@ -705,7 +707,6 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = $request->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -715,7 +716,6 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = $request->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),

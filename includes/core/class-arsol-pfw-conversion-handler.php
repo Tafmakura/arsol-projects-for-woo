@@ -39,9 +39,9 @@ class Conversion_Handler {
             'post_author' => $request->post_author, // Creator (admin)
             'meta_input' => array(
                 '_arsol_pfw_customer_id' => $request_entity->get_customer_id(), // Customer
-                '_arsol_pfw_proposed_project_start_date' => $request_entity->get_start_date(),
-                '_arsol_pfw_proposed_project_due_date' => $request_entity->get_due_date(),
-                '_arsol_pfw_proposed_project_lead' => $request_entity->get_project_lead(),
+                '_arsol_pfw_proposed_project_start_date' => $request_entity->get_requested_start_date(),
+                '_arsol_pfw_proposed_project_due_date' => $request_entity->get_requested_due_date(),
+                '_arsol_pfw_proposed_project_lead' => $request_entity->get_requested_project_lead(),
                 '_arsol_pfw_request_id' => $request_id,
                 '_arsol_pfw_created_via' => 'request_conversion'
             )
@@ -135,7 +135,7 @@ class Conversion_Handler {
             $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project();
             $project->set_title($proposal_obj->get_title());
             $project->set_customer_id($proposal_obj->get_customer_id());
-            $project->set_budget($proposal_obj->get_budget());
+            $project->set_project_budget($proposal_obj->get_proposed_project_budget());
             $project->set_description($proposal_obj->get_prop('description'));
             $project->set_stage('not-started');
             
@@ -236,7 +236,7 @@ class Conversion_Handler {
         error_log("ARSOL PFW DEBUG: Copied {$copied_count} mapped meta keys");
         
         // 3. Transfer request budget as proposed budget
-        $request_budget = $request->get_budget();
+        $request_budget = $request->get_requested_project_budget();
         if (!empty($request_budget)) {
             update_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', 'budget');
             

@@ -20,10 +20,10 @@ if (!isset($project) || !is_object($project)) {
 $project_id = $project->get_id();
 $customer_id = $project->get_customer_id();
 $customer = get_userdata($customer_id);
-$project_stage = $project->get_stage();
+$project_stage = $project->get_project_stage();
 $project_lead = $project->get_project_lead();
-$start_date = $project->get_start_date();
-$due_date = $project->get_due_date();
+$start_date = $project->get_project_start_date();
+$due_date = $project->get_project_due_date();
 
 // Get available stages using the project entity
 $available_stages = $project->get_available_stages();

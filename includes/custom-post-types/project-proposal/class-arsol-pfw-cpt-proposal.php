@@ -186,21 +186,21 @@ class Arsol_PFW_Proposal {
     // ========================================
 
     /**
-     * Get complete proposal budget as array
+     * Get proposed project budget
      * 
-     * @return array Complete proposal budget structure
+     * @return array Complete proposed project budget structure
      */
-    public function get_proposal_budget() {
+    public function get_proposed_project_budget() {
         return $this->get_prop('budget_data') ?: array();
     }
 
     /**
-     * Set complete proposal budget as array
+     * Set complete proposed project budget as array
      * 
-     * @param array $budget_data Complete proposal budget structure
+     * @param array $budget_data Complete proposed project budget structure
      * @return bool Success status
      */
-    public function set_proposal_budget($budget_data) {
+    public function set_proposed_project_budget($budget_data) {
         $this->set_prop('budget_data', $budget_data);
         return true;
     }
@@ -212,7 +212,7 @@ class Arsol_PFW_Proposal {
      * @return mixed Field value
      */
     public function get_budget_field($field) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         return isset($budget_data[$field]) ? $budget_data[$field] : null;
     }
 
@@ -224,27 +224,27 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_budget_field($field, $value) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         $budget_data[$field] = $value;
-        return $this->set_proposal_budget($budget_data);
+        return $this->set_proposed_project_budget($budget_data);
     }
 
     /**
-     * Get complete proposal quotation as array
+     * Get complete proposed project quotation as array
      * 
-     * @return array Complete proposal quotation structure
+     * @return array Complete proposed project quotation structure
      */
-    public function get_proposal_quotation() {
+    public function get_proposed_project_quotation() {
         return $this->get_prop('quotation_data') ?: array();
     }
 
     /**
-     * Set complete proposal quotation as array
+     * Set complete proposed project quotation as array
      * 
-     * @param array $quotation_data Complete proposal quotation structure
+     * @param array $quotation_data Complete proposed project quotation structure
      * @return bool Success status
      */
-    public function set_proposal_quotation($quotation_data) {
+    public function set_proposed_project_quotation($quotation_data) {
         $this->set_prop('quotation_data', $quotation_data);
         return true;
     }
@@ -256,7 +256,7 @@ class Arsol_PFW_Proposal {
      * @return mixed Field value
      */
     public function get_quotation_field($field) {
-        $quotation_data = $this->get_proposal_quotation();
+        $quotation_data = $this->get_proposed_project_quotation();
         return isset($quotation_data[$field]) ? $quotation_data[$field] : null;
     }
 
@@ -268,9 +268,142 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_quotation_field($field, $value) {
-        $quotation_data = $this->get_proposal_quotation();
+        $quotation_data = $this->get_proposed_project_quotation();
         $quotation_data[$field] = $value;
-        return $this->set_proposal_quotation($quotation_data);
+        return $this->set_proposed_project_quotation($quotation_data);
+    }
+
+    /**
+     * Get requested project budget (inherited from request)
+     * 
+     * @return mixed Requested project budget value
+     */
+    public function get_requested_project_budget() {
+        return $this->get_request_field('budget');
+    }
+
+    /**
+     * Set requested project budget (inherited from request)
+     * 
+     * @param mixed $budget Requested project budget value
+     * @return bool Success status
+     */
+    public function set_requested_project_budget($budget) {
+        return $this->set_request_field('budget', $budget);
+    }
+
+    /**
+     * Get requested project start date (inherited from request)
+     * 
+     * @return string Requested project start date
+     */
+    public function get_requested_project_start_date() {
+        return $this->get_request_field('start_date');
+    }
+
+    /**
+     * Set requested project start date (inherited from request)
+     * 
+     * @param string $start_date Requested project start date
+     * @return bool Success status
+     */
+    public function set_requested_project_start_date($start_date) {
+        return $this->set_request_field('start_date', $start_date);
+    }
+
+    /**
+     * Get requested project due date (inherited from request)
+     * 
+     * @return string Requested project due date
+     */
+    public function get_requested_project_due_date() {
+        return $this->get_request_field('due_date');
+    }
+
+    /**
+     * Set requested project due date (inherited from request)
+     * 
+     * @param string $due_date Requested project due date
+     * @return bool Success status
+     */
+    public function set_requested_project_due_date($due_date) {
+        return $this->set_request_field('due_date', $due_date);
+    }
+
+    /**
+     * Get requested project title (inherited from request)
+     * 
+     * @return string Requested project title
+     */
+    public function get_requested_project_title() {
+        return $this->get_request_field('title');
+    }
+
+    /**
+     * Set requested project title (inherited from request)
+     * 
+     * @param string $title Requested project title
+     * @return bool Success status
+     */
+    public function set_requested_project_title($title) {
+        return $this->set_request_field('title', $title);
+    }
+
+    /**
+     * Get proposed project start date
+     * 
+     * @return string Proposed project start date
+     */
+    public function get_proposed_project_start_date() {
+        return $this->get_meta('_arsol_pfw_proposed_project_start_date');
+    }
+
+    /**
+     * Set proposed project start date
+     * 
+     * @param string $start_date Proposed project start date
+     * @return bool Success status
+     */
+    public function set_proposed_project_start_date($start_date) {
+        return $this->set_meta('_arsol_pfw_proposed_project_start_date', $start_date);
+    }
+
+    /**
+     * Get proposed project due date
+     * 
+     * @return string Proposed project due date
+     */
+    public function get_proposed_project_due_date() {
+        return $this->get_meta('_arsol_pfw_proposed_project_due_date');
+    }
+
+    /**
+     * Set proposed project due date
+     * 
+     * @param string $due_date Proposed project due date
+     * @return bool Success status
+     */
+    public function set_proposed_project_due_date($due_date) {
+        return $this->set_meta('_arsol_pfw_proposed_project_due_date', $due_date);
+    }
+
+    /**
+     * Get proposed project lead
+     * 
+     * @return int|null Proposed project lead ID
+     */
+    public function get_proposed_project_lead() {
+        return $this->get_meta('_arsol_pfw_proposed_project_lead');
+    }
+
+    /**
+     * Set proposed project lead
+     * 
+     * @param int $lead_id Proposed project lead ID
+     * @return bool Success status
+     */
+    public function set_proposed_project_lead($lead_id) {
+        return $this->set_meta('_arsol_pfw_proposed_project_lead', (int) $lead_id);
     }
 
     /**
@@ -406,7 +539,7 @@ class Arsol_PFW_Proposal {
      * @return array|null Onetime amount data
      */
     public function get_budget_onetime_amount() {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         return isset($budget_data['onetime']) ? $budget_data['onetime'] : null;
     }
 
@@ -417,9 +550,9 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_budget_onetime_amount($amount_data) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         $budget_data['onetime'] = $amount_data;
-        return $this->set_proposal_budget($budget_data);
+        return $this->set_proposed_project_budget($budget_data);
     }
 
     /**
@@ -428,7 +561,7 @@ class Arsol_PFW_Proposal {
      * @return array|null Recurring amount data
      */
     public function get_budget_recurring_amount() {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         return isset($budget_data['recurring']) ? $budget_data['recurring'] : null;
     }
 
@@ -439,9 +572,9 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_budget_recurring_amount($amount_data) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         $budget_data['recurring'] = $amount_data;
-        return $this->set_proposal_budget($budget_data);
+        return $this->set_proposed_project_budget($budget_data);
     }
 
     /**
@@ -450,7 +583,7 @@ class Arsol_PFW_Proposal {
      * @return string|null Budget notes
      */
     public function get_budget_notes() {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         return isset($budget_data['notes']) ? $budget_data['notes'] : null;
     }
 
@@ -461,9 +594,9 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_budget_notes($notes) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         $budget_data['notes'] = $notes;
-        return $this->set_proposal_budget($budget_data);
+        return $this->set_proposed_project_budget($budget_data);
     }
 
     /**
@@ -472,7 +605,7 @@ class Arsol_PFW_Proposal {
      * @return string|null Budget type
      */
     public function get_budget_type() {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         return isset($budget_data['type']) ? $budget_data['type'] : null;
     }
 
@@ -483,9 +616,9 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_budget_type($type) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         $budget_data['type'] = $type;
-        return $this->set_proposal_budget($budget_data);
+        return $this->set_proposed_project_budget($budget_data);
     }
 
     /**
@@ -562,63 +695,6 @@ class Arsol_PFW_Proposal {
      */
     public function set_quotation_line_items($line_items) {
         return $this->set_quotation_field('line_items', $line_items);
-    }
-
-    /**
-     * Get request budget
-     * 
-     * @return array|null Request budget
-     */
-    public function get_request_budget() {
-        return $this->get_request_field('budget');
-    }
-
-    /**
-     * Set request budget
-     * 
-     * @param array $budget Request budget
-     * @return bool Success status
-     */
-    public function set_request_budget($budget) {
-        return $this->set_request_field('budget', $budget);
-    }
-
-    /**
-     * Get request start date
-     * 
-     * @return string|null Request start date
-     */
-    public function get_request_start_date() {
-        return $this->get_request_field('start_date');
-    }
-
-    /**
-     * Set request start date
-     * 
-     * @param string $start_date Request start date
-     * @return bool Success status
-     */
-    public function set_request_start_date($start_date) {
-        return $this->set_request_field('start_date', $start_date);
-    }
-
-    /**
-     * Get request title
-     * 
-     * @return string|null Request title
-     */
-    public function get_request_title() {
-        return $this->get_request_field('title');
-    }
-
-    /**
-     * Set request title
-     * 
-     * @param string $title Request title
-     * @return bool Success status
-     */
-    public function set_request_title($title) {
-        return $this->set_request_field('title', $title);
     }
 
     /**
@@ -810,12 +886,12 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal expiration date
+     * Get expiration date
      * 
-     * @return string Proposal expiration date
+     * @return string Expiration date
      */
     public function get_expiration_date() {
-        return $this->get_prop('expiration_date');
+        return $this->get_meta('_arsol_pfw_proposal_expiration_date');
     }
 
     /**
@@ -1334,7 +1410,7 @@ class Arsol_PFW_Proposal {
      * @return mixed Field value
      */
     public function get_budget_meta($field) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         return isset($budget_data[$field]) ? $budget_data[$field] : null;
     }
 
@@ -1345,9 +1421,9 @@ class Arsol_PFW_Proposal {
      * @param mixed $value Field value
      */
     public function set_budget_meta($field, $value) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         $budget_data[$field] = $value;
-        $this->set_proposal_budget($budget_data);
+        $this->set_proposed_project_budget($budget_data);
     }
 
     /**
@@ -1357,7 +1433,7 @@ class Arsol_PFW_Proposal {
      * @return mixed Field value
      */
     public function get_quotation_meta($field) {
-        $quotation_data = $this->get_proposal_quotation();
+        $quotation_data = $this->get_proposed_project_quotation();
         return isset($quotation_data[$field]) ? $quotation_data[$field] : null;
     }
 
@@ -1368,9 +1444,9 @@ class Arsol_PFW_Proposal {
      * @param mixed $value Field value
      */
     public function set_quotation_meta($field, $value) {
-        $quotation_data = $this->get_proposal_quotation();
+        $quotation_data = $this->get_proposed_project_quotation();
         $quotation_data[$field] = $value;
-        $this->set_proposal_quotation($quotation_data);
+        $this->set_proposed_project_quotation($quotation_data);
     }
 
     /**
@@ -1464,7 +1540,7 @@ class Arsol_PFW_Proposal {
      * @return array|mixed Legacy format
      */
     public function get_legacy_budget_onetime_amount() {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         return isset($budget_data['onetime']) ? $budget_data['onetime'] : null;
     }
 
@@ -1474,9 +1550,9 @@ class Arsol_PFW_Proposal {
      * @param array|mixed $data Legacy format
      */
     public function set_legacy_budget_onetime_amount($data) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         $budget_data['onetime'] = $data;
-        $this->set_proposal_budget($budget_data);
+        $this->set_proposed_project_budget($budget_data);
     }
 
     /**
@@ -1485,7 +1561,7 @@ class Arsol_PFW_Proposal {
      * @return array|mixed Legacy format
      */
     public function get_legacy_budget_recurring_amount() {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         return isset($budget_data['recurring']) ? $budget_data['recurring'] : null;
     }
 
@@ -1495,9 +1571,9 @@ class Arsol_PFW_Proposal {
      * @param array|mixed $data Legacy format
      */
     public function set_legacy_budget_recurring_amount($data) {
-        $budget_data = $this->get_proposal_budget();
+        $budget_data = $this->get_proposed_project_budget();
         $budget_data['recurring'] = $data;
-        $this->set_proposal_budget($budget_data);
+        $this->set_proposed_project_budget($budget_data);
     }
 
     /**
@@ -1506,7 +1582,7 @@ class Arsol_PFW_Proposal {
      * @return array|mixed Legacy format
      */
     public function get_legacy_quotation_line_items() {
-        $quotation_data = $this->get_proposal_quotation();
+        $quotation_data = $this->get_proposed_project_quotation();
         return isset($quotation_data['line_items']) ? $quotation_data['line_items'] : null;
     }
 
@@ -1516,8 +1592,8 @@ class Arsol_PFW_Proposal {
      * @param array|mixed $data Legacy format
      */
     public function set_legacy_quotation_line_items($data) {
-        $quotation_data = $this->get_proposal_quotation();
+        $quotation_data = $this->get_proposed_project_quotation();
         $quotation_data['line_items'] = $data;
-        $this->set_proposal_quotation($quotation_data);
+        $this->set_proposed_project_quotation($quotation_data);
     }
 }

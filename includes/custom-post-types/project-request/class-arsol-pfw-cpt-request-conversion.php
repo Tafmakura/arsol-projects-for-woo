@@ -107,7 +107,7 @@ class Request_Conversion {
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal();
             $proposal->set_title($request->get_title());
             $proposal->set_customer_id($request->get_customer_id());
-            $proposal->set_budget($request->get_budget());
+            $proposal->set_proposed_project_budget($request->get_requested_project_budget());
             $proposal->set_description($request->get_prop('description'));
             $proposal->set_stage('processing');
             
@@ -212,7 +212,7 @@ class Request_Conversion {
         }
         
         // 3. Transfer request budget as proposed budget
-        $request_budget = $request->get_budget();
+        $request_budget = $request->get_requested_project_budget();
         if (!empty($request_budget)) {
             $budget_data = array(
                 'onetime' => $request_budget,
