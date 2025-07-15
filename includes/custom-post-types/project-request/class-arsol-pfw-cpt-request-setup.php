@@ -130,7 +130,7 @@ class Setup {
         }
         
         // Instantiate the request entity
-        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post->ID);
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post->ID);
         
         $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-request-header.php';
         if (file_exists($template_path)) {

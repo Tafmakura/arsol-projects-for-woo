@@ -33,7 +33,7 @@ class Proposal_Budget {
         wp_nonce_field('arsol_proposal_budget_save', 'arsol_proposal_budget_nonce');
         
         // Get current values using entity methods (primary approach)
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post->ID);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
         $budget_data = $proposal->get_proposal_budget();
         
         $onetime_data = $proposal->get_budget_onetime_amount() ?: array();

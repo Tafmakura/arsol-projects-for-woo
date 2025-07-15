@@ -64,7 +64,7 @@ class Proposal {
         }
 
         $start_date = get_post_meta($post->ID, '_arsol_pfw_proposed_project_start_date', true);
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Proposal($post->ID);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
         $delivery_date = $proposal->get_due_date();
         $expiration_date = get_post_meta($post->ID, '_arsol_pfw_proposal_expiration_date', true);
 
@@ -271,7 +271,7 @@ class Proposal {
         // Conditionally save/delete budget data
         if ($cost_proposal_type === 'budget') {
             // Create proposal entity for saving
-            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
             
             // Prepare budget data structure
             $budget_data = array(
@@ -376,7 +376,7 @@ class Proposal {
             
         } else {
             // If not budget estimates, clear budget data
-            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
             $proposal->set_proposal_budget(array());
             
             // Clear old budget fields (no longer needed with array structure)
@@ -403,7 +403,7 @@ class Proposal {
 
         // Save project lead
         if (isset($_POST['proposal_project_lead'])) {
-            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
             $proposal->set_project_lead(sanitize_text_field($_POST['proposal_project_lead']));
         }
 
@@ -416,14 +416,14 @@ class Proposal {
         if ($cost_proposal_type === 'budget') {
             // Save budget notes using entity method
             if (isset($_POST['arsol_pfw_proposal_notes'])) {
-                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
                 $proposal->set_budget_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
                 $proposal->save();
             }
         } elseif ($cost_proposal_type === 'quotation') {
             // Save quotation notes using entity method
             if (isset($_POST['arsol_pfw_proposal_quotation_notes'])) {
-                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
                 $proposal->set_quotation_notes(wp_kses_post($_POST['arsol_pfw_proposal_quotation_notes']));
                 $proposal->save();
             }
@@ -556,7 +556,7 @@ class Proposal {
         $errors = array();
         
         // Get quotation line items using entity method
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
         $quotation_line_items = $proposal->get_quotation_line_items();
         
         if (empty($quotation_line_items) || !is_array($quotation_line_items)) {

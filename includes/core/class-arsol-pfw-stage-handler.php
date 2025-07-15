@@ -361,18 +361,18 @@ class Stage_Handler {
         try {
             switch ($entity_type) {
                 case 'request':
-                    if (class_exists('\Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request')) {
-                        return new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($entity_id);
+                    if (class_exists('\Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request')) {
+                        return new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($entity_id);
                     }
                     break;
                 case 'proposal':
-                    if (class_exists('\Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal')) {
-                        return new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($entity_id);
+                    if (class_exists('\Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal')) {
+                        return new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($entity_id);
                     }
                     break;
                 case 'project':
-                    if (class_exists('\Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project')) {
-                        return new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($entity_id);
+                    if (class_exists('\Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project')) {
+                        return new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($entity_id);
                     }
                     break;
             }

@@ -382,7 +382,7 @@ class Proposal_Quotation {
         // Quotation data is now stored in _arsol_pfw_proposed_project_quotation_line_items
         
         // Save line items to database using entity methods
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
         
         // Save totals to quotation data structure
         $quotation_data = $proposal->get_proposal_quotation();

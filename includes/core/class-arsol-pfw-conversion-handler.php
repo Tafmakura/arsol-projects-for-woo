@@ -28,7 +28,7 @@ class Conversion_Handler {
         }
         
         // Get request entity for data access
-        $request_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($request_id);
+        $request_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($request_id);
         
         // Prepare proposal data
         $proposal_data = array(
@@ -62,7 +62,7 @@ class Conversion_Handler {
                 // Copy budget data
                 $budget_data = $request_entity->get_request_budget();
                 if (!empty($budget_data)) {
-                    $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+                    $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
                     $proposal_entity->set_proposal_budget($budget_data);
                     $proposal_entity->save();
                 }
@@ -72,7 +72,7 @@ class Conversion_Handler {
                 // Copy quotation data
                 $quotation_data = $request_entity->get_request_quotation();
                 if (!empty($quotation_data)) {
-                    $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+                    $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
                     $proposal_entity->set_proposal_quotation($quotation_data);
                     $proposal_entity->save();
                 }
@@ -132,7 +132,7 @@ class Conversion_Handler {
             }
             
             error_log("ARSOL PFW DEBUG: Creating project...");
-            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project();
+            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project();
             $project->set_title($proposal_obj->get_title());
             $project->set_customer_id($proposal_obj->get_customer_id());
             $project->set_project_budget($proposal_obj->get_proposed_project_budget());
@@ -197,8 +197,8 @@ class Conversion_Handler {
         error_log("ARSOL PFW DEBUG: Starting metadata copy from request #{$request_id} to proposal #{$proposal_id}");
         
         // Get request and proposal objects using factory functions
-        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($request_id);
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($request_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         
         if (!$request || !$proposal) {
             error_log("ARSOL PFW DEBUG: Failed to load request or proposal objects");
@@ -296,8 +296,8 @@ class Conversion_Handler {
         error_log("ARSOL PFW DEBUG: Starting metadata copy from proposal #{$proposal_id} to project #{$project_id}");
         
         // Get proposal and project objects using entity classes
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Arsol_PFW_Project($project_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($project_id);
         
         if (!$proposal || !$project) {
             error_log("ARSOL PFW DEBUG: Failed to load proposal or project objects");

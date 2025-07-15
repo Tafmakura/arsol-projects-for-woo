@@ -369,7 +369,7 @@ class Woocommerce_Logs {
      * @param string $context
      */
     public static function log_quotation_line_items($proposal_id, $context = '') {
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         $line_items = $proposal->get_quotation_line_items() ?: array();
         
         $log_message = sprintf(
@@ -389,7 +389,7 @@ class Woocommerce_Logs {
      * @param string $context
      */
     public static function log_quotation_totals($proposal_id, $context = '') {
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         $onetime_total = $proposal->get_quotation_onetime_total() ?: 0;
         $recurring_totals = $proposal->get_quotation_recurring_totals() ?: array();
         

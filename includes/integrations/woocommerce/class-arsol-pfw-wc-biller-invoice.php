@@ -499,7 +499,7 @@ class Woocommerce_Biller {
                 
             case 'budget':
                 // Budget type requires at least one-time budget with amount > 0
-                $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+                $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
                 $onetime_data = $proposal_entity->get_budget_onetime_amount();
                 
                 if (empty($onetime_data) || !is_array($onetime_data)) {
@@ -521,7 +521,7 @@ class Woocommerce_Biller {
                 
             case 'quotation':
                 // Quotation type requires at least one quotation line item with description and amount
-                $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+                $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
                 $quotation_data = $proposal_entity->get_proposal_quotation();
                 $line_items = $proposal_entity->get_quotation_line_items();
                 
@@ -593,7 +593,7 @@ class Woocommerce_Biller {
         }
         
         $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
-        $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+        $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         $currency = $proposal_entity->get_quotation_currency() ?: get_woocommerce_currency();
         $line_items = array();
         

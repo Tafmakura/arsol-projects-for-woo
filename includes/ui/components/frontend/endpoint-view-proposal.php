@@ -19,7 +19,7 @@ if (!isset($post) || !$post) {
 }
 
 // Use factory function to get proposal object
-$proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post->ID);
+$proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
 if (!$proposal) {
     echo '<p>' . esc_html__('Proposal not found.', 'arsol-pfw') . '</p>';
     return;

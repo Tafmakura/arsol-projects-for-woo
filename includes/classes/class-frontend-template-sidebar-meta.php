@@ -273,7 +273,7 @@ class Frontend_Template_Sidebar_Meta {
         }
         
         // Due Date
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project_Proposal\Proposal($post_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
         $due_date = $proposal->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
@@ -552,7 +552,7 @@ class Frontend_Template_Sidebar_Meta {
      * @return array
      */
     public function get_proposal_budget_data($post_id) {
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
         
         $budget_data = $proposal->get_proposal_budget();
         $onetime_data = $proposal->get_budget_onetime_amount() ?: array();

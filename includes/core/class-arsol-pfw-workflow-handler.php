@@ -234,7 +234,7 @@ class Workflow_Handler {
 
     private function update_request_meta($post_id, $data) {
         // Get request object to use setter methods
-        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post_id);
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
         
         if (isset($data['request_budget'])) {
             $request->set_budget(sanitize_text_field($data['request_budget']));
@@ -324,7 +324,7 @@ class Workflow_Handler {
      * @return bool
      */
     private function has_valid_quotation_data($proposal_id) {
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($proposal_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         $line_items = $proposal->get_quotation_line_items() ?: array();
         
         if (empty($line_items) || !is_array($line_items)) {

@@ -32,7 +32,7 @@ function arsol_pfw_get_request($the_request = false) {
         return false;
     }
     
-    return new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($the_request);
+    return new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($the_request);
 }
 
 /**
@@ -80,7 +80,7 @@ function arsol_pfw_get_requests_by_customer($customer_id) {
     $requests = array();
     
     foreach ($posts as $post) {
-        $requests[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post);
+        $requests[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post);
     }
     
     return $requests;
@@ -104,7 +104,7 @@ function arsol_pfw_get_requests_by_post_author($user_id) {
     $requests = array();
     
     foreach ($posts as $post) {
-        $requests[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectRequest\Arsol_PFW_Request($post);
+        $requests[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post);
     }
     
     return $requests;

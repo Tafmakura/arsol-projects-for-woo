@@ -282,7 +282,7 @@ class Assets {
         }
         
         // Get proposal entity for data access
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\ProjectProposal\Arsol_PFW_Proposal($post->ID);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
         $line_items = $proposal->get_quotation_line_items() ?: array();
         
         wp_enqueue_script(
