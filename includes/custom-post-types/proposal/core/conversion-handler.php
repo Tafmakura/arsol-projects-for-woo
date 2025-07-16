@@ -131,7 +131,7 @@ class Conversion_Handler {
                 throw new Exception(__('Proposal not found.', 'arsol-pfw'));
             }
             
-            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project();
+            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project();
         $project->set_title($proposal->get_title());
         $project->set_customer_id($proposal->get_customer_id());
         $project->set_budget($proposal->get_budget());
@@ -278,7 +278,7 @@ class Conversion_Handler {
     private function copy_proposal_metadata_to_project($proposal_id, $project_id) {
         // Get proposal and project objects using entity classes
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($project_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
         
         if (!$proposal || !$project) {
             throw new Exception(__('Failed to load proposal or project for metadata copy.', 'arsol-pfw'));

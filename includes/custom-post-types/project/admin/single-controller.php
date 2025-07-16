@@ -168,7 +168,7 @@ class Single_Controller {
 
         // Save project lead
         if (isset($_POST['project_lead'])) {
-            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Project($post_id);
+            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
             $project->set_project_lead(sanitize_text_field($_POST['project_lead']));
         }
 

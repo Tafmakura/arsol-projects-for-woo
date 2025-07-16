@@ -151,7 +151,7 @@ class Sidebar_Meta {
         }
         
         // Get project object to use getter methods
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($post_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
         
         // Customer
         $customer = $project->get_customer();

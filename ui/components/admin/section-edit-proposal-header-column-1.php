@@ -35,7 +35,7 @@ $parent_project_data = false;
 // ALWAYS check URL parameter first (for new proposals)
 if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
     $parent_project_id = intval($_GET['parent_project']);
-    $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($parent_project_id);
+    $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
     
     if ($parent_project) {
         $is_project_tied = true;
@@ -62,7 +62,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
 elseif ($proposal_id > 0) {
     $parent_project_id = $proposal->get_parent_project_id();
     if (!empty($parent_project_id)) {
-        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($parent_project_id);
+        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
         if ($parent_project) {
             $is_project_tied = true;
             

@@ -20,7 +20,7 @@ $is_edit = isset($is_edit) && $is_edit;
 
 // If editing, populate fields from the project object
 if ($is_edit && isset($post) && $post) {
-    $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($post->ID);
+    $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post->ID);
     if ($project) {
         $title = $project->get_title();
         $content = $post->post_content; // Post content still comes from WP_Post

@@ -132,7 +132,7 @@ class Conversion_Handler {
             }
             
             error_log("ARSOL PFW DEBUG: Creating project...");
-            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project();
+            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project();
             $project->set_title($proposal_obj->get_title());
             $project->set_customer_id($proposal_obj->get_customer_id());
             $project->set_project_budget($proposal_obj->get_proposed_project_budget());
@@ -297,7 +297,7 @@ class Conversion_Handler {
         
         // Get proposal and project objects using entity classes
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($project_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
         
         if (!$proposal || !$project) {
             error_log("ARSOL PFW DEBUG: Failed to load proposal or project objects");

@@ -206,7 +206,7 @@ class Endpoints {
         }
         
         // Create single project instance using our entity class
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($project_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
         $current_tab = 'overview';
         
         // Stage handling with proper error checking
@@ -238,7 +238,7 @@ class Endpoints {
         }
         
         // Create single project instance using our entity class
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($project_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
         $current_tab = 'orders';
         
         // Stage handling with proper error checking
@@ -277,7 +277,7 @@ class Endpoints {
         }
         
         // Create single project instance using our entity class
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($project_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
         $current_tab = 'subscriptions';
         
         // Stage handling with proper error checking
@@ -447,7 +447,7 @@ class Endpoints {
         $user_id = get_current_user_id();
         
         // Check if project exists and user has access
-        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($project_id);
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
         if (!$project || !\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($user_id, $project_id)) {
             // Use the no-access template for consistency
             include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/frontend/woocommerce/myaccount/no-access.php';

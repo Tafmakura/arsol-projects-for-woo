@@ -371,8 +371,8 @@ class Stage_Handler {
                     }
                     break;
                 case 'project':
-                    if (class_exists('\Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project')) {
-                        return new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($entity_id);
+                    if (class_exists('\Arsol_Projects_For_Woo\Custom_Post_Types\Project')) {
+                        return new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($entity_id);
                     }
                     break;
             }

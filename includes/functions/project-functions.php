@@ -32,7 +32,7 @@ function arsol_pfw_get_project($the_project = false) {
         return false;
     }
     
-    return new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($the_project);
+    return new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($the_project);
 }
 
 /**
@@ -80,7 +80,7 @@ function arsol_pfw_get_projects_by_customer($customer_id) {
     $projects = array();
     
     foreach ($posts as $post) {
-        $projects[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($post);
+        $projects[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post);
     }
     
     return $projects;
@@ -104,7 +104,7 @@ function arsol_pfw_get_projects_by_post_author($user_id) {
     $projects = array();
     
     foreach ($posts as $post) {
-        $projects[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($post);
+        $projects[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post);
     }
     
     return $projects;

@@ -19,7 +19,7 @@ $parent_project_title = '';
 if (!$is_edit && isset($_GET['parent_project'])) {
     $parent_project_id = absint($_GET['parent_project']);
     if ($parent_project_id) {
-        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($parent_project_id);
+        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
         if ($parent_project) {
             $parent_project_title = $parent_project->get_title();
         } else {
@@ -34,7 +34,7 @@ if ($is_edit) {
     if ($request) {
         $parent_project_id = $request->get_prop('parent_project_id');
         if ($parent_project_id) {
-            $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($parent_project_id);
+            $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
             if ($parent_project) {
                 $parent_project_title = $parent_project->get_title();
             }
