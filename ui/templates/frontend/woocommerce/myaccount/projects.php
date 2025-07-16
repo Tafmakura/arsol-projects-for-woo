@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 
 // --- Create/Request Buttons ---
 $user_id = get_current_user_id();
-$admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
+$admin_users = new \Arsol_Projects_For_Woo\Admin\Users\Users();
 $can_create = $admin_users->can_user_create_projects($user_id);
 $can_request = $admin_users->can_user_request_projects($user_id);
 

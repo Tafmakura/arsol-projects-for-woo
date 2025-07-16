@@ -303,7 +303,7 @@ class Endpoints {
      */
     public function project_create_endpoint_content() {
         $user_id = get_current_user_id();
-        $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
+        $admin_users = new \Arsol_Projects_For_Woo\Admin\Users\Users();
         
         if (!$admin_users->can_user_create_projects($user_id)) {
             include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/frontend/woocommerce/myaccount/no-access.php';
@@ -320,7 +320,7 @@ class Endpoints {
      */
     public function project_request_endpoint_content() {
         $user_id = get_current_user_id();
-        $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
+        $admin_users = new \Arsol_Projects_For_Woo\Admin\Users\Users();
 
         if (!$admin_users->can_user_request_projects($user_id)) {
             include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/frontend/woocommerce/myaccount/no-access.php';
