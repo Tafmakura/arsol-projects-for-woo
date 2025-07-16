@@ -1,37 +1,26 @@
 <?php
 /**
- * Plugin Name: Arsol Projects for Woo
- * Plugin URI: https://your-site.com/arsol-projects-for-woo
- * Description: A WordPress plugin to manage projects with WooCommerce integration
- * Version: 0.0.9.6
- * Requires at least: 5.8
- * Requires PHP: 7.4.1
- * Requires Plugins: woocommerce
- * Author: Taf Makura
- * Author URI: https://your-site.com
- * License: GPL v2 or later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Plugin Name: Arsol Projects for WooCommerce
+ * Plugin URI: https://arsol.com
+ * Description: A comprehensive project management system for WooCommerce, allowing customers to create and manage projects, proposals, and requests.
+ * Version: 2.0.0
+ * Author: Arsol
+ * Author URI: https://arsol.com
  * Text Domain: arsol-pfw
  * Domain Path: /languages
- * 
+ * Requires at least: 5.0
+ * Tested up to: 6.4
+ * Requires PHP: 7.4
+ * WC requires at least: 5.0
+ * WC tested up to: 8.0
+ * License: GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ *
  * @package Arsol_Projects_For_Woo
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * @since 1.0.0
  */
 
-// Prevent direct access to this file
+// Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -41,63 +30,13 @@ define('ARSOL_PROJECTS_PLUGIN_FILE', __FILE__);
 define('ARSOL_PROJECTS_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('ARSOL_PROJECTS_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('ARSOL_PROJECTS_PLUGIN_BASENAME', plugin_basename(__FILE__));
+define('ARSOL_PROJECTS_VERSION', '2.0.0');
 
-// Define additional constants for compatibility
-define('ARSOL_PFW_PLUGIN_DIR', plugin_dir_path(__FILE__));
-
-// Define project meta key constant for WooCommerce integration
-define('ARSOL_PROJECT_META_KEY', 'arsol-pfw/parent-project-id');
-
-use Arsol_Projects_For_Woo\Setup;
-
-// Include the Setup class
-require_once ARSOL_PROJECTS_PLUGIN_DIR . 'class-arsol-pfw-setup.php';
-
-// Register activation hook
-register_activation_hook(__FILE__, 'arsol_projects_activate');
-
-/**
- * Plugin activation function
- */
-function arsol_projects_activate() {
-    // Set flag to flush rewrite rules on next init
-    update_option('arsol_projects_flush_rewrite_rules', false);
+// Initialize the plugin
+add_action('plugins_loaded', function() {
+    // Load the setup class
+    require_once ARSOL_PROJECTS_PLUGIN_DIR . 'class-arsol-pfw-setup.php';
     
-    // Trigger defaults initialization
-    do_action('arsol_pfw_plugin_activated');
-}
-
-// Register deactivation hook
-register_deactivation_hook(__FILE__, 'arsol_projects_deactivate');
-
-/**
- * Plugin deactivation function
- */
-function arsol_projects_deactivate() {
-    // Delete the flush rewrite rules option
-    delete_option('arsol_projects_flush_rewrite_rules');
-    // Flush rewrite rules
-    flush_rewrite_rules();
-}
-
-/**
- * Initializes the Arsol Projects for Woo plugin.
- *
- * This function is hooked to the 'plugins_loaded' action to ensure that all
- * dependent plugins are loaded before our plugin's main logic runs.
- *
- * @return void
- */
-function arsol_projects_init() {
-    // Instantiate the Setup class
-    new Setup();
-    // All other class initializations are handled inside Setup()
-}
-add_action('plugins_loaded', 'arsol_projects_init');
-
-// Declare HPOS compatibility
-add_action('before_woocommerce_init', function() {
-    if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
-        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
-    }
+    // Initialize the plugin
+    new \Arsol_Projects_For_Woo\Setup();
 }); 
