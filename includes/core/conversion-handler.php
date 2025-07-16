@@ -158,7 +158,8 @@ class Conversion_Handler {
             error_log("ARSOL PFW DEBUG: Metadata copy completed");
             
             // 5. Handle WooCommerce orders (if needed)
-            $cost_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true);
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+            $cost_type = $proposal->get_proposal_costing_type();
             if ($cost_type === 'quotation') {
                 error_log("ARSOL PFW DEBUG: Creating WooCommerce orders for quotation proposal");
                 $this->create_woocommerce_orders($proposal_id, $project_id);
