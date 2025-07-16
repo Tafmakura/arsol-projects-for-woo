@@ -51,7 +51,7 @@ class Setup {
         $supports = array('title', 'author');
         
         // Add comments support if enabled
-        if (\Arsol_Projects_For_Woo\Admin\Settings_General::is_comments_enabled_for_post_type('arsol-pfw-project')) {
+        if (\Arsol_Projects_For_Woo\Admin\Settings\General::is_comments_enabled_for_post_type('arsol-pfw-project')) {
             $supports[] = 'comments';
         }
 
