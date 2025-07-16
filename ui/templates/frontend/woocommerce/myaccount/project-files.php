@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 // $project (WP_Post object), $project_id, $current_tab, $statuses, $current_status, $wrapper_data
 
 // Include unified project header
-include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
+include ARSOL_PFW_PLUGIN_DIR . 'ui/partials/frontend/project/project-header.php';
 
 // --- Render Page Content ---
 ?>

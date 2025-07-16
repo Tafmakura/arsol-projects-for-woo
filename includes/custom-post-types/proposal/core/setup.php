@@ -134,7 +134,7 @@ class Setup {
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
         
         // Include the header container template with the entity instance
-        $template_path = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-proposal-header.php';
+        $template_path = ARSOL_PFW_PLUGIN_DIR . 'ui/components/admin/section-edit-proposal-header.php';
         if (file_exists($template_path)) {
             include $template_path;
         }

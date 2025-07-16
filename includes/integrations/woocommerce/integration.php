@@ -466,7 +466,7 @@ class Integration {
         }
         
         // Load the template with the prepared variables
-        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/section-woocommerce-table-related-project.php';
+        include ARSOL_PFW_PLUGIN_DIR . 'ui/components/frontend/section-woocommerce-table-related-project.php';
     }
 
     /**

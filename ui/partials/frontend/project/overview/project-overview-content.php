@@ -19,16 +19,16 @@ if (empty($post_id) || empty($post_type)) {
     // Include appropriate content based on project type
     switch ($project_type) {
         case 'active':
-            include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project.php';
+            include ARSOL_PFW_PLUGIN_DIR . 'ui/components/frontend/endpoint-view-project.php';
             break;
         case 'proposal':
-            include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-proposal.php';
+            include ARSOL_PFW_PLUGIN_DIR . 'ui/components/frontend/endpoint-view-proposal.php';
             break;
         case 'request':
-            include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-request.php';
+            include ARSOL_PFW_PLUGIN_DIR . 'ui/components/frontend/endpoint-view-request.php';
             break;
         default:
-            include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project.php';
+            include ARSOL_PFW_PLUGIN_DIR . 'ui/components/frontend/endpoint-view-project.php';
             break;
     }
     ?>

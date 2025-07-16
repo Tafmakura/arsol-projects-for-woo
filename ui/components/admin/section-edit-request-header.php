@@ -93,7 +93,7 @@ $container_class = 'arsol-header-grid';
 
                         <?php
                     // Load the general settings template
-                    $template_path = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-request-header-column-1.php';
+                    $template_path = ARSOL_PFW_PLUGIN_DIR . 'ui/components/admin/section-edit-request-header-column-1.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }
@@ -105,7 +105,7 @@ $container_class = 'arsol-header-grid';
                     
                     <?php
                     // Load the request details template
-                    $template_path = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-request-header-column-2.php';
+                    $template_path = ARSOL_PFW_PLUGIN_DIR . 'ui/components/admin/section-edit-request-header-column-2.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }

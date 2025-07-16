@@ -13,6 +13,6 @@ if (!defined('ABSPATH')) exit;
 <div class="arsol-pfw-project-orders-content">
     <?php
     // Include the existing orders listing section
-    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project-orders.php';
+    include ARSOL_PFW_PLUGIN_DIR . 'ui/components/frontend/endpoint-view-project-orders.php';
     ?>
 </div>

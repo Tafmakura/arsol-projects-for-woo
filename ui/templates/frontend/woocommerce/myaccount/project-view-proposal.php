@@ -139,7 +139,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                     <?php 
                     // Set the variable that the comments template expects
                     $project_id = $proposal_id;
-                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; 
+                    include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; 
                     ?>
                 </div>
             <?php endif; ?>
@@ -171,7 +171,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                         
                         <?php
                         // Include proposal sidebar template directly
-                        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/sections/frontend/section-sidebar-proposal.php';
+                        include ARSOL_PFW_PLUGIN_DIR . 'ui/sections/frontend/section-sidebar-proposal.php';
                         ?>
                         
                         <?php

@@ -18,4 +18,4 @@ if (empty($request_title) && !empty($request_id)) {
 }
 
 // Include the unified project header
-include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
+include ARSOL_PFW_PLUGIN_DIR . 'ui/partials/frontend/project/project-header.php';
