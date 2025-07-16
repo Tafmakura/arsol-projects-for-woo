@@ -14,8 +14,8 @@ class Setup {
         add_action('init', array($this, 'load_textdomain'));
         
         // Register activation and deactivation hooks
-        register_activation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'activate'));
-        register_deactivation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'deactivate'));
+        register_activation_hook(ARSOL_PFW_PLUGIN_FILE, array($this, 'activate'));
+        register_deactivation_hook(ARSOL_PFW_PLUGIN_FILE, array($this, 'deactivate'));
         
         // Schedule automatic conversion cleanup
         add_action('wp', array($this, 'schedule_conversion_cleanup'));
@@ -238,7 +238,7 @@ class Setup {
 
     public function load_textdomain() {
         // Load plugin text domain with updated domain name
-        load_plugin_textdomain('arsol-pfw', false, dirname(ARSOL_PROJECTS_PLUGIN_BASENAME) . '/languages');
+        load_plugin_textdomain('arsol-pfw', false, dirname(ARSOL_PFW_PLUGIN_BASENAME) . '/languages');
     }
 
     /**

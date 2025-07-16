@@ -445,7 +445,7 @@ class Tools {
         
         // Add debugging information
         $logs[] = "=== Debug Information ===";
-        $logs[] = "Plugin Version: " . (defined('ARSOL_PROJECTS_VERSION') ? ARSOL_PROJECTS_VERSION : 'Unknown');
+        $logs[] = "Plugin Version: " . (defined('ARSOL_PFW_VERSION') ? ARSOL_PFW_VERSION : 'Unknown');
         $logs[] = "WordPress Version: " . get_bloginfo('version');
         $logs[] = "WooCommerce Version: " . (defined('WC_VERSION') ? WC_VERSION : 'Not installed');
         $logs[] = "PHP Version: " . phpversion();

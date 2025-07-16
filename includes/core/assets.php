@@ -46,7 +46,7 @@ class Assets {
      * Register frontend CSS and JS
      */
     public function register_frontend_assets() {
-        $plugin_url = plugin_dir_url(ARSOL_PROJECTS_PLUGIN_FILE);
+        $plugin_url = plugin_dir_url(ARSOL_PFW_PLUGIN_FILE);
         
         // Register CSS with prefixed filename
         wp_register_style(
@@ -113,7 +113,7 @@ class Assets {
      * Register admin CSS and JS
      */
     public function register_admin_assets() {
-        $plugin_url = plugin_dir_url(ARSOL_PROJECTS_PLUGIN_FILE);
+        $plugin_url = plugin_dir_url(ARSOL_PFW_PLUGIN_FILE);
         
         // Register CSS with prefixed filename
         wp_register_style(
@@ -287,9 +287,9 @@ class Assets {
         
         wp_enqueue_script(
             'arsol-pfw-proposal-quotation',
-            plugin_dir_url(ARSOL_PROJECTS_PLUGIN_FILE) . 'assets/js/arsol-pfw-admin-cpt-proposal.js',
+            plugin_dir_url(ARSOL_PFW_PLUGIN_FILE) . 'assets/js/arsol-pfw-admin-cpt-proposal.js',
             array('jquery', 'jquery-ui-sortable'),
-            ARSOL_PROJECTS_VERSION,
+            ARSOL_PFW_VERSION,
             true
         );
         

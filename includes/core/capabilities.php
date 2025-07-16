@@ -23,8 +23,8 @@ class Capabilities {
      */
     public function __construct() {
         // Hook into plugin activation/deactivation for clean capability management
-        register_activation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'add_administrator_capabilities'));
-        register_deactivation_hook(ARSOL_PROJECTS_PLUGIN_FILE, array($this, 'remove_all_capabilities'));
+        register_activation_hook(ARSOL_PFW_PLUGIN_FILE, array($this, 'add_administrator_capabilities'));
+        register_deactivation_hook(ARSOL_PFW_PLUGIN_FILE, array($this, 'remove_all_capabilities'));
     }
 
     /**

@@ -5,9 +5,9 @@
  */
 
 // Define plugin constants
-define('ARSOL_PROJECTS_PLUGIN_FILE', __FILE__);
+define('ARSOL_PFW_PLUGIN_FILE', __FILE__);
 define('ARSOL_PFW_PLUGIN_DIR', dirname(__FILE__) . '/');
-define('ARSOL_PROJECTS_PLUGIN_BASENAME', 'arsol-projects-for-woo/arsol-projects-for-woo.php');
+define('ARSOL_PFW_PLUGIN_BASENAME', 'arsol-projects-for-woo/arsol-projects-for-woo.php');
 
 echo "Testing manual loader...\n";
 

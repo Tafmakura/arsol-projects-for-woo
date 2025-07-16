@@ -1,8 +1,8 @@
 <?php
 // Simple test to isolate the issue
 define('ARSOL_PFW_PLUGIN_DIR', __DIR__ . '/');
-define('ARSOL_PROJECTS_PLUGIN_FILE', __DIR__ . '/arsol-projects-for-woo.php');
-define('ARSOL_PROJECTS_PLUGIN_BASENAME', 'arsol-projects-for-woo/arsol-projects-for-woo.php');
+define('ARSOL_PFW_PLUGIN_FILE', __DIR__ . '/arsol-projects-for-woo.php');
+define('ARSOL_PFW_PLUGIN_BASENAME', 'arsol-projects-for-woo/arsol-projects-for-woo.php');
 
 // Mock WordPress functions to avoid hanging
 if (!function_exists('add_action')) {
