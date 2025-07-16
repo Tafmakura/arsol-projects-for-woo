@@ -28,4 +28,4 @@ function add_custom_proposal_button($type, $data) {
         echo '<a href="#" class="button button-secondary">' . __('Custom Action', 'arsol-pfw') . '</a>';
         echo '</div>';
     }
-} 
+}

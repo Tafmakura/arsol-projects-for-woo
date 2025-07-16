@@ -166,12 +166,12 @@ update_post_meta($proposal_id, '_arsol_pfw_proposed_project_budget_line_items', 
 // Saving quotation line items
 $quotation_data = array(
     'line_items' => array(
-        array(
-            'description' => 'Web Development',
-            'quantity' => 1,
-            'rate' => 5000,
-            'total' => 5000,
-            'type' => 'onetime'
+    array(
+        'description' => 'Web Development',
+        'quantity' => 1,
+        'rate' => 5000,
+        'total' => 5000,
+        'type' => 'onetime'
         )
     ),
     'currency' => 'USD',
