@@ -37,7 +37,20 @@ class Setup {
             }
 
             $relative_class = substr($class, $len);
-            $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+            
+            // Convert namespace to file path, handling case sensitivity
+            $file_parts = explode('\\', $relative_class);
+            $file_path = '';
+            
+            foreach ($file_parts as $part) {
+                if ($file_path !== '') {
+                    $file_path .= '/';
+                }
+                // Convert to lowercase to match actual directory structure
+                $file_path .= strtolower($part);
+            }
+            
+            $file = $base_dir . $file_path . '.php';
 
             if (file_exists($file)) {
                 require $file;
