@@ -169,7 +169,20 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/biller-invoice.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/logs/logs.php';
         
-        // Email classes
+        // Email classes are loaded after WooCommerce is available
+        // See load_woocommerce_email_classes() method
+    }
+
+    /**
+     * Load WooCommerce email classes after WooCommerce is loaded
+     */
+    private function load_woocommerce_email_classes() {
+        // Only load if WooCommerce is active
+        if (!class_exists('WooCommerce')) {
+            return;
+        }
+
+        // Load email classes
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-project.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-request.php';
@@ -218,6 +231,9 @@ class Setup {
             add_action('admin_notices', array($this, 'woocommerce_notice'));
             return;
         }
+
+        // Load WooCommerce email classes after WooCommerce is available
+        $this->load_woocommerce_email_classes();
     }
 
     public function load_textdomain() {
