@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Check for shortcode override using the new system
-$override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_no_access]');
+$override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_no_access]');
 if ($override) {
     echo do_shortcode($override);
 } else {

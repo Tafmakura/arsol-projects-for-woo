@@ -28,11 +28,11 @@ if (!$request) {
 $project_type = 'request';
 
 // === PURE STAGE-BASED DISPLAY LOGIC ===
-$current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($request_id);
+$current_stage_id = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_current_stage_id($request_id);
 
 // Check what forms are allowed for this stage
-$should_show_edit_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($request_id, $current_stage_id, 'edit_request_form');
-$should_show_create_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($request_id, $current_stage_id, 'request_form');
+$should_show_edit_form = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_form($request_id, $current_stage_id, 'edit_request_form');
+$should_show_create_form = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_form($request_id, $current_stage_id, 'request_form');
 
 // Determine display mode based on stage settings
 if ($should_show_edit_form) {
@@ -47,13 +47,13 @@ if ($should_show_edit_form) {
     // No forms allowed, check if content should be shown
     $form_type = '';
     $is_edit_mode = false;
-    $display_mode = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_content($request_id, $current_stage_id) ? 'content' : 'empty';
+    $display_mode = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_content($request_id, $current_stage_id) ? 'content' : 'empty';
 }
 
 // Check sidebar visibility (create forms: hidden, edit forms: follow settings, content: follow settings)
 $show_sidebar = ($display_mode === 'form' && !$is_edit_mode) 
     ? false 
-    : \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_sidebar($request_id, $current_stage_id);
+    : \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_sidebar($request_id, $current_stage_id);
 
 // === DEBUG LOGGING ===
 error_log("=== ARSOL DEBUG: Request Display Mode Detection ===");
@@ -74,26 +74,26 @@ error_log("Edit Request Form Visibility: " . $edit_form_visibility);
 error_log("Edit Request Form Stages: " . print_r($edit_form_stages, true));
 
 // Check the should_show_form result for both form types
-$should_show_edit_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($request_id, $current_stage_id, 'edit_request_form');
-$should_show_create_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($request_id, $current_stage_id, 'request_form');
+$should_show_edit_form = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_form($request_id, $current_stage_id, 'edit_request_form');
+$should_show_create_form = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_form($request_id, $current_stage_id, 'request_form');
 error_log("Should Show Edit Form: " . ($should_show_edit_form ? 'YES' : 'NO'));
 error_log("Should Show Create Form: " . ($should_show_create_form ? 'YES' : 'NO'));
 error_log("=== END DEBUG ===");
 
 // === NEW DISPLAY CONTROL LOGIC ===
-$current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($request_id);
+$current_stage_id = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_current_stage_id($request_id);
 
 // Determine form type based on edit mode
 $is_edit_mode = !empty($_GET['edit']) && !empty($_GET['post_id']);
 $form_type = $is_edit_mode ? 'edit_request_form' : 'request_form';
 
 // Get display mode (form, content, or empty)
-$display_mode = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_display_mode($request_id, $current_stage_id, $form_type);
+$display_mode = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_display_mode($request_id, $current_stage_id, $form_type);
 
 // Check sidebar visibility (create forms: hidden, edit forms: follow settings, content: follow settings)
 $show_sidebar = ($display_mode === 'form' && !$is_edit_mode) 
     ? false 
-    : \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_sidebar($request_id, $current_stage_id);
+    : \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_sidebar($request_id, $current_stage_id);
 
 // --- Render Project Request Content ---
 ?>
@@ -142,7 +142,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                 // Render appropriate form based on form type
                 if ($form_type === 'edit_request_form') {
                     // Check for shortcode override for edit form
-                    $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_edit_request_form]');
+                    $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_edit_request_form]');
                     if ($override) {
                         echo do_shortcode($override . ' request_id="' . $request_id . '"');
                     } else {
@@ -150,7 +150,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                     }
                 } else {
                     // Check for shortcode override for create form
-                    $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_form]');
+                    $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_request_form]');
                     if ($override) {
                         echo do_shortcode($override . ' request_id="' . $request_id . '"');
                     } else {
@@ -186,7 +186,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         
         <?php
         // Check for shortcode override using the new system
-        $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_overview]');
+        $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_request_overview]');
         if ($override) {
                                 echo do_shortcode($override . ' request_id="' . $request_id . '"');
         } else {
@@ -206,7 +206,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         
         <?php
                 // Files section - show request file upload if enabled for this stage
-                $show_files = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_files($request_id, $current_stage_id, 'request_file_upload');
+                $show_files = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_files($request_id, $current_stage_id, 'request_file_upload');
                 if ($show_files): ?>
                     <div class="files">
                         <?php
@@ -242,7 +242,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
         
         <?php
         // Comments section - dual-layer permission check
-                $show_comments = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_comments($request_id, $current_stage_id);
+                $show_comments = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_comments($request_id, $current_stage_id);
         if ($show_comments): ?>
             <div class="comments">
                 <?php 

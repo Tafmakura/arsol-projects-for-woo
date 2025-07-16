@@ -20,14 +20,14 @@ $post_id = $is_edit_mode ? intval($_GET['post_id']) : null;
 // Endpoint-level override detection for performance
 if ($is_edit_mode) {
     // Check for specific edit request form override first
-    $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_edit_request_form]');
+    $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_edit_request_form]');
     
     if ($override) {
         // Performance benefit: Complete bypass of plugin logic
         echo do_shortcode($override . ($post_id ? ' post_id="' . $post_id . '"' : ''));
     } else {
         // Check for general request form override
-        $general_override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_form]');
+        $general_override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_request_form]');
         
         if ($general_override) {
             // Use general override with edit parameter
@@ -39,7 +39,7 @@ if ($is_edit_mode) {
     }
 } else {
     // Create mode - check for request form override
-    $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_request_form]');
+    $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_request_form]');
     
     if ($override) {
         // Performance benefit: Complete bypass of plugin logic  

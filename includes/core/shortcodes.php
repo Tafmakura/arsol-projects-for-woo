@@ -1356,7 +1356,7 @@ class Shortcodes {
 		), $atts, 'arsol_pfw_request_form');
 
 		$user_id = get_current_user_id();
-		$admin_users = new \Arsol_Projects_For_Woo\Admin\Users\Users();
+		$admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
 
 		if (!$admin_users->can_user_request_projects($user_id)) {
 			return '<p>' . __('You do not have permission to request projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw') . '</p>';

@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
 
 // --- Create/Request Buttons ---
 $user_id = get_current_user_id();
-$admin_users = new \Arsol_Projects_For_Woo\Admin\Users\Users();
+$admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
 $can_create = $admin_users->can_user_create_projects($user_id);
 $can_request = $admin_users->can_user_request_projects($user_id);
 
@@ -92,7 +92,7 @@ $tabs = array(
     <?php
     switch ($current_tab) {
         case 'proposals':
-            $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_proposals_list]');
+            $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_proposals_list]');
             if ($override) {
                 echo do_shortcode($override);
             } else {
@@ -102,7 +102,7 @@ $tabs = array(
         case 'requests':
             $button_text = __('Create New Request', 'arsol-pfw');
             $button_url = wc_get_account_endpoint_url('create-request');
-            $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_requests_list]');
+            $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_requests_list]');
             if ($override) {
                 echo do_shortcode($override);
             } else {
@@ -113,7 +113,7 @@ $tabs = array(
         default:
             $button_text = __('Create New Project', 'arsol-pfw');
             $button_url = wc_get_account_endpoint_url('create-project');
-            $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_projects_list]');
+            $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_projects_list]');
             if ($override) {
                 echo do_shortcode($override);
             } else {

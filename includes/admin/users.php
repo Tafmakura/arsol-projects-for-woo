@@ -9,7 +9,7 @@
  * @since 2.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Admin\Users;
+namespace Arsol_Projects_For_Woo\Admin;
 
 if (!defined('ABSPATH')) {
     exit;

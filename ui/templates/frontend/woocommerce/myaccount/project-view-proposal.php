@@ -28,13 +28,13 @@ if (!$proposal) {
 $project_type = 'proposal';
 
 // === NEW DISPLAY CONTROL LOGIC ===
-$current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($proposal_id);
+$current_stage_id = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_current_stage_id($proposal_id);
 
 // Get display mode (always content for proposals - no forms)
 $display_mode = 'content';
 
 // Check sidebar visibility
-$show_sidebar = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_sidebar($proposal_id, $current_stage_id);
+$show_sidebar = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_sidebar($proposal_id, $current_stage_id);
 ?>
 
 <?php
@@ -76,7 +76,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             
                 <?php
                 // Check for shortcode override using the new system
-                $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_proposal_overview]');
+                $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_proposal_overview]');
                 if ($override) {
                     echo do_shortcode($override . ' proposal_id="' . $proposal_id . '"');
                 } else {
@@ -96,8 +96,8 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             
             <?php
             // Files section - show proposal files if enabled for this stage
-            $current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($proposal_id);
-            $show_files = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_files($proposal_id, $current_stage_id, 'proposal_file_display');
+            $current_stage_id = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_current_stage_id($proposal_id);
+            $show_files = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_files($proposal_id, $current_stage_id, 'proposal_file_display');
             if ($show_files): ?>
                 <div class="files">
                     <?php
@@ -133,7 +133,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             
             <?php
             // Comments section - dual-layer permission check
-            $show_comments = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_comments($proposal_id, $current_stage_id);
+            $show_comments = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_comments($proposal_id, $current_stage_id);
             if ($show_comments): ?>
                 <div class="comments">
                     <?php 

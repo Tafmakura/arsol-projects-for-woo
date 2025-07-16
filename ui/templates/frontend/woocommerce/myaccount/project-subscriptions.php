@@ -29,7 +29,7 @@ include ARSOL_PFW_PLUGIN_DIR . 'ui/partials/frontend/project/project-header.php'
 
 // --- Render Page Content ---
 // Always render subscriptions content for this template
-\Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
+\Arsol_Projects_For_Woo\Frontend\Template\Overrides::render_template(
     'project_subscriptions',
     ARSOL_PFW_PLUGIN_DIR . 'ui/components/frontend/endpoint-view-project-subscriptions.php',
     compact('project')

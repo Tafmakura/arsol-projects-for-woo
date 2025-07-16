@@ -28,11 +28,11 @@ if (!$project) {
 $project_type = $project->get_post()->post_type; // 'arsol-pfw-project'
 
 // === PURE STAGE-BASED DISPLAY LOGIC ===
-$current_stage_id = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_current_stage_id($project_id);
+$current_stage_id = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_current_stage_id($project_id);
 
 // Check what forms are allowed for this stage
-$should_show_edit_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($project_id, $current_stage_id, 'edit_project_form');
-$should_show_create_form = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_form($project_id, $current_stage_id, 'project_form');
+$should_show_edit_form = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_form($project_id, $current_stage_id, 'edit_project_form');
+$should_show_create_form = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_form($project_id, $current_stage_id, 'project_form');
 
 // Determine display mode based on stage settings
 if ($should_show_edit_form) {
@@ -47,13 +47,13 @@ if ($should_show_edit_form) {
     // No forms allowed, check if content should be shown
     $form_type = '';
     $is_edit_mode = false;
-    $display_mode = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_content($project_id, $current_stage_id) ? 'content' : 'empty';
+    $display_mode = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_content($project_id, $current_stage_id) ? 'content' : 'empty';
 }
 
 // Check sidebar visibility (create forms: hidden, edit forms: follow settings, content: follow settings)
 $show_sidebar = ($display_mode === 'form' && !$is_edit_mode) 
     ? false 
-    : \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_sidebar($project_id, $current_stage_id);
+    : \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_sidebar($project_id, $current_stage_id);
 
 // --- Render Project Overview Content ---
 ?>
@@ -102,7 +102,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             // Render appropriate form based on form type
             if ($form_type === 'edit_project_form') {
                 // Check for shortcode override for edit form
-                $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_edit_project_form]');
+                $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_edit_project_form]');
                 if ($override) {
                     echo do_shortcode($override . ' project_id="' . $project_id . '"');
                 } else {
@@ -110,7 +110,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                 }
             } else {
                 // Check for shortcode override for create form
-                $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_project_form]');
+                $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_project_form]');
                 if ($override) {
                     echo do_shortcode($override . ' project_id="' . $project_id . '"');
                 } else {
@@ -146,7 +146,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             
             <?php
             // Check for shortcode override using the new system
-            $override = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::get_shortcode_override('[arsol_pfw_project_overview]');
+            $override = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::get_shortcode_override('[arsol_pfw_project_overview]');
             if ($override) {
                 echo do_shortcode($override . ' project_id="' . $project_id . '"');
             } else {
@@ -166,7 +166,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                 
                 <?php
                 // Project files section - show project files if enabled for this stage
-                $show_project_files = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_files($project_id, $current_stage_id, 'project_files_list');
+                $show_project_files = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_files($project_id, $current_stage_id, 'project_files_list');
                 if ($show_project_files): ?>
                     <div class="files">
                         <?php
@@ -202,7 +202,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             
             <?php
             // Comments section - dual-layer permission check
-            $show_comments = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_comments($project_id, $current_stage_id);
+            $show_comments = \Arsol_Projects_For_Woo\Frontend\Template\Overrides::should_show_comments($project_id, $current_stage_id);
             if ($show_comments): ?>
                 <div class="comments">
                     <?php include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; ?>

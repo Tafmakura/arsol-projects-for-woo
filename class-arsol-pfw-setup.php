@@ -125,7 +125,7 @@ class Setup {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/integrations.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/advanced.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/tools.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/users/users.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/users.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/setup.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/setup-defaults.php';
     }
@@ -266,7 +266,7 @@ class Setup {
         new \Arsol_Projects_For_Woo\Admin\Settings\Integrations();
         new \Arsol_Projects_For_Woo\Admin\Settings\Advanced();
         new \Arsol_Projects_For_Woo\Admin\Settings\Tools();
-        new \Arsol_Projects_For_Woo\Admin\Users\Users();
+        new \Arsol_Projects_For_Woo\Admin\Users();
         new \Arsol_Projects_For_Woo\Admin\Setup\Setup();
         new \Arsol_Projects_For_Woo\Admin\Setup_Defaults\Setup_Defaults();
 
