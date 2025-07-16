@@ -30,7 +30,7 @@ $wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' .
 
 <?php
 // 1. Customer Notice (first)
-$customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_effective_customer_notice($project->get_id(), 'project');
+$customer_notice = \Arsol_Projects_For_Woo\Admin\Setup_Defaults\Setup_Defaults::get_effective_customer_notice($project->get_id(), 'project');
 if (!empty($customer_notice)) : ?>
     <div class="arsol-pfw-customer-notice">
         <div class="arsol-pfw-notice-content">

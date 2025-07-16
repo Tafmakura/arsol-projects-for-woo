@@ -380,7 +380,7 @@ class Display {
         $description = $args['description'];
 
         // Get markdown default for placeholder
-        $customer_notice_defaults = \Arsol_Projects_For_Woo\Admin\Setup_Defaults::get_customer_notice_defaults();
+        $customer_notice_defaults = \Arsol_Projects_For_Woo\Admin\Setup_Defaults\Setup_Defaults::get_customer_notice_defaults();
         $markdown_default = isset($customer_notice_defaults[$key]) ? $customer_notice_defaults[$key] : '';
         
         echo '<div class="arsol-pfw-customer-notice-field">';
