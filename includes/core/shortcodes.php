@@ -9,7 +9,7 @@
  */
 
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Core;
 
 use Arsol_Projects_For_Woo\Woo\AdminOrders;
 use Arsol_Projects_For_Woo\Woocommerce;
