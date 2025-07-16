@@ -8,7 +8,7 @@
  * @version 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Frontend\Template;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
  * the shortcode content is placed inside the <div class="project-content-wrapper">
  * rather than replacing the entire wrapper.
  */
-class Frontend_Template_Overrides {
+class Overrides {
 
     /**
      * Map of template types to their corresponding advanced settings keys

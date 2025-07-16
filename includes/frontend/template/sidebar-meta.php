@@ -8,13 +8,13 @@
  * @version 2.0.0
  */
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Frontend\Template;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Frontend_Template_Sidebar_Meta {
+class Sidebar_Meta {
 
     /**
      * Constructor

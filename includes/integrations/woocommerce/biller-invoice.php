@@ -1,6 +1,6 @@
 <?php
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Integrations\WooCommerce;
 
 use Exception;
 
@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
  * 
  * Automatically triggered during proposal-to-project conversion workflow.
  */
-class Woocommerce_Biller {
+class Biller_Invoice {
     
     /**
      * Constructor

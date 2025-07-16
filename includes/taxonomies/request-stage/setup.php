@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Taxonomies\RequestStage;
+namespace Arsol_Projects_For_Woo\Taxonomies\Request_Stage;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 /**
  * Request Stage Taxonomy Setup class
  */
-class Taxonomies_Request_Stage_Setup {
+class Setup {
 
     /**
      * Constructor

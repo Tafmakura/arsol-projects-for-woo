@@ -98,7 +98,7 @@ switch ($post_type) {
                                 'style' => 'ol',
                                 'short_ping' => true,
                                 'avatar_size' => 0, // No avatars
-                                'max_depth' => \Arsol_Projects_For_Woo\Frontend_Comments::get_max_reply_depth(),   // Centralized depth control
+                                'max_depth' => \Arsol_Projects_For_Woo\Frontend\Comments::get_max_reply_depth(),   // Centralized depth control
                                 'thread_comments' => true,
                                 'reply_text' => __('Reply', 'arsol-pfw'),
                                 'callback' => function($comment, $args, $depth) {

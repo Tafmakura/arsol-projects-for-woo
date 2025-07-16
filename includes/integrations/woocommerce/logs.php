@@ -1,6 +1,6 @@
 <?php
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Integrations\WooCommerce;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * 
  * Centralized logging functionality with configurable debug options
  */
-class Woocommerce_Logs {
+class Logs {
     
     /**
      * Log sources for different components

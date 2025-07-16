@@ -1,6 +1,6 @@
 <?php
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Frontend;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
  * Simple AJAX Comments Handler
  * Based on https://rudrastyh.com/wordpress/ajax-comments.html
  */
-class Frontend_Comments {
+class Comments {
 
     /**
      * Maximum comment reply depth

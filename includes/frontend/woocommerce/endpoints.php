@@ -8,10 +8,9 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Woocommerce;
+namespace Arsol_Projects_For_Woo\Frontend\WooCommerce;
 
-use Arsol_Projects_For_Woo\Frontend_Template_Overrides;
-use Arsol_Projects_For_Woo\Woocommerce;
+use Arsol_Projects_For_Woo\Frontend\Template\Overrides;
 
 // Exit if accessed directly.
 if (!defined('ABSPATH')) {
@@ -21,7 +20,7 @@ if (!defined('ABSPATH')) {
 /**
  * Frontend Project Endpoints class
  */
-class Frontend_Endpoints {
+class Endpoints {
     
     /**
      * Constructor

@@ -152,7 +152,7 @@ class Setup {
      * Load taxonomy files manually
      */
     private function load_taxonomy_files() {
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/setup/setup.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/setup.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/admin.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/setup.php';
@@ -167,7 +167,7 @@ class Setup {
     private function load_integration_files() {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/integration.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/biller-invoice.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/logs/logs.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/logs.php';
         
         // Email classes are loaded after WooCommerce is available
         // See load_woocommerce_email_classes() method
@@ -220,7 +220,7 @@ class Setup {
     public function cleanup_stuck_conversions() {
         $cleaned = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::cleanup_stuck_workflows(30);
         if ($cleaned > 0) {
-            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs\Logs::log_workflow('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                 "Automatic cleanup: removed {$cleaned} stuck conversions");
         }
     }
@@ -278,10 +278,10 @@ class Setup {
         new \Arsol_Projects_For_Woo\Frontend\Template\Overrides();
         new \Arsol_Projects_For_Woo\Frontend\Template\Sidebar_Buttons();
         new \Arsol_Projects_For_Woo\Frontend\Template\Sidebar_Meta();
-        new \Arsol_Projects_For_Woo\Frontend_Comments();
+        new \Arsol_Projects_For_Woo\Frontend\Comments();
 
         // Initialize taxonomies
-        new \Arsol_Projects_For_Woo\Taxonomies\Setup\Setup();
+        new \Arsol_Projects_For_Woo\Taxonomies\Setup();
         new \Arsol_Projects_For_Woo\Taxonomies\Project_Stage\Setup();
         new \Arsol_Projects_For_Woo\Taxonomies\Proposal_Stage\Setup();
         new \Arsol_Projects_For_Woo\Taxonomies\Request_Stage\Setup();
@@ -289,7 +289,7 @@ class Setup {
         // Initialize integrations
         new \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration();
         new \Arsol_Projects_For_Woo\Integrations\WooCommerce\Biller_Invoice();
-        new \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs\Logs();
+        new \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs();
 
         // Functions are now loaded in the manual loader
     }

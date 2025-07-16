@@ -8,16 +8,16 @@
  * @version 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Admin;
+namespace Arsol_Projects_For_Woo\Admin\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
 /**
- * Settings_Advanced class
+ * Advanced class
  */
-class Settings_Advanced {
+class Advanced {
 
     /**
      * Shortcode fields configuration

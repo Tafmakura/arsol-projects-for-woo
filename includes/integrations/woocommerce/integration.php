@@ -1,12 +1,12 @@
 <?php
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Integrations\WooCommerce;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Woocommerce {
+class Integration {
     /**
      * Project meta key for orders and subscriptions
      * Uses the global constant defined in the main plugin file

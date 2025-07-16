@@ -1,12 +1,12 @@
 <?php
 
-namespace Arsol_Projects_For_Woo;
+namespace Arsol_Projects_For_Woo\Frontend\WooCommerce;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Frontend_Woocommerce_Checkout {
+class Checkout {
 
     public function __construct() {
         // Register the project checkout field when WordPress and WooCommerce are fully loaded
