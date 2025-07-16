@@ -24,7 +24,7 @@ $per_page = isset($per_page) ? $per_page : 10;
 // Get paginated orders for the project.
 $paged = ( get_query_var( 'paged' ) ) ? get_query_var( 'paged' ) : 1;
 $orders = wc_get_orders(array(
-    'meta_key' => ARSOL_PROJECT_META_KEY,
+    'meta_key' => ARSOL_PFW_PROJECT_META_KEY,
     'meta_value' => $project_id,
     'limit' => $per_page,
     'offset' => ($paged - 1) * $per_page,
@@ -86,7 +86,7 @@ do_action('arsol_projects_before_project_orders', $has_orders, $project_id);
 
         <?php
         // Manually create pagination links
-        $total_pages = wc_get_orders(array('meta_key' => ARSOL_PROJECT_META_KEY, 'meta_value' => $project_id, 'paginate' => true, 'customer' => get_current_user_id()))->max_num_pages;
+        $total_pages = wc_get_orders(array('meta_key' => ARSOL_PFW_PROJECT_META_KEY, 'meta_value' => $project_id, 'paginate' => true, 'customer' => get_current_user_id()))->max_num_pages;
 
         if ($total_pages > 1) {
             echo '<nav class="woocommerce-pagination">';

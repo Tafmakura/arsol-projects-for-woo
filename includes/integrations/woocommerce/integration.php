@@ -11,7 +11,7 @@ class Integration {
      * Project meta key for orders and subscriptions
      * Uses the global constant defined in the main plugin file
      */
-    const PROJECT_META_KEY = ARSOL_PROJECT_META_KEY;
+    const PROJECT_META_KEY = ARSOL_PFW_PROJECT_META_KEY;
 
     public function __construct() {
         // Initialize hooks
