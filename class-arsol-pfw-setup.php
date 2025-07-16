@@ -134,6 +134,10 @@ class Setup {
      * Load frontend files manually
      */
     private function load_frontend_files() {
+        // Load the base handler first (other classes extend this)
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/handler/handler.php';
+        
+        // Load other frontend files
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/request/request.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/proposal/proposal.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/woocommerce/checkout.php';
@@ -142,7 +146,6 @@ class Setup {
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/template/sidebar-buttons.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/template/sidebar-meta.php';
         require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/comments/comments.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/handler/handler.php';
     }
 
     /**

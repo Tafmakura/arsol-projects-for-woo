@@ -37,11 +37,53 @@ foreach ($core_files as $file) {
     }
 }
 
-// Test if Workflow_Handler class exists after loading
+// Test loading frontend files
+$frontend_files = [
+    'includes/frontend/handler/handler.php',
+    'includes/frontend/request/request.php',
+    'includes/frontend/proposal/proposal.php',
+];
+
+echo "\nTesting frontend files:\n";
+foreach ($frontend_files as $file) {
+    if (file_exists($file)) {
+        echo "✅ {$file} exists\n";
+        try {
+            require_once $file;
+            echo "   ✅ Loaded successfully\n";
+        } catch (Exception $e) {
+            echo "   ❌ Error loading: " . $e->getMessage() . "\n";
+        }
+    } else {
+        echo "❌ {$file} not found\n";
+    }
+}
+
+// Test if classes exist after loading
+echo "\nTesting class existence:\n";
+
 if (class_exists('\Arsol_Projects_For_Woo\Workflow\Workflow_Handler')) {
     echo "✅ Workflow_Handler class found\n";
 } else {
     echo "❌ Workflow_Handler class not found\n";
+}
+
+if (class_exists('\Arsol_Projects_For_Woo\Frontend\Frontend_Handler')) {
+    echo "✅ Frontend_Handler class found\n";
+} else {
+    echo "❌ Frontend_Handler class not found\n";
+}
+
+if (class_exists('\Arsol_Projects_For_Woo\Frontend\Request_Frontend')) {
+    echo "✅ Request_Frontend class found\n";
+} else {
+    echo "❌ Request_Frontend class not found\n";
+}
+
+if (class_exists('\Arsol_Projects_For_Woo\Frontend\Proposal_Frontend')) {
+    echo "✅ Proposal_Frontend class found\n";
+} else {
+    echo "❌ Proposal_Frontend class not found\n";
 }
 
 echo "\nManual loader test completed!\n"; 
