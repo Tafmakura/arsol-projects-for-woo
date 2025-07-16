@@ -1,6 +1,6 @@
 <?php
 
-namespace Arsol_Projects_For_Woo\Custom_Post_Types\Request\Admin;
+namespace Arsol_Projects_For_Woo\Custom_Post_Types\Request\Core;
 
 if (!defined('ABSPATH')) {
     exit;

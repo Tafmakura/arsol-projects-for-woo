@@ -92,9 +92,9 @@ class Setup {
         new \Arsol_Projects_For_Woo\Core\Shortcodes();
 
         // Initialize custom post types
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Setup();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Setup();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Core\Setup();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Core\Setup();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Core\Setup();
 
         // Initialize admin components
         new \Arsol_Projects_For_Woo\Admin\Settings\General();
@@ -105,18 +105,17 @@ class Setup {
         new \Arsol_Projects_For_Woo\Admin\Settings\Tools();
         new \Arsol_Projects_For_Woo\Admin\Users\Users();
         new \Arsol_Projects_For_Woo\Admin\Setup\Setup();
-        new \Arsol_Projects_For_Woo\Admin\Setup\Defaults();
+        new \Arsol_Projects_For_Woo\Admin\Setup_Defaults\Setup_Defaults();
 
         // Initialize frontend components
-        new \Arsol_Projects_For_Woo\Frontend\Handler\Handler();
+        new \Arsol_Projects_For_Woo\Frontend\Request_Frontend();
+        new \Arsol_Projects_For_Woo\Frontend\Proposal_Frontend();
         new \Arsol_Projects_For_Woo\Frontend\WooCommerce\Checkout();
         new \Arsol_Projects_For_Woo\Frontend\WooCommerce\Endpoints();
         new \Arsol_Projects_For_Woo\Frontend\Template\Overrides();
         new \Arsol_Projects_For_Woo\Frontend\Template\Sidebar_Buttons();
         new \Arsol_Projects_For_Woo\Frontend\Template\Sidebar_Meta();
-        new \Arsol_Projects_For_Woo\Frontend\Comments\Comments();
-        new \Arsol_Projects_For_Woo\Frontend\Request\Request();
-        new \Arsol_Projects_For_Woo\Frontend\Proposal\Proposal();
+        new \Arsol_Projects_For_Woo\Frontend_Comments();
 
         // Initialize taxonomies
         new \Arsol_Projects_For_Woo\Taxonomies\Setup\Setup();
@@ -130,9 +129,9 @@ class Setup {
         new \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs\Logs();
 
         // Load functions
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/Functions/project-functions.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/Functions/proposal-functions.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/Functions/request-functions.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/project-functions.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/proposal-functions.php';
+        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/request-functions.php';
     }
 
     public function woocommerce_notice() {

@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Admin;
+namespace Arsol_Projects_For_Woo\Admin\Setup;
 
 if (!defined('ABSPATH')) {
     exit;
