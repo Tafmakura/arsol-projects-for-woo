@@ -50,16 +50,16 @@ class Setup {
      */
     private function instantiate_classes() {
         // Initialize Request Stage Taxonomy (first)
-        new RequestStage\Taxonomies_Request_Stage_Setup();
-        new RequestStage\Taxonomies_Request_Stage_Admin();
+        new \Arsol_Projects_For_Woo\Taxonomies\Request_Stage\Setup();
+        new \Arsol_Projects_For_Woo\Taxonomies\Request_Stage\Admin();
         
         // Initialize Proposal Stage Taxonomy (second)
-        new ProposalStage\Taxonomies_Proposal_Stage_Setup();
-        new ProposalStage\Taxonomies_Proposal_Stage_Admin();
+        new \Arsol_Projects_For_Woo\Taxonomies\Proposal_Stage\Setup();
+        new \Arsol_Projects_For_Woo\Taxonomies\Proposal_Stage\Admin();
         
         // Initialize Project Stage Taxonomy (third)
-        new ProjectStage\Taxonomies_Project_Stage_Setup();
-        new ProjectStage\Taxonomies_Project_Stage_Admin();
+        new \Arsol_Projects_For_Woo\Taxonomies\Project_Stage\Setup();
+        new \Arsol_Projects_For_Woo\Taxonomies\Project_Stage\Admin();
     }
 
     /**
