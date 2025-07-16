@@ -152,7 +152,7 @@ if (empty($main_title)) {
                 // Include status badge component
                 $show_icon = true;
                 $css_class = 'header-status-badge';
-                include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/status-badge.php';
+                include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/status-badge.php';
                 ?>
             </div>
         <?php endif; ?>
@@ -168,7 +168,7 @@ if (empty($main_title)) {
                     $label = __('Edit Project', 'arsol-pfw');
                     $type = 'secondary';
                     $icon = 'dashicons-edit';
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
+                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
                     break;
                     
                 case 'arsol-pfw-proposal':
@@ -176,7 +176,7 @@ if (empty($main_title)) {
                     $label = __('Edit Proposal', 'arsol-pfw');
                     $type = 'secondary';
                     $icon = 'dashicons-edit';
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
+                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
                     break;
                     
                 case 'arsol-pfw-request':
@@ -184,7 +184,7 @@ if (empty($main_title)) {
                     $label = __('Convert to Project', 'arsol-pfw');
                     $type = 'primary';
                     $icon = 'dashicons-arrow-right-alt';
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
+                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/action-button.php';
                     break;
             }
             ?>

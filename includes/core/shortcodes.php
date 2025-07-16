@@ -681,7 +681,7 @@ class Shortcodes {
 		}
 
 		// Load the project content template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project.php';
 		
 		// Restore original post
 		$post = $original_post;
@@ -729,7 +729,7 @@ class Shortcodes {
 		}
 
 		// Load the proposal content template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-proposal.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-proposal.php';
 		
 		// Restore original post
 		$post = $original_post;
@@ -777,7 +777,7 @@ class Shortcodes {
 		}
 
 		// Load the request content template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-request.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-request.php';
 		
 		// Restore original post
 		$post = $original_post;
@@ -902,7 +902,7 @@ class Shortcodes {
 		$current_tab = $project_type;
 
 		// Load the projects listing template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-project.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-project.php';
 		
 		wp_reset_postdata();
 
@@ -998,7 +998,7 @@ class Shortcodes {
 		$current_tab = $project_type;
 
 		// Load the projects listing template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-project.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-project.php';
 		
 		wp_reset_postdata();
 
@@ -1076,7 +1076,7 @@ class Shortcodes {
 		$current_tab = 'proposals';
 
 		// Load the proposals listing template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-proposals.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-proposals.php';
 		
 		wp_reset_postdata();
 
@@ -1133,7 +1133,7 @@ class Shortcodes {
 		$current_tab = 'proposals';
 
 		// Load the proposals listing template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-proposals.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-proposals.php';
 		
 		wp_reset_postdata();
 
@@ -1211,7 +1211,7 @@ class Shortcodes {
 		$current_tab = 'requests';
 
 		// Load the requests listing template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-requests.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-requests.php';
 		
 		wp_reset_postdata();
 
@@ -1268,7 +1268,7 @@ class Shortcodes {
 		$current_tab = 'requests';
 
 		// Load the requests listing template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-requests.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/projects/projects-listing-requests.php';
 		
 		wp_reset_postdata();
 
@@ -1332,7 +1332,7 @@ class Shortcodes {
 		}
 		
 		// Load the project form template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-create-project.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-create-project.php';
 
 		return ob_get_clean();
 	}
@@ -1376,7 +1376,7 @@ class Shortcodes {
 		}
 		
 		// Load the request form template
-		include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-create-request.php';
+		include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-create-request.php';
 
 		return ob_get_clean();
 	}

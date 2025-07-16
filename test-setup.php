@@ -1,6 +1,6 @@
 <?php
 // Simple test to isolate the issue
-define('ARSOL_PROJECTS_PLUGIN_DIR', __DIR__ . '/');
+define('ARSOL_PFW_PLUGIN_DIR', __DIR__ . '/');
 define('ARSOL_PROJECTS_PLUGIN_FILE', __DIR__ . '/arsol-projects-for-woo.php');
 define('ARSOL_PROJECTS_PLUGIN_BASENAME', 'arsol-projects-for-woo/arsol-projects-for-woo.php');
 
@@ -44,7 +44,7 @@ if (!function_exists('filemtime')) {
 // Setup autoloader
 spl_autoload_register(function ($class) {
     $prefix = 'Arsol_Projects_For_Woo\\';
-    $base_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/';
+    $base_dir = ARSOL_PFW_PLUGIN_DIR . 'includes/';
 
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) !== 0) {

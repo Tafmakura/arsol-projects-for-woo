@@ -17,7 +17,7 @@ class Assets {
      * @return string|bool File modification time or false if file doesn't exist
      */
     private function get_file_version($file_path) {
-        $full_path = ARSOL_PROJECTS_PLUGIN_DIR . $file_path;
+        $full_path = ARSOL_PFW_PLUGIN_DIR . $file_path;
         return file_exists($full_path) ? filemtime($full_path) : false;
     }
 

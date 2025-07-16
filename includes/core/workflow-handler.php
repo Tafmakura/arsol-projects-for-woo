@@ -50,7 +50,7 @@ class Workflow_Handler {
     public function __construct() {
         // Load active workflow implementation (hard-coded to "standard" for now)
         $workflow_slug = 'standard';
-        $workflow_file = ARSOL_PROJECTS_PLUGIN_DIR . "includes/workflows/{$workflow_slug}/class-arsol-pfw-workflow-{$workflow_slug}.php";
+        $workflow_file = ARSOL_PFW_PLUGIN_DIR . "includes/workflows/{$workflow_slug}/class-arsol-pfw-workflow-{$workflow_slug}.php";
         if (file_exists($workflow_file)) {
             require_once $workflow_file;
             $class = '\\Arsol_Projects_For_Woo\\Workflows\\Standard\\Workflow_Standard';

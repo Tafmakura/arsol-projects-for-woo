@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
 // $project (Arsol_PFW_Project object), $project_id, $current_tab, $statuses, $current_status, $wrapper_data
 
 // Include unified project header
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
+include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
 
 // Basic validation
 if (!$project) {
@@ -205,7 +205,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
             $show_comments = \Arsol_Projects_For_Woo\Frontend_Template_Overrides::should_show_comments($project_id, $current_stage_id);
             if ($show_comments): ?>
                 <div class="comments">
-                    <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; ?>
+                    <?php include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/partials/project-overview/comments.php'; ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -236,7 +236,7 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
                             
                             <?php
                             // Include project sidebar template directly
-                            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/sections/frontend/section-sidebar-project.php';
+                            include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/sections/frontend/section-sidebar-project.php';
                             ?>
                             
                             <?php

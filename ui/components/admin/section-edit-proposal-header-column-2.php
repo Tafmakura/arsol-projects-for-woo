@@ -31,7 +31,7 @@ $costing_type = $proposal->get_costing_type();
 ?>
 
 <?php if ($has_request_data): ?>
-    <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/subsection-edit-project-proposal-details.php'; ?>
+    <?php include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/admin/subsection-edit-project-proposal-details.php'; ?>
 <?php else: ?>
     <p><?php _e('This proposal was created directly without an initial customer request.', 'arsol-pfw'); ?></p>
 <?php endif; ?> 

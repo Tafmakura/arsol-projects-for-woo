@@ -190,7 +190,7 @@ class Endpoints {
             : '';
 
         // Load the single master template and pass all necessary data
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/projects.php';
+        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/projects.php';
     }
     
     /**
@@ -222,7 +222,7 @@ class Endpoints {
         // Debug logging with object properties
         error_log("ARSOL DEBUG: Project Overview - ID: {$project->get_id()}, Title: '{$project->get_title()}', Type: {$project->get_post()->post_type}, Stage: '$current_stage'");
         
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
+        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-overview.php';
     }
     
     /**
@@ -254,7 +254,7 @@ class Endpoints {
         // Debug logging with object properties
         error_log("ARSOL DEBUG: Project Orders - ID: {$project->get_id()}, Title: '{$project->get_title()}', Type: {$project->get_post()->post_type}, Stage: '$current_stage'");
         
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-orders.php';
+        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-orders.php';
     }
     
     /**
@@ -293,7 +293,7 @@ class Endpoints {
         // Debug logging with object properties
         error_log("ARSOL DEBUG: Project Subscriptions - ID: {$project->get_id()}, Title: '{$project->get_title()}', Type: {$project->get_post()->post_type}, Stage: '$current_stage'");
         
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-subscriptions.php';
+        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-subscriptions.php';
     }
     
     /**
@@ -306,11 +306,11 @@ class Endpoints {
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
         
         if (!$admin_users->can_user_create_projects($user_id)) {
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
+            include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
             return;
         }
         
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-create.php';
+        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-create.php';
     }
     
     /**
@@ -323,12 +323,12 @@ class Endpoints {
         $admin_users = new \Arsol_Projects_For_Woo\Admin\Users();
 
         if (!$admin_users->can_user_request_projects($user_id)) {
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
+            include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
             return;
         }
 
         // Use the project request template
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-request.php';
+        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-request.php';
     }
     
     /**
@@ -381,7 +381,7 @@ class Endpoints {
         error_log("ARSOL DEBUG: Proposal View - ID: {$proposal->get_id()}, Title: '{$proposal->get_title()}', Type: {$proposal->get_post()->post_type}, Stage: '$current_stage'");
 
         // Include the new project view proposal template
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php';
+        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-proposal.php';
     }
     
     /**
@@ -434,7 +434,7 @@ class Endpoints {
         error_log("ARSOL DEBUG: Request View - ID: {$request->get_id()}, Title: '{$request->get_title()}', Type: {$request->get_post()->post_type}, Stage: '$current_stage'");
 
         // Include the new project view request template
-        include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-request.php';
+        include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/project-view-request.php';
     }
     
     /**
@@ -450,7 +450,7 @@ class Endpoints {
         $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Project($project_id);
         if (!$project || !\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($user_id, $project_id)) {
             // Use the no-access template for consistency
-            include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
+            include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/frontend/woocommerce/myaccount/no-access.php';
             return false;
         }
         

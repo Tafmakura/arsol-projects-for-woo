@@ -79,7 +79,7 @@ if ($has_request_data) {
 
                         <?php
                     // Load the general settings template
-                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-1.php';
+                    $template_path = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-1.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }
@@ -92,7 +92,7 @@ if ($has_request_data) {
                     
                     <?php
                     // Load the project details template
-                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-2.php';
+                    $template_path = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-2.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }
@@ -102,7 +102,7 @@ if ($has_request_data) {
                     <h3><?php _e('Project Details', 'arsol-pfw'); ?></h3>
                     <?php
                     // Load the status & actions template
-                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-3.php';
+                    $template_path = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-3.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }
@@ -113,7 +113,7 @@ if ($has_request_data) {
                     <h3><?php _e('Project Details', 'arsol-pfw'); ?></h3>
                     <?php 
                     // Load the status & actions template
-                    $template_path = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-3.php';
+                    $template_path = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/admin/section-edit-project-header-column-3.php';
                     if (file_exists($template_path)) {
                         include $template_path;
                     }

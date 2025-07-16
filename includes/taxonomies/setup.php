@@ -33,16 +33,16 @@ class Setup {
      */
     private function require_files() {
         // Project Stage Taxonomy Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/class-arsol-pfw-taxonomies-project-stage-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/class-arsol-pfw-taxonomies-project-stage-admin.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/project-stage/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/project-stage/admin.php';
         
         // Request Stage Taxonomy Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/request-stage/class-arsol-pfw-taxonomies-request-stage-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/request-stage/class-arsol-pfw-taxonomies-request-stage-admin.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/request-stage/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/request-stage/admin.php';
         
         // Proposal Stage Taxonomy Classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/class-arsol-pfw-taxonomies-proposal-stage-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/class-arsol-pfw-taxonomies-proposal-stage-admin.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/admin.php';
     }
 
     /**

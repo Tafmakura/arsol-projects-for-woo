@@ -5,7 +5,7 @@
 
 // Define plugin constants
 define('ARSOL_PROJECTS_PLUGIN_FILE', __FILE__);
-define('ARSOL_PROJECTS_PLUGIN_DIR', dirname(__FILE__) . '/');
+define('ARSOL_PFW_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('ARSOL_PROJECTS_PLUGIN_BASENAME', 'arsol-projects-for-woo/arsol-projects-for-woo.php');
 
 echo "Testing WooCommerce dependency loading...\n";
@@ -20,7 +20,7 @@ if (class_exists('WC_Email')) {
 // Test 2: Try to load email classes without WooCommerce
 echo "\nTesting email class loading without WooCommerce:\n";
 try {
-    require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-project.php';
+    require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-project.php';
     echo "❌ Email class loaded without WooCommerce (this should fail)\n";
 } catch (Error $e) {
     echo "✅ Email class correctly failed to load: " . $e->getMessage() . "\n";

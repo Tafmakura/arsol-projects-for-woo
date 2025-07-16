@@ -25,13 +25,13 @@ $project_title = $project->get_title();
 $current_tab = 'subscriptions';
 
 // Include unified project header
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
+include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
 
 // --- Render Page Content ---
 // Always render subscriptions content for this template
 \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
     'project_subscriptions',
-    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project-subscriptions.php',
+    ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project-subscriptions.php',
     compact('project')
 );
 ?>

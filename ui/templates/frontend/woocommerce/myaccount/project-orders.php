@@ -16,13 +16,13 @@ if (!defined('ABSPATH')) {
 // $project (Arsol_PFW_Project object), $project_id, $current_tab, $statuses, $current_status, $wrapper_data
 
 // Include unified project header
-include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
+include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/partials/frontend/project/project-header.php';
 
 // --- Render Page Content ---
 // Always render orders content for this template
 \Arsol_Projects_For_Woo\Frontend_Template_Overrides::render_template(
     'project_orders',
-    ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project-orders.php',
+    ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/frontend/endpoint-view-project-orders.php',
     compact('project')
 );
 ?>

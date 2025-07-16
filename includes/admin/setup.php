@@ -174,22 +174,22 @@ class Setup {
             <?php
             switch ($active_tab) {
                 case 'display':
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-display.php';
+                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-display.php';
                     break;
                 case 'files':
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-files.php';
+                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-files.php';
                     break;
                 case 'templates':
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-templates.php';
+                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-templates.php';
                     break;
                 case 'tools':
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-tools.php';
+                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-tools.php';
                     break;
                 case 'integrations':
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-integrations.php';
+                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-integrations.php';
                     break;
                 default:
-                    include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-general.php';
+                    include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/templates/admin/page-admin-settings-general.php';
                     break;
             }
             ?>

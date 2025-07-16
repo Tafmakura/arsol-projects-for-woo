@@ -92,5 +92,5 @@ if ($proposal_id) {
     <?php /* Proposal Expiration Date removed from project post type display */ ?>
 
 <?php elseif ($has_request_data): ?>
-    <?php include ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/components/admin/subsection-edit-project-proposal-details.php'; ?>
+    <?php include ARSOL_PFW_PLUGIN_DIR . 'includes/ui/components/admin/subsection-edit-project-proposal-details.php'; ?>
 <?php endif; ?>

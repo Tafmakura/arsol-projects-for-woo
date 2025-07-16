@@ -31,7 +31,7 @@ class Setup {
         spl_autoload_register(function ($class) {
             // Arsol Projects For Woo namespace
             $prefix = 'Arsol_Projects_For_Woo\\';
-            $base_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/';
+            $base_dir = ARSOL_PFW_PLUGIN_DIR . 'includes/';
 
             $len = strlen($prefix);
             if (strncmp($prefix, $class, $len) !== 0) {
@@ -73,20 +73,20 @@ class Setup {
      * Load core files manually
      */
     private function load_core_files() {
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/assets.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/capabilities.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/permissions.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/stage-handler.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/conversion-handler.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/shortcodes.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/assets.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/capabilities.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/permissions.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/stage-handler.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/conversion-handler.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/shortcodes.php';
         
         // Load workflow files
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/workflow-handler.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/workflow-handler.php';
         
         // Load data store files
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/project-data-store.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/proposal-data-store.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/data-stores/request-data-store.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/data-stores/project-data-store.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/data-stores/proposal-data-store.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/data-stores/request-data-store.php';
     }
 
     /**
@@ -94,40 +94,40 @@ class Setup {
      */
     private function load_custom_post_types() {
         // Project
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/core/setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/core/project.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/admin/single-controller.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/admin/list-controller.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/project/frontend/handler.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/project/core/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/project/core/project.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/project/admin/single-controller.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/project/admin/list-controller.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/project/frontend/handler.php';
         
         // Request
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/request/core/setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/request/core/conversion-handler.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/request/admin/single-controller.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/request/admin/list-controller.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/request/core/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/request/core/conversion-handler.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/request/admin/single-controller.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/request/admin/list-controller.php';
         
         // Proposal
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/proposal/core/setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/proposal/core/conversion-handler.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/single-controller.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/list-controller.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/budget-controller.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/quotation-controller.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/core/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/core/conversion-handler.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/single-controller.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/list-controller.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/budget-controller.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/quotation-controller.php';
     }
 
     /**
      * Load admin files manually
      */
     private function load_admin_files() {
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/settings/general.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/settings/display.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/settings/files.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/settings/integrations.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/settings/advanced.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/settings/tools.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/users/users.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/admin/setup-defaults.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/general.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/display.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/files.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/integrations.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/advanced.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/tools.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/users/users.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/setup-defaults.php';
     }
 
     /**
@@ -135,39 +135,39 @@ class Setup {
      */
     private function load_frontend_files() {
         // Load the base handler first (other classes extend this)
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/handler/handler.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/handler/handler.php';
         
         // Load other frontend files
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/request/request.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/proposal/proposal.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/woocommerce/checkout.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/woocommerce/endpoints.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/template/overrides.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/template/sidebar-buttons.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/template/sidebar-meta.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/frontend/comments/comments.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/request/request.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/proposal/proposal.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/woocommerce/checkout.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/woocommerce/endpoints.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/template/overrides.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/template/sidebar-buttons.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/template/sidebar-meta.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/comments/comments.php';
     }
 
     /**
      * Load taxonomy files manually
      */
     private function load_taxonomy_files() {
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/project-stage/admin.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/admin.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/request-stage/setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/taxonomies/request-stage/admin.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/project-stage/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/project-stage/admin.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/admin.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/request-stage/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/request-stage/admin.php';
     }
 
     /**
      * Load integration files manually
      */
     private function load_integration_files() {
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/integration.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/biller-invoice.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/logs.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/integration.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/biller-invoice.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/logs.php';
         
         // Email classes are loaded after WooCommerce is available
         // See load_woocommerce_email_classes() method
@@ -183,26 +183,26 @@ class Setup {
         }
 
         // Load email classes
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-setup.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-project.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-request.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-new-request.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-project-completion.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-project-creation.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-project-stage.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-proposal-decision.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-proposal-processing.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-proposal-ready.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-request-stage.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-project.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-admin-new-request.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-new-request.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-project-completion.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-project-creation.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-project-stage.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-proposal-decision.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-proposal-processing.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-proposal-ready.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/integrations/woocommerce/email/class-arsol-pfw-wc-email-request-stage.php';
     }
 
     /**
      * Load function files manually
      */
     private function load_function_files() {
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/project-functions.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/proposal-functions.php';
-        require_once ARSOL_PROJECTS_PLUGIN_DIR . 'includes/functions/request-functions.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/functions/project-functions.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/functions/proposal-functions.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/functions/request-functions.php';
     }
 
     /**

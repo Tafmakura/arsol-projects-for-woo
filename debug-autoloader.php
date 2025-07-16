@@ -1,11 +1,11 @@
 <?php
 // Debug script to test autoloader
-define('ARSOL_PROJECTS_PLUGIN_DIR', __DIR__ . '/');
+define('ARSOL_PFW_PLUGIN_DIR', __DIR__ . '/');
 
 // Test the autoloader logic for Stage_Handler
 $class = 'Arsol_Projects_For_Woo\Core\Stage_Handler';
 $prefix = 'Arsol_Projects_For_Woo\\';
-$base_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/';
+$base_dir = ARSOL_PFW_PLUGIN_DIR . 'includes/';
 
 $len = strlen($prefix);
 if (strncmp($prefix, $class, $len) !== 0) {

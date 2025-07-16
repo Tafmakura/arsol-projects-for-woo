@@ -5,13 +5,13 @@
 
 // Define plugin constants
 define('ARSOL_PROJECTS_PLUGIN_FILE', __FILE__);
-define('ARSOL_PROJECTS_PLUGIN_DIR', dirname(__FILE__) . '/');
+define('ARSOL_PFW_PLUGIN_DIR', dirname(__FILE__) . '/');
 define('ARSOL_PROJECTS_PLUGIN_BASENAME', 'arsol-projects-for-woo/arsol-projects-for-woo.php');
 
 echo "Testing Shortcodes class loading...\n";
 
 // Test loading the shortcodes file
-$shortcodes_file = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/core/shortcodes.php';
+$shortcodes_file = ARSOL_PFW_PLUGIN_DIR . 'includes/core/shortcodes.php';
 if (file_exists($shortcodes_file)) {
     echo "✅ Shortcodes file exists: {$shortcodes_file}\n";
     try {

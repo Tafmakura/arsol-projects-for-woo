@@ -93,7 +93,7 @@ class Setup_Defaults {
      * Get customer notice defaults from markdown files
      */
     public static function get_customer_notice_defaults() {
-        $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
+        $markdown_dir = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
         
         $file_mappings = array(
             'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',
@@ -115,7 +115,7 @@ class Setup_Defaults {
      * Since markdown files are part of the plugin, they should always exist
      */
     public static function load_markdown_content($key, $filename) {
-        $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
+        $markdown_dir = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
         $file_path = $markdown_dir . $filename;
         
         // Try to load the markdown file
@@ -378,7 +378,7 @@ class Setup_Defaults {
             return array('error' => 'Permission denied');
         }
 
-        $markdown_dir = ARSOL_PROJECTS_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
+        $markdown_dir = ARSOL_PFW_PLUGIN_DIR . 'includes/ui/markdown/frontend/';
         
         $file_mappings = array(
             'arsol_pfw_project_default_customer_notice' => 'content-default-project-customer-notice.md',

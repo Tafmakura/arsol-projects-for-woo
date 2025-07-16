@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Taxonomies\ProposalStage;
+namespace Arsol_Projects_For_Woo\Taxonomies\Proposal_Stage;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
 /**
  * Proposal Stage Taxonomy Admin class
  */
-class Taxonomies_Proposal_Stage_Admin {
+class Admin {
 
     /**
      * Constructor
