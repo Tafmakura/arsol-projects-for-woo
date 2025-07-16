@@ -37,21 +37,20 @@ class Setup {
             }
 
             $relative_class = substr($class, $len);
-            
-            // Convert namespace to file path, handling case sensitivity
             $file_parts = explode('\\', $relative_class);
             $file_path = '';
-            
-            foreach ($file_parts as $part) {
+            $count = count($file_parts);
+            foreach ($file_parts as $i => $part) {
                 if ($file_path !== '') {
                     $file_path .= '/';
                 }
-                // Convert to lowercase to match actual directory structure
+                // Only convert underscores to hyphens in the last part (the filename)
+                if ($i === $count - 1) {
+                    $part = str_replace('_', '-', $part);
+                }
                 $file_path .= strtolower($part);
             }
-            
             $file = $base_dir . $file_path . '.php';
-
             if (file_exists($file)) {
                 require $file;
             }
