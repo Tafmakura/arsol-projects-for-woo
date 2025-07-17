@@ -27,32 +27,32 @@ class Endpoints {
      */
     public function __construct() {
         // Register endpoints
-        add_action('init', array($this, 'register_endpoints'));
+        add_action('init', array("proposal_id" => $proposal_id));$this, 'register_endpoints'));
         
         // Add Projects to account menu
-        add_filter('woocommerce_account_menu_items', array($this, 'add_projects_menu_item'));
+        add_filter('woocommerce_account_menu_items', array("proposal_id" => $proposal_id));$this, 'add_projects_menu_item'));
         
         // Add custom query vars
-        add_filter('query_vars', array($this, 'add_woocommerce_query_vars'));
-        add_filter('woocommerce_get_query_vars', array($this, 'add_woocommerce_query_vars'));
+        add_filter('query_vars', array("proposal_id" => $proposal_id));$this, 'add_woocommerce_query_vars'));
+        add_filter('woocommerce_get_query_vars', array("proposal_id" => $proposal_id));$this, 'add_woocommerce_query_vars'));
         
         // Handle endpoint content
-        add_action('woocommerce_account_projects_endpoint', array($this, 'projects_endpoint_content'));
-        add_action('woocommerce_account_view-project_endpoint', array($this, 'project_overview_endpoint_content'));
-        add_action('woocommerce_account_view-project-orders_endpoint', array($this, 'project_orders_endpoint_content'));
+        add_action('woocommerce_account_projects_endpoint', array("proposal_id" => $proposal_id));$this, 'projects_endpoint_content'));
+        add_action('woocommerce_account_view-project_endpoint', array("proposal_id" => $proposal_id));$this, 'project_overview_endpoint_content'));
+        add_action('woocommerce_account_view-project-orders_endpoint', array("proposal_id" => $proposal_id));$this, 'project_orders_endpoint_content'));
         
         // Only register subscription endpoint if WooCommerce Subscriptions is active
         if (class_exists('WC_Subscriptions')) {
-            add_action('woocommerce_account_view-project-subscriptions_endpoint', array($this, 'project_subscriptions_endpoint_content'));
+            add_action('woocommerce_account_view-project-subscriptions_endpoint', array("proposal_id" => $proposal_id));$this, 'project_subscriptions_endpoint_content'));
         }
         
-        add_action('woocommerce_account_create-project_endpoint', array($this, 'project_create_endpoint_content'));
-        add_action('woocommerce_account_create-request_endpoint', array($this, 'project_request_endpoint_content'));
-        add_action('woocommerce_account_view-proposal_endpoint', array($this, 'project_view_proposal_endpoint_content'));
-        add_action('woocommerce_account_view-request_endpoint', array($this, 'project_view_request_endpoint_content'));
+        add_action('woocommerce_account_create-project_endpoint', array("proposal_id" => $proposal_id));$this, 'project_create_endpoint_content'));
+        add_action('woocommerce_account_create-request_endpoint', array("proposal_id" => $proposal_id));$this, 'project_request_endpoint_content'));
+        add_action('woocommerce_account_view-proposal_endpoint', array("proposal_id" => $proposal_id));$this, 'project_view_proposal_endpoint_content'));
+        add_action('woocommerce_account_view-request_endpoint', array("proposal_id" => $proposal_id));$this, 'project_view_request_endpoint_content'));
 
         // Add comment redirect filter
-        add_filter('comment_post_redirect', array($this, 'handle_comment_redirect'), 10, 2);
+        add_filter('comment_post_redirect', array("proposal_id" => $proposal_id));$this, 'handle_comment_redirect'), 10, 2);
     }
     
     /**
@@ -148,7 +148,7 @@ class Endpoints {
         $paged = get_query_var('paged') ? get_query_var('paged') : 1;
 
         // Base query arguments
-        $args = array(
+        $args = array("proposal_id" => $proposal_id));
             'posts_per_page' => 10,
             'paged'          => $paged,
             'author'         => $user_id,
@@ -170,8 +170,8 @@ class Endpoints {
             default:
                 $args['post_type'] = 'arsol-pfw-project';
                 $args['post_status'] = 'publish';
-                $args['tax_query'] = array(
-                    array(
+                $args['tax_query'] = array("proposal_id" => $proposal_id));
+                    array("proposal_id" => $proposal_id));
                         'taxonomy' => 'arsol-pfw-project-stage',
                         'field'    => 'slug',
                         'terms'    => 'active'
@@ -210,7 +210,7 @@ class Endpoints {
         $current_tab = 'overview';
         
         // Stage handling with proper error checking
-        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array("proposal_id" => $proposal_id));'fields' => 'slugs'));
         $current_stage = '';
         if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
@@ -242,7 +242,7 @@ class Endpoints {
         $current_tab = 'orders';
         
         // Stage handling with proper error checking
-        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array("proposal_id" => $proposal_id));'fields' => 'slugs'));
         $current_stage = '';
         if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
@@ -281,7 +281,7 @@ class Endpoints {
         $current_tab = 'subscriptions';
         
         // Stage handling with proper error checking
-        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
+        $stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array("proposal_id" => $proposal_id));'fields' => 'slugs'));
         $current_stage = '';
         if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
@@ -360,8 +360,7 @@ class Endpoints {
 
         if (!$can_view) {
             // Use centralized no-access template instead of redirect
-                'proposal_id' => $proposal_id
-            ));
+            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('proposal', array("proposal_id" => $proposal_id));
             return;
         }
 
@@ -369,7 +368,7 @@ class Endpoints {
         $current_tab = 'proposal';
 
         // Stage handling with proper error checking
-        $stage_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array('fields' => 'slugs'));
+        $stage_terms = wp_get_object_terms($proposal_id, 'arsol-pfw-proposal-stage', array("proposal_id" => $proposal_id));'fields' => 'slugs'));
         $current_stage = '';
         if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
@@ -416,7 +415,7 @@ class Endpoints {
             // Use centralized no-access template instead of redirect
             // Use centralized no-access template instead of redirect
             // Use centralized no-access template instead of redirect
-            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('request', array(
+            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('request', array("proposal_id" => $proposal_id));
                 'request_id' => $request_id
             ));
             return;
@@ -426,7 +425,7 @@ class Endpoints {
         $current_tab = 'request';
 
         // Get request stage (with proper error handling)
-        $stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
+        $stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array("proposal_id" => $proposal_id));'fields' => 'slugs'));
         $current_stage = '';
         if (!is_wp_error($stage_terms) && !empty($stage_terms)) {
             $current_stage = $stage_terms[0];
@@ -512,7 +511,7 @@ class Endpoints {
         }
 
         // Check if this is a project-related post type
-        if (in_array($post->post_type, ['arsol-pfw-project', 'arsol-pfw-proposal', 'arsol-pfw-request'])) {
+        if (in_array("proposal_id" => $proposal_id));$post->post_type, ['arsol-pfw-project', 'arsol-pfw-proposal', 'arsol-pfw-request'])) {
             // Determine the appropriate endpoint based on post type
             switch ($post->post_type) {
                 case 'arsol-pfw-project':
