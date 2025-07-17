@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Taxonomies\Proposal_Stage;
+namespace Arsol_Projects_For_Woo\Taxonomies\Stages\Proposal_Stage;
 
 if (!defined('ABSPATH')) {
     exit;
