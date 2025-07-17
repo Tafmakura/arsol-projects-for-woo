@@ -1003,24 +1003,7 @@ class Arsol_PFW_Request {
         return $this->get_meta('_arsol_pfw_proposal_due_date');
     }
 
-    /**
-     * Get request customer notice (renamed for clarity)
-     * 
-     * @return string Customer notice
-     */
-    public function get_request_customer_notice() {
-        return $this->get_meta('_arsol_pfw_request_customer_notice');
-    }
 
-    /**
-     * Set request customer notice (renamed for clarity)
-     * 
-     * @param string $customer_notice Customer notice
-     * @return bool Success status
-     */
-    public function set_request_customer_notice($customer_notice) {
-        return $this->set_meta('_arsol_pfw_request_customer_notice', wp_kses_post($customer_notice));
-    }
 
     /**
      * Get customer notice (legacy method for backward compatibility)
