@@ -146,14 +146,12 @@ class Sidebar_Meta {
         // Only add status if we have an actual status
         if (!empty($current_stage)) {
             $stage_label = $project->get_stage_label();
-            $stage_color = $project->get_stage_color();
             
             $metadata['status'] = array(
                 'label' => __('Stage', 'arsol-pfw'),
                 'value' => $stage_label,
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($current_stage),
-                'color' => $stage_color
+                'class' => 'status-badge status-' . sanitize_html_class($current_stage)
             );
         }
         
@@ -222,14 +220,12 @@ class Sidebar_Meta {
         // Only add status if we have an actual status
         if (!empty($current_stage)) {
             $stage_label = $proposal->get_stage_label();
-            $stage_color = $proposal->get_stage_color();
             
             $metadata['status'] = array(
                 'label' => __('Stage', 'arsol-pfw'),
                 'value' => $stage_label,
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($current_stage),
-                'color' => $stage_color
+                'class' => 'status-badge status-' . sanitize_html_class($current_stage)
             );
         }
         
@@ -297,14 +293,12 @@ class Sidebar_Meta {
         // Only add status if we have an actual status
         if (!empty($current_stage)) {
             $stage_label = $request->get_stage_label();
-            $stage_color = $request->get_stage_color();
             
             $metadata['status'] = array(
                 'label' => __('Stage', 'arsol-pfw'),
                 'value' => $stage_label,
                 'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($current_stage),
-                'color' => $stage_color
+                'class' => 'status-badge status-' . sanitize_html_class($current_stage)
             );
         }
         

@@ -215,15 +215,6 @@ class Project {
     }
 
     /**
-     * Get project stage color
-     *
-     * @return string Stage color (hex code or CSS class)
-     */
-    public function get_stage_color() {
-        return $this->get_stage_entity()->get_stage_color();
-    }
-
-    /**
      * Get project stage notes
      *
      * @return string Stage notes
@@ -553,7 +544,7 @@ class Project {
      */
     public function set_description($description) {
         $this->set_prop('description', $description);
-        return true;
+        return $this->update(array('content' => $description));
     }
 
     /**
@@ -572,8 +563,8 @@ class Project {
      * @return bool Success status
      */
     public function set_project_budget($budget) {
-        $this->set_prop('budget', $budget);
-        return true;
+        $this->set_project_budget($budget);
+        return $this->set_meta('_arsol_pfw_project_budget_line_items', $budget);
     }
 
     /**
@@ -592,7 +583,7 @@ class Project {
      * @return bool Success status
      */
     public function set_project_due_date($due_date) {
-        return $this->set_prop('due_date', $due_date);
+        return $this->set_project_due_date($due_date);
     }
 
     /**
@@ -611,8 +602,8 @@ class Project {
      * @return bool Success status
      */
     public function set_project_lead($lead_id) {
-        $this->set_prop('project_lead', (int) $lead_id);
-        return true;
+        $this->set_project_lead((int) $lead_id);
+        return $this->set_meta('_arsol_pfw_project_lead', (int) $lead_id);
     }
 
     /**
@@ -631,8 +622,8 @@ class Project {
      * @return bool Success status
      */
     public function set_project_start_date($start_date) {
-        $this->set_prop('start_date', $start_date);
-        return true;
+        $this->set_project_start_date($start_date);
+        return $this->set_meta('_arsol_pfw_project_start_date', sanitize_text_field($start_date));
     }
 
     /**

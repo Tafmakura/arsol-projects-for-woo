@@ -42,18 +42,11 @@ interface Stage_Interface
     public function update_stage(string $new_stage, string $note = ''): bool;
 
     /**
-     * Get the stage label
+     * Get stage label
      *
-     * @return string The human-readable stage label
+     * @return string Human-readable stage label
      */
     public function get_stage_label(): string;
-
-    /**
-     * Get the stage color
-     *
-     * @return string The stage color (hex code or CSS class)
-     */
-    public function get_stage_color(): string;
 
     /**
      * Get stage notes

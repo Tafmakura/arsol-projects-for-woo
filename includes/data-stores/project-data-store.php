@@ -38,7 +38,7 @@ class Project_Data_Store {
         $post_data = array(
             'post_type'    => 'arsol-pfw-project',
             'post_title'   => $project->get_title(),
-            'post_content' => $project->get_prop('description'),
+            'post_content' => $project->get_description(),
             'post_status'  => 'publish',
             'post_author'  => $user_id, // Creator (post_author)
         );
@@ -52,16 +52,15 @@ class Project_Data_Store {
         // Set ID
         $project->set_prop('id', $post_id);
         
-        // Store customer_id and created_via using entity methods
+        // Set customer ID
         $project->set_customer_id($customer_id);
-        $project->set_created_via('admin_creation');
         
         // Save meta
         $this->save_simple_meta($project);
         $this->save_complex_meta($project);
         
         // Set initial stage
-        $stage = $project->get_prop('stage') ?: 'not-started';
+        $stage = $project->get_stage() ?: 'not-started';
         $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
         $project->set_stage($stage);
         
@@ -86,18 +85,19 @@ class Project_Data_Store {
         // Set basic properties
         $project->set_title($post->post_title);
         $project->set_description($post->post_content);
-        $project->set_prop('date_created', $post->post_date);
-        $project->set_prop('date_modified', $post->post_modified);
+        // Set dates
+        $project->set_date_created($post->post_date);
+        $project->set_date_modified($post->post_modified);
         
         // Load customer_id and created_via using entity methods
         $customer_id = $project->get_customer_id();
         $created_via = $project->get_created_via();
         
         if ($customer_id) {
-            $project->set_prop('customer_id', $customer_id);
+            $project->set_customer_id($customer_id);
         }
         if ($created_via) {
-            $project->set_prop('created_via', $created_via);
+            $project->set_created_via($created_via);
         }
         
         // Load simple meta data

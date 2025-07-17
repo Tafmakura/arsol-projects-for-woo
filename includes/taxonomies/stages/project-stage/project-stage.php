@@ -142,17 +142,6 @@ class Project_Stage implements Stage_Interface, WooCommerce_Stage_Interface, Sta
     }
 
     /**
-     * Get the stage color
-     *
-     * @return string The stage color (hex code or CSS class)
-     */
-    public function get_stage_color(): string
-    {
-        $stages = $this->get_available_stages();
-        return $stages[$this->stage]['color'] ?? '#666666';
-    }
-
-    /**
      * Get stage notes
      *
      * @return string The stage notes
@@ -341,50 +330,37 @@ class Project_Stage implements Stage_Interface, WooCommerce_Stage_Interface, Sta
     private function get_available_stages(): array
     {
         return apply_filters('arsol_pfw_project_stages', [
-            'draft' => [
-                'label' => __('Draft, arsol-projects-for-woo'),
-                'color' => '#666666',
+            'not-started' => [
+                'label' => __('Not Started', 'arsol-projects-for-woo'),
                 'wc_status' => 'pending',
                 'initial' => true,
                 'final' => false,
                 'transitions' => ['in-progress', 'cancelled'],
             ],
             'in-progress' => [
-                'label' => __('In Progress, arsol-projects-for-woo'),
-                'color' => '#0073aa',
+                'label' => __('In Progress', 'arsol-projects-for-woo'),
                 'wc_status' => 'processing',
                 'initial' => false,
                 'final' => false,
-                'transitions' => ['review', 'cancelled'],
+                'transitions' => ['paused', 'completed', 'cancelled'],
             ],
-            'review' => [
-                'label' => __('Under Review, arsol-projects-for-woo'),
-                'color' => '#ffba00',
-                'wc_status' => 'processing',
-                'initial' => false,
-                'final' => false,
-                'transitions' => ['completed', 'revision', 'cancelled'],
-            ],
-            'revision' => [
-                'label' => __('Revision Required, arsol-projects-for-woo'),
-                'color' => '#dc3232',
+            'paused' => [
+                'label' => __('Paused', 'arsol-projects-for-woo'),
                 'wc_status' => 'processing',
                 'initial' => false,
                 'final' => false,
                 'transitions' => ['in-progress', 'cancelled'],
             ],
             'completed' => [
-                'label' => __('Completed, arsol-projects-for-woo'),
-                'color' => '#46b450',
-                'wc_status' => '',
+                'label' => __('Completed', 'arsol-projects-for-woo'),
+                'wc_status' => 'completed',
                 'initial' => false,
                 'final' => true,
                 'transitions' => [],
             ],
             'cancelled' => [
-                'label' => __('Cancelled, arsol-projects-for-woo'),
-                'color' => '#dc3232',
-                'wc_status' => '',
+                'label' => __('Cancelled', 'arsol-projects-for-woo'),
+                'wc_status' => 'cancelled',
                 'initial' => false,
                 'final' => true,
                 'transitions' => [],
@@ -482,7 +458,6 @@ class Project_Stage implements Stage_Interface, WooCommerce_Stage_Interface, Sta
             $statistics[$stage] = [
                 'count' => count($entity_ids),
                 'label' => $stages[$stage]['label'],
-                'color' => $stages[$stage]['color'],
             ];
         }
 

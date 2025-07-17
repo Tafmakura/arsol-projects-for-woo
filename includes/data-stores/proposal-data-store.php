@@ -43,7 +43,7 @@ class Proposal_Data_Store {
         $post_data = array(
             'post_type'    => 'arsol-pfw-proposal',
             'post_title'   => $proposal->get_title(),
-            'post_content' => $proposal->get_prop('description'),
+            'post_content' => $proposal->get_description(),
             'post_status'  => 'publish',
             'post_author'  => $user_id, // Creator (post_author)
         );
@@ -57,16 +57,15 @@ class Proposal_Data_Store {
         // Set ID
         $proposal->set_prop('id', $post_id);
         
-        // Store customer_id and created_via using entity methods
+        // Set customer ID
         $proposal->set_customer_id($customer_id);
-        $proposal->set_created_via('admin_creation');
         
         // Save meta
         $this->save_simple_meta($proposal);
         $this->save_complex_meta($proposal);
         
         // Set initial stage
-        $stage = $proposal->get_prop('stage') ?: 'processing';
+        $stage = $proposal->get_stage() ?: 'processing';
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
         $proposal->set_stage($stage);
         
@@ -91,8 +90,9 @@ class Proposal_Data_Store {
         // Set basic properties
         $proposal->set_title($post->post_title);
         $proposal->set_description($post->post_content);
-        $proposal->set_prop('date_created', $post->post_date);
-        $proposal->set_prop('date_modified', $post->post_modified);
+        // Set dates
+        $proposal->set_date_created($post->post_date);
+        $proposal->set_date_modified($post->post_modified);
         
         // Load customer_id and created_via using entity methods
         $customer_id = $proposal->get_customer_id();
@@ -102,7 +102,7 @@ class Proposal_Data_Store {
             $proposal->set_prop('customer_id', $customer_id);
         }
         if ($created_via) {
-            $proposal->set_prop('created_via', $created_via);
+            $proposal->set_created_via($created_via);
         }
         
         // Load simple meta data

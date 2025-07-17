@@ -28,7 +28,7 @@ class Request_Data_Store {
         $post_data = array(
             'post_type'    => 'arsol-pfw-request',
             'post_title'   => $request->get_title(),
-            'post_content' => $request->get_prop('description'),
+            'post_content' => $request->get_description(),
             'post_status'  => 'publish',
             'post_author'  => $user_id, // Creator (post_author)
         );
@@ -42,15 +42,14 @@ class Request_Data_Store {
         // Set ID
         $request->set_prop('id', $post_id);
         
-        // Store customer_id and created_via using entity methods
+        // Set customer ID
         $request->set_customer_id($customer_id);
-        $request->set_created_via('admin_creation');
         
         // Save meta
         $this->save_meta($request);
         
         // Set initial stage
-        $stage = $request->get_prop('stage') ?: 'pending-review';
+        $stage = $request->get_stage() ?: 'pending-review';
         $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
         $request->set_stage($stage);
         
@@ -75,8 +74,9 @@ class Request_Data_Store {
         // Set basic properties
         $request->set_title($post->post_title);
         $request->set_description($post->post_content);
-        $request->set_prop('date_created', $post->post_date);
-        $request->set_prop('date_modified', $post->post_modified);
+        // Set dates
+        $request->set_date_created($post->post_date);
+        $request->set_date_modified($post->post_modified);
         
         // Load customer_id and created_via using entity methods
         $customer_id = $request->get_customer_id();
@@ -86,7 +86,7 @@ class Request_Data_Store {
             $request->set_prop('customer_id', $customer_id);
         }
         if ($created_via) {
-            $request->set_prop('created_via', $created_via);
+            $request->set_created_via($created_via);
         }
         
         // Load meta data

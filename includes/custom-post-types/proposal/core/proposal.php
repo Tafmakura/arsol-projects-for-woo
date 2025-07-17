@@ -215,15 +215,6 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal stage color
-     *
-     * @return string Stage color (hex code or CSS class)
-     */
-    public function get_stage_color() {
-        return $this->get_stage_entity()->get_stage_color();
-    }
-
-    /**
      * Get proposal stage notes
      *
      * @return string Stage notes

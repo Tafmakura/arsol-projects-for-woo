@@ -138,7 +138,7 @@ class Conversion_Handler {
             $project->set_title($proposal_obj->get_title());
             $project->set_customer_id($proposal_obj->get_customer_id());
             $project->set_project_budget($proposal_obj->get_proposed_project_budget());
-            $project->set_description($proposal_obj->get_prop('description'));      
+            $project->set_description($proposal_obj->get_description());      
             // Set initial stage using OOP stage entity
             $project_stage_entity = $project->get_stage_entity();
             $project_stage_entity->set_stage('not-started');
@@ -213,7 +213,7 @@ class Conversion_Handler {
         error_log("ARSOL PFW DEBUG: Successfully loaded request and proposal objects");
         
         // 1. Preserve original request content in proposal meta
-        $request_description = $request->get_prop('description');
+        $request_description = $request->get_description();
         $proposal->set_request_details($request_description);
         error_log("ARSOL PFW DEBUG: Copied request description to proposal: " . ($request_description ? substr($request_description, 0, 50) . "..." : "null"));
         
@@ -315,7 +315,7 @@ class Conversion_Handler {
         error_log("ARSOL PFW DEBUG: Successfully loaded proposal and project objects");
         
         // 1. Preserve proposal content in project meta
-        $proposal_description = $proposal->get_prop('description');
+        $proposal_description = $proposal->get_description();
         $project->set_meta('_arsol_pfw_project_proposal_details', $proposal_description);
         error_log("ARSOL PFW DEBUG: Copied proposal description to project: " . ($proposal_description ? substr($proposal_description, 0, 50) . "..." : "null"));
         
