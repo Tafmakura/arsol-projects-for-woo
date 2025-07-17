@@ -239,38 +239,34 @@ function arsol_pfw_get_projects_with_subscriptions($args = array()) {
 }
 
 /**
- * Get stage counts
+ * Get stage counts using OOP stage entities
  * 
  * @return array Array of stage counts
  */
 function arsol_pfw_get_project_stage_counts() {
-    $stages = get_terms(array(
-        'taxonomy' => 'arsol-pfw-project-stage',
-        'hide_empty' => false,
-    ));
+    $stage_entity = new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage(0);
+    $statistics = $stage_entity->get_stage_statistics();
     
     $counts = array();
-    foreach ($stages as $stage) {
-        $counts[$stage->slug] = $stage->count;
+    foreach ($statistics as $stage_slug => $stage_data) {
+        $counts[$stage_slug] = $stage_data['count'];
     }
     
     return $counts;
 }
 
 /**
- * Get available stages
+ * Get available stages using OOP stage entities
  * 
  * @return array Array of available stages
  */
 function arsol_pfw_get_available_project_stages() {
-    $stages = get_terms(array(
-        'taxonomy' => 'arsol-pfw-project-stage',
-        'hide_empty' => false,
-    ));
+    $stage_entity = new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage(0);
+    $stages = $stage_entity->get_available_stages();
     
     $stage_options = array();
-    foreach ($stages as $stage) {
-        $stage_options[$stage->slug] = $stage->name;
+    foreach ($stages as $stage_slug => $stage_data) {
+        $stage_options[$stage_slug] = $stage_data['label'];
     }
     
     return $stage_options;
@@ -346,22 +342,12 @@ function arsol_pfw_get_projects_by_date_range($start_date, $end_date, $args = ar
 }
 
 /**
- * Bulk update project stages
+ * Bulk update project stages using OOP stage entities
  * 
  * @param array $project_ids Array of project IDs
  * @param string $stage_slug Stage slug to set
  * @return int Number of projects updated
  */
 function arsol_pfw_bulk_update_project_stages($project_ids, $stage_slug) {
-    $updated = 0;
-    
-    foreach ($project_ids as $project_id) {
-        $project = arsol_pfw_get_project($project_id);
-        if ($project) {
-            $project->update_stage($stage_slug);
-            $updated++;
-        }
-    }
-    
-    return $updated;
+    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage::bulk_update_stage($project_ids, $stage_slug);
 } 

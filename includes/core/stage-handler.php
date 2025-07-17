@@ -1,4 +1,6 @@
 <?php
+// DEPRECATED: All stage logic is now handled by the OOP stage entity classes (Project_Stage, Proposal_Stage, Request_Stage).
+// Please use the appropriate entity class in includes/taxonomies/stages/ instead of this handler.
 
 namespace Arsol_Projects_For_Woo\Core;
 

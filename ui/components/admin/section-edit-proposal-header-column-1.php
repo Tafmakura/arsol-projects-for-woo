@@ -86,13 +86,13 @@ elseif ($proposal_id > 0) {
     }
 }
 
-// Get proposal stage using CRUD method
+// Get proposal stage using direct methods (WooCommerce style)
 $current_proposal_stage = $proposal->get_stage();
 if (empty($current_proposal_stage)) {
     $current_proposal_stage = 'processing'; // Default to processing
 }
 
-// Get available stages using the proposal entity
+// Get available stages using direct methods
 $available_stages = $proposal->get_available_stages();
 ?>
 
@@ -174,9 +174,9 @@ $available_stages = $proposal->get_available_stages();
         <label for="proposal_stage"><?php _e('Proposal Stage:', 'arsol-pfw'); ?></label>
         <select id="proposal_stage" name="proposal_stage" class="wc-enhanced-select">
             <?php if (!empty($available_stages)) : ?>
-                <?php foreach ($available_stages as $stage_slug => $stage_name) : ?>
+                <?php foreach ($available_stages as $stage_slug => $stage_data) : ?>
                     <option value="<?php echo esc_attr($stage_slug); ?>" <?php selected($current_proposal_stage, $stage_slug); ?>>
-                        <?php echo esc_html($stage_name); ?>
+                        <?php echo esc_html($stage_data['label']); ?>
                     </option>
                 <?php endforeach; ?>
             <?php endif; ?>

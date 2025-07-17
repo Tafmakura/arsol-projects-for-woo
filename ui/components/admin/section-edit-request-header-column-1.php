@@ -20,14 +20,15 @@ if (!isset($request) || !is_object($request)) {
 $request_id = $request->get_id();
 $customer_id = $request->get_customer_id();
 $customer = get_userdata($customer_id);
+
+// Use direct stage methods (WooCommerce style)
 $request_stage = $request->get_stage();
+$available_stages = $request->get_available_stages();
+
 $budget = $request->get_requested_project_budget();
 $start_date = $request->get_requested_project_start_date();
 $due_date = $request->get_requested_project_due_date();
 $request_project_lead = $request->get_requested_project_lead();
-
-// Get available stages using the request entity
-$available_stages = $request->get_available_stages();
 
 // Set default stage if none set
 if (empty($request_stage)) {
@@ -53,9 +54,9 @@ if (empty($request_stage)) {
         <label for="request-stage"><?php _e('Stage:', 'arsol-pfw'); ?></label>
         <select id="request-stage" name="request_stage" class="wc-enhanced-select">
             <?php if (!empty($available_stages)): ?>
-                <?php foreach ($available_stages as $stage_slug => $stage_name): ?>
+                <?php foreach ($available_stages as $stage_slug => $stage_data): ?>
                     <option value="<?php echo esc_attr($stage_slug); ?>" <?php selected($request_stage, $stage_slug); ?>>
-                        <?php echo esc_html($stage_name); ?>
+                        <?php echo esc_html($stage_data['label']); ?>
                     </option>
                 <?php endforeach; ?>
             <?php else: ?>

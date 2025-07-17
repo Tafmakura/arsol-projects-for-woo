@@ -20,13 +20,14 @@ if (!isset($project) || !is_object($project)) {
 $project_id = $project->get_id();
 $customer_id = $project->get_customer_id();
 $customer = get_userdata($customer_id);
-$project_stage = $project->get_project_stage();
+
+// Use direct stage methods (WooCommerce style)
+$project_stage = $project->get_stage();
+$available_stages = $project->get_available_stages();
+
 $project_lead = $project->get_project_lead();
 $start_date = $project->get_project_start_date();
 $due_date = $project->get_project_due_date();
-
-// Get available stages using the project entity
-$available_stages = $project->get_available_stages();
 ?>
 
 <div class="form-field-row">
@@ -64,9 +65,9 @@ $available_stages = $project->get_available_stages();
         <label for="project_stage"><?php _e('Project Stage:', 'arsol-pfw'); ?></label>
         <select id="project_stage" name="project_stage" class="wc-enhanced-select">
             <?php if (!empty($available_stages)) : ?>
-                <?php foreach ($available_stages as $stage_slug => $stage_name) : ?>
+                <?php foreach ($available_stages as $stage_slug => $stage_data) : ?>
                     <option value="<?php echo esc_attr($stage_slug); ?>" <?php selected($project_stage, $stage_slug); ?>>
-                        <?php echo esc_html($stage_name); ?>
+                        <?php echo esc_html($stage_data['label']); ?>
                     </option>
                 <?php endforeach; ?>
             <?php endif; ?>

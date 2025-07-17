@@ -137,29 +137,32 @@ class Sidebar_Meta {
     private function get_project_metadata($post_id, $status) {
         $metadata = array();
         
-        // Get actual taxonomy status instead of using passed status
-        $actual_status = $this->get_taxonomy_status($post_id);
-        
-        // Only add status if we have an actual status
-        if (!empty($actual_status)) {
-            $metadata['status'] = array(
-                'label' => __('Stage', 'arsol-pfw'),
-                'value' => $this->format_status_display($actual_status, $post_id),
-                'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
-            );
-        }
-        
         // Get project object to use getter methods
         $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
+        
+        // Use direct stage methods (WooCommerce style)
+        $current_stage = $project->get_stage();
+        
+        // Only add status if we have an actual status
+        if (!empty($current_stage)) {
+            $stage_label = $project->get_stage_label();
+            $stage_color = $project->get_stage_color();
+            
+            $metadata['status'] = array(
+                label => __('Stage', 'arsol-pfw'),
+                value' => $stage_label,
+                type' => 'badge,             class => tatus-badge status-' . sanitize_html_class($current_stage),
+                color => $stage_color
+            );
+        }
         
         // Customer
         $customer = $project->get_customer();
         if ($customer) {
             $metadata['customer'] = array(
-                'label' => __('Customer', 'arsol-pfw'),
-                'value' => $customer->display_name,
-                'type' => 'text'
+                label=> __(Customer', 'arsol-pfw'),
+                value' => $customer->display_name,
+                type' => text'
             );
         }
         
@@ -167,11 +170,11 @@ class Sidebar_Meta {
         $project_lead = $project->get_project_lead();
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
-            if ($lead) {
+            if ($lead)[object Object]
                 $metadata['project_lead'] = array(
-                    'label' => __('Project Lead', 'arsol-pfw'),
-                    'value' => $lead->display_name,
-                    'type' => 'text'
+                    label' => __('Project Lead', 'arsol-pfw'),
+                    value' => $lead->display_name,
+                    type' => text'
                 );
             }
         }
@@ -180,9 +183,9 @@ class Sidebar_Meta {
         $start_date = $project->get_project_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
-                'label' => __('Start Date', 'arsol-pfw'),
-                'value' => $start_date,
-                'type' => 'date'
+                label=> __(Start Date', 'arsol-pfw'),
+                value => $start_date,
+                type' => date'
             );
         }
         
@@ -190,9 +193,9 @@ class Sidebar_Meta {
         $due_date = $project->get_project_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
-                'label' => __('Due Date', 'arsol-pfw'),
-                'value' => $due_date,
-                'type' => 'date'
+                label=> __(Due Date', 'arsol-pfw'),
+                value' => $due_date,
+                type' => date'
             );
         }
         
@@ -209,29 +212,32 @@ class Sidebar_Meta {
     private function get_proposal_metadata($post_id, $status) {
         $metadata = array();
         
-        // Get actual taxonomy status instead of using passed status
-        $actual_status = $this->get_taxonomy_status($post_id);
-        
-        // Only add status if we have an actual status
-        if (!empty($actual_status)) {
-            $metadata['status'] = array(
-                'label' => __('Stage', 'arsol-pfw'),
-                'value' => $this->format_status_display($actual_status, $post_id),
-                'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
-            );
-        }
-        
         // Get proposal object to use getter methods
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+        
+        // Use direct stage methods (WooCommerce style)
+        $current_stage = $proposal->get_stage();
+        
+        // Only add status if we have an actual status
+        if (!empty($current_stage)) {
+            $stage_label = $proposal->get_stage_label();
+            $stage_color = $proposal->get_stage_color();
+            
+            $metadata['status'] = array(
+                label => __('Stage', 'arsol-pfw'),
+                value' => $stage_label,
+                type' => 'badge,             class => tatus-badge status-' . sanitize_html_class($current_stage),
+                color => $stage_color
+            );
+        }
         
         // Customer
         $customer = $proposal->get_customer();
         if ($customer) {
             $metadata['customer'] = array(
-                'label' => __('Customer', 'arsol-pfw'),
-                'value' => $customer->display_name,
-                'type' => 'text'
+                label=> __(Customer', 'arsol-pfw'),
+                value' => $customer->display_name,
+                type' => text'
             );
         }
         
@@ -242,28 +248,28 @@ class Sidebar_Meta {
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
-            if ($lead) {
+            if ($lead)[object Object]
                 $metadata['project_lead'] = array(
-                    'label' => __('Project Lead', 'arsol-pfw'),
-                    'value' => $lead->display_name,
-                    'type' => 'text'
+                    label' => __('Project Lead', 'arsol-pfw'),
+                    value' => $lead->display_name,
+                    type' => text'
                 );
             }
         }
         
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
-                'label' => __('Start Date', 'arsol-pfw'),
-                'value' => $start_date,
-                'type' => 'date'
+                label=> __(Start Date', 'arsol-pfw'),
+                value => $start_date,
+                type' => date'
             );
         }
         
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
-                'label' => __('Due Date', 'arsol-pfw'),
-                'value' => $due_date,
-                'type' => 'date'
+                label=> __(Due Date', 'arsol-pfw'),
+                value' => $due_date,
+                type' => date'
             );
         }
         
@@ -280,29 +286,32 @@ class Sidebar_Meta {
     private function get_request_metadata($post_id, $status) {
         $metadata = array();
         
-        // Get actual taxonomy status instead of using passed status
-        $actual_status = $this->get_taxonomy_status($post_id);
-        
-        // Only add status if we have an actual status
-        if (!empty($actual_status)) {
-            $metadata['status'] = array(
-                'label' => __('Stage', 'arsol-pfw'),
-                'value' => $this->format_status_display($actual_status, $post_id),
-                'type' => 'badge',
-                'class' => 'status-badge status-' . sanitize_html_class($actual_status)
-            );
-        }
-        
         // Get request object to use getter methods
         $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
+        
+        // Use direct stage methods (WooCommerce style)
+        $current_stage = $request->get_stage();
+        
+        // Only add status if we have an actual status
+        if (!empty($current_stage)) {
+            $stage_label = $request->get_stage_label();
+            $stage_color = $request->get_stage_color();
+            
+            $metadata['status'] = array(
+                label => __('Stage', 'arsol-pfw'),
+                value' => $stage_label,
+                type' => 'badge,             class => tatus-badge status-' . sanitize_html_class($current_stage),
+                color => $stage_color
+            );
+        }
         
         // Customer
         $customer = $request->get_customer();
         if ($customer) {
             $metadata['customer'] = array(
-                'label' => __('Customer', 'arsol-pfw'),
-                'value' => $customer->display_name,
-                'type' => 'text'
+                label=> __(Customer', 'arsol-pfw'),
+                value' => $customer->display_name,
+                type' => text'
             );
         }
         
@@ -313,11 +322,11 @@ class Sidebar_Meta {
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
-            if ($lead) {
+            if ($lead)[object Object]
                 $metadata['project_lead'] = array(
-                    'label' => __('Project Lead', 'arsol-pfw'),
-                    'value' => $lead->display_name,
-                    'type' => 'text'
+                    label' => __('Project Lead', 'arsol-pfw'),
+                    value' => $lead->display_name,
+                    type' => text'
                 );
             }
         }
@@ -325,18 +334,18 @@ class Sidebar_Meta {
         // Start Date
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
-                'label' => __('Start Date', 'arsol-pfw'),
-                'value' => $start_date,
-                'type' => 'date'
+                label=> __(Start Date', 'arsol-pfw'),
+                value => $start_date,
+                type' => date'
             );
         }
         
         // Due Date
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
-                'label' => __('Due Date', 'arsol-pfw'),
-                'value' => $due_date,
-                'type' => 'date'
+                label=> __(Due Date', 'arsol-pfw'),
+                value' => $due_date,
+                type' => date'
             );
         }
         

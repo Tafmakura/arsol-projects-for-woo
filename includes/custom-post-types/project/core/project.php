@@ -167,24 +167,134 @@ class Project {
     }
 
     /**
+     * Get project stage entity (internal use)
+     *
+     * @return \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage
+     */
+    private function get_stage_entity() {
+        return new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage($this->project_id);
+    }
+
+    /**
      * Get project stage
-     * 
+     *
      * @return string Current stage
      */
     public function get_stage() {
-        // Use centralized stage manager
-        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($this->project_id, 'project');
+        return $this->get_stage_entity()->get_stage();
     }
 
     /**
      * Set project stage
-     * 
+     *
      * @param string $stage Stage slug
      * @return bool Success status
      */
     public function set_stage($stage) {
-        // Use centralized stage manager
-        return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($this->project_id, 'project', $stage);
+        return $this->get_stage_entity()->set_stage($stage);
+    }
+
+    /**
+     * Update project stage with optional notes
+     *
+     * @param string $new_stage New stage slug
+     * @param string $note Optional note about the stage change
+     * @return bool Success status
+     */
+    public function update_stage($new_stage, $note = '') {
+        return $this->get_stage_entity()->update_stage($new_stage, $note);
+    }
+
+    /**
+     * Get project stage label
+     *
+     * @return string Human-readable stage label
+     */
+    public function get_stage_label() {
+        return $this->get_stage_entity()->get_stage_label();
+    }
+
+    /**
+     * Get project stage color
+     *
+     * @return string Stage color (hex code or CSS class)
+     */
+    public function get_stage_color() {
+        return $this->get_stage_entity()->get_stage_color();
+    }
+
+    /**
+     * Get project stage notes
+     *
+     * @return string Stage notes
+     */
+    public function get_stage_notes() {
+        return $this->get_stage_entity()->get_stage_notes();
+    }
+
+    /**
+     * Set project stage notes
+     *
+     * @param string $notes Stage notes
+     * @return bool Success status
+     */
+    public function set_stage_notes($notes) {
+        return $this->get_stage_entity()->set_stage_notes($notes);
+    }
+
+    /**
+     * Get project stage history
+     *
+     * @return array Array of stage change history
+     */
+    public function get_stage_history() {
+        return $this->get_stage_entity()->get_stage_history();
+    }
+
+    /**
+     * Get allowed stage transitions
+     *
+     * @return array Array of allowed stage transitions
+     */
+    public function get_allowed_stage_transitions() {
+        return $this->get_stage_entity()->get_allowed_transitions();
+    }
+
+    /**
+     * Check if stage transition is allowed
+     *
+     * @param string $new_stage Stage to transition to
+     * @return bool True if transition is allowed
+     */
+    public function can_transition_to($new_stage) {
+        return $this->get_stage_entity()->can_transition_to($new_stage);
+    }
+
+    /**
+     * Check if current stage is final
+     *
+     * @return bool true if this is a final stage
+     */
+    public function is_final_stage() {
+        return $this->get_stage_entity()->is_final_stage();
+    }
+
+    /**
+     * Check if current stage is initial
+     *
+     * @return bool true this is an initial stage
+     */
+    public function is_initial_stage() {
+        return $this->get_stage_entity()->is_initial_stage();
+    }
+
+    /**
+     * Get available stages
+     *
+     * @return array Array of available stages
+     */
+    public function get_available_stages() {
+        return $this->get_stage_entity()->get_available_stages();
     }
 
     /**
@@ -542,25 +652,6 @@ class Project {
      */
     public function set_project_customer_notice($customer_notice) {
         return $this->set_meta('_arsol_pfw_project_customer_notice', wp_kses_post($customer_notice));
-    }
-
-    /**
-     * Update stage with hooks
-     * 
-     * @param string $new_stage New stage
-     * @return bool|WP_Error Success status or error
-     */
-    public function update_stage($new_stage) {
-        return \Arsol_Projects_For_Woo\Core\Stage_Handler::update_stage($this->project_id, 'project', $new_stage);
-    }
-
-    /**
-     * Get available stages
-     * 
-     * @return array Available stages
-     */
-    public function get_available_stages() {
-        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('project');
     }
 
     /**
