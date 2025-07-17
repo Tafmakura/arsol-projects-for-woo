@@ -49,7 +49,7 @@ class Budget_Controller {
             $recurring_data = $proposal->get_legacy_budget_recurring_amount() ?: array();
         }
         if (empty($budget_notes)) {
-            $budget_notes = get_post_meta($post->ID, '_arsol_pfw_proposal_notes', true);
+            $budget_notes = $proposal->get_proposal_notes();
         }
 
         $budget_amount = !empty($onetime_data['amount']) ? $onetime_data['amount'] : '';

@@ -46,7 +46,7 @@ class Biller_Invoice {
     public function convert_proposal_to_order($proposal_id, $project_id = null) {
         // Validate proposal
         if (!$this->validate_proposal($proposal_id)) {
-            $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+            $cost_proposal_type = $this->get_proposal_type($proposal_id);
             $error_messages = array(
                 'none' => __('Proposal validation failed. Please ensure a customer is assigned.', 'arsol-pfw'),
                 'budget' => __('Proposal validation failed. Please ensure a customer is assigned.', 'arsol-pfw'),
@@ -477,7 +477,7 @@ class Biller_Invoice {
         }
         
         // Check if proposal has a customer (post_author)
-        $customer_id = get_post_meta($proposal_id, '_arsol_pfw_customer_id', true);
+        $customer_id = $this->get_customer_id($proposal_id);
         if (empty($customer_id)) {
             return false;
         }
@@ -488,8 +488,9 @@ class Biller_Invoice {
             return false;
         }
         
-        // Get proposal type
-        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+        // Get proposal costing type using Proposal entity
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+        $cost_proposal_type = $proposal->get_costing_type() ?: 'none';
         
         // Validate based on proposal type
         switch ($cost_proposal_type) {
@@ -592,16 +593,17 @@ class Biller_Invoice {
             return false;
         }
         
-        $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
-        $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $currency = $proposal_entity->get_quotation_currency() ?: get_woocommerce_currency();
+        // Get proposal costing type using Proposal entity
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+        $cost_proposal_type = $proposal->get_costing_type() ?: 'none';
+        $currency = $proposal->get_quotation_currency() ?: get_woocommerce_currency();
         $line_items = array();
         
         // Get line items based on proposal type
         switch ($cost_proposal_type) {
             case 'quotation':
                 // Get quotation line items
-                $line_items = $proposal_entity->get_quotation_line_items() ?: array();
+                $line_items = $proposal->get_quotation_line_items() ?: array();
                 break;
                 
             case 'budget':
@@ -614,10 +616,22 @@ class Biller_Invoice {
         
         return array(
             'proposal_id' => $proposal_id,
-            'customer_id' => $proposal->post_author,
+            'customer_id' => $this->get_customer_id($proposal_id),
             'line_items' => $line_items,
             'currency' => $currency,
             'proposal_type' => $cost_proposal_type
         );
+    }
+
+    private function get_customer_id($proposal_id) {
+        // Use Proposal entity for customer access
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+        return $proposal->get_customer_id();
+    }
+
+    private function get_proposal_type($proposal_id) {
+        // Use Proposal entity for costing type access
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+        return $proposal->get_costing_type() ?: 'none';
     }
 }

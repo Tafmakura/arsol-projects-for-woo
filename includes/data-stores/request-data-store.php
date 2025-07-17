@@ -42,9 +42,9 @@ class Request_Data_Store {
         // Set ID
         $request->set_prop('id', $post_id);
         
-        // Store customer_id in meta (like WooCommerce)
-        update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
-        update_post_meta($post_id, '_arsol_pfw_created_via', 'admin_creation');
+        // Store customer_id and created_via using entity methods
+        $request->set_customer_id($customer_id);
+        $request->set_created_via('admin_creation');
         
         // Save meta
         $this->save_meta($request);
@@ -77,9 +77,9 @@ class Request_Data_Store {
         $request->set_prop('date_created', $post->post_date);
         $request->set_prop('date_modified', $post->post_modified);
         
-        // Load customer_id from meta (like WooCommerce)
-        $customer_id = get_post_meta($post->ID, '_arsol_pfw_customer_id', true);
-        $created_via = get_post_meta($post->ID, '_arsol_pfw_created_via', true);
+        // Load customer_id and created_via using entity methods
+        $customer_id = $request->get_customer_id();
+        $created_via = $request->get_created_via();
         
         if ($customer_id) {
             $request->set_prop('customer_id', $customer_id);
@@ -90,7 +90,7 @@ class Request_Data_Store {
         
         // Load meta data
         foreach ($this->meta_keys as $prop => $meta_key) {
-            $value = get_post_meta($post->ID, $meta_key, true);
+            $value = $request->get_meta($meta_key);
             $request->set_prop($prop, $value);
         }
         
@@ -130,13 +130,13 @@ class Request_Data_Store {
             }
         }
         
-        // Update customer_id in meta (like WooCommerce)
+        // Update customer_id and created_via using entity methods
         if (isset($changes['customer_id'])) {
-            update_post_meta($request->get_id(), '_arsol_pfw_customer_id', $changes['customer_id']);
+            $request->set_customer_id($changes['customer_id']);
         }
         
         if (isset($changes['created_via'])) {
-            update_post_meta($request->get_id(), '_arsol_pfw_created_via', $changes['created_via']);
+            $request->set_created_via($changes['created_via']);
         }
         
         // Update meta
@@ -176,7 +176,7 @@ class Request_Data_Store {
         foreach ($this->meta_keys as $prop => $meta_key) {
             $value = $request->get_prop($prop);
             if ($value !== null) {
-                update_post_meta($request->get_id(), $meta_key, $value);
+                $request->set_meta($meta_key, $value);
             }
         }
     }

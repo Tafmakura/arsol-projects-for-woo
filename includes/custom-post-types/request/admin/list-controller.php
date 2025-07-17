@@ -55,8 +55,9 @@ class List_Controller {
                 break;
                 
             case 'request_budget':
-                // Use direct meta access for performance in admin columns
-                $budget = get_post_meta($post_id, '_arsol_pfw_requested_project_budget', true);
+                // Use Request entity for budget access
+                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
+                $budget = $request->get_request_budget();
                 if ($budget) {
                     if (is_array($budget) && isset($budget['amount'])) {
                         $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();
@@ -71,8 +72,9 @@ class List_Controller {
                 break;
                 
             case 'customer':
-                // Use direct meta access for performance in admin columns
-                $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
+                // Use Request entity for customer access
+                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
+                $customer_id = $request->get_customer_id();
                 if ($customer_id) {
                     echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-request');
                 } else {

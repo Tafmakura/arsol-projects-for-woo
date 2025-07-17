@@ -37,7 +37,8 @@ class Conversion_Handler {
             // Prevent concurrent conversions and handle stuck workflows
             if ($this->is_workflow_in_progress($request_id)) {
                 // Check if this is a stuck workflow (older than 5 minutes)
-                $workflow_started = get_post_meta($request_id, '_arsol_pfw_workflow_started', true);
+                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($request_id);
+                $workflow_started = $request->get_meta('_arsol_pfw_workflow_started');
                 $is_stuck = false;
                 
                 if ($workflow_started) {
@@ -205,7 +206,7 @@ class Conversion_Handler {
         );
         
         foreach ($meta_mapping as $old_key => $new_key) {
-            $value = get_post_meta($request_id, $old_key, true);
+            $value = $request->get_meta($old_key);
             if (!empty($value)) {
                 update_post_meta($proposal_id, $new_key, $value);
             }
@@ -225,7 +226,7 @@ class Conversion_Handler {
         arsol_pfw_update_proposal_stage($proposal_id, 'processing');
         
         // 5. Copy custom fields and taxonomies
-        $custom_fields = get_post_meta($request_id);
+        $custom_fields = $request->get_meta();
         foreach ($custom_fields as $key => $values) {
             if (strpos($key, '_arsol_pfw_') === 0 && !isset($meta_mapping[$key])) {
                 foreach ($values as $value) {

@@ -145,6 +145,12 @@ class Setup {
         if (!$post || $post->post_type !== 'arsol-pfw-request') {
             return;
         }
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post->ID);
+        $requested_budget = $request->get_request_budget();
+        $requested_start_date = $request->get_request_start_date();
+        $requested_due_date = $request->get_request_due_date();
+        $request_date = $request->get_request_date();
+        $request_attachments = $request->get_request_attachments();
         
         $template_path = ARSOL_PFW_PLUGIN_DIR . 'ui/components/admin/section-edit-request-header-column-2.php';
         if (file_exists($template_path)) {

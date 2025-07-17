@@ -48,12 +48,12 @@ $all_statuses = get_terms(array(
 
 // Check if has request data
 $has_request_data = false;
-$request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
-$request_title = get_post_meta($project_id, '_arsol_pfw_project_request_title', true);
-$request_content = get_post_meta($project_id, '_arsol_pfw_project_request_content', true);
-$requested_budget = get_post_meta($project_id, '_arsol_pfw_requested_project_budget', true);
-$requested_start_date = get_post_meta($project_id, '_arsol_pfw_requested_project_start_date', true);
-$requested_due_date = get_post_meta($project_id, '_arsol_pfw_requested_project_due_date', true);
+$request_id = $project->get_meta('_arsol_pfw_project_request_id');
+$request_title = $project->get_meta('_arsol_pfw_project_request_title');
+$request_content = $project->get_meta('_arsol_pfw_project_request_content');
+$requested_budget = $project->get_meta('_arsol_pfw_requested_project_budget');
+$requested_start_date = $project->get_meta('_arsol_pfw_requested_project_start_date');
+$requested_due_date = $project->get_meta('_arsol_pfw_requested_project_due_date');
 
 if ($request_id || $request_title || $request_content || $requested_budget || $requested_start_date || $requested_due_date) {
     $has_request_data = true;

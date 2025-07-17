@@ -52,9 +52,9 @@ class Project_Data_Store {
         // Set ID
         $project->set_prop('id', $post_id);
         
-        // Store customer_id in meta (like WooCommerce)
-        update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
-        update_post_meta($post_id, '_arsol_pfw_created_via', 'admin_creation');
+        // Store customer_id and created_via using entity methods
+        $project->set_customer_id($customer_id);
+        $project->set_created_via('admin_creation');
         
         // Save meta
         $this->save_simple_meta($project);
@@ -88,9 +88,9 @@ class Project_Data_Store {
         $project->set_prop('date_created', $post->post_date);
         $project->set_prop('date_modified', $post->post_modified);
         
-        // Load customer_id from meta (like WooCommerce)
-        $customer_id = get_post_meta($post->ID, '_arsol_pfw_customer_id', true);
-        $created_via = get_post_meta($post->ID, '_arsol_pfw_created_via', true);
+        // Load customer_id and created_via using entity methods
+        $customer_id = $project->get_customer_id();
+        $created_via = $project->get_created_via();
         
         if ($customer_id) {
             $project->set_prop('customer_id', $customer_id);
@@ -101,13 +101,13 @@ class Project_Data_Store {
         
         // Load simple meta data
         foreach ($this->meta_keys as $prop => $meta_key) {
-            $value = get_post_meta($post->ID, $meta_key, true);
+            $value = $project->get_meta($meta_key);
             $project->set_prop($prop, $value);
         }
         
         // Load complex meta data
         foreach ($this->complex_meta_keys as $prop => $meta_key) {
-            $value = get_post_meta($post->ID, $meta_key, true);
+            $value = $project->get_meta($meta_key);
             $project->set_prop($prop, $value ?: array());
         }
         
@@ -147,13 +147,13 @@ class Project_Data_Store {
             }
         }
         
-        // Update customer_id in meta (like WooCommerce)
+        // Update customer_id and created_via using entity methods
         if (isset($changes['customer_id'])) {
-            update_post_meta($project->get_id(), '_arsol_pfw_customer_id', $changes['customer_id']);
+            $project->set_customer_id($changes['customer_id']);
         }
         
         if (isset($changes['created_via'])) {
-            update_post_meta($project->get_id(), '_arsol_pfw_created_via', $changes['created_via']);
+            $project->set_created_via($changes['created_via']);
         }
         
         // Update meta
@@ -194,7 +194,7 @@ class Project_Data_Store {
         foreach ($this->meta_keys as $prop => $meta_key) {
             $value = $project->get_prop($prop);
             if ($value !== null) {
-                update_post_meta($project->get_id(), $meta_key, $value);
+                $project->set_meta($meta_key, $value);
             }
         }
     }
@@ -208,7 +208,7 @@ class Project_Data_Store {
         foreach ($this->complex_meta_keys as $prop => $meta_key) {
             $value = $project->get_prop($prop);
             if ($value !== null) {
-                update_post_meta($project->get_id(), $meta_key, $value);
+                $project->set_meta($meta_key, $value);
             }
         }
     }

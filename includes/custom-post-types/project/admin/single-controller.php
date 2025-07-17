@@ -97,8 +97,9 @@ class Single_Controller {
         // Add nonce for security
         wp_nonce_field('project_customer_notice_section', 'project_customer_notice_section_nonce');
 
-        // Get current values
-        $notice = get_post_meta($post->ID, '_arsol_pfw_project_customer_notice', true);
+        // Get current values using Project entity
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post->ID);
+        $notice = $project->get_project_customer_notice();
         ?>
         <div>
             <p class="description">
@@ -143,6 +144,9 @@ class Single_Controller {
             return;
         }
 
+        // Get project entity
+        $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
+
         // Handle project stage change
         if (isset($_POST['project_stage'])) {
             $new_status = sanitize_text_field($_POST['project_stage']);
@@ -153,8 +157,8 @@ class Single_Controller {
 
             // Set start date on the first transition to 'in-progress'
             if ($new_status === 'in-progress' && $old_status !== 'in-progress') {
-                if (empty(get_post_meta($post_id, '_arsol_pfw_project_start_date', true))) {
-                    update_post_meta($post_id, '_arsol_pfw_project_start_date', current_time('mysql'));
+                if (empty($project->get_project_start_date())) {
+                    $project->set_project_start_date(current_time('mysql'));
                 }
             }
             
@@ -162,39 +166,39 @@ class Single_Controller {
         }
 
         // Set default start date if not already set
-        if (empty(get_post_meta($post_id, '_arsol_pfw_project_start_date', true))) {
-            update_post_meta($post_id, '_arsol_pfw_project_start_date', current_time('mysql'));
+        if (empty($project->get_project_start_date())) {
+            $project->set_project_start_date(current_time('mysql'));
         }
 
         // Save project lead
         if (isset($_POST['project_lead'])) {
-            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
             $project->set_project_lead(sanitize_text_field($_POST['project_lead']));
         }
 
         // Save project start date
         if (isset($_POST['project_start_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_project_start_date', sanitize_text_field($_POST['project_start_date']));
+            $project->set_project_start_date(sanitize_text_field($_POST['project_start_date']));
         }
 
         // Save project due date
         if (isset($_POST['project_due_date'])) {
-            update_post_meta($post_id, '_arsol_pfw_project_due_date', sanitize_text_field($_POST['project_due_date']));
+            $project->set_project_due_date(sanitize_text_field($_POST['project_due_date']));
         }
         
         // Save customer notice
         if (isset($_POST['project_customer_notice_section_nonce']) && wp_verify_nonce($_POST['project_customer_notice_section_nonce'], 'project_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_project_customer_notice'])) {
-                $notice = wp_kses_post($_POST['arsol_pfw_project_customer_notice']);
-                update_post_meta($post_id, '_arsol_pfw_project_customer_notice', $notice);
+                $project->set_project_customer_notice(wp_kses_post($_POST['arsol_pfw_project_customer_notice']));
             }
         }
         
         // Save customer ID from customer_id field
         if (isset($_POST['customer_id']) && !empty($_POST['customer_id'])) {
-            $customer_id = intval($_POST['customer_id']);
-            update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
+            $project->set_customer_id(intval($_POST['customer_id']));
         }
+        
+        // Save all changes
+        $project->save();
         
         // Handle create proposal after save
         if (isset($_POST['arsol_create_after_save']) && !empty($_POST['arsol_create_after_save'])) {

@@ -198,7 +198,9 @@ class Quotation_Controller {
                 <h3><?php _e('Notes', 'arsol-pfw'); ?></h3>
                 <p class="description"><?php _e('These notes will be displayed on the frontend proposal view.', 'arsol-pfw'); ?></p>
                 <?php
-                $notes_content = get_post_meta($post->ID, '_arsol_pfw_proposal_notes', true);
+                // Use Proposal entity for notes access
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
+                $notes_content = $proposal->get_proposal_notes();
                 wp_editor(
                     $notes_content,
                     'arsol_proposal_notes',
@@ -369,10 +371,12 @@ class Quotation_Controller {
         
         // Save Notes
         if (isset($_POST['arsol_pfw_proposal_notes'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposal_notes', wp_kses_post($_POST['arsol_pfw_proposal_notes']));
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+            $proposal->set_proposal_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
         }
         
-        $cost_proposal_type = get_post_meta($post_id, '_arsol_pfw_proposal_costing_type', true);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+        $cost_proposal_type = $proposal->get_costing_type();
         if ($cost_proposal_type !== 'quotation') {
             return;
         }
@@ -381,7 +385,6 @@ class Quotation_Controller {
         // Quotation data is now stored in _arsol_pfw_proposed_project_quotation_line_items
         
         // Save line items to database using entity methods
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
         
         // Save totals to quotation data structure
         $quotation_data = $proposal->get_proposal_quotation();

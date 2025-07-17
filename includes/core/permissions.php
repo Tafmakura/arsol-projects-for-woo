@@ -111,8 +111,9 @@ class Permissions {
             return false;
         }
 
-        // Check if user is the assigned customer for the proposal
-        $customer_id = get_post_meta($proposal_id, '_arsol_pfw_customer_id', true);
+        // Check if user is the customer of this proposal
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+        $customer_id = $proposal->get_customer_id();
         if (!empty($customer_id) && $customer_id == $user_id) {
             return true;
         }

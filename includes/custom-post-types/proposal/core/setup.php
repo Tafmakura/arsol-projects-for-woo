@@ -145,18 +145,17 @@ class Setup {
      */
     public function render_customer_request_details_section($post) {
         // Only show if this proposal has request data
-        if (!$this->has_request_data($post->ID)) {
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
+        if (!$proposal->get_request_id() && !$proposal->get_request_budget() && !$proposal->get_request_start_date() && !$proposal->get_request_due_date()) {
             return;
         }
-
-        // Get request data for display
-        $requested_budget = get_post_meta($post->ID, '_arsol_pfw_requested_project_budget', true);
-        $requested_start_date = get_post_meta($post->ID, '_arsol_pfw_requested_project_start_date', true);
-        $requested_due_date = get_post_meta($post->ID, '_arsol_pfw_requested_project_due_date', true);
-        $request_date = get_post_meta($post->ID, '_arsol_pfw_request_date', true);
-        $request_title = get_post_meta($post->ID, '_arsol_pfw_request_title', true);
-        $request_content = get_post_meta($post->ID, '_arsol_pfw_request_details', true);
-        $request_attachments = get_post_meta($post->ID, '_arsol_pfw_request_attachments', true);
+        $requested_budget = $proposal->get_request_budget();
+        $requested_start_date = $proposal->get_request_start_date();
+        $requested_due_date = $proposal->get_request_due_date();
+        $request_date = $proposal->get_request_date();
+        $request_title = $proposal->get_request_title();
+        $request_content = $proposal->get_request_details();
+        $request_attachments = $proposal->get_request_attachments();
 
         // Display request title if available
         if ($request_title) {
@@ -217,13 +216,8 @@ class Setup {
      * Check if proposal has request data
      */
     private function has_request_data($post_id) {
-        $requested_budget = get_post_meta($post_id, '_arsol_pfw_requested_project_budget', true);
-        $requested_start_date = get_post_meta($post_id, '_arsol_pfw_requested_project_start_date', true);
-        $requested_due_date = get_post_meta($post_id, '_arsol_pfw_requested_project_due_date', true);
-        $request_date = get_post_meta($post_id, '_arsol_pfw_request_date', true);
-        $request_attachments = get_post_meta($post_id, '_arsol_pfw_request_attachments', true);
-        
-        return !empty($requested_budget) || !empty($requested_start_date) || !empty($requested_due_date) || !empty($request_date) || !empty($request_attachments);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+        return $proposal->get_request_id() || $proposal->get_request_budget() || $proposal->get_request_start_date() || $proposal->get_request_due_date();
     }
 
     /**
@@ -252,7 +246,8 @@ class Setup {
         
         // Save project lead
         if (isset($_POST['proposal_project_lead'])) {
-            update_post_meta($post_id, '_arsol_pfw_proposed_project_lead', sanitize_text_field($_POST['proposal_project_lead']));
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+            $proposal->set_proposal_lead(sanitize_text_field($_POST['proposal_project_lead']));
         }
         
         // Save secondary status (keeping existing functionality)
@@ -260,7 +255,8 @@ class Setup {
             $secondary_status = sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
             // Validate the value is one of the allowed options
             if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
-                update_post_meta($post_id, '_arsol_pfw_proposal_secondary_status', $secondary_status);
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+                $proposal->set_meta('_arsol_pfw_proposal_secondary_status', $secondary_status);
             }
         }
     }

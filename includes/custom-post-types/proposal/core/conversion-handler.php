@@ -62,8 +62,9 @@ class Conversion_Handler {
 
             // Prevent concurrent conversions and handle stuck workflows
             if ($this->is_workflow_in_progress($proposal_id)) {
-                // Check if this is a stuck workflow (older than 5 minutes)
-                $workflow_started = get_post_meta($proposal_id, '_arsol_pfw_workflow_started', true);
+                // Check if workflow has already started
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+                $workflow_started = $proposal->get_meta('_arsol_pfw_workflow_started');
                 $is_stuck = false;
                 
                 if ($workflow_started) {
@@ -95,7 +96,7 @@ class Conversion_Handler {
                 "Starting conversion: Proposal #{$proposal_id} to Project");
             
             // Validation step
-            update_post_meta($proposal_id, '_arsol_pfw_conversion_step', 'validation');
+            $proposal->update_meta('_arsol_pfw_conversion_step', 'validation');
 
             // No stage restriction – conversion allowed for any published proposal
 
@@ -123,7 +124,7 @@ class Conversion_Handler {
             do_action('arsol_after_project_conversion_validated', $proposal_id, $proposal_post, $conversion_data);
             
             // Creation step
-            update_post_meta($proposal_id, '_arsol_pfw_conversion_step', 'creation');
+            $proposal->update_meta('_arsol_pfw_conversion_step', 'creation');
 
             // NEW WAY - Factory functions and CRUD methods
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
@@ -157,16 +158,16 @@ class Conversion_Handler {
              */
             do_action('arsol_after_project_conversion_project_created', $new_project_id, $proposal_id, $proposal, $conversion_data);            
             // Metadata copy step
-            update_post_meta($proposal_id, '_arsol_pfw_conversion_step', 'metadata_copy');
+            $proposal->update_meta('_arsol_pfw_conversion_step', 'metadata_copy');
             
             // Copy metadata from proposal to project
             $this->copy_proposal_metadata_to_project($proposal_id, $new_project_id);
 
             // Order creation step  
-            update_post_meta($proposal_id, '_arsol_pfw_conversion_step', 'order_creation');
+            $proposal->update_meta('_arsol_pfw_conversion_step', 'order_creation');
 
             // Handle WooCommerce order creation
-            $cost_proposal_type = get_post_meta($proposal_id, '_arsol_pfw_proposal_costing_type', true) ?: 'none';
+            $cost_proposal_type = $proposal->get_proposal_costing_type();
             
             \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
                 sprintf('Starting billing operations for proposal #%d (type: %s) → project #%d', 
@@ -188,18 +189,18 @@ class Conversion_Handler {
                     
                     // Store created order IDs and record them for rollback
                     if (!empty($result['order_id'])) {
-                        update_post_meta($new_project_id, '_arsol_pfw_project_woocommerce_order_id', $result['order_id']);
+                        $project->update_meta('_arsol_pfw_project_woocommerce_order_id', $result['order_id']);
                         // Record order for potential rollback
                         $this->record_transaction_entity($proposal_id, $result['order_id']);
                     }
                     
                     if (!empty($result['subscription_id'])) {
-                        update_post_meta($new_project_id, '_arsol_pfw_project_woocommerce_subscription_id', $result['subscription_id']);
+                        $project->update_meta('_arsol_pfw_project_woocommerce_subscription_id', $result['subscription_id']);
                         // Record subscription for potential rollback
                         $this->record_transaction_entity($proposal_id, $result['subscription_id']);
                     }
                     
-                    update_post_meta($new_project_id, '_arsol_pfw_project_order_creation_note', $result['message']);
+                    $project->update_meta('_arsol_pfw_project_order_creation_note', $result['message']);
                     
                     \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info',
                         sprintf('Successfully created orders for project #%d: %s', $new_project_id, $result['message']));
@@ -216,7 +217,7 @@ class Conversion_Handler {
                     sprintf('Order creation failed for project #%d: %s', $new_project_id, $error_message));
                 
                 // Store error for debugging but continue with conversion
-                update_post_meta($new_project_id, '_arsol_pfw_project_order_creation_error', $error_message);
+                $project->update_meta('_arsol_pfw_project_order_creation_error', $error_message);
             }
 
             /**
@@ -285,7 +286,7 @@ class Conversion_Handler {
         }
         
         // Copy basic proposal data
-        update_post_meta($project_id, '_arsol_pfw_project_proposal_details', $proposal->get_prop('description'));        
+        $project->update_meta('_arsol_pfw_project_proposal_details', $proposal->get_prop('description'));        
         
         // 2. Rename request data with project context
         $request_meta_mapping = array(
@@ -307,7 +308,7 @@ class Conversion_Handler {
         );
         
         // Get proposal type for type-aware handling
-        $cost_proposal_type = $proposal->get_costing_type();
+        $cost_proposal_type = $proposal->get_proposal_costing_type();
         
         // Copy type-specific data using entity methods
         if ($cost_proposal_type === 'budget') {
@@ -338,9 +339,9 @@ class Conversion_Handler {
 
         // Copy all remaining meta data
         foreach ($meta_to_copy as $proposal_key => $project_key) {
-            $value = get_post_meta($proposal_id, $proposal_key, true);
+            $value = $proposal->get_meta($proposal_key, true);
             if ($value) {
-                update_post_meta($project_id, $project_key, $value);
+                $project->update_meta($project_key, $value);
             }
         }
 
@@ -351,14 +352,14 @@ class Conversion_Handler {
         );
         
         foreach ($historical_fields as $field) {
-            $value = get_post_meta($proposal_id, $field, true);
+            $value = $proposal->get_meta($field, true);
             if ($value) {
-                update_post_meta($project_id, $field, $value); // Keep original field name
+                $project->update_meta($field, $value); // Keep original field name
             }
         }
 
         // Store original proposal ID for reference
-        update_post_meta($project_id, '_arsol_pfw_project_proposal_id', $proposal_id);
+        $project->update_meta('_arsol_pfw_project_proposal_id', $proposal_id);
 
         // Set default project status to not-started
         wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-stage');
@@ -397,9 +398,15 @@ class Conversion_Handler {
      * Record a created entity in the transaction
      */
     private function record_transaction_entity($source_id, $entity_id) {
-        $created_ids = get_post_meta($source_id, '_arsol_pfw_conversion_created_ids', true) ?: array();
-        $created_ids[] = $entity_id;
-        update_post_meta($source_id, '_arsol_pfw_conversion_created_ids', $created_ids);
+        $source_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($source_id);
+        $created_ids = $source_entity->get_meta('_arsol_pfw_conversion_created_ids') ?: array();
+        $created_ids[] = array(
+            'id' => $entity_id,
+            'type' => 'project', // Assuming all created entities are projects for now
+            'created_at' => current_time('mysql')
+        );
+        $source_entity->set_meta('_arsol_pfw_conversion_created_ids', $created_ids);
+        $source_entity->save();
     }
 
     /**
@@ -441,15 +448,23 @@ class Conversion_Handler {
      */
     private function rollback_proposal_to_project($source_id) {
         $deleted_count = 0;
-        $created_ids = get_post_meta($source_id, '_arsol_pfw_conversion_created_ids', true) ?: array();
+        $source_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($source_id);
+        $created_ids = $source_entity->get_meta('_arsol_pfw_conversion_created_ids') ?: array();
         
-        foreach ($created_ids as $entity_id) {
-            $post = get_post($entity_id);
-            if (!$post) continue;
+        foreach ($created_ids as $entity_data) {
+            $entity_id = $entity_data['id'];
+            $entity_type = $entity_data['type'];
             
-            // Handle different entity types
-            switch ($post->post_type) {
-                case 'shop_order':
+            switch ($entity_type) {
+                case 'project':
+                    // Project entity
+                    if (wp_delete_post($entity_id, true)) {
+                        $deleted_count++;
+                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                            "Rollback: Deleted project #{$entity_id}");
+                    }
+                    break;
+                case 'order':
                     // WooCommerce order - use proper WC deletion method
                     $order = wc_get_order($entity_id);
                     if ($order) {
@@ -466,7 +481,7 @@ class Conversion_Handler {
                         }
                     }
                     break;
-                case 'shop_subscription':
+                case 'subscription':
                     // WooCommerce subscription - use proper WC deletion method
                     if (function_exists('wcs_get_subscription')) {
                         $subscription = wcs_get_subscription($entity_id);
@@ -492,20 +507,12 @@ class Conversion_Handler {
                         }
                     }
                     break;
-                case 'arsol-pfw-project':
-                    // Project entity
-                    if (wp_delete_post($entity_id, true)) {
-                        $deleted_count++;
-                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
-                            "Rollback: Deleted project #{$entity_id}");
-                    }
-                    break;
                 default:
                     // Unknown entity type - try generic deletion
                     if (wp_delete_post($entity_id, true)) {
                         $deleted_count++;
                         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
-                            "Rollback: Deleted {$post->post_type} #{$entity_id}");
+                            "Rollback: Deleted {$entity_type} #{$entity_id}");
                     }
                     break;
             }

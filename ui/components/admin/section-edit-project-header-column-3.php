@@ -9,9 +9,10 @@ if (!$post || $post->post_type !== 'arsol-pfw-project') {
     return;
 }
 
-$project_id = $post->ID;
-$project_orders = get_post_meta($project_id, '_arsol_pfw_project_orders', true);
-$project_subscriptions = get_post_meta($project_id, '_arsol_pfw_project_subscriptions', true);
+// Use Project entity for meta access
+$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post->ID);
+$project_orders = $project->get_meta('_arsol_pfw_project_orders');
+$project_subscriptions = $project->get_meta('_arsol_pfw_project_subscriptions');
 ?>
 
 <?php if (!empty($project_orders) && is_array($project_orders)): ?>

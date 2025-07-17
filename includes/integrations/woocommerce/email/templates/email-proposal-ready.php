@@ -33,8 +33,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
 </ul>
 
 <?php
-// Get proposal details
-$estimated_cost = get_post_meta($proposal->ID, '_arsol_pfw_proposal_estimated_cost', true);
+// Get estimated cost using Proposal entity
+$proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal->ID);
+$estimated_cost = $proposal->get_meta('_arsol_pfw_proposal_estimated_cost');
 ?>
 
 <?php if ($estimated_cost): ?>

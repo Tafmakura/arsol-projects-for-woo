@@ -213,19 +213,19 @@ class Shortcodes {
 	 * @return bool Whether user can view the project
 	 */
 	private function can_customer_view_project($project_id) {
-		$project = get_post($project_id);
+		$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
 		
-		if (!$project || $project->post_status !== 'publish') {
+		if (!$project || $project->get_status() !== 'publish') {
 			return false;
 		}
 		
 		// If user is logged in and owns the project
-		if (is_user_logged_in() && $project->post_author == get_current_user_id()) {
+		if (is_user_logged_in() && $project->get_author_id() == get_current_user_id()) {
 			return true;
 		}
 		
 		// Check if project is publicly viewable
-		        $is_public = get_post_meta($project_id, '_arsol_pfw_project_public', true);
+		$is_public = $project->get_meta('_arsol_pfw_project_public');
 		return $is_public === 'yes';
 	}
 

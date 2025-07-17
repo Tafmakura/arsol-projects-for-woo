@@ -20,7 +20,7 @@ if (!isset($project) || !is_object($project)) {
 $project_id = $project->get_id();
 
 // Check for proposal data first
-$proposal_id = get_post_meta($project_id, '_arsol_pfw_project_proposal_id', true);
+$proposal_id = $project->get_meta('_arsol_pfw_project_proposal_id');
 $has_proposal_data = false;
 
 // If from proposal, get proposal budget/date data
@@ -30,19 +30,19 @@ if ($proposal_id) {
     $recurring_budget_data = $project->get_proposal_budget_recurring_amount();
     $billing_interval = $project->get_proposal_budget_recurring_billing_interval();
     $billing_period = $project->get_proposal_budget_recurring_billing_period();
-    $proposed_start_date = get_post_meta($project_id, '_arsol_pfw_proposed_project_start_date', true);
-    $proposed_due_date = get_post_meta($project_id, '_arsol_pfw_proposed_project_due_date', true);
-    $proposed_expiration_date = get_post_meta($project_id, '_arsol_pfw_proposal_expiration_date', true);
+    $proposed_start_date = $project->get_meta('_arsol_pfw_proposed_project_start_date');
+    $proposed_due_date = $project->get_meta('_arsol_pfw_proposed_project_due_date');
+    $proposed_expiration_date = $project->get_meta('_arsol_pfw_proposal_expiration_date');
 }
 
         // Check if has request data
         $has_request_data = false;
-        $request_id = get_post_meta($project_id, '_arsol_pfw_project_request_id', true);
-        $request_title = get_post_meta($project_id, '_arsol_pfw_project_request_title', true);
-        $request_content = get_post_meta($project_id, '_arsol_pfw_project_request_content', true);
-        $requested_budget = get_post_meta($project_id, '_arsol_pfw_project_requested_budget', true);
-        $requested_start_date = get_post_meta($project_id, '_arsol_pfw_project_requested_start_date', true);
-        $requested_due_date = get_post_meta($project_id, '_arsol_pfw_requested_project_due_date', true);
+        $request_id = $project->get_meta('_arsol_pfw_project_request_id');
+        $request_title = $project->get_meta('_arsol_pfw_project_request_title');
+        $request_content = $project->get_meta('_arsol_pfw_project_request_content');
+        $requested_budget = $project->get_meta('_arsol_pfw_project_requested_budget');
+        $requested_start_date = $project->get_meta('_arsol_pfw_project_requested_start_date');
+        $requested_due_date = $project->get_meta('_arsol_pfw_requested_project_due_date');
 
         $has_request_data = $request_id || $requested_budget || $requested_start_date || $requested_due_date;
 ?>

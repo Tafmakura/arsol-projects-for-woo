@@ -58,20 +58,20 @@ class Single_Controller {
         wp_nonce_field('arsol-pfw-proposal-actions-metabox', 'arsol_pfw_proposal_actions_metabox_nonce');
 
         // Get current values
-        $cost_proposal_type = get_post_meta($post->ID, '_arsol_pfw_proposal_costing_type', true);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
+        $cost_proposal_type = $proposal->get_proposal_costing_type();
         if (empty($cost_proposal_type)) {
             $cost_proposal_type = 'none'; // Default to none
         }
 
-        $start_date = get_post_meta($post->ID, '_arsol_pfw_proposed_project_start_date', true);
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
-        $delivery_date = $proposal->get_due_date();
-        $expiration_date = get_post_meta($post->ID, '_arsol_pfw_proposal_expiration_date', true);
+        $start_date = $proposal->get_proposal_start_date();
+        $delivery_date = $proposal->get_proposal_due_date();
+        $expiration_date = $proposal->get_proposal_expiration_date();
 
         // Get original request data for comparison
-        $requested_budget = get_post_meta($post->ID, '_arsol_pfw_requested_project_budget', true);
-        $requested_start_date = get_post_meta($post->ID, '_arsol_pfw_requested_project_start_date', true);
-        $request_due_date = get_post_meta($post->ID, '_arsol_pfw_requested_project_due_date', true);
+        $requested_budget = $proposal->get_request_budget();
+        $requested_start_date = $proposal->get_request_start_date();
+        $request_due_date = $proposal->get_request_due_date();
 
         // WordPress automatically preserves form data on validation failures - no temporary storage needed
 
@@ -109,7 +109,7 @@ class Single_Controller {
         } 
         // Fallback to meta data check (for existing proposals)
         elseif ($post->ID > 0) {
-            $parent_project_id = get_post_meta($post->ID, '_arsol_pfw_parent_project_id', true);
+            $parent_project_id = $proposal->get_parent_project_id();
             if (!empty($parent_project_id)) {
                 $parent_project = get_post($parent_project_id);
                 if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
@@ -223,7 +223,8 @@ class Single_Controller {
         }
         
         // Save all meta data normally (no temporary data needed)
-        update_post_meta($post_id, '_arsol_pfw_proposal_costing_type', $cost_proposal_type);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+        $proposal->set_proposal_costing_type($cost_proposal_type);
 
         // Handle project-tied proposal meta keys - CONSOLIDATED LOGIC
         $parent_project_id = null;
@@ -243,7 +244,7 @@ class Single_Controller {
             
             if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
                 // Save parent project ID with proper naming convention
-                update_post_meta($post_id, '_arsol_pfw_parent_project_id', $parent_project_id);
+                $proposal->set_parent_project_id($parent_project_id);
             }
         }
         
@@ -261,7 +262,7 @@ class Single_Controller {
             $secondary_status = sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
             // Validate the value is one of the allowed options
             if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
-                update_post_meta($post_id, '_arsol_pfw_proposal_secondary_status', $secondary_status);
+                $proposal->set_proposal_secondary_status($secondary_status);
             }
         }
 
@@ -432,23 +433,25 @@ class Single_Controller {
         // Save customer notice
         if (isset($_POST['proposal_customer_notice_section_nonce']) && wp_verify_nonce($_POST['proposal_customer_notice_section_nonce'], 'proposal_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_proposal_customer_notice'])) {
-                $notice = wp_kses_post($_POST['arsol_pfw_proposal_customer_notice']);
-                update_post_meta($post_id, '_arsol_pfw_proposal_customer_notice', $notice);
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+                $proposal->set_proposal_customer_notice(wp_kses_post($_POST['arsol_pfw_proposal_customer_notice']));
+                $proposal->save();
             }
         }
         
         // Save customer ID from customer_id field
         if (isset($_POST['customer_id']) && !empty($_POST['customer_id'])) {
-            $customer_id = intval($_POST['customer_id']);
-            update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+            $proposal->set_customer_id(intval($_POST['customer_id']));
+            $proposal->save();
         }
         
         // Handle parent project ID for project-tied proposals
         // Check if this is a new proposal created from a project
-        if (get_post_status($post_id) === 'auto-draft' || (get_post_status($post_id) === 'draft' && !get_post_meta($post_id, '_arsol_pfw_parent_project_id', true))) {
+        if (get_post_status($post_id) === 'auto-draft' || (get_post_status($post_id) === 'draft' && !$proposal->get_parent_project_id())) {
             $creation_data = get_transient('arsol_proposal_created_from_project_' . get_current_user_id());
             if ($creation_data && is_array($creation_data) && isset($creation_data['parent_project_id'])) {
-                update_post_meta($post_id, '_arsol_pfw_parent_project_id', intval($creation_data['parent_project_id']));
+                $proposal->set_parent_project_id(intval($creation_data['parent_project_id']));
                 
                 // Set default title if not already set
                 $current_title = get_the_title($post_id);
@@ -744,8 +747,8 @@ class Single_Controller {
      * @return bool True if proposal is tied to a project
      */
     public function is_project_tied_proposal($post_id) {
-        $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
-        return !empty($parent_project_id) && is_numeric($parent_project_id);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+        return !empty($proposal->get_parent_project_id()) && is_numeric($proposal->get_parent_project_id());
     }
     
     /**
@@ -757,18 +760,15 @@ class Single_Controller {
         if (!$this->is_project_tied_proposal($post_id)) {
             return false;
         }
-        
-        $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+        $parent_project_id = $proposal->get_parent_project_id();
         $parent_project = get_post($parent_project_id);
-        
         if (!$parent_project || $parent_project->post_type !== 'arsol-pfw-project') {
             return false;
         }
-        
-        // Get parent project data for locked fields
-        $customer_id = $parent_project->post_author; // Customer is post_author, not meta
-        $lead_id = get_post_meta($parent_project_id, '_arsol_pfw_project_lead', true); // Correct meta key
-        
+        $customer_id = $parent_project->post_author;
+        $parent_project_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
+        $lead_id = $parent_project_entity->get_project_lead();
         return array(
             'id' => $parent_project_id,
             'title' => $parent_project->post_title,
@@ -782,7 +782,8 @@ class Single_Controller {
      */
     public function prevent_proposal_deletion_with_projects($post_id) {
         if ($post_id && get_post_type($post_id) === 'arsol-pfw-proposal') {
-            $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+            $parent_project_id = $proposal->get_parent_project_id();
             if (!empty($parent_project_id)) {
                 $parent_project = get_post($parent_project_id);
                 if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
@@ -806,8 +807,9 @@ class Single_Controller {
         // Add nonce for security
         wp_nonce_field('proposal_customer_notice_section', 'proposal_customer_notice_section_nonce');
 
-        // Get current values
-        $notice = get_post_meta($post->ID, '_arsol_pfw_proposal_customer_notice', true);
+        // Get current values using Proposal entity
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
+        $notice = $proposal->get_proposal_customer_notice();
         ?>
         <div>
             <p class="description">

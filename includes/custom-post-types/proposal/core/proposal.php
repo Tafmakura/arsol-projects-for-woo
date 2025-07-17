@@ -588,7 +588,7 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal customer notice
+     * Get proposal customer notice (renamed for clarity)
      * 
      * @return string Customer notice
      */
@@ -597,13 +597,32 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Set proposal customer notice
+     * Set proposal customer notice (renamed for clarity)
      * 
      * @param string $customer_notice Customer notice
      * @return bool Success status
      */
     public function set_proposal_customer_notice($customer_notice) {
         return $this->set_meta('_arsol_pfw_proposal_customer_notice', wp_kses_post($customer_notice));
+    }
+
+    /**
+     * Get customer notice (legacy method for backward compatibility)
+     * 
+     * @return string Customer notice
+     */
+    public function get_customer_notice() {
+        return $this->get_proposal_customer_notice();
+    }
+
+    /**
+     * Set customer notice (legacy method for backward compatibility)
+     * 
+     * @param string $customer_notice Customer notice
+     * @return bool Success status
+     */
+    public function set_customer_notice($customer_notice) {
+        return $this->set_proposal_customer_notice($customer_notice);
     }
 
     /**
@@ -759,7 +778,7 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get request start date (if converted from request)
+     * Get request start date (cross-entity access for historical data)
      * 
      * @return string Request start date
      */
@@ -778,7 +797,7 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get request due date (if converted from request)
+     * Get request due date (cross-entity access for historical data)
      * 
      * @return string Request due date
      */
@@ -962,5 +981,173 @@ class Arsol_PFW_Proposal {
      */
     public function get_changes() {
         return $this->changes;
+    }
+
+    /**
+     * Get proposal status (alias for stage, WooCommerce compatibility)
+     * 
+     * @return string Current status
+     */
+    public function get_status() {
+        return $this->get_stage();
+    }
+
+    /**
+     * Set proposal status (alias for stage, WooCommerce compatibility)
+     * 
+     * @param string $status Status
+     * @return bool Success status
+     */
+    public function set_status($status) {
+        return $this->set_stage($status);
+    }
+
+    /**
+     * Update proposal status (alias for stage, WooCommerce compatibility)
+     * 
+     * @param string $status New status
+     * @return bool|WP_Error Success status or error
+     */
+    public function update_status($status) {
+        return $this->update_stage($status);
+    }
+
+    /**
+     * Get customer user ID (WooCommerce compatibility - same as customer_id for our entities)
+     * 
+     * @return int Customer user ID
+     */
+    public function get_customer_user_id() {
+        return $this->get_customer_id();
+    }
+
+    /**
+     * Set customer user ID (WooCommerce compatibility - same as customer_id for our entities)
+     * 
+     * @param int $customer_user_id Customer user ID
+     * @return bool Success status
+     */
+    public function set_customer_user_id($customer_user_id) {
+        return $this->set_customer_id($customer_user_id);
+    }
+
+    /**
+     * Get date created
+     * 
+     * @return string Date created
+     */
+    public function get_date_created() {
+        return $this->proposal ? $this->proposal->post_date : '';
+    }
+
+    /**
+     * Set date created
+     * 
+     * @param string $date_created Date created
+     * @return bool Success status
+     */
+    public function set_date_created($date_created) {
+        if (!$this->proposal_id) {
+            return false;
+        }
+        
+        $result = wp_update_post(array(
+            'ID' => $this->proposal_id,
+            'post_date' => $date_created
+        ));
+        
+        if (!is_wp_error($result)) {
+            $this->proposal = get_post($this->proposal_id);
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get date modified
+     * 
+     * @return string Date modified
+     */
+    public function get_date_modified() {
+        return $this->proposal ? $this->proposal->post_modified : '';
+    }
+
+    /**
+     * Set date modified
+     * 
+     * @param string $date_modified Date modified
+     * @return bool Success status
+     */
+    public function set_date_modified($date_modified) {
+        if (!$this->proposal_id) {
+            return false;
+        }
+        
+        $result = wp_update_post(array(
+            'ID' => $this->proposal_id,
+            'post_modified' => $date_modified
+        ));
+        
+        if (!is_wp_error($result)) {
+            $this->proposal = get_post($this->proposal_id);
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Get project budget (cross-entity access for historical data)
+     * 
+     * @return array|string Project budget
+     */
+    public function get_project_budget() {
+        return $this->get_meta('_arsol_pfw_project_budget');
+    }
+
+    /**
+     * Get request budget (cross-entity access for historical data)
+     * 
+     * @return array|string Request budget
+     */
+    public function get_request_budget() {
+        return $this->get_meta('_arsol_pfw_requested_project_budget');
+    }
+
+    /**
+     * Get project start date (cross-entity access for historical data)
+     * 
+     * @return string Project start date
+     */
+    public function get_project_start_date() {
+        return $this->get_meta('_arsol_pfw_project_start_date');
+    }
+
+    /**
+     * Get project due date (cross-entity access for historical data)
+     * 
+     * @return string Project due date
+     */
+    public function get_project_due_date() {
+        return $this->get_meta('_arsol_pfw_project_due_date');
+    }
+
+    /**
+     * Get request start date (cross-entity access for historical data)
+     * 
+     * @return string Request start date
+     */
+    public function get_request_start_date() {
+        return $this->get_meta('_arsol_pfw_requested_project_start_date');
+    }
+
+    /**
+     * Get request due date (cross-entity access for historical data)
+     * 
+     * @return string Request due date
+     */
+    public function get_request_due_date() {
+        return $this->get_meta('_arsol_pfw_requested_project_due_date');
     }
 } 

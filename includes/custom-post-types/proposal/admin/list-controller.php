@@ -54,8 +54,9 @@ class List_Controller {
                 break;
                 
             case 'customer':
-                // Use direct meta access for performance in admin columns
-                $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
+                // Use Proposal entity for customer access
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+                $customer_id = $proposal->get_customer_id();
                 if ($customer_id) {
                     echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-proposal');
                 } else {
@@ -64,8 +65,9 @@ class List_Controller {
                 break;
             
             case 'project':
-                // Use direct meta access for performance in admin columns
-                $parent_project_id = get_post_meta($post_id, '_arsol_pfw_parent_project_id', true);
+                // Use Proposal entity for parent project access
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+                $parent_project_id = $proposal->get_parent_project_id();
                 if ($parent_project_id) {
                     $parent_project_title = get_the_title($parent_project_id);
                     if ($parent_project_title) {
@@ -81,8 +83,9 @@ class List_Controller {
                 break;
                 
             case 'project_lead':
-                // Use direct meta access for performance in admin columns
-                $lead_id = get_post_meta($post_id, '_arsol_pfw_proposed_project_lead', true);
+                // Use Proposal entity for project lead access
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+                $lead_id = $proposal->get_proposal_lead();
                 echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
                 break;
         }

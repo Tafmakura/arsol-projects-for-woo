@@ -17,25 +17,18 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-// Determine post type and get appropriate meta keys
-$post_type = get_post_type();
-$post_id = get_the_ID();
+global $post;
 
-if ($post_type === 'arsol-pfw-proposal') {
-    // For proposals, get request data from proposal meta
-    $request_id = get_post_meta($post_id, '_arsol_pfw_request_id', true);
-    $requested_budget = get_post_meta($post_id, '_arsol_pfw_requested_project_budget', true);
-    $requested_start_date = get_post_meta($post_id, '_arsol_pfw_requested_project_start_date', true);
-    $requested_due_date = get_post_meta($post_id, '_arsol_pfw_requested_project_due_date', true);
-} else {
-    // For projects, get request data from project meta
-    $request_id = get_post_meta($post_id, '_arsol_pfw_request_id', true);
-    $requested_budget = get_post_meta($post_id, '_arsol_pfw_requested_project_budget', true);
-    $requested_start_date = get_post_meta($post_id, '_arsol_pfw_requested_project_start_date', true);
-    $requested_due_date = get_post_meta($post_id, '_arsol_pfw_requested_project_due_date', true);
+if (!$post || $post->post_type !== 'arsol-pfw-project') {
+    return;
 }
 
-$has_request_data = $request_id || $requested_budget || $requested_start_date || $requested_due_date;
+// Use Project entity for meta access
+$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post->ID);
+$request_id = $project->get_meta('_arsol_pfw_request_id');
+$requested_budget = $project->get_meta('_arsol_pfw_requested_project_budget');
+$requested_start_date = $project->get_meta('_arsol_pfw_requested_project_start_date');
+$requested_due_date = $project->get_meta('_arsol_pfw_requested_project_due_date');
 ?>
 
 <?php if ($has_request_data): ?>

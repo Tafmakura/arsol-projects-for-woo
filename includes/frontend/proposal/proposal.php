@@ -43,7 +43,9 @@ class Proposal_Frontend extends Frontend_Handler {
 
         global $post;
         $current_user_id = get_current_user_id();
-        $customer_id = get_post_meta($post->ID, '_arsol_pfw_customer_id', true);
+        // Get customer ID using Proposal entity
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
+        $customer_id = $proposal->get_customer_id();
 
         // Check if current user is the assigned customer
         if ($current_user_id != $customer_id) {
@@ -201,12 +203,14 @@ class Proposal_Frontend extends Frontend_Handler {
             do_action('arsol_before_proposal_creation_metadata_save', $proposal_id, $_POST, $creation_data);
 
             // Save additional metadata if needed
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
             if (!empty($budget)) {
-                update_post_meta($proposal_id, '_arsol_pfw_proposal_budget', sanitize_text_field($budget));
+                $proposal->set_proposal_budget(array('amount' => $budget));
             }
             if (!empty($request_id)) {
-                update_post_meta($proposal_id, '_arsol_pfw_request_id', $request_id);
+                $proposal->set_request_id($request_id);
             }
+            $proposal->save();
 
             /**
              * Hook: arsol_after_proposal_creation_metadata_saved

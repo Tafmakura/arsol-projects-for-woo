@@ -93,8 +93,9 @@ class Single_Controller {
         // Add nonce for security
         wp_nonce_field('request_customer_notice_section', 'request_customer_notice_section_nonce');
 
-        // Get current values
-        $notice = get_post_meta($post->ID, '_arsol_pfw_request_customer_notice', true);
+        // Get current values using Request entity
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post->ID);
+        $notice = $request->get_request_customer_notice();
         ?>
         <div>
             <p class="description">
@@ -148,15 +149,15 @@ class Single_Controller {
         $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
         
         if (isset($_POST['request_budget'])) {
-            $request->set_budget(sanitize_text_field($_POST['request_budget']));
+            $request->set_request_budget(array('amount' => sanitize_text_field($_POST['request_budget'])));
         }
         
         if (isset($_POST['request_start_date'])) {
-            $request->set_start_date(sanitize_text_field($_POST['request_start_date']));
+            $request->set_request_start_date(sanitize_text_field($_POST['request_start_date']));
         }
         
         if (isset($_POST['request_due_date'])) {
-            $request->set_due_date(sanitize_text_field($_POST['request_due_date']));
+            $request->set_request_due_date(sanitize_text_field($_POST['request_due_date']));
         }
         
         if (isset($_POST['request_project_lead'])) {
@@ -166,16 +167,17 @@ class Single_Controller {
         // Save customer notice
         if (isset($_POST['request_customer_notice_section_nonce']) && wp_verify_nonce($_POST['request_customer_notice_section_nonce'], 'request_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_request_customer_notice'])) {
-                $notice = wp_kses_post($_POST['arsol_pfw_request_customer_notice']);
-                update_post_meta($post_id, '_arsol_pfw_request_customer_notice', $notice);
+                $request->set_request_customer_notice(wp_kses_post($_POST['arsol_pfw_request_customer_notice']));
             }
         }
         
         // Save customer ID from customer_id field
         if (isset($_POST['customer_id']) && !empty($_POST['customer_id'])) {
-            $customer_id = intval($_POST['customer_id']);
-            update_post_meta($post_id, '_arsol_pfw_customer_id', $customer_id);
+            $request->set_customer_id(intval($_POST['customer_id']));
         }
+        
+        // Save all changes
+        $request->save();
         
         // Handle conversion after save (WordPress-native approach)
         if (isset($_POST['arsol_convert_after_save']) && !empty($_POST['arsol_convert_after_save'])) {
