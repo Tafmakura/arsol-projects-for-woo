@@ -598,7 +598,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Due date
      */
-    public function get_proposal_due_date() {
+    public function get_proposed_due_date() {
         return $this->get_meta('_arsol_pfw_proposed_project_due_date');
     }
 
@@ -608,7 +608,7 @@ class Arsol_PFW_Proposal {
      * @param string $due_date Due date
      * @return bool Success status
      */
-    public function set_proposal_due_date($due_date) {
+    public function set_proposed_due_date($due_date) {
         return $this->set_meta('_arsol_pfw_proposed_project_due_date', sanitize_text_field($due_date));
     }
 
@@ -617,7 +617,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return int Lead ID
      */
-    public function get_proposal_lead() {
+    public function get_proposed_project_lead() {
         return $this->get_meta('_arsol_pfw_proposed_project_lead');
     }
 
@@ -627,16 +627,12 @@ class Arsol_PFW_Proposal {
      * @param int $lead_id Lead ID
      * @return bool Success status
      */
-    public function set_proposal_lead($lead_id) {
+    public function set_proposed_project_lead($lead_id) {
         return $this->set_meta('_arsol_pfw_proposed_project_lead', (int) $lead_id);
     }
 
     /**
      * Get proposal start date
-     * 
-     * @return string Start date
-     */
-    public function get_proposal_start_date() {
         return $this->get_meta('_arsol_pfw_proposed_project_start_date');
     }
 
@@ -646,7 +642,7 @@ class Arsol_PFW_Proposal {
      * @param string $start_date Start date
      * @return bool Success status
      */
-    public function set_proposal_start_date($start_date) {
+    public function set_proposed_start_date($start_date) {
         return $this->set_meta('_arsol_pfw_proposed_project_start_date', sanitize_text_field($start_date));
     }
 
@@ -883,7 +879,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Request start date
      */
-    public function get_request_start_date() {
+    public function get_requested_project_start_date() {
         return $this->get_meta('_arsol_pfw_requested_project_start_date');
     }
 
@@ -893,7 +889,7 @@ class Arsol_PFW_Proposal {
      * @param string $start_date Request start date
      * @return bool Success status
      */
-    public function set_request_start_date($start_date) {
+    public function set_requested_project_start_date($start_date) {
         return $this->set_meta('_arsol_pfw_requested_project_start_date', sanitize_text_field($start_date));
     }
 
@@ -902,7 +898,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Request due date
      */
-    public function get_request_due_date() {
+    public function get_requested_project_due_date() {
         return $this->get_meta('_arsol_pfw_requested_project_due_date');
     }
 
@@ -912,7 +908,7 @@ class Arsol_PFW_Proposal {
      * @param string $due_date Request due date
      * @return bool Success status
      */
-    public function set_request_due_date($due_date) {
+    public function set_requested_project_due_date($due_date) {
         return $this->set_meta('_arsol_pfw_requested_project_due_date', sanitize_text_field($due_date));
     }
 

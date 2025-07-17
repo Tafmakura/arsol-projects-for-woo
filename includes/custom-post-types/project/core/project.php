@@ -177,7 +177,7 @@ class Project {
 
     /**
      * Get project stage
-     *
+     * 
      * @return string Current stage
      */
     public function get_stage() {
@@ -186,7 +186,7 @@ class Project {
 
     /**
      * Set project stage
-     *
+     * 
      * @param string $stage Stage slug
      * @return bool Success status
      */
@@ -971,7 +971,7 @@ class Project {
      * 
      * @return string Proposal start date
      */
-    public function get_proposal_start_date() {
+    public function get_proposed_project_start_date() {
         // First try current proposal start date
         $current_date = $this->get_meta('_arsol_pfw_proposal_start_date');
         if (!empty($current_date)) {
@@ -987,7 +987,7 @@ class Project {
      * 
      * @return string Proposal due date
      */
-    public function get_proposal_due_date() {
+    public function get_proposed_due_date() {
         // First try current proposal due date
         $current_date = $this->get_meta('_arsol_pfw_proposal_due_date');
         if (!empty($current_date)) {
@@ -1003,7 +1003,7 @@ class Project {
      * 
      * @return string Request start date
      */
-    public function get_request_start_date() {
+    public function get_requested_start_date() {
         return $this->get_meta('_arsol_pfw_project_requested_start_date');
     }
 
@@ -1012,7 +1012,7 @@ class Project {
      * 
      * @return string Request due date
      */
-    public function get_request_due_date() {
+    public function get_requested_due_date() {
         return $this->get_meta('_arsol_pfw_requested_project_due_date');
     }
 

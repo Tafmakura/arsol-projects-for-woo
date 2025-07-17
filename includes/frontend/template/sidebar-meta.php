@@ -241,8 +241,8 @@ class Sidebar_Meta {
         
         // Project Lead
         $project_lead = $proposal->get_proposed_project_lead();
-        $start_date = $proposal->get_proposed_start_date();
-        $due_date = $proposal->get_proposed_due_date();
+        $start_date = $proposal->get_proposed_project_start_date();
+        $due_date = $proposal->get_proposed_project_due_date();
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
@@ -314,8 +314,8 @@ class Sidebar_Meta {
         
         // Project Lead
         $project_lead = $request->get_requested_project_lead();
-        $start_date = $request->get_requested_start_date();
-        $due_date = $request->get_requested_due_date();
+        $start_date = $request->get_requested_project_start_date();
+        $due_date = $request->get_requested_project_due_date();
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
@@ -630,8 +630,8 @@ class Sidebar_Meta {
         
         // Project Lead
         $project_lead = $proposal->get_proposed_project_lead();
-        $start_date = $proposal->get_proposed_start_date();
-        $due_date = $proposal->get_proposed_due_date();
+        $start_date = $proposal->get_proposed_project_start_date();
+        $due_date = $proposal->get_proposed_project_due_date();
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
@@ -698,8 +698,8 @@ class Sidebar_Meta {
         
         // Project Lead
         $project_lead = $request->get_requested_project_lead();
-        $start_date = $request->get_requested_start_date();
-        $due_date = $request->get_requested_due_date();
+        $start_date = $request->get_requested_project_start_date();
+        $due_date = $request->get_requested_project_due_date();
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);

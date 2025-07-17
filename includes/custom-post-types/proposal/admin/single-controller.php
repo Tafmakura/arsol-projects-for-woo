@@ -64,14 +64,14 @@ class Single_Controller {
             $cost_proposal_type = 'none'; // Default to none
         }
 
-        $start_date = $proposal->get_proposal_start_date();
-        $delivery_date = $proposal->get_proposal_due_date();
+        $start_date = $proposal->get_proposed_project_start_date();
+        $delivery_date = $proposal->get_proposed_project_due_date();
         $expiration_date = $proposal->get_proposal_expiration_date();
 
         // Get original request data for comparison
         $requested_budget = $proposal->get_request_budget();
-        $requested_start_date = $proposal->get_request_start_date();
-        $request_due_date = $proposal->get_request_due_date();
+        $requested_start_date = $proposal->get_requested_project_start_date();
+        $request_due_date = $proposal->get_requested_project_due_date();
 
         // WordPress automatically preserves form data on validation failures - no temporary storage needed
 

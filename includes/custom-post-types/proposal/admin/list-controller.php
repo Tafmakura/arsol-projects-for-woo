@@ -86,7 +86,7 @@ class List_Controller {
             case 'project_lead':
                 // Use Proposal entity for project lead access
                 $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-                $lead_id = $proposal->get_proposal_lead();
+                $lead_id = $proposal->get_proposed_project_lead();
                 echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-proposal');
                 break;
         }

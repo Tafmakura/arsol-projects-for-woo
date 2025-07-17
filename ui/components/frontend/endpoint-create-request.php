@@ -47,7 +47,7 @@ if ($is_edit && isset($request)) {
     $title = $request->get_title();
     $content = $post->post_content; // Post content still comes from WP_Post
     $budget = $request->get_requested_project_budget();
-    $start_date = $request->get_request_start_date();
+    $start_date = $request->get_requested_project_start_date();
     $due_date = $request->get_requested_project_due_date();
 } else {
     $title = '';
