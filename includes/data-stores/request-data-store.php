@@ -51,7 +51,8 @@ class Request_Data_Store {
         
         // Set initial stage
         $stage = $request->get_prop('stage') ?: 'pending-review';
-        \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($post_id, 'request', $stage);
+        $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
+        $request->set_stage($stage);
         
         do_action('arsol_pfw_request_created', $post_id, $request);
         

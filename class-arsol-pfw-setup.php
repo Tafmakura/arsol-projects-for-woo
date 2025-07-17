@@ -251,7 +251,6 @@ class Setup {
         new \Arsol_Projects_For_Woo\Core\Assets();
         new \Arsol_Projects_For_Woo\Core\Capabilities();
         new \Arsol_Projects_For_Woo\Core\Permissions();
-        new \Arsol_Projects_For_Woo\Core\Stage_Handler();
         new \Arsol_Projects_For_Woo\Workflow\Workflow_Handler();
         new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
         new \Arsol_Projects_For_Woo\Core\Shortcodes();
@@ -309,7 +308,7 @@ class Setup {
      */
     public function activate() {
         // Create default stages
-        \Arsol_Projects_For_Woo\Core\Stage_Handler::create_default_stages();
+        // \Arsol_Projects_For_Woo\Core\Stage_Handler::create_default_stages(); // This line is removed
         
         // Set up capabilities
         \Arsol_Projects_For_Woo\Core\Capabilities::setup_capabilities();

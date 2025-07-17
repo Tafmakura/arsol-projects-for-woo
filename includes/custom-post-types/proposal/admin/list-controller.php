@@ -44,9 +44,10 @@ class List_Controller {
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'proposal_stage':
-                $stage = \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($post_id, 'proposal');
+                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+                $stage = $proposal->get_stage();
+                $stage_label = $proposal->get_stage_label();
                 if ($stage) {
-                    $stage_label = \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_label('proposal', $stage);
                     echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
                 } else {
                     echo '<span class="stage stage-processing">Processing</span>';

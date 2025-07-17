@@ -67,7 +67,8 @@ class Proposal_Data_Store {
         
         // Set initial stage
         $stage = $proposal->get_prop('stage') ?: 'processing';
-        \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($post_id, 'proposal', $stage);
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+        $proposal->set_stage($stage);
         
         do_action('arsol_pfw_proposal_created', $post_id, $proposal);
         

@@ -30,13 +30,9 @@ do_action('arsol_projects_before_user_proposals', $has_items);
                 <?php while ($query->have_posts()) : $query->the_post(); 
                     $proposal_id = get_the_ID();
                     $post_status = get_post_status($proposal_id);
-                    $stage_slug = \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($proposal_id, 'proposal');
-                    $status = '';
-                    if ($post_status === 'draft') {
-                        $status = __('Draft', 'arsol-pfw');
-                    } elseif (!empty($stage_slug)) {
-                        $status = \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_label('proposal', $stage_slug);
-                    }
+                    $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+                    $stage_slug = $proposal->get_stage();
+                    $status = $proposal->get_stage_label();
                     $view_url = wc_get_account_endpoint_url('view-proposal/' . $proposal_id);
                     $excerpt = wp_trim_words(strip_shortcodes(strip_tags(get_the_content())), 40, '...');
                 ?>
