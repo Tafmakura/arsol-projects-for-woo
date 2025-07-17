@@ -49,7 +49,11 @@ class Proposal_Frontend extends Frontend_Handler {
 
         // Check if current user is the assigned customer
         if ($current_user_id != $customer_id) {
-            return '<div class="arsol-pfw-error"><p>You do not have permission to view this proposal.</p></div>';
+            ob_start();
+            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('proposal', array(
+                'proposal_id' => $post->ID
+            ));
+            return ob_get_clean();
         }
 
         // Get proposal status

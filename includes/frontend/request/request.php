@@ -47,7 +47,11 @@ class Request_Frontend extends Frontend_Handler {
 
         // Check if current user is the author
         if ($current_user_id !== $post_author_id) {
-            return '<div class="arsol-pfw-error"><p>You do not have permission to view this request.</p></div>';
+            ob_start();
+            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('request', array(
+                'request_id' => $post->ID
+            ));
+            return ob_get_clean();
         }
 
         // Get request status

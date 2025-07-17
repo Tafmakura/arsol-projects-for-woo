@@ -714,7 +714,11 @@ class Shortcodes {
 
 		// Check permissions
 		if (!$this->can_customer_view_project($project_id)) {
-			return '<p>' . __('You do not have permission to view this proposal.', 'arsol-pfw') . '</p>';
+                        ob_start();
+                        \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('proposal', array(
+                            'proposal_id' => $project_id
+                        ));
+                        return ob_get_clean();
 		}
 
 		ob_start();

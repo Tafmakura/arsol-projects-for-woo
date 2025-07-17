@@ -76,6 +76,7 @@ class Setup {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/assets.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/capabilities.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/permissions.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/access-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/conversion-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/shortcodes.php';
         

@@ -30,7 +30,8 @@ do_action('arsol_pfw_project_wrapper_before', $project_type, $wrapper_data);
 
 <div class="arsol-pfw-no-access">
     <div class="arsol-pfw-header">
-        <h3 class="arsol-pfw-title"><?php esc_html_e('Access Denied', 'arsol-pfw'); ?></h3>
+        <h3 class="arsol-pfw-title"><?php $title = \Arsol_Projects_For_Woo\Core\Access_Handler::get_no_access_title($context);
+        echo esc_html($title); ?></h3>
     </div>
     
     <div class="arsol-pfw-content-wrapper" id="no-access-wrapper">

@@ -359,9 +359,10 @@ class Endpoints {
         $can_view = \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_proposal($user_id, $proposal_id);
 
         if (!$can_view) {
-            wc_add_notice(__('You do not have permission to view this proposal.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
-            exit;
+            // Use centralized no-access template instead of redirect
+                'proposal_id' => $proposal_id
+            ));
+            return;
         }
 
         // Generate contextual variables directly - no remapping
@@ -412,9 +413,13 @@ class Endpoints {
         $can_view = \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_request($user_id, $request_id);
 
         if (!$can_view) {
-            wc_add_notice(__('You do not have permission to view this request.', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
-            exit;
+            // Use centralized no-access template instead of redirect
+            // Use centralized no-access template instead of redirect
+            // Use centralized no-access template instead of redirect
+            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('request', array(
+                'request_id' => $request_id
+            ));
+            return;
         }
 
         // Generate contextual variables directly - no remapping
