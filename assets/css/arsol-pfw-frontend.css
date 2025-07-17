@@ -317,6 +317,11 @@
     background-color: #005a87 !important;
 }
 
+/* No Access Template */
+.arsol-pfw-no-access {
+    /* Inherit project template styling */
+}
+
 /* No Permission Message */
 .arsol-no-permission {
     text-align: center;
