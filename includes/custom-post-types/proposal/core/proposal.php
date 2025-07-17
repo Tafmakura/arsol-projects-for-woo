@@ -1214,22 +1214,4 @@ class Arsol_PFW_Proposal {
     public function get_project_due_date() {
         return $this->get_meta('_arsol_pfw_project_due_date');
     }
-
-    /**
-     * Get request start date (cross-entity access for historical data)
-     * 
-     * @return string Request start date
-     */
-    public function get_request_start_date() {
-        return $this->get_meta('_arsol_pfw_requested_project_start_date');
-    }
-
-    /**
-     * Get request due date (cross-entity access for historical data)
-     * 
-     * @return string Request due date
-     */
-    public function get_request_due_date() {
-        return $this->get_meta('_arsol_pfw_requested_project_due_date');
-    }
 } 

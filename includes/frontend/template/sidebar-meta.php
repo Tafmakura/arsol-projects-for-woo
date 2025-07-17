@@ -149,10 +149,11 @@ class Sidebar_Meta {
             $stage_color = $project->get_stage_color();
             
             $metadata['status'] = array(
-                label => __('Stage', 'arsol-pfw'),
-                value' => $stage_label,
-                type' => 'badge,             class => tatus-badge status-' . sanitize_html_class($current_stage),
-                color => $stage_color
+                'label' => __('Stage', 'arsol-pfw'),
+                'value' => $stage_label,
+                'type' => 'badge',
+                'class' => 'status-badge status-' . sanitize_html_class($current_stage),
+                'color' => $stage_color
             );
         }
         
@@ -160,9 +161,9 @@ class Sidebar_Meta {
         $customer = $project->get_customer();
         if ($customer) {
             $metadata['customer'] = array(
-                label=> __(Customer', 'arsol-pfw'),
-                value' => $customer->display_name,
-                type' => text'
+                'label' => __('Customer', 'arsol-pfw'),
+                'value' => $customer->display_name,
+                'type' => 'text'
             );
         }
         
@@ -170,11 +171,11 @@ class Sidebar_Meta {
         $project_lead = $project->get_project_lead();
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
-            if ($lead)[object Object]
+            if ($lead) {
                 $metadata['project_lead'] = array(
-                    label' => __('Project Lead', 'arsol-pfw'),
-                    value' => $lead->display_name,
-                    type' => text'
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
                 );
             }
         }
@@ -183,9 +184,9 @@ class Sidebar_Meta {
         $start_date = $project->get_project_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
-                label=> __(Start Date', 'arsol-pfw'),
-                value => $start_date,
-                type' => date'
+                'label' => __('Start Date', 'arsol-pfw'),
+                'value' => $start_date,
+                'type' => 'date'
             );
         }
         
@@ -193,9 +194,9 @@ class Sidebar_Meta {
         $due_date = $project->get_project_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
-                label=> __(Due Date', 'arsol-pfw'),
-                value' => $due_date,
-                type' => date'
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
+                'type' => 'date'
             );
         }
         
@@ -224,10 +225,11 @@ class Sidebar_Meta {
             $stage_color = $proposal->get_stage_color();
             
             $metadata['status'] = array(
-                label => __('Stage', 'arsol-pfw'),
-                value' => $stage_label,
-                type' => 'badge,             class => tatus-badge status-' . sanitize_html_class($current_stage),
-                color => $stage_color
+                'label' => __('Stage', 'arsol-pfw'),
+                'value' => $stage_label,
+                'type' => 'badge',
+                'class' => 'status-badge status-' . sanitize_html_class($current_stage),
+                'color' => $stage_color
             );
         }
         
@@ -235,9 +237,9 @@ class Sidebar_Meta {
         $customer = $proposal->get_customer();
         if ($customer) {
             $metadata['customer'] = array(
-                label=> __(Customer', 'arsol-pfw'),
-                value' => $customer->display_name,
-                type' => text'
+                'label' => __('Customer', 'arsol-pfw'),
+                'value' => $customer->display_name,
+                'type' => 'text'
             );
         }
         
@@ -248,28 +250,28 @@ class Sidebar_Meta {
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
-            if ($lead)[object Object]
+            if ($lead) {
                 $metadata['project_lead'] = array(
-                    label' => __('Project Lead', 'arsol-pfw'),
-                    value' => $lead->display_name,
-                    type' => text'
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
                 );
             }
         }
         
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
-                label=> __(Start Date', 'arsol-pfw'),
-                value => $start_date,
-                type' => date'
+                'label' => __('Start Date', 'arsol-pfw'),
+                'value' => $start_date,
+                'type' => 'date'
             );
         }
         
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
-                label=> __(Due Date', 'arsol-pfw'),
-                value' => $due_date,
-                type' => date'
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
+                'type' => 'date'
             );
         }
         
@@ -298,10 +300,11 @@ class Sidebar_Meta {
             $stage_color = $request->get_stage_color();
             
             $metadata['status'] = array(
-                label => __('Stage', 'arsol-pfw'),
-                value' => $stage_label,
-                type' => 'badge,             class => tatus-badge status-' . sanitize_html_class($current_stage),
-                color => $stage_color
+                'label' => __('Stage', 'arsol-pfw'),
+                'value' => $stage_label,
+                'type' => 'badge',
+                'class' => 'status-badge status-' . sanitize_html_class($current_stage),
+                'color' => $stage_color
             );
         }
         
@@ -309,9 +312,9 @@ class Sidebar_Meta {
         $customer = $request->get_customer();
         if ($customer) {
             $metadata['customer'] = array(
-                label=> __(Customer', 'arsol-pfw'),
-                value' => $customer->display_name,
-                type' => text'
+                'label' => __('Customer', 'arsol-pfw'),
+                'value' => $customer->display_name,
+                'type' => 'text'
             );
         }
         
@@ -322,11 +325,11 @@ class Sidebar_Meta {
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
-            if ($lead)[object Object]
+            if ($lead) {
                 $metadata['project_lead'] = array(
-                    label' => __('Project Lead', 'arsol-pfw'),
-                    value' => $lead->display_name,
-                    type' => text'
+                    'label' => __('Project Lead', 'arsol-pfw'),
+                    'value' => $lead->display_name,
+                    'type' => 'text'
                 );
             }
         }
@@ -334,18 +337,18 @@ class Sidebar_Meta {
         // Start Date
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
-                label=> __(Start Date', 'arsol-pfw'),
-                value => $start_date,
-                type' => date'
+                'label' => __('Start Date', 'arsol-pfw'),
+                'value' => $start_date,
+                'type' => 'date'
             );
         }
         
         // Due Date
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
-                label=> __(Due Date', 'arsol-pfw'),
-                value' => $due_date,
-                type' => date'
+                'label' => __('Due Date', 'arsol-pfw'),
+                'value' => $due_date,
+                'type' => 'date'
             );
         }
         

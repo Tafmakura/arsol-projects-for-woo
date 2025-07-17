@@ -20,10 +20,10 @@ use Arsol_Projects_For_Woo\Taxonomies\Stages\Static_Stage_Interface;
  */
 class Request_Stage implements Stage_Interface, WooCommerce_Stage_Interface, Static_Stage_Interface
 {
-    private int $request_id;
-    private string $stage;
-    private string $notes;
-    private array $history;
+    private $request_id;
+    private $stage;
+    private $notes;
+    private $history;
 
     public function __construct(int $request_id)
     {

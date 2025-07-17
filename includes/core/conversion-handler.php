@@ -138,7 +138,7 @@ class Conversion_Handler {
             $project->set_title($proposal_obj->get_title());
             $project->set_customer_id($proposal_obj->get_customer_id());
             $project->set_project_budget($proposal_obj->get_proposed_project_budget());
-            $project->set_description($proposal_obj->get_prop('description));      
+            $project->set_description($proposal_obj->get_prop('description'));      
             // Set initial stage using OOP stage entity
             $project_stage_entity = $project->get_stage_entity();
             $project_stage_entity->set_stage('not-started');
