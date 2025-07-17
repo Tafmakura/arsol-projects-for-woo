@@ -1198,15 +1198,6 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get request budget (cross-entity access for historical data)
-     * 
-     * @return array|string Request budget
-     */
-    public function get_request_budget() {
-        return $this->get_meta('_arsol_pfw_requested_project_budget');
-    }
-
-    /**
      * Get project start date (cross-entity access for historical data)
      * 
      * @return string Project start date
