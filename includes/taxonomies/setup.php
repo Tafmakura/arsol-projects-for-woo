@@ -23,26 +23,8 @@ class Setup {
      * Constructor
      */
     public function __construct() {
-        $this->require_files();
         $this->instantiate_classes();
         $this->setup_menu_ordering();
-    }
-
-    /**
-     * Include necessary taxonomy files
-     */
-    private function require_files() {
-        // Project Stage Taxonomy Classes
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/project-stage/setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/project-stage/admin.php';
-        
-        // Request Stage Taxonomy Classes
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/request-stage/setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/request-stage/admin.php';
-        
-        // Proposal Stage Taxonomy Classes
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/admin.php';
     }
 
     /**
@@ -50,16 +32,16 @@ class Setup {
      */
     private function instantiate_classes() {
         // Initialize Request Stage Taxonomy (first)
-        new \Arsol_Projects_For_Woo\Taxonomies\Request_Stage\Setup();
-        new \Arsol_Projects_For_Woo\Taxonomies\Request_Stage\Admin();
+        new \Arsol_Projects_For_Woo\Taxonomies\Stages\Request_Stage\Setup();
+        new \Arsol_Projects_For_Woo\Taxonomies\Stages\Request_Stage\Admin();
         
         // Initialize Proposal Stage Taxonomy (second)
-        new \Arsol_Projects_For_Woo\Taxonomies\Proposal_Stage\Setup();
-        new \Arsol_Projects_For_Woo\Taxonomies\Proposal_Stage\Admin();
+        new \Arsol_Projects_For_Woo\Taxonomies\Stages\Proposal_Stage\Setup();
+        new \Arsol_Projects_For_Woo\Taxonomies\Stages\Proposal_Stage\Admin();
         
         // Initialize Project Stage Taxonomy (third)
-        new \Arsol_Projects_For_Woo\Taxonomies\Project_Stage\Setup();
-        new \Arsol_Projects_For_Woo\Taxonomies\Project_Stage\Admin();
+        new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage\Setup();
+        new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage\Admin();
     }
 
     /**

@@ -76,7 +76,6 @@ class Setup {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/assets.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/capabilities.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/permissions.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/stage-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/conversion-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/shortcodes.php';
         
@@ -155,12 +154,24 @@ class Setup {
      */
     private function load_taxonomy_files() {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/project-stage/setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/project-stage/admin.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/proposal-stage/admin.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/request-stage/setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/request-stage/admin.php';
+        
+        // Load stage interface first
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/interface-stage.php';
+        
+        // Load project stage files
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/project-stage/project-stage.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/project-stage/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/project-stage/admin.php';
+        
+        // Load proposal stage files
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/proposal-stage/proposal-stage.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/proposal-stage/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/proposal-stage/admin.php';
+        
+        // Load request stage files
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/request-stage/request-stage.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/request-stage/setup.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/request-stage/admin.php';
     }
 
     /**
@@ -283,9 +294,6 @@ class Setup {
 
         // Initialize taxonomies
         new \Arsol_Projects_For_Woo\Taxonomies\Setup();
-        new \Arsol_Projects_For_Woo\Taxonomies\Project_Stage\Setup();
-        new \Arsol_Projects_For_Woo\Taxonomies\Proposal_Stage\Setup();
-        new \Arsol_Projects_For_Woo\Taxonomies\Request_Stage\Setup();
 
         // Initialize integrations
         new \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration();
