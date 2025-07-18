@@ -31,12 +31,12 @@ if (!isset($proposal) || !is_object($proposal)) {
 $proposal_id = $proposal->get_id();
 $budget_data = $proposal->get_proposed_project_budget();
 $delivery_date = $proposal->get_proposed_project_due_date();
-$expiration_date = $proposal->get_expiration_date();
+$expiration_date = $proposal->get_proposal_expiration_date();
 $start_date = $proposal->get_proposed_project_start_date();
 $project_lead = $proposal->get_proposed_project_lead();
-$costing_type = $proposal->get_costing_type();
-$budget_notes = $proposal->get_budget_notes();
-$quotation_notes = $proposal->get_quotation_notes();
+$costing_type = $proposal->get_proposal_costing_type();
+$budget_notes = $proposal->get_proposal_budget_notes();
+$quotation_notes = $proposal->get_proposal_quotation_notes();
 $quotation_data = $proposal->get_proposed_project_quotation();
 
 // Check for project-tied proposal - URL parameter first, then meta data
@@ -46,13 +46,13 @@ $parent_project_data = false;
 // ALWAYS check URL parameter first (for new proposals)
 if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
     $parent_project_id = intval($_GET['parent_project']);
-    $parent_project = get_post($parent_project_id);
+    $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
     
-    if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
+    if ($parent_project && $parent_project->exists()) {
         $is_project_tied = true;
         $parent_project_data = array(
             'id' => $parent_project_id,
-            'title' => $parent_project->post_title
+            'title' => $parent_project->get_title()
         );
     }
 } 
@@ -60,12 +60,12 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
 elseif ($proposal_id > 0) {
     $parent_project_id = $proposal->get_parent_project_id();
     if (!empty($parent_project_id)) {
-        $parent_project = get_post($parent_project_id);
-        if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
+        $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
+        if ($parent_project && $parent_project->exists()) {
             $is_project_tied = true;
             $parent_project_data = array(
                 'id' => $parent_project_id,
-                'title' => $parent_project->post_title
+                'title' => $parent_project->get_title()
             );
         }
     }
@@ -73,7 +73,7 @@ elseif ($proposal_id > 0) {
 
 // Check if has request data
 $has_request_data = false;
-$request_id = $proposal->get_source_request_id();
+$request_id = $proposal->get_request_id();
 $requested_budget = $proposal->get_requested_project_budget();
 $requested_start_date = $proposal->get_requested_project_start_date();
 $requested_due_date = $proposal->get_requested_project_due_date();
@@ -97,38 +97,6 @@ if ($has_request_data) {
             </h2>
 
             <?php
-            // Check for project-tied proposal - URL parameter first, then meta data
-            $is_project_tied = false;
-            $parent_project_data = false;
-            
-            // ALWAYS check URL parameter first (for new proposals)
-            if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
-                $parent_project_id = intval($_GET['parent_project']);
-                $parent_project = get_post($parent_project_id);
-                
-                if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
-                    $is_project_tied = true;
-                    $parent_project_data = array(
-                        'id' => $parent_project_id,
-                        'title' => $parent_project->post_title
-                    );
-                }
-            } 
-            // Fallback to getter method check (for existing proposals)
-            elseif ($proposal_id > 0) {
-                $parent_project_id = $proposal->get_parent_project_id();
-                if (!empty($parent_project_id)) {
-                    $parent_project = get_post($parent_project_id);
-                    if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
-                        $is_project_tied = true;
-                        $parent_project_data = array(
-                            'id' => $parent_project_id,
-                            'title' => $parent_project->post_title
-                        );
-                    }
-                }
-            }
-            
             // Display project relationship if this is a project-tied proposal
             if ($is_project_tied && $parent_project_data) {
                 echo '<p class="order_number">';
