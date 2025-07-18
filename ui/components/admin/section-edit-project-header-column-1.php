@@ -65,9 +65,9 @@ $due_date = $project->get_project_due_date();
         <label for="project_stage"><?php _e('Project Stage:', 'arsol-pfw'); ?></label>
         <select id="project_stage" name="project_stage" class="wc-enhanced-select">
             <?php if (!empty($available_stages)) : ?>
-                <?php foreach ($available_stages as $stage_slug => $stage_data) : ?>
-                    <option value="<?php echo esc_attr($stage_slug); ?>" <?php selected($project_stage, $stage_slug); ?>>
-                        <?php echo esc_html($stage_data['label']); ?>
+                <?php foreach ($available_stages as $stage) : ?>
+                    <option value="<?php echo esc_attr($stage->slug); ?>" <?php selected($project_stage, $stage->slug); ?>>
+                        <?php echo esc_html($stage->name); ?>
                     </option>
                 <?php endforeach; ?>
             <?php endif; ?>

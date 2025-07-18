@@ -174,9 +174,9 @@ $available_stages = $proposal->get_available_stages();
         <label for="proposal_stage"><?php _e('Proposal Stage:', 'arsol-pfw'); ?></label>
         <select id="proposal_stage" name="proposal_stage" class="wc-enhanced-select">
             <?php if (!empty($available_stages)) : ?>
-                <?php foreach ($available_stages as $stage_slug => $stage_data) : ?>
-                    <option value="<?php echo esc_attr($stage_slug); ?>" <?php selected($current_proposal_stage, $stage_slug); ?>>
-                        <?php echo esc_html($stage_data['label']); ?>
+                <?php foreach ($available_stages as $stage) : ?>
+                    <option value="<?php echo esc_attr($stage->slug); ?>" <?php selected($current_proposal_stage, $stage->slug); ?>>
+                        <?php echo esc_html($stage->name); ?>
                     </option>
                 <?php endforeach; ?>
             <?php endif; ?>

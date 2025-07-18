@@ -53,9 +53,9 @@ if (empty($request_stage)) {
         <label for="request-stage"><?php _e('Stage:', 'arsol-pfw'); ?></label>
         <select id="request-stage" name="request_stage" class="wc-enhanced-select">
             <?php if (!empty($available_stages)): ?>
-                <?php foreach ($available_stages as $stage_slug => $stage_data): ?>
-                    <option value="<?php echo esc_attr($stage_slug); ?>" <?php selected($request_stage, $stage_slug); ?>>
-                        <?php echo esc_html($stage_data['label']); ?>
+                <?php foreach ($available_stages as $stage): ?>
+                    <option value="<?php echo esc_attr($stage->slug); ?>" <?php selected($request_stage, $stage->slug); ?>>
+                        <?php echo esc_html($stage->name); ?>
                     </option>
                 <?php endforeach; ?>
             <?php else: ?>
