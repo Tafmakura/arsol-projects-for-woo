@@ -19,14 +19,13 @@ if (!isset($proposal) || !is_object($proposal)) {
 
 $proposal_id = $proposal->get_id();
 $customer_id = $proposal->get_customer_id();
-$customer = get_userdata($customer_id);
-$proposal_status = get_post_status($post);
+$customer = $proposal->get_customer();
 $proposal_stage = $proposal->get_stage();
 $proposal_project_lead = $proposal->get_proposed_project_lead();
 $start_date = $proposal->get_proposed_project_start_date();
 $delivery_date = $proposal->get_proposed_project_due_date();
-$expiration_date = $proposal->get_expiration_date();
-$cost_proposal_type = $proposal->get_costing_type();
+$expiration_date = $proposal->get_proposal_expiration_date();
+$cost_proposal_type = $proposal->get_proposal_costing_type();
 
 // Check for project-tied proposal - URL parameter first, then meta data
 $is_project_tied = false;
@@ -53,7 +52,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
         
         // EXCLUSIVELY use parent project values - override completely
         $customer_id = $parent_customer_id;
-        $customer = get_userdata($customer_id);
+        $customer = $parent_project->get_customer();
         $proposal_project_lead = $parent_lead_id;
         $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
     }
@@ -79,7 +78,7 @@ elseif ($proposal_id > 0) {
             
             // EXCLUSIVELY use parent project values - override completely
             $customer_id = $parent_customer_id;
-            $customer = get_userdata($customer_id);
+            $customer = $parent_project->get_customer();
             $proposal_project_lead = $parent_lead_id;
             $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
         }
@@ -120,13 +119,13 @@ $available_stages = $proposal->get_available_stages();
             <input type="hidden" name="customer_id" value="<?php echo esc_attr($customer_id); ?>">
             <select class="arsol-disabled-select" disabled>
                 <option value="<?php echo esc_attr($customer_id); ?>" selected>
-                    <?php echo esc_html($customer->display_name); ?>
+                    <?php echo $customer ? esc_html($customer->display_name) : __('Customer not found', 'arsol-pfw'); ?>
                 </option>
             </select>
         <?php else: ?>
             <!-- Regular customer search field -->
             <select class="wc-customer-search" name="customer_id" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>">
-                <?php if ($customer_id): ?>
+                <?php if ($customer_id && $customer): ?>
                     <option value="<?php echo esc_attr($customer_id); ?>" selected>
                         <?php echo esc_html($customer->display_name); ?>
                     </option>

@@ -29,31 +29,27 @@ if (!isset($project) || !is_object($project)) {
 
 $project_id = $project->get_id();
 $customer_id = $project->get_customer_id();
-$customer = get_userdata($customer_id);
-$project_stage_terms = wp_get_object_terms($project_id, 'arsol-pfw-project-stage', array('fields' => 'slugs'));
-$project_stage = !empty($project_stage_terms) ? $project_stage_terms[0] : 'not-started';
+$customer = $project->get_customer();
 
-// Use existing project instance to get data via getter methods
+// Use entity methods for stage and data
+$project_stage = $project->get_stage();
 $budget = $project->get_project_budget();
 $due_date = $project->get_project_due_date();
 $start_date = $project->get_project_start_date();
 $project_lead = $project->get_project_lead();
 $customer_notice = $project->get_customer_notice();
 
-// Get all project statuses
-$all_statuses = get_terms(array(
-    'taxonomy' => 'arsol-pfw-project-stage',
-    'hide_empty' => false,
-));
+// Get available stages using entity method
+$available_stages = $project->get_available_stages();
 
-// Check if has request data
+// Check if has request data using entity methods
 $has_request_data = false;
 $request_id = $project->get_meta('_arsol_pfw_project_request_id');
 $request_title = $project->get_meta('_arsol_pfw_project_request_title');
 $request_content = $project->get_meta('_arsol_pfw_project_request_content');
-$requested_budget = $project->get_meta('_arsol_pfw_requested_project_budget');
-$requested_start_date = $project->get_meta('_arsol_pfw_requested_project_start_date');
-$requested_due_date = $project->get_meta('_arsol_pfw_requested_project_due_date');
+$requested_budget = $project->get_requested_budget();
+$requested_start_date = $project->get_requested_start_date();
+$requested_due_date = $project->get_requested_due_date();
 
 if ($request_id || $request_title || $request_content || $requested_budget || $requested_start_date || $requested_due_date) {
     $has_request_data = true;

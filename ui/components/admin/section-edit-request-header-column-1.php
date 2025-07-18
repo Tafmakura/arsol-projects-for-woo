@@ -19,7 +19,7 @@ if (!isset($request) || !is_object($request)) {
 
 $request_id = $request->get_id();
 $customer_id = $request->get_customer_id();
-$customer = get_userdata($customer_id);
+$customer = $request->get_customer();
 
 // Use direct stage methods (WooCommerce style)
 $request_stage = $request->get_stage();
@@ -42,7 +42,7 @@ if (empty($request_stage)) {
         </label>
         <select class="arsol-disabled-select" name="customer_id" disabled>
             <option value="<?php echo esc_attr($customer_id); ?>" selected>
-                <?php echo esc_html($customer->display_name); ?>
+                <?php echo $customer ? esc_html($customer->display_name) : __('Customer not found', 'arsol-pfw'); ?>
             </option>
         </select>
     </p>

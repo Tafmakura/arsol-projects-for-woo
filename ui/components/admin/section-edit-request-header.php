@@ -29,39 +29,26 @@ if (!isset($request) || !is_object($request)) {
 
 $request_id = $request->get_id();
 $customer_id = $request->get_customer_id();
-$customer = get_userdata($customer_id);
+$customer = $request->get_customer();
 
-// Get request stage (with proper error handling)
-$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'slugs'));
-$request_stage = 'pending'; // Default value
-if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
-    $request_stage = $request_stage_terms[0];
-}
+// Use entity methods for stage and data
+$request_stage = $request->get_stage();
+$budget = $request->get_requested_project_budget();
+$delivery_date = $request->get_requested_project_due_date();
+$start_date = $request->get_requested_project_start_date();
 
-        $budget = $request->get_requested_project_budget();
-        $delivery_date = $request->get_requested_project_due_date();
-        $start_date = $request->get_requested_project_start_date();
+// Get available stages using entity method
+$available_stages = $request->get_available_stages();
 
-// Get all request stages (with proper error handling)
-$stages = get_terms(array(
-    'taxonomy' => 'arsol-pfw-request-stage',
-    'hide_empty' => false,
-));
-
-// Handle WP_Error from get_terms
-if (is_wp_error($stages)) {
-    $stages = array(); // Fallback to empty array
-}
-
-// Check for parent project
+// Check for parent project using entity method
 $parent_project_id = $request->get_parent_project_id();
 $parent_project_data = null;
 if ($parent_project_id) {
-    $parent_project = get_post($parent_project_id);
-    if ($parent_project && $parent_project->post_type === 'arsol-pfw-project') {
+    $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
+    if ($parent_project && $parent_project->exists()) {
         $parent_project_data = array(
             'id' => $parent_project_id,
-            'title' => $parent_project->post_title
+            'title' => $parent_project->get_title()
         );
     }
 }

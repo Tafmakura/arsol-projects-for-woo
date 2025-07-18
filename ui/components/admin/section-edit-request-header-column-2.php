@@ -20,19 +20,15 @@ if (!isset($request) || !is_object($request)) {
 $request_id = $request->get_id();
 $request_content = $request->get_content();
 $attachments = get_attached_media('', $request_id);
-        $budget = $request->get_requested_project_budget();
-        $start_date = $request->get_requested_project_start_date();
-        $delivery_date = $request->get_requested_project_due_date();
+$budget = $request->get_requested_project_budget();
+$start_date = $request->get_requested_project_start_date();
+$delivery_date = $request->get_requested_project_due_date();
 
-// Get request stage (with proper error handling)
-$request_stage_terms = wp_get_object_terms($request_id, 'arsol-pfw-request-stage', array('fields' => 'names'));
-$request_stage = '';
-if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
-    $request_stage = $request_stage_terms[0];
-}
+// Use entity methods for stage
+$request_stage = $request->get_stage_label();
 
 $customer = $request->get_customer();
-$submission_date = get_the_time('l j F \a\t g:ia', $request->get_post());
+$submission_date = $request->get_date_created();
 ?>
 
 <div class="form-field-row">
