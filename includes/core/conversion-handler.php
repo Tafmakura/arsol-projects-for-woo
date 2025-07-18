@@ -54,15 +54,15 @@ class Conversion_Handler {
         }
         
         // Copy request data based on type
-        $cost_request_type = $request_entity->get_costing_type();
+        $request_budget = $request_entity->get_requested_project_budget();
+        $cost_request_type = !empty($request_budget) ? 'budget' : 'none';
         
         switch ($cost_request_type) {
             case 'budget':
                 // Copy budget data
-                $budget_data = $request_entity->get_requested_project_budget();
-                if (!empty($budget_data)) {
+                if (!empty($request_budget)) {
                     $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-                    $proposal_entity->set_proposed_project_budget($budget_data);
+                    $proposal_entity->set_proposed_project_budget($request_budget);
                     $proposal_entity->save();
                 }
                 break;
@@ -327,7 +327,7 @@ class Conversion_Handler {
         );
         
         // 4. Get proposal type for type-aware handling
-        $cost_proposal_type = $proposal->get_costing_type();
+        $cost_proposal_type = $proposal->get_proposal_costing_type();
         error_log("ARSOL PFW DEBUG: Proposal costing type: {$cost_proposal_type}");
         
         // 5. Copy type-specific data using entity methods

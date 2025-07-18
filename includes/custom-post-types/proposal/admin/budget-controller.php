@@ -39,7 +39,7 @@ class Budget_Controller {
         
         $onetime_data = $proposal->get_budget_onetime_amount() ?: array();
         $recurring_data = $proposal->get_budget_recurring_amount() ?: array();
-        $budget_notes = $proposal->get_budget_notes() ?: '';
+        $budget_notes = $proposal->get_proposal_budget_notes() ?: '';
 
         // Fallback to individual meta access if entity methods return empty (WooCommerce pattern)
         if (empty($onetime_data)) {

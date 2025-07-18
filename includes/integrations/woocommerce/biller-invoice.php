@@ -490,7 +490,7 @@ class Biller_Invoice {
         
         // Get proposal costing type using Proposal entity
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $cost_proposal_type = $proposal->get_costing_type() ?: 'none';
+        $cost_proposal_type = $proposal->get_proposal_costing_type() ?: 'none';
         
         // Validate based on proposal type
         switch ($cost_proposal_type) {
@@ -632,6 +632,6 @@ class Biller_Invoice {
     private function get_proposal_type($proposal_id) {
         // Use Proposal entity for costing type access
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        return $proposal->get_costing_type() ?: 'none';
+        return $proposal->get_proposal_costing_type() ?: 'none';
     }
 }
