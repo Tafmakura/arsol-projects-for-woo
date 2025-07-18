@@ -33,15 +33,14 @@ class Conversion_Handler {
         // Prepare proposal data
         $proposal_data = array(
             'post_type' => 'arsol-pfw-proposal',
-            'post_title' => $request->post_title,
-            'post_content' => $request->post_content,
-            'post_status' => 'draft',
-            'post_author' => $request->post_author, // Creator (admin)
+            'post_title' => $request_entity->get_title(),
+            'post_content' => $request_entity->get_content(),
+            'post_status' => 'publish',
+            'post_author' => get_current_user_id(),
             'meta_input' => array(
                 '_arsol_pfw_customer_id' => $request_entity->get_customer_id(), // Customer
                 '_arsol_pfw_proposed_project_start_date' => $request_entity->get_requested_start_date(),
                 '_arsol_pfw_proposed_project_due_date' => $request_entity->get_requested_due_date(),
-                '_arsol_pfw_proposed_project_lead' => $request_entity->get_requested_project_lead(),
                 '_arsol_pfw_request_id' => $request_id,
                 '_arsol_pfw_created_via' => 'request_conversion'
             )

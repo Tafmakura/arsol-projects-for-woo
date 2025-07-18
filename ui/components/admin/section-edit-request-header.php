@@ -41,7 +41,6 @@ if (!is_wp_error($request_stage_terms) && !empty($request_stage_terms)) {
         $budget = $request->get_requested_project_budget();
         $delivery_date = $request->get_requested_project_due_date();
         $start_date = $request->get_requested_project_start_date();
-        $project_lead = $request->get_requested_project_lead();
 
 // Get all request stages (with proper error handling)
 $stages = get_terms(array(
