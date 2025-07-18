@@ -361,8 +361,9 @@ class Conversion_Handler {
         // Store original proposal ID for reference
         $project->update_meta('_arsol_pfw_project_proposal_id', $proposal_id);
 
-        // Set default project status to not-started
-        wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-stage');
+        // Set default project stage using the stage entity
+        $project_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
+        $project_entity->set_stage('not-started');
 
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
             sprintf('Metadata copied from proposal #%d to project #%d (type: %s): %s', 

@@ -152,8 +152,9 @@ class Handler {
          */
         do_action('arsol_before_project_creation_status_assignment', $project_id, 'not-started', $creation_data);
 
-        // Set default project status
-        wp_set_object_terms($project_id, 'not-started', 'arsol-pfw-project-stage');
+        // Set default project stage using the stage entity
+        $project_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
+        $project_entity->set_stage('not-started');
 
         /**
          * Hook: arsol_after_project_creation_status_assigned

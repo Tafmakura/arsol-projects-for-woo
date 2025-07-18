@@ -29,7 +29,6 @@ do_action('arsol_projects_before_user_proposals', $has_items);
             <tbody>
                 <?php while ($query->have_posts()) : $query->the_post(); 
                     $proposal_id = get_the_ID();
-                    $post_status = get_post_status($proposal_id);
                     $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
                     $stage_slug = $proposal->get_stage();
                     $status = $proposal->get_stage_label();

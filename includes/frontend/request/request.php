@@ -194,8 +194,9 @@ class Request_Frontend extends Frontend_Handler {
              */
             do_action('arsol_before_request_creation_status_assignment', $request_id, 'pending-review', $creation_data);
 
-            // Set default request status to 'pending-review'
-            wp_set_object_terms($request_id, 'pending-review', 'arsol-pfw-request-stage');
+            // Set default request stage using the stage entity
+            $request_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($request_id);
+            $request_entity->set_stage('pending-review');
 
             /**
              * Hook: arsol_after_request_creation_status_assigned

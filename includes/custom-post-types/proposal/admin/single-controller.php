@@ -15,14 +15,41 @@ class Single_Controller {
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
         // Set default stage when proposal is published
         add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
+        // Initialize stage when proposal is created
+        add_action('wp_insert_post', array($this, 'initialize_proposal_stage'), 10, 3);
         // Prevent proposal deletion if tied projects exist
         add_action('before_delete_post', array($this, 'prevent_proposal_deletion_with_projects'));
     }
 
+    /**
+     * Initialize proposal stage when first created
+     */
+    public function initialize_proposal_stage($post_id, $post, $update) {
+        // Only run for new proposals, not updates
+        if ($update || $post->post_type !== 'arsol-pfw-proposal') {
+            return;
+        }
+        
+        // Initialize the stage entity with default stage
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+        $current_stage = $proposal->get_stage();
+        
+        // Only set if not already set
+        if (empty($current_stage)) {
+            $proposal->set_stage('draft');
+        }
+    }
+
     public function set_proposal_review_status($new_status, $old_status, $post) {
         if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
-            // Set the review status to 'processing'
-            wp_set_object_terms($post->ID, 'processing', 'arsol-pfw-proposal-stage');
+            // Use the stage entity to set the initial stage
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
+            $current_stage = $proposal->get_stage();
+            
+            // Only set stage if it's not already set or is the default 'draft'
+            if (empty($current_stage) || $current_stage === 'draft') {
+                $proposal->set_stage('processing');
+            }
         }
     }
 
