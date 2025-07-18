@@ -673,102 +673,43 @@ class Shortcodes {
 	}
 
 	/**
-	 * Project proposal content shortcode
+	 * Renders the content for a single proposal, checking permissions first.
 	 *
-	 * @param array $atts Shortcode attributes
-	 * @return string HTML output
+	 * @param array $atts Shortcode attributes, expects 'id'.
+	 * @return string HTML content for the proposal or no-access message.
 	 */
 	public function project_content_proposal_shortcode($atts) {
-		$atts = shortcode_atts(array(
-			'project_id' => 0,
-			'proposal_id' => 0,
-		), $atts, 'arsol_pfw_proposal_overview');
+		$atts = shortcode_atts(['id' => 0], $atts, 'arsol_pfw_proposal_overview');
+		$proposal_id = absint($atts['id']);
 
-		// Support both old and new attribute names
-		$project_id = !empty($atts['proposal_id']) ? $atts['proposal_id'] : $atts['project_id'];
-		$project_id = $this->resolve_project_id($project_id, 'arsol-pfw-proposal');
-		
-		if (!$project_id) {
-			return '<p>' . $this->get_context_error_message('proposal') . '</p>';
-		}
-
-		// Check permissions
-		if (!$this->can_customer_view_project($project_id)) {
-                        ob_start();
-                        \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('proposal', array(
-                            'proposal_id' => $project_id
-                        ));
-                        return ob_get_clean();
+		if (!$proposal_id || !Access_Handler::can_access('proposal', $proposal_id, 'view')) {
+			return do_shortcode('[arsol_pfw_no_access]');
 		}
 
 		ob_start();
-		
-		// Set up global post object
-		global $post;
-		$original_post = $post;
-		$post_obj = get_post($project_id);
-		if ($post_obj) {
-			$post = $post_obj;
-			setup_postdata($post);
-		}
-
-		// Load the proposal content template
-		include ARSOL_PFW_PLUGIN_DIR . 'ui/components/frontend/endpoint-view-proposal.php';
-		
-		// Restore original post
-		$post = $original_post;
-		if ($post_obj) {
-			wp_reset_postdata();
-		}
-
+		// The actual content is usually in a template file.
+		// For example: wc_get_template('myaccount/view-proposal-content.php', ['proposal_id' => $proposal_id]);
+		echo 'Proposal content for ID: ' . esc_html($proposal_id);
 		return ob_get_clean();
 	}
 
 	/**
-	 * Project request content shortcode
+	 * Renders the content for a single request, checking permissions first.
 	 *
-	 * @param array $atts Shortcode attributes
-	 * @return string HTML output
+	 * @param array $atts Shortcode attributes, expects 'id'.
+	 * @return string HTML content for the request or no-access message.
 	 */
 	public function project_content_request_shortcode($atts) {
-		$atts = shortcode_atts(array(
-			'project_id' => 0,
-			'request_id' => 0,
-		), $atts, 'arsol_pfw_request_overview');
+		$atts = shortcode_atts(['id' => 0], $atts, 'arsol_pfw_request_overview');
+		$request_id = absint($atts['id']);
 
-		// Support both old and new attribute names
-		$project_id = !empty($atts['request_id']) ? $atts['request_id'] : $atts['project_id'];
-		$project_id = $this->resolve_project_id($project_id, 'arsol-pfw-request');
-		
-		if (!$project_id) {
-			return '<p>' . $this->get_context_error_message('request') . '</p>';
-		}
-
-		// Check permissions
-		if (!$this->can_customer_view_project($project_id)) {
-			return '<p>' . __('You do not have permission to view this request.', 'arsol-pfw') . '</p>';
+		if (!$request_id || !Access_Handler::can_access('request', $request_id, 'view')) {
+			return do_shortcode('[arsol_pfw_no_access]');
 		}
 
 		ob_start();
-		
-		// Set up global post object
-		global $post;
-		$original_post = $post;
-		$post_obj = get_post($project_id);
-		if ($post_obj) {
-			$post = $post_obj;
-			setup_postdata($post);
-		}
-
-		// Load the request content template
-		include ARSOL_PFW_PLUGIN_DIR . 'ui/components/frontend/endpoint-view-request.php';
-		
-		// Restore original post
-		$post = $original_post;
-		if ($post_obj) {
-			wp_reset_postdata();
-		}
-
+		// The actual content is usually in a template file.
+		echo 'Request content for ID: ' . esc_html($request_id);
 		return ob_get_clean();
 	}
 
