@@ -33,14 +33,41 @@ class Proposal_Stage implements Stage_Interface, WooCommerce_Stage_Interface, St
 
     private function load_stage_data(): void
     {
-        $this->stage = get_post_meta($this->proposal_id, '_arsol_pfw_proposal_stage', true) ?: 'draft';
+        // Ensure default stage terms exist
+        $this->ensure_default_stage_terms();
+        
+        // Get stage from taxonomy terms
+        $terms = wp_get_object_terms($this->proposal_id, 'arsol-pfw-proposal-stage', ['fields' => 'slugs']);
+        $this->stage = !empty($terms) ? $terms[0] : 'draft';
+        
+        // Notes and history can still use meta for now (they're not taxonomy data)
         $this->notes = get_post_meta($this->proposal_id, '_arsol_pfw_proposal_stage_notes', true) ?: '';
         $this->history = get_post_meta($this->proposal_id, '_arsol_pfw_proposal_stage_history', true) ?: [];
     }
 
+    /**
+     * Ensure default stage terms exist in the taxonomy
+     */
+    private function ensure_default_stage_terms(): void
+    {
+        $stages = $this->get_available_stages();
+        foreach ($stages as $stage_slug => $stage_data) {
+            $term = term_exists($stage_slug, 'arsol-pfw-proposal-stage');
+            if (!$term) {
+                wp_insert_term($stage_data['label'], 'arsol-pfw-proposal-stage', [
+                    'slug' => $stage_slug,
+                    'description' => $stage_data['label'] . ' stage for proposals',
+                ]);
+            }
+        }
+    }
+
     private function save_stage_data(): void
     {
-        update_post_meta($this->proposal_id, '_arsol_pfw_proposal_stage', $this->stage);
+        // Save stage using taxonomy terms
+        wp_set_object_terms($this->proposal_id, $this->stage, 'arsol-pfw-proposal-stage', false);
+        
+        // Save notes and history using meta
         update_post_meta($this->proposal_id, '_arsol_pfw_proposal_stage_notes', $this->notes);
         update_post_meta($this->proposal_id, '_arsol_pfw_proposal_stage_history', $this->history);
     }
@@ -256,11 +283,11 @@ class Proposal_Stage implements Stage_Interface, WooCommerce_Stage_Interface, St
         $args = [
             'post_type' => 'arsol_pfw_proposal',
             'post_status' => 'any',
-            'meta_query' => [
+            'tax_query' => [
                 [
-                    'key' => '_arsol_pfw_proposal_stage',
-                    'value' => $stage,
-                    'compare' => '=',
+                    'taxonomy' => 'arsol-pfw-proposal-stage',
+                    'field' => 'slug',
+                    'terms' => $stage,
                 ],
             ],
             'fields' => 'ids',
