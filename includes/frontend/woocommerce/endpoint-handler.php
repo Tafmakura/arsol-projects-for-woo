@@ -1,6 +1,6 @@
 <?php
 /**
- * Frontend Project Endpoints Class
+ * Frontend Project Endpoint Handler Class
  *
  * Handles custom endpoints for project pages.
  *
@@ -18,9 +18,9 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Frontend Project Endpoints class
+ * Frontend Project Endpoint Handler class
  */
-class Endpoints {
+class Endpoint_Handler {
     
     /**
      * Constructor

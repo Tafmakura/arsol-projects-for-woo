@@ -142,7 +142,7 @@ class Setup {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/request/request.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/proposal/proposal.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/woocommerce/checkout.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/woocommerce/endpoints.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/woocommerce/endpoint-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/template/overrides.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/template/sidebar-buttons.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/frontend/template/sidebar-meta.php';
@@ -286,7 +286,7 @@ class Setup {
         new \Arsol_Projects_For_Woo\Frontend\Request_Frontend();
         new \Arsol_Projects_For_Woo\Frontend\Proposal_Frontend();
         new \Arsol_Projects_For_Woo\Frontend\WooCommerce\Checkout();
-        new \Arsol_Projects_For_Woo\Frontend\WooCommerce\Endpoints();
+        new \Arsol_Projects_For_Woo\Frontend\WooCommerce\Endpoint_Handler();
         new \Arsol_Projects_For_Woo\Frontend\Template\Overrides();
         new \Arsol_Projects_For_Woo\Frontend\Template\Sidebar_Buttons();
         new \Arsol_Projects_For_Woo\Frontend\Template\Sidebar_Meta();
