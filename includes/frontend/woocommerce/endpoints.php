@@ -201,7 +201,8 @@ class Endpoints {
     public function project_overview_endpoint_content() {
         $project_id = absint(get_query_var('view-project'));
         
-        if (!$this->validate_project_access($project_id)) {
+        if (!\Arsol_Projects_For_Woo\Core\Access_Handler::can_access('project', $project_id, 'view')) {
+            echo do_shortcode('[arsol_pfw_no_access]');
             return;
         }
         
@@ -233,7 +234,8 @@ class Endpoints {
     public function project_orders_endpoint_content() {
         $project_id = absint(get_query_var('view-project-orders'));
         
-        if (!$this->validate_project_access($project_id)) {
+        if (!\Arsol_Projects_For_Woo\Core\Access_Handler::can_access('project', $project_id, 'view')) {
+            echo do_shortcode('[arsol_pfw_no_access]');
             return;
         }
         
@@ -271,7 +273,8 @@ class Endpoints {
         
         $project_id = absint(get_query_var('view-project-subscriptions'));
         
-        if (!$this->validate_project_access($project_id)) {
+        if (!\Arsol_Projects_For_Woo\Core\Access_Handler::can_access('project', $project_id, 'view')) {
+            echo do_shortcode('[arsol_pfw_no_access]');
             return;
         }
         
@@ -304,7 +307,7 @@ class Endpoints {
         $user_id = get_current_user_id();
         
         if (!\Arsol_Projects_For_Woo\Core\Access_Handler::can_access('create_project')) {
-            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('create');
+            echo do_shortcode('[arsol_pfw_no_access]');
             return;
         }
         
@@ -320,7 +323,7 @@ class Endpoints {
         $user_id = get_current_user_id();
 
         if (!\Arsol_Projects_For_Woo\Core\Access_Handler::can_access('request_project')) {
-            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('request_projects');
+            echo do_shortcode('[arsol_pfw_no_access]');
             return;
         }
 
@@ -352,7 +355,7 @@ class Endpoints {
 
         // Use consolidated access control
         if (!\Arsol_Projects_For_Woo\Core\Access_Handler::can_access('proposal', $proposal_id, 'view', $user_id)) {
-            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('proposal', array("proposal_id" => $proposal_id));
+            echo do_shortcode('[arsol_pfw_no_access]');
             return;
         }
 
@@ -400,7 +403,7 @@ class Endpoints {
 
         // Use consolidated access control
         if (!\Arsol_Projects_For_Woo\Core\Access_Handler::can_access('request', $request_id, 'view', $user_id)) {
-            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('request', array('request_id' => $request_id));
+            echo do_shortcode('[arsol_pfw_no_access]');
             return;
         }
 
@@ -437,7 +440,7 @@ class Endpoints {
         $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
         if (!$project || !\Arsol_Projects_For_Woo\Core\Access_Handler::can_access('project', $project_id, 'view', $user_id)) {
             // Use the no-access template for consistency
-            \Arsol_Projects_For_Woo\Core\Access_Handler::display_no_access_template('project', array('project_id' => $project_id));
+            echo do_shortcode('[arsol_pfw_no_access]');
             return false;
         }
         

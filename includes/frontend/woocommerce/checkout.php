@@ -363,4 +363,50 @@ class Checkout {
             // The order->save() is called by WooCommerce after this hook.
         }
     }
+
+	/**
+	 * Maybe add project ID to cart item meta.
+	 *
+	 * @param array $cart_item_data The cart item data.
+	 * @param int   $product_id     The product ID.
+	 * @param int   $variation_id   The variation ID.
+	 * @return array The updated cart item data.
+	 */
+	public function add_project_to_cart_item($cart_item_data, $product_id, $variation_id) {
+		if (isset($_REQUEST['add-to-cart-project'])) {
+			$project_id = absint($_REQUEST['add-to-cart-project']);
+
+			// Use Access_Handler to verify view permission before adding to cart.
+			if ($project_id && \Arsol_Projects_For_Woo\Core\Access_Handler::can_access('project', $project_id, 'view')) {
+				$cart_item_data['arsol_pfw_project_id'] = $project_id;
+			}
+		}
+		return $cart_item_data;
+	}
+
+	/**
+	 * Display project information in the cart.
+	 *
+	 * @param array $item_data  The item data.
+	 * @param array $cart_item  The cart item.
+	 * @return array The updated item data.
+	 */
+	public function display_project_in_cart($item_data, $cart_item) {
+		if (isset($cart_item['arsol_pfw_project_id'])) {
+			$project_id = $cart_item['arsol_pfw_project_id'];
+
+			// Use Access_Handler to verify view permission before displaying.
+			if ($project_id && \Arsol_Projects_For_Woo\Core\Access_Handler::can_access('project', $project_id, 'view')) {
+				$project = get_post($project_id);
+				if ($project) {
+					$item_data[] = [
+						'key'     => __('Project', 'arsol-pfw'),
+						'value'   => esc_html($project->post_title),
+						'display' => '',
+					];
+				}
+			}
+		}
+		return $item_data;
+	}
 } 
