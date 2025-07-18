@@ -644,9 +644,9 @@ class Shortcodes {
 			return '<p>' . $this->get_context_error_message('project') . '</p>';
 		}
 
-		// Check permissions
-		if (!$this->can_customer_view_project($project_id)) {
-			return '<p>' . __('You do not have permission to view this project.', 'arsol-pfw') . '</p>';
+		// Check permissions using Access_Handler
+		if (!Access_Handler::can_access('project', $project_id, 'view')) {
+			return do_shortcode('[arsol_pfw_no_access]');
 		}
 
 		ob_start();
