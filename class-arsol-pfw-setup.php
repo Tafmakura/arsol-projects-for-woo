@@ -267,15 +267,15 @@ class Setup {
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Core\Setup();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Core\Setup();
 
-        // Initialize CPT admin controllers (meta boxes) - TEMPORARILY DISABLED FOR JS DEBUGGING
-        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Single_Controller();
-        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\List_Controller();
-        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Admin\Single_Controller();
-        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Admin\List_Controller();
-        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Single_Controller();
-        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\List_Controller();
-        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Budget_Controller();
-        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Quotation_Controller();
+        // Initialize CPT admin controllers (meta boxes)
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Single_Controller();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\List_Controller();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Admin\Single_Controller();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Admin\List_Controller();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Single_Controller();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\List_Controller();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Budget_Controller();
+        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Quotation_Controller();
 
         // Initialize admin components
         new \Arsol_Projects_For_Woo\Admin\Settings\General();
