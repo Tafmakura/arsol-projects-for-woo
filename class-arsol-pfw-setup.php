@@ -157,9 +157,6 @@ class Setup {
     private function load_taxonomy_files() {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/setup.php';
         
-        // Load stage interface first
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/interface-stage.php';
-        
         // Load project stage files
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/project-stage/setup.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/project-stage/admin.php';
