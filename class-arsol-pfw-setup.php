@@ -159,17 +159,14 @@ class Setup {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/interface-stage.php';
         
         // Load project stage files
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/project-stage/project-stage.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/project-stage/setup.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/project-stage/admin.php';
         
         // Load proposal stage files
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/proposal-stage/proposal-stage.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/proposal-stage/setup.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/proposal-stage/admin.php';
         
         // Load request stage files
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/request-stage/request-stage.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/request-stage/setup.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/request-stage/admin.php';
     }
