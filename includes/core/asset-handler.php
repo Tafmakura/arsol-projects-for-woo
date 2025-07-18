@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 /**
  * Assets class to manage CSS and JS files
  */
-class Assets {
+class Asset_Handler {
     /**
      * Get file version based on file modification time
      * 
@@ -25,14 +25,20 @@ class Assets {
      * Constructor
      */
     public function __construct() {
+        error_log('ARSOL DEBUG: Asset_Handler constructor called');
+        
         // Delay asset hooks until after init to ensure text domain is loaded
         add_action('init', array($this, 'setup_asset_hooks'), 20);
+        
+        error_log('ARSOL DEBUG: Asset_Handler constructor completed');
     }
 
     /**
      * Setup asset hooks after init
      */
     public function setup_asset_hooks() {
+        error_log('ARSOL DEBUG: Asset_Handler setup_asset_hooks called');
+        
         // Register hooks for frontend assets
         add_action('wp_enqueue_scripts', array($this, 'register_frontend_assets'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
@@ -40,6 +46,10 @@ class Assets {
         // Register hooks for admin assets
         add_action('admin_enqueue_scripts', array($this, 'register_admin_assets'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
+        
+        error_log('ARSOL DEBUG: Asset_Handler hooks registered');
+
+
     }
 
     /**
@@ -113,7 +123,11 @@ class Assets {
      * Register admin CSS and JS
      */
     public function register_admin_assets() {
+        error_log('ARSOL DEBUG: Asset_Handler register_admin_assets called');
+        
         $plugin_url = plugin_dir_url(ARSOL_PFW_PLUGIN_FILE);
+        
+        error_log('ARSOL DEBUG: Plugin URL: ' . $plugin_url);
         
         // Register CSS with prefixed filename
         wp_register_style(
@@ -166,111 +180,32 @@ class Assets {
      * @param string $hook Current admin page hook
      */
     public function enqueue_admin_assets($hook) {
+        error_log('ARSOL DEBUG: Asset_Handler enqueue_admin_assets called with hook: ' . $hook);
+        
         $screen = get_current_screen();
         if (!$screen) {
+            error_log('ARSOL DEBUG: No screen found in enqueue_admin_assets');
             return;
         }
 
-        // Define post types that should load admin assets
-        $allowed_post_types = array(
-            'shop_order', 
-            'arsol-pfw-project', 
-            'arsol-pfw-request', 
-            'arsol-pfw-proposal'
-        );
+        error_log('ARSOL DEBUG: Screen post type: ' . $screen->post_type);
+        error_log('ARSOL DEBUG: Screen ID: ' . $screen->id);
 
-        // Check if we're on a post type page that needs admin assets OR the settings page
-        $is_post_type_page = in_array($screen->post_type, $allowed_post_types);
-        $is_settings_page = ($hook === 'toplevel_page_arsol-projects');
+        // Simplified test - just enqueue the main admin script on any admin page
+        error_log('ARSOL DEBUG: Enqueueing main admin script');
+        wp_enqueue_style('arsol-pfw-admin');
+        wp_enqueue_script('arsol-pfw-admin');
         
-        if ($is_post_type_page || $is_settings_page) {
-            
-            // Enqueue WooCommerce admin styles and scripts
-            if ($is_post_type_page) {
-                // WooCommerce assets are mainly needed for post type pages
-            wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
-            wp_enqueue_script('selectWoo');
-            wp_enqueue_script('wc-enhanced-select');
-            wp_enqueue_style('select2');
-            }
-            
-            // Always enqueue our plugin assets
-            wp_enqueue_style('arsol-pfw-admin');
-            wp_enqueue_script('arsol-pfw-admin');
-            
-            // Enqueue post-type specific JavaScript (only for post type pages)
-            if ($is_post_type_page) {
-                
-                if ($screen->post_type === 'arsol-pfw-proposal') {
-                    wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
-                    
-                    // Localize proposal script
-                    wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_vars', array(
-                        'validation_message' => __('Please complete all required fields before saving.', 'arsol-pfw'),
-                    ));
-                    
-                    // Localize budget script
-                    wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_budget_vars', array(
-                        'currency_symbol' => get_woocommerce_currency_symbol(),
-                    ));
-                    
-                    // Always localize quotation script for proposals (needed for all proposal types)
-                    global $post;
-                    $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
-                    $line_items = $proposal->get_meta('_arsol_pfw_proposed_project_quotation_line_items') ?: array();
-                        
-                        // Fetch product names and map saved prices for existing product line items
-                        if (!empty($line_items['products'])) {
-                            foreach ($line_items['products'] as $key => $product_item) {
-                                if (!empty($product_item['product_id'])) {
-                                    $product = wc_get_product($product_item['product_id']);
-                                    if ($product) {
-                                        $line_items['products'][$key]['product_name'] = $product->get_formatted_name();
-                                    }
-                                }
-                                // Map saved price to regular_price for the JavaScript template
-                                if (isset($product_item['price'])) {
-                                    $line_items['products'][$key]['regular_price'] = $product_item['price'];
-                            }
-                        }
-                    }
-                    
-                    wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_quotation_vars', array(
-                        'ajax_url' => admin_url('admin-ajax.php'),
-                        'nonce' => wp_create_nonce('arsol-proposal-quotation-nonce'),
-                        'search_products_nonce' => wp_create_nonce('search-products'),
-                        'currency_symbol' => get_woocommerce_currency_symbol(),
-                        'line_items' => $line_items,
-                        'calculation_constants' => array(
-                            'days_in_month' => 30.44, // Average days in a month
-                            'days_in_year' => 365.25  // Average days in a year
-                        )
-                    ));
-                    
-                } elseif ($screen->post_type === 'arsol-pfw-project') {
-                    wp_enqueue_script('arsol-pfw-admin-cpt-project');
-                    // Also enqueue proposal script for Create Proposal button functionality
-                    wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
-                    
-                } elseif ($screen->post_type === 'arsol-pfw-request') {
-                    wp_enqueue_script('arsol-pfw-admin-cpt-request');
-                }
-                
-                // WooCommerce should already provide wc_enhanced_select_params, but ensure our nonces are available
-                // Only add minimal necessary data for our custom functionality
-                wp_localize_script('wc-enhanced-select', 'arsol_enhanced_select_params', array(
-                'search_products_nonce'   => wp_create_nonce('search-products'),
-                'search_customers_nonce'  => wp_create_nonce('search-customers'),
-            ));
-            }
-            
-            // Localize our main plugin script (for both post type pages and settings page)
-            wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
-                'ajaxUrl' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('arsol-pfw-admin'),
-                'confirmDelete' => __('Are you sure you want to remove this project?', 'arsol-pfw'),
-            ));
-        }
+        error_log('ARSOL DEBUG: Main admin script enqueued');
+        
+        // Localize our main plugin script
+        wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('arsol-pfw-admin'),
+            'confirmDelete' => __('Are you sure you want to remove this project?', 'arsol-pfw'),
+        ));
+        
+        error_log('ARSOL DEBUG: Main admin script localized');
     }
 
     /**

@@ -73,7 +73,7 @@ class Setup {
      * Load core files manually
      */
     private function load_core_files() {
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/assets.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/asset-handler.php';
         // Stage management core
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/stage-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/capabilities-handler.php';
@@ -255,7 +255,7 @@ class Setup {
      */
     private function instantiate_classes() {
         // Initialize core components
-        new \Arsol_Projects_For_Woo\Core\Assets();
+        new \Arsol_Projects_For_Woo\Core\Asset_Handler();
         new \Arsol_Projects_For_Woo\Core\Capabilities_Handler();
         new \Arsol_Projects_For_Woo\Core\Access_Handler();
         new \Arsol_Projects_For_Woo\Workflow\Workflow_Handler();
@@ -267,15 +267,15 @@ class Setup {
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Core\Setup();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Core\Setup();
 
-        // Initialize CPT admin controllers (meta boxes)
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Single_Controller();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\List_Controller();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Admin\Single_Controller();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Admin\List_Controller();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Single_Controller();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\List_Controller();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Budget_Controller();
-        new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Quotation_Controller();
+        // Initialize CPT admin controllers (meta boxes) - TEMPORARILY DISABLED FOR JS DEBUGGING
+        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Single_Controller();
+        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\List_Controller();
+        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Admin\Single_Controller();
+        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Admin\List_Controller();
+        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Single_Controller();
+        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\List_Controller();
+        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Budget_Controller();
+        // new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Quotation_Controller();
 
         // Initialize admin components
         new \Arsol_Projects_For_Woo\Admin\Settings\General();
