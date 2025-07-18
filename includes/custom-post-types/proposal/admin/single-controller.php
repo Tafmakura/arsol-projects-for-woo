@@ -391,8 +391,9 @@ class Single_Controller {
                 }
             }
             
-            // Save budget data using entity method (primary approach)
-            $proposal->set_proposal_budget($budget_data);
+            // Save budget estimates 
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+            $proposal->set_proposed_project_budget($budget_data);
             
             // Also save individual meta fields for backward compatibility (WooCommerce pattern)
             if (!empty($budget_data['onetime'])) {
@@ -405,7 +406,7 @@ class Single_Controller {
         } else {
             // If not budget estimates, clear budget data
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-            $proposal->set_proposal_budget(array());
+            $proposal->set_proposed_project_budget(array());
             
             // Clear old budget fields (no longer needed with array structure)
             // Budget data is now stored in _arsol_pfw_proposed_project_budget_line_items
@@ -442,18 +443,12 @@ class Single_Controller {
         
         // Save proposal notes based on costing type
         if ($cost_proposal_type === 'budget') {
-            // Save budget notes using entity method
-            if (isset($_POST['arsol_pfw_proposal_notes'])) {
-                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-                $proposal->set_budget_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
-                $proposal->save();
-            }
+            // Save notes
+            $proposal->set_proposal_budget_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
         } elseif ($cost_proposal_type === 'quotation') {
-            // Save quotation notes using entity method
+            // Save proposal quotation notes
             if (isset($_POST['arsol_pfw_proposal_quotation_notes'])) {
-                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-                $proposal->set_quotation_notes(wp_kses_post($_POST['arsol_pfw_proposal_quotation_notes']));
-                $proposal->save();
+                $proposal->set_proposal_quotation_notes(wp_kses_post($_POST['arsol_pfw_proposal_quotation_notes']));
             }
         }
         

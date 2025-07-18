@@ -267,9 +267,18 @@ class Setup {
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Request\Core\Setup();
         new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Core\Setup();
 
-        // Initialize CPT admin controllers (meta boxes) - TEMPORARILY DISABLED FOR DEBUGGING
+        // Initialize CPT admin controllers (meta boxes) - TESTING PROPOSAL SINGLE_CONTROLLER
         // error_log('ARSOL DEBUG: Starting admin controller instantiation');
-        // 
+        
+        // Test just the Proposal Single_Controller first
+        try {
+            new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Single_Controller();
+            error_log('ARSOL DEBUG: Proposal Single_Controller instantiated successfully');
+        } catch (Exception $e) {
+            error_log('ARSOL DEBUG: Error instantiating Proposal Single_Controller: ' . $e->getMessage());
+        }
+        
+        // Temporarily disabled other controllers
         // try {
         //     new \Arsol_Projects_For_Woo\Custom_Post_Types\Project\Admin\Single_Controller();
         //     error_log('ARSOL DEBUG: Project Single_Controller instantiated');
@@ -296,20 +305,6 @@ class Setup {
         //     error_log('ARSOL DEBUG: Request List_Controller instantiated');
         // } catch (Exception $e) {
         //     error_log('ARSOL DEBUG: Error instantiating Request List_Controller: ' . $e->getMessage());
-        // }
-        // 
-        // try {
-        //     new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\Single_Controller();
-        //     error_log('ARSOL DEBUG: Proposal Single_Controller instantiated');
-        // } catch (Exception $e) {
-        //     error_log('ARSOL DEBUG: Error instantiating Proposal Single_Controller: ' . $e->getMessage());
-        // }
-        // 
-        // try {
-        //     new \Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin\List_Controller();
-        //     error_log('ARSOL DEBUG: Proposal List_Controller instantiated');
-        // } catch (Exception $e) {
-        //     error_log('ARSOL DEBUG: Error instantiating Proposal List_Controller: ' . $e->getMessage());
         // }
         // 
         // try {

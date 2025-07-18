@@ -209,7 +209,7 @@ class Proposal_Frontend extends Frontend_Handler {
             // Save additional metadata if needed
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
             if (!empty($budget)) {
-                $proposal->set_proposal_budget(array('amount' => $budget));
+                $proposal->set_proposed_project_budget(array('amount' => $budget));
             }
             if (!empty($request_id)) {
                 $proposal->set_request_id($request_id);

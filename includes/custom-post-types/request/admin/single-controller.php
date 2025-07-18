@@ -149,7 +149,7 @@ class Single_Controller {
         $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
         
         if (isset($_POST['request_budget'])) {
-            $request->set_request_budget(array('amount' => sanitize_text_field($_POST['request_budget'])));
+            $request->set_requested_project_budget(array('amount' => sanitize_text_field($_POST['request_budget'])));
         }
         
         if (isset($_POST['request_start_date'])) {

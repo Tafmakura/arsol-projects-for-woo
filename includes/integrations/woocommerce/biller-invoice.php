@@ -595,7 +595,7 @@ class Biller_Invoice {
         
         // Get proposal costing type using Proposal entity
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $cost_proposal_type = $proposal->get_costing_type() ?: 'none';
+        $cost_proposal_type = $proposal->get_proposal_costing_type() ?: 'none';
         $currency = $proposal->get_quotation_currency() ?: get_woocommerce_currency();
         $line_items = array();
         
