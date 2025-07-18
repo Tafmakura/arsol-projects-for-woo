@@ -172,7 +172,7 @@ class Project {
      * @return string Current stage
      */
     public function get_stage() {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage($this->project_id, self::get_stage_taxonomy());
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($this->project_id, self::get_stage_taxonomy());
     }
 
     /**
@@ -182,7 +182,7 @@ class Project {
      * @return bool Success status
      */
     public function set_stage($stage) {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::set_stage($this->project_id, $stage, self::get_stage_taxonomy());
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($this->project_id, $stage, self::get_stage_taxonomy());
     }
 
     /**
@@ -203,7 +203,7 @@ class Project {
      * @return string Human-readable stage label
      */
     public function get_stage_label() {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage_name($this->project_id, self::get_stage_taxonomy());
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_name($this->project_id, self::get_stage_taxonomy());
     }
 
     /**
@@ -284,7 +284,7 @@ class Project {
      * @return array Array of available stages
      */
     public function get_available_stages() {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages(self::get_stage_taxonomy());
+        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages(self::get_stage_taxonomy());
     }
 
     /**

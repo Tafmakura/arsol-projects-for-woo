@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
  * @return array Array of WP_Term objects
  */
 function arsol_pfw_get_project_stages() {
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages('arsol-pfw-project-stage');
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('arsol-pfw-project-stage');
 }
 
 /**
@@ -28,7 +28,7 @@ function arsol_pfw_get_project_stages() {
  * @return array Array of WP_Term objects
  */
 function arsol_pfw_get_proposal_stages() {
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages('arsol-pfw-proposal-stage');
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('arsol-pfw-proposal-stage');
 }
 
 /**
@@ -37,7 +37,7 @@ function arsol_pfw_get_proposal_stages() {
  * @return array Array of WP_Term objects
  */
 function arsol_pfw_get_request_stages() {
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages('arsol-pfw-request-stage');
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('arsol-pfw-request-stage');
 }
 
 /**
@@ -59,7 +59,7 @@ function arsol_pfw_get_stage_name($stage_slug, $entity_type) {
         return false;
     }
     
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage_name_by_slug($stage_slug, $taxonomy);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_name_by_slug($stage_slug, $taxonomy);
 }
 
 /**
@@ -81,7 +81,7 @@ function arsol_pfw_get_stage($post_id, $entity_type) {
         return false;
     }
     
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage($post_id, $taxonomy);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage($post_id, $taxonomy);
 }
 
 /**
@@ -103,7 +103,7 @@ function arsol_pfw_get_stage_name_for_post($post_id, $entity_type) {
         return false;
     }
     
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage_name($post_id, $taxonomy);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_name($post_id, $taxonomy);
 }
 
 /**
@@ -127,7 +127,7 @@ function arsol_pfw_set_stage($post_id, $stage_slug, $entity_type, $create_if_mis
         return false;
     }
     
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::set_stage($post_id, $stage_slug, $taxonomy, $create_if_missing);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($post_id, $stage_slug, $taxonomy, $create_if_missing);
 }
 
 /**
@@ -150,7 +150,7 @@ function arsol_pfw_create_stage($stage_slug, $entity_type, $stage_name = null) {
         return false;
     }
     
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::create_stage($stage_slug, $taxonomy, $stage_name);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::create_stage($stage_slug, $taxonomy, $stage_name);
 }
 
 /**
@@ -172,7 +172,7 @@ function arsol_pfw_remove_stage($post_id, $entity_type) {
         return false;
     }
     
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::remove_stage($post_id, $taxonomy);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::remove_stage($post_id, $taxonomy);
 }
 
 /**
@@ -203,7 +203,7 @@ function arsol_pfw_get_items_by_stage($stage_slug, $entity_type, $args = []) {
         return [];
     }
     
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_items_by_stage($stage_slug, $taxonomy, $post_type, $args);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_items_by_stage($stage_slug, $taxonomy, $post_type, $args);
 }
 
 /**
@@ -232,5 +232,5 @@ function arsol_pfw_get_stage_statistics($entity_type) {
         return [];
     }
     
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage_statistics($taxonomy, $post_type);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_statistics($taxonomy, $post_type);
 }

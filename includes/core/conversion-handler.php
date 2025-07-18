@@ -83,8 +83,8 @@ class Conversion_Handler {
         $this->copy_taxonomies($request_id, $proposal_id);
         
         // Set initial stage using OOP stage entity
+        // Remove the old stage entity call - no longer needed with simplified system
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $stage_entity = $proposal->get_stage_entity();
         $stage_entity->set_stage('processing');
         
         // Trigger conversion hooks
@@ -140,7 +140,6 @@ class Conversion_Handler {
             $project->set_project_budget($proposal_obj->get_proposed_project_budget());
             $project->set_description($proposal_obj->get_description());      
             // Set initial stage using OOP stage entity
-            $project_stage_entity = $project->get_stage_entity();
             $project_stage_entity->set_stage('not-started');
             
             if (is_wp_error($project)) {

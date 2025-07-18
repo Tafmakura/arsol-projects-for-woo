@@ -213,46 +213,30 @@ function arsol_pfw_get_proposals_by_date_range($start_date, $end_date, $args = a
 }
 
 /**
- * Get stage counts using OOP stage entities
+ * Get proposal stage counts
  * 
  * @return array Array of stage counts
  */
 function arsol_pfw_get_proposal_stage_counts() {
-    $stage_entity = new \Arsol_Projects_For_Woo\Taxonomies\Stages\Proposal_Stage(0);
-    $statistics = $stage_entity->get_stage_statistics();
-    
-    $counts = array();
-    foreach ($statistics as $stage_slug => $stage_data) {
-        $counts[$stage_slug] = $stage_data['count'];
-    }
-    
-    return $counts;
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_statistics('arsol-pfw-proposal-stage', 'arsol-pfw-proposal');
 }
 
 /**
- * Get available stages using OOP stage entities
+ * Get available proposal stages
  * 
  * @return array Array of available stages
  */
 function arsol_pfw_get_available_proposal_stages() {
-    $stage_entity = new \Arsol_Projects_For_Woo\Taxonomies\Stages\Proposal_Stage(0);
-    $stages = $stage_entity->get_available_stages();
-    
-    $stage_options = array();
-    foreach ($stages as $stage_slug => $stage_data) {
-        $stage_options[$stage_slug] = $stage_data['label'];
-    }
-    
-    return $stage_options;
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('arsol-pfw-proposal-stage');
 }
 
 /**
- * Bulk update proposal stages using OOP stage entities
+ * Bulk update proposal stages
  * 
  * @param array $proposal_ids Array of proposal IDs
- * @param string $stage_slug Stage slug to set
- * @return int Number of proposals updated
+ * @param string $stage_slug Stage slug
+ * @return bool Success status
  */
 function arsol_pfw_bulk_update_proposal_stages($proposal_ids, $stage_slug) {
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Proposal_Stage::bulk_update_stage($proposal_ids, $stage_slug);
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::bulk_update_stage($proposal_ids, $stage_slug, 'arsol-pfw-proposal-stage');
 } 

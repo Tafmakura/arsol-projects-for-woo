@@ -37,7 +37,7 @@ define('ARSOL_PFW_PROJECT_META_KEY', 'arsol-pfw/parent-project-id');
 // Initialize the plugin
 add_action('plugins_loaded', function() {
     // Load the stage handler
-    require_once ARSOL_PFW_PLUGIN_DIR . 'includes/taxonomies/stages/stage-handler.php';
+    require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/stage-handler.php';
     
     // Load the stage functions
     require_once ARSOL_PFW_PLUGIN_DIR . 'includes/functions/stage-functions.php';

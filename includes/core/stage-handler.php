@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-namespace Arsol_Projects_For_Woo\Taxonomies\Stages;
+namespace Arsol_Projects_For_Woo\Core;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -181,6 +181,30 @@ class Stage_Handler {
         return get_posts($query_args);
     }
     
+    /**
+     * Bulk update stage for multiple items
+     * 
+     * @param array $post_ids Array of post IDs
+     * @param string $stage_slug The stage slug
+     * @param string $taxonomy The taxonomy name
+     * @return bool Success status
+     */
+    public static function bulk_update_stage($post_ids, $stage_slug, $taxonomy) {
+        if (empty($post_ids) || !is_array($post_ids)) {
+            return false;
+        }
+        
+        $success = true;
+        foreach ($post_ids as $post_id) {
+            $result = self::set_stage($post_id, $stage_slug, $taxonomy);
+            if (!$result) {
+                $success = false;
+            }
+        }
+        
+        return $success;
+    }
+
     /**
      * Get stage statistics
      * 
