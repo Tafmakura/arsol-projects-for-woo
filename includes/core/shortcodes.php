@@ -871,7 +871,7 @@ class Shortcodes {
 		// Build query args
 		$query_args = array(
 			'post_type' => 'arsol-pfw-proposal',
-			'post_status' => array('publish', 'draft'),
+			'post_status' => 'publish',  // Only published proposals on frontend
 			'author' => $current_user_id,
 			'posts_per_page' => $per_page,
 			'paged' => $paged,
@@ -943,7 +943,7 @@ class Shortcodes {
 		// Build query args
 		$query_args = array(
 			'post_type' => 'arsol-pfw-request',
-			'post_status' => array('publish', 'draft'),
+			'post_status' => 'publish',  // Only published requests on frontend
 			'author' => $current_user_id,
 			'posts_per_page' => $per_page,
 			'paged' => $paged,

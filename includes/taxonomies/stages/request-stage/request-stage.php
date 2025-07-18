@@ -36,9 +36,15 @@ class Request_Stage implements Stage_Interface, WooCommerce_Stage_Interface, Sta
         // Ensure default stage terms exist
         $this->ensure_default_stage_terms();
         
-        // Get stage from taxonomy terms
+        // Get stage from taxonomy terms with error handling
         $terms = wp_get_object_terms($this->request_id, 'arsol-pfw-request-stage', ['fields' => 'slugs']);
-        $this->stage = !empty($terms) ? $terms[0] : 'draft';
+        
+        // Handle WP_Error or empty result
+        if (is_wp_error($terms) || empty($terms)) {
+            $this->stage = 'draft';
+        } else {
+            $this->stage = $terms[0];
+        }
         
         // Notes and history can still use meta for now (they're not taxonomy data)
         $this->notes = get_post_meta($this->request_id, '_arsol_pfw_request_stage_notes', true) ?: '';
@@ -50,6 +56,11 @@ class Request_Stage implements Stage_Interface, WooCommerce_Stage_Interface, Sta
      */
     private function ensure_default_stage_terms(): void
     {
+        // Check if taxonomy exists
+        if (!taxonomy_exists('arsol-pfw-request-stage')) {
+            return;
+        }
+        
         $stages = $this->get_available_stages();
         foreach ($stages as $stage_slug => $stage_data) {
             $term = term_exists($stage_slug, 'arsol-pfw-request-stage');
@@ -64,8 +75,10 @@ class Request_Stage implements Stage_Interface, WooCommerce_Stage_Interface, Sta
 
     private function save_stage_data(): void
     {
-        // Save stage using taxonomy terms
-        wp_set_object_terms($this->request_id, $this->stage, 'arsol-pfw-request-stage', false);
+        // Save stage using taxonomy terms (only if taxonomy exists)
+        if (taxonomy_exists('arsol-pfw-request-stage')) {
+            wp_set_object_terms($this->request_id, $this->stage, 'arsol-pfw-request-stage', false);
+        }
         
         // Save notes and history using meta
         update_post_meta($this->request_id, '_arsol_pfw_request_stage_notes', $this->notes);
@@ -282,7 +295,7 @@ class Request_Stage implements Stage_Interface, WooCommerce_Stage_Interface, Sta
     {
         $args = [
             'post_type' => 'arsol_pfw_request',
-            'post_status' => 'any',
+            'post_status' => 'publish',  // Only published posts on frontend
             'tax_query' => [
                 [
                     'taxonomy' => 'arsol-pfw-request-stage',

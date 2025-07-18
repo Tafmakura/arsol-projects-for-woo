@@ -104,13 +104,18 @@ class Access_Handler {
 
     /**
      * Checks if a user can view a generic post.
-     * Base check relies on ownership.
+     * Base check relies on ownership and post status.
      *
      * @param \WP_Post $post      The post object.
      * @param int      $user_id   The User ID.
      * @return bool
      */
     private static function can_view_post(\WP_Post $post, $user_id) {
+        // Only published posts can be viewed on frontend
+        if ($post->post_status !== 'publish') {
+            return false;
+        }
+        
         // Owner can always view.
         if ((int) $post->post_author === (int) $user_id) {
             return true;

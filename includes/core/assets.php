@@ -215,6 +215,7 @@ class Assets {
                     
                     // Always localize quotation script for proposals (needed for all proposal types)
                     global $post;
+                    $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
                     $line_items = $proposal->get_meta('_arsol_pfw_proposed_project_quotation_line_items') ?: array();
                         
                         // Fetch product names and map saved prices for existing product line items
