@@ -239,12 +239,12 @@ function arsol_pfw_get_projects_with_subscriptions($args = array()) {
 }
 
 /**
- * Get project stage counts
+ * Get project stage counts using native WordPress term count properties
  * 
- * @return array Array of stage counts
+ * @return array Array of stage counts with native term properties
  */
 function arsol_pfw_get_project_stage_counts() {
-    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_statistics('arsol-pfw-project-stage', 'arsol-pfw-project');
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_count('arsol-pfw-project-stage', 'arsol-pfw-project');
 }
 
 /**
@@ -326,12 +326,13 @@ function arsol_pfw_get_projects_by_date_range($start_date, $end_date, $args = ar
 }
 
 /**
- * Bulk update project stages
+ * Set project stage for one or more projects
  * 
- * @param array $project_ids Array of project IDs
+ * @param int|array $project_ids Single project ID or array of project IDs
  * @param string $stage_slug Stage slug
+ * @param bool $create_if_missing Whether to create the stage if it doesn't exist
  * @return bool Success status
  */
-function arsol_pfw_bulk_update_project_stages($project_ids, $stage_slug) {
-    return \Arsol_Projects_For_Woo\Core\Stage_Handler::bulk_update_stage($project_ids, $stage_slug, 'arsol-pfw-project-stage');
+function arsol_pfw_set_project_stage($project_ids, $stage_slug, $create_if_missing = false) {
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($project_ids, $stage_slug, 'arsol-pfw-project-stage', $create_if_missing);
 } 

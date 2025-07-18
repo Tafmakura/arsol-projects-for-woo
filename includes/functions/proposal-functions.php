@@ -213,12 +213,24 @@ function arsol_pfw_get_proposals_by_date_range($start_date, $end_date, $args = a
 }
 
 /**
- * Get proposal stage counts
+ * Set proposal stage for one or more proposals
  * 
- * @return array Array of stage counts
+ * @param int|array $proposal_ids Single proposal ID or array of proposal IDs
+ * @param string $stage_slug Stage slug
+ * @param bool $create_if_missing Whether to create the stage if it doesn't exist
+ * @return bool Success status
+ */
+function arsol_pfw_set_proposal_stage($proposal_ids, $stage_slug, $create_if_missing = false) {
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($proposal_ids, $stage_slug, 'arsol-pfw-proposal-stage', $create_if_missing);
+}
+
+/**
+ * Get proposal stage counts using native WordPress term count properties
+ * 
+ * @return array Array of stage counts with native term properties
  */
 function arsol_pfw_get_proposal_stage_counts() {
-    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_statistics('arsol-pfw-proposal-stage', 'arsol-pfw-proposal');
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_count('arsol-pfw-proposal-stage', 'arsol-pfw-proposal');
 }
 
 /**
@@ -228,15 +240,4 @@ function arsol_pfw_get_proposal_stage_counts() {
  */
 function arsol_pfw_get_available_proposal_stages() {
     return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages('arsol-pfw-proposal-stage');
-}
-
-/**
- * Bulk update proposal stages
- * 
- * @param array $proposal_ids Array of proposal IDs
- * @param string $stage_slug Stage slug
- * @return bool Success status
- */
-function arsol_pfw_bulk_update_proposal_stages($proposal_ids, $stage_slug) {
-    return \Arsol_Projects_For_Woo\Core\Stage_Handler::bulk_update_stage($proposal_ids, $stage_slug, 'arsol-pfw-proposal-stage');
 } 

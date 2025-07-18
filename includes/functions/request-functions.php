@@ -318,12 +318,24 @@ function arsol_pfw_get_requests_by_date_range($start_date, $end_date, $args = ar
 }
 
 /**
- * Get request stage counts
+ * Set request stage for one or more requests
  * 
- * @return array Array of stage counts
+ * @param int|array $request_ids Single request ID or array of request IDs
+ * @param string $stage_slug Stage slug
+ * @param bool $create_if_missing Whether to create the stage if it doesn't exist
+ * @return bool Success status
+ */
+function arsol_pfw_set_request_stage($request_ids, $stage_slug, $create_if_missing = false) {
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::set_stage($request_ids, $stage_slug, 'arsol-pfw-request-stage', $create_if_missing);
+}
+
+/**
+ * Get request stage counts using native WordPress term count properties
+ * 
+ * @return array Array of stage counts with native term properties
  */
 function arsol_pfw_get_request_stage_counts() {
-    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_statistics('arsol-pfw-request-stage', 'arsol-pfw-request');
+    return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_count('arsol-pfw-request-stage', 'arsol-pfw-request');
 }
 
 /**
