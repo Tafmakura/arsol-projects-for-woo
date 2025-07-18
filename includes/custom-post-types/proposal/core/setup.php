@@ -146,10 +146,11 @@ class Setup {
     public function render_customer_request_details_section($post) {
         // Only show if this proposal has request data
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
-        if (!$proposal->get_request_id() && !$proposal->get_request_budget() && !$proposal->get_requested_project_start_date() && !$proposal->get_requested_project_due_date()) {
+        if (!$proposal->get_request_id() && !$proposal->get_requested_project_budget() && !$proposal->get_requested_project_start_date() && !$proposal->get_requested_project_due_date()) {
             return;
         }
-        $requested_budget = $proposal->get_request_budget();
+        
+        $requested_budget = $proposal->get_requested_project_budget();
         $requested_start_date = $proposal->get_requested_project_start_date();
         $requested_due_date = $proposal->get_requested_project_due_date();
         $request_date = $proposal->get_request_date();
@@ -217,7 +218,7 @@ class Setup {
      */
     private function has_request_data($post_id) {
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-        return $proposal->get_request_id() || $proposal->get_request_budget() || $proposal->get_requested_project_start_date() || $proposal->get_requested_project_due_date();
+        return $proposal->get_request_id() || $proposal->get_requested_project_budget() || $proposal->get_requested_project_start_date() || $proposal->get_requested_project_due_date();
     }
 
     /**

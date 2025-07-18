@@ -555,41 +555,22 @@ class Arsol_PFW_Request {
     }
 
     /**
-     * Get request budget
+     * Get requested project budget
      * 
      * @return array Budget data
      */
-    public function get_request_budget() {
+    public function get_requested_project_budget() {
         return $this->get_meta('_arsol_pfw_requested_project_budget') ?: array();
     }
 
     /**
-     * Set request budget
+     * Set requested project budget
      * 
      * @param array $budget Budget data
      * @return bool Success status
      */
-    public function set_request_budget($budget) {
+    public function set_requested_project_budget($budget) {
         return $this->set_meta('_arsol_pfw_requested_project_budget', $budget);
-    }
-
-    /**
-     * Get request quotation
-     * 
-     * @return array Quotation data
-     */
-    public function get_request_quotation() {
-        return $this->get_meta('_arsol_pfw_requested_project_quotation_line_items') ?: array();
-    }
-
-    /**
-     * Set request quotation
-     * 
-     * @param array $quotation Quotation data
-     * @return bool Success status
-     */
-    public function set_request_quotation($quotation) {
-        return $this->set_meta('_arsol_pfw_requested_project_quotation_line_items', $quotation);
     }
 
     /**
@@ -766,7 +747,6 @@ class Arsol_PFW_Request {
             '_arsol_pfw_customer_id',
             '_arsol_pfw_created_via',
             '_arsol_pfw_requested_project_budget',
-            '_arsol_pfw_requested_project_quotation_line_items',
             '_arsol_pfw_requested_project_start_date',
             '_arsol_pfw_requested_project_due_date',
             '_arsol_pfw_request_customer_notice',
@@ -823,54 +803,6 @@ class Arsol_PFW_Request {
      */
     public function get_changes() {
         return $this->changes;
-    }
-
-    /**
-     * Get request status (alias for stage, WooCommerce compatibility)
-     * 
-     * @return string Current status
-     */
-    public function get_status() {
-        return $this->get_stage();
-    }
-
-    /**
-     * Set request status (alias for stage, WooCommerce compatibility)
-     * 
-     * @param string $status Status
-     * @return bool Success status
-     */
-    public function set_status($status) {
-        return $this->set_stage($status);
-    }
-
-    /**
-     * Update request status (alias for stage, WooCommerce compatibility)
-     * 
-     * @param string $status New status
-     * @return bool|WP_Error Success status or error
-     */
-    public function update_status($status) {
-        return $this->update_stage($status);
-    }
-
-    /**
-     * Get customer user ID (WooCommerce compatibility - same as customer_id for our entities)
-     * 
-     * @return int Customer user ID
-     */
-    public function get_customer_user_id() {
-        return $this->get_customer_id();
-    }
-
-    /**
-     * Set customer user ID (WooCommerce compatibility - same as customer_id for our entities)
-     * 
-     * @param int $customer_user_id Customer user ID
-     * @return bool Success status
-     */
-    public function set_customer_user_id($customer_user_id) {
-        return $this->set_customer_id($customer_user_id);
     }
 
     /**
@@ -992,8 +924,6 @@ class Arsol_PFW_Request {
     public function get_proposal_due_date() {
         return $this->get_meta('_arsol_pfw_proposal_due_date');
     }
-
-
 
     /**
      * Get customer notice (legacy method for backward compatibility)

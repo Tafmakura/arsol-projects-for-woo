@@ -58,7 +58,7 @@ class List_Controller {
             case 'request_budget':
                 // Use Request entity for budget access
                 $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
-                $budget = $request->get_request_budget();
+                $budget = $request->get_requested_project_budget();
                 if ($budget) {
                     if (is_array($budget) && isset($budget['amount'])) {
                         $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();

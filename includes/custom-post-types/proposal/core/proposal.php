@@ -557,41 +557,79 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal budget
+     * Get proposed project budget
      * 
      * @return array Budget data
      */
-    public function get_proposal_budget() {
+    public function get_proposed_project_budget() {
         return $this->get_meta('_arsol_pfw_proposed_project_budget_line_items') ?: array();
     }
 
     /**
-     * Set proposal budget
+     * Set proposed project budget
      * 
      * @param array $budget Budget data
      * @return bool Success status
      */
-    public function set_proposal_budget($budget) {
+    public function set_proposed_project_budget($budget) {
         return $this->set_meta('_arsol_pfw_proposed_project_budget_line_items', $budget);
     }
 
     /**
-     * Get proposal quotation
+     * Get proposed project quotation
      * 
      * @return array Quotation data
      */
-    public function get_proposal_quotation() {
+    public function get_proposed_project_quotation() {
         return $this->get_meta('_arsol_pfw_proposed_project_quotation_line_items') ?: array();
     }
 
     /**
-     * Set proposal quotation
+     * Set proposed project quotation
      * 
      * @param array $quotation Quotation data
      * @return bool Success status
      */
-    public function set_proposal_quotation($quotation) {
+    public function set_proposed_project_quotation($quotation) {
         return $this->set_meta('_arsol_pfw_proposed_project_quotation_line_items', $quotation);
+    }
+
+    /**
+     * Get proposal budget notes
+     * 
+     * @return string Budget notes
+     */
+    public function get_proposal_budget_notes() {
+        return $this->get_meta('_arsol_pfw_proposal_budget_notes');
+    }
+
+    /**
+     * Set proposal budget notes
+     * 
+     * @param string $notes Budget notes
+     * @return bool Success status
+     */
+    public function set_proposal_budget_notes($notes) {
+        return $this->set_meta('_arsol_pfw_proposal_budget_notes', wp_kses_post($notes));
+    }
+
+    /**
+     * Get proposal quotation notes
+     * 
+     * @return string Quotation notes
+     */
+    public function get_proposal_quotation_notes() {
+        return $this->get_meta('_arsol_pfw_proposal_quotation_notes');
+    }
+
+    /**
+     * Set proposal quotation notes
+     * 
+     * @param string $notes Quotation notes
+     * @return bool Success status
+     */
+    public function set_proposal_quotation_notes($notes) {
+        return $this->set_meta('_arsol_pfw_proposal_quotation_notes', wp_kses_post($notes));
     }
 
     /**
@@ -861,21 +899,21 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get request budget (if converted from request)
+     * Get requested project budget (if converted from request)
      * 
-     * @return array Request budget
+     * @return array Requested project budget
      */
-    public function get_request_budget() {
+    public function get_requested_project_budget() {
         return $this->get_meta('_arsol_pfw_requested_project_budget') ?: array();
     }
 
     /**
-     * Set request budget
+     * Set requested project budget
      * 
-     * @param array $budget Request budget
+     * @param array $budget Requested project budget
      * @return bool Success status
      */
-    public function set_request_budget($budget) {
+    public function set_requested_project_budget($budget) {
         return $this->set_meta('_arsol_pfw_requested_project_budget', $budget);
     }
 
@@ -1067,54 +1105,6 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal status (alias for stage, WooCommerce compatibility)
-     * 
-     * @return string Current status
-     */
-    public function get_status() {
-        return $this->get_stage();
-    }
-
-    /**
-     * Set proposal status (alias for stage, WooCommerce compatibility)
-     * 
-     * @param string $status Status
-     * @return bool Success status
-     */
-    public function set_status($status) {
-        return $this->set_stage($status);
-    }
-
-    /**
-     * Update proposal status (alias for stage, WooCommerce compatibility)
-     * 
-     * @param string $status New status
-     * @return bool|WP_Error Success status or error
-     */
-    public function update_status($status) {
-        return $this->update_stage($status);
-    }
-
-    /**
-     * Get customer user ID (WooCommerce compatibility - same as customer_id for our entities)
-     * 
-     * @return int Customer user ID
-     */
-    public function get_customer_user_id() {
-        return $this->get_customer_id();
-    }
-
-    /**
-     * Set customer user ID (WooCommerce compatibility - same as customer_id for our entities)
-     * 
-     * @param int $customer_user_id Customer user ID
-     * @return bool Success status
-     */
-    public function set_customer_user_id($customer_user_id) {
-        return $this->set_customer_id($customer_user_id);
-    }
-
-    /**
      * Get date created
      * 
      * @return string Date created
@@ -1206,4 +1196,6 @@ class Arsol_PFW_Proposal {
     public function get_project_due_date() {
         return $this->get_meta('_arsol_pfw_project_due_date');
     }
+
+
 } 

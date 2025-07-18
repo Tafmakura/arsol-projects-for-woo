@@ -313,13 +313,13 @@ class Conversion_Handler {
         // Copy type-specific data using entity methods
         if ($cost_proposal_type === 'budget') {
             // Copy budget data using entity methods
-            $budget_data = $proposal->get_proposal_budget();
+            $budget_data = $proposal->get_proposed_project_budget();
             if (!empty($budget_data)) {
                 $project->set_project_budget($proposal->get_proposed_project_budget());
             }
         } elseif ($cost_proposal_type === 'quotation') {
             // Copy quotation data using entity methods
-            $quotation_data = $proposal->get_proposal_quotation();
+            $quotation_data = $proposal->get_proposed_project_quotation();
             if (!empty($quotation_data)) {
                 $project->set_project_quotation($quotation_data);
             }

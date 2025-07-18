@@ -26,8 +26,8 @@ $has_proposal_data = false;
 // If from proposal, get proposal budget/date data
 if ($proposal_id) {
     $has_proposal_data = true;
-    $budget_data = $project->get_proposal_budget_onetime_amount();
-    $recurring_budget_data = $project->get_proposal_budget_recurring_amount();
+            $budget_data = $project->get_proposed_budget();
+        $recurring_budget_data = $project->get_proposed_budget();
     $billing_interval = $project->get_proposal_budget_recurring_billing_interval();
     $billing_period = $project->get_proposal_budget_recurring_billing_period();
     $proposed_start_date = $project->get_meta('_arsol_pfw_proposed_project_start_date');

@@ -523,7 +523,7 @@ class Biller_Invoice {
             case 'quotation':
                 // Quotation type requires at least one quotation line item with description and amount
                 $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-                $quotation_data = $proposal_entity->get_proposal_quotation();
+                $quotation_data = $proposal_entity->get_proposed_project_quotation();
                 $line_items = $proposal_entity->get_quotation_line_items();
                 
                 if (empty($line_items) || !is_array($line_items)) {

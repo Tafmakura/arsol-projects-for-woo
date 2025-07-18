@@ -387,7 +387,7 @@ class Quotation_Controller {
         // Save line items to database using entity methods
         
         // Save totals to quotation data structure
-        $quotation_data = $proposal->get_proposal_quotation();
+        $quotation_data = $proposal->get_proposed_project_quotation();
         $quotation_data['onetime_total'] = sanitize_text_field($_POST['arsol_pfw_proposal_quotation_onetime_total']);
         
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
@@ -399,7 +399,7 @@ class Quotation_Controller {
         $quotation_data['currency'] = $currency_code;
         $quotation_data['currency_symbol'] = get_woocommerce_currency_symbol($currency_code);
         
-        $proposal->set_proposal_quotation($quotation_data);
+        $proposal->set_proposed_project_quotation($quotation_data);
         $proposal->save();
     }
 

@@ -60,20 +60,10 @@ class Conversion_Handler {
         switch ($cost_request_type) {
             case 'budget':
                 // Copy budget data
-                $budget_data = $request_entity->get_request_budget();
+                $budget_data = $request_entity->get_requested_project_budget();
                 if (!empty($budget_data)) {
                     $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-                    $proposal_entity->set_proposal_budget($budget_data);
-                    $proposal_entity->save();
-                }
-                break;
-                
-            case 'quotation':
-                // Copy quotation data
-                $quotation_data = $request_entity->get_request_quotation();
-                if (!empty($quotation_data)) {
-                    $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-                    $proposal_entity->set_proposal_quotation($quotation_data);
+                    $proposal_entity->set_proposed_project_budget($budget_data);
                     $proposal_entity->save();
                 }
                 break;
@@ -344,14 +334,14 @@ class Conversion_Handler {
         // 5. Copy type-specific data using entity methods
         if ($cost_proposal_type === 'budget') {
             // Copy budget data using entity methods
-            $budget_data = $proposal->get_proposal_budget();
+            $budget_data = $proposal->get_proposed_project_budget();
             if (!empty($budget_data)) {
                 $project->set_meta('_arsol_pfw_proposed_project_budget_line_items', $budget_data);
                 error_log("ARSOL PFW DEBUG: Copied budget data using entity methods");
             }
         } elseif ($cost_proposal_type === 'quotation') {
             // Copy quotation data using entity methods
-            $quotation_data = $proposal->get_proposal_quotation();
+            $quotation_data = $proposal->get_proposed_project_quotation();
             if (!empty($quotation_data)) {
                 $project->set_project_quotation($quotation_data);
                 error_log("ARSOL PFW DEBUG: Copied quotation data using entity methods");

@@ -23,7 +23,7 @@ if (!isset($proposal) || !is_object($proposal)) {
 }
 
 // Use variables passed from parent template
-$budget_data = $proposal->get_proposal_budget();
+$budget_data = $proposal->get_proposed_project_budget();
 $delivery_date = $proposal->get_proposed_project_due_date();
 $expiration_date = $proposal->get_expiration_date();
 $start_date = $proposal->get_proposed_project_start_date();

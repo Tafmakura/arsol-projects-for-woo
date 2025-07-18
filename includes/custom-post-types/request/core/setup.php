@@ -146,7 +146,7 @@ class Setup {
             return;
         }
         $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post->ID);
-        $requested_budget = $request->get_request_budget();
+        $requested_budget = $request->get_requested_project_budget();
         $requested_start_date = $request->get_requested_project_start_date();
         $requested_due_date = $request->get_requested_project_due_date();
         $request_date = $request->get_request_date();

@@ -784,94 +784,10 @@ class Project {
     /**
      * Get changes
      * 
-     * @return array Changes array
+     * @return array Changes
      */
     public function get_changes() {
         return $this->changes;
-    }
-
-    /**
-     * Get proposal budget onetime amount
-     * 
-     * @return array|string Proposal budget onetime amount
-     */
-    public function get_proposal_budget_onetime_amount() {
-        return $this->get_meta('_arsol_pfw_project_proposal_budget_onetime_amount');
-    }
-
-    /**
-     * Get proposal budget recurring amount
-     * 
-     * @return array|string Proposal budget recurring amount
-     */
-    public function get_proposal_budget_recurring_amount() {
-        return $this->get_meta('_arsol_pfw_project_proposal_budget_recurring_amount');
-    }
-
-    /**
-     * Get proposal budget recurring billing interval
-     * 
-     * @return string Proposal budget recurring billing interval
-     */
-    public function get_proposal_budget_recurring_billing_interval() {
-        return $this->get_meta('_arsol_pfw_project_proposal_budget_recurring_amount_billing_interval');
-    }
-
-    /**
-     * Get proposal budget recurring billing period
-     * 
-     * @return string Proposal budget recurring billing period
-     */
-    public function get_proposal_budget_recurring_billing_period() {
-        return $this->get_meta('_arsol_pfw_project_proposal_budget_recurring_amount_billing_period');
-    }
-
-    /**
-     * Get project status (alias for stage, WooCommerce compatibility)
-     * 
-     * @return string Current status
-     */
-    public function get_status() {
-        return $this->get_stage();
-    }
-
-    /**
-     * Set project status (alias for stage, WooCommerce compatibility)
-     * 
-     * @param string $status Status
-     * @return bool Success status
-     */
-    public function set_status($status) {
-        return $this->set_stage($status);
-    }
-
-    /**
-     * Update project status (alias for stage, WooCommerce compatibility)
-     * 
-     * @param string $status New status
-     * @return bool|WP_Error Success status or error
-     */
-    public function update_status($status) {
-        return $this->update_stage($status);
-    }
-
-    /**
-     * Get customer user ID (WooCommerce compatibility - same as customer_id for our entities)
-     * 
-     * @return int Customer user ID
-     */
-    public function get_customer_user_id() {
-        return $this->get_customer_id();
-    }
-
-    /**
-     * Set customer user ID (WooCommerce compatibility - same as customer_id for our entities)
-     * 
-     * @param int $customer_user_id Customer user ID
-     * @return bool Success status
-     */
-    public function set_customer_user_id($customer_user_id) {
-        return $this->set_customer_id($customer_user_id);
     }
 
     /**
@@ -941,11 +857,11 @@ class Project {
     }
 
     /**
-     * Get proposal budget (cross-entity access for historical data)
+     * Get proposed budget (cross-entity access to proposal data)
      * 
-     * @return array|string Proposal budget
+     * @return array|string Proposed budget
      */
-    public function get_proposal_budget() {
+    public function get_proposed_budget() {
         // First try current proposal budget
         $current_budget = $this->get_meta('_arsol_pfw_proposal_budget');
         if (!empty($current_budget)) {
@@ -957,20 +873,20 @@ class Project {
     }
 
     /**
-     * Get request budget (cross-entity access for historical data)
+     * Get requested budget (cross-entity access to request data)
      * 
-     * @return array|string Request budget
+     * @return array|string Requested budget
      */
-    public function get_request_budget() {
+    public function get_requested_budget() {
         return $this->get_meta('_arsol_pfw_project_requested_budget');
     }
 
     /**
-     * Get proposal start date (cross-entity access for historical data)
+     * Get proposed start date (cross-entity access to proposal data)
      * 
-     * @return string Proposal start date
+     * @return string Proposed start date
      */
-    public function get_proposed_project_start_date() {
+    public function get_proposed_start_date() {
         // First try current proposal start date
         $current_date = $this->get_meta('_arsol_pfw_proposal_start_date');
         if (!empty($current_date)) {
@@ -982,9 +898,9 @@ class Project {
     }
 
     /**
-     * Get proposal due date (cross-entity access for historical data)
+     * Get proposed due date (cross-entity access to proposal data)
      * 
-     * @return string Proposal due date
+     * @return string Proposed due date
      */
     public function get_proposed_due_date() {
         // First try current proposal due date
@@ -998,18 +914,18 @@ class Project {
     }
 
     /**
-     * Get request start date (cross-entity access for historical data)
+     * Get requested start date (cross-entity access to request data)
      * 
-     * @return string Request start date
+     * @return string Requested start date
      */
     public function get_requested_start_date() {
         return $this->get_meta('_arsol_pfw_project_requested_start_date');
     }
 
     /**
-     * Get request due date (cross-entity access for historical data)
+     * Get requested due date (cross-entity access to request data)
      * 
-     * @return string Request due date
+     * @return string Requested due date
      */
     public function get_requested_due_date() {
         return $this->get_meta('_arsol_pfw_requested_project_due_date');

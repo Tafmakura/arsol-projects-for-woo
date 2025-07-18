@@ -215,7 +215,7 @@ class Shortcodes {
 	private function can_customer_view_project($project_id) {
 		$project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
 		
-		if (!$project || $project->get_status() !== 'publish') {
+		if (!$project || $project->get_stage() !== 'publish') {
 			return false;
 		}
 		
