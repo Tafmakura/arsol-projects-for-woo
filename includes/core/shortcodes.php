@@ -224,9 +224,7 @@ class Shortcodes {
 			return true;
 		}
 		
-		// Check if project is publicly viewable
-		$is_public = $project->get_meta('_arsol_pfw_project_public');
-		return $is_public === 'yes';
+		return false;
 	}
 
 	/**
@@ -734,15 +732,9 @@ class Shortcodes {
 
 		// Resolve dynamic parameters
 		$params = $this->resolve_dynamic_parameters($atts);
-		$context = $this->detect_context();
 		
-		if ($context === 'my_account') {
-			// Show user's own projects
-			return $this->render_user_projects($params, 'active');
-		} else {
-			// Show public projects with optional filtering
-			return $this->render_public_projects($params, 'active');
-		}
+		// Only show user's own projects - no public projects supported
+		return $this->render_user_projects($params, 'active');
 	}
 
 	/**
@@ -835,102 +827,6 @@ class Shortcodes {
 	}
 
 	/**
-	 * Render public projects (public page context)
-	 *
-	 * @param array $params Resolved parameters
-	 * @param string $project_type Type of projects to show
-	 * @return string HTML output
-	 */
-	private function render_public_projects($params, $project_type = 'active') {
-		ob_start();
-		
-		$paged = max(1, intval($params['paged']));
-		$per_page = max(1, intval($params['per_page']));
-
-		// Build query args for public projects
-		$query_args = array(
-			'post_type' => 'arsol-pfw-project',
-			'post_status' => 'publish',
-			'posts_per_page' => $per_page,
-			'paged' => $paged,
-			'orderby' => $params['orderby'],
-			'order' => $params['order'],
-			'meta_query' => array(
-				array(
-					            'key' => '_arsol_pfw_project_public',
-					'value' => 'yes',
-					'compare' => '='
-				)
-			)
-		);
-
-		// Add customer filter if specified
-		if ($params['customer_id']) {
-			$customer_id = intval($params['customer_id']);
-			// Validate customer exists
-			if (get_user_by('id', $customer_id)) {
-				$query_args['author'] = $customer_id;
-			}
-		}
-
-		// Add status filter
-		if ($project_type === 'active') {
-			$query_args['meta_query'][] = array(
-				'relation' => 'OR',
-				array(
-					'key' => '_arsol_pfw_project_stage',
-					'value' => 'active',
-					'compare' => '='
-				),
-				array(
-					'key' => '_arsol_pfw_project_stage',
-					'value' => 'completed',
-					'compare' => '!='
-				),
-				array(
-					'key' => '_arsol_pfw_project_stage',
-					'compare' => 'NOT EXISTS'
-				)
-			);
-		} elseif ($params['status']) {
-			$query_args['meta_query'][] = array(
-				'key' => '_arsol_pfw_project_stage',
-				'value' => $params['status'],
-				'compare' => '='
-			);
-		}
-
-		// Add category filter
-		if ($params['category']) {
-			$query_args['tax_query'] = array(
-				array(
-					'taxonomy' => 'arsol-pfw-project-category',
-					'field' => 'slug',
-					'terms' => $params['category']
-				)
-			);
-		}
-
-		// Add search filter
-		if ($params['search']) {
-			$query_args['s'] = $params['search'];
-		}
-
-		$query = new \WP_Query($query_args);
-
-		$total_pages = $query->max_num_pages;
-		$wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
-		$current_tab = $project_type;
-
-		// Load the projects listing template
-		include ARSOL_PFW_PLUGIN_DIR . 'ui/partials/frontend/projects/projects-listing-project.php';
-		
-		wp_reset_postdata();
-
-		return ob_get_clean();
-	}
-
-	/**
 	 * Project proposals listing shortcode
 	 *
 	 * @param array $atts Shortcode attributes
@@ -949,15 +845,9 @@ class Shortcodes {
 
 		// Resolve dynamic parameters
 		$params = $this->resolve_dynamic_parameters($atts);
-		$context = $this->detect_context();
 		
-		if ($context === 'my_account') {
-			// Show user's own proposals
-			return $this->render_user_proposals($params);
-		} else {
-			// Show public proposals with optional filtering
-			return $this->render_public_proposals($params);
-		}
+		// Only show user's own proposals - no public proposals supported
+		return $this->render_user_proposals($params);
 	}
 
 	/**
@@ -1009,63 +899,6 @@ class Shortcodes {
 	}
 
 	/**
-	 * Render public proposals (public page context)
-	 *
-	 * @param array $params Resolved parameters
-	 * @return string HTML output
-	 */
-	private function render_public_proposals($params) {
-		ob_start();
-		
-		$paged = max(1, intval($params['paged']));
-		$per_page = max(1, intval($params['per_page']));
-
-		// Build query args for public proposals
-		$query_args = array(
-			'post_type' => 'arsol-pfw-proposal',
-			'post_status' => 'publish',
-			'posts_per_page' => $per_page,
-			'paged' => $paged,
-			'orderby' => $params['orderby'],
-			'order' => $params['order'],
-			'meta_query' => array(
-				array(
-					            'key' => '_arsol_pfw_proposal_public',
-					'value' => 'yes',
-					'compare' => '='
-				)
-			)
-		);
-
-		// Add customer filter if specified
-		if ($params['customer_id']) {
-			$customer_id = intval($params['customer_id']);
-			// Validate customer exists
-			if (get_user_by('id', $customer_id)) {
-				$query_args['author'] = $customer_id;
-			}
-		}
-
-		// Add search filter
-		if ($params['search']) {
-			$query_args['s'] = $params['search'];
-		}
-
-		$query = new \WP_Query($query_args);
-
-		$total_pages = $query->max_num_pages;
-		$wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
-		$current_tab = 'proposals';
-
-		// Load the proposals listing template
-		include ARSOL_PFW_PLUGIN_DIR . 'ui/partials/frontend/projects/projects-listing-proposals.php';
-		
-		wp_reset_postdata();
-
-		return ob_get_clean();
-	}
-
-	/**
 	 * Project requests listing shortcode
 	 *
 	 * @param array $atts Shortcode attributes
@@ -1084,15 +917,9 @@ class Shortcodes {
 
 		// Resolve dynamic parameters
 		$params = $this->resolve_dynamic_parameters($atts);
-		$context = $this->detect_context();
 		
-		if ($context === 'my_account') {
-			// Show user's own requests
-			return $this->render_user_requests($params);
-		} else {
-			// Show public requests with optional filtering
-			return $this->render_public_requests($params);
-		}
+		// Only show user's own requests - no public requests supported
+		return $this->render_user_requests($params);
 	}
 
 	/**
@@ -1123,63 +950,6 @@ class Shortcodes {
 			'orderby' => $params['orderby'],
 			'order' => $params['order'],
 		);
-
-		// Add search filter
-		if ($params['search']) {
-			$query_args['s'] = $params['search'];
-		}
-
-		$query = new \WP_Query($query_args);
-
-		$total_pages = $query->max_num_pages;
-		$wp_button_class = function_exists('wc_wp_theme_get_element_class_name') ? ' ' . wc_wp_theme_get_element_class_name('button') : '';
-		$current_tab = 'requests';
-
-		// Load the requests listing template
-		include ARSOL_PFW_PLUGIN_DIR . 'ui/partials/frontend/projects/projects-listing-requests.php';
-		
-		wp_reset_postdata();
-
-		return ob_get_clean();
-	}
-
-	/**
-	 * Render public requests (public page context)
-	 *
-	 * @param array $params Resolved parameters
-	 * @return string HTML output
-	 */
-	private function render_public_requests($params) {
-		ob_start();
-		
-		$paged = max(1, intval($params['paged']));
-		$per_page = max(1, intval($params['per_page']));
-
-		// Build query args for public requests
-		$query_args = array(
-			'post_type' => 'arsol-pfw-request',
-			'post_status' => 'publish',
-			'posts_per_page' => $per_page,
-			'paged' => $paged,
-			'orderby' => $params['orderby'],
-			'order' => $params['order'],
-			'meta_query' => array(
-				array(
-					            'key' => '_arsol_pfw_request_public',
-					'value' => 'yes',
-					'compare' => '='
-				)
-			)
-		);
-
-		// Add customer filter if specified
-		if ($params['customer_id']) {
-			$customer_id = intval($params['customer_id']);
-			// Validate customer exists
-			if (get_user_by('id', $customer_id)) {
-				$query_args['author'] = $customer_id;
-			}
-		}
 
 		// Add search filter
 		if ($params['search']) {
