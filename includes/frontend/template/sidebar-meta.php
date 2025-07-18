@@ -696,23 +696,8 @@ class Sidebar_Meta {
             );
         }
         
-        // Project Lead
-        $project_lead = $request->get_requested_project_lead();
-        $start_date = $request->get_requested_project_start_date();
-        $due_date = $request->get_requested_project_due_date();
-        
-        if (!empty($project_lead)) {
-            $lead = get_userdata($project_lead);
-            if ($lead) {
-                $metadata['project_lead'] = array(
-                    'label' => __('Project Lead', 'arsol-pfw'),
-                    'value' => $lead->display_name,
-                    'type' => 'text'
-                );
-            }
-        }
-        
         // Start Date
+        $start_date = $request->get_requested_project_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -722,6 +707,7 @@ class Sidebar_Meta {
         }
         
         // Due Date
+        $due_date = $request->get_requested_project_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
