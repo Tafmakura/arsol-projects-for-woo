@@ -167,21 +167,12 @@ class Project {
     }
 
     /**
-     * Get project stage entity (internal use)
-     *
-     * @return \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage
-     */
-    private function get_stage_entity() {
-        return new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage($this->project_id);
-    }
-
-    /**
      * Get project stage
      * 
      * @return string Current stage
      */
     public function get_stage() {
-        return $this->get_stage_entity()->get_stage();
+        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage($this->project_id, self::get_stage_taxonomy());
     }
 
     /**
@@ -191,7 +182,7 @@ class Project {
      * @return bool Success status
      */
     public function set_stage($stage) {
-        return $this->get_stage_entity()->set_stage($stage);
+        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::set_stage($this->project_id, $stage, self::get_stage_taxonomy());
     }
 
     /**
@@ -202,7 +193,8 @@ class Project {
      * @return bool Success status
      */
     public function update_stage($new_stage, $note = '') {
-        return $this->get_stage_entity()->update_stage($new_stage, $note);
+        // For now, just set the stage. Notes functionality can be added later if needed
+        return $this->set_stage($new_stage);
     }
 
     /**
@@ -211,7 +203,7 @@ class Project {
      * @return string Human-readable stage label
      */
     public function get_stage_label() {
-        return $this->get_stage_entity()->get_stage_label();
+        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage_name($this->project_id, self::get_stage_taxonomy());
     }
 
     /**
@@ -220,7 +212,8 @@ class Project {
      * @return string Stage notes
      */
     public function get_stage_notes() {
-        return $this->get_stage_entity()->get_stage_notes();
+        // Notes functionality removed in simplified system
+        return '';
     }
 
     /**
@@ -230,7 +223,8 @@ class Project {
      * @return bool Success status
      */
     public function set_stage_notes($notes) {
-        return $this->get_stage_entity()->set_stage_notes($notes);
+        // Notes functionality removed in simplified system
+        return true;
     }
 
     /**
@@ -239,7 +233,8 @@ class Project {
      * @return array Array of stage change history
      */
     public function get_stage_history() {
-        return $this->get_stage_entity()->get_stage_history();
+        // History functionality removed in simplified system
+        return [];
     }
 
     /**
@@ -248,7 +243,8 @@ class Project {
      * @return array Array of allowed stage transitions
      */
     public function get_allowed_stage_transitions() {
-        return $this->get_stage_entity()->get_allowed_transitions();
+        // Transition validation removed in simplified system
+        return [];
     }
 
     /**
@@ -258,7 +254,8 @@ class Project {
      * @return bool True if transition is allowed
      */
     public function can_transition_to($new_stage) {
-        return $this->get_stage_entity()->can_transition_to($new_stage);
+        // Transition validation removed in simplified system
+        return true;
     }
 
     /**
@@ -267,7 +264,8 @@ class Project {
      * @return bool true if this is a final stage
      */
     public function is_final_stage() {
-        return $this->get_stage_entity()->is_final_stage();
+        // Final stage logic removed in simplified system
+        return false;
     }
 
     /**
@@ -276,7 +274,8 @@ class Project {
      * @return bool true this is an initial stage
      */
     public function is_initial_stage() {
-        return $this->get_stage_entity()->is_initial_stage();
+        // Initial stage logic removed in simplified system
+        return false;
     }
 
     /**
@@ -285,7 +284,7 @@ class Project {
      * @return array Array of available stages
      */
     public function get_available_stages() {
-        return $this->get_stage_entity()->get_available_stages();
+        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages(self::get_stage_taxonomy());
     }
 
     /**
