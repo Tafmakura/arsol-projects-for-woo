@@ -734,7 +734,7 @@ class Shortcodes {
 		$params = $this->resolve_dynamic_parameters($atts);
 		
 		// Only show user's own projects - no public projects supported
-		return $this->render_user_projects($params, 'active');
+			return $this->render_user_projects($params, 'active');
 	}
 
 	/**
@@ -847,7 +847,7 @@ class Shortcodes {
 		$params = $this->resolve_dynamic_parameters($atts);
 		
 		// Only show user's own proposals - no public proposals supported
-		return $this->render_user_proposals($params);
+			return $this->render_user_proposals($params);
 	}
 
 	/**
@@ -919,7 +919,7 @@ class Shortcodes {
 		$params = $this->resolve_dynamic_parameters($atts);
 		
 		// Only show user's own requests - no public requests supported
-		return $this->render_user_requests($params);
+			return $this->render_user_requests($params);
 	}
 
 	/**

@@ -74,6 +74,8 @@ class Setup {
      */
     private function load_core_files() {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/assets.php';
+        // Stage management core
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/stage-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/capabilities-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/access-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/core/conversion-handler.php';
