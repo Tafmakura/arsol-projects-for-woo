@@ -201,110 +201,44 @@ class Arsol_PFW_Proposal {
 
     /**
      * Get proposal stage label
-     *
-     * @return string Human-readable stage label
+     * 
+     * @return string Stage label
      */
     public function get_stage_label() {
-        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_name($this->proposal_id, self::get_stage_taxonomy());
-    }
-
-    /**
-     * Get proposal stage notes
-     *
-     * @return string Stage notes
-     */
-    public function get_stage_notes() {
-        // Notes functionality removed in simplified system
-        return '';
-    }
-
-    /**
-     * Set proposal stage notes
-     *
-     * @param string $notes Stage notes
-     * @return bool Success status
-     */
-    public function set_stage_notes($notes) {
-        // Notes functionality removed in simplified system
-        return true;
-    }
-
-    /**
-     * Get proposal stage history
-     *
-     * @return array Array of stage change history
-     */
-    public function get_stage_history() {
-        // History functionality removed in simplified system
-        return [];
-    }
-
-    /**
-     * Get allowed stage transitions
-     *
-     * @return array Array of allowed stage transitions
-     */
-    public function get_allowed_stage_transitions() {
-        // Transition validation removed in simplified system
-        return [];
-    }
-
-    /**
-     * Check if stage transition is allowed
-     *
-     * @param string $new_stage Stage to transition to
-     * @return bool True if transition is allowed
-     */
-    public function can_transition_to($new_stage) {
-        // Transition validation removed in simplified system
-        return true;
-    }
-
-    /**
-     * Check if current stage is final
-     *
-     * @return bool true if this is a final stage
-     */
-    public function is_final_stage() {
-        // Final stage logic removed in simplified system
-        return false;
-    }
-
-    /**
-     * Check if current stage is initial
-     *
-     * @return bool true this is an initial stage
-     */
-    public function is_initial_stage() {
-        // Initial stage logic removed in simplified system
-        return false;
+        $stage = $this->get_stage();
+        if (!$stage) {
+            return '';
+        }
+        
+        $term = get_term_by('slug', $stage, self::get_stage_taxonomy());
+        return $term ? $term->name : $stage;
     }
 
     /**
      * Get available stages
-     *
-     * @return array Array of available stages
+     * 
+     * @return array Available stages
      */
     public function get_available_stages() {
         return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages(self::get_stage_taxonomy());
     }
 
     /**
-     * Get proposal meta value
+     * Get proposal meta
      * 
      * @param string $key Meta key
-     * @param bool $single Return single value
+     * @param bool $single Whether to return a single value
      * @return mixed Meta value
      */
     public function get_meta($key, $single = true) {
         if (!$this->proposal_id) {
-            return $single ? '' : array();
+            return '';
         }
         return get_post_meta($this->proposal_id, $key, $single);
     }
 
     /**
-     * Set proposal meta value
+     * Set proposal meta
      * 
      * @param string $key Meta key
      * @param mixed $value Meta value
@@ -1072,27 +1006,6 @@ class Arsol_PFW_Proposal {
             return false;
         }
         return delete_post_meta($this->proposal_id, $key);
-    }
-
-    /**
-     * Get proposal property
-     * 
-     * @param string $prop Property name
-     * @return mixed Property value
-     */
-    public function get_prop($prop) {
-        return isset($this->data[$prop]) ? $this->data[$prop] : null;
-    }
-
-    /**
-     * Set proposal property
-     * 
-     * @param string $prop Property name
-     * @param mixed $value Property value
-     */
-    public function set_prop($prop, $value) {
-        $this->data[$prop] = $value;
-        $this->changes[$prop] = $value;
     }
 
     /**

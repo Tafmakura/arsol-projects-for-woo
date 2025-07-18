@@ -49,15 +49,11 @@ class Project_Data_Store {
             return $post_id;
         }
         
-        // Set ID
-        $project->set_prop('id', $post_id);
-        
         // Set customer ID
         $project->set_customer_id($customer_id);
         
         // Save meta
-        $this->save_simple_meta($project);
-        $this->save_complex_meta($project);
+        $this->save_meta($project);
         
         // Set initial stage
         $stage = $project->get_stage() ?: 'not-started';
@@ -100,18 +96,6 @@ class Project_Data_Store {
             $project->set_created_via($created_via);
         }
         
-        // Load simple meta data
-        foreach ($this->meta_keys as $prop => $meta_key) {
-            $value = $project->get_meta($meta_key);
-            $project->set_prop($prop, $value);
-        }
-        
-        // Load complex meta data
-        foreach ($this->complex_meta_keys as $prop => $meta_key) {
-            $value = $project->get_meta($meta_key);
-            $project->set_prop($prop, $value ?: array());
-        }
-        
         return true;
     }
     
@@ -122,21 +106,19 @@ class Project_Data_Store {
      * @return bool|WP_Error
      */
     public function update($project) {
-        $changes = $project->get_changes();
-        
-        if (empty($changes)) {
-            return true;
-        }
-        
         // Update post if needed
         $post_updates = array();
         
-        if (isset($changes['name'])) {
-            $post_updates['post_title'] = $changes['name'];
+        // Check if title or description need updating
+        $current_title = $project->get_title();
+        $current_description = $project->get_description();
+        
+        if ($current_title && $current_title !== get_the_title($project->get_id())) {
+            $post_updates['post_title'] = $current_title;
         }
         
-        if (isset($changes['description'])) {
-            $post_updates['post_content'] = $changes['description'];
+        if ($current_description && $current_description !== get_post_field('post_content', $project->get_id())) {
+            $post_updates['post_content'] = $current_description;
         }
         
         if (!empty($post_updates)) {
@@ -148,18 +130,8 @@ class Project_Data_Store {
             }
         }
         
-        // Update customer_id and created_via using entity methods
-        if (isset($changes['customer_id'])) {
-            $project->set_customer_id($changes['customer_id']);
-        }
-        
-        if (isset($changes['created_via'])) {
-            $project->set_created_via($changes['created_via']);
-        }
-        
         // Update meta
-        $this->save_simple_meta($project);
-        $this->save_complex_meta($project);
+        $this->save_meta($project);
         
         do_action('arsol_pfw_project_updated', $project->get_id(), $project);
         
@@ -187,30 +159,39 @@ class Project_Data_Store {
     }
     
     /**
-     * Save simple meta data
+     * Save meta data
      *
      * @param object $project Project object
      */
-    protected function save_simple_meta($project) {
-        foreach ($this->meta_keys as $prop => $meta_key) {
-            $value = $project->get_prop($prop);
-            if ($value !== null) {
-                $project->set_meta($meta_key, $value);
-            }
+    protected function save_meta($project) {
+        // Save budget
+        $budget = $project->get_project_budget();
+        if ($budget !== null) {
+            $project->set_meta('_arsol_pfw_project_budget_line_items', $budget);
         }
-    }
-    
-    /**
-     * Save complex meta data (array-based structures)
-     *
-     * @param object $project Project object
-     */
-    protected function save_complex_meta($project) {
-        foreach ($this->complex_meta_keys as $prop => $meta_key) {
-            $value = $project->get_prop($prop);
-            if ($value !== null) {
-                $project->set_meta($meta_key, $value);
-            }
+        
+        // Save due date
+        $due_date = $project->get_project_due_date();
+        if ($due_date !== null) {
+            $project->set_meta('_arsol_pfw_project_due_date', $due_date);
+        }
+        
+        // Save start date
+        $start_date = $project->get_project_start_date();
+        if ($start_date !== null) {
+            $project->set_meta('_arsol_pfw_project_start_date', $start_date);
+        }
+        
+        // Save project lead
+        $project_lead = $project->get_project_lead();
+        if ($project_lead !== null) {
+            $project->set_meta('_arsol_pfw_project_lead', $project_lead);
+        }
+        
+        // Save customer notice
+        $customer_notice = $project->get_project_customer_notice();
+        if ($customer_notice !== null) {
+            $project->set_meta('_arsol_pfw_project_customer_notice', $customer_notice);
         }
     }
     

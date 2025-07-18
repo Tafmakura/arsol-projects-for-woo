@@ -199,111 +199,44 @@ class Project {
 
     /**
      * Get project stage label
-     *
-     * @return string Human-readable stage label
+     * 
+     * @return string Stage label
      */
     public function get_stage_label() {
-        return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_stage_name($this->project_id, self::get_stage_taxonomy());
-    }
-
-    /**
-     * Get project stage notes
-     *
-     * @return string Stage notes
-     */
-    public function get_stage_notes() {
-        // Notes functionality removed in simplified system
-        return '';
-    }
-
-    /**
-     * Set project stage notes
-     *
-     * @param string $notes Stage notes
-     * @return bool Success status
-     */
-    public function set_stage_notes($notes) {
-        // Notes functionality removed in simplified system
-        return true;
-    }
-
-    /**
-     * Get project stage history
-     *
-     * @return array Array of stage change history
-     */
-    public function get_stage_history() {
-        // History functionality removed in simplified system
-        return [];
-    }
-
-    /**
-     * Get allowed stage transitions
-     *
-     * @return array Array of allowed stage transitions
-     */
-    public function get_allowed_stage_transitions() {
-        // Transition validation removed in simplified system
-        return [];
-    }
-
-    /**
-     * Check if stage transition is allowed
-     *
-     * @param string $new_stage Stage to transition to
-     * @return bool True if transition is allowed
-     */
-    public function can_transition_to($new_stage) {
-        // Transition validation removed in simplified system
-        return true;
-    }
-
-    /**
-     * Check if current stage is final
-     *
-     * @return bool true if this is a final stage
-     */
-    public function is_final_stage() {
-        // Final stage logic removed in simplified system
-        return false;
-    }
-
-    /**
-     * Check if current stage is initial
-     *
-     * @return bool true this is an initial stage
-     */
-    public function is_initial_stage() {
-        // Initial stage logic removed in simplified system
-        return false;
+        $stage = $this->get_stage();
+        if (!$stage) {
+            return '';
+        }
+        
+        $term = get_term_by('slug', $stage, self::get_stage_taxonomy());
+        return $term ? $term->name : $stage;
     }
 
     /**
      * Get available stages
-     *
-     * @return array Array of available stages
+     * 
+     * @return array Available stages
      */
     public function get_available_stages() {
         return \Arsol_Projects_For_Woo\Core\Stage_Handler::get_available_stages(self::get_stage_taxonomy());
     }
 
     /**
-     * Get project meta value
+     * Get project meta
      * 
      * @param string $key Meta key
-     * @param bool $single Return single value
+     * @param bool $single Whether to return a single value
      * @return mixed Meta value
      */
     public function get_meta($key, $single = true) {
         if (!$this->project_id) {
-            return $single ? '' : array();
+            return '';
         }
-
         return get_post_meta($this->project_id, $key, $single);
     }
 
     /**
-     * Set project meta value
+     * Set project meta
      * 
      * @param string $key Meta key
      * @param mixed $value Meta value
@@ -313,7 +246,6 @@ class Project {
         if (!$this->project_id) {
             return false;
         }
-
         return update_post_meta($this->project_id, $key, $value);
     }
 
@@ -522,8 +454,21 @@ class Project {
      * @return bool Success status
      */
     public function set_title($title) {
-        $this->set_prop('name', $title);
-        return true;
+        if (!$this->project_id) {
+            return false;
+        }
+        
+        $result = wp_update_post(array(
+            'ID' => $this->project_id,
+            'post_title' => sanitize_text_field($title)
+        ));
+        
+        if (!is_wp_error($result)) {
+            $this->project = get_post($this->project_id);
+            return true;
+        }
+        
+        return false;
     }
 
     /**
@@ -532,7 +477,7 @@ class Project {
      * @return string Project description
      */
     public function get_description() {
-        return $this->get_prop('description');
+        return $this->get_content();
     }
 
     /**
@@ -542,7 +487,6 @@ class Project {
      * @return bool Success status
      */
     public function set_description($description) {
-        $this->set_prop('description', $description);
         return $this->update(array('content' => $description));
     }
 
@@ -552,7 +496,7 @@ class Project {
      * @return array Project budget data
      */
     public function get_project_budget() {
-        return $this->get_prop('budget');
+        return $this->get_meta('_arsol_pfw_project_budget_line_items') ?: array();
     }
 
     /**
@@ -562,7 +506,6 @@ class Project {
      * @return bool Success status
      */
     public function set_project_budget($budget) {
-        $this->set_project_budget($budget);
         return $this->set_meta('_arsol_pfw_project_budget_line_items', $budget);
     }
 
@@ -572,7 +515,7 @@ class Project {
      * @return string Project due date
      */
     public function get_project_due_date() {
-        return $this->get_prop('due_date');
+        return $this->get_meta('_arsol_pfw_project_due_date');
     }
 
     /**
@@ -582,7 +525,7 @@ class Project {
      * @return bool Success status
      */
     public function set_project_due_date($due_date) {
-        return $this->set_project_due_date($due_date);
+        return $this->set_meta('_arsol_pfw_project_due_date', sanitize_text_field($due_date));
     }
 
     /**
@@ -591,7 +534,7 @@ class Project {
      * @return int|null Project lead ID
      */
     public function get_project_lead() {
-        return $this->get_prop('project_lead');
+        return $this->get_meta('_arsol_pfw_project_lead');
     }
 
     /**
@@ -601,7 +544,6 @@ class Project {
      * @return bool Success status
      */
     public function set_project_lead($lead_id) {
-        $this->set_project_lead((int) $lead_id);
         return $this->set_meta('_arsol_pfw_project_lead', (int) $lead_id);
     }
 
@@ -611,7 +553,7 @@ class Project {
      * @return string Project start date
      */
     public function get_project_start_date() {
-        return $this->get_prop('start_date');
+        return $this->get_meta('_arsol_pfw_project_start_date');
     }
 
     /**
@@ -621,7 +563,6 @@ class Project {
      * @return bool Success status
      */
     public function set_project_start_date($start_date) {
-        $this->set_project_start_date($start_date);
         return $this->set_meta('_arsol_pfw_project_start_date', sanitize_text_field($start_date));
     }
 
@@ -753,32 +694,6 @@ class Project {
         }
         
         return delete_post_meta($this->project_id, $key);
-    }
-
-    /**
-     * Get property value
-     * 
-     * @param string $prop Property name
-     * @return mixed Property value
-     */
-    public function get_prop($prop) {
-        return isset($this->data[$prop]) ? $this->data[$prop] : null;
-    }
-
-    /**
-     * Set property value
-     * 
-     * @param string $prop Property name
-     * @param mixed $value Property value
-     * @return bool Success status
-     */
-    public function set_prop($prop, $value) {
-        if ($this->get_prop($prop) !== $value) {
-            $this->changes[$prop] = $value;
-            $this->data[$prop] = $value;
-        }
-        
-        return true;
     }
 
     /**

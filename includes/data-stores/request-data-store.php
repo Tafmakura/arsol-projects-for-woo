@@ -39,9 +39,6 @@ class Request_Data_Store {
             return $post_id;
         }
         
-        // Set ID
-        $request->set_prop('id', $post_id);
-        
         // Set customer ID
         $request->set_customer_id($customer_id);
         
@@ -83,16 +80,10 @@ class Request_Data_Store {
         $created_via = $request->get_created_via();
         
         if ($customer_id) {
-            $request->set_prop('customer_id', $customer_id);
+            $request->set_customer_id($customer_id);
         }
         if ($created_via) {
             $request->set_created_via($created_via);
-        }
-        
-        // Load meta data
-        foreach ($this->meta_keys as $prop => $meta_key) {
-            $value = $request->get_meta($meta_key);
-            $request->set_prop($prop, $value);
         }
         
         return true;
@@ -105,21 +96,19 @@ class Request_Data_Store {
      * @return bool|WP_Error
      */
     public function update($request) {
-        $changes = $request->get_changes();
-        
-        if (empty($changes)) {
-            return true;
-        }
-        
         // Update post if needed
         $post_updates = array();
         
-        if (isset($changes['name'])) {
-            $post_updates['post_title'] = $changes['name'];
+        // Check if title or description need updating
+        $current_title = $request->get_title();
+        $current_description = $request->get_description();
+        
+        if ($current_title && $current_title !== get_the_title($request->get_id())) {
+            $post_updates['post_title'] = $current_title;
         }
         
-        if (isset($changes['description'])) {
-            $post_updates['post_content'] = $changes['description'];
+        if ($current_description && $current_description !== get_post_field('post_content', $request->get_id())) {
+            $post_updates['post_content'] = $current_description;
         }
         
         if (!empty($post_updates)) {
@@ -129,15 +118,6 @@ class Request_Data_Store {
             if (is_wp_error($result)) {
                 return $result;
             }
-        }
-        
-        // Update customer_id and created_via using entity methods
-        if (isset($changes['customer_id'])) {
-            $request->set_customer_id($changes['customer_id']);
-        }
-        
-        if (isset($changes['created_via'])) {
-            $request->set_created_via($changes['created_via']);
         }
         
         // Update meta
@@ -174,11 +154,34 @@ class Request_Data_Store {
      * @param object $request Request object
      */
     protected function save_meta($request) {
-        foreach ($this->meta_keys as $prop => $meta_key) {
-            $value = $request->get_prop($prop);
-            if ($value !== null) {
-                $request->set_meta($meta_key, $value);
-            }
+        // Save budget
+        $budget = $request->get_requested_project_budget();
+        if ($budget !== null) {
+            $request->set_meta('_arsol_pfw_requested_project_budget', $budget);
+        }
+        
+        // Save due date
+        $due_date = $request->get_requested_project_due_date();
+        if ($due_date !== null) {
+            $request->set_meta('_arsol_pfw_requested_project_due_date', $due_date);
+        }
+        
+        // Save start date
+        $start_date = $request->get_requested_project_start_date();
+        if ($start_date !== null) {
+            $request->set_meta('_arsol_pfw_requested_project_start_date', $start_date);
+        }
+        
+        // Save customer notice
+        $customer_notice = $request->get_request_customer_notice();
+        if ($customer_notice !== null) {
+            $request->set_meta('_arsol_pfw_request_customer_notice', $customer_notice);
+        }
+        
+        // Save attachments
+        $attachments = $request->get_request_attachments();
+        if ($attachments !== null) {
+            $request->set_meta('_arsol_pfw_request_attachments', $attachments);
         }
     }
     

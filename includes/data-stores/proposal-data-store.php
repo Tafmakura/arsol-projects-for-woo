@@ -54,15 +54,11 @@ class Proposal_Data_Store {
             return $post_id;
         }
         
-        // Set ID
-        $proposal->set_prop('id', $post_id);
-        
         // Set customer ID
         $proposal->set_customer_id($customer_id);
         
         // Save meta
-        $this->save_simple_meta($proposal);
-        $this->save_complex_meta($proposal);
+        $this->save_meta($proposal);
         
         // Set initial stage
         $stage = $proposal->get_stage() ?: 'processing';
@@ -99,22 +95,10 @@ class Proposal_Data_Store {
         $created_via = $proposal->get_created_via();
         
         if ($customer_id) {
-            $proposal->set_prop('customer_id', $customer_id);
+            $proposal->set_customer_id($customer_id);
         }
         if ($created_via) {
             $proposal->set_created_via($created_via);
-        }
-        
-        // Load simple meta data
-        foreach ($this->meta_keys as $prop => $meta_key) {
-            $value = $proposal->get_meta($meta_key);
-            $proposal->set_prop($prop, $value);
-        }
-        
-        // Load complex meta data
-        foreach ($this->complex_meta_keys as $prop => $meta_key) {
-            $value = $proposal->get_meta($meta_key);
-            $proposal->set_prop($prop, $value ?: array());
         }
         
         return true;
@@ -127,21 +111,19 @@ class Proposal_Data_Store {
      * @return bool|WP_Error
      */
     public function update($proposal) {
-        $changes = $proposal->get_changes();
-        
-        if (empty($changes)) {
-            return true;
-        }
-        
         // Update post if needed
         $post_updates = array();
         
-        if (isset($changes['name'])) {
-            $post_updates['post_title'] = $changes['name'];
+        // Check if title or description need updating
+        $current_title = $proposal->get_title();
+        $current_description = $proposal->get_description();
+        
+        if ($current_title && $current_title !== get_the_title($proposal->get_id())) {
+            $post_updates['post_title'] = $current_title;
         }
         
-        if (isset($changes['description'])) {
-            $post_updates['post_content'] = $changes['description'];
+        if ($current_description && $current_description !== get_post_field('post_content', $proposal->get_id())) {
+            $post_updates['post_content'] = $current_description;
         }
         
         if (!empty($post_updates)) {
@@ -153,18 +135,8 @@ class Proposal_Data_Store {
             }
         }
         
-        // Update customer_id and created_via using entity methods
-        if (isset($changes['customer_id'])) {
-            $proposal->set_customer_id($changes['customer_id']);
-        }
-        
-        if (isset($changes['created_via'])) {
-            $proposal->set_created_via($changes['created_via']);
-        }
-        
         // Update meta
-        $this->save_simple_meta($proposal);
-        $this->save_complex_meta($proposal);
+        $this->save_meta($proposal);
         
         do_action('arsol_pfw_proposal_updated', $proposal->get_id(), $proposal);
         
@@ -192,30 +164,81 @@ class Proposal_Data_Store {
     }
     
     /**
-     * Save simple meta data
+     * Save meta data
      *
      * @param object $proposal Proposal object
      */
-    protected function save_simple_meta($proposal) {
-        foreach ($this->meta_keys as $prop => $meta_key) {
-            $value = $proposal->get_prop($prop);
-            if ($value !== null) {
-                $proposal->set_meta($meta_key, $value);
-            }
+    protected function save_meta($proposal) {
+        // Save budget
+        $budget = $proposal->get_proposed_project_budget();
+        if ($budget !== null) {
+            $proposal->set_meta('_arsol_pfw_proposed_project_budget_line_items', $budget);
         }
-    }
-    
-    /**
-     * Save complex meta data (array-based structures)
-     *
-     * @param object $proposal Proposal object
-     */
-    protected function save_complex_meta($proposal) {
-        foreach ($this->complex_meta_keys as $prop => $meta_key) {
-            $value = $proposal->get_prop($prop);
-            if ($value !== null) {
-                $proposal->set_meta($meta_key, $value);
-            }
+        
+        // Save quotation
+        $quotation = $proposal->get_proposed_project_quotation();
+        if ($quotation !== null) {
+            $proposal->set_meta('_arsol_pfw_proposed_project_quotation_line_items', $quotation);
+        }
+        
+        // Save due date
+        $due_date = $proposal->get_proposed_project_due_date();
+        if ($due_date !== null) {
+            $proposal->set_meta('_arsol_pfw_proposed_project_due_date', $due_date);
+        }
+        
+        // Save start date
+        $start_date = $proposal->get_proposed_project_start_date();
+        if ($start_date !== null) {
+            $proposal->set_meta('_arsol_pfw_proposed_project_start_date', $start_date);
+        }
+        
+        // Save project lead
+        $project_lead = $proposal->get_proposed_project_lead();
+        if ($project_lead !== null) {
+            $proposal->set_meta('_arsol_pfw_proposed_project_lead', $project_lead);
+        }
+        
+        // Save expiration date
+        $expiration_date = $proposal->get_proposal_expiration_date();
+        if ($expiration_date !== null) {
+            $proposal->set_meta('_arsol_pfw_proposal_expiration_date', $expiration_date);
+        }
+        
+        // Save costing type
+        $costing_type = $proposal->get_proposal_costing_type();
+        if ($costing_type !== null) {
+            $proposal->set_meta('_arsol_pfw_proposal_costing_type', $costing_type);
+        }
+        
+        // Save customer notice
+        $customer_notice = $proposal->get_proposal_customer_notice();
+        if ($customer_notice !== null) {
+            $proposal->set_meta('_arsol_pfw_proposal_customer_notice', $customer_notice);
+        }
+        
+        // Save secondary status
+        $secondary_status = $proposal->get_proposal_secondary_status();
+        if ($secondary_status !== null) {
+            $proposal->set_meta('_arsol_pfw_proposal_secondary_status', $secondary_status);
+        }
+        
+        // Save notes
+        $notes = $proposal->get_proposal_notes();
+        if ($notes !== null) {
+            $proposal->set_meta('_arsol_pfw_proposal_notes', $notes);
+        }
+        
+        // Save budget notes
+        $budget_notes = $proposal->get_proposal_budget_notes();
+        if ($budget_notes !== null) {
+            $proposal->set_meta('_arsol_pfw_proposal_budget_notes', $budget_notes);
+        }
+        
+        // Save quotation notes
+        $quotation_notes = $proposal->get_proposal_quotation_notes();
+        if ($quotation_notes !== null) {
+            $proposal->set_meta('_arsol_pfw_proposal_quotation_notes', $quotation_notes);
         }
     }
     
