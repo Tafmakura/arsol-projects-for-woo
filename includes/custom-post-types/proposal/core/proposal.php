@@ -167,116 +167,31 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal stage taxonomy
+     * Get proposal stage entity (internal use)
      *
-     * @return string Proposal stage taxonomy name
+     * @return \Arsol_Projects_For_Woo\Taxonomies\Stages\Proposal_Stage
      */
-    private function get_stage_taxonomy() {
-        return 'arsol-pfw-proposal-stage';
+    private function get_stage_entity() {
+        return new \Arsol_Projects_For_Woo\Taxonomies\Stages\Proposal_Stage($this->proposal_id);
     }
 
     /**
      * Get proposal stage
      *
-     * @return string|false Current stage slug or false if not found
+     * @return string Current stage
      */
     public function get_stage() {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage(
-            $this->proposal_id, 
-            $this->get_stage_taxonomy()
-        );
+        return $this->get_stage_entity()->get_stage();
     }
 
     /**
      * Set proposal stage
      *
      * @param string $stage Stage slug
-     * @param bool $create_if_missing Whether to create the stage if it doesn't exist
      * @return bool Success status
      */
-    public function set_stage($stage, $create_if_missing = false) {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::set_stage(
-            $this->proposal_id, 
-            $stage, 
-            $this->get_stage_taxonomy(),
-            $create_if_missing
-        );
-    }
-
-    /**
-     * Get proposal stage name
-     *
-     * @return string|false Human-readable stage name or false if not found
-     */
-    public function get_stage_name() {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage_name(
-            $this->proposal_id, 
-            $this->get_stage_taxonomy()
-        );
-    }
-
-    /**
-     * Get proposal stage name by slug
-     *
-     * @param string $stage_slug Stage slug
-     * @return string|false Stage name or false if not found
-     */
-    public function get_stage_name_by_slug($stage_slug) {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage_name_by_slug(
-            $stage_slug, 
-            $this->get_stage_taxonomy()
-        );
-    }
-
-    /**
-     * Remove proposal stage
-     *
-     * @return bool Success status
-     */
-    public function remove_stage() {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::remove_stage(
-            $this->proposal_id, 
-            $this->get_stage_taxonomy()
-        );
-    }
-
-    /**
-     * Get available proposal stages
-     *
-     * @return array Array of available stages
-     */
-    public function get_available_stages() {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages(
-            $this->get_stage_taxonomy()
-        );
-    }
-
-    /**
-     * Get proposals by stage
-     *
-     * @param string $stage_slug Stage slug
-     * @param array $args Additional query arguments
-     * @return array Array of proposal IDs
-     */
-    public function get_proposals_by_stage($stage_slug, $args = []) {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_posts_by_stage(
-            $stage_slug, 
-            $this->get_stage_taxonomy(), 
-            'arsol-pfw-proposal', 
-            $args
-        );
-    }
-
-    /**
-     * Get proposal stage statistics
-     *
-     * @return array Array of stage statistics
-     */
-    public function get_stage_statistics() {
-        return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_stage_statistics(
-            $this->get_stage_taxonomy(), 
-            'arsol-pfw-proposal'
-        );
+    public function set_stage($stage) {
+        return $this->get_stage_entity()->set_stage($stage);
     }
 
     /**
@@ -287,7 +202,7 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function update_stage($new_stage, $note = '') {
-        return $this->set_stage($new_stage);
+        return $this->get_stage_entity()->update_stage($new_stage, $note);
     }
 
     /**
@@ -296,7 +211,7 @@ class Arsol_PFW_Proposal {
      * @return string Human-readable stage label
      */
     public function get_stage_label() {
-        return $this->get_stage_name();
+        return $this->get_stage_entity()->get_stage_label();
     }
 
     /**
@@ -305,7 +220,7 @@ class Arsol_PFW_Proposal {
      * @return string Stage notes
      */
     public function get_stage_notes() {
-        return ''; // No direct notes meta for stages, as they are managed by taxonomy terms
+        return $this->get_stage_entity()->get_stage_notes();
     }
 
     /**
@@ -315,7 +230,7 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_stage_notes($notes) {
-        return true; // No direct notes meta for stages
+        return $this->get_stage_entity()->set_stage_notes($notes);
     }
 
     /**
@@ -324,7 +239,7 @@ class Arsol_PFW_Proposal {
      * @return array Array of stage change history
      */
     public function get_stage_history() {
-        return array(); // No direct history meta for stages
+        return $this->get_stage_entity()->get_stage_history();
     }
 
     /**
@@ -333,7 +248,7 @@ class Arsol_PFW_Proposal {
      * @return array Array of allowed stage transitions
      */
     public function get_allowed_stage_transitions() {
-        return array(); // No direct transitions meta for stages
+        return $this->get_stage_entity()->get_allowed_transitions();
     }
 
     /**
@@ -343,7 +258,7 @@ class Arsol_PFW_Proposal {
      * @return bool True if transition is allowed
      */
     public function can_transition_to($new_stage) {
-        return true; // No direct transitions meta for stages
+        return $this->get_stage_entity()->can_transition_to($new_stage);
     }
 
     /**
@@ -352,7 +267,7 @@ class Arsol_PFW_Proposal {
      * @return bool true if this is a final stage
      */
     public function is_final_stage() {
-        return false; // No direct final stage meta for stages
+        return $this->get_stage_entity()->is_final_stage();
     }
 
     /**
@@ -361,7 +276,16 @@ class Arsol_PFW_Proposal {
      * @return bool true this is an initial stage
      */
     public function is_initial_stage() {
-        return false; // No direct initial stage meta for stages
+        return $this->get_stage_entity()->is_initial_stage();
+    }
+
+    /**
+     * Get available stages
+     *
+     * @return array Array of available stages
+     */
+    public function get_available_stages() {
+        return $this->get_stage_entity()->get_available_stages();
     }
 
     /**
@@ -552,6 +476,45 @@ class Arsol_PFW_Proposal {
      */
     public static function get_post_type() {
         return 'arsol-pfw-proposal';
+    }
+
+    /**
+     * Get stage taxonomy
+     * 
+     * @return string
+     */
+    public static function get_stage_taxonomy() {
+        return 'arsol-pfw-proposal-stage';
+    }
+
+    /**
+     * Find proposals
+     * 
+     * @param array $args Query arguments
+     * @return array Array of proposal objects
+     */
+    public static function find($args = array()) {
+        $defaults = array(
+            'post_type' => self::get_post_type(),
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'orderby' => 'date',
+            'order' => 'DESC'
+        );
+
+        $args = wp_parse_args($args, $defaults);
+        $query = new \WP_Query($args);
+        
+        $proposals = array();
+        if ($query->have_posts()) {
+            while ($query->have_posts()) {
+                $query->the_post();
+                $proposals[] = new self(get_post());
+            }
+        }
+        wp_reset_postdata();
+        
+        return $proposals;
     }
 
     /**

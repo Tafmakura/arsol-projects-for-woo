@@ -154,7 +154,7 @@ class Stage_Handler {
     }
     
     /**
-     * Get posts by stage
+     * Get items by stage
      * 
      * @param string $stage_slug The stage slug
      * @param string $taxonomy The taxonomy name
@@ -162,7 +162,7 @@ class Stage_Handler {
      * @param array $args Additional query arguments
      * @return array Array of post IDs
      */
-    public static function get_posts_by_stage($stage_slug, $taxonomy, $post_type, $args = []) {
+    public static function get_items_by_stage($stage_slug, $taxonomy, $post_type, $args = []) {
         $defaults = [
             'post_type' => $post_type,
             'post_status' => 'publish',
@@ -193,7 +193,7 @@ class Stage_Handler {
         $statistics = [];
         
         foreach ($stages as $stage) {
-            $post_ids = self::get_posts_by_stage($stage->slug, $taxonomy, $post_type);
+            $post_ids = self::get_items_by_stage($stage->slug, $taxonomy, $post_type);
             $statistics[$stage->slug] = [
                 'count' => count($post_ids),
                 'label' => $stage->name,

@@ -2,518 +2,507 @@
 /**
  * Project Stage Entity for Arsol Projects for Woo
  *
- * Handles different behaviors for different project stages including:
- * - Stage transitions with validation
- * - WooCommerce integration
- * - Stage history tracking
- * - Duration calculations
- * - Stage-specific behaviors
- *
  * @package Arsol_Projects_For_Woo
- * @since 1.0.0
- */
+ * @since 10*/
 
-namespace Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage;
+declare(strict_types=1);
+
+namespace Arsol_Projects_For_Woo\Taxonomies\Stages;
 
 use Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Interface;
-
-if (!defined('ABSPATH')) {
-    exit;
-}
+use Arsol_Projects_For_Woo\Taxonomies\Stages\WooCommerce_Stage_Interface;
+use Arsol_Projects_For_Woo\Taxonomies\Stages\Static_Stage_Interface;
 
 /**
  * Project Stage Entity Class
  *
- * Handles project-specific stage behaviors and transitions.
+ * Provides OOP methods for managing project stages with WooCommerce compatibility
  */
-class Project_Stage implements Stage_Interface {
-    
+class Project_Stage implements Stage_Interface, WooCommerce_Stage_Interface, Static_Stage_Interface
+{
     /**
-     * Project ID
+     * The project ID
      *
      * @var int
      */
     private $project_id;
-    
+
     /**
-     * Current stage
+     * The current stage
      *
      * @var string
      */
-    private $current_stage;
-    
+    private $stage;
+
     /**
-     * Stage configuration
+     * Stage notes
+     *
+     * @var string
+     */
+    private $notes;
+
+    /**
+     * Stage history
      *
      * @var array
      */
-    private $stage_config;
-    
+    private $history;
+
     /**
      * Constructor
      *
-     * @param int $project_id Project ID
+     * @param int $project_id The project ID
      */
-    public function __construct($project_id) {
-        $this->project_id = (int) $project_id;
-        $this->load_stage_config();
-        $this->current_stage = $this->get_stage_from_taxonomy();
+    public function __construct(int $project_id)
+    {
+        $this->project_id = $project_id;
+        $this->load_stage_data();
     }
-    
+
     /**
-     * Load stage configuration
+     * Load stage data from database
      */
-    private function load_stage_config() {
-        $this->stage_config = [
-            'not-started' => [
-                'label' => 'Not Started',
-                'transitions' => ['in-progress', 'cancelled'],
-                'wc_status' => 'pending',
-                'is_initial' => true,
-                'is_final' => false,
-                'behaviors' => [
-                    'can_start_work' => true,
-                    'can_cancel' => true,
-                    'requires_approval' => false
-                ]
-            ],
-            'in-progress' => [
-                'label' => 'In Progress',
-                'transitions' => ['paused', 'completed', 'cancelled'],
-                'wc_status' => 'processing',
-                'is_initial' => false,
-                'is_final' => false,
-                'behaviors' => [
-                    'can_pause' => true,
-                    'can_complete' => true,
-                    'can_cancel' => true,
-                    'tracks_time' => true
-                ]
-            ],
-            'paused' => [
-                'label' => 'Paused',
-                'transitions' => ['in-progress', 'cancelled'],
-                'wc_status' => 'on-hold',
-                'is_initial' => false,
-                'is_final' => false,
-                'behaviors' => [
-                    'can_resume' => true,
-                    'can_cancel' => true,
-                    'pauses_time_tracking' => true
-                ]
-            ],
-            'completed' => [
-                'label' => 'Completed',
-                'transitions' => [],
-                'wc_status' => 'completed',
-                'is_initial' => false,
-                'is_final' => true,
-                'behaviors' => [
-                    'triggers_completion_hooks' => true,
-                    'sends_completion_email' => true,
-                    'updates_wc_order' => true
-                ]
-            ],
-            'cancelled' => [
-                'label' => 'Cancelled',
-                'transitions' => [],
-                'wc_status' => 'cancelled',
-                'is_initial' => false,
-                'is_final' => true,
-                'behaviors' => [
-                    'triggers_cancellation_hooks' => true,
-                    'sends_cancellation_email' => true,
-                    'updates_wc_order' => true
-                ]
-            ]
-        ];
-    }
-    
-    /**
-     * Get current stage from taxonomy
-     *
-     * @return string
-     */
-    private function get_stage_from_taxonomy() {
+    private function load_stage_data(): void
+    {
+        // Ensure default stage terms exist
+        $this->ensure_default_stage_terms();
+        
+        // Get stage from taxonomy terms with error handling
         $terms = wp_get_object_terms($this->project_id, 'arsol-pfw-project-stage', ['fields' => 'slugs']);
-        return !empty($terms) && !is_wp_error($terms) ? $terms[0] : 'not-started';
+        
+        // Handle WP_Error or empty result
+        if (is_wp_error($terms) || empty($terms)) {
+            $this->stage = 'draft';
+        } else {
+            $this->stage = $terms[0];
+        }
+        
+        // Notes and history can still use meta for now (they're not taxonomy data)
+        $this->notes = get_post_meta($this->project_id, '_arsol_pfw_project_stage_notes', true) ?: '';
+        $this->history = get_post_meta($this->project_id, '_arsol_pfw_project_stage_history', true) ?: [];
     }
-    
+
     /**
-     * Get current stage
-     * 
-     * @return string Current stage slug
+     * Ensure default stage terms exist in the taxonomy
      */
-    public function get_stage() {
-        return $this->current_stage;
+    private function ensure_default_stage_terms(): void
+    {
+        // Check if taxonomy exists
+        if (!taxonomy_exists('arsol-pfw-project-stage')) {
+            return;
+        }
+        
+        $stages = $this->get_available_stages();
+        foreach ($stages as $stage_slug => $stage_data) {
+            $term = term_exists($stage_slug, 'arsol-pfw-project-stage');
+            if (!$term) {
+                wp_insert_term($stage_data['label'], 'arsol-pfw-project-stage', [
+                    'slug' => $stage_slug,
+                    'description' => $stage_data['label'] . ' stage for projects',
+                ]);
+            }
+        }
     }
-    
+
     /**
-     * Set stage with validation
-     * 
-     * @param string $stage Stage slug
-     * @return bool Success status
+     * Save stage data to database
      */
-    public function set_stage($stage) {
-        if (!$this->validate_transition($stage)) {
+    private function save_stage_data(): void
+    {
+        // Save stage using taxonomy terms (only if taxonomy exists)
+        if (taxonomy_exists('arsol-pfw-project-stage')) {
+            wp_set_object_terms($this->project_id, $this->stage, 'arsol-pfw-project-stage', false);
+        }
+        
+        // Save notes and history using meta
+        update_post_meta($this->project_id, '_arsol_pfw_project_stage_notes', $this->notes);
+        update_post_meta($this->project_id, '_arsol_pfw_project_stage_history', $this->history);
+    }
+
+    /**
+     * Get the current stage
+     *
+     * @return string The current stage slug
+     */
+    public function get_stage(): string
+    {
+        return $this->stage;
+    }
+
+    /**
+     * Set the stage
+     *
+     * @param string $stage The stage slug to set
+     * @return bool True on success, false on failure
+     */
+    public function set_stage(string $stage): bool
+    {
+        if (!$this->can_transition_to($stage)) {
             return false;
         }
-        
-        $old_stage = $this->current_stage;
-        $this->current_stage = $stage;
-        
-        // Update taxonomy
-        $result = wp_set_object_terms($this->project_id, $stage, 'arsol-pfw-project-stage', false);
-        
-        if (!is_wp_error($result)) {
-            $this->trigger_stage_change_hooks($old_stage, $stage);
-            $this->handle_stage_specific_behaviors($old_stage, $stage);
-            return true;
-        }
-        
-        return false;
+
+        $old_stage = $this->stage;
+        $this->stage = $stage;
+        $this->add_to_history($old_stage, $stage);
+        $this->save_stage_data();
+
+        // Trigger hooks
+        do_action('arsol_pfw_project_stage_changed', $this->project_id, $old_stage, $stage);
+        do_action("arsol_pfw_project_stage_{$stage}", $this->project_id);
+        do_action("arsol_pfw_project_stage_{$old_stage}_to_{$stage}", $this->project_id);
+
+        return true;
     }
-    
+
     /**
-     * Update stage with optional notes
+     * Update the stage with optional notes
      *
-     * @param string $new_stage New stage slug
+     * @param string $new_stage The new stage slug
      * @param string $note Optional note about the stage change
-     * @return bool Success status
+     * @return bool True on success, false on failure
      */
-    public function update_stage($new_stage, $note = '') {
+    public function update_stage(string $new_stage, string $note = ''): bool
+    {
         if ($note) {
-            $this->add_stage_note($note);
+            $this->set_stage_notes($note);
         }
-        
+
         return $this->set_stage($new_stage);
     }
-    
+
     /**
-     * Get stage label
+     * Get the stage label
      *
-     * @return string Human-readable stage label
+     * @return string The human-readable stage label
      */
-    public function get_stage_label() {
-        return isset($this->stage_config[$this->current_stage]) 
-            ? $this->stage_config[$this->current_stage]['label'] 
-            : $this->current_stage;
+    public function get_stage_label(): string
+    {
+        $stages = $this->get_available_stages();
+        return $stages[$this->stage]['label'] ?? ucfirst($this->stage);
     }
-    
+
     /**
      * Get stage notes
      *
-     * @return string Stage notes
+     * @return string The stage notes
      */
-    public function get_stage_notes() {
-        return get_post_meta($this->project_id, '_arsol_pfw_stage_notes', true);
+    public function get_stage_notes(): string
+    {
+        return $this->notes;
     }
-    
+
     /**
      * Set stage notes
      *
-     * @param string $notes Stage notes
-     * @return bool Success status
+     * @param string $notes The notes to set
+     * @return bool True on success, false on failure
      */
-    public function set_stage_notes($notes) {
-        return update_post_meta($this->project_id, '_arsol_pfw_stage_notes', $notes);
+    public function set_stage_notes(string $notes): bool
+    {
+        $this->notes = $notes;
+        $this->save_stage_data();
+        return true;
     }
-    
-    /**
-     * Add stage note
-     *
-     * @param string $note Stage note
-     * @return bool Success status
-     */
-    private function add_stage_note($note) {
-        $notes = $this->get_stage_notes();
-        $notes .= "\n" . date('Y-m-d H:i:s') . ": " . $note;
-        return $this->set_stage_notes($notes);
-    }
-    
+
     /**
      * Get stage history
      *
      * @return array Array of stage change history
      */
-    public function get_stage_history() {
-        return get_post_meta($this->project_id, '_arsol_pfw_stage_history', true) ?: [];
+    public function get_stage_history(): array
+    {
+        return $this->history;
     }
-    
+
     /**
-     * Add stage history entry
-     *
-     * @param string $old_stage Old stage
-     * @param string $new_stage New stage
-     * @param string $note Optional note
-     */
-    private function add_stage_history($old_stage, $new_stage, $note = '') {
-        $history = $this->get_stage_history();
-        $history[] = [
-            'timestamp' => current_time('timestamp'),
-            'old_stage' => $old_stage,
-            'new_stage' => $new_stage,
-            'note' => $note
-        ];
-        update_post_meta($this->project_id, '_arsol_pfw_stage_history', $history);
-    }
-    
-    /**
-     * Get allowed transitions
+     * Get allowed stage transitions
      *
      * @return array Array of allowed stage transitions
      */
-    public function get_allowed_transitions() {
-        return isset($this->stage_config[$this->current_stage]) 
-            ? $this->stage_config[$this->current_stage]['transitions'] 
-            : [];
+    public function get_allowed_transitions(): array
+    {
+        $stages = $this->get_available_stages();
+        return $stages[$this->stage]['transitions'] ?? [];
     }
-    
+
     /**
-     * Check if stage transition is allowed
+     * Check if a stage transition is allowed
      *
-     * @param string $new_stage New stage slug
+     * @param string $new_stage The stage to transition to
      * @return bool True if transition is allowed
      */
-    public function can_transition_to($new_stage) {
-        return in_array($new_stage, $this->get_allowed_transitions());
+    public function can_transition_to(string $new_stage): bool
+    {
+        $allowed_transitions = $this->get_allowed_transitions();
+        return in_array($new_stage, $allowed_transitions, true);
     }
-    
-    /**
-     * Check if current stage is final
-     *
-     * @return bool True if current stage is final
-     */
-    public function is_final_stage() {
-        return isset($this->stage_config[$this->current_stage]) 
-            ? $this->stage_config[$this->current_stage]['is_final'] 
-            : false;
-    }
-    
-    /**
-     * Check if current stage is initial
-     *
-     * @return bool True if current stage is initial
-     */
-    public function is_initial_stage() {
-        return isset($this->stage_config[$this->current_stage]) 
-            ? $this->stage_config[$this->current_stage]['is_initial'] 
-            : false;
-    }
-    
-    /**
-     * Get available stages
-     *
-     * @return array Array of available stages
-     */
-    public function get_available_stages() {
-        return array_keys($this->stage_config);
-    }
-    
+
     /**
      * Get stage duration
      *
      * @return int Duration in seconds
      */
-    public function get_stage_duration() {
-        $start_time = $this->get_stage_start_time();
-        if (!$start_time) {
-            return 0;
-        }
-        
-        return current_time('timestamp') - $start_time;
+    public function get_stage_duration(): int
+    {
+        $current_time = time();
+        $stage_start = $this->get_stage_start_time();
+        return $current_time - $stage_start;
     }
-    
+
+    /**
+     * Get total time in current stage
+     *
+     * @return int Time in seconds
+     */
+    public function get_time_in_current_stage(): int
+    {
+        return $this->get_stage_duration();
+    }
+
+    /**
+     * Check if stage is final
+     *
+     * @return bool true if this is a final stage
+     */
+    public function is_final_stage(): bool
+    {
+        $stages = $this->get_available_stages();
+        return $stages[$this->stage]['final'] ?? false;
+    }
+
+    /**
+     * Check if stage is initial
+     *
+     * @return bool true this is an initial stage
+     */
+    public function is_initial_stage(): bool
+    {
+        $stages = $this->get_available_stages();
+        return $stages[$this->stage]['initial'] ?? false;
+    }
+
+    /**
+     * Get WooCommerce status equivalent
+     *
+     * @return string WooCommerce status
+     */
+    public function get_wc_status(): string
+    {
+        $stages = $this->get_available_stages();
+        return $stages[$this->stage]['wc_status'] ?? 'pending';
+    }
+
+    /**
+     * Set WooCommerce status
+     *
+     * @param string $status WooCommerce status
+     * @return bool True on success, false on failure
+     */
+    public function set_wc_status(string $status): bool
+    {
+        // Find stage that matches this WC status
+        $stages = $this->get_available_stages();
+        foreach ($stages as $stage_slug => $stage_data) {
+            if ($stage_data['wc_status'] === $status) {
+                return $this->set_stage($stage_slug);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Sync with WooCommerce order status
+     *
+     * @return bool True on success, false on failure
+     */
+    public function sync_with_wc_order(): bool
+    {
+        $order_id = get_post_meta($this->project_id, '_arsol_pfw_order_id', true);
+        if (!$order_id) {
+            return false;
+        }
+
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            return false;
+        }
+
+        return $this->set_wc_status($order->get_status());
+    }
+
+    /**
+     * Add stage change to history
+     *
+     * @param string $old_stage The previous stage
+     * @param string $new_stage The new stage
+     */
+    private function add_to_history(string $old_stage, string $new_stage): void
+    {
+        $this->history[] = [
+            'from' => $old_stage,
+            'to' => $new_stage,
+            'timestamp' => time(),
+            'user_id' => get_current_user_id(),
+            'notes' => $this->notes,
+        ];
+    }
+
     /**
      * Get stage start time
      *
-     * @return int Unix timestamp
+     * @return int Timestamp when current stage started
      */
-    public function get_stage_start_time() {
-        return get_post_meta($this->project_id, '_arsol_pfw_stage_start_time', true);
-    }
-    
-    /**
-     * Set stage start time
-     *
-     * @param int $timestamp Unix timestamp
-     * @return bool Success status
-     */
-    private function set_stage_start_time($timestamp) {
-        return update_post_meta($this->project_id, '_arsol_pfw_stage_start_time', $timestamp);
-    }
-    
-    /**
-     * Get WooCommerce order status mapping
-     *
-     * @return string WooCommerce order status
-     */
-    public function get_wc_order_status() {
-        return isset($this->stage_config[$this->current_stage]) 
-            ? $this->stage_config[$this->current_stage]['wc_status'] 
-            : 'pending';
-    }
-    
-    /**
-     * Set WooCommerce order status
-     *
-     * @param string $wc_status WooCommerce order status
-     * @return bool Success status
-     */
-    public function set_wc_order_status($wc_status) {
-        // This would update associated WooCommerce orders
-        // Implementation depends on your WooCommerce integration
-        return true;
-    }
-    
-    /**
-     * Trigger stage change hooks
-     *
-     * @param string $old_stage Old stage slug
-     * @param string $new_stage New stage slug
-     * @return void
-     */
-    public function trigger_stage_change_hooks($old_stage, $new_stage) {
-        // Add to history
-        $this->add_stage_history($old_stage, $new_stage);
-        
-        // Trigger WordPress hooks
-        do_action('arsol_pfw_project_stage_changed', $this->project_id, $old_stage, $new_stage);
-        do_action("arsol_pfw_project_stage_{$old_stage}_to_{$new_stage}", $this->project_id);
-        
-        // Set stage start time
-        $this->set_stage_start_time(current_time('timestamp'));
-    }
-    
-    /**
-     * Validate stage transition
-     *
-     * @param string $new_stage New stage slug
-     * @return bool True if transition is valid
-     */
-    public function validate_transition($new_stage) {
-        // Check if stage exists
-        if (!isset($this->stage_config[$new_stage])) {
-            return false;
+    private function get_stage_start_time(): int
+    {
+        if (empty($this->history)) {
+            return get_post_time(UUE, $this->project_id);
         }
-        
-        // Check if transition is allowed
-        if (!$this->can_transition_to($new_stage)) {
-            return false;
-        }
-        
-        // Additional validation can be added here
-        return true;
+
+        $last_entry = end($this->history);
+        return $last_entry['timestamp'] ?? time();
     }
-    
+
     /**
-     * Handle stage-specific behaviors
+     * Get available stages configuration
      *
-     * @param string $old_stage Old stage
-     * @param string $new_stage New stage
+     * @return array Array of stage configurations
      */
-    private function handle_stage_specific_behaviors($old_stage, $new_stage) {
-        $config = $this->stage_config[$new_stage];
-        
-        if (isset($config['behaviors'])) {
-            foreach ($config['behaviors'] as $behavior => $enabled) {
-                if ($enabled) {
-                    $this->execute_behavior($behavior, $old_stage, $new_stage);
-                }
+    private function get_available_stages(): array
+    {
+        return apply_filters('arsol_pfw_project_stages', [
+            'not-started' => [
+                'label' => __('Not Started', 'arsol-projects-for-woo'),
+                'wc_status' => 'pending',
+                'initial' => true,
+                'final' => false,
+                'transitions' => ['in-progress', 'cancelled'],
+            ],
+            'in-progress' => [
+                'label' => __('In Progress', 'arsol-projects-for-woo'),
+                'wc_status' => 'processing',
+                'initial' => false,
+                'final' => false,
+                'transitions' => ['paused', 'completed', 'cancelled'],
+            ],
+            'paused' => [
+                'label' => __('Paused', 'arsol-projects-for-woo'),
+                'wc_status' => 'processing',
+                'initial' => false,
+                'final' => false,
+                'transitions' => ['in-progress', 'cancelled'],
+            ],
+            'completed' => [
+                'label' => __('Completed', 'arsol-projects-for-woo'),
+                'wc_status' => 'completed',
+                'initial' => false,
+                'final' => true,
+                'transitions' => [],
+            ],
+            'cancelled' => [
+                'label' => __('Cancelled', 'arsol-projects-for-woo'),
+                'wc_status' => 'cancelled',
+                'initial' => false,
+                'final' => true,
+                'transitions' => [],
+            ],
+        ]);
+    }
+
+    // Static methods implementation
+
+    /**
+     * Create a new stage entity
+     *
+     * @param int $entity_id The entity ID (project, proposal, or request)
+     * @param string $initial_stage The initial stage
+     * @return Stage_Interface The created stage entity
+     */
+    public static function create(int $entity_id, string $initial_stage): Stage_Interface
+    {
+        $stage_entity = new self($entity_id);
+        $stage_entity->set_stage($initial_stage);
+        return $stage_entity;
+    }
+
+    /**
+     * Get stage entity by ID
+     *
+     * @param int $entity_id The entity ID
+     * @return Stage_Interface|null The stage entity or null if not found
+     */
+    public static function get(int $entity_id): ?Stage_Interface
+    {
+        if (!get_post($entity_id)) {
+            return null;
+        }
+        return new self($entity_id);
+    }
+
+    /**
+     * Get all entities with a specific stage
+     *
+     * @param string $stage The stage to search for
+     * @return array Array of entity IDs
+     */
+    public static function get_entities_by_stage(string $stage): array
+    {
+        $args = [
+            'post_type' => 'arsol_pfw_project',
+            'post_status' => 'publish',  // Only published posts on frontend
+            'tax_query' => [
+                [
+                    'taxonomy' => 'arsol-pfw-project-stage',
+                    'field' => 'slug',
+                    'terms' => $stage,
+                ],
+            ],
+            'fields' => 'ids',
+            'posts_per_page' => -1,
+        ];
+
+        return get_posts($args);
+    }
+
+    /**
+     * Bulk update stage for multiple entities
+     *
+     * @param array $entity_ids Array of entity IDs
+     * @param string $new_stage The new stage
+     * @param string $note Optional note
+     * @return int Number of entities updated
+     */
+    public static function bulk_update_stage(array $entity_ids, string $new_stage, string $note = ''): int
+    {
+        $updated_count = 0;
+
+        foreach ($entity_ids as $entity_id) {
+            $stage_entity = self::get($entity_id);
+            if ($stage_entity && $stage_entity->update_stage($new_stage, $note)) {
+                $updated_count++;
             }
         }
+
+        return $updated_count;
     }
-    
+
     /**
-     * Execute specific behavior
+     * Get stage statistics
      *
-     * @param string $behavior Behavior name
-     * @param string $old_stage Old stage
-     * @param string $new_stage New stage
+     * @return array Array of stage statistics
      */
-    private function execute_behavior($behavior, $old_stage, $new_stage) {
-        switch ($behavior) {
-            case 'triggers_completion_hooks':
-                do_action('arsol_pfw_project_completed', $this->project_id);
-                break;
-                
-            case 'triggers_cancellation_hooks':
-                do_action('arsol_pfw_project_cancelled', $this->project_id);
-                break;
-                
-            case 'sends_completion_email':
-                // Send completion email
-                break;
-                
-            case 'sends_cancellation_email':
-                // Send cancellation email
-                break;
-                
-            case 'updates_wc_order':
-                $this->set_wc_order_status($this->get_wc_order_status());
-                break;
+    public static function get_stage_statistics(): array
+    {
+        $stages = (new self(0))->get_available_stages();
+        $statistics = [];
+
+        foreach (array_keys($stages) as $stage) {
+            $entity_ids = self::get_entities_by_stage($stage);
+            $statistics[$stage] = [
+                'count' => count($entity_ids),
+                'label' => $stages[$stage]['label'],
+            ];
         }
-    }
-    
-    /**
-     * Get stage configuration
-     *
-     * @return array Stage configuration
-     */
-    public function get_stage_config() {
-        return $this->stage_config;
-    }
-    
-    /**
-     * Set stage configuration
-     *
-     * @param array $config Stage configuration
-     * @return bool Success status
-     */
-    public function set_stage_config($config) {
-        $this->stage_config = $config;
-        return true;
-    }
-    
-    /**
-     * Static method to get project stages
-     *
-     * @return array Array of project stages
-     */
-    public static function get_project_stages() {
-        $instance = new self(0);
-        return $instance->get_available_stages();
-    }
-    
-    /**
-     * Static method to get project stage by slug
-     *
-     * @param string $slug Stage slug
-     * @return array|null Stage configuration
-     */
-    public static function get_project_stage_by_slug($slug) {
-        $instance = new self(0);
-        $config = $instance->get_stage_config();
-        return isset($config[$slug]) ? $config[$slug] : null;
-    }
-    
-    /**
-     * Static method to bulk update stages
-     *
-     * @param array $project_ids Array of project IDs
-     * @param string $stage_slug Stage slug
-     * @return bool Success status
-     */
-    public static function bulk_update_stage($project_ids, $stage_slug) {
-        $success = true;
-        
-        foreach ($project_ids as $project_id) {
-            $stage_entity = new self($project_id);
-            if (!$stage_entity->set_stage($stage_slug)) {
-                $success = false;
-            }
-        }
-        
-        return $success;
+
+        return $statistics;
     }
 } 

@@ -239,33 +239,37 @@ function arsol_pfw_get_projects_with_subscriptions($args = array()) {
 }
 
 /**
- * Get project stage counts
+ * Get stage counts using OOP stage entities
  * 
  * @return array Array of stage counts
  */
 function arsol_pfw_get_project_stage_counts() {
-    $stages = \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages('arsol-pfw-project-stage');
-    $counts = [];
+    $stage_entity = new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage(0);
+    $statistics = $stage_entity->get_stage_statistics();
     
-    foreach ($stages as $stage) {
-        $post_ids = \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_posts_by_stage(
-            $stage->slug, 
-            'arsol-pfw-project-stage', 
-            'arsol-pfw-project'
-        );
-        $counts[$stage->slug] = count($post_ids);
+    $counts = array();
+    foreach ($statistics as $stage_slug => $stage_data) {
+        $counts[$stage_slug] = $stage_data['count'];
     }
     
     return $counts;
 }
 
 /**
- * Get available project stages
+ * Get available stages using OOP stage entities
  * 
  * @return array Array of available stages
  */
 function arsol_pfw_get_available_project_stages() {
-    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages('arsol-pfw-project-stage');
+    $stage_entity = new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage(0);
+    $stages = $stage_entity->get_available_stages();
+    
+    $stage_options = array();
+    foreach ($stages as $stage_slug => $stage_data) {
+        $stage_options[$stage_slug] = $stage_data['label'];
+    }
+    
+    return $stage_options;
 }
 
 /**
