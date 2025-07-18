@@ -605,20 +605,40 @@ class Arsol_PFW_Request {
     /**
      * Get request ID (for internal reference)
      * 
-     * @return string Request ID
+     * @return int Request ID
      */
     public function get_request_id() {
-        return $this->get_meta('_arsol_pfw_request_id');
+        return $this->request_id;
     }
 
     /**
      * Set request ID
      * 
-     * @param string $request_id Request ID
+     * @param int $request_id Request ID
      * @return bool Success status
      */
     public function set_request_id($request_id) {
-        return $this->set_meta('_arsol_pfw_request_id', sanitize_text_field($request_id));
+        $this->request_id = (int) $request_id;
+        return true;
+    }
+
+    /**
+     * Get parent project ID
+     * 
+     * @return int Parent project ID
+     */
+    public function get_parent_project_id() {
+        return $this->get_meta('_arsol_pfw_parent_project_id');
+    }
+
+    /**
+     * Set parent project ID
+     * 
+     * @param int $project_id Parent project ID
+     * @return bool Success status
+     */
+    public function set_parent_project_id($project_id) {
+        return $this->set_meta('_arsol_pfw_parent_project_id', (int) $project_id);
     }
 
     /**
@@ -687,6 +707,7 @@ class Arsol_PFW_Request {
             '_arsol_pfw_request_attachments',
             '_arsol_pfw_request_converted_to_proposal',
             '_arsol_pfw_request_id',
+            '_arsol_pfw_parent_project_id',
         );
 
         foreach ($meta_keys as $meta_key) {
