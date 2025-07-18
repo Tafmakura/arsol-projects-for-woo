@@ -33,8 +33,6 @@ class Assets {
      * Setup asset hooks after init
      */
     public function setup_asset_hooks() {
-        error_log('ARSOL DEBUG: setup_asset_hooks called');
-        
         // Register hooks for frontend assets
         add_action('wp_enqueue_scripts', array($this, 'register_frontend_assets'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
@@ -42,8 +40,6 @@ class Assets {
         // Register hooks for admin assets
         add_action('admin_enqueue_scripts', array($this, 'register_admin_assets'));
         add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
-        
-        error_log('ARSOL DEBUG: Asset hooks registered');
     }
 
     /**
@@ -117,11 +113,7 @@ class Assets {
      * Register admin CSS and JS
      */
     public function register_admin_assets() {
-        error_log('ARSOL DEBUG: register_admin_assets called');
-        
         $plugin_url = plugin_dir_url(ARSOL_PFW_PLUGIN_FILE);
-        
-        error_log('ARSOL DEBUG: Plugin URL: ' . $plugin_url);
         
         // Register CSS with prefixed filename
         wp_register_style(
@@ -131,8 +123,6 @@ class Assets {
             $this->get_file_version('assets/css/arsol-pfw-admin.css')
         );
         
-        error_log('ARSOL DEBUG: Admin CSS registered');
-        
         // Register main admin JS
         wp_register_script(
             'arsol-pfw-admin',
@@ -141,8 +131,6 @@ class Assets {
             $this->get_file_version('assets/js/arsol-pfw-admin.js'),
             true
         );
-        
-        error_log('ARSOL DEBUG: Admin JS registered');
         
         // Register proposal admin JS
         wp_register_script(
@@ -180,12 +168,8 @@ class Assets {
     public function enqueue_admin_assets($hook) {
         $screen = get_current_screen();
         if (!$screen) {
-            error_log('ARSOL DEBUG: No screen found in enqueue_admin_assets');
             return;
         }
-
-        error_log('ARSOL DEBUG: Current hook: ' . $hook);
-        error_log('ARSOL DEBUG: Current screen: ' . print_r($screen, true));
 
         // Define post types that should load admin assets
         $allowed_post_types = array(
@@ -199,12 +183,7 @@ class Assets {
         $is_post_type_page = in_array($screen->post_type, $allowed_post_types);
         $is_settings_page = ($hook === 'toplevel_page_arsol-projects');
         
-        error_log('ARSOL DEBUG: Is post type page: ' . ($is_post_type_page ? 'yes' : 'no'));
-        error_log('ARSOL DEBUG: Is settings page: ' . ($is_settings_page ? 'yes' : 'no'));
-        error_log('ARSOL DEBUG: Screen post type: ' . $screen->post_type);
-        
         if ($is_post_type_page || $is_settings_page) {
-            error_log('ARSOL DEBUG: Enqueueing admin assets');
             
             // Enqueue WooCommerce admin styles and scripts
             if ($is_post_type_page) {
@@ -218,8 +197,6 @@ class Assets {
             // Always enqueue our plugin assets
             wp_enqueue_style('arsol-pfw-admin');
             wp_enqueue_script('arsol-pfw-admin');
-            
-            error_log('ARSOL DEBUG: Admin assets enqueued');
             
             // Enqueue post-type specific JavaScript (only for post type pages)
             if ($is_post_type_page) {
