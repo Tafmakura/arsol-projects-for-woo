@@ -77,7 +77,7 @@ $form_action = $is_edit ? 'arsol_edit_request' : 'arsol_create_request';
 // Check if user can create project requests
 if (!$is_edit) {
     $user_id = get_current_user_id();
-    $can_create = \Arsol_Projects_For_Woo\Core\Capabilities::can_create_project_requests($user_id);
+    $can_create = \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_project_requests($user_id);
 
     if (!$can_create) {
         wc_add_notice(__('You do not have permission to create project requests. Please contact the administrator if you believe this is an error.', 'arsol-pfw'), 'error');

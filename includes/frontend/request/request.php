@@ -115,7 +115,7 @@ class Request_Frontend extends Frontend_Handler {
         try {
             // Check if user can create project requests
             $user_id = get_current_user_id();
-            $can_create = \Arsol_Projects_For_Woo\Core\Capabilities::can_create_project_requests($user_id);
+            $can_create = \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_project_requests($user_id);
 
             if (!$can_create) {
                 throw new Exception(__('You do not have permission to create project requests. Please contact the administrator if you believe this is an error.', 'arsol-pfw'));

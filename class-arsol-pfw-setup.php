@@ -319,7 +319,7 @@ class Setup {
         // \Arsol_Projects_For_Woo\Core\Stage_Handler::create_default_stages(); // This line is removed
         
         // Set up capabilities
-        \Arsol_Projects_For_Woo\Core\Capabilities::setup_capabilities();
+        \Arsol_Projects_For_Woo\Core\Capabilities_Handler::setup_capabilities();
         
         // Flush rewrite rules to ensure our custom post types and endpoints are registered
         flush_rewrite_rules();

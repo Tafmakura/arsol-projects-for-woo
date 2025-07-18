@@ -475,8 +475,8 @@ class Endpoints {
      * @return bool Whether the user can view the project
      */
     public static function user_can_view_project($user_id, $project_id) {
-        // This method is now deprecated - use \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project() instead
-        return \Arsol_Projects_For_Woo\Core\Permissions::user_can_view_project($user_id, $project_id);
+        // This method is now deprecated - use \Arsol_Projects_For_Woo\Core\Access_Handler::user_can_view_project() instead
+        return \Arsol_Projects_For_Woo\Core\Access_Handler::user_can_view_project($user_id, $project_id);
     }
 
     /**

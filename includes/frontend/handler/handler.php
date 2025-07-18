@@ -126,7 +126,7 @@ abstract class Frontend_Handler {
      * Validate nonce for security
      */
     protected function validate_nonce($nonce_field, $nonce_action) {
-        \Arsol_Projects_For_Woo\Core\Permissions::validate_nonce_and_permissions($nonce_field, $nonce_action);
+        \Arsol_Projects_For_Woo\Core\Access_Handler::validate_nonce_and_permissions($nonce_field, $nonce_action);
     }
 
     /**
@@ -135,7 +135,7 @@ abstract class Frontend_Handler {
     protected function check_user_permissions($post_id, $action = 'view') {
         $user_id = get_current_user_id();
         
-        if (!\Arsol_Projects_For_Woo\Core\Permissions::user_can_view_post($user_id, $post_id)) {
+        if (!\Arsol_Projects_For_Woo\Core\Access_Handler::user_can_view_post($user_id, $post_id)) {
             wp_die(__('You do not have permission to perform this action.', 'arsol-pfw'));
         }
         
