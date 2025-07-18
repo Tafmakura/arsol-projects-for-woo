@@ -42,7 +42,7 @@ if (empty($request_stage)) {
         </label>
         <select class="arsol-disabled-select" name="customer_id" disabled>
             <option value="<?php echo esc_attr($customer_id); ?>" selected>
-                <?php echo $customer ? esc_html($customer->display_name) : __('Customer not found', 'arsol-pfw'); ?>
+                <?php echo ($customer && is_object($customer)) ? esc_html($customer->display_name) : __('Customer not found', 'arsol-pfw'); ?>
             </option>
         </select>
     </p>

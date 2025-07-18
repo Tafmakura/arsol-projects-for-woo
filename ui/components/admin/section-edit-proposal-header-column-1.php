@@ -119,13 +119,13 @@ $available_stages = $proposal->get_available_stages();
             <input type="hidden" name="customer_id" value="<?php echo esc_attr($customer_id); ?>">
             <select class="arsol-disabled-select" disabled>
                 <option value="<?php echo esc_attr($customer_id); ?>" selected>
-                    <?php echo $customer ? esc_html($customer->display_name) : __('Customer not found', 'arsol-pfw'); ?>
+                    <?php echo ($customer && is_object($customer)) ? esc_html($customer->display_name) : __('Customer not found', 'arsol-pfw'); ?>
                 </option>
             </select>
         <?php else: ?>
             <!-- Regular customer search field -->
             <select class="wc-customer-search" name="customer_id" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="<?php echo esc_attr(wp_create_nonce('search-customers')); ?>">
-                <?php if ($customer_id && $customer): ?>
+                <?php if ($customer_id && $customer && is_object($customer)): ?>
                     <option value="<?php echo esc_attr($customer_id); ?>" selected>
                         <?php echo esc_html($customer->display_name); ?>
                     </option>
