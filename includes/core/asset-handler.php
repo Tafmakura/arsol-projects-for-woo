@@ -181,14 +181,13 @@ class Asset_Handler {
 
         // Check if we're on a post type page that needs admin assets OR the settings page
         $is_post_type_page = in_array($screen->post_type, $allowed_post_types);
-        $is_settings_page = ($hook === 'toplevel_page_arsol-projects');
+        $is_settings_page = strpos($hook, 'arsol-projects') !== false;
         
         if ($is_post_type_page || $is_settings_page) {
             
-            // Enqueue WooCommerce admin styles and scripts
-            if ($is_post_type_page) {
-                // WooCommerce assets are mainly needed for post type pages
-                wp_enqueue_style('woocommerce_admin_styles', WC()->plugin_url() . '/assets/css/admin.css', array(), WC_VERSION);
+            // Enqueue WooCommerce admin styles and scripts if available
+            if ($is_post_type_page && class_exists('WooCommerce')) {
+                wp_enqueue_style('woocommerce_admin_styles');
                 wp_enqueue_script('selectWoo');
                 wp_enqueue_script('wc-enhanced-select');
                 wp_enqueue_style('select2');
@@ -237,64 +236,5 @@ class Asset_Handler {
                 'confirmDelete' => __('Are you sure you want to remove this project?', 'arsol-pfw'),
             ));
         }
-    }
-
-    /**
-     * Enqueue admin scripts for proposal quotation
-     */
-    public function enqueue_proposal_quotation_scripts() {
-        global $post;
-        
-        if (!$post || $post->post_type !== 'arsol-pfw-proposal') {
-            return;
-        }
-        
-        // Get proposal entity for data access
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
-        $line_items = $proposal->get_quotation_line_items() ?: array();
-        
-        wp_enqueue_script(
-            'arsol-pfw-proposal-quotation',
-            plugin_dir_url(ARSOL_PFW_PLUGIN_FILE) . 'assets/js/arsol-pfw-admin-cpt-proposal.js',
-            array('jquery', 'jquery-ui-sortable'),
-            ARSOL_PFW_VERSION,
-            true
-        );
-        
-        wp_localize_script('arsol-pfw-proposal-quotation', 'arsol_pfw_quotation_data', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('arsol_pfw_quotation_nonce'),
-            'post_id' => $post->ID,
-            'line_items' => $line_items,
-            'currency' => $proposal->get_quotation_currency() ?: get_woocommerce_currency(),
-            'currency_symbol' => $proposal->get_quotation_currency_symbol() ?: get_woocommerce_currency_symbol(),
-            'strings' => array(
-                'confirm_delete' => __('Are you sure you want to delete this item?', 'arsol-pfw'),
-                'invalid_amount' => __('Please enter a valid amount.', 'arsol-pfw'),
-                'invalid_quantity' => __('Please enter a valid quantity.', 'arsol-pfw'),
-                'select_product' => __('Please select a product.', 'arsol-pfw'),
-                'enter_description' => __('Please enter a description.', 'arsol-pfw')
-            )
-        ));
-    }
-
-    /**
-     * Check if we're on an order or project screen
-     *
-     * @param \WP_Screen $screen Current screen object
-     * @return bool
-     */
-    private function is_order_or_project_screen($screen) {
-        // Check for post type screens
-        if (in_array($screen->post_type, array('shop_order', 'arsol-pfw-project'))) {
-            return true;
-        }
-        
-        // Check for HPOS order list screen
-        if ($screen->id === 'woocommerce_page_wc-orders') {
-            return true;
-        }
-        
-        return false;
     }
 }
