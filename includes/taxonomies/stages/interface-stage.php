@@ -2,194 +2,174 @@
 /**
  * Stage Interface for Arsol Projects for Woo
  *
+ * Defines the interface for stage entities that can have different behaviors
+ * for different stages (transitions, validation, WooCommerce integration, etc.)
+ *
  * @package Arsol_Projects_For_Woo
- * @since 10*/
-
-declare(strict_types=1);
+ * @since 1.0.0
+ */
 
 namespace Arsol_Projects_For_Woo\Taxonomies\Stages;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 /**
- * Interface for stage taxonomy entities
+ * Stage Interface
  *
- * Provides a consistent API for all stage entities (project-stage, proposal-stage, request-stage)
- * following WooCommerce status patterns for familiarity and compatibility.
+ * Defines the contract for stage entities that can have different behaviors
+ * for different stages.
  */
-interface Stage_Interface
-{
+interface Stage_Interface {
+    
     /**
-     * Get the current stage
-     *
-     * @return string The current stage slug
+     * Get current stage
+     * 
+     * @return string Current stage slug
      */
-    public function get_stage(): string;
-
+    public function get_stage();
+    
     /**
-     * Set the stage
-     *
-     * @param string $stage The stage slug to set
-     * @return bool True on success, false on failure
+     * Set stage with validation
+     * 
+     * @param string $stage Stage slug
+     * @return bool Success status
      */
-    public function set_stage(string $stage): bool;
-
+    public function set_stage($stage);
+    
     /**
-     * Update the stage with optional notes
+     * Update stage with optional notes
      *
-     * @param string $new_stage The new stage slug
+     * @param string $new_stage New stage slug
      * @param string $note Optional note about the stage change
-     * @return bool True on success, false on failure
+     * @return bool Success status
      */
-    public function update_stage(string $new_stage, string $note = ''): bool;
-
+    public function update_stage($new_stage, $note = '');
+    
     /**
      * Get stage label
      *
      * @return string Human-readable stage label
      */
-    public function get_stage_label(): string;
-
+    public function get_stage_label();
+    
     /**
      * Get stage notes
      *
-     * @return string The stage notes
+     * @return string Stage notes
      */
-    public function get_stage_notes(): string;
-
+    public function get_stage_notes();
+    
     /**
      * Set stage notes
      *
-     * @param string $notes The notes to set
-     * @return bool True on success, false on failure
+     * @param string $notes Stage notes
+     * @return bool Success status
      */
-    public function set_stage_notes(string $notes): bool;
-
+    public function set_stage_notes($notes);
+    
     /**
      * Get stage history
      *
      * @return array Array of stage change history
      */
-    public function get_stage_history(): array;
-
+    public function get_stage_history();
+    
     /**
-     * Get allowed stage transitions
+     * Get allowed transitions
      *
      * @return array Array of allowed stage transitions
      */
-    public function get_allowed_transitions(): array;
-
+    public function get_allowed_transitions();
+    
     /**
-     * Check if a stage transition is allowed
+     * Check if stage transition is allowed
      *
-     * @param string $new_stage The stage to transition to
+     * @param string $new_stage New stage slug
      * @return bool True if transition is allowed
      */
-    public function can_transition_to(string $new_stage): bool;
-
+    public function can_transition_to($new_stage);
+    
+    /**
+     * Check if current stage is final
+     *
+     * @return bool True if current stage is final
+     */
+    public function is_final_stage();
+    
+    /**
+     * Check if current stage is initial
+     *
+     * @return bool True if current stage is initial
+     */
+    public function is_initial_stage();
+    
+    /**
+     * Get available stages
+     *
+     * @return array Array of available stages
+     */
+    public function get_available_stages();
+    
     /**
      * Get stage duration
      *
      * @return int Duration in seconds
      */
-    public function get_stage_duration(): int;
-
+    public function get_stage_duration();
+    
     /**
-     * Get total time in current stage
+     * Get stage start time
      *
-     * @return int Time in seconds
+     * @return int Unix timestamp
      */
-    public function get_time_in_current_stage(): int;
-
+    public function get_stage_start_time();
+    
     /**
-     * Check if stage is final
+     * Get WooCommerce order status mapping
      *
-     * @return bool True if this is a final stage
+     * @return string WooCommerce order status
      */
-    public function is_final_stage(): bool;
-
+    public function get_wc_order_status();
+    
     /**
-     * Check if stage is initial
+     * Set WooCommerce order status
      *
-     * @return bool True if this is an initial stage
+     * @param string $wc_status WooCommerce order status
+     * @return bool Success status
      */
-    public function is_initial_stage(): bool;
-}
-
-/**
- * Interface for WooCommerce-compatible stage methods
- *
- * Extends the base stage interface with WooCommerce-specific functionality
- */
-interface WooCommerce_Stage_Interface extends Stage_Interface
-{
+    public function set_wc_order_status($wc_status);
+    
     /**
-     * Get WooCommerce status equivalent
+     * Trigger stage change hooks
      *
-     * @return string WooCommerce status
+     * @param string $old_stage Old stage slug
+     * @param string $new_stage New stage slug
+     * @return void
      */
-    public function get_wc_status(): string;
-
+    public function trigger_stage_change_hooks($old_stage, $new_stage);
+    
     /**
-     * Set WooCommerce status
+     * Validate stage transition
      *
-     * @param string $status WooCommerce status
-     * @return bool True on success, false on failure
+     * @param string $new_stage New stage slug
+     * @return bool True if transition is valid
      */
-    public function set_wc_status(string $status): bool;
-
+    public function validate_transition($new_stage);
+    
     /**
-     * Sync with WooCommerce order status
+     * Get stage configuration
      *
-     * @return bool True on success, false on failure
+     * @return array Stage configuration
      */
-    public function sync_with_wc_order(): bool;
-}
-
-/**
- * Interface for static stage methods
- *
- * Provides factory and bulk operations for stage entities
- */
-interface Static_Stage_Interface
-{
+    public function get_stage_config();
+    
     /**
-     * Create a new stage entity
+     * Set stage configuration
      *
-     * @param int $entity_id The entity ID (project, proposal, or request)
-     * @param string $initial_stage The initial stage
-     * @return Stage_Interface The created stage entity
+     * @param array $config Stage configuration
+     * @return bool Success status
      */
-    public static function create(int $entity_id, string $initial_stage): Stage_Interface;
-
-    /**
-     * Get stage entity by ID
-     *
-     * @param int $entity_id The entity ID
-     * @return Stage_Interface|null The stage entity or null if not found
-     */
-    public static function get(int $entity_id): ?Stage_Interface;
-
-    /**
-     * Get all entities with a specific stage
-     *
-     * @param string $stage The stage to search for
-     * @return array Array of entity IDs
-     */
-    public static function get_entities_by_stage(string $stage): array;
-
-    /**
-     * Bulk update stage for multiple entities
-     *
-     * @param array $entity_ids Array of entity IDs
-     * @param string $new_stage The new stage
-     * @param string $note Optional note
-     * @return int Number of entities updated
-     */
-    public static function bulk_update_stage(array $entity_ids, string $new_stage, string $note = ''): int;
-
-    /**
-     * Get stage statistics
-     *
-     * @return array Array of stage statistics
-     */
-    public static function get_stage_statistics(): array;
+    public function set_stage_config($config);
 } 

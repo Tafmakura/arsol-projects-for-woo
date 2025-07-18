@@ -239,37 +239,33 @@ function arsol_pfw_get_projects_with_subscriptions($args = array()) {
 }
 
 /**
- * Get stage counts using OOP stage entities
+ * Get project stage counts
  * 
  * @return array Array of stage counts
  */
 function arsol_pfw_get_project_stage_counts() {
-    $stage_entity = new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage(0);
-    $statistics = $stage_entity->get_stage_statistics();
+    $stages = \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages('arsol-pfw-project-stage');
+    $counts = [];
     
-    $counts = array();
-    foreach ($statistics as $stage_slug => $stage_data) {
-        $counts[$stage_slug] = $stage_data['count'];
+    foreach ($stages as $stage) {
+        $post_ids = \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_posts_by_stage(
+            $stage->slug, 
+            'arsol-pfw-project-stage', 
+            'arsol-pfw-project'
+        );
+        $counts[$stage->slug] = count($post_ids);
     }
     
     return $counts;
 }
 
 /**
- * Get available stages using OOP stage entities
+ * Get available project stages
  * 
  * @return array Array of available stages
  */
 function arsol_pfw_get_available_project_stages() {
-    $stage_entity = new \Arsol_Projects_For_Woo\Taxonomies\Stages\Project_Stage(0);
-    $stages = $stage_entity->get_available_stages();
-    
-    $stage_options = array();
-    foreach ($stages as $stage_slug => $stage_data) {
-        $stage_options[$stage_slug] = $stage_data['label'];
-    }
-    
-    return $stage_options;
+    return \Arsol_Projects_For_Woo\Taxonomies\Stages\Stage_Handler::get_available_stages('arsol-pfw-project-stage');
 }
 
 /**
