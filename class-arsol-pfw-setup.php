@@ -260,8 +260,8 @@ class Setup {
     private function instantiate_classes() {
         // Initialize core components
         new \Arsol_Projects_For_Woo\Core\Assets();
-        new \Arsol_Projects_For_Woo\Core\Capabilities();
-        new \Arsol_Projects_For_Woo\Core\Permissions();
+        new \Arsol_Projects_For_Woo\Core\Capabilities_Handler();
+        new \Arsol_Projects_For_Woo\Core\Access_Handler();
         new \Arsol_Projects_For_Woo\Workflow\Workflow_Handler();
         new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
         new \Arsol_Projects_For_Woo\Core\Shortcodes();
