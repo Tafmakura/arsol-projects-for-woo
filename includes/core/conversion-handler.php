@@ -238,7 +238,7 @@ class Conversion_Handler {
                 'onetime' => $request_budget,
                 'type' => 'budget'
             );
-            $proposal->set_meta('_arsol_pfw_proposed_project_budget_line_items', $budget_data);
+            $proposal->set_meta('_arsol_pfw_proposed_project_budget', $budget_data);
             error_log("ARSOL PFW DEBUG: Copied request budget using array structure: " . print_r($budget_data, true));
         } else {
             error_log("ARSOL PFW DEBUG: Request budget was empty");

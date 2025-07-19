@@ -23,8 +23,8 @@ class Proposal_Data_Store {
     
     // Complex data structure meta keys (array-based)
     protected $complex_meta_keys = array(
-        'budget_data' => '_arsol_pfw_proposed_project_budget_line_items',
-        'quotation_data' => '_arsol_pfw_proposed_project_quotation_line_items',
+        'budget_data' => '_arsol_pfw_proposed_project_budget',
+        'quotation_data' => '_arsol_pfw_proposed_project_quotation',
         'original_request_data' => '_arsol_pfw_proposal_original_request_data',
         'woocommerce_data' => '_arsol_pfw_proposal_woocommerce_data',
         'workflow_data' => '_arsol_pfw_proposal_workflow_data',
@@ -172,13 +172,13 @@ class Proposal_Data_Store {
         // Save budget
         $budget = $proposal->get_proposed_project_budget();
         if ($budget !== null) {
-            $proposal->set_meta('_arsol_pfw_proposed_project_budget_line_items', $budget);
+            $proposal->set_meta('_arsol_pfw_proposed_project_budget', $budget);
         }
         
         // Save quotation
         $quotation = $proposal->get_proposed_project_quotation();
         if ($quotation !== null) {
-            $proposal->set_meta('_arsol_pfw_proposed_project_quotation_line_items', $quotation);
+            $proposal->set_meta('_arsol_pfw_proposed_project_quotation', $quotation);
         }
         
         // Save due date

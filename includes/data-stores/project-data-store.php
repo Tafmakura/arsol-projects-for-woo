@@ -19,8 +19,8 @@ class Project_Data_Store {
     
     // Complex data structure meta keys (array-based) - inherited from proposal
     protected $complex_meta_keys = array(
-        'proposal_budget_data' => '_arsol_pfw_proposed_project_budget_line_items',
-        'proposal_quotation_data' => '_arsol_pfw_proposed_project_quotation_line_items',
+        'proposal_budget_data' => '_arsol_pfw_proposed_project_budget',
+        'proposal_quotation_data' => '_arsol_pfw_proposed_project_quotation',
         'woocommerce_data' => '_arsol_pfw_project_woocommerce_data',
         'workflow_data' => '_arsol_pfw_project_workflow_data',
     );

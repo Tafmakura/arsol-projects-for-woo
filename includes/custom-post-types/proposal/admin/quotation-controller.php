@@ -248,7 +248,7 @@ class Quotation_Controller {
                 </td>
                 <td class="arsol-date-column">
                     <span class="arsol-not-applicable">—</span>
-                    <input type="date" class="arsol-date-input hidden-start-date" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display: none;">
+                    <input type="date" class="arsol-date-input hidden-start-date" name="line_items[products][{{ data.id }}][billing_start_date]" value="{{ data.billing_start_date || '' }}" style="display: none;">
                 </td>
                 <td class="arsol-quantity-column"><input type="number" class="arsol-quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
                 <td class="arsol-price-column"><input type="text" class="arsol-price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}" required></td>
@@ -284,7 +284,7 @@ class Quotation_Controller {
                     <input type="text" class="arsol-description-input" name="line_items[recurring_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>" required>
                 </td>
                 <td class="arsol-date-column">
-                    <input type="date" class="arsol-date-input" name="line_items[recurring_fees][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}">
+                    <input type="date" class="arsol-date-input" name="line_items[recurring_fees][{{ data.id }}][billing_start_date]" value="{{ data.billing_start_date || '' }}">
                 </td>
                 <td class="arsol-amount-column">
                     <input type="text" class="arsol-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}" required>
@@ -295,14 +295,14 @@ class Quotation_Controller {
                         $intervals = function_exists('wcs_get_subscription_period_interval_strings') ? wcs_get_subscription_period_interval_strings() : array(1=>1);
                         $periods = function_exists('wcs_get_subscription_period_strings') ? wcs_get_subscription_period_strings() : array('month' => 'month');
                     ?>
-                    <select name="line_items[recurring_fees][{{ data.id }}][interval]" class="arsol-billing-select">
+                    <select name="line_items[recurring_fees][{{ data.id }}][billing_interval]" class="arsol-billing-select">
                         <# _.each(<?php echo json_encode($intervals); ?>, function(label, value) { #>
-                            <option value="{{ value }}" <# if (data.interval == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                            <option value="{{ value }}" <# if (data.billing_interval == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
-                    <select name="line_items[recurring_fees][{{ data.id }}][period]" class="arsol-billing-select">
+                    <select name="line_items[recurring_fees][{{ data.id }}][billing_period]" class="arsol-billing-select">
                          <# _.each(<?php echo json_encode($periods); ?>, function(label, value) { #>
-                            <option value="{{ value }}" <# if (data.period == value) { #>selected="selected"<# } #>>{{ label }}</option>
+                            <option value="{{ value }}" <# if (data.billing_period == value) { #>selected="selected"<# } #>>{{ label }}</option>
                         <# }); #>
                     </select>
                     </div>
@@ -408,9 +408,9 @@ class Quotation_Controller {
                     'regular_price' => isset($product_data['price']) ? wc_format_decimal($product_data['price']) : '',
                     'sale_price' => isset($product_data['sale_price']) ? wc_format_decimal($product_data['sale_price']) : '',
                     'product_type' => isset($product_data['product_type']) ? sanitize_text_field($product_data['product_type']) : '',
-                    'start_date' => isset($product_data['start_date']) ? sanitize_text_field($product_data['start_date']) : '',
-                    'interval' => isset($product_data['interval']) ? absint($product_data['interval']) : 1,
-                    'period' => isset($product_data['period']) ? sanitize_text_field($product_data['period']) : 'month',
+                    'billing_start_date' => isset($product_data['billing_start_date']) ? sanitize_text_field($product_data['billing_start_date']) : '',
+                    'billing_interval' => isset($product_data['billing_interval']) ? absint($product_data['billing_interval']) : 1,
+                    'billing_period' => isset($product_data['billing_period']) ? sanitize_text_field($product_data['billing_period']) : 'month',
                 );
             }
         }
@@ -435,9 +435,9 @@ class Quotation_Controller {
                     'description' => isset($fee_data['description']) ? sanitize_text_field($fee_data['description']) : '',
                     'amount' => isset($fee_data['amount']) ? wc_format_decimal($fee_data['amount']) : '',
                     'tax_class' => isset($fee_data['tax_class']) ? sanitize_text_field($fee_data['tax_class']) : '',
-                    'start_date' => isset($fee_data['start_date']) ? sanitize_text_field($fee_data['start_date']) : '',
-                    'interval' => isset($fee_data['interval']) ? absint($fee_data['interval']) : 1,
-                    'period' => isset($fee_data['period']) ? sanitize_text_field($fee_data['period']) : 'month',
+                    'billing_start_date' => isset($fee_data['billing_start_date']) ? sanitize_text_field($fee_data['billing_start_date']) : '',
+                    'billing_interval' => isset($fee_data['billing_interval']) ? absint($fee_data['billing_interval']) : 1,
+                    'billing_period' => isset($fee_data['billing_period']) ? sanitize_text_field($fee_data['billing_period']) : 'month',
                 );
             }
         }

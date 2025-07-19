@@ -311,8 +311,8 @@ class Biller_Invoice {
                     }
                     
                     // Add start date for subscription products
-                    if ($order_item && isset($item['start_date']) && !empty($item['start_date'])) {
-                        $order_item->add_meta_data('_subscription_start_date', $item['start_date']);
+                    if ($order_item && isset($item['billing_start_date']) && !empty($item['billing_start_date'])) {
+                        $order_item->add_meta_data('_subscription_start_date', $item['billing_start_date']);
                     }
                 }
             }
@@ -327,8 +327,8 @@ class Biller_Invoice {
                 $fee_item->set_total($fee['amount']);
                 
                 // Add start date if specified
-                if (isset($fee['start_date']) && !empty($fee['start_date'])) {
-                    $fee_item->add_meta_data('_subscription_start_date', $fee['start_date']);
+                if (isset($fee['billing_start_date']) && !empty($fee['billing_start_date'])) {
+                    $fee_item->add_meta_data('_subscription_start_date', $fee['billing_start_date']);
                 }
                 
                 $order->add_item($fee_item);
@@ -395,10 +395,10 @@ class Biller_Invoice {
                     }
                     
                     // Add start date
-                    if ($subscription_item && isset($item['start_date']) && !empty($item['start_date'])) {
-                        $subscription_item->add_meta_data('_subscription_start_date', $item['start_date']);
-                        }
-                    } else {
+                    if ($subscription_item && isset($item['billing_start_date']) && !empty($item['billing_start_date'])) {
+                        $subscription_item->add_meta_data('_subscription_start_date', $item['billing_start_date']);
+                    }
+                } else {
                         \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                             sprintf('Skipped product #%d for subscription (type: %s)', 
                                 $item['product_id'], $product_type_to_check));
@@ -416,8 +416,8 @@ class Biller_Invoice {
                 $fee_item->set_total($fee['amount']);
                 
                 // Add start date if specified
-                if (isset($fee['start_date']) && !empty($fee['start_date'])) {
-                    $fee_item->add_meta_data('_subscription_start_date', $fee['start_date']);
+                if (isset($fee['billing_start_date']) && !empty($fee['billing_start_date'])) {
+                    $fee_item->add_meta_data('_subscription_start_date', $fee['billing_start_date']);
                 }
                 
                 $subscription->add_item($fee_item);

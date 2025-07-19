@@ -219,7 +219,7 @@ class Conversion_Handler {
                 'onetime' => $request_budget,
                 'type' => 'budget'
             );
-            update_post_meta($proposal_id, '_arsol_pfw_proposed_project_budget_line_items', $budget_data);
+            update_post_meta($proposal_id, '_arsol_pfw_proposed_project_budget', $budget_data);
         }
         
         // 4. Set proposal status to processing using stage manager
