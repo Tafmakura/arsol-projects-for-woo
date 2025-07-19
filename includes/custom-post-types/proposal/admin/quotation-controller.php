@@ -78,9 +78,8 @@ class Quotation_Controller {
                     <thead>
                         <tr>
                                                     <th class="arsol-description-column"><?php _e('Fee Name', 'arsol-pfw'); ?></th>
-                        <th class="arsol-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
                         <th class="arsol-amount-column"><?php _e('Amount', 'arsol-pfw'); ?></th>
-                        <th class="arsol-billing-cycle-column"><?php _e('Billing Cycle', 'arsol-pfw'); ?></th>
+                        <th class="arsol-billing-cycle-column"><?php _e('Billing Cycle & Start Date', 'arsol-pfw'); ?></th>
                         <th class="arsol-taxable-column"><?php _e('Tax', 'arsol-pfw'); ?></th>
                         <th class="arsol-subtotal-column"><?php _e('Subtotal', 'arsol-pfw'); ?></th>
                         <th class="arsol-actions-column"></th>
@@ -283,9 +282,6 @@ class Quotation_Controller {
                 <td class="arsol-description-column">
                     <input type="text" class="arsol-description-input" name="line_items[recurring_fees][{{ data.id }}][description]" value="{{ data.description || '' }}" placeholder="<?php esc_attr_e('e.g. Monthly Maintenance', 'arsol-pfw'); ?>" required>
                 </td>
-                <td class="arsol-date-column">
-                    <input type="date" class="arsol-date-input" name="line_items[recurring_fees][{{ data.id }}][billing_start_date]" value="{{ data.billing_start_date || '' }}">
-                </td>
                 <td class="arsol-amount-column">
                     <input type="text" class="arsol-amount-input wc_input_price" name="line_items[recurring_fees][{{ data.id }}][amount]" value="{{ data.amount || '' }}" required>
                 </td>
@@ -306,6 +302,7 @@ class Quotation_Controller {
                         <# }); #>
                     </select>
                     </div>
+                    <input type="date" class="arsol-date-input arsol-recurring-date-input" name="line_items[recurring_fees][{{ data.id }}][billing_start_date]" value="{{ data.billing_start_date || '' }}">
                 </td>
                 <td class="arsol-taxable-column">
                     <select name="line_items[recurring_fees][{{ data.id }}][tax_class]">

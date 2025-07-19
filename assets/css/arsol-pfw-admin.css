@@ -1441,3 +1441,17 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
     flex-shrink: 0;
 }
 
+/* Recurring fees date input styling */
+.arsol-recurring-date-input {
+    margin-top: 8px;
+    max-width: 100%;
+    width: 100%;
+    display: block;
+}
+
+/* Ensure billing cycle column has enough space for both billing period and date input */
+.arsol-billing-cycle-column {
+    min-width: 200px;
+    width: 200px;
+}
+
