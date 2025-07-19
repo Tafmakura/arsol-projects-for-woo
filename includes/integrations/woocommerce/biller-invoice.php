@@ -314,6 +314,11 @@ class Biller_Invoice {
                     if ($order_item && isset($item['billing_start_date']) && !empty($item['billing_start_date'])) {
                         $order_item->add_meta_data('_subscription_start_date', $item['billing_start_date']);
                     }
+                    
+                    // Add custom details if specified
+                    if ($order_item && isset($item['details']) && !empty($item['details'])) {
+                        $order_item->add_meta_data('_line_item_details', $item['details']);
+                    }
                 }
             }
         }
@@ -397,6 +402,11 @@ class Biller_Invoice {
                     // Add start date
                     if ($subscription_item && isset($item['billing_start_date']) && !empty($item['billing_start_date'])) {
                         $subscription_item->add_meta_data('_subscription_start_date', $item['billing_start_date']);
+                    }
+                    
+                    // Add custom details if specified
+                    if ($subscription_item && isset($item['details']) && !empty($item['details'])) {
+                        $subscription_item->add_meta_data('_line_item_details', $item['details']);
                     }
                 } else {
                         \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 

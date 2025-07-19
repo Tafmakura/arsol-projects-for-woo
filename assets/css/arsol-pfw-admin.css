@@ -1460,3 +1460,27 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
     width: 200px;
 }
 
+/* Product details textarea styling */
+.arsol-product-details {
+    margin-top: 8px;
+    width: 100%;
+    resize: vertical;
+    min-height: 40px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    padding: 6px 8px;
+}
+
+.arsol-product-details:focus {
+    border-color: #0073aa;
+    box-shadow: 0 0 0 1px #0073aa;
+    outline: none;
+}
+
+/* Ensure product column has enough space for both product select and details */
+.arsol-product-column {
+    min-width: 250px;
+    width: 250px;
+}
+

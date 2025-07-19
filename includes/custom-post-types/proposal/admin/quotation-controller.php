@@ -239,11 +239,14 @@ class Quotation_Controller {
         ?>
         <script type="text/html" id="tmpl-arsol-product-line-item">
             <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}" <# if (data.product_type === 'subscription' || data.product_type === 'subscription_variation') { #>data-is-subscription="true" data-billing-interval="{{ data.billing_interval || 1 }}" data-billing-period="{{ data.billing_period || 'month' }}"<# } #>>
-                <td class="arsol-description-column">
-                    <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]" required>
-                        <option value="{{ data.product_id || '' }}" selected="selected">{{ data.product_name || '' }}</option>
+                <td class="arsol-product-column">
+                    <select class="arsol-product-select" name="line_items[products][{{ data.id }}][product_id]">
+                        <option value=""><?php _e('Select a product...', 'arsol-pfw'); ?></option>
                     </select>
-                    <input type="hidden" name="line_items[products][{{ data.id }}][product_type]" value="{{ data.product_type || '' }}">
+                    <textarea class="arsol-product-details" 
+                              name="line_items[products][{{ data.id }}][details]" 
+                              placeholder="<?php esc_attr_e('Details...', 'arsol-pfw'); ?>"
+                              rows="2">{{ data.details || '' }}</textarea>
                 </td>
                 <td class="arsol-date-column">
                     <span class="arsol-not-applicable">—</span>
@@ -411,6 +414,7 @@ class Quotation_Controller {
                     'regular_price' => isset($product_data['price']) ? wc_format_decimal($product_data['price']) : '',
                     'sale_price' => isset($product_data['sale_price']) ? wc_format_decimal($product_data['sale_price']) : '',
                     'product_type' => $product_type, // Use actual product type from WooCommerce
+                    'details' => isset($product_data['details']) ? sanitize_textarea_field($product_data['details']) : '',
                 );
                 
                 // Only save billing fields for subscription products
