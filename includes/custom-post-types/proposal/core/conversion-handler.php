@@ -135,7 +135,7 @@ class Conversion_Handler {
             $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project();
         $project->set_title($proposal->get_title());
         $project->set_customer_id($proposal->get_customer_id());
-        $project->set_budget($proposal->get_budget());
+        $project->set_project_budget($proposal->get_proposed_project_budget());
         $project->set_description($proposal->get_prop('description'));
         $project->set_stage('not-started');
             

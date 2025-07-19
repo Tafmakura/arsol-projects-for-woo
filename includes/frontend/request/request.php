@@ -370,15 +370,27 @@ class Request_Frontend extends Frontend_Handler {
         $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
         
         if (!empty($data['requested_budget'])) {
-            $request->set_budget(sanitize_text_field($data['requested_budget']));
+            // Clean and format budget amount
+            $amount = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($data['requested_budget']);
+            $amount = floatval(wc_format_decimal($amount));
+            $currency = get_woocommerce_currency();
+            
+            if ($amount > 0) {
+                $budget_data = array(
+                    'amount' => $amount,
+                    'currency' => $currency,
+                    'currency_symbol' => get_woocommerce_currency_symbol($currency)
+                );
+                $request->set_requested_project_budget($budget_data);
+            }
         }
         
         if (!empty($data['requested_start_date'])) {
-            $request->set_start_date(sanitize_text_field($data['requested_start_date']));
+            $request->set_requested_project_start_date(sanitize_text_field($data['requested_start_date']));
         }
         
         if (!empty($data['requested_due_date'])) {
-            $request->set_due_date(sanitize_text_field($data['requested_due_date']));
+            $request->set_requested_project_due_date(sanitize_text_field($data['requested_due_date']));
         }
         
         if (!empty($data['request_project_lead'])) {
