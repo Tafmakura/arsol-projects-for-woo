@@ -303,7 +303,7 @@ class Single_Controller {
             
             // Handle one-time budget
             if (isset($_POST['arsol_pfw_proposal_budget_onetime_amount']) && !empty($_POST['arsol_pfw_proposal_budget_onetime_amount'])) {
-                $onetime_amount = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($_POST['arsol_pfw_proposal_budget_onetime_amount']);
+                $onetime_amount = \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::clean_amount_input($_POST['arsol_pfw_proposal_budget_onetime_amount']);
                 $onetime_amount = floatval(wc_format_decimal($onetime_amount));
                 
                 if ($onetime_amount > 0) {
@@ -321,7 +321,7 @@ class Single_Controller {
             
             // Handle recurring budget
             if (isset($_POST['arsol_pfw_proposal_budget_recurring_amount']) && !empty($_POST['arsol_pfw_proposal_budget_recurring_amount'])) {
-                $recurring_amount = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($_POST['arsol_pfw_proposal_budget_recurring_amount']);
+                $recurring_amount = \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::clean_amount_input($_POST['arsol_pfw_proposal_budget_recurring_amount']);
                 $recurring_amount = floatval(wc_format_decimal($recurring_amount));
                 
                 if ($recurring_amount > 0) {
@@ -583,7 +583,7 @@ class Single_Controller {
                 $budget_amount = floatval($proposal_budget['amount']);
             } else {
                 // Remove commas and other non-numeric characters except decimal point
-                $cleaned_budget = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($proposal_budget);
+                $cleaned_budget = \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::clean_amount_input($proposal_budget);
                 $budget_amount = floatval(wc_format_decimal($cleaned_budget));
             }
         }
@@ -594,7 +594,7 @@ class Single_Controller {
                 $recurring_budget_amount = floatval($proposal_recurring_budget['amount']);
             } else {
                 // Remove commas and other non-numeric characters except decimal point
-                $cleaned_recurring_budget = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($proposal_recurring_budget);
+                $cleaned_recurring_budget = \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::clean_amount_input($proposal_recurring_budget);
                 $recurring_budget_amount = floatval(wc_format_decimal($cleaned_recurring_budget));
             }
         }

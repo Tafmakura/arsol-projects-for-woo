@@ -235,7 +235,7 @@ class Workflow_Handler {
         
         if (isset($data['request_budget'])) {
             // Clean and format budget amount
-            $amount = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($data['request_budget']);
+            $amount = \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::clean_amount_input($data['request_budget']);
             $amount = floatval(wc_format_decimal($amount));
             $currency = get_woocommerce_currency();
             

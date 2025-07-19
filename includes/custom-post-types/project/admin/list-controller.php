@@ -56,7 +56,7 @@ class List_Controller {
                 $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
                 $customer_id = $project->get_customer_id();
                 if ($customer_id) {
-                    echo \Arsol_Projects_For_Woo\Woocommerce::create_customer_filter_link($customer_id, 'arsol-pfw-project');
+                    echo \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::create_customer_filter_link($customer_id, 'arsol-pfw-project');
                 } else {
                     echo '<span class="na">&ndash;</span>';
                 }
@@ -111,7 +111,7 @@ class List_Controller {
             if (!empty($current_customer)) {
                 $customer = get_userdata($current_customer);
                 if ($customer) {
-                    $customer_display = \Arsol_Projects_For_Woo\Woocommerce::format_customer_admin_display($customer);
+                    $customer_display = \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::format_customer_admin_display($customer);
                     
                     printf(
                         '<option value="%s" selected="selected">%s</option>',

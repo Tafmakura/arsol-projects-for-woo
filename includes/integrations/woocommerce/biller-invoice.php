@@ -115,7 +115,7 @@ class Biller_Invoice {
                 throw new Exception($order->get_error_message());
             }
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                 sprintf('WooCommerce order #%d created for proposal #%d', $order->get_id(), $proposal_data['proposal_id']));
             
             // Set billing and shipping addresses
@@ -128,7 +128,7 @@ class Biller_Invoice {
             $order->add_meta_data('_arsol_pfw_proposal_id', $proposal_data['proposal_id']);
             if ($project_id) {
                 // Save project using both methods to ensure compatibility
-                \Arsol_Projects_For_Woo\Woocommerce::save_project_to_order($order, $project_id);
+                \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::save_project_to_order($order, $project_id);
             }
             $order->add_meta_data('_arsol_pfw_conversion_date', current_time('mysql'));
             
@@ -141,7 +141,7 @@ class Biller_Invoice {
             $order->calculate_totals();
             $order->save();
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                 sprintf('Order #%d finalized with total: %s', $order->get_id(), $order->get_formatted_order_total()));
             
             return array(
@@ -151,7 +151,7 @@ class Biller_Invoice {
             );
             
         } catch (Exception $e) {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('error', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('error', 
                 sprintf('Order creation failed for proposal #%d: %s', $proposal_data['proposal_id'], $e->getMessage()));
             
             return array(
@@ -185,7 +185,7 @@ class Biller_Invoice {
                 throw new Exception(__('Parent order not found.', 'arsol-pfw'));
             }
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                 sprintf('Starting subscription creation for proposal #%d with parent order #%d', 
                     $proposal_data['proposal_id'], $parent_order_id));
             
@@ -202,7 +202,7 @@ class Biller_Invoice {
                 throw new Exception($subscription->get_error_message());
             }
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                 sprintf('WooCommerce subscription #%d created for proposal #%d', $subscription->get_id(), $proposal_data['proposal_id']));
             
             // Copy addresses from parent order
@@ -216,7 +216,7 @@ class Biller_Invoice {
             $subscription->add_meta_data('_arsol_pfw_proposal_id', $proposal_data['proposal_id']);
             if ($project_id) {
                 // Save project using both methods to ensure compatibility
-                \Arsol_Projects_For_Woo\Woocommerce::save_project_to_order($subscription, $project_id);
+                \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::save_project_to_order($subscription, $project_id);
             }
             $subscription->add_meta_data('_arsol_pfw_conversion_date', current_time('mysql'));
             
@@ -229,7 +229,7 @@ class Biller_Invoice {
             $subscription->calculate_totals();
             $subscription->save();
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                 sprintf('Subscription #%d finalized with total: %s', $subscription->get_id(), $subscription->get_formatted_order_total()));
             
             return array(
@@ -239,7 +239,7 @@ class Biller_Invoice {
             );
             
         } catch (Exception $e) {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('error', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('error', 
                 sprintf('Subscription creation failed for proposal #%d: %s', $proposal_data['proposal_id'], $e->getMessage()));
             
             return array(
@@ -373,7 +373,7 @@ class Biller_Invoice {
                     $actual_product_type = $product->get_type();
                     $stored_product_type = isset($item['product_type']) ? $item['product_type'] : 'not_set';
                     
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('debug', 
+                    \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('debug', 
                         sprintf('Processing product #%d for subscription: Actual type: %s, Stored type: %s', 
                             $item['product_id'], $actual_product_type, $stored_product_type));
                     
@@ -384,7 +384,7 @@ class Biller_Invoice {
                         $item_id = $subscription->add_product($product, $item['quantity']); 
                         $subscription_item = $item_id ? $subscription->get_item($item_id) : null;
                         
-                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+                        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                             sprintf('Added subscription product #%d to subscription (item_id: %s)', 
                                 $item['product_id'], $item_id ? $item_id : 'failed'));
                     
@@ -399,7 +399,7 @@ class Biller_Invoice {
                         $subscription_item->add_meta_data('_subscription_start_date', $item['start_date']);
                         }
                     } else {
-                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+                        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                             sprintf('Skipped product #%d for subscription (type: %s)', 
                                 $item['product_id'], $product_type_to_check));
                     }
@@ -422,7 +422,7 @@ class Biller_Invoice {
                 
                 $subscription->add_item($fee_item);
                 
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+                \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                     sprintf('Added recurring fee "%s" to subscription', $fee['description']));
             }
         }

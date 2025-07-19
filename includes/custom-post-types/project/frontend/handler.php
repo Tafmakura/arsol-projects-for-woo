@@ -179,7 +179,7 @@ class Handler {
         // Save additional project meta
         if (!empty($budget)) {
             // Remove formatting from budget amount (commas, etc.)
-            $amount = \Arsol_Projects_For_Woo\Woocommerce::clean_amount_input($budget);
+            $amount = \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::clean_amount_input($budget);
             $currency = get_woocommerce_currency();
             
             if (!empty($amount)) {

@@ -359,7 +359,7 @@ class Checkout {
         if (!empty($project_id)) {
             $order = wc_get_order($order_id);
             // Use centralized save method for consistency across all components
-            \Arsol_Projects_For_Woo\Woocommerce::save_project_to_order($order, (int)$project_id);
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::save_project_to_order($order, (int)$project_id);
             // The order->save() is called by WooCommerce after this hook.
         }
     }
