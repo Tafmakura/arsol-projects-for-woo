@@ -242,9 +242,7 @@ class Quotation_Controller {
             <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}" <# if (data.product_type === 'subscription' || data.product_type === 'subscription_variation') { #>data-is-subscription="true" data-billing-interval="{{ data.billing_interval || 1 }}" data-billing-period="{{ data.billing_period || 'month' }}"<# } #>>
                 <td class="arsol-description-column">
                     <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]" required>
-                        <# if (data.product_id && data.description) { #>
-                            <option value="{{ data.product_id }}" selected="selected">{{ data.description }}</option>
-                        <# } #>
+                        <option value="{{ data.product_id || '' }}" selected="selected">{{ data.product_name || '' }}</option>
                     </select>
                     <input type="hidden" name="line_items[products][{{ data.id }}][product_type]" value="{{ data.product_type || '' }}">
                 </td>
@@ -253,7 +251,7 @@ class Quotation_Controller {
                     <input type="date" class="arsol-date-input hidden-start-date" name="line_items[products][{{ data.id }}][start_date]" value="{{ data.start_date || '' }}" style="display: none;">
                 </td>
                 <td class="arsol-quantity-column"><input type="number" class="arsol-quantity-input" name="line_items[products][{{ data.id }}][quantity]" value="{{ data.quantity || 1 }}" min="1"></td>
-                <td class="arsol-price-column"><input type="text" class="arsol-price-input wc_input_price" name="line_items[products][{{ data.id }}][regular_price]" value="{{ data.regular_price || '' }}" required></td>
+                <td class="arsol-price-column"><input type="text" class="arsol-price-input wc_input_price" name="line_items[products][{{ data.id }}][price]" value="{{ data.regular_price || '' }}" required></td>
                 <td class="arsol-sale-price-column"><input type="text" class="arsol-sale-price-input wc_input_price" name="line_items[products][{{ data.id }}][sale_price]" value="{{ data.sale_price || '' }}"></td>
                 <td class="arsol-subtotal-column">{{{ data.subtotal_formatted || '<?php echo wc_price(0); ?>' }}}</td>
                 <td class="arsol-actions-column"><a href="#" class="remove-line-item button button-secondary">&times;</a></td>
@@ -385,80 +383,14 @@ class Quotation_Controller {
             return;
         }
 
-        // Process and save line items from form submission
-        $quotation_data = array();
+        // Clear old quotation fields (no longer needed with array structure)
+        // Quotation data is now stored in _arsol_pfw_proposed_project_quotation_line_items
         
-        // Process products
-        if (isset($_POST['line_items']['products']) && is_array($_POST['line_items']['products'])) {
-            $quotation_data['products'] = array();
-            foreach ($_POST['line_items']['products'] as $id => $product_data) {
-                $product_id = isset($product_data['product_id']) ? absint($product_data['product_id']) : 0;
-                $product_name = '';
-                
-                // Get product name from product ID
-                if ($product_id) {
-                    $product = wc_get_product($product_id);
-                    if ($product) {
-                        $product_name = $product->get_name();
-                    }
-                }
-                
-                $quotation_data['products'][$id] = array(
-                    'product_id' => $product_id,
-                    'description' => $product_name, // Use product name as description
-                    'quantity' => isset($product_data['quantity']) ? absint($product_data['quantity']) : 1,
-                    'regular_price' => isset($product_data['regular_price']) ? wc_format_decimal($product_data['regular_price']) : '',
-                    'sale_price' => isset($product_data['sale_price']) ? wc_format_decimal($product_data['sale_price']) : '',
-                    'product_type' => isset($product_data['product_type']) ? sanitize_text_field($product_data['product_type']) : '',
-                    'start_date' => isset($product_data['start_date']) ? sanitize_text_field($product_data['start_date']) : '',
-                    'interval' => isset($product_data['interval']) ? absint($product_data['interval']) : 1,
-                    'period' => isset($product_data['period']) ? sanitize_text_field($product_data['period']) : 'month',
-                );
-            }
-        }
-        
-        // Process one-time fees
-        if (isset($_POST['line_items']['one_time_fees']) && is_array($_POST['line_items']['one_time_fees'])) {
-            $quotation_data['one_time_fees'] = array();
-            foreach ($_POST['line_items']['one_time_fees'] as $id => $fee_data) {
-                $quotation_data['one_time_fees'][$id] = array(
-                    'description' => isset($fee_data['description']) ? sanitize_text_field($fee_data['description']) : '',
-                    'amount' => isset($fee_data['amount']) ? wc_format_decimal($fee_data['amount']) : '',
-                    'tax_class' => isset($fee_data['tax_class']) ? sanitize_text_field($fee_data['tax_class']) : '',
-                );
-            }
-        }
-        
-        // Process recurring fees
-        if (isset($_POST['line_items']['recurring_fees']) && is_array($_POST['line_items']['recurring_fees'])) {
-            $quotation_data['recurring_fees'] = array();
-            foreach ($_POST['line_items']['recurring_fees'] as $id => $fee_data) {
-                $quotation_data['recurring_fees'][$id] = array(
-                    'description' => isset($fee_data['description']) ? sanitize_text_field($fee_data['description']) : '',
-                    'amount' => isset($fee_data['amount']) ? wc_format_decimal($fee_data['amount']) : '',
-                    'tax_class' => isset($fee_data['tax_class']) ? sanitize_text_field($fee_data['tax_class']) : '',
-                    'start_date' => isset($fee_data['start_date']) ? sanitize_text_field($fee_data['start_date']) : '',
-                    'interval' => isset($fee_data['interval']) ? absint($fee_data['interval']) : 1,
-                    'period' => isset($fee_data['period']) ? sanitize_text_field($fee_data['period']) : 'month',
-                );
-            }
-        }
-        
-        // Process shipping fees
-        if (isset($_POST['line_items']['shipping_fees']) && is_array($_POST['line_items']['shipping_fees'])) {
-            $quotation_data['shipping_fees'] = array();
-            foreach ($_POST['line_items']['shipping_fees'] as $id => $shipping_data) {
-                $quotation_data['shipping_fees'][$id] = array(
-                    'description' => isset($shipping_data['description']) ? sanitize_text_field($shipping_data['description']) : '',
-                    'shipping_class_id' => isset($shipping_data['shipping_class_id']) ? absint($shipping_data['shipping_class_id']) : 0,
-                    'amount' => isset($shipping_data['amount']) ? wc_format_decimal($shipping_data['amount']) : '',
-                    'tax_class' => isset($shipping_data['tax_class']) ? sanitize_text_field($shipping_data['tax_class']) : '',
-                );
-            }
-        }
+        // Save line items to database using entity methods
         
         // Save totals to quotation data structure
-        $quotation_data['onetime_total'] = isset($_POST['arsol_pfw_proposal_quotation_onetime_total']) ? sanitize_text_field($_POST['arsol_pfw_proposal_quotation_onetime_total']) : '0';
+        $quotation_data = $proposal->get_proposed_project_quotation();
+        $quotation_data['onetime_total'] = sanitize_text_field($_POST['arsol_pfw_proposal_quotation_onetime_total']);
         
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
         $recurring_totals = json_decode($recurring_totals_json, true);
@@ -573,6 +505,7 @@ class Quotation_Controller {
         $sale_price_val = is_numeric($sale_price_val) ? (float) $sale_price_val : '';
 
         $data = array(
+            'product_name' => $product->get_name(),
             'regular_price' => wc_format_decimal($regular_price_val, wc_get_price_decimals()),
             'sale_price' => $sale_price_val !== '' ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
             'product_type' => $product_type, // WooCommerce product types with prices: simple, subscription, subscription_variation, variation, external
