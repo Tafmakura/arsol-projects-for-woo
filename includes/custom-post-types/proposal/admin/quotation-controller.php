@@ -240,7 +240,7 @@ class Quotation_Controller {
         <script type="text/html" id="tmpl-arsol-product-line-item">
             <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}" <# if (data.product_type === 'subscription' || data.product_type === 'subscription_variation') { #>data-is-subscription="true" data-billing-interval="{{ data.billing_interval || 1 }}" data-billing-period="{{ data.billing_period || 'month' }}"<# } #>>
                 <td class="arsol-product-column">
-                    <select class="arsol-product-select" name="line_items[products][{{ data.id }}][product_id]">
+                    <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]">
                         <option value=""><?php _e('Select a product...', 'arsol-pfw'); ?></option>
                     </select>
                     <textarea class="arsol-product-details" 
