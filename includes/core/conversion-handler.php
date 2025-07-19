@@ -450,12 +450,12 @@ class Conversion_Handler {
      */
     private function create_woocommerce_orders($proposal_id, $project_id) {
         try {
-            // Check if WooCommerce_Biller class exists
-            if (!class_exists('\Arsol_Projects_For_Woo\Woocommerce_Biller')) {
-                throw new Exception('WooCommerce billing system not available');
+            // Check if Biller_Invoice class exists
+            if (!class_exists('\Arsol_Projects_For_Woo\Integrations\WooCommerce\Biller_Invoice')) {
+                throw new Exception(__('WooCommerce billing integration not available.', 'arsol-pfw'));
             }
             
-            $biller = new \Arsol_Projects_For_Woo\Woocommerce_Biller();
+            $biller = new \Arsol_Projects_For_Woo\Integrations\WooCommerce\Biller_Invoice();
             $result = $biller->convert_proposal_to_order($proposal_id, $project_id);
             
             if (!$result['success']) {

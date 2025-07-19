@@ -48,7 +48,7 @@ class Conversion_Handler {
                     
                     if ($age_minutes > 0.5) { // 30 seconds
                         $is_stuck = true;
-                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+                        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('warning', 
                             "Detected stuck workflow for request #{$request_id}, age: {$age_minutes} minutes. Auto-clearing...");
                     }
                 }
@@ -57,7 +57,7 @@ class Conversion_Handler {
                     // Force clear the stuck workflow
                     $this->force_clear_stuck_workflow($request_id);
                     
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                    \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                         "Successfully cleared stuck workflow for request #{$request_id}. Proceeding with conversion...");
                 } else {
                     throw new Exception(__('Conversion already in progress.', 'arsol-pfw'));
@@ -66,7 +66,7 @@ class Conversion_Handler {
             
             // Start transaction with logging
             $this->start_workflow_transaction($request_id, 'conversion', 'request_to_proposal');
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_request_to_proposal_conversion('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_request_to_proposal_conversion('info', 
                 "Starting conversion: Request #{$request_id} to Proposal");
             
             // Validation step
@@ -146,7 +146,7 @@ class Conversion_Handler {
             $this->complete_workflow_transaction($request_id);
             
             // Log success
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_request_to_proposal_conversion('success', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_request_to_proposal_conversion('success', 
                 "Conversion completed: Request #{$request_id} → Proposal #{$new_proposal_id}");
             
             // Set success notice
@@ -164,7 +164,7 @@ class Conversion_Handler {
             
         } catch (Exception $e) {
             // Log error
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_request_to_proposal_conversion('error', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_request_to_proposal_conversion('error', 
                 "Conversion failed: Request #{$request_id} - " . $e->getMessage());
             
             // Rollback everything
@@ -298,7 +298,7 @@ class Conversion_Handler {
         $this->rollback_request_to_proposal($source_id);
         
         // Log rollback completion
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('warning', 
             "Rollback completed for request_to_proposal. Reason: {$reason}");
         
         // Clean up transaction metadata
@@ -317,7 +317,7 @@ class Conversion_Handler {
         foreach ($created_ids as $entity_id) {
             if (wp_delete_post($entity_id, true)) {
                 $deleted_count++;
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                     "Rollback: Deleted proposal #{$entity_id}");
             }
         }
@@ -343,7 +343,7 @@ class Conversion_Handler {
             // Force rollback the stuck transaction
             $this->rollback_workflow_transaction($post_id, 'Manual cleanup - stuck workflow cleared');
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                 "Manually cleared stuck workflow for post #{$post_id}");
             
             return true;

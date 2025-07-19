@@ -311,11 +311,45 @@ class Asset_Handler {
             case 'arsol-pfw-proposal':
                 wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
 
+                // Get current proposal data for quotation
+                $proposal_id = get_the_ID();
+                $line_items = array();
+                $quotation_data = array();
+                
+                if ($proposal_id) {
+                    $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
+                    if ($proposal && $proposal->exists()) {
+                        $quotation_data = $proposal->get_proposed_project_quotation() ?: array();
+                        $line_items = $quotation_data;
+                    }
+                }
+
+                // Localize proposal script with all required variables
                 $data = array(
                     'validation_message' => __('Please complete all required fields before saving.', 'arsol-pfw'),
                     'currency_symbol' => class_exists('WooCommerce') ? get_woocommerce_currency_symbol() : '$',
                 );
                 wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_vars', $data);
+                
+                // Localize budget script
+                wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_budget_vars', array(
+                    'currency_symbol' => class_exists('WooCommerce') ? get_woocommerce_currency_symbol() : '$',
+                ));
+                
+                // Localize quotation script with all required data
+                wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_quotation_vars', array(
+                    'ajax_url' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('arsol_proposal_quotation_nonce'),
+                    'search_products_nonce' => wp_create_nonce('search-products'),
+                    'currency_symbol' => class_exists('WooCommerce') ? get_woocommerce_currency_symbol() : '$',
+                    'line_items' => $line_items,
+                    'calculation_constants' => array(
+                        'days_in_month' => 30.44,
+                        'days_in_year' => 365.25,
+                        'months_in_year' => 12
+                    ),
+                    'average_monthly_total_formatted' => '', // Will be calculated client-side
+                ));
                 break;
 
             case 'arsol-pfw-project':

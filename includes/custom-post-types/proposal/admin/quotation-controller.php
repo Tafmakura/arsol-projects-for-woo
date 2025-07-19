@@ -2,7 +2,8 @@
 
 namespace Arsol_Projects_For_Woo\Custom_Post_Types\Proposal\Admin;
 
-use Arsol_Projects_For_Woo\Woocommerce_Subscriptions;
+use Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal;
+use Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration;
 
 if (!defined('ABSPATH')) exit;
 

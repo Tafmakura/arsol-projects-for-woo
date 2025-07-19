@@ -243,7 +243,7 @@ class Integration {
         }
         
         if (!$order) {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('error',
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('error',
                 'Invalid order provided to get_project_from_order');
                 return false;
         }
@@ -270,7 +270,7 @@ class Integration {
         $order->add_meta_data('_arsol_pfw_project_id', $project_id);
         update_post_meta($order->get_id(), '_arsol_pfw_project_id', $project_id);
         
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info',
+        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info',
             sprintf('Project #%d linked to order #%d', $project_id, $order->get_id()));
         
         return true;

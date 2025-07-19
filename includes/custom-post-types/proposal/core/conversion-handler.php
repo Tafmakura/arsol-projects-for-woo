@@ -25,7 +25,7 @@ class Conversion_Handler {
             $proposal_id = intval($_GET['proposal_id']);
             } catch (Exception $e) {
                 // Handle error via notice mechanism (same as other failures)
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('error', $e->getMessage());
+                \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_proposal_to_project_conversion('error', $e->getMessage());
                 // Set admin notice and redirect back if possible
                 if (!empty($_GET['proposal_id'])) {
                     $redirect_back = admin_url('post.php?post=' . intval($_GET['proposal_id']) . '&action=edit');
@@ -74,7 +74,7 @@ class Conversion_Handler {
                     
                     if ($age_minutes > 0.5) { // 30 seconds
                         $is_stuck = true;
-                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+                        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('warning', 
                             "Detected stuck workflow for proposal #{$proposal_id}, age: {$age_minutes} minutes. Auto-clearing...");
                     }
                 }
@@ -83,7 +83,7 @@ class Conversion_Handler {
                     // Force clear the stuck workflow
                     $this->force_clear_stuck_workflow($proposal_id);
                     
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                    \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                         "Successfully cleared stuck workflow for proposal #{$proposal_id}. Proceeding with conversion...");
                 } else {
                     throw new Exception(__('Conversion already in progress.', 'arsol-pfw'));
@@ -92,7 +92,7 @@ class Conversion_Handler {
             
             // Start transaction with logging
             $this->start_workflow_transaction($proposal_id, 'conversion', 'proposal_to_project');
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_proposal_to_project_conversion('info', 
                 "Starting conversion: Proposal #{$proposal_id} to Project");
             
             // Validation step
@@ -169,18 +169,18 @@ class Conversion_Handler {
             // Get proposal costing type
             $proposal_costing_type = $proposal->get_proposal_costing_type();
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_proposal_to_project_conversion('info', 
                 sprintf('Starting conversion: Proposal #%d (type: %s) → Project #%d', 
                     $proposal_id, $proposal_costing_type, $new_project_id));
 
             try {
                 // Only create orders for quotation proposals
                 if ($proposal_costing_type === 'quotation') {
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+                    \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                         sprintf('Creating orders for quotation proposal %d', $proposal_id));
                     
                     // Create a biller instance and convert proposal to order
-                    $biller = new \Arsol_Projects_For_Woo\Woocommerce_Biller();
+                    $biller = new \Arsol_Projects_For_Woo\Integrations\WooCommerce\Biller_Invoice();
                     $result = $biller->convert_proposal_to_order($proposal_id, $new_project_id);
                     
                     if (!$result['success']) {
@@ -202,18 +202,18 @@ class Conversion_Handler {
                     
                     $project->update_meta('_arsol_pfw_project_order_creation_note', $result['message']);
                     
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info',
+                    \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info',
                         sprintf('Successfully created orders for project #%d: %s', $new_project_id, $result['message']));
                     
                 } else {
-                    \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
+                    \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('info', 
                         sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $proposal_costing_type));
                 }
                 
             } catch (Exception $e) {
                 // Log order creation error but don't fail the conversion
                 $error_message = $e->getMessage();
-                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('error',
+                \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_woocommerce_billing('error',
                     sprintf('Order creation failed for project #%d: %s', $new_project_id, $error_message));
                 
                 // Store error for debugging but continue with conversion
@@ -230,7 +230,7 @@ class Conversion_Handler {
             $this->complete_workflow_transaction($proposal_id);
             
             // Log success
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('success', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_proposal_to_project_conversion('success', 
                 "Conversion completed: Proposal #{$proposal_id} → Project #{$new_project_id}");
             
             // Set success notice
@@ -251,7 +251,7 @@ class Conversion_Handler {
             
         } catch (Exception $e) {
             // Log error
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('error', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_proposal_to_project_conversion('error', 
                 "Conversion failed: Proposal #{$proposal_id} - " . $e->getMessage());
             
             // Rollback everything
@@ -365,7 +365,7 @@ class Conversion_Handler {
         $project_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
         $project_entity->set_stage('not-started');
 
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
+        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_proposal_to_project_conversion('info', 
             sprintf('Metadata copied from proposal #%d to project #%d (type: %s): %s', 
                 $proposal_id, $project_id, $proposal_costing_type, implode(', ', array_keys($meta_to_copy))));
 
@@ -436,7 +436,7 @@ class Conversion_Handler {
         $this->rollback_proposal_to_project($source_id);
         
         // Log rollback completion
-        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('warning', 
             "Rollback completed for proposal_to_project. Reason: {$reason}");
         
         // Clean up transaction metadata
@@ -461,7 +461,7 @@ class Conversion_Handler {
                     // Project entity
                     if (wp_delete_post($entity_id, true)) {
                         $deleted_count++;
-                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                             "Rollback: Deleted project #{$entity_id}");
                     }
                     break;
@@ -471,13 +471,13 @@ class Conversion_Handler {
                     if ($order) {
                         $order->delete(true); // Force delete
                         $deleted_count++;
-                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                             "Rollback: Deleted shop_order #{$entity_id} using WooCommerce API");
                     } else {
                         // Fallback to direct deletion if WC object not found
                         if (wp_delete_post($entity_id, true)) {
                             $deleted_count++;
-                            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                                 "Rollback: Deleted shop_order #{$entity_id} using WordPress API (fallback)");
                         }
                     }
@@ -489,13 +489,13 @@ class Conversion_Handler {
                         if ($subscription) {
                             $subscription->delete(true); // Force delete
                             $deleted_count++;
-                            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                                 "Rollback: Deleted shop_subscription #{$entity_id} using WooCommerce Subscriptions API");
                         } else {
                             // Fallback to direct deletion if WCS object not found
                             if (wp_delete_post($entity_id, true)) {
                                 $deleted_count++;
-                                \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                                \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                                     "Rollback: Deleted shop_subscription #{$entity_id} using WordPress API (fallback)");
                             }
                         }
@@ -503,7 +503,7 @@ class Conversion_Handler {
                         // WooCommerce Subscriptions not active, use direct deletion
                         if (wp_delete_post($entity_id, true)) {
                             $deleted_count++;
-                            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                                 "Rollback: Deleted shop_subscription #{$entity_id} using WordPress API (no WCS)");
                         }
                     }
@@ -512,7 +512,7 @@ class Conversion_Handler {
                     // Unknown entity type - try generic deletion
                     if (wp_delete_post($entity_id, true)) {
                         $deleted_count++;
-                        \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+                        \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                             "Rollback: Deleted {$entity_type} #{$entity_id}");
                     }
                     break;
@@ -540,7 +540,7 @@ class Conversion_Handler {
             // Force rollback the stuck transaction
             $this->rollback_workflow_transaction($post_id, 'Manual cleanup - stuck workflow cleared');
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                 "Manually cleared stuck workflow for post #{$post_id}");
             
             return true;

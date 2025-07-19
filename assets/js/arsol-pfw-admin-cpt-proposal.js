@@ -1144,7 +1144,7 @@
     };
 
     // Initialize when DOM is ready
-    $(document).ready(function() {
+    $(function() {
         // Only initialize on proposal admin pages
         if ($('body').hasClass('post-type-arsol-pfw-proposal') || $('#proposal_details').length > 0) {
             // Initialize all systems

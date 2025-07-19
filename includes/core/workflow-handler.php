@@ -399,7 +399,7 @@ class Workflow_Handler {
         ", $max_age_date));
         
         if ($cleaned_count > 0) {
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
                 "Cleaned up {$cleaned_count} old workflow metadata entries");
         }
         
@@ -418,7 +418,7 @@ class Workflow_Handler {
         delete_post_meta($post_id, '_arsol_pfw_conversion_created_ids');
         delete_post_meta($post_id, '_arsol_pfw_conversion_rollback_reason');
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('info', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('info', 
             "Cleared workflow metadata for post #{$post_id}");
     }
 
@@ -434,7 +434,7 @@ class Workflow_Handler {
             WHERE meta_key IN ('_arsol_pfw_workflow_started', '_arsol_pfw_workflow_type', '_arsol_pfw_conversion_type', '_arsol_pfw_conversion_step', '_arsol_pfw_conversion_created_ids', '_arsol_pfw_conversion_rollback_reason')
         ");
         
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_workflow('warning', 
+            \Arsol_Projects_For_Woo\Integrations\WooCommerce\Logs::log_workflow('warning', 
             "Emergency cleanup: removed {$cleaned_count} workflow metadata entries");
         
         return $cleaned_count;

@@ -12,7 +12,7 @@
 namespace Arsol_Projects_For_Woo\Core;
 
 use Arsol_Projects_For_Woo\Woo\AdminOrders;
-use Arsol_Projects_For_Woo\Woocommerce;
+use Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -365,7 +365,7 @@ class Shortcodes {
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project orders using the admin orders class
-		$project_orders = Woocommerce::get_project_orders(
+		$project_orders = Integration::get_project_orders(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 
@@ -412,7 +412,7 @@ class Shortcodes {
 		$per_page = max(1, (int) $atts['per_page']);
 
 		// Get project subscriptions using the admin orders class
-		$project_subscriptions = Woocommerce::get_project_subscriptions(
+		$project_subscriptions = Integration::get_project_subscriptions(
 			$project_id, 
 			$current_user_id, 
 			$current_page, 
