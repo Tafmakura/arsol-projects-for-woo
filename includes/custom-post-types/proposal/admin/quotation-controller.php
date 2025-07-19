@@ -383,14 +383,80 @@ class Quotation_Controller {
             return;
         }
 
-        // Clear old quotation fields (no longer needed with array structure)
-        // Quotation data is now stored in _arsol_pfw_proposed_project_quotation_line_items
+        // Process and save line items from form submission
+        $quotation_data = array();
         
-        // Save line items to database using entity methods
+        // Process products - save both product_id and product_name
+        if (isset($_POST['line_items']['products']) && is_array($_POST['line_items']['products'])) {
+            $quotation_data['products'] = array();
+            foreach ($_POST['line_items']['products'] as $id => $product_data) {
+                $product_id = isset($product_data['product_id']) ? absint($product_data['product_id']) : 0;
+                $product_name = '';
+                
+                // Get product name from product ID for storage
+                if ($product_id) {
+                    $product = wc_get_product($product_id);
+                    if ($product) {
+                        $product_name = $product->get_name();
+                    }
+                }
+                
+                $quotation_data['products'][$id] = array(
+                    'product_id' => $product_id,
+                    'product_name' => $product_name, // Store product name for display
+                    'quantity' => isset($product_data['quantity']) ? absint($product_data['quantity']) : 1,
+                    'regular_price' => isset($product_data['price']) ? wc_format_decimal($product_data['price']) : '',
+                    'sale_price' => isset($product_data['sale_price']) ? wc_format_decimal($product_data['sale_price']) : '',
+                    'product_type' => isset($product_data['product_type']) ? sanitize_text_field($product_data['product_type']) : '',
+                    'start_date' => isset($product_data['start_date']) ? sanitize_text_field($product_data['start_date']) : '',
+                    'interval' => isset($product_data['interval']) ? absint($product_data['interval']) : 1,
+                    'period' => isset($product_data['period']) ? sanitize_text_field($product_data['period']) : 'month',
+                );
+            }
+        }
+        
+        // Process one-time fees
+        if (isset($_POST['line_items']['one_time_fees']) && is_array($_POST['line_items']['one_time_fees'])) {
+            $quotation_data['one_time_fees'] = array();
+            foreach ($_POST['line_items']['one_time_fees'] as $id => $fee_data) {
+                $quotation_data['one_time_fees'][$id] = array(
+                    'description' => isset($fee_data['description']) ? sanitize_text_field($fee_data['description']) : '',
+                    'amount' => isset($fee_data['amount']) ? wc_format_decimal($fee_data['amount']) : '',
+                    'tax_class' => isset($fee_data['tax_class']) ? sanitize_text_field($fee_data['tax_class']) : '',
+                );
+            }
+        }
+        
+        // Process recurring fees
+        if (isset($_POST['line_items']['recurring_fees']) && is_array($_POST['line_items']['recurring_fees'])) {
+            $quotation_data['recurring_fees'] = array();
+            foreach ($_POST['line_items']['recurring_fees'] as $id => $fee_data) {
+                $quotation_data['recurring_fees'][$id] = array(
+                    'description' => isset($fee_data['description']) ? sanitize_text_field($fee_data['description']) : '',
+                    'amount' => isset($fee_data['amount']) ? wc_format_decimal($fee_data['amount']) : '',
+                    'tax_class' => isset($fee_data['tax_class']) ? sanitize_text_field($fee_data['tax_class']) : '',
+                    'start_date' => isset($fee_data['start_date']) ? sanitize_text_field($fee_data['start_date']) : '',
+                    'interval' => isset($fee_data['interval']) ? absint($fee_data['interval']) : 1,
+                    'period' => isset($fee_data['period']) ? sanitize_text_field($fee_data['period']) : 'month',
+                );
+            }
+        }
+        
+        // Process shipping fees
+        if (isset($_POST['line_items']['shipping_fees']) && is_array($_POST['line_items']['shipping_fees'])) {
+            $quotation_data['shipping_fees'] = array();
+            foreach ($_POST['line_items']['shipping_fees'] as $id => $shipping_data) {
+                $quotation_data['shipping_fees'][$id] = array(
+                    'description' => isset($shipping_data['description']) ? sanitize_text_field($shipping_data['description']) : '',
+                    'shipping_class_id' => isset($shipping_data['shipping_class_id']) ? absint($shipping_data['shipping_class_id']) : 0,
+                    'amount' => isset($shipping_data['amount']) ? wc_format_decimal($shipping_data['amount']) : '',
+                    'tax_class' => isset($shipping_data['tax_class']) ? sanitize_text_field($shipping_data['tax_class']) : '',
+                );
+            }
+        }
         
         // Save totals to quotation data structure
-        $quotation_data = $proposal->get_proposed_project_quotation();
-        $quotation_data['onetime_total'] = sanitize_text_field($_POST['arsol_pfw_proposal_quotation_onetime_total']);
+        $quotation_data['onetime_total'] = isset($_POST['arsol_pfw_proposal_quotation_onetime_total']) ? sanitize_text_field($_POST['arsol_pfw_proposal_quotation_onetime_total']) : '0';
         
         $recurring_totals_json = isset($_POST['line_items_recurring_totals']) ? stripslashes($_POST['line_items_recurring_totals']) : '{}';
         $recurring_totals = json_decode($recurring_totals_json, true);

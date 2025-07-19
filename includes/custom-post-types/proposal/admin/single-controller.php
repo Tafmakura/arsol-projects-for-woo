@@ -353,9 +353,7 @@ class Single_Controller {
 
         // Conditionally delete quotation data if it's not the selected type
         if ($proposal_costing_type !== 'quotation') {
-             delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items');
-             delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_onetime_total');
-             delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_recurring_totals_grouped');
+             delete_post_meta($post_id, '_arsol_pfw_proposed_project_quotation');
         }
 
         // Save start date

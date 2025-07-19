@@ -496,7 +496,7 @@ class Arsol_PFW_Proposal {
      * @return array Budget data
      */
     public function get_proposed_project_budget() {
-        return $this->get_meta('_arsol_pfw_proposed_project_budget_line_items') ?: array();
+        return $this->get_meta('_arsol_pfw_proposed_project_budget') ?: array();
     }
 
     /**
@@ -506,7 +506,7 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_proposed_project_budget($budget) {
-        return $this->set_meta('_arsol_pfw_proposed_project_budget_line_items', $budget);
+        return $this->set_meta('_arsol_pfw_proposed_project_budget', $budget);
     }
 
     /**
@@ -515,7 +515,7 @@ class Arsol_PFW_Proposal {
      * @return array Quotation data
      */
     public function get_proposed_project_quotation() {
-        return $this->get_meta('_arsol_pfw_proposed_project_quotation_line_items') ?: array();
+        return $this->get_meta('_arsol_pfw_proposed_project_quotation') ?: array();
     }
 
     /**
@@ -525,7 +525,7 @@ class Arsol_PFW_Proposal {
      * @return bool Success status
      */
     public function set_proposed_project_quotation($quotation) {
-        return $this->set_meta('_arsol_pfw_proposed_project_quotation_line_items', $quotation);
+        return $this->set_meta('_arsol_pfw_proposed_project_quotation', $quotation);
     }
 
     /**
@@ -967,8 +967,8 @@ class Arsol_PFW_Proposal {
         $meta_keys = array(
             '_arsol_pfw_customer_id',
             '_arsol_pfw_created_via',
-            '_arsol_pfw_proposed_project_budget_line_items',
-            '_arsol_pfw_proposed_project_quotation_line_items',
+            '_arsol_pfw_proposed_project_budget',
+            '_arsol_pfw_proposed_project_quotation',
             '_arsol_pfw_proposed_project_lead',
             '_arsol_pfw_proposed_project_start_date',
             '_arsol_pfw_proposed_project_due_date',
