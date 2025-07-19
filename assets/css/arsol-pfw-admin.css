@@ -44,9 +44,17 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 
 /* Form Input Styling */
 .arsol-description-input {
-    width: 100% !important;
+    width: 100%;
     flex: 1;
-    min-width: 150px !important;
+    min-width: 150px;
+}
+
+/* Ensure product select has 100% width */
+.arsol-description-input,
+.arsol-description-input + .select2-container,
+.arsol-description-column .select2-container {
+    width: 100%;
+    max-width: 100%;
 }
 
 .arsol-date-input[style*="display:none"],
