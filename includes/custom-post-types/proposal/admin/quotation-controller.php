@@ -462,7 +462,7 @@ class Quotation_Controller {
     }
 
     public function ajax_get_product_details() {
-        check_ajax_referer('arsol-proposal-quotation-nonce', 'nonce');
+        check_ajax_referer('arsol_proposal_quotation_nonce', 'nonce');
         
         $product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
         if (!$product_id) {
