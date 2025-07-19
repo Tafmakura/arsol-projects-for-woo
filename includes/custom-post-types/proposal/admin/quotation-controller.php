@@ -302,7 +302,7 @@ class Quotation_Controller {
                         <# }); #>
                     </select>
                     </div>
-                    <input type="date" class="arsol-date-input arsol-recurring-date-input" name="line_items[recurring_fees][{{ data.id }}][billing_start_date]" value="{{ data.billing_start_date || '' }}" placeholder="<?php esc_attr_e('Starting on:', 'arsol-pfw'); ?>">
+                    <input type="date" class="arsol-date-input arsol-recurring-date-input" name="line_items[recurring_fees][{{ data.id }}][billing_start_date]" value="{{ data.billing_start_date || '' }}">
                 </td>
                 <td class="arsol-taxable-column">
                     <select name="line_items[recurring_fees][{{ data.id }}][tax_class]">
