@@ -391,27 +391,44 @@ class Quotation_Controller {
             $quotation_data['products'] = array();
             foreach ($_POST['line_items']['products'] as $id => $product_data) {
                 $product_id = isset($product_data['product_id']) ? absint($product_data['product_id']) : 0;
-                $product_name = '';
                 
-                // Get product name from product ID for storage
-                if ($product_id) {
-                    $product = wc_get_product($product_id);
-                    if ($product) {
-                        $product_name = $product->get_name();
-                    }
+                // Validate product exists before saving
+                if (!$product_id) {
+                    continue; // Skip line items with no product ID
                 }
                 
-                $quotation_data['products'][$id] = array(
+                $product = wc_get_product($product_id);
+                if (!$product) {
+                    continue; // Skip line items with invalid/deleted products
+                }
+                
+                $product_name = $product->get_name();
+                $product_type = $product->get_type();
+                $is_subscription = in_array($product_type, array('subscription', 'subscription_variation'));
+                
+                // Build line item data
+                $line_item = array(
                     'product_id' => $product_id,
                     'product_name' => $product_name, // Store product name for display
                     'quantity' => isset($product_data['quantity']) ? absint($product_data['quantity']) : 1,
                     'regular_price' => isset($product_data['price']) ? wc_format_decimal($product_data['price']) : '',
                     'sale_price' => isset($product_data['sale_price']) ? wc_format_decimal($product_data['sale_price']) : '',
-                    'product_type' => isset($product_data['product_type']) ? sanitize_text_field($product_data['product_type']) : '',
-                    'billing_start_date' => isset($product_data['billing_start_date']) ? sanitize_text_field($product_data['billing_start_date']) : '',
-                    'billing_interval' => isset($product_data['billing_interval']) ? absint($product_data['billing_interval']) : 1,
-                    'billing_period' => isset($product_data['billing_period']) ? sanitize_text_field($product_data['billing_period']) : 'month',
+                    'product_type' => $product_type, // Use actual product type from WooCommerce
                 );
+                
+                // Only save billing fields for subscription products
+                if ($is_subscription) {
+                    $line_item['billing_start_date'] = isset($product_data['billing_start_date']) ? sanitize_text_field($product_data['billing_start_date']) : '';
+                    $line_item['billing_interval'] = isset($product_data['billing_interval']) ? absint($product_data['billing_interval']) : 1;
+                    $line_item['billing_period'] = isset($product_data['billing_period']) ? sanitize_text_field($product_data['billing_period']) : 'month';
+                } else {
+                    // Ensure billing fields are empty for simple products
+                    $line_item['billing_start_date'] = '';
+                    $line_item['billing_interval'] = '';
+                    $line_item['billing_period'] = '';
+                }
+                
+                $quotation_data['products'][$id] = $line_item;
             }
         }
         
