@@ -86,9 +86,10 @@ class Single_Controller {
 
         // Get current values
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
-        $cost_proposal_type = $proposal->get_proposal_costing_type();
-        if (empty($cost_proposal_type)) {
-            $cost_proposal_type = 'none'; // Default to none
+        // Get proposal costing type
+        $proposal_costing_type = $proposal->get_proposal_costing_type();
+        if (empty($proposal_costing_type)) {
+            $proposal_costing_type = 'none'; // Default to none
         }
 
         $start_date = $proposal->get_proposed_project_start_date();
@@ -218,7 +219,7 @@ class Single_Controller {
         }
         
         // It's safe for us to save the data now.
-        $cost_proposal_type = isset($_POST['arsol_pfw_proposal_costing_type']) ? sanitize_text_field($_POST['arsol_pfw_proposal_costing_type']) : 'none';
+        $proposal_costing_type = isset($_POST['arsol_pfw_proposal_costing_type']) ? sanitize_text_field($_POST['arsol_pfw_proposal_costing_type']) : 'none';
         
         // Store post ID for error display and validate data
         $this->post_id_being_saved = $post_id;
@@ -229,7 +230,7 @@ class Single_Controller {
         $should_validate = $is_trying_to_publish || $is_updating_published;
         
         if ($should_validate) {
-        $validation_errors = $this->validate_proposal_data($post_id, $cost_proposal_type);
+        $validation_errors = $this->validate_proposal_data($post_id, $proposal_costing_type);
         
         if (!empty($validation_errors)) {
             // Store errors for display
@@ -251,7 +252,7 @@ class Single_Controller {
         
         // Save all meta data normally (no temporary data needed)
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-        $proposal->set_proposal_costing_type($cost_proposal_type);
+        $proposal->set_proposal_costing_type($proposal_costing_type);
 
         // Handle project-tied proposal meta keys - CONSOLIDATED LOGIC
         $parent_project_id = null;
@@ -297,7 +298,7 @@ class Single_Controller {
         $currency = get_woocommerce_currency();
 
         // Conditionally save/delete budget data
-        if ($cost_proposal_type === 'budget') {
+        if ($proposal_costing_type === 'budget') {
             $budget_data = array();
             
             // Handle one-time budget
@@ -351,7 +352,7 @@ class Single_Controller {
         }
 
         // Conditionally delete quotation data if it's not the selected type
-        if ($cost_proposal_type !== 'quotation') {
+        if ($proposal_costing_type !== 'quotation') {
              delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_line_items');
              delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_onetime_total');
              delete_post_meta($post_id, '_arsol_pfw_proposal_quotation_recurring_totals_grouped');
@@ -379,10 +380,10 @@ class Single_Controller {
         }
         
         // Save proposal notes based on costing type
-        if ($cost_proposal_type === 'budget') {
+        if ($proposal_costing_type === 'budget') {
             // Save notes
             $proposal->set_proposal_budget_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
-        } elseif ($cost_proposal_type === 'quotation') {
+        } elseif ($proposal_costing_type === 'quotation') {
             // Save proposal quotation notes
             if (isset($_POST['arsol_pfw_proposal_quotation_notes'])) {
                 $proposal->set_proposal_quotation_notes(wp_kses_post($_POST['arsol_pfw_proposal_quotation_notes']));
@@ -465,14 +466,14 @@ class Single_Controller {
     /**
      * Validate proposal data based on type
      */
-    private function validate_proposal_data($post_id, $cost_proposal_type) {
+    private function validate_proposal_data($post_id, $proposal_costing_type) {
         $errors = array();
         
         // Universal validation
         $errors = array_merge($errors, $this->validate_universal_fields($post_id));
         
         // Type-specific validation
-        switch ($cost_proposal_type) {
+        switch ($proposal_costing_type) {
             case 'quotation':
                 $errors = array_merge($errors, $this->validate_quotation_fields($post_id));
                 break;

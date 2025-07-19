@@ -376,8 +376,9 @@ class Quotation_Controller {
         }
         
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-        $cost_proposal_type = $proposal->get_proposal_costing_type();
-        if ($cost_proposal_type !== 'quotation') {
+        // Get proposal costing type
+        $proposal_costing_type = $proposal->get_proposal_costing_type();
+        if ($proposal_costing_type !== 'quotation') {
             return;
         }
 

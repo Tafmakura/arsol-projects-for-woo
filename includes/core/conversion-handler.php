@@ -326,19 +326,18 @@ class Conversion_Handler {
             '_arsol_pfw_proposed_project_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
         );
         
-        // 4. Get proposal type for type-aware handling
-        $cost_proposal_type = $proposal->get_proposal_costing_type();
-        error_log("ARSOL PFW DEBUG: Proposal costing type: {$cost_proposal_type}");
+        // Get proposal costing type
+        $proposal_costing_type = $proposal->get_proposal_costing_type();
+        error_log("ARSOL PFW DEBUG: Proposal costing type: {$proposal_costing_type}");
         
-        // 5. Copy type-specific data using entity methods
-        if ($cost_proposal_type === 'budget') {
-            // Copy budget data using entity methods
+        // Copy type-specific data
+        if ($proposal_costing_type === 'budget') {
+            // Copy budget data
             $budget_data = $proposal->get_proposed_project_budget();
             if (!empty($budget_data)) {
-                $project->set_meta('_arsol_pfw_proposed_project_budget_line_items', $budget_data);
-                error_log("ARSOL PFW DEBUG: Copied budget data using entity methods");
+                $project->set_project_budget($budget_data);
             }
-        } elseif ($cost_proposal_type === 'quotation') {
+        } elseif ($proposal_costing_type === 'quotation') {
             // Copy quotation data using entity methods
             $quotation_data = $proposal->get_proposed_project_quotation();
             if (!empty($quotation_data)) {

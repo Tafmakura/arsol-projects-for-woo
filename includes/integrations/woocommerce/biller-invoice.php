@@ -46,13 +46,13 @@ class Biller_Invoice {
     public function convert_proposal_to_order($proposal_id, $project_id = null) {
         // Validate proposal
         if (!$this->validate_proposal($proposal_id)) {
-            $cost_proposal_type = $this->get_proposal_type($proposal_id);
+            $proposal_costing_type = $this->get_proposal_type($proposal_id);
             $error_messages = array(
-                'none' => __('Proposal validation failed. Please ensure a customer is assigned.', 'arsol-pfw'),
-                'budget' => __('Proposal validation failed. Please ensure a customer is assigned.', 'arsol-pfw'),
-                'quotation' => __('Proposal validation failed. Please ensure it has valid quotation line items (with description and amount) and a customer assigned.', 'arsol-pfw')
+                'none' => __('This proposal type does not support order creation.', 'arsol-pfw'),
+                'budget' => __('Budget proposals do not support order creation. Please use quotation proposals for order creation.', 'arsol-pfw'),
+                'quotation' => __('Failed to create order from quotation proposal.', 'arsol-pfw')
             );
-            $error_message = isset($error_messages[$cost_proposal_type]) ? $error_messages[$cost_proposal_type] : $error_messages['none'];
+            $error_message = isset($error_messages[$proposal_costing_type]) ? $error_messages[$proposal_costing_type] : $error_messages['none'];
             
             throw new Exception($error_message);
         }
@@ -490,10 +490,10 @@ class Biller_Invoice {
         
         // Get proposal costing type using Proposal entity
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $cost_proposal_type = $proposal->get_proposal_costing_type() ?: 'none';
+        $proposal_costing_type = $proposal->get_proposal_costing_type() ?: 'none';
         
         // Validate based on proposal type
-        switch ($cost_proposal_type) {
+        switch ($proposal_costing_type) {
             case 'none':
                 // No requirements for 'none' type (no orders created)
                 return true;
@@ -606,12 +606,12 @@ class Biller_Invoice {
         
         // Get proposal costing type using Proposal entity
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $cost_proposal_type = $proposal->get_proposal_costing_type() ?: 'none';
+        $proposal_costing_type = $proposal->get_proposal_costing_type() ?: 'none';
         $currency = get_woocommerce_currency(); // Use WooCommerce default currency
         $line_items = array();
         
         // Get line items based on proposal type
-        switch ($cost_proposal_type) {
+        switch ($proposal_costing_type) {
             case 'quotation':
                 // Get quotation line items
                 $line_items = $proposal->get_proposed_project_quotation() ?: array();
@@ -630,7 +630,7 @@ class Biller_Invoice {
             'customer_id' => $this->get_customer_id($proposal_id),
             'line_items' => $line_items,
             'currency' => $currency,
-            'proposal_type' => $cost_proposal_type
+            'proposal_type' => $proposal_costing_type
         );
     }
 

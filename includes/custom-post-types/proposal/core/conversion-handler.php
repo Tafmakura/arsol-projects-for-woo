@@ -166,16 +166,16 @@ class Conversion_Handler {
             // Order creation step  
             $proposal->update_meta('_arsol_pfw_conversion_step', 'order_creation');
 
-            // Handle WooCommerce order creation
-            $cost_proposal_type = $proposal->get_proposal_costing_type();
+            // Get proposal costing type
+            $proposal_costing_type = $proposal->get_proposal_costing_type();
             
-            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
-                sprintf('Starting billing operations for proposal #%d (type: %s) → project #%d', 
-                    $proposal_id, $cost_proposal_type, $new_project_id));
+            \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
+                sprintf('Starting conversion: Proposal #%d (type: %s) → Project #%d', 
+                    $proposal_id, $proposal_costing_type, $new_project_id));
 
             try {
                 // Only create orders for quotation proposals
-                if ($cost_proposal_type === 'quotation') {
+                if ($proposal_costing_type === 'quotation') {
                     \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
                         sprintf('Creating orders for quotation proposal %d', $proposal_id));
                     
@@ -207,7 +207,7 @@ class Conversion_Handler {
                     
                 } else {
                     \Arsol_Projects_For_Woo\Woocommerce_Logs::log_woocommerce_billing('info', 
-                        sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $cost_proposal_type));
+                        sprintf('Skipping order creation for proposal %d with type: %s', $proposal_id, $proposal_costing_type));
                 }
                 
             } catch (Exception $e) {
@@ -308,16 +308,16 @@ class Conversion_Handler {
         );
         
         // Get proposal type for type-aware handling
-        $cost_proposal_type = $proposal->get_proposal_costing_type();
+        $proposal_costing_type = $proposal->get_proposal_costing_type();
         
         // Copy type-specific data using entity methods
-        if ($cost_proposal_type === 'budget') {
+        if ($proposal_costing_type === 'budget') {
             // Copy budget data using entity methods
             $budget_data = $proposal->get_proposed_project_budget();
             if (!empty($budget_data)) {
                 $project->set_project_budget($proposal->get_proposed_project_budget());
             }
-        } elseif ($cost_proposal_type === 'quotation') {
+        } elseif ($proposal_costing_type === 'quotation') {
             // Copy quotation data using entity methods
             $quotation_data = $proposal->get_proposed_project_quotation();
             if (!empty($quotation_data)) {
@@ -335,7 +335,7 @@ class Conversion_Handler {
          * Filter: arsol_project_conversion_meta_mapping
          * Allows modification of metadata mapping from proposal to project
          */
-        $meta_to_copy = apply_filters('arsol_project_conversion_meta_mapping', $meta_to_copy, $project_id, $proposal_id, $cost_proposal_type, array());
+        $meta_to_copy = apply_filters('arsol_project_conversion_meta_mapping', $meta_to_copy, $project_id, $proposal_id, $proposal_costing_type, array());
 
         // Copy all remaining meta data
         foreach ($meta_to_copy as $proposal_key => $project_key) {
@@ -367,13 +367,13 @@ class Conversion_Handler {
 
         \Arsol_Projects_For_Woo\Woocommerce_Logs::log_proposal_to_project_conversion('info', 
             sprintf('Metadata copied from proposal #%d to project #%d (type: %s): %s', 
-                $proposal_id, $project_id, $cost_proposal_type, implode(', ', array_keys($meta_to_copy))));
+                $proposal_id, $project_id, $proposal_costing_type, implode(', ', array_keys($meta_to_copy))));
 
         /**
          * Hook: arsol_after_project_conversion_metadata_copied
          * Fired after all metadata is copied from proposal to project
          */
-        do_action('arsol_after_project_conversion_metadata_copied', $project_id, $proposal_id, $meta_to_copy, $cost_proposal_type, array());
+        do_action('arsol_after_project_conversion_metadata_copied', $project_id, $proposal_id, $meta_to_copy, $proposal_costing_type, array());
     }
 
     // ==========================================

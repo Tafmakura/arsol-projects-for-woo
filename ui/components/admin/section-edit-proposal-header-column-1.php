@@ -25,18 +25,21 @@ $proposal_project_lead = $proposal->get_proposed_project_lead();
 $start_date = $proposal->get_proposed_project_start_date();
 $delivery_date = $proposal->get_proposed_project_due_date();
 $expiration_date = $proposal->get_proposal_expiration_date();
-$cost_proposal_type = $proposal->get_proposal_costing_type();
+$proposal_costing_type = $proposal->get_proposal_costing_type();
+if (empty($proposal_costing_type)) {
+    $proposal_costing_type = 'none'; // Default to none
+}
 
-// Check for project-tied proposal - URL parameter first, then meta data
+// Check if this is a project-tied proposal
 $is_project_tied = false;
-$parent_project_data = false;
+$parent_project_data = null;
 
-// ALWAYS check URL parameter first (for new proposals)
+// Priority 1: URL parameter (for new proposals created from project)
 if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
     $parent_project_id = intval($_GET['parent_project']);
     $parent_project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
     
-    if ($parent_project) {
+    if ($parent_project && $parent_project->exists()) {
         $is_project_tied = true;
         
         // Get parent project data using CRUD methods
@@ -54,7 +57,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
         $customer_id = $parent_customer_id;
         $customer = $parent_project->get_customer();
         $proposal_project_lead = $parent_lead_id;
-        $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
+        $proposal_costing_type = 'quotation'; // Always quotation for project-tied proposals
     }
 } 
 // Fallback to meta data check (for existing proposals)
@@ -80,7 +83,7 @@ elseif ($proposal_id > 0) {
             $customer_id = $parent_customer_id;
             $customer = $parent_project->get_customer();
             $proposal_project_lead = $parent_lead_id;
-            $cost_proposal_type = 'quotation'; // Always quotation for project-tied proposals
+            $proposal_costing_type = 'quotation'; // Always quotation for project-tied proposals
         }
     }
 }
@@ -197,9 +200,9 @@ $available_stages = $proposal->get_available_stages();
         <?php else: ?>
             <!-- Regular cost type field -->
             <select id="arsol_pfw_proposal_costing_type" name="arsol_pfw_proposal_costing_type" class="wc-enhanced-select">
-                <option value="none" <?php selected($cost_proposal_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
-                <option value="budget" <?php selected($cost_proposal_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
-                <option value="quotation" <?php selected($cost_proposal_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
+                <option value="none" <?php selected($proposal_costing_type, 'none'); ?>><?php _e('None', 'arsol-pfw'); ?></option>
+                <option value="budget" <?php selected($proposal_costing_type, 'budget'); ?>><?php _e('Budget', 'arsol-pfw'); ?></option>
+                <option value="quotation" <?php selected($proposal_costing_type, 'quotation'); ?>><?php _e('Quotation', 'arsol-pfw'); ?></option>
             </select>
         <?php endif; ?>
     </p>

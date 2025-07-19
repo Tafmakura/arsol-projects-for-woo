@@ -215,10 +215,10 @@ class Logs {
         
         // Get proposal type
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $cost_proposal_type = $proposal->get_proposal_costing_type();
+        $proposal_costing_type = $proposal->get_proposal_costing_type();
         
-        $debug_info['cost_proposal_type'] = $cost_proposal_type;
-        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
+        $debug_info['proposal_costing_type'] = $proposal_costing_type;
+        $debug_info['should_create_orders'] = ($proposal_costing_type === 'quotation');
         
         // Check quotation line items
         $line_items = $proposal->get_proposed_project_quotation() ?: array();
@@ -273,13 +273,13 @@ class Logs {
         
         // Get proposal type
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $cost_proposal_type = $proposal->get_proposal_costing_type();
+        $proposal_costing_type = $proposal->get_proposal_costing_type();
         
-        $debug_info['cost_proposal_type'] = $cost_proposal_type;
-        $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
+        $debug_info['proposal_costing_type'] = $proposal_costing_type;
+        $debug_info['should_create_orders'] = ($proposal_costing_type === 'quotation');
         
         self::log_woocommerce_billing('info', sprintf('Proposal costing type: %s, Should create orders: %s', 
-            $cost_proposal_type, $debug_info['should_create_orders'] ? 'YES' : 'NO'));
+            $proposal_costing_type, $debug_info['should_create_orders'] ? 'YES' : 'NO'));
         
         // Check quotation line items
         $line_items = $proposal->get_proposed_project_quotation() ?: array();
