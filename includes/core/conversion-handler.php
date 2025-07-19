@@ -71,8 +71,6 @@ class Conversion_Handler {
         // Copy taxonomies
         $this->copy_taxonomies($request_id, $proposal_id);
         
-        // Set initial stage using OOP stage entity
-        // Remove the old stage entity call - no longer needed with simplified system
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         $proposal->set_stage('processing');
         
@@ -128,21 +126,22 @@ class Conversion_Handler {
             $project->set_customer_id($proposal_obj->get_customer_id());
             $project->set_project_budget($proposal_obj->get_proposed_project_budget());
             $project->set_description($proposal_obj->get_description());      
-            // Set initial stage using OOP stage entity
-            $project->set_stage('not-started');
             
-            if (is_wp_error($project)) {
-                error_log("ARSOL PFW DEBUG: Failed to create project: " . $project->get_error_message());
-                throw new Exception($project->get_error_message());
+            if (!$project) {
+                error_log("ARSOL PFW DEBUG: Failed to create project object");
+                throw new Exception(__("Failed to create project object.", "arsol-pfw"));
             }
             
             $project_id = $project->save();
-            if (is_wp_error($project_id)) {
-                error_log("ARSOL PFW DEBUG: Failed to save project: " . $project_id->get_error_message());
-                throw new Exception($project_id->get_error_message());
+            if (!$project_id || is_wp_error($project_id)) {
+                error_log("ARSOL PFW DEBUG: Failed to save project");
+                throw new Exception(__("Failed to save project.", "arsol-pfw"));
             }
             
             error_log("ARSOL PFW DEBUG: Project created with ID: {$project_id}");
+            
+            // Set initial stage after project is saved
+            $project->set_stage("not-started");
             
             // 4. Copy metadata
             error_log("ARSOL PFW DEBUG: Starting metadata copy...");
