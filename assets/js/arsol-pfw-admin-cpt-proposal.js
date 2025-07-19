@@ -406,7 +406,7 @@
             $builder
                 .on('click', '.add-line-item', this.addLineItem.bind(this))
                 .on('click', '.remove-line-item', this.removeLineItem.bind(this))
-                .on('change', '.arsol-product-item select.arsol-description-input', this.productChanged.bind(this))
+                .on('change', '.arsol-product-item select.arsol-product-select', this.productChanged.bind(this))
                 .on('change', '.arsol-select-full', this.shippingMethodChanged.bind(this));
             
             // Use jQuery's one() method for input events with debouncing (WordPress pattern)
@@ -419,7 +419,7 @@
             var debouncedValidateShippingFee = _.debounce(this.updateShippingFeeButtonState.bind(this), 300);
             
             // Products & Services section
-            $builder.on('input change', '#product-lines-body .arsol-quantity-input, #product-lines-body .arsol-sale-price-input, #product-lines-body .arsol-price-input, #product-lines-body .arsol-description-input', function() {
+            $builder.on('input change', '#product-lines-body .arsol-quantity-input, #product-lines-body .arsol-sale-price-input, #product-lines-body .arsol-price-input, #product-lines-body .arsol-product-select', function() {
                 debouncedCalculate();
                 debouncedValidateProduct();
             });
@@ -522,7 +522,7 @@
                 
                 // Set Select2 value for existing products
                 if (data.product_id && data.product_name) {
-                    var $select = $newRow.find('.arsol-description-input');
+                    var $select = $newRow.find('.arsol-product-select');
                     // Create option for Select2 and set it as selected
                     var option = new Option(data.product_name, data.product_id, true, true);
                     $select.append(option).trigger('change');
@@ -545,7 +545,7 @@
         },
 
         initSelect2: function($row) {
-            var $select = $row.find('.arsol-description-input');
+            var $select = $row.find('.arsol-product-select');
             
             // Set up WooCommerce attributes but don't add the auto-init class yet
             // This prevents WooCommerce from automatically initializing with default settings
@@ -728,7 +728,7 @@
             var amount = '';
             
             if (type === 'product') {
-                description = $lastRow.find('select.arsol-description-input option:selected').text();
+                description = $lastRow.find('select.arsol-product-select option:selected').text();
                 var price = $lastRow.find('.arsol-price-input').val();
                 var salePrice = $lastRow.find('.arsol-sale-price-input').val();
                 amount = salePrice || price;
