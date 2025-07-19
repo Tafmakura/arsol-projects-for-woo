@@ -519,6 +519,22 @@
 
             if (type === 'product') {
                 this.initSelect2($newRow);
+                
+                // Set the selected product for existing data
+                if (data.product_id && data.description) {
+                    // Set the value after Select2 is initialized
+                    setTimeout(function() {
+                        var $select = $newRow.find('.arsol-description-input');
+                        // Create the option and set it as selected
+                        var option = new Option(data.description, data.product_id, true, true);
+                        $select.append(option).trigger('change');
+                        
+                        // Also set the hidden product type field
+                        $newRow.find('input[name*="[product_type]"]').val(data.product_type || '');
+                    }, 300); // Increased delay to ensure Select2 is fully initialized
+                }
+                
+                // If we have product data but no regular price, fetch product details
                 if(data.product_id && !data.regular_price) {
                      this.fetchProductDetails($newRow, data.product_id);
                 } else if (data.product_type && (data.product_type === 'subscription' || data.product_type === 'subscription_variation')) {
@@ -834,16 +850,11 @@
 
         productChanged: function(e) {
             var $select = $(e.currentTarget);
-            var productId = $select.val();
-            var $row = $select.closest('tr');
-
-            if (productId) {
-                this.fetchProductDetails($row, productId);
-            } else {
-                $row.find('.arsol-price-input, .arsol-sale-price-input').val('');
-                $row.removeData('billing-interval billing-period is-subscription');
-                this.toggleStartDateColumn();
-                this.calculateTotals();
+            var $row = $select.closest('.arsol-line-item');
+            var selectedProductId = $select.val();
+            
+            if (selectedProductId) {
+                this.fetchProductDetails($row, selectedProductId);
             }
         },
 
