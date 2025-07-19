@@ -42,7 +42,7 @@ class Quotation_Controller {
                     <thead>
                         <tr>
                                                     <th class="arsol-description-column"><?php _e('Product', 'arsol-pfw'); ?></th>
-                        <th class="arsol-date-column"><?php _e('Start Date', 'arsol-pfw'); ?></th>
+                        <th class="arsol-date-column"><?php _e('Billing Start Date', 'arsol-pfw'); ?></th>
                         <th class="arsol-quantity-column"><?php _e('Qty', 'arsol-pfw'); ?></th>
                         <th class="arsol-price-column"><?php _e('Price', 'arsol-pfw'); ?></th>
                         <th class="arsol-sale-price-column"><?php _e('Sale Price', 'arsol-pfw'); ?></th>
