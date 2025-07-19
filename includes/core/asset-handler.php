@@ -311,16 +311,29 @@ class Asset_Handler {
             case 'arsol-pfw-proposal':
                 wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
 
-                // Get current proposal data for quotation
+                // Get current proposal data using proper getter methods
                 $proposal_id = get_the_ID();
-                $line_items = array();
                 $quotation_data = array();
+                $budget_data = array();
+                $budget_notes = '';
+                $quotation_notes = '';
+                $costing_type = 'none';
                 
                 if ($proposal_id) {
                     $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
                     if ($proposal && $proposal->exists()) {
-                        $quotation_data = $proposal->get_proposed_project_quotation() ?: array();
-                        $line_items = $quotation_data;
+                        // Get costing type to determine which data to load
+                        $costing_type = $proposal->get_proposal_costing_type();
+                        
+                        // Get quotation data using proper getter
+                        $quotation_data = $proposal->get_proposed_project_quotation();
+                        
+                        // Get budget data using proper getter
+                        $budget_data = $proposal->get_proposed_project_budget();
+                        
+                        // Get notes using proper getters
+                        $budget_notes = $proposal->get_proposal_budget_notes();
+                        $quotation_notes = $proposal->get_proposal_quotation_notes();
                     }
                 }
 
@@ -331,18 +344,23 @@ class Asset_Handler {
                 );
                 wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_vars', $data);
                 
-                // Localize budget script
+                // Localize budget script with proper budget data
                 wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_budget_vars', array(
                     'currency_symbol' => class_exists('WooCommerce') ? get_woocommerce_currency_symbol() : '$',
+                    'budget_data' => $budget_data,
+                    'budget_notes' => $budget_notes,
+                    'costing_type' => $costing_type,
                 ));
                 
-                // Localize quotation script with all required data
+                // Localize quotation script with proper quotation data
                 wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_quotation_vars', array(
                     'ajax_url' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('arsol_proposal_quotation_nonce'),
                     'search_products_nonce' => wp_create_nonce('search-products'),
                     'currency_symbol' => class_exists('WooCommerce') ? get_woocommerce_currency_symbol() : '$',
-                    'line_items' => $line_items,
+                    'line_items' => $quotation_data,
+                    'quotation_notes' => $quotation_notes,
+                    'costing_type' => $costing_type,
                     'calculation_constants' => array(
                         'days_in_month' => 30.44,
                         'days_in_year' => 365.25,
