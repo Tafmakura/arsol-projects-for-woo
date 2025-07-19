@@ -1445,7 +1445,6 @@ body.post-type-arsol-pfw-proposal .stage-filter-dropdown {
 /* Recurring fees date input styling */
 .arsol-recurring-date-input {
     margin-top: 8px;
-    max-width: 100%;
     width: 100%;
     display: block;
 }
