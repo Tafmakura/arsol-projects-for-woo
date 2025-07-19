@@ -353,12 +353,33 @@ class Asset_Handler {
                 ));
                 
                 // Localize quotation script with proper quotation data
+                $quotation_line_items = array();
+                if (!empty($quotation_data['line_items'])) {
+                    $quotation_line_items = $quotation_data['line_items'];
+                    
+                    // Fetch current product names from database for existing products
+                    if (!empty($quotation_line_items['products']) && is_array($quotation_line_items['products'])) {
+                        foreach ($quotation_line_items['products'] as $id => $item) {
+                            if (!empty($item['product_id'])) {
+                                $product = wc_get_product($item['product_id']);
+                                if ($product) {
+                                    // Update with current product name from database
+                                    $quotation_line_items['products'][$id]['product_name'] = $product->get_name();
+                                    $quotation_line_items['products'][$id]['product_type'] = $product->get_type();
+                                    $quotation_line_items['products'][$id]['regular_price'] = $product->get_regular_price();
+                                    $quotation_line_items['products'][$id]['sale_price'] = $product->get_sale_price();
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_quotation_vars', array(
                     'ajax_url' => admin_url('admin-ajax.php'),
-                    'nonce' => wp_create_nonce('arsol_proposal_quotation_nonce'),
+                    'ajax_nonce' => wp_create_nonce('arsol_proposal_quotation_ajax'),
                     'search_products_nonce' => wp_create_nonce('search-products'),
                     'currency_symbol' => class_exists('WooCommerce') ? get_woocommerce_currency_symbol() : '$',
-                    'line_items' => $quotation_data,
+                    'line_items' => $quotation_line_items,
                     'quotation_notes' => $quotation_notes,
                     'costing_type' => $costing_type,
                     'calculation_constants' => array(
