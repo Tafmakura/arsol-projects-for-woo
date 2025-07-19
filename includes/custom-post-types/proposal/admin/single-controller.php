@@ -494,7 +494,7 @@ class Single_Controller {
         
         // Get quotation line items using entity method
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-        $quotation_line_items = $proposal->get_quotation_line_items();
+        $quotation_line_items = $proposal->get_proposed_project_quotation();
         
         if (empty($quotation_line_items) || !is_array($quotation_line_items)) {
             $errors[] = __('Quotation proposals must have at least one line item.', 'arsol-pfw');

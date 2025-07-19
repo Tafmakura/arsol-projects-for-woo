@@ -291,7 +291,7 @@ class Workflow_Handler {
         $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
         
         // Check line items
-        $line_items = $proposal->get_quotation_line_items() ?: array();
+        $line_items = $proposal->get_proposed_project_quotation() ?: array();
         $debug_info['has_line_items'] = !empty($line_items);
         $debug_info['line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
         
@@ -323,7 +323,7 @@ class Workflow_Handler {
      */
     private function has_valid_quotation_data($proposal_id) {
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $line_items = $proposal->get_quotation_line_items() ?: array();
+        $line_items = $proposal->get_proposed_project_quotation() ?: array();
         
         if (empty($line_items) || !is_array($line_items)) {
             return false;

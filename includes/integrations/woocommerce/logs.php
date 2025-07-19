@@ -221,7 +221,7 @@ class Logs {
         $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
         
         // Check quotation line items
-        $line_items = $proposal->get_quotation_line_items() ?: array();
+        $line_items = $proposal->get_proposed_project_quotation() ?: array();
         $debug_info['has_quotation_line_items'] = !empty($line_items);
         $debug_info['quotation_line_items_structure'] = !empty($line_items) ? array_keys($line_items) : array();
         
@@ -282,7 +282,7 @@ class Logs {
             $cost_proposal_type, $debug_info['should_create_orders'] ? 'YES' : 'NO'));
         
         // Check quotation line items
-        $line_items = $proposal->get_quotation_line_items() ?: array();
+        $line_items = $proposal->get_proposed_project_quotation() ?: array();
         $debug_info['has_quotation_line_items'] = !empty($line_items);
         
         if (!empty($line_items)) {
@@ -372,7 +372,7 @@ class Logs {
      */
     public static function log_quotation_line_items($proposal_id, $context = '') {
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $line_items = $proposal->get_quotation_line_items() ?: array();
+        $line_items = $proposal->get_proposed_project_quotation() ?: array();
         
         $log_message = sprintf(
             'Quotation line items for proposal #%d (%s): %s',

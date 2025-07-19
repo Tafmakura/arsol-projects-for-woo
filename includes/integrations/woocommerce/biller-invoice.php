@@ -501,7 +501,18 @@ class Biller_Invoice {
             case 'budget':
                 // Budget type requires at least one-time budget with amount > 0
                 $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-                $onetime_data = $proposal_entity->get_budget_onetime_amount();
+                $budget_data = $proposal_entity->get_proposed_project_budget();
+                
+                // Extract one-time budget data
+                $onetime_data = array();
+                if (!empty($budget_data) && is_array($budget_data)) {
+                    foreach ($budget_data as $item) {
+                        if (isset($item['type']) && $item['type'] === 'one_time') {
+                            $onetime_data = $item;
+                            break;
+                        }
+                    }
+                }
                 
                 if (empty($onetime_data) || !is_array($onetime_data)) {
                     return false;
@@ -513,7 +524,7 @@ class Biller_Invoice {
                 }
                 
                 // If amount is provided, description is required
-                $budget_details = !empty($onetime_data['details']) ? $onetime_data['details'] : '';
+                $budget_details = !empty($onetime_data['description']) ? $onetime_data['description'] : '';
                 if (empty($budget_details)) {
                     return false;
                 }
@@ -524,7 +535,7 @@ class Biller_Invoice {
                 // Quotation type requires at least one quotation line item with description and amount
                 $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
                 $quotation_data = $proposal_entity->get_proposed_project_quotation();
-                $line_items = $proposal_entity->get_quotation_line_items();
+                $line_items = $quotation_data; // Use the quotation data directly
                 
                 if (empty($line_items) || !is_array($line_items)) {
                     return false;
@@ -596,14 +607,14 @@ class Biller_Invoice {
         // Get proposal costing type using Proposal entity
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         $cost_proposal_type = $proposal->get_proposal_costing_type() ?: 'none';
-        $currency = $proposal->get_quotation_currency() ?: get_woocommerce_currency();
+        $currency = get_woocommerce_currency(); // Use WooCommerce default currency
         $line_items = array();
         
         // Get line items based on proposal type
         switch ($cost_proposal_type) {
             case 'quotation':
                 // Get quotation line items
-                $line_items = $proposal->get_quotation_line_items() ?: array();
+                $line_items = $proposal->get_proposed_project_quotation() ?: array();
                 break;
                 
             case 'budget':

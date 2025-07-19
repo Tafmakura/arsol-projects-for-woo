@@ -33,29 +33,32 @@ class Budget_Controller {
     public function render_budget_estimates_meta_box($post) {
         wp_nonce_field('arsol_proposal_budget_save', 'arsol_proposal_budget_nonce');
         
-        // Get current values using entity methods (primary approach)
+        // Get current values using entity methods
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
         $budget_data = $proposal->get_proposed_project_budget();
-        
-        $onetime_data = $proposal->get_budget_onetime_amount() ?: array();
-        $recurring_data = $proposal->get_budget_recurring_amount() ?: array();
         $budget_notes = $proposal->get_proposal_budget_notes() ?: '';
 
-        // Fallback to individual meta access if entity methods return empty (WooCommerce pattern)
-        if (empty($onetime_data)) {
-            $onetime_data = $proposal->get_legacy_budget_onetime_amount() ?: array();
-        }
-        if (empty($recurring_data)) {
-            $recurring_data = $proposal->get_legacy_budget_recurring_amount() ?: array();
-        }
-        if (empty($budget_notes)) {
-            $budget_notes = $proposal->get_proposal_notes();
+        // Extract one-time and recurring data from budget line items
+        $onetime_data = array();
+        $recurring_data = array();
+        
+        if (!empty($budget_data) && is_array($budget_data)) {
+            foreach ($budget_data as $item) {
+                if (isset($item['type'])) {
+                    if ($item['type'] === 'one_time') {
+                        $onetime_data = $item;
+                    } elseif ($item['type'] === 'recurring') {
+                        $recurring_data = $item;
+                    }
+                }
+            }
         }
 
+        // Extract values with fallbacks
         $budget_amount = !empty($onetime_data['amount']) ? $onetime_data['amount'] : '';
         $recurring_budget_amount = !empty($recurring_data['amount']) ? $recurring_data['amount'] : '';
-        $onetime_details = !empty($onetime_data['details']) ? $onetime_data['details'] : '';
-        $recurring_details = !empty($recurring_data['details']) ? $recurring_data['details'] : '';
+        $onetime_details = !empty($onetime_data['description']) ? $onetime_data['description'] : '';
+        $recurring_details = !empty($recurring_data['description']) ? $recurring_data['description'] : '';
 
         // Determine currency
         $currency_code = !empty($onetime_data['currency']) 
