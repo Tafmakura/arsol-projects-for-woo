@@ -68,8 +68,8 @@ class Conversion_Handler {
                 break;
         }
         
-        // Copy taxonomies
-        $this->copy_taxonomies($request_id, $proposal_id);
+        // Copy metadata and taxonomies
+        $this->copy_request_metadata_to_proposal($request_id, $proposal_id);
         
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         $proposal->set_stage('processing');
