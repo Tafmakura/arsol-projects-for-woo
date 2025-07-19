@@ -477,6 +477,7 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 
 .arsol-date-input {
     width: 100%;
+    max-width: 125px;
 }
 
 .arsol-billing-select {
