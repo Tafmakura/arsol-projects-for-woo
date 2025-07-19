@@ -39,8 +39,8 @@ class Conversion_Handler {
             'post_author' => get_current_user_id(),
             'meta_input' => array(
                 '_arsol_pfw_customer_id' => $request_entity->get_customer_id(), // Customer
-                '_arsol_pfw_proposed_project_start_date' => $request_entity->get_requested_start_date(),
-                '_arsol_pfw_proposed_project_due_date' => $request_entity->get_requested_due_date(),
+                '_arsol_pfw_proposed_project_start_date' => $request_entity->get_requested_project_start_date(),
+                '_arsol_pfw_proposed_project_due_date' => $request_entity->get_requested_project_due_date(),
                 '_arsol_pfw_request_id' => $request_id,
                 '_arsol_pfw_created_via' => 'request_conversion'
             )
