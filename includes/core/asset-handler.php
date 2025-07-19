@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Assets class to manage CSS and JS files
+ * Follows WordPress best practices for asset enqueueing
  */
 class Asset_Handler {
     /**
@@ -37,9 +38,18 @@ class Asset_Handler {
         add_action('wp_enqueue_scripts', array($this, 'register_frontend_assets'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_frontend_assets'));
         
-        // Register hooks for admin assets
+        // Register admin assets (always register, conditionally enqueue)
         add_action('admin_enqueue_scripts', array($this, 'register_admin_assets'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
+        
+        // Use WordPress best practices: hook into load-post.php and load-post-new.php for our CPTs
+        add_action('load-post.php', array($this, 'setup_cpt_edit_assets'));
+        add_action('load-post-new.php', array($this, 'setup_cpt_edit_assets'));
+        
+        // Handle WooCommerce order pages specifically
+        add_action('load-edit.php', array($this, 'setup_woocommerce_order_list_assets'));
+        
+        // Handle settings pages and other admin areas
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_settings_assets'));
     }
 
     /**
@@ -75,7 +85,8 @@ class Asset_Handler {
         );
     }
 
-    /** Enqueue frontend assets on appropriate pages
+    /**
+     * Enqueue frontend assets on appropriate pages
      */
     public function enqueue_frontend_assets() {
         // Only load on relevant pages like checkout, account page, etc.
@@ -161,80 +172,160 @@ class Asset_Handler {
     }
 
     /**
-     * Enqueue admin assets on appropriate pages
-     * 
-     * @param string $hook Current admin page hook
+     * Setup CPT edit screen assets using WordPress best practices
+     * Hooked into load-post.php and load-post-new.php
      */
-    public function enqueue_admin_assets($hook) {
+    public function setup_cpt_edit_assets() {
         $screen = get_current_screen();
         if (!$screen) {
             return;
         }
 
-        // Define post types that should load admin assets
-        $allowed_post_types = array(
-            'shop_order', 
-            'arsol-pfw-project', 
-            'arsol-pfw-request', 
-            'arsol-pfw-proposal'
-        );
+        // Only target our custom post types
+        $allowed_post_types = ['arsol-pfw-project', 'arsol-pfw-request', 'arsol-pfw-proposal'];
+        if (!in_array($screen->post_type, $allowed_post_types, true)) {
+            return;
+        }
 
-        // Check if we're on a post type page that needs admin assets OR the settings page
-        $is_post_type_page = in_array($screen->post_type, $allowed_post_types);
-        $is_settings_page = strpos($hook, 'arsol-projects') !== false;
-        
-        if ($is_post_type_page || $is_settings_page) {
-            
-            // Enqueue WooCommerce admin styles and scripts if available
-            if ($is_post_type_page && class_exists('WooCommerce')) {
-                wp_enqueue_style('woocommerce_admin_styles');
-                wp_enqueue_script('selectWoo');
-                wp_enqueue_script('wc-enhanced-select');
-                wp_enqueue_style('select2');
+        // Add admin_enqueue_scripts hook specifically for this CPT
+        add_action('admin_enqueue_scripts', function($hook_suffix) use ($screen) {
+            // Only enqueue on post.php or post-new.php
+            if ($hook_suffix !== 'post.php' && $hook_suffix !== 'post-new.php') {
+                return;
             }
-            
-            // Always enqueue our plugin assets
+
+            // Enqueue core plugin assets
             wp_enqueue_style('arsol-pfw-admin');
             wp_enqueue_script('arsol-pfw-admin');
-            
-            // Enqueue post-type specific JavaScript (only for post type pages)
-            if ($is_post_type_page) {
-                
-                if ($screen->post_type === 'arsol-pfw-proposal') {
-                    wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
-                    
-                    // Localize proposal script
-                    wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_vars', array(
-                        'validation_message' => __('Please complete all required fields before saving.', 'arsol-pfw'),
-                    ));
-                    
-                    // Localize budget script
-                    wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_budget_vars', array(
-                        'currency_symbol' => get_woocommerce_currency_symbol(),
-                    ));
-                    
-                } elseif ($screen->post_type === 'arsol-pfw-project') {
-                    wp_enqueue_script('arsol-pfw-admin-cpt-project');
-                    // Also enqueue proposal script for Create Proposal button functionality
-                    wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
-                    
-                } elseif ($screen->post_type === 'arsol-pfw-request') {
-                    wp_enqueue_script('arsol-pfw-admin-cpt-request');
-                }
-                
-                // WooCommerce should already provide wc_enhanced_select_params, but ensure our nonces are available
-                wp_localize_script('wc-enhanced-select', 'arsol_enhanced_select_params', array(
-                    'search_products_nonce'   => wp_create_nonce('search-products'),
-                    'search_customers_nonce'  => wp_create_nonce('search-customers'),
-                ));
+
+            // Enqueue CPT-specific assets
+            $this->enqueue_cpt_specific_assets($screen->post_type);
+
+            // Conditionally enqueue WooCommerce assets only if WooCommerce is active
+            if (class_exists('WooCommerce')) {
+                $this->enqueue_woocommerce_assets();
             }
-            
-            // Localize our main plugin script (for both post type pages and settings page)
+
+            // Localize main admin script
             wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
                 'ajaxUrl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('arsol-pfw-admin'),
                 'confirmDelete' => __('Are you sure you want to remove this project?', 'arsol-pfw'),
             ));
+        });
+    }
+
+    /**
+     * Setup WooCommerce order list page assets
+     * Hooked into load-edit.php for order listing
+     */
+    public function setup_woocommerce_order_list_assets() {
+        $screen = get_current_screen();
+        if (!$screen || $screen->post_type !== 'shop_order') {
+            return;
+        }
+
+        // Add admin_enqueue_scripts hook specifically for WooCommerce order list
+        add_action('admin_enqueue_scripts', function($hook_suffix) {
+            // Only enqueue on edit.php for shop_order
+            if ($hook_suffix !== 'edit.php') {
+                return;
+            }
+
+            // Only enqueue if WooCommerce is active
+            if (class_exists('WooCommerce')) {
+                wp_enqueue_style('arsol-pfw-admin');
+                wp_enqueue_script('arsol-pfw-admin');
+                
+                wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
+                    'ajaxUrl' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('arsol-pfw-admin'),
+                ));
+            }
+        });
+    }
+
+    /**
+     * Enqueue assets for settings pages and other admin areas
+     * Uses $hook_suffix for precise targeting
+     */
+    public function enqueue_settings_assets($hook_suffix) {
+        // Target settings pages
+        if (strpos($hook_suffix, 'arsol-projects') !== false) {
+            wp_enqueue_style('arsol-pfw-admin');
+            wp_enqueue_script('arsol-pfw-admin');
+
+            wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('arsol-pfw-admin'),
+            ));
+        }
+
+        // Target WooCommerce order edit pages (existing orders)
+        if ($hook_suffix === 'post.php' && isset($_GET['post_type']) && $_GET['post_type'] === 'shop_order') {
+            // Only enqueue if WooCommerce is active
+            if (class_exists('WooCommerce')) {
+                wp_enqueue_style('arsol-pfw-admin');
+                wp_enqueue_script('arsol-pfw-admin');
+                
+                wp_localize_script('arsol-pfw-admin', 'arsolPfw', array(
+                    'ajaxUrl' => admin_url('admin-ajax.php'),
+                    'nonce' => wp_create_nonce('arsol-pfw-admin'),
+                ));
+            }
+        }
+    }
+
+    /**
+     * Enqueue WooCommerce assets conditionally
+     */
+    private function enqueue_woocommerce_assets() {
+        // Only enqueue if WooCommerce assets are registered
+        if (wp_style_is('woocommerce_admin_styles', 'registered')) {
+            wp_enqueue_style('woocommerce_admin_styles');
+        }
+        if (wp_script_is('selectWoo', 'registered')) {
+            wp_enqueue_script('selectWoo');
+        }
+        if (wp_script_is('wc-enhanced-select', 'registered')) {
+            wp_enqueue_script('wc-enhanced-select');
+        }
+        if (wp_style_is('select2', 'registered')) {
+            wp_enqueue_style('select2');
+        }
+
+        // Localize WooCommerce enhanced select
+        if (wp_script_is('wc-enhanced-select', 'enqueued')) {
+            wp_localize_script('wc-enhanced-select', 'arsol_enhanced_select_params', array(
+                'search_products_nonce'   => wp_create_nonce('search-products'),
+                'search_customers_nonce'  => wp_create_nonce('search-customers'),
+            ));
+        }
+    }
+    
+    /**
+     * Enqueue CPT-specific assets
+     */
+    private function enqueue_cpt_specific_assets($post_type) {
+        switch ($post_type) {
+            case 'arsol-pfw-proposal':
+                wp_enqueue_script('arsol-pfw-admin-cpt-proposal');
+
+                $data = array(
+                    'validation_message' => __('Please complete all required fields before saving.', 'arsol-pfw'),
+                    'currency_symbol' => class_exists('WooCommerce') ? get_woocommerce_currency_symbol() : '$',
+                );
+                wp_localize_script('arsol-pfw-admin-cpt-proposal', 'arsol_proposal_vars', $data);
+                break;
+
+            case 'arsol-pfw-project':
+                wp_enqueue_script('arsol-pfw-admin-cpt-project');
+                wp_enqueue_script('arsol-pfw-admin-cpt-proposal'); // for Create Proposal
+                break;
+
+            case 'arsol-pfw-request':
+                wp_enqueue_script('arsol-pfw-admin-cpt-request');
+                break;
         }
     }
 }
