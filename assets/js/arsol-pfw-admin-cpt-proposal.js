@@ -519,6 +519,15 @@
 
             if (type === 'product') {
                 this.initSelect2($newRow);
+                
+                // Set Select2 value for existing products
+                if (data.product_id && data.product_name) {
+                    var $select = $newRow.find('.arsol-description-input');
+                    // Create option for Select2 and set it as selected
+                    var option = new Option(data.product_name, data.product_id, true, true);
+                    $select.append(option).trigger('change');
+                }
+                
                 if(data.product_id && !data.regular_price) {
                      this.fetchProductDetails($newRow, data.product_id);
                 } else if (data.product_type && (data.product_type === 'subscription' || data.product_type === 'subscription_variation')) {
