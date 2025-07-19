@@ -137,6 +137,13 @@ class Conversion_Handler {
                 error_log("ARSOL PFW DEBUG: Failed to save project");
                 throw new Exception(__("Failed to save project.", "arsol-pfw"));
             }
+
+            // Reload the project object to ensure it has the ID before setting the stage
+            $project = arsol_pfw_get_project($project_id);
+            if (!$project) {
+                error_log("ARSOL PFW DEBUG: Failed to reload project after saving. ID: {$project_id}");
+                throw new Exception(__("Failed to reload project after saving.", "arsol-pfw"));
+            }
             
             error_log("ARSOL PFW DEBUG: Project created with ID: {$project_id}");
             
@@ -146,7 +153,6 @@ class Conversion_Handler {
             // 4. Copy metadata
             error_log("ARSOL PFW DEBUG: Starting metadata copy...");
             $this->copy_proposal_metadata_to_project($proposal_id, $project_id);
-            error_log("ARSOL PFW DEBUG: Metadata copy completed");
             
             // 5. Handle WooCommerce orders (if needed)
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
