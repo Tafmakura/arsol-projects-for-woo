@@ -22,11 +22,11 @@ $cost_proposal_type = $proposal->get_proposal_costing_type();
 $expiration_date = $proposal->get_proposal_expiration_date();
 ?>
 
-<!-- Cost Proposal Type Guidance -->
+<!-- Proposal Costing Type Guidance -->
 <div class="arsol-pfw-show-if-arsol_pfw_proposal_costing_type-is-none">
     <div class="cost-proposal-guidance">
-        <h4><?php _e('💡 Cost Proposal Type Guidance', 'arsol-pfw'); ?></h4>
-        <p><?php _e('Choose a cost proposal type to provide pricing estimates:', 'arsol-pfw'); ?></p>
+        <h4><?php _e('💡 Proposal Costing Type Guidance', 'arsol-pfw'); ?></h4>
+        <p><?php _e('Choose a proposal costing type to provide pricing estimates:', 'arsol-pfw'); ?></p>
         <ul>
             <li><strong><?php _e('Budget:', 'arsol-pfw'); ?></strong> <?php _e('Provide rough cost estimates and timelines', 'arsol-pfw'); ?></li>
             <li><strong><?php _e('Quotation:', 'arsol-pfw'); ?></strong> <?php _e('Create detailed pricing with products and services', 'arsol-pfw'); ?></li>

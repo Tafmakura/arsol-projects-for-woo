@@ -97,14 +97,14 @@ $available_stages = $proposal->get_available_stages();
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="arsol_pfw_proposal_start_date"><?php _e('Proposed Start Date:', 'arsol-pfw'); ?></label>
+        <label for="arsol_pfw_proposal_start_date"><?php _e('Start Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="arsol_pfw_proposal_start_date" name="arsol_pfw_proposal_start_date" value="<?php echo esc_attr($start_date); ?>" class="widefat">
     </p>
 </div>
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="arsol_pfw_proposal_due_date"><?php _e('Proposed Due Date:', 'arsol-pfw'); ?></label>
+        <label for="arsol_pfw_proposal_due_date"><?php _e('Due Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="arsol_pfw_proposal_due_date" name="arsol_pfw_proposal_due_date" value="<?php echo esc_attr($delivery_date); ?>" class="widefat">
     </p>
 </div>
@@ -170,7 +170,7 @@ $available_stages = $proposal->get_available_stages();
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="proposal_stage"><?php _e('Proposal Stage:', 'arsol-pfw'); ?></label>
+        <label for="proposal_stage"><?php _e('Stage:', 'arsol-pfw'); ?></label>
         <select id="proposal_stage" name="proposal_stage" class="wc-enhanced-select">
             <?php if (!empty($available_stages)) : ?>
                 <?php foreach ($available_stages as $stage) : ?>
@@ -185,7 +185,7 @@ $available_stages = $proposal->get_available_stages();
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="arsol_pfw_proposal_costing_type"><?php _e('Cost Proposal Type:', 'arsol-pfw'); ?></label>
+        <label for="arsol_pfw_proposal_costing_type"><?php _e('Costing Type:', 'arsol-pfw'); ?></label>
         <?php if ($is_project_tied): ?>
             <!-- Locked cost type field for project-tied proposals -->
             <!-- IMPORTANT: Keep same ID for JavaScript conditional logic to work -->
@@ -207,7 +207,7 @@ $available_stages = $proposal->get_available_stages();
 
 <div class="form-field-row">
     <p class="form-field form-field-half">
-        <label for="arsol_pfw_proposal_expiration_date"><?php _e('Proposal Expiration Date:', 'arsol-pfw'); ?></label>
+        <label for="arsol_pfw_proposal_expiration_date"><?php _e('Expiration Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="arsol_pfw_proposal_expiration_date" name="arsol_pfw_proposal_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
     </p>
 </div>

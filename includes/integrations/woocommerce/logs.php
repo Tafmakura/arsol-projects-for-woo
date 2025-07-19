@@ -278,7 +278,7 @@ class Logs {
         $debug_info['cost_proposal_type'] = $cost_proposal_type;
         $debug_info['should_create_orders'] = ($cost_proposal_type === 'quotation');
         
-        self::log_woocommerce_billing('info', sprintf('Cost proposal type: %s, Should create orders: %s', 
+        self::log_woocommerce_billing('info', sprintf('Proposal costing type: %s, Should create orders: %s', 
             $cost_proposal_type, $debug_info['should_create_orders'] ? 'YES' : 'NO'));
         
         // Check quotation line items

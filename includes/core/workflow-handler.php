@@ -295,7 +295,7 @@ class Workflow_Handler {
         $debug_info['proposal_stage'] = $proposal ? $proposal->post_status : 'N/A';
         $debug_info['proposal_author'] = $proposal ? $proposal->post_author : 'N/A';
         
-        // Check cost proposal type
+        // Check proposal costing type
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         $cost_proposal_type = $proposal->get_proposal_costing_type();
         
