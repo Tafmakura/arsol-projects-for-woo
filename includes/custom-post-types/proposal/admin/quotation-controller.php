@@ -242,9 +242,7 @@ class Quotation_Controller {
             <tr class="arsol-line-item arsol-product-item" data-id="{{ data.id }}" <# if (data.product_type === 'subscription' || data.product_type === 'subscription_variation') { #>data-is-subscription="true" data-billing-interval="{{ data.billing_interval || 1 }}" data-billing-period="{{ data.billing_period || 'month' }}"<# } #>>
                 <td class="arsol-description-column">
                     <select class="arsol-description-input" name="line_items[products][{{ data.id }}][product_id]" required>
-                        <# if (data.product_id && data.product_name) { #>
-                            <option value="{{ data.product_id }}" selected="selected">{{ data.product_name }}</option>
-                        <# } #>
+                        <option value="{{ data.product_id || '' }}" selected="selected">{{ data.product_name || '' }}</option>
                     </select>
                     <input type="hidden" name="line_items[products][{{ data.id }}][product_type]" value="{{ data.product_type || '' }}">
                 </td>
@@ -379,80 +377,16 @@ class Quotation_Controller {
         }
         
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-        $cost_proposal_type = $proposal->get_proposal_costing_type();
-        if ($cost_proposal_type !== 'quotation') {
+        // Get proposal costing type
+        $proposal_costing_type = $proposal->get_proposal_costing_type();
+        if ($proposal_costing_type !== 'quotation') {
             return;
         }
 
-        // Process and save line items
-        $line_items = array(
-            'products' => array(),
-            'one_time_fees' => array(),
-            'recurring_fees' => array(),
-            'shipping_fees' => array()
-        );
-
-        // Process products
-        if (isset($_POST['line_items']['products']) && is_array($_POST['line_items']['products'])) {
-            foreach ($_POST['line_items']['products'] as $id => $item) {
-                if (!empty($item['product_id'])) {
-                    $product = wc_get_product($item['product_id']);
-                    $product_name = $product ? $product->get_name() : '';
-                    
-                    $line_items['products'][$id] = array(
-                        'product_id' => sanitize_text_field($item['product_id']),
-                        'product_name' => $product_name, // Save current product name
-                        'product_type' => sanitize_text_field($item['product_type'] ?? ''),
-                        'quantity' => intval($item['quantity'] ?? 1),
-                        'price' => wc_format_decimal($item['price'] ?? 0),
-                        'sale_price' => wc_format_decimal($item['sale_price'] ?? ''),
-                        'start_date' => sanitize_text_field($item['start_date'] ?? ''),
-                        'subtotal' => wc_format_decimal($item['subtotal'] ?? 0)
-                    );
-                }
-            }
-        }
-
-        // Process one-time fees
-        if (isset($_POST['line_items']['one_time_fees']) && is_array($_POST['line_items']['one_time_fees'])) {
-            foreach ($_POST['line_items']['one_time_fees'] as $id => $item) {
-                if (!empty($item['description'])) {
-                    $line_items['one_time_fees'][$id] = array(
-                        'description' => sanitize_text_field($item['description']),
-                        'amount' => wc_format_decimal($item['amount'] ?? 0)
-                    );
-                }
-            }
-        }
-
-        // Process recurring fees
-        if (isset($_POST['line_items']['recurring_fees']) && is_array($_POST['line_items']['recurring_fees'])) {
-            foreach ($_POST['line_items']['recurring_fees'] as $id => $item) {
-                if (!empty($item['description'])) {
-                    $line_items['recurring_fees'][$id] = array(
-                        'description' => sanitize_text_field($item['description']),
-                        'amount' => wc_format_decimal($item['amount'] ?? 0),
-                        'interval' => intval($item['interval'] ?? 1),
-                        'period' => sanitize_text_field($item['period'] ?? 'month')
-                    );
-                }
-            }
-        }
-
-        // Process shipping fees
-        if (isset($_POST['line_items']['shipping_fees']) && is_array($_POST['line_items']['shipping_fees'])) {
-            foreach ($_POST['line_items']['shipping_fees'] as $id => $item) {
-                if (!empty($item['description'])) {
-                    $line_items['shipping_fees'][$id] = array(
-                        'description' => sanitize_text_field($item['description']),
-                        'amount' => wc_format_decimal($item['amount'] ?? 0)
-                    );
-                }
-            }
-        }
-
-        // Save line items to proposal
-        $proposal->set_quotation_line_items($line_items);
+        // Clear old quotation fields (no longer needed with array structure)
+        // Quotation data is now stored in _arsol_pfw_proposed_project_quotation_line_items
+        
+        // Save line items to database using entity methods
         
         // Save totals to quotation data structure
         $quotation_data = $proposal->get_proposed_project_quotation();
@@ -528,36 +462,59 @@ class Quotation_Controller {
     }
 
     public function ajax_get_product_details() {
-        check_ajax_referer('arsol_proposal_quotation_ajax', 'security');
+        check_ajax_referer('arsol_proposal_quotation_nonce', 'nonce');
         
-        $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
-        
+        $product_id = isset($_POST['product_id']) ? absint($_POST['product_id']) : 0;
         if (!$product_id) {
-            wp_send_json_error('Invalid product ID');
+            wp_send_json_error('Missing product ID');
         }
-        
+
         $product = wc_get_product($product_id);
         if (!$product) {
-            wp_send_json_error('Product not found');
+            wp_send_json_error('Invalid product');
         }
         
-        $response = array(
-            'success' => true,
-            'product_id' => $product_id,
-            'product_name' => $product->get_name(), // Always get current name from database
-            'product_type' => $product->get_type(),
-            'regular_price' => $product->get_regular_price(),
-            'sale_price' => $product->get_sale_price(),
-            'price' => $product->get_price()
+        $product_type = $product->get_type();
+        $is_subscription = in_array($product_type, array('subscription', 'subscription_variation'));
+        $sign_up_fee = 0;
+        $regular_price_val = 0;
+        $sale_price_val = '';
+        $billing_interval = null;
+        $billing_period = null;
+
+        if ($is_subscription && class_exists('WC_Product_Subscription')) {
+            // Logic for Subscription Products
+            $regular_price_val = $product->get_regular_price();
+            $active_price = $product->get_price();
+            if (is_numeric($active_price) && is_numeric($regular_price_val) && $active_price < $regular_price_val) {
+                $sale_price_val = $active_price;
+            }
+            
+            $sign_up_fee = (float) $product->get_meta('_subscription_sign_up_fee');
+            $billing_interval = $product->get_meta('_subscription_period_interval');
+            $billing_period = $product->get_meta('_subscription_period');
+
+        } else {
+            // Logic for Simple/Other Products
+            $regular_price_val = $product->get_regular_price();
+            $sale_price_val = $product->get_sale_price();
+        }
+        
+        // Ensure we have numeric values before formatting
+        $regular_price_val = is_numeric($regular_price_val) ? (float) $regular_price_val : 0;
+        $sale_price_val = is_numeric($sale_price_val) ? (float) $sale_price_val : '';
+
+        $data = array(
+            'product_name' => $product->get_name(),
+            'regular_price' => wc_format_decimal($regular_price_val, wc_get_price_decimals()),
+            'sale_price' => $sale_price_val !== '' ? wc_format_decimal($sale_price_val, wc_get_price_decimals()) : '',
+            'product_type' => $product_type, // WooCommerce product types with prices: simple, subscription, subscription_variation, variation, external
+            'sign_up_fee' => wc_format_decimal($sign_up_fee, wc_get_price_decimals()),
+            'billing_interval' => $billing_interval,
+            'billing_period'   => $billing_period
         );
-        
-        // Add subscription-specific data if applicable
-        if (class_exists('WC_Subscriptions') && ($product->get_type() === 'subscription' || $product->get_type() === 'subscription_variation')) {
-            $response['interval'] = $product->get_meta('_subscription_period_interval') ?: 1;
-            $response['period'] = $product->get_meta('_subscription_period') ?: 'month';
-        }
-        
-        wp_send_json($response);
+
+        wp_send_json_success($data);
     }
 
     /**

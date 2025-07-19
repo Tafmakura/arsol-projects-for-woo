@@ -519,29 +519,8 @@
 
             if (type === 'product') {
                 this.initSelect2($newRow);
-                // Always fetch current product details from database for existing items
-                if (data.product_id) {
-                    this.fetchProductDetails($newRow, data.product_id, function(productData) {
-                        // Update the select with current product name from database
-                        var $select = $newRow.find('.arsol-description-input');
-                        $select.empty().append('<option value="' + productData.product_id + '" selected="selected">' + productData.product_name + '</option>');
-                        
-                        // Update hidden fields with current data
-                        $newRow.find('input[name*="[product_type]"]').val(productData.product_type);
-                        $newRow.find('.arsol-price-input').val(productData.regular_price);
-                        $newRow.find('.arsol-sale-price-input').val(productData.sale_price);
-                        
-                        // Handle subscription data
-                        if (productData.product_type === 'subscription' || productData.product_type === 'subscription_variation') {
-                            $newRow.data('billing-interval', productData.interval || 1);
-                            $newRow.data('billing-period', productData.period || 'month');
-                            $newRow.data('is-subscription', true);
-                            
-                            // Show date input for subscriptions
-                            $newRow.find('.arsol-date-column .arsol-not-applicable').hide();
-                            $newRow.find('.arsol-date-column .arsol-date-input').show();
-                        }
-                    });
+                if(data.product_id && !data.regular_price) {
+                     this.fetchProductDetails($newRow, data.product_id);
                 } else if (data.product_type && (data.product_type === 'subscription' || data.product_type === 'subscription_variation')) {
                     // Set subscription data for existing saved subscription products
                     $newRow.data('billing-interval', data.interval || 1);
@@ -554,18 +533,6 @@
                 }
                 // Non-subscription products use default state (show "—", hide date input)
             }
-            // Handle product selection changes
-            $newRow.on('change', '.arsol-description-input', function() {
-                var $select = $(this);
-                var selectedProductId = $select.val();
-                
-                if (selectedProductId) {
-                    self.fetchProductDetails($newRow, selectedProductId, function(productData) {
-                        // Update the select with current product name
-                        $select.empty().append('<option value="' + productData.product_id + '" selected="selected">' + productData.product_name + '</option>');
-                    });
-                }
-            });
         },
 
         initSelect2: function($row) {
@@ -627,46 +594,72 @@
         },
 
         fetchProductDetails: function($row, productId, callback) {
-            var self = this;
             $.ajax({
                 url: arsol_proposal_quotation_vars.ajax_url,
                 type: 'POST',
                 data: {
                     action: 'arsol_proposal_quotation_ajax_get_product_details',
-                    security: arsol_proposal_quotation_vars.ajax_nonce,
+                    nonce: arsol_proposal_quotation_vars.nonce,
                     product_id: productId
                 },
                 success: function(response) {
                     if (response.success) {
-                        var productData = response.data;
+                        var data = response.data;
                         
-                        // Update the row with product details
-                        $row.find('.arsol-price-input').val(productData.regular_price);
-                        $row.find('.arsol-sale-price-input').val(productData.sale_price);
-                        $row.find('input[name*="[product_type]"]').val(productData.product_type);
+                        // Set price fields
+                        $row.find('.arsol-price-input').val(data.regular_price);
+                        $row.find('.arsol-sale-price-input').val(data.sale_price);
                         
-                        // Handle subscription data
-                        if (productData.product_type === 'subscription' || productData.product_type === 'subscription_variation') {
-                            $row.data('billing-interval', productData.interval || 1);
-                            $row.data('billing-period', productData.period || 'month');
+                        // Store the product type in the hidden input field
+                        $row.find('input[name*="[product_type]"]').val(data.product_type || '');
+                        
+                        // Check if product is subscription type
+                        var isSubscription = data.product_type && (data.product_type === 'subscription' || data.product_type === 'subscription_variation');
+                        console.log('fetchProductDetails response:', {
+                            productType: data.product_type,
+                            isSubscription: isSubscription,
+                            billingInterval: data.billing_interval,
+                            billingPeriod: data.billing_period
+                        });
+                        
+                        if (isSubscription) {
+                            // Store subscription billing data on the row for calculations
+                            $row.data('billing-interval', data.billing_interval || 1);
+                            $row.data('billing-period', data.billing_period || 'month');
                             $row.data('is-subscription', true);
                             
                             // Show date input for subscriptions
                             $row.find('.arsol-date-column .arsol-not-applicable').hide();
                             $row.find('.arsol-date-column .arsol-date-input').show();
+                        } else {
+                            // Remove subscription data for non-subscription products
+                            $row.removeData('billing-interval billing-period is-subscription');
+                            
+                            // Switch back to default state
+                            $row.find('.arsol-date-column .arsol-date-input').hide();
+                            $row.find('.arsol-date-column .arsol-not-applicable').show();
                         }
                         
-                        // Call callback if provided
-                        if (typeof callback === 'function') {
-                            callback(productData);
-                        }
+                        ArsolProposalQuotation.toggleStartDateColumn();
+                        ArsolProposalQuotation.calculateTotals();
                         
-                        // Trigger change event to recalculate totals
-                        $row.find('.arsol-price-input, .arsol-sale-price-input, .arsol-quantity-input').trigger('change');
+                        // Delay button state update to ensure DOM is fully updated
+                        setTimeout(function() {
+                            ArsolProposalQuotation.updateProductButtonState();
+                        }, 100);
+                        
+                        // Call callback if provided (for loading existing data)
+                        if (callback && typeof callback === 'function') {
+                            callback({
+                                name: data.product_name || '',
+                                type: data.product_type || '',
+                                regular_price: data.regular_price || '',
+                                sale_price: data.sale_price || '',
+                                billing_interval: data.billing_interval || 1,
+                                billing_period: data.billing_period || 'month'
+                            });
+                        }
                     }
-                },
-                error: function() {
-                    console.error('Failed to fetch product details for product ID:', productId);
                 }
             });
         },
