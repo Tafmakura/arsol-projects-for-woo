@@ -46,7 +46,10 @@ class List_Controller {
                 return;
             }
 
-          
+            // Create project entity
+            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
+            
+           
         } catch (Exception $e) {
             error_log('Arsol PFW Project List Error: ' . $e->getMessage());
             echo '<span class="error">Error loading data</span>';
