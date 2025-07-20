@@ -210,6 +210,7 @@ class Setup {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/functions/project-functions.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/functions/proposal-functions.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/functions/request-functions.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/functions/user-functions.php';
     }
 
     /**

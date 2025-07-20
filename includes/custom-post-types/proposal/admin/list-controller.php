@@ -77,7 +77,7 @@ class List_Controller {
     private function render_customer_column_direct($post_id) {
         $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
         if ($customer_id) {
-            echo \Arsol_Projects_For_Woo\Functions\format_user_display($customer_id, 'filter_link', ['post_type' => 'arsol-pfw-proposal']);
+            echo arsol_pfw_format_user($customer_id, 'filter_link', ['post_type' => 'arsol-pfw-proposal']);
         } else {
             echo '<span class="na">&ndash;</span>';
         }
@@ -107,7 +107,7 @@ class List_Controller {
     private function render_project_lead_column_direct($post_id) {
         $lead_id = get_post_meta($post_id, '_arsol_pfw_proposed_project_lead', true);
         if ($lead_id) {
-            echo \Arsol_Projects_For_Woo\Functions\format_user_display($lead_id, 'filter_link', ['post_type' => 'arsol-pfw-proposal']);
+            echo arsol_pfw_format_user($lead_id, 'filter_link', ['post_type' => 'arsol-pfw-proposal']);
         } else {
             echo '<span class="na">&ndash;</span>';
         }
@@ -155,7 +155,7 @@ class List_Controller {
             if (!empty($current_customer)) {
                 $customer = get_userdata($current_customer);
                 if ($customer) {
-                    $customer_display = \Arsol_Projects_For_Woo\Functions\format_user_display($customer, 'admin');
+                    $customer_display = arsol_pfw_format_user($customer, 'admin');
                     
                     printf(
                         '<option value="%s" selected="selected">%s</option>',
