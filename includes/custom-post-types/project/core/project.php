@@ -100,9 +100,8 @@ class Project {
             return false;
         }
 
-        // Load data from data store
-        $this->read();
-
+        // Don't automatically call read() to avoid data store dependency issues
+        // read() can be called manually if needed for full data loading
         return true;
     }
 
@@ -636,21 +635,27 @@ class Project {
      * @return bool|WP_Error Success status or error
      */
     public function save() {
-        $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Project_Data_Store();
-        
-        if ($this->project_id > 0) {
-            return $data_store->update($this);
-        } else {
-            $result = $data_store->create($this);
+        try {
+            $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Project_Data_Store();
             
-            if (!is_wp_error($result)) {
-                $this->project_id = $result;
-                $this->project = get_post($result);
-                // Load the data after creation
-                $this->read();
+            if ($this->project_id > 0) {
+                return $data_store->update($this);
+            } else {
+                $result = $data_store->create($this);
+                
+                if (!is_wp_error($result)) {
+                    $this->project_id = $result;
+                    $this->project = get_post($result);
+                    // Load the data after creation
+                    $this->read();
+                }
+                
+                return $result;
             }
-            
-            return $result;
+        } catch (Exception $e) {
+            // Log error but don't crash
+            error_log('Arsol PFW Project save error: ' . $e->getMessage());
+            return new \WP_Error('project_save_failed', $e->getMessage());
         }
     }
 
@@ -664,8 +669,14 @@ class Project {
             return false;
         }
         
-        $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Project_Data_Store();
-        return $data_store->read($this);
+        try {
+            $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Project_Data_Store();
+            return $data_store->read($this);
+        } catch (Exception $e) {
+            // Log error but don't crash
+            error_log('Arsol PFW Project read error: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -678,8 +689,14 @@ class Project {
             return false;
         }
         
-        $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Project_Data_Store();
-        return $data_store->delete($this);
+        try {
+            $data_store = new \Arsol_Projects_For_Woo\Data_Stores\Project_Data_Store();
+            return $data_store->delete($this);
+        } catch (Exception $e) {
+            // Log error but don't crash
+            error_log('Arsol PFW Project delete error: ' . $e->getMessage());
+            return false;
+        }
     }
 
     /**
