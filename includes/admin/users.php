@@ -56,7 +56,7 @@ class Users {
         // Ajax handlers
         add_action('wp_ajax_arsol_pfw_user_action', array($this, 'handle_ajax_user_action'));
         add_action('wp_ajax_arsol_json_search_project_leads', array($this, 'json_search_project_leads'));
-        add_action('wp_ajax_arsol_json_search_customers', array($this, 'json_search_customers'));        
+        
         // New user registration hooks
         add_action('user_register', array($this, 'set_default_user_permission'));
     }
@@ -584,9 +584,12 @@ class Users {
         $users = get_users($user_args);
         
         foreach ($users as $user) {
-            $formatted_name = arsol_pfw_format_user($user->ID, 'name_email');
-            $results[$user->ID] = $formatted_name;
-        }                $display_name = trim($user->first_name . ' ' . $user->last_name);
+            // Format: "Display Name (email)" or "First Last (email)"
+            $display_name = '';
+            if (!empty($user->display_name)) {
+                $display_name = $user->display_name;
+            } elseif (!empty($user->first_name) || !empty($user->last_name)) {
+                $display_name = trim($user->first_name . ' ' . $user->last_name);
             } else {
                 $display_name = $user->user_email;
             }
@@ -628,7 +631,7 @@ class Users {
         if (!empty($args['selected'])) {
             $selected_user = get_userdata($args['selected']);
             if ($selected_user) {
-                $display_name = arsol_pfw_format_user($args['selected']);
+                $display_name = self::format_project_lead_display($args['selected']);
                 $display_name = wp_strip_all_tags($display_name);
                 echo '<option value="' . esc_attr($args['selected']) . '" selected="selected">' . esc_html($display_name) . '</option>';
             }
@@ -674,7 +677,7 @@ class Users {
      * @param int $user_id User ID
      * @return string Formatted display name
      */
-    public static function arsol_pfw_format_user($user_id) {
+    public static function format_project_lead_display($user_id) {
         $user = get_userdata($user_id);
         if (!$user) {
             return __('Unknown User', 'arsol-pfw');
@@ -746,42 +749,5 @@ class Users {
             $default_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request';
             update_user_meta($user_id, 'arsol_pfw_user_permission', $default_permission);
         }
-    }
-}
-
-    /**
-     * AJAX handler for customer search (replaces WooCommerce native search)
-     */
-    public function json_search_customers() {
-        check_ajax_referer('search-customers', 'security');
-        
-        if (!current_user_can('edit_posts')) {
-            wp_die();
-        }
-        
-        $term = sanitize_text_field($_GET['term']);
-        $limit = 20;
-        $results = array();
-        
-        if (empty($term)) {
-            wp_send_json($results);
-        }
-        
-        // Search all users
-        $user_args = array(
-            'search' => '*' . $term . '*',
-            'search_columns' => array('display_name', 'user_login', 'user_email', 'user_nicename', 'first_name', 'last_name'),
-            'number' => $limit,
-            'fields' => array('ID', 'display_name', 'user_email', 'first_name', 'last_name'),
-        );
-        
-        $users = get_users($user_args);
-        
-        foreach ($users as $user) {
-            $formatted_name = arsol_pfw_format_user($user->ID, 'name_email');
-            $results[$user->ID] = $formatted_name;
-        }
-        
-        wp_send_json($results);
     }
 }
