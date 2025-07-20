@@ -57,7 +57,7 @@ class List_Controller {
 
             switch ($column) {
                 case 'project_stage':
-                    $this->render_stage_column($project);
+                //    $this->render_stage_column($project);
                     break;
                     
                 case 'customer':
