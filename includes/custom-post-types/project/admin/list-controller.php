@@ -10,7 +10,7 @@ class List_Controller {
        // add_filter('manage_arsol-pfw-project_posts_columns', array($this, 'add_custom_columns'));
        // add_action('manage_arsol-pfw-project_posts_custom_column', array($this, 'render_custom_column'), 10, 2);
         // Add filters to projects table
-       // add_action('restrict_manage_posts', array($this, 'add_filters'));
+        add_action('restrict_manage_posts', array($this, 'add_filters'));
         // Filtering logic for projects table
        // add_action('pre_get_posts', array($this, 'filter_projects_by_date_range'));
         // Handle bulk actions
