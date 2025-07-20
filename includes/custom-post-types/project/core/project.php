@@ -864,4 +864,42 @@ class Project {
     public function set_customer_notice($customer_notice) {
         return $this->set_project_customer_notice($customer_notice);
     }
+
+    // ===== OOP Helper Methods for Admin Display =====
+
+    /**
+     * Get customer display name
+     * 
+     * @return string Customer display name
+     */
+    public function get_customer_display_name() {
+        $customer = $this->get_customer();
+        if ($customer) {
+            return \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::format_customer_name($customer);
+        }
+        return '';
+    }
+
+    /**
+     * Get project lead display name
+     * 
+     * @return string Project lead display name
+     */
+    public function get_project_lead_display_name() {
+        $lead_id = $this->get_project_lead();
+        if ($lead_id) {
+            return \Arsol_Projects_For_Woo\Admin\Users::format_project_lead_display($lead_id);
+        }
+        return '';
+    }
+
+    /**
+     * Get project lead user object
+     * 
+     * @return WP_User|null
+     */
+    public function get_project_lead_user() {
+        $lead_id = $this->get_project_lead();
+        return $lead_id ? get_userdata($lead_id) : null;
+    }
 }

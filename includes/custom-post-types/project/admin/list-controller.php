@@ -39,35 +39,87 @@ class List_Controller {
      * Render custom column content
      */
     public function render_custom_column($column, $post_id) {
-        switch ($column) {
-            case 'project_stage':
-                $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
-                $stage = $project->get_stage();
-                $stage_label = $project->get_stage_label();
-                if ($stage) {
-                    echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
-                } else {
-                    echo '<span class="stage stage-not-started">Not Started</span>';
-                }
-                break;
-                
-            case 'customer':
-                // Use Project entity for customer access
-                $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
-                $customer_id = $project->get_customer_id();
-                if ($customer_id) {
-                    echo \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::create_customer_filter_link($customer_id, 'arsol-pfw-project');
-                } else {
-                    echo '<span class="na">&ndash;</span>';
-                }
-                break;
-                
-            case 'project_lead':
-                // Use Project entity for project lead access
-                $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
-                $lead_id = $project->get_project_lead();
-                echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
-                break;
+        try {
+            // Validate post_id
+            if (!$post_id || !is_numeric($post_id)) {
+                echo '<span class="error">Invalid project ID</span>';
+                return;
+            }
+
+            // Create project entity
+            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
+            
+            // Validate project loaded successfully
+            if (!$project->exists()) {
+                echo '<span class="error">Project not found</span>';
+                return;
+            }
+
+            switch ($column) {
+                case 'project_stage':
+                    $this->render_stage_column($project);
+                    break;
+                    
+                case 'customer':
+                    $this->render_customer_column($project);
+                    break;
+                    
+                case 'project_lead':
+                    $this->render_project_lead_column($project);
+                    break;
+            }
+        } catch (Exception $e) {
+            error_log('Arsol PFW Project List Error: ' . $e->getMessage());
+            echo '<span class="error">Error loading data</span>';
+        }
+    }
+
+    /**
+     * Render stage column
+     */
+    private function render_stage_column($project) {
+        $stage = $project->get_stage();
+        $stage_label = $project->get_stage_label();
+        
+        if ($stage && $stage_label) {
+            echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
+        } else {
+            echo '<span class="stage stage-not-started">Not Started</span>';
+        }
+    }
+
+    /**
+     * Render customer column
+     */
+    private function render_customer_column($project) {
+        $customer_id = $project->get_customer_id();
+        
+        if ($customer_id && $customer_id > 0) {
+            // Use entity method to get customer object
+            $customer = $project->get_customer();
+            
+            if ($customer) {
+                // Use static method from Integration class
+                echo \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::create_customer_filter_link($customer, 'arsol-pfw-project');
+            } else {
+                echo '<span class="na">&ndash;</span>';
+            }
+        } else {
+            echo '<span class="na">&ndash;</span>';
+        }
+    }
+
+    /**
+     * Render project lead column
+     */
+    private function render_project_lead_column($project) {
+        $lead_id = $project->get_project_lead();
+        
+        if ($lead_id && $lead_id > 0) {
+            // Use static method from Users class
+            echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
+        } else {
+            echo '<span class="na">&ndash;</span>';
         }
     }
 
