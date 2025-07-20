@@ -24,63 +24,65 @@ class List_Controller {
     public function add_custom_columns($columns) {
         $new_columns = array();
         
-        // Add columns in desired order - check if keys exist first
-        if (isset($columns['cb'])) {
-            $new_columns['cb'] = $columns['cb'];
-        }
-        if (isset($columns['title'])) {
-            $new_columns['title'] = $columns['title'];
-        }
+        // Add columns in desired order
+        $new_columns['cb'] = $columns['cb'];
+        $new_columns['title'] = $columns['title'];
         $new_columns['customer'] = __('Customer', 'arsol-pfw');
         $new_columns['project_stage'] = __('Stage', 'arsol-pfw');
         $new_columns['project_lead'] = __('Project Lead', 'arsol-pfw');
-        if (isset($columns['date'])) {
-            $new_columns['date'] = $columns['date'];
-        }
+        $new_columns['date'] = $columns['date'];
         
         return $new_columns;
     }
 
     /**
-     * Render custom column content - WordPress Standard Pattern
+     * Render custom column content
      */
     public function render_custom_column($column, $post_id) {
-        switch ($column) {
-            case 'project_stage':
-                $this->render_stage_column_direct($post_id);
-                break;
-            case 'customer':
-                $this->render_customer_column_direct($post_id);
-                break;
-            case 'project_lead':
-                $this->render_project_lead_column_direct($post_id);
-                break;
+        try {
+            // Validate post_id
+            if (!$post_id || !is_numeric($post_id)) {
+                echo '<span class="error">Invalid project ID</span>';
+                return;
+            }
+
+            // Create project entity
+            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
+            
+           
+        } catch (Exception $e) {
+            error_log('Arsol PFW Project List Error: ' . $e->getMessage());
+            echo '<span class="error">Error loading data</span>';
         }
     }
 
     /**
-     * Render stage column using direct WordPress functions
+     * Render stage column
      */
-    private function render_stage_column_direct($post_id) {
-        $terms = wp_get_object_terms($post_id, 'arsol-pfw-project-stage', ['fields' => 'all']);
-        if (!empty($terms) && !is_wp_error($terms)) {
-            $term = $terms[0];
-            echo '<span class="stage stage-' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</span>';
+    private function render_stage_column($project) {
+        $stage = $project->get_stage();
+        $stage_label = $project->get_stage_label();
+        
+        if ($stage && $stage_label) {
+            echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
         } else {
             echo '<span class="stage stage-not-started">Not Started</span>';
         }
     }
 
     /**
-     * Render customer column using direct WordPress functions
+     * Render customer column
      */
-    private function render_customer_column_direct($post_id) {
-        $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
-        if ($customer_id) {
-            $customer = get_userdata($customer_id);
+    private function render_customer_column($project) {
+        $customer_id = $project->get_customer_id();
+        
+        if ($customer_id && $customer_id > 0) {
+            // Use entity method to get customer object
+            $customer = $project->get_customer();
+            
             if ($customer) {
-                $filter_url = add_query_arg(['post_type' => 'arsol-pfw-project', 'customer' => $customer_id], admin_url('edit.php'));
-                echo '<a href="' . esc_url($filter_url) . '">' . esc_html($customer->display_name) . '</a>';
+                // Use static method from Integration class
+                echo \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::create_customer_filter_link($customer, 'arsol-pfw-project');
             } else {
                 echo '<span class="na">&ndash;</span>';
             }
@@ -90,18 +92,14 @@ class List_Controller {
     }
 
     /**
-     * Render project lead column using direct WordPress functions
+     * Render project lead column
      */
-    private function render_project_lead_column_direct($post_id) {
-        $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
-        if ($lead_id) {
-            $lead = get_userdata($lead_id);
-            if ($lead) {
-                $filter_url = add_query_arg(['post_type' => 'arsol-pfw-project', 'project_lead' => $lead_id], admin_url('edit.php'));
-                echo '<a href="' . esc_url($filter_url) . '">' . esc_html($lead->display_name) . '</a>';
-            } else {
-                echo '<span class="na">&ndash;</span>';
-            }
+    private function render_project_lead_column($project) {
+        $lead_id = $project->get_project_lead();
+        
+        if ($lead_id && $lead_id > 0) {
+            // Use static method from Users class
+            echo \Arsol_Projects_For_Woo\Admin\Users::create_project_lead_filter_link($lead_id, 'arsol-pfw-project');
         } else {
             echo '<span class="na">&ndash;</span>';
         }

@@ -38,68 +38,50 @@ class List_Controller {
     }
 
     /**
-     * Render custom column content - WordPress Standard Pattern
+     * Render custom column content
+     * Fixed: Now uses direct meta access for performance in admin columns
      */
     public function render_custom_column($column, $post_id) {
         switch ($column) {
             case 'request_stage':
-                $this->render_stage_column_direct($post_id);
+                // Use Stage Manager directly - no need to instantiate request object
+                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
+                $stage = $request->get_stage();
+                $stage_label = $request->get_stage_label();
+                if ($stage) {
+                    echo '<span class="stage stage-' . esc_attr($stage) . '">' . esc_html($stage_label) . '</span>';
+                } else {
+                    echo '<span class="stage stage-pending-review">Pending Review</span>';
+                }
                 break;
-            case 'customer':
-                $this->render_customer_column_direct($post_id);
-                break;
+                
             case 'request_budget':
-                $this->render_budget_column_direct($post_id);
+                // Use Request entity for budget access
+                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
+                $budget = $request->get_requested_project_budget();
+                if ($budget) {
+                    if (is_array($budget) && isset($budget['amount'])) {
+                        $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();
+                        echo wc_price($budget['amount'], array('currency' => $currency));
+                    } else {
+                        // Legacy support for simple numeric values
+                        echo wc_price($budget);
+                    }
+                } else {
+                    echo '<span class="na">&ndash;</span>';
+                }
                 break;
-        }
-    }
-
-    /**
-     * Render stage column using direct WordPress functions
-     */
-    private function render_stage_column_direct($post_id) {
-        $terms = wp_get_object_terms($post_id, 'arsol-pfw-request-stage', ['fields' => 'all']);
-        if (!empty($terms) && !is_wp_error($terms)) {
-            $term = $terms[0];
-            echo '<span class="stage stage-' . esc_attr($term->slug) . '">' . esc_html($term->name) . '</span>';
-        } else {
-            echo '<span class="stage stage-pending-review">Pending Review</span>';
-        }
-    }
-
-    /**
-     * Render customer column using direct WordPress functions
-     */
-    private function render_customer_column_direct($post_id) {
-        $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
-        if ($customer_id) {
-            $customer = get_userdata($customer_id);
-            if ($customer) {
-                $filter_url = add_query_arg(['post_type' => 'arsol-pfw-request', 'customer' => $customer_id], admin_url('edit.php'));
-                echo '<a href="' . esc_url($filter_url) . '">' . esc_html($customer->display_name) . '</a>';
-            } else {
-                echo '<span class="na">&ndash;</span>';
-            }
-        } else {
-            echo '<span class="na">&ndash;</span>';
-        }
-    }
-
-    /**
-     * Render budget column using direct WordPress functions
-     */
-    private function render_budget_column_direct($post_id) {
-        $budget = get_post_meta($post_id, '_arsol_pfw_requested_project_budget', true);
-        if ($budget) {
-            if (is_array($budget) && isset($budget['amount'])) {
-                $currency = isset($budget['currency']) ? $budget['currency'] : get_woocommerce_currency();
-                echo wc_price($budget['amount'], array('currency' => $currency));
-            } else {
-                // Legacy support for simple numeric values
-                echo wc_price($budget);
-            }
-        } else {
-            echo '<span class="na">&ndash;</span>';
+                
+            case 'customer':
+                // Use Request entity for customer access
+                $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post_id);
+                $customer_id = $request->get_customer_id();
+                if ($customer_id) {
+                    echo \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::create_customer_filter_link($customer_id, 'arsol-pfw-request');
+                } else {
+                    echo '<span class="na">&ndash;</span>';
+                }
+                break;
         }
     }
 
@@ -114,7 +96,7 @@ class List_Controller {
             $statuses = get_terms('arsol-pfw-request-stage', array('hide_empty' => false));
             if (!empty($statuses) && !is_wp_error($statuses)) {
                 echo '<select name="request_stage" id="filter-by-request-stage" class="postform stage-filter-dropdown">';
-                echo '<option value="">' . __('All Statuses', 'arsol-pfw') . '</option>';
+                echo '<option value="">' . __('All Stages', 'arsol-pfw') . '</option>';
                 foreach ($statuses as $status) {
                     printf(
                         '<option value="%s" %s>%s</option>',
