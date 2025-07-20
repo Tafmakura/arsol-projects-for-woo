@@ -72,18 +72,12 @@ class List_Controller {
     }
 
     /**
-     * Render customer column using direct WordPress functions
+     * Render customer column using user functions
      */
     private function render_customer_column_direct($post_id) {
         $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
         if ($customer_id) {
-            $customer = get_userdata($customer_id);
-            if ($customer) {
-                $filter_url = add_query_arg(['post_type' => 'arsol-pfw-proposal', 'customer' => $customer_id], admin_url('edit.php'));
-                echo '<a href="' . esc_url($filter_url) . '">' . esc_html($customer->display_name) . '</a>';
-            } else {
-                echo '<span class="na">&ndash;</span>';
-            }
+            echo \Arsol_Projects_For_Woo\Functions\format_user_display($customer_id, 'filter_link', ['post_type' => 'arsol-pfw-proposal']);
         } else {
             echo '<span class="na">&ndash;</span>';
         }
@@ -108,18 +102,12 @@ class List_Controller {
     }
 
     /**
-     * Render project lead column using direct WordPress functions
+     * Render project lead column using user functions
      */
     private function render_project_lead_column_direct($post_id) {
         $lead_id = get_post_meta($post_id, '_arsol_pfw_proposed_project_lead', true);
         if ($lead_id) {
-            $lead = get_userdata($lead_id);
-            if ($lead) {
-                $filter_url = add_query_arg(['post_type' => 'arsol-pfw-proposal', 'project_lead' => $lead_id], admin_url('edit.php'));
-                echo '<a href="' . esc_url($filter_url) . '">' . esc_html($lead->display_name) . '</a>';
-            } else {
-                echo '<span class="na">&ndash;</span>';
-            }
+            echo \Arsol_Projects_For_Woo\Functions\format_user_display($lead_id, 'filter_link', ['post_type' => 'arsol-pfw-proposal']);
         } else {
             echo '<span class="na">&ndash;</span>';
         }
@@ -167,7 +155,7 @@ class List_Controller {
             if (!empty($current_customer)) {
                 $customer = get_userdata($current_customer);
                 if ($customer) {
-                    $customer_display = \Arsol_Projects_For_Woo\Integrations\WooCommerce\Integration::format_customer_admin_display($customer);
+                    $customer_display = \Arsol_Projects_For_Woo\Functions\format_user_display($customer, 'admin');
                     
                     printf(
                         '<option value="%s" selected="selected">%s</option>',
