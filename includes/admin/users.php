@@ -586,8 +586,7 @@ class Users {
         foreach ($users as $user) {
             $formatted_name = arsol_pfw_format_user($user->ID, 'name_email');
             $results[$user->ID] = $formatted_name;
-        }                $display_name = trim($user->first_name . ' ' . $user->last_name);
-        
+        }        
         wp_send_json($results);
     }
     
