@@ -282,13 +282,14 @@ jQuery(document).ready(function($) {
         });
     }
 
-    function initProjectLeadAjaxSearch() {
-        $('.arsol-pfw-project-lead-search').filter(':not(.enhanced)').each(function() {
+    function initUnifiedUserSearch() {
+        $('.arsol-pfw-user-search').filter(':not(.enhanced)').each(function() {
             var $this = $(this);
+            var searchType = $this.data('search-type') || 'users';
             
             var select2_args = {
                 allowClear: $this.data('allow_clear') ? true : false,
-                placeholder: $this.data('placeholder') || 'Search for project lead...',
+                placeholder: $this.data('placeholder') || 'Search for user...',
                 minimumInputLength: 1,
                 width: 'resolve',
                 ajax: {
@@ -298,7 +299,8 @@ jQuery(document).ready(function($) {
                     data: function(params) {
                         return {
                             term: params.term,
-                            action: $this.data('action') || 'arsol_json_search_project_leads',
+                            action: $this.data('action') || 'arsol_pfw_ajax_search_users',
+                            search_type: searchType,
                             security: $this.data('security'),
                             limit: $this.data('limit') || 20
                         };
@@ -389,7 +391,7 @@ jQuery(document).ready(function($) {
     function initAllDropdowns() {
         initWooCommerceEnhancedDropdowns();
         initUserSelectDropdowns();
-        initProjectLeadAjaxSearch();
+        initUnifiedUserSearch();
         initAdminTableFilters();
     }
     
@@ -412,8 +414,8 @@ jQuery(document).ready(function($) {
                             var $node = $(node);
                             
                             // Check for dropdown elements
-                            if ($node.is('.wc-enhanced-select, .wc-customer-search, .arsol-user-select2, .arsol-pfw-project-lead-search') || 
-                                $node.find('.wc-enhanced-select, .wc-customer-search, .arsol-user-select2, .arsol-pfw-project-lead-search').length) {
+                            if ($node.is('.wc-enhanced-select, .wc-customer-search, .arsol-user-select2, .arsol-pfw-user-search') || 
+                                $node.find('.wc-enhanced-select, .wc-customer-search, .arsol-user-select2, .arsol-pfw-user-search').length) {
                                 shouldReinitDropdowns = true;
                             }
                             

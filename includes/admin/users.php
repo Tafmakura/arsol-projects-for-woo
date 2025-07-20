@@ -55,7 +55,7 @@ class Users {
         
         // Ajax handlers
         add_action('wp_ajax_arsol_pfw_user_action', array($this, 'handle_ajax_user_action'));
-        add_action('wp_ajax_arsol_json_search_project_leads', array($this, 'json_search_project_leads'));
+        add_action('wp_ajax_arsol_pfw_ajax_search_users', array($this, 'ajax_search'));
         
         // New user registration hooks
         add_action('user_register', array($this, 'set_default_user_permission'));
@@ -589,7 +589,76 @@ class Users {
         }        
         wp_send_json($results);
     }
-    
+
+    /**
+     * Single AJAX handler for all user searches
+     * Handles customers, project leads, and general user searches
+     */
+    public function ajax_search() {
+        check_ajax_referer('search-users', 'security');
+        
+        if (!current_user_can('edit_posts')) {
+            wp_die();
+        }
+        
+        $search_type = isset($_GET['search_type']) ? sanitize_text_field($_GET['search_type']) : 'users';
+        $term = isset($_GET['term']) ? sanitize_text_field($_GET['term']) : '';
+        $limit = isset($_GET['limit']) ? absint($_GET['limit']) : 20;
+        
+        $results = array();
+        
+        if (strlen($term) < 1) {
+            wp_die();
+        }
+        
+        // Base user args
+        $user_args = array(
+            'search' => '*' . $term . '*',
+            'search_columns' => array('display_name', 'user_login', 'user_email', 'user_nicename', 'first_name', 'last_name'),
+            'number' => $limit,
+            'fields' => array('ID', 'display_name', 'user_email', 'first_name', 'last_name'),
+        );
+        
+        // Add capability filtering based on search type
+        switch ($search_type) {
+            case 'project_leads':
+                $user_args['meta_query'] = array(
+                    'relation' => 'OR',
+                    array(
+                        'key' => 'wp_capabilities',
+                        'value' => 'arsol_pfw_manage',
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'wp_capabilities',
+                        'value' => 'edit_arsol_pfw_projects',
+                        'compare' => 'LIKE'
+                    ),
+                    array(
+                        'key' => 'wp_capabilities',
+                        'value' => 'manage_options',
+                        'compare' => 'LIKE'
+                    ),
+                );
+                break;
+                
+            case 'customers':
+            case 'users':
+            default:
+                // No additional filtering - search all users
+                break;
+        }
+        
+        $users = get_users($user_args);
+        
+        foreach ($users as $user) {
+            $formatted_name = arsol_pfw_format_user($user->ID, 'display_name', false, true, false);
+            $results[$user->ID] = $formatted_name;
+        }
+        
+        wp_send_json($results);
+    }
+
     /**
      * Render a project lead search select field
      * AJAX-enabled search field for project leads
@@ -608,12 +677,12 @@ class Users {
         
         $args = wp_parse_args($args, $defaults);
         
-        $classes = 'arsol-pfw-project-lead-search';
+        $classes = 'arsol-pfw-user-search';
         if (!empty($args['class'])) {
             $classes .= ' ' . esc_attr($args['class']);
         }
         
-        echo '<select name="' . esc_attr($args['name']) . '" id="' . esc_attr($args['id']) . '" class="' . esc_attr($classes) . '" data-placeholder="' . esc_attr($args['placeholder']) . '" data-allow_clear="true" data-action="arsol_json_search_project_leads" data-security="' . wp_create_nonce('search-project-leads') . '">';
+        echo '<select name="' . esc_attr($args['name']) . '" id="' . esc_attr($args['id']) . '" class="' . esc_attr($classes) . '" data-placeholder="' . esc_attr($args['placeholder']) . '" data-allow_clear="true" data-action="arsol_pfw_ajax_search_users" data-search-type="project_leads" data-security="' . wp_create_nonce('search-users') . '">';
         echo '<option value="">' . esc_html($args['placeholder']) . '</option>';
         
         // If there's a selected value, add it as an option
