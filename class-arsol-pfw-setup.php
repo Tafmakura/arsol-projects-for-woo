@@ -104,14 +104,12 @@ class Setup {
         // Request
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/request/core/request.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/request/core/setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/request/core/conversion-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/request/admin/single-controller.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/request/admin/list-controller.php';
         
         // Proposal
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/core/proposal.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/core/setup.php';
-        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/core/conversion-handler.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/single-controller.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/list-controller.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/custom-post-types/proposal/admin/budget-controller.php';
