@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) exit;
  * Format user display name with different styles
  * 
  * @param int|\WP_User $user User ID or user object
- * @param string $format Format type: 'basic', 'admin', 'filter_link', 'full'
+ * @param string $format Format type: 'basic', 'admin', 'filter_link', 'full', 'name_email'
  * @param array $args Additional arguments for specific formats
  * @return string Formatted user display
  */
@@ -51,21 +51,51 @@ function arsol_pfw_format_user_display($user, $format = 'basic', $args = []) {
 }
 
 /**
- * Format basic user name (display_name → first/last → email)
+ * Format basic user name with priority: first/last → display_name → email
  * 
  * @param \WP_User $user User object
  * @return string Formatted name
  */
 function arsol_pfw_format_basic_name($user) {
-    if (!empty($user->display_name)) {
-        return $user->display_name;
-    } elseif (!empty($user->first_name) || !empty($user->last_name)) {
-        return trim($user->first_name . ' ' . $user->last_name);
-    } elseif (!empty($user->user_email)) {
-        return $user->user_email;
-    } else {
-        return __('Unknown User', 'arsol-pfw');
+    // Priority 1: First and Last name
+    if (!empty($user->first_name) || !empty($user->last_name)) {
+        $first = trim($user->first_name ?? '');
+        $last = trim($user->last_name ?? '');
+        $full_name = trim($first . ' ' . $last);
+        
+        if (!empty($full_name)) {
+            return $full_name;
+        }
     }
+    
+    // Priority 2: Display name (but only if it looks like a real name)
+    if (!empty($user->display_name)) {
+        $display_name = trim($user->display_name);
+        
+        // Check if display_name looks like a proper name
+        if (strlen($display_name) > 2 && 
+            !preg_match('/^[a-z0-9_]+$/i', $display_name) && // Not just alphanumeric
+            strpos($display_name, ' ') !== false) { // Contains space (first last)
+            return $display_name;
+        }
+    }
+    
+    // Priority 3: Display name (even if username-like)
+    if (!empty($user->display_name)) {
+        return trim($user->display_name);
+    }
+    
+    // Priority 4: Email (fallback)
+    if (!empty($user->user_email)) {
+        return $user->user_email;
+    }
+    
+    // Priority 5: Username (last resort)
+    if (!empty($user->user_login)) {
+        return $user->user_login;
+    }
+    
+    return __('Unknown User', 'arsol-pfw');
 }
 
 /**
@@ -112,14 +142,48 @@ function arsol_pfw_format_full_display($user) {
 }
 
 /**
- * Format name with email
+ * Format name with email: "First Name (email@domain.com)" or "DisplayName (email@domain.com)"
  * 
  * @param \WP_User $user User object
  * @return string Formatted name with email
  */
 function arsol_pfw_format_name_email($user) {
-    $name = arsol_pfw_format_basic_name($user);
-    return sprintf('%s (%s)', $name, $user->user_email);
+    // Get the best available name
+    $name = '';
+    
+    // Priority 1: First and Last name
+    if (!empty($user->first_name) || !empty($user->last_name)) {
+        $first = trim($user->first_name ?? '');
+        $last = trim($user->last_name ?? '');
+        $full_name = trim($first . ' ' . $last);
+        
+        if (!empty($full_name)) {
+            $name = $full_name;
+        }
+    }
+    
+    // Priority 2: Display name (if no first/last name or as fallback)
+    if (empty($name) && !empty($user->display_name)) {
+        $name = trim($user->display_name);
+    }
+    
+    // If we still don't have a name, use email or username
+    if (empty($name)) {
+        if (!empty($user->user_email)) {
+            $name = $user->user_email;
+        } elseif (!empty($user->user_login)) {
+            $name = $user->user_login;
+        } else {
+            $name = __('Unknown User', 'arsol-pfw');
+        }
+    }
+    
+    // Format: "Name (email@domain.com)"
+    if (!empty($user->user_email)) {
+        return sprintf('%s (%s)', $name, $user->user_email);
+    } else {
+        return $name;
+    }
 }
 
 /**
@@ -141,7 +205,7 @@ function arsol_pfw_format_name_id($user) {
  * @return string HTML link
  */
 function arsol_pfw_create_filter_link($user, $post_type) {
-    $name = arsol_pfw_format_basic_name($user);
+    $name = arsol_pfw_format_name_email($user); // Use name_email format for filter links
     $filter_url = add_query_arg([
         'post_type' => $post_type,
         'customer' => $user->ID
