@@ -73,7 +73,7 @@ class List_Controller {
     private function render_customer_column_direct($post_id) {
         $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
         if ($customer_id) {
-            echo arsol_pfw_format_user($customer_id, 'filter_link', ['post_type' => 'arsol-pfw-request']);
+            echo arsol_pfw_format_user($customer_id, 'display_name', false, true, true, ['post_type' => 'arsol-pfw-request']);
         } else {
             echo '<span class="na">&ndash;</span>';
         }
@@ -128,7 +128,7 @@ class List_Controller {
             if (!empty($current_customer)) {
                 $customer = get_userdata($current_customer);
                 if ($customer) {
-                    $customer_display = arsol_pfw_format_user($customer, 'name_email');
+                    $customer_display = arsol_pfw_format_user($customer, 'display_name', false, true, false);
                     
                     printf(
                         '<option value="%s" selected="selected">%s</option>',

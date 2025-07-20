@@ -905,7 +905,7 @@ class Project {
     public function get_project_lead_display_name() {
         $lead_id = $this->get_project_lead();
         if ($lead_id) {
-            return \Arsol_Projects_For_Woo\Admin\Users::format_project_lead_display($lead_id);
+            return arsol_pfw_format_user($lead_id, 'display_name', false, true, false);
         }
         return '';
     }

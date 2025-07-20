@@ -3,14 +3,21 @@
 if (!defined('ABSPATH')) exit;
 
 /**
- * Format user display name with different styles
+ * Consolidated user formatting function
+ * 
+ * Handles all user display formatting with consistent priority order:
+ * display_name → first_name + last_name → user_email → user_login
  * 
  * @param int|\WP_User $user User ID or user object
- * @param string $format Format type: 'basic', 'admin', 'filter_link', 'full', 'name_email'
- * @param array $args Additional arguments for specific formats
+ * @param string $format Format type: 'display_name', 'first_name', 'full_name', 'last_name'
+ * @param bool $id Whether to show user ID in secondary info
+ * @param bool $email Whether to include email in output
+ * @param bool $link Whether to make the output a clickable link (for admin columns)
+ * @param array $args Additional arguments (post_type for links, etc.)
  * @return string Formatted user display
  */
-function arsol_pfw_format_user_display($user, $format = 'basic', $args = []) {
+function arsol_pfw_format_user($user, $format = 'display_name', $id = false, $email = true, $link = false, $args = []) {
+    // Handle user ID or user object
     if (is_numeric($user)) {
         $user = get_userdata($user);
     }
@@ -19,44 +26,128 @@ function arsol_pfw_format_user_display($user, $format = 'basic', $args = []) {
         return __('Unknown User', 'arsol-pfw');
     }
     
+    // Get the best available name with consistent priority
+    $name = arsol_pfw_get_user_name($user);
+    
+    // Generate the formatted text based on format and fallback logic
+    $formatted_text = '';
+    $secondary_info = '';
+    
+    // Determine primary display based on format and availability
     switch ($format) {
-        case 'basic':
-            return arsol_pfw_format_basic_name($user);
+        case 'display_name':
+            if (!empty($user->display_name)) {
+                $formatted_text = $user->display_name;
+            } elseif (!empty($user->first_name) || !empty($user->last_name)) {
+                // Fallback to first/last name
+                $first = trim($user->first_name ?? '');
+                $last = trim($user->last_name ?? '');
+                $formatted_text = trim($first . ' ' . $last);
+            } else {
+                // Fallback to email
+                $formatted_text = $user->user_email;
+                if ($id) {
+                    $secondary_info = '#' . $user->ID;
+                }
+            }
+            break;
             
-        case 'admin':
-            return arsol_pfw_format_admin_display($user);
+        case 'first_name':
+            if (!empty($user->first_name)) {
+                $formatted_text = $user->first_name;
+            } else {
+                // Fallback to email
+                $formatted_text = $user->user_email;
+                if ($id) {
+                    $secondary_info = '#' . $user->ID;
+                }
+            }
+            break;
             
-        case 'filter_link':
-            $post_type = isset($args['post_type']) ? $args['post_type'] : 'arsol-pfw-project';
-            return arsol_pfw_create_filter_link($user, $post_type);
+        case 'full_name':
+            if (!empty($user->first_name) || !empty($user->last_name)) {
+                $first = trim($user->first_name ?? '');
+                $last = trim($user->last_name ?? '');
+                $formatted_text = trim($first . ' ' . $last);
+            } else {
+                // Fallback to email
+                $formatted_text = $user->user_email;
+                if ($id) {
+                    $secondary_info = '#' . $user->ID;
+                }
+            }
+            break;
             
-        case 'full':
-            return arsol_pfw_format_full_display($user);
-            
-        case 'email_only':
-            return $user->user_email;
-            
-        case 'id_only':
-            return '#' . $user->ID;
-            
-        case 'name_email':
-            return arsol_pfw_format_name_email($user);
-            
-        case 'name_id':
-            return arsol_pfw_format_name_id($user);
+        case 'last_name':
+            if (!empty($user->last_name)) {
+                $formatted_text = $user->last_name;
+            } else {
+                // Fallback to email
+                $formatted_text = $user->user_email;
+                if ($id) {
+                    $secondary_info = '#' . $user->ID;
+                }
+            }
+            break;
             
         default:
-            return arsol_pfw_format_basic_name($user);
+            // Default to display_name logic
+            if (!empty($user->display_name)) {
+                $formatted_text = $user->display_name;
+            } elseif (!empty($user->first_name) || !empty($user->last_name)) {
+                $first = trim($user->first_name ?? '');
+                $last = trim($user->last_name ?? '');
+                $formatted_text = trim($first . ' ' . $last);
+            } else {
+                $formatted_text = $user->user_email;
+                if ($id) {
+                    $secondary_info = '#' . $user->ID;
+                }
+            }
+            break;
     }
+    
+    // Add email if requested and not already the primary display
+    if ($email && $formatted_text !== $user->user_email && !empty($user->user_email)) {
+        if (!empty($secondary_info)) {
+            // Primary (email) (secondary)
+            $formatted_text = sprintf('%s (%s) (%s)', $formatted_text, $user->user_email, $secondary_info);
+        } else {
+            // Primary (email)
+            $formatted_text = sprintf('%s (%s)', $formatted_text, $user->user_email);
+        }
+    } elseif (!empty($secondary_info)) {
+        // Primary (secondary) - when email is primary or not requested
+        $formatted_text = sprintf('%s (%s)', $formatted_text, $secondary_info);
+    }
+    
+    // Make it linkable if requested
+    if ($link) {
+        $post_type = isset($args['post_type']) ? $args['post_type'] : 'arsol-pfw-project';
+        $filter_url = add_query_arg([
+            'post_type' => $post_type,
+            'customer' => $user->ID
+        ], admin_url('edit.php'));
+        
+        return sprintf(
+            '<a href="%s">%s</a>',
+            esc_url($filter_url),
+            esc_html($formatted_text)
+        );
+    }
+    
+    return $formatted_text;
 }
 
 /**
- * Format basic user name with priority: display_name → first/last → email
+ * Get user name with consistent priority order
+ * 
+ * Priority: display_name → first_name + last_name → user_email → user_login
  * 
  * @param \WP_User $user User object
- * @return string Formatted name
+ * @return string Best available name
  */
-function arsol_pfw_format_basic_name($user) {
+function arsol_pfw_get_user_name($user) {
     // Priority 1: Display name
     if (!empty($user->display_name)) {
         return trim($user->display_name);
@@ -84,126 +175,6 @@ function arsol_pfw_format_basic_name($user) {
     }
     
     return __('Unknown User', 'arsol-pfw');
-}
-
-/**
- * Format admin display (Name (#ID – email))
- * 
- * @param \WP_User $user User object
- * @return string Formatted admin display
- */
-function arsol_pfw_format_admin_display($user) {
-    $name = arsol_pfw_format_basic_name($user);
-    return sprintf(
-        '%s (#%s – %s)',
-        $name,
-        $user->ID,
-        $user->user_email
-    );
-}
-
-/**
- * Format full display with all details
- * 
- * @param \WP_User $user User object
- * @return string Formatted full display
- */
-function arsol_pfw_format_full_display($user) {
-    $name = arsol_pfw_format_basic_name($user);
-    $details = [];
-    
-    if (!empty($user->first_name) && !empty($user->last_name)) {
-        $details[] = sprintf('First: %s, Last: %s', $user->first_name, $user->last_name);
-    }
-    
-    if (!empty($user->user_email)) {
-        $details[] = 'Email: ' . $user->user_email;
-    }
-    
-    if (!empty($user->user_registered)) {
-        $details[] = 'Registered: ' . date('Y-m-d', strtotime($user->user_registered));
-    }
-    
-    $details_str = !empty($details) ? ' (' . implode(' | ', $details) . ')' : '';
-    
-    return $name . $details_str;
-}
-
-/**
- * Format name with email: "DisplayName (email@domain.com)" or "First Last (email@domain.com)"
- * 
- * @param \WP_User $user User object
- * @return string Formatted name with email
- */
-function arsol_pfw_format_name_email($user) {
-    // Get the best available name
-    $name = '';
-    
-    // Priority 1: Display name
-    if (!empty($user->display_name)) {
-        $name = trim($user->display_name);
-    }
-    
-    // Priority 2: First and Last name (if no display name)
-    if (empty($name) && (!empty($user->first_name) || !empty($user->last_name))) {
-        $first = trim($user->first_name ?? '');
-        $last = trim($user->last_name ?? '');
-        $full_name = trim($first . ' ' . $last);
-        
-        if (!empty($full_name)) {
-            $name = $full_name;
-        }
-    }
-    
-    // If we still don't have a name, use email or username
-    if (empty($name)) {
-        if (!empty($user->user_email)) {
-            $name = $user->user_email;
-        } elseif (!empty($user->user_login)) {
-            $name = $user->user_login;
-        } else {
-            $name = __('Unknown User', 'arsol-pfw');
-        }
-    }
-    
-    // Format: "Name (email@domain.com)"
-    if (!empty($user->user_email)) {
-        return sprintf('%s (%s)', $name, $user->user_email);
-    } else {
-        return $name;
-    }
-}
-
-/**
- * Format name with ID
- * 
- * @param \WP_User $user User object
- * @return string Formatted name with ID
- */
-function arsol_pfw_format_name_id($user) {
-    $name = arsol_pfw_format_basic_name($user);
-    return sprintf('%s (#%s)', $name, $user->ID);
-}
-
-/**
- * Create filter link for admin columns
- * 
- * @param \WP_User $user User object
- * @param string $post_type Post type for filter URL
- * @return string HTML link
- */
-function arsol_pfw_create_filter_link($user, $post_type) {
-    $name = arsol_pfw_format_name_email($user); // Use name_email format for filter links
-    $filter_url = add_query_arg([
-        'post_type' => $post_type,
-        'customer' => $user->ID
-    ], admin_url('edit.php'));
-    
-    return sprintf(
-        '<a href="%s">%s</a>',
-        esc_url($filter_url),
-        esc_html($name)
-    );
 }
 
 /**
@@ -282,13 +253,25 @@ function arsol_pfw_get_user_meta($user, $meta_key, $default = '') {
 }
 
 /**
- * Convenience function for user formatting (main factory function)
+ * Legacy function for backward compatibility
  * 
- * @param mixed $user User ID, email, username, or user object
+ * @param int|\WP_User $user User ID or user object
  * @param string $format Format type
  * @param array $args Additional arguments
  * @return string Formatted user display
  */
-function arsol_pfw_format_user($user, $format = 'basic', $args = []) {
-    return arsol_pfw_format_user_display($user, $format, $args);
+function arsol_pfw_format_user_display($user, $format = 'basic', $args = []) {
+    // Map old format names to new ones
+    $format_map = [
+        'basic' => 'display_name',
+        'name_email' => 'display_name',
+        'admin' => 'display_name',
+        'full' => 'full_name',
+        'email_only' => 'display_name',
+        'id_only' => 'display_name'
+    ];
+    
+    $new_format = isset($format_map[$format]) ? $format_map[$format] : 'display_name';
+    
+    return arsol_pfw_format_user($user, $new_format, false, true, false, $args);
 }

@@ -584,7 +584,7 @@ class Users {
         $users = get_users($user_args);
         
         foreach ($users as $user) {
-            $formatted_name = arsol_pfw_format_user($user->ID, 'name_email');
+            $formatted_name = arsol_pfw_format_user($user->ID, 'display_name', false, true, false);
             $results[$user->ID] = $formatted_name;
         }        
         wp_send_json($results);
@@ -620,7 +620,7 @@ class Users {
         if (!empty($args['selected'])) {
             $selected_user = get_userdata($args['selected']);
             if ($selected_user) {
-                $display_name = arsol_pfw_format_user($args['selected']);
+                $display_name = arsol_pfw_format_user($args['selected'], 'display_name', false, true, false);
                 $display_name = wp_strip_all_tags($display_name);
                 echo '<option value="' . esc_attr($args['selected']) . '" selected="selected">' . esc_html($display_name) . '</option>';
             }
