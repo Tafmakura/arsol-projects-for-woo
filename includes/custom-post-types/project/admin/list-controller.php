@@ -12,7 +12,7 @@ class List_Controller {
         // Add filters to projects table
         add_action('restrict_manage_posts', array($this, 'add_filters'));
         // Filtering logic for projects table
-       // add_action('pre_get_posts', array($this, 'filter_projects_by_date_range'));
+        add_action('pre_get_posts', array($this, 'filter_projects_by_date_range'));
         // Handle bulk actions
       //  add_filter('bulk_actions-edit-arsol-pfw-project', array($this, 'register_bulk_actions'));
        // add_filter('handle_bulk_actions-edit-arsol-pfw-project', array($this, 'handle_bulk_actions'), 10, 3);
