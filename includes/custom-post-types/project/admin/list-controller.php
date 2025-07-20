@@ -129,13 +129,13 @@ class List_Controller {
 
             // Customer filter (WooCommerce native customer search)
             $current_customer = isset($_GET['customer']) ? $_GET['customer'] : '';
-            echo '<select name="customer" class="wc-customer-search" data-placeholder="' . esc_attr__('Filter by customer', 'arsol-pfw') . '" data-allow_clear="true" data-action="woocommerce_json_search_customers" data-security="' . esc_attr(wp_create_nonce('search-customers')) . '">';
+            echo '<select name="customer" class="wc-customer-search" data-placeholder="' . esc_attr__('Filter by customer', 'arsol-pfw') . '" data-allow_clear="true" data-action="arsol_json_search_customers" data-security="' . esc_attr(wp_create_nonce('search-customers')) . '">';
             
             // If there's a current customer selected, add it as an option
             if (!empty($current_customer)) {
                 $customer = get_userdata($current_customer);
                 if ($customer) {
-                    $customer_display = arsol_pfw_format_user($customer, 'admin');
+                    $customer_display = arsol_pfw_format_user($customer, 'name_email');
                     
                     printf(
                         '<option value="%s" selected="selected">%s</option>',
