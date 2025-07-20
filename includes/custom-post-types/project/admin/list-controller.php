@@ -8,7 +8,7 @@ class List_Controller {
     public function __construct() {
         // Add custom columns to projects table
         add_filter('manage_arsol-pfw-project_posts_columns', array($this, 'add_custom_columns'));
-      //  add_action('manage_arsol-pfw-project_posts_custom_column', array($this, 'render_custom_column'), 10, 2);
+        add_action('manage_arsol-pfw-project_posts_custom_column', array($this, 'render_custom_column'), 10, 2);
         // Add filters to projects table
         add_action('restrict_manage_posts', array($this, 'add_filters'));
         // Filtering logic for projects table
@@ -46,28 +46,7 @@ class List_Controller {
                 return;
             }
 
-            // Create project entity
-            $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post_id);
-            
-            // Validate project loaded successfully
-            if (!$project->exists()) {
-                echo '<span class="error">Project not found</span>';
-                return;
-            }
-
-            switch ($column) {
-                case 'project_stage':
-                    $this->render_stage_column($project);
-                    break;
-                    
-                case 'customer':
-                    $this->render_customer_column($project);
-                    break;
-                    
-                case 'project_lead':
-                    $this->render_project_lead_column($project);
-                    break;
-            }
+          
         } catch (Exception $e) {
             error_log('Arsol PFW Project List Error: ' . $e->getMessage());
             echo '<span class="error">Error loading data</span>';
