@@ -51,13 +51,18 @@ function arsol_pfw_format_user_display($user, $format = 'basic', $args = []) {
 }
 
 /**
- * Format basic user name with priority: first/last → display_name → email
+ * Format basic user name with priority: display_name → first/last → email
  * 
  * @param \WP_User $user User object
  * @return string Formatted name
  */
 function arsol_pfw_format_basic_name($user) {
     // Priority 1: Display name
+    if (!empty($user->display_name)) {
+        return trim($user->display_name);
+    }
+    
+    // Priority 2: First and Last name
     if (!empty($user->first_name) || !empty($user->last_name)) {
         $first = trim($user->first_name ?? '');
         $last = trim($user->last_name ?? '');
@@ -68,29 +73,12 @@ function arsol_pfw_format_basic_name($user) {
         }
     }
     
-    // Priority 2: Display name (but only if it looks like a real name)
-    if (!empty($user->display_name)) {
-        $display_name = trim($user->display_name);
-        
-        // Check if display_name looks like a proper name
-        if (strlen($display_name) > 2 && 
-            !preg_match('/^[a-z0-9_]+$/i', $display_name) && // Not just alphanumeric
-            strpos($display_name, ' ') !== false) { // Contains space (first last)
-            return $display_name;
-        }
-    }
-    
-    // Priority 3: Display name (even if username-like)
-    if (!empty($user->display_name)) {
-        return trim($user->display_name);
-    }
-    
-    // Priority 4: Email (fallback)
+    // Priority 3: Email (fallback)
     if (!empty($user->user_email)) {
         return $user->user_email;
     }
     
-    // Priority 5: Username (last resort)
+    // Priority 4: Username (last resort)
     if (!empty($user->user_login)) {
         return $user->user_login;
     }
@@ -142,7 +130,7 @@ function arsol_pfw_format_full_display($user) {
 }
 
 /**
- * Format name with email: "First Name (email@domain.com)" or "DisplayName (email@domain.com)"
+ * Format name with email: "DisplayName (email@domain.com)" or "First Last (email@domain.com)"
  * 
  * @param \WP_User $user User object
  * @return string Formatted name with email
@@ -152,7 +140,12 @@ function arsol_pfw_format_name_email($user) {
     $name = '';
     
     // Priority 1: Display name
-    if (!empty($user->first_name) || !empty($user->last_name)) {
+    if (!empty($user->display_name)) {
+        $name = trim($user->display_name);
+    }
+    
+    // Priority 2: First and Last name (if no display name)
+    if (empty($name) && (!empty($user->first_name) || !empty($user->last_name))) {
         $first = trim($user->first_name ?? '');
         $last = trim($user->last_name ?? '');
         $full_name = trim($first . ' ' . $last);
@@ -160,11 +153,6 @@ function arsol_pfw_format_name_email($user) {
         if (!empty($full_name)) {
             $name = $full_name;
         }
-    }
-    
-    // Priority 2: First and Last name (if no display name)
-    if (empty($name) && !empty($user->display_name)) {
-        $name = trim($user->display_name);
     }
     
     // If we still don't have a name, use email or username
