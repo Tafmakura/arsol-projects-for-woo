@@ -57,7 +57,7 @@ function arsol_pfw_format_user_display($user, $format = 'basic', $args = []) {
  * @return string Formatted name
  */
 function arsol_pfw_format_basic_name($user) {
-    // Priority 1: First and Last name
+    // Priority 1: Display name
     if (!empty($user->first_name) || !empty($user->last_name)) {
         $first = trim($user->first_name ?? '');
         $last = trim($user->last_name ?? '');
@@ -151,7 +151,7 @@ function arsol_pfw_format_name_email($user) {
     // Get the best available name
     $name = '';
     
-    // Priority 1: First and Last name
+    // Priority 1: Display name
     if (!empty($user->first_name) || !empty($user->last_name)) {
         $first = trim($user->first_name ?? '');
         $last = trim($user->last_name ?? '');
@@ -162,7 +162,7 @@ function arsol_pfw_format_name_email($user) {
         }
     }
     
-    // Priority 2: Display name (if no first/last name or as fallback)
+    // Priority 2: First and Last name (if no display name)
     if (empty($name) && !empty($user->display_name)) {
         $name = trim($user->display_name);
     }
