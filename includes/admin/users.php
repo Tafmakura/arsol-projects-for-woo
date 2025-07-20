@@ -584,19 +584,9 @@ class Users {
         $users = get_users($user_args);
         
         foreach ($users as $user) {
-            // Format: "Display Name (email)" or "First Last (email)"
-            $display_name = '';
-            if (!empty($user->display_name)) {
-                $display_name = $user->display_name;
-            } elseif (!empty($user->first_name) || !empty($user->last_name)) {
-                $display_name = trim($user->first_name . ' ' . $user->last_name);
-            } else {
-                $display_name = $user->user_email;
-            }
-            
-            $formatted_name = $display_name . ' (' . $user->user_email . ')';
+            $formatted_name = arsol_pfw_format_user($user->ID, 'name_email');
             $results[$user->ID] = $formatted_name;
-        }
+        }                $display_name = trim($user->first_name . ' ' . $user->last_name);
         
         wp_send_json($results);
     }
@@ -631,7 +621,7 @@ class Users {
         if (!empty($args['selected'])) {
             $selected_user = get_userdata($args['selected']);
             if ($selected_user) {
-                $display_name = self::format_project_lead_display($args['selected']);
+                $display_name = arsol_pfw_format_user($args['selected']);
                 $display_name = wp_strip_all_tags($display_name);
                 echo '<option value="' . esc_attr($args['selected']) . '" selected="selected">' . esc_html($display_name) . '</option>';
             }
