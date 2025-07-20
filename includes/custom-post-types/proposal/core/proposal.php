@@ -1084,6 +1084,24 @@ class Arsol_PFW_Proposal {
     }
 
     /**
+     * Convert this proposal to a project
+     * 
+     * @param bool $is_internal_call Whether this is an internal call (skips nonce check)
+     * @return void
+     */
+    public function convert_to_project($is_internal_call = false) {
+        if (!$this->exists()) {
+            return;
+        }
+        
+        // Get the conversion handler
+        $conversion_handler = new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
+        
+        // Convert proposal to project
+        $conversion_handler->convert_proposal_to_project($this->proposal_id, $is_internal_call);
+    }
+
+    /**
      * Get project budget (cross-entity access for historical data)
      * 
      * @return array|string Project budget

@@ -603,6 +603,23 @@ class Arsol_PFW_Request {
     }
 
     /**
+     * Convert this request to a proposal
+     * 
+     * @return int|WP_Error Proposal ID on success, WP_Error on failure
+     */
+    public function convert_to_proposal() {
+        if (!$this->exists()) {
+            return new \WP_Error('invalid_request', __('Request does not exist.', 'arsol-pfw'));
+        }
+        
+        // Get the conversion handler
+        $conversion_handler = new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
+        
+        // Convert request to proposal
+        return $conversion_handler->convert_request_to_proposal($this->request_id);
+    }
+
+    /**
      * Get request ID (for internal reference)
      * 
      * @return int Request ID
