@@ -61,11 +61,11 @@ class List_Controller {
                     break;
                     
                 case 'customer':
-                    $this->render_customer_column($project);
+                //    $this->render_customer_column($project);
                     break;
                     
                 case 'project_lead':
-                    $this->render_project_lead_column($project);
+                //    $this->render_project_lead_column($project);
                     break;
             }
         } catch (Exception $e) {
