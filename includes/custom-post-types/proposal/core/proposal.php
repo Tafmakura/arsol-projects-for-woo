@@ -1107,24 +1107,8 @@ class Arsol_PFW_Proposal {
      * @return string Project due date
      */
     public function get_project_due_date() {
-        return $this->get_proposed_project_due_date();
+        return $this->get_meta('_arsol_pfw_project_due_date');
     }
 
-    /**
-     * Convert this proposal to a project
-     * 
-     * @param bool $is_internal_call Whether this is an internal call (skips security checks)
-     * @return int|WP_Error Project ID on success, WP_Error on failure
-     */
-    public function convert_to_project($is_internal_call = false) {
-        if (!$this->exists()) {
-            return new \WP_Error('invalid_proposal', __('Proposal does not exist.', 'arsol-pfw'));
-        }
 
-        // Get conversion handler
-        $conversion_handler = new \Arsol_Projects_For_Woo\Core\Conversion_Handler();
-        
-        // Convert to project
-        return $conversion_handler->convert_proposal_to_project($this->proposal_id, $is_internal_call);
-    }
 } 
