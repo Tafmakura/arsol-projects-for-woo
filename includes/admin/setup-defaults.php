@@ -343,7 +343,7 @@ class Setup_Defaults {
      */
     public function reset_defaults_ajax() {
         // Verify nonce and capability
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'arsol_pfw_reset_defaults') || !arsol_pfw_user_can('arsol_pfw_admin_manage_settings')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'arsol_pfw_reset_defaults') || !function_exists('arsol_pfw_user_can') || !arsol_pfw_user_can('arsol_pfw_admin_manage_settings')) {
             wp_send_json_error(array('message' => __('Security check failed.', 'arsol-pfw')));
         }
 

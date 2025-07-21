@@ -135,11 +135,13 @@ class Single_Controller {
             return;
         }
 
-        // Check the user's permissions
-        if (!arsol_pfw_user_can('edit_arsol_pfw_request', $post_id)) {
+        if (get_post_type($post_id) !== 'arsol-pfw-request') {
             return;
         }
-
+        if (!function_exists('arsol_pfw_user_can') || !arsol_pfw_user_can('edit_arsol_pfw_request', $post_id)) {
+            return;
+        }
+        
         // Save request stage from column 1
         if (isset($_POST['request_stage'])) {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['request_stage']), 'arsol-pfw-request-stage', false);

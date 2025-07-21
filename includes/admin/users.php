@@ -199,9 +199,9 @@ class Users {
      * @return void
      */
     public function add_user_profile_fields($user) {
-        // Only show this to administrators or users with manage capability
-        if (!arsol_pfw_user_can('arsol_pfw_manage')) {
-            return;
+        // Check permissions
+        if (!function_exists('arsol_pfw_user_can') || !arsol_pfw_user_can('arsol_pfw_manage')) {
+            wp_die(__('You do not have permission to perform this action.', 'arsol-pfw'));
         }
         
         // Get current settings
@@ -302,7 +302,7 @@ class Users {
      */
     public function save_user_profile_fields($user_id) {
         // Only allow administrators or users with our master manage capability to save.
-        if (!arsol_pfw_user_can('arsol_pfw_manage')) {
+        if (!function_exists('arsol_pfw_user_can') || !arsol_pfw_user_can('arsol_pfw_manage')) {
             return;
         }
         

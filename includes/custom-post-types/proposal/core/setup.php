@@ -151,7 +151,7 @@ class Setup {
         if (get_post_type($post_id) !== 'arsol-pfw-proposal') {
             return;
         }
-        if (!arsol_pfw_user_can('edit_arsol_pfw_proposal', $post_id)) {
+        if (!function_exists('arsol_pfw_user_can') || !arsol_pfw_user_can('edit_arsol_pfw_proposal', $post_id)) {
             return;
         }
         

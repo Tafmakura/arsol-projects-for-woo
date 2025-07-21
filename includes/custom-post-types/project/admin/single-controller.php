@@ -142,7 +142,7 @@ class Single_Controller {
             return;
         }
         // Use our new capability check
-        if (!arsol_pfw_user_can('edit_arsol_pfw_project', $post_id)) {
+        if (!function_exists('arsol_pfw_user_can') || !arsol_pfw_user_can('edit_arsol_pfw_project', $post_id)) {
             return;
         }
 
@@ -216,6 +216,9 @@ class Single_Controller {
      */
     public function prevent_project_deletion_with_proposals($post_id) {
         if (get_post_type($post_id) !== 'arsol-pfw-project') {
+            return;
+        }
+        if (!function_exists('arsol_pfw_user_can') || !arsol_pfw_user_can('edit_arsol_pfw_project', $post_id)) {
             return;
         }
         

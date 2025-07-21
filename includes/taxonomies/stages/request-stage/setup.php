@@ -144,7 +144,7 @@ class Setup {
         global $menu;
         
         // Check user permissions before adding hooks.
-        if (!arsol_pfw_user_can('arsol_pfw_admin_manage_stages')) {
+        if (!function_exists('arsol_pfw_user_can') || !\arsol_pfw_user_can('arsol_pfw_admin_manage_stages')) {
             return;
         }
         
