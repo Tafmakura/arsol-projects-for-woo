@@ -342,8 +342,9 @@ class Setup_Defaults {
      * Force reset all defaults (admin action)
      */
     public function reset_defaults_ajax() {
-        if (!current_user_can('manage_options') || !wp_verify_nonce($_POST['nonce'], 'arsol_pfw_reset_defaults')) {
-            wp_send_json_error('Permission denied');
+        // Verify nonce and capability
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'arsol_pfw_reset_defaults') || !arsol_pfw_user_can('arsol_pfw_admin_manage_settings')) {
+            wp_send_json_error(array('message' => __('Security check failed.', 'arsol-pfw')));
         }
 
         // Force re-initialization
@@ -374,7 +375,7 @@ class Setup_Defaults {
      * Only available for administrators
      */
     public static function debug_markdown_files() {
-        if (!current_user_can('manage_options')) {
+        if (!arsol_pfw_user_can('arsol_pfw_admin_manage_settings')) {
             return array('error' => 'Permission denied');
         }
 

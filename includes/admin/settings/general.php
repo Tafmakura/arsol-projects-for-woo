@@ -151,22 +151,25 @@ class General {
             )
         );
 
+        // This field will be replaced by the checkbox group below.
+        // We are keeping it registered but without a render callback to handle old data gracefully.
         add_settings_field(
-            'arsol-pfw-user-project-permissions',
+            'arsol-pfw-user-project-permissions-legacy',
+            __('Legacy Permissions', 'arsol-pfw'),
+            '__return_false', // No UI rendered for this old field.
+            'arsol_pfw_general_settings',
+            'arsol_projects_user_permissions'
+        );
+
+        add_settings_field(
+            'arsol-pfw-frontend-permissions',
             __('Frontend Permissions', 'arsol-pfw'),
-            array($this, 'render_select_field'),
+            array($this, 'render_frontend_permission_checkboxes'),
             'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
-                'description' => __('Controls how user project permissions are handled globally', 'arsol-pfw'),
-                'field' => 'user_project_permissions',
-                'options' => array(
-                    'none' => __('None', 'arsol-pfw'),
-                    'request' => __('Users can request projects', 'arsol-pfw'),
-                    'create' => __('Users can create projects', 'arsol-pfw'),
-                    'user_specific' => __('Set per user', 'arsol-pfw')
-                ),
-                'class' => 'arsol-pfw-frontend-permissions'
+                'description' => __('Grant frontend capabilities to the default "Customer" role.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-frontend-permissions-group'
             )
         );
 
@@ -409,6 +412,40 @@ class General {
     }
 
     /**
+     * Render frontend permission checkboxes.
+     * Replaces the old dropdown with a more intuitive and flexible UI.
+     */
+    public function render_frontend_permission_checkboxes($args) {
+        $settings = get_option('arsol_pfw_general_settings', array());
+        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
+
+        $permissions = array(
+            'can_create_projects' => __('Users can create projects', 'arsol-pfw'),
+            'can_request_projects' => __('Users can request projects', 'arsol-pfw'),
+        );
+        
+        echo "<div class='{$class}'>";
+        foreach ($permissions as $field => $label) {
+            $value = isset($settings[$field]) ? $settings[$field] : 0;
+            ?>
+            <label for="<?php echo esc_attr($field); ?>">
+                <input type="checkbox"
+                       id="<?php echo esc_attr($field); ?>"
+                       name="arsol_pfw_general_settings[<?php echo esc_attr($field); ?>]"
+                       value="1"
+                       <?php checked(1, $value); ?>>
+                <?php echo esc_html($label); ?>
+            </label><br>
+            <?php
+        }
+
+        if (!empty($args['description'])) {
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
+        }
+        echo '</div>';
+    }
+
+    /**
      * Render user permissions section description
      */
     public function render_user_permissions_section() {
@@ -584,93 +621,79 @@ class General {
     }
 
     /**
-     * Update capabilities when settings are saved
+     * Update capabilities for all roles based on the saved settings.
+     * This function is hooked to `update_option_arsol_pfw_general_settings`.
      *
-     * @param mixed $old_value Old settings value
-     * @param mixed $new_value New settings value
-     */
-    /**
-     * Update capabilities when settings are saved
-     *
-     * @param mixed $old_value Old settings value
-     * @param mixed $new_value New settings value
+     * @param mixed $old_value Old settings value.
+     * @param mixed $new_value New settings value.
      */
     public function update_capabilities($old_value, $new_value) {
-        $manage_roles = isset($new_value["project_manager_roles"]) ? array_unique($new_value["project_manager_roles"]) : array("administrator");
-        $create_roles = isset($new_value["project_user_roles"]) ? array_unique($new_value["project_user_roles"]) : array("administrator");
+        // First, remove all our custom capabilities from every role to ensure a clean slate.
+        $all_pfw_caps = \Arsol_Projects_For_Woo\Core\Capabilities_Handler::get_all_capabilities();
+        $editable_roles = get_editable_roles();
 
-        if (!in_array("administrator", $manage_roles)) {
-            $manage_roles[] = "administrator";
+        foreach (array_keys($editable_roles) as $role_slug) {
+            $role = get_role($role_slug);
+            if ($role) {
+                // We only want to manage our specific hierarchical and frontend caps here.
+                // Leave the primitive CPT caps alone as WordPress manages them.
+                $caps_to_manage = [
+                    'arsol_pfw_manage', 'arsol_pfw_manage_all', 'arsol_pfw_manage_assigned', 'arsol_pfw_manage_own',
+                    'arsol_pfw_frontend_create_own_projects', 'arsol_pfw_frontend_view_own_projects', 'arsol_pfw_frontend_edit_own_projects',
+                    'arsol_pfw_frontend_create_own_requests', 'arsol_pfw_frontend_view_own_requests', 'arsol_pfw_frontend_edit_own_requests'
+                ];
+                foreach ($caps_to_manage as $cap) {
+                    $role->remove_cap($cap);
+                }
+            }
         }
 
-        $all_roles = wp_roles()->get_names();
+        // --- Grant Hierarchical Admin Capabilities ---
 
-        // ✅ SIMPLIFIED: Use standard WordPress capabilities
-        $manage_capabilities = array(
-            "edit_posts",           // Can edit their own posts
-            "edit_others_posts",    // Can edit others" posts
-            "edit_private_posts",   // Can edit private posts
-            "edit_published_posts", // Can edit published posts
-            "publish_posts",        // Can publish posts
-            "delete_posts",         // Can delete their own posts
-            "delete_others_posts",  // Can delete others" posts
-            "delete_private_posts", // Can delete private posts
-            "delete_published_posts", // Can delete published posts
-            "read_private_posts",   // Can read private posts
-        );
+        // `arsol_pfw_manage` is for Super Admins. Ensure the 'administrator' role always has it.
+        $admin_role = get_role('administrator');
+        if ($admin_role) {
+            $admin_role->add_cap('arsol_pfw_manage');
+        }
 
-        $create_capabilities = array(
-            "edit_posts",           // Can edit their own posts
-            "publish_posts",        // Can publish posts
-            "delete_posts",         // Can delete their own posts
-            "read_private_posts",   // Can read private posts
-        );
+        // `arsol_pfw_manage_all` is for admin-level roles. We grant this to Shop Managers by default.
+        $shop_manager_role = get_role('shop_manager');
+        if ($shop_manager_role) {
+            $shop_manager_role->add_cap('arsol_pfw_manage_all');
+        }
 
-        // Clean up old custom capabilities first
-        $old_custom_capabilities = array(
-            "arsol_pfw_manage",
-            "edit_arsol_pfw_projects", "edit_others_arsol_pfw_projects", "publish_arsol_pfw_projects",
-            "read_private_arsol_pfw_projects", "delete_arsol_pfw_projects", "delete_others_arsol_pfw_projects",
-            "edit_arsol_pfw_proposals", "edit_others_arsol_pfw_proposals", "publish_arsol_pfw_proposals",
-            "read_private_arsol_pfw_proposals", "delete_arsol_pfw_proposals", "delete_others_arsol_pfw_proposals",
-            "edit_arsol_pfw_requests", "edit_others_arsol_pfw_requests", "publish_arsol_pfw_requests",
-            "read_private_arsol_pfw_requests", "delete_arsol_pfw_requests", "delete_others_arsol_pfw_requests",
-            "manage_projects", "create_projects", "request_projects"
-        );
-
-        foreach ($all_roles as $role_slug => $role_name) {
+        // `arsol_pfw_manage_assigned` is assigned to roles selected in the 'Project Manager' settings.
+        $manager_roles = isset($new_value['project_manager_roles']) ? $new_value['project_manager_roles'] : array();
+        foreach ($manager_roles as $role_slug) {
             $role = get_role($role_slug);
-            if (!$role) {
-                continue;
+            if ($role) {
+                $role->add_cap('arsol_pfw_manage_assigned');
             }
+        }
+        
+        // --- Grant Frontend Capabilities to the "Customer" Role ---
+        $customer_role = get_role('customer');
+        if (!$customer_role) {
+            return; // Exit if the customer role doesn't exist.
+        }
 
-            // Remove old custom capabilities
-            foreach ($old_custom_capabilities as $old_cap) {
-                $role->remove_cap($old_cap);
-            }
+        // Grant "request" capabilities.
+        if (!empty($new_value['can_request_projects'])) {
+            $customer_role->add_cap('arsol_pfw_frontend_create_own_requests');
+            $customer_role->add_cap('arsol_pfw_frontend_view_own_requests');
+            $customer_role->add_cap('arsol_pfw_frontend_edit_own_requests');
+        }
 
-            // Don not mess with Administrator, Editor, Author default capabilities
-            if (in_array($role_slug, array("administrator", "editor", "author"))) {
-                continue;
-            }
-
-            // For other roles, remove standard capabilities first
-            foreach ($manage_capabilities as $cap) {
-                $role->remove_cap($cap);
-            }
-
-            // Add capabilities based on role assignment
-            if (in_array($role_slug, $manage_roles)) {
-                // Add all management capabilities
-                foreach ($manage_capabilities as $cap) {
-                    $role->add_cap($cap);
-                }
-            } elseif (in_array($role_slug, $create_roles)) {
-                // Add only create capabilities
-                foreach ($create_capabilities as $cap) {
-                    $role->add_cap($cap);
-                }
-            }
+        // Grant "project" capabilities.
+        if (!empty($new_value['can_create_projects'])) {
+            $customer_role->add_cap('arsol_pfw_frontend_create_own_projects');
+            $customer_role->add_cap('arsol_pfw_frontend_view_own_projects');
+            $customer_role->add_cap('arsol_pfw_frontend_edit_own_projects');
+            
+            // If a user can create projects, they should also be able to create requests.
+            $customer_role->add_cap('arsol_pfw_frontend_create_own_requests');
+            $customer_role->add_cap('arsol_pfw_frontend_view_own_requests');
+            $customer_role->add_cap('arsol_pfw_frontend_edit_own_requests');
         }
     }
 

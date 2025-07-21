@@ -143,7 +143,8 @@ class Setup {
     public function reorder_taxonomy_menus() {
         global $menu;
         
-        if (!is_admin() || !current_user_can('manage_options')) {
+        // Check user permissions before adding hooks.
+        if (!arsol_pfw_user_can('arsol_pfw_admin_manage_stages')) {
             return;
         }
         

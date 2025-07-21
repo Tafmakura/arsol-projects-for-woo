@@ -68,8 +68,9 @@ class Setup {
             'rewrite'           => false,
             'show_in_rest'      => false,
             'taxonomies'         => array('arsol-pfw-request-stage'),
-            // ✅ SIMPLIFIED: Use standard WordPress capabilities
-            'capability_type'    => 'post',
+            // Use our custom capabilities
+            'capability_type'    => 'arsol_pfw_request',
+            'map_meta_cap'       => true,
         );
 
         $result = register_post_type('arsol-pfw-request', $args);

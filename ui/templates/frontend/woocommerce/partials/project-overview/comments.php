@@ -128,12 +128,12 @@ switch ($post_type) {
                                     }
                                     
                                     // Add edit/delete links if user has permission
-                                    if ($current_user_id == $comment_author_id || current_user_can('manage_options')) {
-                                        echo '<div class="arsol-comment-actions">';
-                                        echo '<a href="#" class="arsol-edit-comment" data-comment-id="' . $comment->comment_ID . '">' . __('Edit', 'arsol-pfw') . '</a> | ';
-                                        echo '<a href="#" class="arsol-delete-comment" data-comment-id="' . $comment->comment_ID . '">' . __('Delete', 'arsol-pfw') . '</a>';
-                                        echo '</div>';
-                                    }
+                                    if ($current_user_id == $comment_author_id || arsol_pfw_user_can('arsol_pfw_manage_all')) : ?>
+                                        <div class="arsol-comment-actions">
+                                            <button class="arsol-pfw-edit-comment-btn" data-comment-id="<?php echo $comment->comment_ID; ?>"><?php _e('Edit', 'arsol-pfw'); ?></button>
+                                            <button class="arsol-pfw-delete-comment-btn" data-comment-id="<?php echo $comment->comment_ID; ?>"><?php _e('Delete', 'arsol-pfw'); ?></button>
+                                        </div>
+                                    <?php endif; ?>
                                     
                                     echo '</div>';
                                 }

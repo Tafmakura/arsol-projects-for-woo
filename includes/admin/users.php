@@ -200,7 +200,7 @@ class Users {
      */
     public function add_user_profile_fields($user) {
         // Only show this to administrators or users with manage capability
-        if (!current_user_can('manage_options') && !current_user_can('arsol_pfw_manage')) {
+        if (!arsol_pfw_user_can('arsol_pfw_manage')) {
             return;
         }
         
@@ -301,8 +301,8 @@ class Users {
      * @return void
      */
     public function save_user_profile_fields($user_id) {
-        // Only allow administrators or users with manage capability to save
-        if (!current_user_can('manage_options') && !current_user_can('arsol_pfw_manage')) {
+        // Only allow administrators or users with our master manage capability to save.
+        if (!arsol_pfw_user_can('arsol_pfw_manage')) {
             return;
         }
         
@@ -596,7 +596,9 @@ class Users {
      */
     public function ajax_search() {
         check_ajax_referer('search-users', 'security');
-        
+
+        // Any user who can edit posts in the admin can use the search functionality.
+        // This is a general utility, not tied to a specific PFW capability.
         if (!current_user_can('edit_posts')) {
             wp_die();
         }
@@ -622,24 +624,15 @@ class Users {
         // Add capability filtering based on search type
         switch ($search_type) {
             case 'project_leads':
-                $user_args['meta_query'] = array(
-                    'relation' => 'OR',
-                    array(
-                        'key' => 'wp_capabilities',
-                        'value' => 'arsol_pfw_manage',
-                        'compare' => 'LIKE'
-                    ),
-                    array(
-                        'key' => 'wp_capabilities',
-                        'value' => 'edit_arsol_pfw_projects',
-                        'compare' => 'LIKE'
-                    ),
-                    array(
-                        'key' => 'wp_capabilities',
-                        'value' => 'manage_options',
-                        'compare' => 'LIKE'
-                    ),
-                );
+                // Project Leads must have the 'manage_assigned' capability.
+                // We find users who have the role that this capability was assigned to.
+                $manager_roles = get_option('arsol_pfw_general_settings', array())['project_manager_roles'] ?? array();
+                if (!empty($manager_roles)) {
+                    $user_args['role__in'] = $manager_roles;
+                } else {
+                    // If no roles are set, return no one.
+                    $user_args['include'] = array(0);
+                }
                 break;
                 
             case 'customers':

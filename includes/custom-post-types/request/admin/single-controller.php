@@ -136,7 +136,7 @@ class Single_Controller {
         }
 
         // Check the user's permissions
-        if (!current_user_can('edit_post', $post_id)) {
+        if (!arsol_pfw_user_can('edit_arsol_pfw_request', $post_id)) {
             return;
         }
 

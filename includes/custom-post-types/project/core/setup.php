@@ -71,8 +71,9 @@ class Setup {
             'rewrite'           => array('slug' => 'project', 'with_front' => false),
             'show_in_rest'      => false,
             'taxonomies'         => array('arsol-pfw-project-stage'),
-            // ✅ SIMPLIFIED: Use standard WordPress capabilities
-            'capability_type'    => 'post',
+            // Use our custom capabilities
+            'capability_type'    => 'arsol_pfw_project',
+            'map_meta_cap'       => true,
         );
 
         $result = register_post_type('arsol-pfw-project', $args);

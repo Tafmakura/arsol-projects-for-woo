@@ -41,79 +41,93 @@ class Setup {
      */
     public function setup_admin_menus() {
         $parent_slug = 'edit.php?post_type=arsol-pfw-project';
-        
+
+        // The capability 'arsol_pfw_manage_all' is a good base for viewing CPT listings.
+        $manage_all_cap = 'arsol_pfw_manage_all';
+
         // 1. Project Requests
         add_submenu_page(
             $parent_slug,
             __('Project Requests', 'arsol-pfw'),
             __('Project Requests', 'arsol-pfw'),
-            'edit_posts',
+            $manage_all_cap,
             'edit.php?post_type=arsol-pfw-request',
             '',
             1
         );
-        
+
         // 2. Request Stages (below Project Requests)
         add_submenu_page(
             $parent_slug,
             __('Request Stages', 'arsol-pfw'),
             __('Request Stages', 'arsol-pfw'),
-            'manage_categories',
+            'arsol_pfw_admin_manage_stages',
             'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request',
             '',
             2
         );
-        
+
         // 3. Project Proposals
         add_submenu_page(
             $parent_slug,
             __('Project Proposals', 'arsol-pfw'),
             __('Project Proposals', 'arsol-pfw'),
-            'edit_posts',
+            $manage_all_cap,
             'edit.php?post_type=arsol-pfw-proposal',
             '',
             3
         );
-        
+
         // 4. Proposal Stages (below Project Proposals)
         add_submenu_page(
             $parent_slug,
             __('Proposal Stages', 'arsol-pfw'),
             __('Proposal Stages', 'arsol-pfw'),
-            'manage_categories',
+            'arsol_pfw_admin_manage_stages',
             'edit-tags.php?taxonomy=arsol-pfw-proposal-stage&post_type=arsol-pfw-proposal',
             '',
             4
         );
-        
+
         // 5. Projects
         add_submenu_page(
             $parent_slug,
             __('Projects', 'arsol-pfw'),
             __('Projects', 'arsol-pfw'),
-            'edit_posts',
+            $manage_all_cap,
             'edit.php?post_type=arsol-pfw-project',
             '',
             5
         );
-        
+
         // 6. Project Stages (below Projects)
         add_submenu_page(
             $parent_slug,
             __('Project Stages', 'arsol-pfw'),
             __('Project Stages', 'arsol-pfw'),
-            'manage_categories',
+            'arsol_pfw_admin_manage_stages',
             'edit-tags.php?taxonomy=arsol-pfw-project-stage&post_type=arsol-pfw-project',
             '',
             6
         );
         
+        // Future Workflows Page (placeholder)
+        // add_submenu_page(
+        //     $parent_slug,
+        //     __('Workflows', 'arsol-pfw'),
+        //     __('Workflows', 'arsol-pfw'),
+        //     'arsol_pfw_admin_manage_workflows',
+        //     'arsol-pfw-workflows',
+        //     array($this, 'workflows_page_callback'), // This callback needs to be created
+        //     7
+        // );
+
         // 99. Settings (last)
-        $settings_result = add_submenu_page(
+        add_submenu_page(
             $parent_slug,
             __('Settings', 'arsol-pfw'),
             __('Settings', 'arsol-pfw'),
-            'manage_options',
+            'arsol_pfw_admin_manage_settings',
             'arsol-projects-settings',
             array($this, 'settings_page_callback'),
             99

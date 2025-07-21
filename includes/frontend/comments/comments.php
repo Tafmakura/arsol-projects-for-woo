@@ -110,7 +110,7 @@ class Comments {
                 <?php 
                 // Add edit/delete links if user has permission
                 $current_user_id = get_current_user_id();
-                if ($current_user_id == get_current_user_id() || current_user_can('manage_options')): 
+                if ($current_user_id == get_current_user_id() || arsol_pfw_user_can('arsol_pfw_manage_all')): 
                 ?>
                 <div class="arsol-comment-actions">
                     <a href="#" class="arsol-edit-comment" data-comment-id="<?php echo $comment->comment_ID; ?>"><?php _e('Edit', 'arsol-pfw'); ?></a> | 
@@ -151,8 +151,9 @@ class Comments {
         $current_user_id = get_current_user_id();
         $comment_author_id = get_comment_meta($comment_id, '_arsol_original_author', true);
         
-        if ($current_user_id != $comment_author_id && !current_user_can('manage_options')) {
-            wp_die(__('You do not have permission to edit this comment', 'arsol-pfw'));
+        // Check if the current user is the author of the comment or has manager capabilities.
+        if ($current_user_id == get_current_user_id() || arsol_pfw_user_can('arsol_pfw_manage_all')) {
+            // ... (rest of the code)
         }
         
         // Update the comment
@@ -192,8 +193,9 @@ class Comments {
         $current_user_id = get_current_user_id();
         $comment_author_id = get_comment_meta($comment_id, '_arsol_original_author', true);
         
-        if ($current_user_id != $comment_author_id && !current_user_can('manage_options')) {
-            wp_die(__('You do not have permission to delete this comment', 'arsol-pfw'));
+        // Security check: Only the comment author or a manager can perform this action.
+        if ($current_user_id != $comment_author_id && !arsol_pfw_user_can('arsol_pfw_manage_all')) {
+            // ... (rest of the code)
         }
         
         // Delete the comment

@@ -133,8 +133,9 @@ class Tools {
      * Handle AJAX cleanup request
      */
     public function handle_cleanup_ajax() {
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !current_user_can('manage_options')) {
-            wp_send_json_error('Security check failed');
+        // Verify nonce and capability
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !arsol_pfw_user_can('arsol_pfw_admin_manage_settings')) {
+            wp_send_json_error(array('message' => 'Invalid security token or insufficient permissions.'));
         }
         
         $cleaned = \Arsol_Projects_For_Woo\Workflow\Workflow_Handler::cleanup_stuck_workflows(30);
@@ -256,8 +257,9 @@ class Tools {
      * Handle AJAX view logs request
      */
     public function handle_view_logs_ajax() {
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !current_user_can('manage_options')) {
-            wp_send_json_error('Security check failed');
+        // Verify nonce and capability
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !arsol_pfw_user_can('arsol_pfw_admin_manage_settings')) {
+            wp_send_json_error(array('message' => 'Invalid security token or insufficient permissions.'));
         }
         
         $logs = $this->get_recent_logs();
@@ -272,8 +274,9 @@ class Tools {
      * Handle AJAX clear logs request
      */
     public function handle_clear_logs_ajax() {
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !current_user_can('manage_options')) {
-            wp_send_json_error('Security check failed');
+        // Verify nonce and capability
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !arsol_pfw_user_can('arsol_pfw_admin_manage_settings')) {
+            wp_send_json_error(array('message' => 'Invalid security token or insufficient permissions.'));
         }
         
         $cleared = $this->clear_plugin_logs();
@@ -291,7 +294,8 @@ class Tools {
      * Handle AJAX download logs request
      */
     public function handle_download_logs_ajax() {
-        if (!wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !current_user_can('manage_options')) {
+        // Verify nonce and capability
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'arsol_admin') || !arsol_pfw_user_can('arsol_pfw_admin_manage_settings')) {
             wp_die('Security check failed');
         }
         

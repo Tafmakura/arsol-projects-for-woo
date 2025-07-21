@@ -268,11 +268,9 @@ class Handler {
             exit;
         }
 
-        // Check permissions - user must own the project or be admin
-        if ($project->post_author != $user_id && !current_user_can('manage_options')) {
-            wc_add_notice(__('You do not have permission to edit this project', 'arsol-pfw'), 'error');
-            wp_safe_redirect(wc_get_account_endpoint_url('projects'));
-            exit;
+        // Security Check: Ensure the user is the project owner or has manager capabilities.
+        if ($project->post_author != $user_id && !arsol_pfw_user_can('arsol_pfw_manage_all')) {
+            wp_send_json_error(array('message' => __('You do not have permission to perform this action.', 'arsol-pfw')));
         }
 
         // Check if user can edit projects

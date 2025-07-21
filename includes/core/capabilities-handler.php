@@ -1,10 +1,10 @@
 <?php
 /**
- * Capabilities Handler Class
+ * Capabilities Handler Class - ARSOL PFW
  *
- * Handles WordPress-native capabilities for Arsol Projects For Woo.
- * Uses proper CPT capability mapping with map_meta_cap = true.
- * Works with existing WordPress roles only - no custom roles.
+ * This class is the central authority for managing all user permissions in the plugin.
+ * It registers the custom capabilities, handles their assignment to roles,
+ * and contains the crucial meta capability mapping for custom ownership logic.
  *
  * @package Arsol_Projects_For_Woo
  * @since 2.0.0
@@ -17,309 +17,189 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Capabilities Handler Class
- * 
- * Provides WordPress-native capability management for the plugin.
- * This class handles capability assignment, removal, and checking.
+ * Manages the registration and logic for all custom capabilities.
  */
 class Capabilities_Handler {
-    
+
     /**
-     * Constructor
+     * The single instance of the class.
+     * @var Capabilities_Handler
+     */
+    protected static $_instance = null;
+
+    /**
+     * Ensures only one instance of the class is loaded.
+     * @return Capabilities_Handler
+     */
+    public static function instance() {
+        if (is_null(self::$_instance)) {
+            self::$_instance = new self();
+        }
+        return self::$_instance;
+    }
+
+    /**
+     * Constructor.
      */
     public function __construct() {
-        // Hook into plugin activation/deactivation for clean capability management
-        register_activation_hook(ARSOL_PFW_PLUGIN_FILE, array($this, 'add_administrator_capabilities'));
-        register_deactivation_hook(ARSOL_PFW_PLUGIN_FILE, array($this, 'remove_all_capabilities'));
+        add_filter('map_meta_cap', array($this, 'map_meta_caps'), 10, 4);
     }
 
     /**
-     * Add WordPress-native capabilities to administrator role on plugin activation
+     * Get all custom capabilities defined by the plugin.
+     * @return array
      */
-    public function add_administrator_capabilities() {
-        $admin_role = get_role('administrator');
-        if (!$admin_role) {
-            return;
-        }
-
-        // Master capability for full plugin access
-        $admin_role->add_cap('arsol_pfw_manage');
-
-        // All project capabilities
-        $project_caps = array(
-            'edit_arsol_pfw_projects',
-            'edit_others_arsol_pfw_projects',
-            'publish_arsol_pfw_projects',
-            'read_private_arsol_pfw_projects',
-            'delete_arsol_pfw_projects',
-            'delete_private_arsol_pfw_projects',
-            'delete_published_arsol_pfw_projects',
-            'delete_others_arsol_pfw_projects',
-            'edit_private_arsol_pfw_projects',
-            'edit_published_arsol_pfw_projects',
-        );
-
-        // All proposal capabilities
-        $proposal_caps = array(
-            'edit_arsol_pfw_proposals',
-            'edit_others_arsol_pfw_proposals',
-            'publish_arsol_pfw_proposals',
-            'read_private_arsol_pfw_proposals',
-            'delete_arsol_pfw_proposals',
-            'delete_private_arsol_pfw_proposals',
-            'delete_published_arsol_pfw_proposals',
-            'delete_others_arsol_pfw_proposals',
-            'edit_private_arsol_pfw_proposals',
-            'edit_published_arsol_pfw_proposals',
-        );
-
-        // All request capabilities
-        $request_caps = array(
-            'edit_arsol_pfw_requests',
-            'edit_others_arsol_pfw_requests',
-            'publish_arsol_pfw_requests',
-            'read_private_arsol_pfw_requests',
-            'delete_arsol_pfw_requests',
-            'delete_private_arsol_pfw_requests',
-            'delete_published_arsol_pfw_requests',
-            'delete_others_arsol_pfw_requests',
-            'edit_private_arsol_pfw_requests',
-            'edit_published_arsol_pfw_requests',
-        );
-
-        // Add all capabilities to administrator
-        $all_caps = array_merge($project_caps, $proposal_caps, $request_caps);
-        foreach ($all_caps as $cap) {
-            $admin_role->add_cap($cap);
-        }
-    }
-
-    /**
-     * Remove all PFW capabilities from all roles on plugin deactivation
-     */
-    public function remove_all_capabilities() {
-        // Get all roles
-        $all_roles = wp_roles()->get_names();
-        
-        // Define all PFW capabilities to remove
-        $capabilities_to_remove = array(
+    public static function get_all_capabilities() {
+        $capabilities = array(
+            // Hierarchical Admin Capabilities
             'arsol_pfw_manage',
-            // Project capabilities
-            'edit_arsol_pfw_projects', 'edit_others_arsol_pfw_projects', 'publish_arsol_pfw_projects',
-            'read_private_arsol_pfw_projects', 'delete_arsol_pfw_projects', 'delete_private_arsol_pfw_projects',
-            'delete_published_arsol_pfw_projects', 'delete_others_arsol_pfw_projects',
-            'edit_private_arsol_pfw_projects', 'edit_published_arsol_pfw_projects',
-            // Proposal capabilities
-            'edit_arsol_pfw_proposals', 'edit_others_arsol_pfw_proposals', 'publish_arsol_pfw_proposals',
-            'read_private_arsol_pfw_proposals', 'delete_arsol_pfw_proposals', 'delete_private_arsol_pfw_proposals',
-            'delete_published_arsol_pfw_proposals', 'delete_others_arsol_pfw_proposals',
-            'edit_private_arsol_pfw_proposals', 'edit_published_arsol_pfw_proposals',
-            // Request capabilities
-            'edit_arsol_pfw_requests', 'edit_others_arsol_pfw_requests', 'publish_arsol_pfw_requests',
-            'read_private_arsol_pfw_requests', 'delete_arsol_pfw_requests', 'delete_private_arsol_pfw_requests',
-            'delete_published_arsol_pfw_requests', 'delete_others_arsol_pfw_requests',
-            'edit_private_arsol_pfw_requests', 'edit_published_arsol_pfw_requests',
+            'arsol_pfw_manage_all',
+            'arsol_pfw_manage_assigned',
+            'arsol_pfw_manage_own',
+
+            // Granular Admin Capabilities
+            'arsol_pfw_admin_manage_settings',
+            'arsol_pfw_admin_manage_stages',
+            'arsol_pfw_admin_manage_workflows',
+
+            // Frontend Capabilities
+            'arsol_pfw_frontend_create_own_projects',
+            'arsol_pfw_frontend_view_own_projects',
+            'arsol_pfw_frontend_edit_own_projects',
+            'arsol_pfw_frontend_create_own_requests',
+            'arsol_pfw_frontend_view_own_requests',
+            'arsol_pfw_frontend_edit_own_requests',
         );
 
-        // Remove capabilities from all roles
-        foreach ($all_roles as $role_slug => $role_name) {
-            $role = get_role($role_slug);
+        // Add CPT-specific capabilities
+        $cpt_slugs = array('arsol_pfw_project', 'arsol_pfw_request', 'arsol_pfw_proposal');
+        foreach ($cpt_slugs as $cpt_slug) {
+            $capabilities = array_merge($capabilities, self::get_cpt_capabilities($cpt_slug));
+        }
+
+        return $capabilities;
+    }
+
+    /**
+     * Get the primitive capabilities for a custom post type.
+     * @param string $cpt_slug The CPT slug.
+     * @return array
+     */
+    private static function get_cpt_capabilities($cpt_slug) {
+        return array(
+            "edit_{$cpt_slug}",
+            "read_{$cpt_slug}",
+            "delete_{$cpt_slug}",
+            "edit_{$cpt_slug}s",
+            "edit_others_{$cpt_slug}s",
+            "publish_{$cpt_slug}s",
+            "read_private_{$cpt_slug}s",
+            "delete_{$cpt_slug}s",
+            "delete_private_{$cpt_slug}s",
+            "delete_published_{$cpt_slug}s",
+            "delete_others_{$cpt_slug}s",
+        );
+    }
+
+    /**
+     * Add capabilities to roles on plugin activation.
+     */
+    public static function add_capabilities() {
+        // `arsol_pfw_manage` for Administrators
+        $admin_role = get_role('administrator');
+        if ($admin_role) {
+            $admin_role->add_cap('arsol_pfw_manage');
+        }
+
+        // `arsol_pfw_manage_all` for Shop Managers
+        $shop_manager_role = get_role('shop_manager');
+        if ($shop_manager_role) {
+            $shop_manager_role->add_cap('arsol_pfw_manage_all');
+        }
+
+        // Note: Other capabilities are assigned via the plugin's settings page,
+        // so we do not assign them here on activation.
+    }
+
+    /**
+     * Remove all custom capabilities from all roles on deactivation.
+     */
+    public static function remove_capabilities() {
+        $all_caps = self::get_all_capabilities();
+        $roles = get_editable_roles();
+        foreach (array_keys($roles) as $role_name) {
+            $role = get_role($role_name);
             if ($role) {
-                foreach ($capabilities_to_remove as $cap) {
+                foreach ($all_caps as $cap) {
                     $role->remove_cap($cap);
                 }
             }
         }
     }
 
-    // ========================================
-    // CAPABILITY CHECKING METHODS
-    // ========================================
-
     /**
-     * Check if user has broad PFW management access
-     * 
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return bool Whether user can manage PFW
-     */
-    public static function can_manage_projects($user_id = null) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('arsol_pfw_manage') || $user->has_cap('manage_options'));
-        }
-        return current_user_can('arsol_pfw_manage') || current_user_can('manage_options');
-    }
-
-    /**
-     * Check if user can create projects
+     * The core of our custom permission logic. This function intercepts
+     * WordPress's capability checks and applies our hierarchical and
+     * custom ownership rules.
      *
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return bool Whether user can create projects
+     * @param array  $caps    Required capabilities.
+     * @param string $cap     The capability being checked.
+     * @param int    $user_id The user ID.
+     * @param array  $args    Additional arguments, including post ID.
+     * @return array
      */
-    public static function can_create_projects($user_id = null) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_projects') || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_projects') || current_user_can('arsol_pfw_manage');
-    }
+    public function map_meta_caps($caps, $cap, $user_id, $args) {
+        $cpt_slugs = array('arsol_pfw_project', 'arsol_pfw_request', 'arsol_pfw_proposal');
+        $primitive_caps_map = array(
+            "edit_{$cpt_slug}"   => "edit_posts",
+            "delete_{$cpt_slug}" => "delete_posts",
+            "read_{$cpt_slug}"   => "read",
+        );
 
-    /**
-     * Check if user can create project requests
-     *
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return bool Whether user can create project requests
-     */
-    public static function can_create_project_requests($user_id = null) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_requests') || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_requests') || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can create project proposals
-     *
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return bool Whether user can create project proposals
-     */
-    public static function can_create_project_proposals($user_id = null) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_proposals') || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_proposals') || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can edit a specific project (WordPress handles ownership)
-     *
-     * @param int $user_id User ID
-     * @param int $project_id Project ID
-     * @return bool Whether user can edit the project
-     */
-    public static function can_edit_project($user_id, $project_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_project', $project_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_project', $project_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can edit a specific project request (WordPress handles ownership)
-     *
-     * @param int $user_id User ID
-     * @param int $request_id Request ID
-     * @return bool Whether user can edit the project request
-     */
-    public static function can_edit_project_request($user_id, $request_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_request', $request_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_request', $request_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can edit a specific project proposal (WordPress handles ownership)
-     *
-     * @param int $user_id User ID
-     * @param int $proposal_id Proposal ID
-     * @return bool Whether user can edit the project proposal
-     */
-    public static function can_edit_project_proposal($user_id, $proposal_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_proposal', $proposal_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_proposal', $proposal_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can delete a specific project (WordPress handles ownership)
-     * 
-     * @param int $user_id User ID
-     * @param int $project_id Project ID
-     * @return bool Whether user can delete the project
-     */
-    public static function can_delete_project($user_id, $project_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('delete_arsol_pfw_project', $project_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('delete_arsol_pfw_project', $project_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can delete a specific request (WordPress handles ownership)
-     * 
-     * @param int $user_id User ID
-     * @param int $request_id Request ID
-     * @return bool Whether user can delete the request
-     */
-    public static function can_delete_project_request($user_id, $request_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('delete_arsol_pfw_request', $request_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('delete_arsol_pfw_request', $request_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can delete a specific proposal (WordPress handles ownership)
-     * 
-     * @param int $user_id User ID
-     * @param int $proposal_id Proposal ID
-     * @return bool Whether user can delete the proposal
-     */
-    public static function can_delete_project_proposal($user_id, $proposal_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('delete_arsol_pfw_proposal', $proposal_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('delete_arsol_pfw_proposal', $proposal_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Get user's highest PFW permission level
-     * 
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return string Permission level: 'manager', 'creator', 'none'
-     */
-    public static function get_user_permission_level($user_id = null) {
-        if (self::can_manage_projects($user_id)) {
-            return 'manager';
-        }
-        
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            if ($user && ($user->has_cap('edit_arsol_pfw_projects') || 
-                         $user->has_cap('edit_arsol_pfw_proposals') || 
-                         $user->has_cap('edit_arsol_pfw_requests'))) {
-                return 'creator';
+        // Check if the capability being checked is one of our CPT meta caps
+        if (isset($primitive_caps_map[$cap])) {
+            $post_id = !empty($args[0]) ? $args[0] : 0;
+            if (!$post_id) {
+                return $caps; // No post ID, so we can't check ownership.
             }
-        } else {
-            if (current_user_can('edit_arsol_pfw_projects') || 
-                current_user_can('edit_arsol_pfw_proposals') || 
-                current_user_can('edit_arsol_pfw_requests')) {
-                return 'creator';
+
+            // Super Admins and Managers can do anything. Grant access immediately.
+            if (user_can($user_id, 'arsol_pfw_manage') || user_can($user_id, 'arsol_pfw_manage_all')) {
+                return array($primitive_caps_map[$cap]); // Grant access.
             }
+
+            // Team Leads: Check if they are the assigned project lead.
+            if (user_can($user_id, 'arsol_pfw_manage_assigned')) {
+                $project_lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
+                if ((int) $project_lead_id === (int) $user_id) {
+                    return array($primitive_caps_map[$cap]); // Grant access.
+                }
+            }
+
+            // Customers: Check if they are the customer for the item.
+            if (user_can($user_id, 'arsol_pfw_manage_own')) {
+                $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
+                if ((int) $customer_id === (int) $user_id) {
+                    return array($primitive_caps_map[$cap]); // Grant access.
+                }
+            }
+            
+            // If we've reached this point, no hierarchical role has granted access.
+            // We return the original $caps, which will cause the check to fail, denying access.
+            return $caps;
         }
-        
-        return 'none';
-    }
 
-    // ========================================
-    // LEGACY COMPATIBILITY METHODS
-    // ========================================
-
-    /**
-     * Legacy method for backward compatibility
-     */
-    public static function setup_capabilities() {
-        $instance = new self();
-        $instance->add_administrator_capabilities();
+        return $caps;
     }
+}
+
+/**
+ * Global helper function to check capabilities.
+ *
+ * @param string $capability The capability to check.
+ * @param int    $post_id    Optional. The post ID to check against.
+ * @return bool
+ */
+function arsol_pfw_user_can($capability, $post_id = 0) {
+    return current_user_can($capability, $post_id);
 } 

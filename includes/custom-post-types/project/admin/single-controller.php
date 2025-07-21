@@ -134,13 +134,15 @@ class Single_Controller {
      * Save project details
      */
     public function save_project_details($post_id) {
-        // If this is an autosave, our form has not been submitted, so we don't want to do anything
+        // Security checks
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
-
-        // Check the user's permissions
-        if (!current_user_can('edit_post', $post_id)) {
+        if (!isset($_POST['arsol_pfw_project_meta_nonce']) || !wp_verify_nonce($_POST['arsol_pfw_project_meta_nonce'], 'arsol_pfw_save_project_meta')) {
+            return;
+        }
+        // Use our new capability check
+        if (!arsol_pfw_user_can('edit_arsol_pfw_project', $post_id)) {
             return;
         }
 
