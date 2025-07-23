@@ -277,6 +277,76 @@ class Capabilities_Handler {
     }
 
     /**
+     * Check if user can manage assigned projects (checks if user is assigned project lead)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @param int $project_id Project ID to check (optional)
+     * @return bool Whether user can manage assigned projects
+     */
+    public static function can_manage_assigned_projects($user_id = null, $project_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        // If project_id provided, check if user is the assigned project lead for this specific project
+        if ($project_id) {
+            $project = get_post($project_id);
+            if (!$project || $project->post_type !== 'arsol-pfw-project') {
+                return false;
+            }
+            
+            // Check if user is the assigned project lead
+            $assigned_lead = get_post_meta($project_id, '_assigned_project_lead', true);
+            return (int) $assigned_lead === (int) $user_id;
+        }
+        
+        // If no project_id, check if user has capability to manage assigned projects
+        return user_can($user_id, 'edit_arsol_pfw_projects');
+    }
+
+    /**
+     * Check if user can manage all requests (uses native WordPress capabilities)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can manage all requests
+     */
+    public static function can_manage_all_requests($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        return user_can($user_id, 'edit_others_arsol_pfw_requests');
+    }
+
+    /**
+     * Check if user can manage all proposals (uses native WordPress capabilities)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can manage all proposals
+     */
+    public static function can_manage_all_proposals($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        return user_can($user_id, 'edit_others_arsol_pfw_proposals');
+    }
+
+    /**
+     * Check if user can manage all projects (uses native WordPress capabilities)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can manage all projects
+     */
+    public static function can_manage_all_projects($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        return user_can($user_id, 'edit_others_arsol_pfw_projects');
+    }
+
+    /**
      * Get user permission level
      *
      * @param int $user_id User ID (optional, defaults to current user)
@@ -862,6 +932,57 @@ class Capabilities_Handler {
         if (isset($settings['creator_roles'])) {
             self::assign_capabilities_to_roles($settings['creator_roles'], 'creator');
         }
+
+        // Update frontend permissions for customer role
+        if (isset($settings['user_project_permissions'])) {
+            self::update_frontend_permissions($settings['user_project_permissions']);
+        }
+    }
+
+    /**
+     * Update frontend permissions for customer role
+     *
+     * @param string $permission_level The permission level ('none', 'request', 'create', 'user_specific')
+     */
+    private static function update_frontend_permissions($permission_level) {
+        $customer_role = get_role('customer');
+        if (!$customer_role) {
+            return;
+        }
+
+        // Remove all frontend capabilities first
+        $frontend_caps = array(
+            'edit_arsol_pfw_projects',
+            'edit_arsol_pfw_requests',
+            'publish_arsol_pfw_projects',
+            'publish_arsol_pfw_requests',
+        );
+        
+        foreach ($frontend_caps as $cap) {
+            $customer_role->remove_cap($cap);
+        }
+        
+        // Grant capabilities based on selected permission level
+        switch ($permission_level) {
+            case 'request':
+                $customer_role->add_cap('edit_arsol_pfw_requests');
+                $customer_role->add_cap('publish_arsol_pfw_requests');
+                break;
+                
+            case 'create':
+                $customer_role->add_cap('edit_arsol_pfw_projects');
+                $customer_role->add_cap('publish_arsol_pfw_projects');
+                break;
+                
+            case 'user_specific':
+                // Don't grant any global capabilities - let individual user settings handle it
+                break;
+                
+            case 'none':
+            default:
+                // No capabilities granted
+                break;
+        }
     }
 
     /**
@@ -1018,6 +1139,11 @@ class Capabilities_Handler {
             'publish_arsol_pfw_requests' => 'Publish Requests',
             'delete_arsol_pfw_requests' => 'Delete Own Requests',
             'delete_others_arsol_pfw_requests' => 'Delete Others Requests',
+            // Management capabilities
+            'manage_arsol_pfw_stages' => 'Manage Stages',
+            'manage_arsol_pfw_workflows' => 'Manage Workflows',
+            'manage_arsol_pfw_settings' => 'Manage Settings',
+            'manage_arsol_pfw_permissions' => 'Manage Permissions',
         );
 
         $summary = array();
