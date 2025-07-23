@@ -442,7 +442,7 @@ class Permissions {
             $field_id = 'arsol-pfw-' . str_replace('_', '-', $field_name);
         }
         ?>
-        <div class="<?php echo $class; ?>">
+        <div class="<?php echo esc_attr($class); ?>">
         <select id="<?php echo esc_attr($field_id); ?>"
                 name="arsol_pfw_permissions_settings[<?php echo esc_attr($field_name); ?>]">
             <?php foreach ($args['options'] as $option => $label): ?>
