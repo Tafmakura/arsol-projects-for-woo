@@ -278,6 +278,7 @@ class Setup {
 
         // Initialize admin components
         new \Arsol_Projects_For_Woo\Admin\Settings\General();
+        new \Arsol_Projects_For_Woo\Admin\Settings\Permissions();
         new \Arsol_Projects_For_Woo\Admin\Settings\Display();
         new \Arsol_Projects_For_Woo\Admin\Settings\Files();
         new \Arsol_Projects_For_Woo\Admin\Settings\Integrations();

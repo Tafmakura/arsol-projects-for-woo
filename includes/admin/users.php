@@ -205,7 +205,7 @@ class Users {
         }
         
         // Get current settings
-        $settings = get_option('arsol_pfw_general_settings', array());
+        $settings = get_option('arsol_pfw_permissions_settings', array());
         $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         $user_permission = get_user_meta($user->ID, 'arsol_pfw_user_permission', true);
         if (empty($user_permission)) {
@@ -419,122 +419,73 @@ class Users {
     // ========================================
 
     /**
-     * Check if user can create projects (uses WordPress-native capabilities)
+     * Check if a user can create projects based on global and user-specific settings
      *
-     * @param int $user_id User ID
-     * @return bool Whether user can create projects
+     * @param int $user_id The user ID
+     * @return bool Whether the user can create projects
      */
     public function can_user_create_projects($user_id) {
-        // Get global settings
-        $settings = get_option('arsol_pfw_general_settings', array());
+        $settings = get_option('arsol_pfw_permissions_settings', array());
         $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
-        // If global permission is "user_specific", check individual user permission
-        if ($global_permission === 'user_specific') {
-            $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
-            if (!$user_permission) {
-                $user_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request_projects';
-            }
-            
-            switch ($user_permission) {
-                case 'create_projects':
-                case 'can_do_both':
-                    return true;
-                default:
-                    return false;
-            }
+        if ('none' === $global_permission) {
+            return false;
         }
         
-        // Otherwise, check global permission
-        switch ($global_permission) {
-            case 'create_projects':
-            case 'can_do_both':
-                return true;
-            default:
-                return false;
+        if ('create_projects' === $global_permission || 'can_do_both' === $global_permission) {
+            return true;
         }
+        
+        if ('user_specific' === $global_permission) {
+            $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
+            return in_array($user_permission, array('create_projects', 'can_do_both'));
+        }
+        
+        return false;
     }
 
     /**
-     * Check if user can request projects (uses WordPress-native capabilities)
+     * Check if a user can request projects based on global and user-specific settings
      *
-     * @param int $user_id User ID
-     * @return bool Whether user can request projects
+     * @param int $user_id The user ID
+     * @return bool Whether the user can request projects
      */
     public function can_user_request_projects($user_id) {
-        // Get global settings
-        $settings = get_option('arsol_pfw_general_settings', array());
+        $settings = get_option('arsol_pfw_permissions_settings', array());
         $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
-        // If global permission is "user_specific", check individual user permission
-        if ($global_permission === 'user_specific') {
-            $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
-            if (!$user_permission) {
-                $user_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request_projects';
-            }
-            
-            switch ($user_permission) {
-                case 'request_projects':
-                case 'can_do_both':
-                    return true;
-                default:
-                    return false;
-            }
+        if ('none' === $global_permission) {
+            return false;
         }
         
-        // Otherwise, check global permission
-        switch ($global_permission) {
-            case 'request_projects':
-            case 'can_do_both':
-                return true;
-            default:
-                return false;
+        if ('request_projects' === $global_permission || 'create_projects' === $global_permission || 'can_do_both' === $global_permission) {
+            return true;
         }
+        
+        if ('user_specific' === $global_permission) {
+            $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
+            return in_array($user_permission, array('request_projects', 'create_projects', 'can_do_both'));
+        }
+        
+        return false;
     }
 
     /**
-     * Get effective user permission level (uses WordPress-native capabilities)
+     * Get the effective user permission level
      *
-     * @param int $user_id User ID
-     * @return string User permission level ('none', 'creator', 'manager')
+     * @param int $user_id The user ID
+     * @return string The effective permission level
      */
     public function get_effective_user_permission($user_id) {
-        // First check if user has management capabilities
-        if (\Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_manage_projects($user_id)) {
-            return 'manager';
-        }
-        
-        // Check global permission setting
-        $settings = get_option('arsol_pfw_general_settings', array());
+        $settings = get_option('arsol_pfw_permissions_settings', array());
         $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
-        // If global permission is "none", nobody can do anything
-        if ($global_permission === 'none') {
-            return 'none';
-        }
-        
-        // If global permission is "request" or "create", check WordPress capabilities
-        if ($global_permission === 'request' || $global_permission === 'create') {
-            if (\Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_projects($user_id) || 
-                \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_project_requests($user_id)) {
-                return 'creator';
-            }
-        }
-        
-        // If global permission is "user_specific", check individual user permission
-        if ($global_permission === 'user_specific') {
+        if ('user_specific' === $global_permission) {
             $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
-            
-            // If user permission is "request" or "create", check WordPress capabilities
-            if ($user_permission === 'request' || $user_permission === 'create') {
-                if (\Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_projects($user_id) || 
-                    \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_project_requests($user_id)) {
-                    return 'creator';
-                }
-            }
+            return !empty($user_permission) ? $user_permission : 'request_projects';
         }
         
-        return 'none';
+        return $global_permission;
     }
 
     // ========================================
@@ -797,15 +748,14 @@ class Users {
     /**
      * Set default user permission for new users
      *
-     * @param int $user_id User ID
-     * @return void
+     * @param int $user_id The user ID
      */
     public function set_default_user_permission($user_id) {
-        $settings = get_option('arsol_pfw_general_settings', array());
+        $settings = get_option('arsol_pfw_permissions_settings', array());
         $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
-        // Only set individual permission if global setting is "user_specific"
-        if ($global_permission === 'user_specific') {
+        // Only set default permission if global setting is 'user_specific'
+        if ('user_specific' === $global_permission) {
             $default_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request_projects';
             update_user_meta($user_id, 'arsol_pfw_user_permission', $default_permission);
         }

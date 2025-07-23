@@ -206,34 +206,33 @@ class Access_Handler {
     // ========================================
 
     /**
-     * Gets the global permission setting for project creation.
+     * Get the global permission setting
      *
-     * @return string ('none', 'request_projects', 'create_projects', 'can_do_both', 'user_specific')
+     * @return string The global permission setting
      */
     private static function get_global_permission_setting() {
-        $settings = get_option('arsol_pfw_general_settings', []);
+        $settings = get_option('arsol_pfw_permissions_settings', array());
         return isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
     }
 
     /**
-     * Gets an individual user's specific permission override.
+     * Get the user-specific permission setting
      *
-     * @param int $user_id The User ID.
-     * @return string ('none', 'request_projects', 'create_projects', 'can_do_both')
+     * @param int $user_id The user ID
+     * @return string The user permission setting
      */
     private static function get_user_permission_setting($user_id) {
-        // Fallback to default if not set.
-        $default = self::get_default_user_permission_setting();
-        return get_user_meta($user_id, 'arsol_pfw_user_permission', true) ?: $default;
+        $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
+        return !empty($user_permission) ? $user_permission : 'request_projects';
     }
 
     /**
-     * Gets the default permission for newly registered users.
+     * Get the default user permission setting
      *
-     * @return string
+     * @return string The default user permission setting
      */
     private static function get_default_user_permission_setting() {
-        $settings = get_option('arsol_pfw_general_settings', []);
+        $settings = get_option('arsol_pfw_permissions_settings', array());
         return isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request_projects';
     }
 } 
