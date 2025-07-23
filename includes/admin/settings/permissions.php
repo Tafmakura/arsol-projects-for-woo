@@ -268,8 +268,8 @@ class Permissions {
                        name="arsol_pfw_permissions_settings[project_manager_capabilities][]"
                        value="<?php echo esc_attr($cap_key); ?>"
                        <?php echo esc_attr($checked); ?>>
-                <?php echo esc_html($cap_label); ?>
-            </label><br>
+                <?php echo esc_html($cap_label); ?><?php echo $conditional_class ? '<br>' : ''; ?>
+            </label><?php echo $conditional_class ? '' : '<br>'; ?>
             <?php
         }
         echo "</div>";
