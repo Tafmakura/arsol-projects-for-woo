@@ -79,27 +79,14 @@ class Permissions {
 
         // Manager Override Settings
         add_settings_field(
-            'manager_override_settings',
-            '',
+            'allow_manager_overrides',
+            __('Allow Individual Overrides', 'arsol-pfw'),
             array($this, 'render_manager_override_field'),
             'arsol_pfw_permissions_settings',
             'arsol_project_manager_permissions',
             array(
                 'description' => __('Allow individual project managers to override admin settings for enabled capabilities.', 'arsol-pfw'),
                 'class' => 'arsol-pfw-manager-override-field'
-            )
-        );
-
-        // Manager Default Behavior
-        add_settings_field(
-            'manager_default_behavior',
-            __('New User Capabilities', 'arsol-pfw'),
-            array($this, 'render_manager_default_behavior_field'),
-            'arsol_pfw_permissions_settings',
-            'arsol_project_manager_permissions',
-            array(
-                'description' => __('Default permission level assigned to new project managers.', 'arsol-pfw'),
-                'class' => 'arsol-pfw-show-if-arsol-pfw-allow-manager-overrides-is-checked arsol-pfw-manager-default-behavior'
             )
         );
 
@@ -373,7 +360,7 @@ class Permissions {
                    name="arsol_pfw_permissions_settings[allow_manager_overrides]"
                    value="1"
                    <?php echo $allow_overrides ? 'checked' : ''; ?>>
-            <?php echo esc_html__('Allow overrides per project manager', 'arsol-pfw'); ?>
+            <?php echo esc_html__('Allow individual project managers to override admin settings', 'arsol-pfw'); ?>
         </label>
         <?php
         
@@ -383,34 +370,7 @@ class Permissions {
         }
     }
 
-    /**
-     * Render manager default behavior field
-     */
-    public function render_manager_default_behavior_field($args) {
-        $settings = get_option('arsol_pfw_permissions_settings', array());
-        $default_behavior = isset($settings['manager_default_behavior']) ? $settings['manager_default_behavior'] : 'enable_all';
-        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
-        
-        $valid_behaviors = array('enable_all', 'disable_all');
-        
-        echo "<div class='{$class}'>";
-        
-        ?>
-        <select id="arsol-pfw-manager-default-behavior"
-                name="arsol_pfw_permissions_settings[manager_default_behavior]">
-            <?php foreach ($valid_behaviors as $behavior): ?>
-                <option value="<?php echo esc_attr($behavior); ?>" <?php selected($default_behavior, $behavior); ?>>
-                    <?php echo esc_html($behavior === 'enable_all' ? __('Enable all available permissions', 'arsol-pfw') : __('Disable all available permissions', 'arsol-pfw')); ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-        <?php
-        
-        if (!empty($args['description'])) {
-            echo '<p class="description">' . esc_html($args['description']) . '</p>';
-        }
-        echo '</div>';
-    }
+
 
     /**
      * Render roles field
@@ -616,7 +576,7 @@ class Permissions {
             }
         }
 
-        // Manager capabilities management
+        // ✅ SIMPLIFIED: Manager capabilities management
         $manager_capabilities = isset($new_value['project_manager_capabilities']) ? $new_value['project_manager_capabilities'] : array();
         
         // Define the capability mappings
@@ -664,55 +624,6 @@ class Permissions {
                 }
             }
         }
-
-        // Manager override settings management
-        $manager_override_settings = isset($new_value['manager_override_settings']) ? $new_value['manager_override_settings'] : array();
-        
-        // Define the capability mappings for overrides
-        $override_capability_mappings = array(
-            'manage_stages' => 'manage_arsol_pfw_stages_override',
-            'manage_workflows' => 'manage_arsol_pfw_workflows_override',
-            'manage_settings' => 'manage_arsol_pfw_settings_override',
-            'manage_permissions' => 'manage_arsol_pfw_permissions_override'
-        );
-
-        // Remove all override capabilities from all roles first
-        foreach ($all_roles as $role_slug => $role_name) {
-            $role = get_role($role_slug);
-            if (!$role) {
-                continue;
-            }
-            
-            // Skip administrator - they always have all permissions
-            if ($role_slug === 'administrator') {
-                continue;
-            }
-            
-            // Remove all override capabilities
-            foreach ($override_capability_mappings as $cap) {
-                $role->remove_cap($cap);
-            }
-        }
-        
-        // Grant override capabilities to selected manager roles
-        foreach ($manage_roles as $role_slug) {
-            $role = get_role($role_slug);
-            if (!$role) {
-                continue;
-            }
-            
-            // Skip administrator - they always have all permissions
-            if ($role_slug === 'administrator') {
-                continue;
-            }
-            
-            // Grant selected override capabilities
-            foreach ($manager_override_settings as $cap_key) {
-                if (isset($override_capability_mappings[$cap_key])) {
-                    $role->add_cap($override_capability_mappings[$cap_key]);
-                }
-            }
-        }
     }
 
     /**
@@ -736,17 +647,9 @@ class Permissions {
             }
         }
         
-        // Validate manager override settings
+        // ✅ SIMPLIFIED: Validate manager override setting
         if (isset($input['allow_manager_overrides'])) {
             $input['allow_manager_overrides'] = (bool) $input['allow_manager_overrides'];
-        }
-        
-        // Validate manager default behavior
-        if (isset($input['manager_default_behavior'])) {
-            $valid_behaviors = array('enable_all', 'disable_all');
-            if (!in_array($input['manager_default_behavior'], $valid_behaviors)) {
-                $input['manager_default_behavior'] = 'enable_all';
-            }
         }
         
         return $input;

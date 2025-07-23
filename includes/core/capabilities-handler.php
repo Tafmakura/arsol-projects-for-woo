@@ -319,11 +319,20 @@ class Capabilities_Handler {
      * Get user's manager override settings
      *
      * @param int $user_id User ID
-     * @return array Array of override capabilities
+     * @return array Array of override capabilities with their states
      */
     public static function get_user_manager_overrides($user_id) {
-        $overrides = get_user_meta($user_id, 'arsol_pfw_manager_overrides', true);
-        return is_array($overrides) ? $overrides : array();
+        $capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
+        $overrides = array();
+        
+        foreach ($capabilities as $cap) {
+            $override_value = get_user_meta($user_id, 'arsol_pfw_manager_override_' . $cap, true);
+            if ($override_value === '1' || $override_value === '0') {
+                $overrides[$cap] = $override_value === '1';
+            }
+        }
+        
+        return $overrides;
     }
 
     /**
@@ -334,8 +343,8 @@ class Capabilities_Handler {
      * @return bool Whether user has override for this capability
      */
     public static function has_manager_override_capability($user_id, $capability) {
-        $overrides = self::get_user_manager_overrides($user_id);
-        return in_array($capability, $overrides);
+        $override_value = get_user_meta($user_id, 'arsol_pfw_manager_override_' . $capability, true);
+        return $override_value === '1';
     }
 
     /**
@@ -346,36 +355,52 @@ class Capabilities_Handler {
      * @return bool Whether user has effective capability
      */
     public static function get_effective_manager_capability($user_id, $capability) {
-        // Check if user has manager capabilities first
+        // ✅ STEP 1: Check if user has manager capabilities first
         if (!self::can_manage_projects($user_id)) {
             return false;
         }
 
-        // Check if overrides are enabled in admin settings
+        // ✅ STEP 2: Check if user has the specific WordPress capability
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+
+        // Map capability names to WordPress capabilities
+        $capability_mappings = array(
+            'manage_stages' => 'manage_arsol_pfw_stages',
+            'manage_workflows' => 'manage_arsol_pfw_workflows', 
+            'manage_settings' => 'manage_arsol_pfw_settings',
+            'manage_permissions' => 'manage_arsol_pfw_permissions'
+        );
+
+        $wp_capability = isset($capability_mappings[$capability]) ? $capability_mappings[$capability] : $capability;
+        
+        // ✅ CAPABILITIES FIRST: Check if user has the WordPress capability
+        if (!$user->has_cap($wp_capability)) {
+            return false; // User doesn't have the capability - no override checks happen
+        }
+
+        // ✅ STEP 3: User has capability - check if overrides are enabled globally
         $settings = get_option('arsol_pfw_permissions_settings', array());
         $allow_overrides = isset($settings['allow_manager_overrides']) ? $settings['allow_manager_overrides'] : false;
         
         if (!$allow_overrides) {
-            // Use admin settings directly
-            $admin_capabilities = isset($settings['project_manager_capabilities']) ? $settings['project_manager_capabilities'] : array();
-            return in_array($capability, $admin_capabilities);
+            // No overrides allowed - follow the capability
+            return true;
         }
 
-        // Check if user has explicit override
-        $user_override_enabled = get_user_meta($user_id, 'arsol_pfw_manager_override_enabled', true);
-        if ($user_override_enabled) {
-            return self::has_manager_override_capability($user_id, $capability);
-        }
-
-        // Use admin default behavior for new users
-        $default_behavior = isset($settings['manager_default_behavior']) ? $settings['manager_default_behavior'] : 'enable_all';
-        $admin_capabilities = isset($settings['project_manager_capabilities']) ? $settings['project_manager_capabilities'] : array();
+        // ✅ STEP 4: Overrides are enabled - check user override state
+        $user_override = get_user_meta($user_id, 'arsol_pfw_manager_override_' . $capability, true);
         
-        if ($default_behavior === 'enable_all') {
-            return in_array($capability, $admin_capabilities);
-        } else {
-            return false; // disable_all
+        if ($user_override === '1') {
+            return true; // Explicitly enabled
+        } elseif ($user_override === '0') {
+            return false; // Explicitly disabled
         }
+        
+        // ✅ NO OVERRIDE EXISTS - follow the capability
+        return true;
     }
 
     /**
