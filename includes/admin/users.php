@@ -297,11 +297,76 @@ class Users {
                     
                     echo '<strong>' . esc_html($level_labels[$effective_level]) . '</strong>';
                     ?>
-                    <p class="description">
-                        <?php echo esc_html($level_descriptions[$effective_level]); ?>
-                    </p>
+                    <p class="description"><?php echo esc_html($level_descriptions[$effective_level]); ?></p>
                 </td>
             </tr>
+            
+            <?php
+            // Manager Override Settings Section
+            $settings = get_option('arsol_pfw_permissions_settings', array());
+            $allow_overrides = isset($settings['allow_manager_overrides']) ? $settings['allow_manager_overrides'] : false;
+            $admin_capabilities = isset($settings['project_manager_capabilities']) ? $settings['project_manager_capabilities'] : array();
+            
+            // Only show manager override section if user has manager capabilities and overrides are enabled
+            if ($allow_overrides && $this->user_has_manager_capabilities($user->ID)) :
+                $user_overrides = get_user_meta($user->ID, 'arsol_pfw_manager_overrides', true);
+                if (!is_array($user_overrides)) {
+                    $user_overrides = array();
+                }
+                
+                // Get admin default behavior
+                $default_behavior = isset($settings['manager_default_behavior']) ? $settings['manager_default_behavior'] : 'enable_all';
+                
+                // Pre-check overrides based on admin settings if user hasn't been updated
+                $user_override_enabled = get_user_meta($user->ID, 'arsol_pfw_manager_override_enabled', true);
+                if (!$user_override_enabled) {
+                    // Set default overrides based on admin settings
+                    if ($default_behavior === 'enable_all') {
+                        $user_overrides = $admin_capabilities;
+                    } else {
+                        $user_overrides = array();
+                    }
+                }
+            ?>
+            <tr>
+                <th><label><?php esc_html_e('Manager Capability Overrides', 'arsol-pfw'); ?></label></th>
+                <td>
+                    <p class="description"><?php esc_html_e('Override individual capabilities for this project manager. Only capabilities enabled in admin settings can be overridden.', 'arsol-pfw'); ?></p>
+                    <?php
+                    $all_capabilities = array(
+                        'manage_stages' => __('Can manage stages', 'arsol-pfw'),
+                        'manage_workflows' => __('Can manage workflows', 'arsol-pfw'),
+                        'manage_settings' => __('Can manage settings', 'arsol-pfw'),
+                        'manage_permissions' => __('Can manage permissions', 'arsol-pfw'),
+                    );
+                    
+                    foreach ($all_capabilities as $cap_key => $cap_label) :
+                        // Only show checkboxes for capabilities enabled in admin settings
+                        if (!in_array($cap_key, $admin_capabilities)) {
+                            continue;
+                        }
+                        
+                        $checked = in_array($cap_key, $user_overrides) ? 'checked' : '';
+                        $disabled = !$allow_overrides ? 'disabled' : '';
+                    ?>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox"
+                               name="arsol_pfw_manager_overrides[]"
+                               value="<?php echo esc_attr($cap_key); ?>"
+                               <?php echo esc_attr($checked); ?>
+                               <?php echo esc_attr($disabled); ?>>
+                        <?php echo esc_html($cap_label); ?>
+                    </label>
+                    <?php endforeach; ?>
+                    
+                    <?php if (!$allow_overrides) : ?>
+                    <p class="description" style="margin-top: 10px; color: #666;">
+                        <?php esc_html_e('Manager overrides are disabled in admin settings.', 'arsol-pfw'); ?>
+                    </p>
+                    <?php endif; ?>
+                </td>
+            </tr>
+            <?php endif; ?>
         </table>
         <?php
     }
@@ -327,6 +392,22 @@ class Users {
             if (in_array($permission, $valid_permissions)) {
                 update_user_meta($user_id, 'arsol_pfw_user_permission', $permission);
             }
+        }
+        
+        // Save manager override settings if posted
+        if (isset($_POST['arsol_pfw_manager_overrides'])) {
+            $overrides = array_map('sanitize_text_field', $_POST['arsol_pfw_manager_overrides']);
+            
+            // Validate override capabilities
+            $valid_capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
+            $overrides = array_intersect($overrides, $valid_capabilities);
+            
+            update_user_meta($user_id, 'arsol_pfw_manager_overrides', $overrides);
+            update_user_meta($user_id, 'arsol_pfw_manager_override_enabled', true);
+        } elseif (isset($_POST['arsol_pfw_manager_overrides']) && empty($_POST['arsol_pfw_manager_overrides'])) {
+            // User explicitly unchecked all overrides
+            update_user_meta($user_id, 'arsol_pfw_manager_overrides', array());
+            update_user_meta($user_id, 'arsol_pfw_manager_override_enabled', true);
         }
     }
     
@@ -486,6 +567,43 @@ class Users {
         }
         
         return $global_permission;
+    }
+
+    /**
+     * Check if a user has manager capabilities (WordPress-native capabilities)
+     *
+     * @param int $user_id The user ID
+     * @return bool Whether the user has manager capabilities
+     */
+    private function user_has_manager_capabilities($user_id) {
+        $user = get_userdata($user_id);
+        if (!$user) {
+            return false;
+        }
+
+        // Check for 'arsol_pfw_manage' capability
+        if ($user->has_cap('arsol_pfw_manage')) {
+            return true;
+        }
+
+        // Check for specific project manager capabilities if 'arsol_pfw_manage' is not present
+        $project_manager_capabilities = array(
+            'edit_arsol_pfw_projects',
+            'edit_arsol_pfw_proposals',
+            'edit_arsol_pfw_requests',
+            'manage_stages',
+            'manage_workflows',
+            'manage_settings',
+            'manage_permissions',
+        );
+
+        foreach ($project_manager_capabilities as $cap) {
+            if ($user->has_cap($cap)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // ========================================

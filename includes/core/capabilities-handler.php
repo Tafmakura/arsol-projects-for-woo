@@ -283,10 +283,10 @@ class Capabilities_Handler {
     }
 
     /**
-     * Get user's highest PFW permission level
-     * 
+     * Get user permission level
+     *
      * @param int $user_id User ID (optional, defaults to current user)
-     * @return string Permission level: 'manager', 'creator', 'none'
+     * @return string Permission level: 'manager', 'creator', or 'none'
      */
     public static function get_user_permission_level($user_id = null) {
         if (self::can_manage_projects($user_id)) {
@@ -309,6 +309,125 @@ class Capabilities_Handler {
         }
         
         return 'none';
+    }
+
+    // ========================================
+    // MANAGER OVERRIDE METHODS
+    // ========================================
+
+    /**
+     * Get user's manager override settings
+     *
+     * @param int $user_id User ID
+     * @return array Array of override capabilities
+     */
+    public static function get_user_manager_overrides($user_id) {
+        $overrides = get_user_meta($user_id, 'arsol_pfw_manager_overrides', true);
+        return is_array($overrides) ? $overrides : array();
+    }
+
+    /**
+     * Check if user has override for a specific capability
+     *
+     * @param int $user_id User ID
+     * @param string $capability Capability to check
+     * @return bool Whether user has override for this capability
+     */
+    public static function has_manager_override_capability($user_id, $capability) {
+        $overrides = self::get_user_manager_overrides($user_id);
+        return in_array($capability, $overrides);
+    }
+
+    /**
+     * Get effective manager capability considering overrides
+     *
+     * @param int $user_id User ID
+     * @param string $capability Capability to check
+     * @return bool Whether user has effective capability
+     */
+    public static function get_effective_manager_capability($user_id, $capability) {
+        // Check if user has manager capabilities first
+        if (!self::can_manage_projects($user_id)) {
+            return false;
+        }
+
+        // Check if overrides are enabled in admin settings
+        $settings = get_option('arsol_pfw_permissions_settings', array());
+        $allow_overrides = isset($settings['allow_manager_overrides']) ? $settings['allow_manager_overrides'] : false;
+        
+        if (!$allow_overrides) {
+            // Use admin settings directly
+            $admin_capabilities = isset($settings['project_manager_capabilities']) ? $settings['project_manager_capabilities'] : array();
+            return in_array($capability, $admin_capabilities);
+        }
+
+        // Check if user has explicit override
+        $user_override_enabled = get_user_meta($user_id, 'arsol_pfw_manager_override_enabled', true);
+        if ($user_override_enabled) {
+            return self::has_manager_override_capability($user_id, $capability);
+        }
+
+        // Use admin default behavior for new users
+        $default_behavior = isset($settings['manager_default_behavior']) ? $settings['manager_default_behavior'] : 'enable_all';
+        $admin_capabilities = isset($settings['project_manager_capabilities']) ? $settings['project_manager_capabilities'] : array();
+        
+        if ($default_behavior === 'enable_all') {
+            return in_array($capability, $admin_capabilities);
+        } else {
+            return false; // disable_all
+        }
+    }
+
+    /**
+     * Check if user can manage stages (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can manage stages
+     */
+    public static function can_manage_stages($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        return self::get_effective_manager_capability($user_id, 'manage_stages');
+    }
+
+    /**
+     * Check if user can manage workflows (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can manage workflows
+     */
+    public static function can_manage_workflows($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        return self::get_effective_manager_capability($user_id, 'manage_workflows');
+    }
+
+    /**
+     * Check if user can manage settings (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can manage settings
+     */
+    public static function can_manage_settings($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        return self::get_effective_manager_capability($user_id, 'manage_settings');
+    }
+
+    /**
+     * Check if user can manage permissions (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can manage permissions
+     */
+    public static function can_manage_permissions($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        return self::get_effective_manager_capability($user_id, 'manage_permissions');
     }
 
     // ========================================
