@@ -165,6 +165,7 @@ class Setup {
             <h1><?php _e('Arsol Projects for Woo', 'arsol-pfw'); ?></h1>
             <h2 class="nav-tab-wrapper">
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php _e('General', 'arsol-pfw'); ?></a>
+                <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=permissions" class="nav-tab <?php echo $active_tab == 'permissions' ? 'nav-tab-active' : ''; ?>"><?php _e('Permissions', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=display" class="nav-tab <?php echo $active_tab == 'display' ? 'nav-tab-active' : ''; ?>"><?php _e('Display', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=files" class="nav-tab <?php echo $active_tab == 'files' ? 'nav-tab-active' : ''; ?>"><?php _e('Files', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=templates" class="nav-tab <?php echo $active_tab == 'templates' ? 'nav-tab-active' : ''; ?>"><?php _e('Templates', 'arsol-pfw'); ?></a>
@@ -173,6 +174,9 @@ class Setup {
             </h2>
             <?php
             switch ($active_tab) {
+                case 'permissions':
+                    include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/admin/page-admin-settings-permissions.php';
+                    break;
                 case 'display':
                     include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/admin/page-admin-settings-display.php';
                     break;
