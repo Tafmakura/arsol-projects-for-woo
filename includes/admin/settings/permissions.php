@@ -299,8 +299,22 @@ class Permissions {
             );
         }
         
-        $all_capabilities = array(
-            'manage_assigned_projects' => __('Can manage assigned projects', 'arsol-pfw'),
+        echo "<div class='{$class}'>";
+        
+        // Dummy checkbox for assigned projects (always enabled)
+        ?>
+        <label for="arsol-pfw-project-manager-capability-manage_assigned_projects">
+            <input type="checkbox"
+                   id="arsol-pfw-project-manager-capability-manage_assigned_projects"
+                   checked disabled>
+            <?php echo esc_html__('Can manage assigned projects', 'arsol-pfw'); ?>
+            <em>(<?php echo esc_html__('always enabled', 'arsol-pfw'); ?>)</em>
+        </label><br>
+        <input type="hidden" name="arsol_pfw_permissions_settings[project_manager_capabilities][]" value="manage_assigned_projects">
+        <?php
+        
+        // Actual configurable capabilities
+        $configurable_capabilities = array(
             'manage_all_requests' => __('Can manage all requests', 'arsol-pfw'),
             'manage_all_proposals' => __('Can manage all proposals', 'arsol-pfw'),
             'manage_all_projects' => __('Can manage all projects', 'arsol-pfw'),
@@ -310,8 +324,7 @@ class Permissions {
             'manage_permissions' => __('Can manage permissions', 'arsol-pfw'),
         );
 
-        echo "<div class='{$class}'>";
-        foreach ($all_capabilities as $cap_key => $cap_label) {
+        foreach ($configurable_capabilities as $cap_key => $cap_label) {
             $checked = in_array($cap_key, $capabilities) ? 'checked' : '';
             
             // Add conditional class for permissions checkbox
