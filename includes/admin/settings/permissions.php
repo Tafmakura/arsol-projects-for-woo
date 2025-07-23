@@ -42,21 +42,21 @@ class Permissions {
     public function register_settings() {
         register_setting('arsol_pfw_permissions_settings', 'arsol_pfw_permissions_settings', array($this, 'validate_settings'));
 
-        // Project Permissions Section
+        // Project Manager Permissions Section
         add_settings_section(
-            'arsol_projects_permissions',
-            __('Project Permissions', 'arsol-pfw'),
-            array($this, 'render_permissions_section'),
+            'arsol_project_manager_permissions',
+            __('Project Manager Permissions', 'arsol-pfw'),
+            array($this, 'render_project_manager_section'),
             'arsol_pfw_permissions_settings'
         );
 
         // Project Manager Roles
         add_settings_field(
             'project_manager_roles',
-            __('Project Manager Permissions', 'arsol-pfw'),
+            __('Project Manager Roles', 'arsol-pfw'),
             array($this, 'render_manager_roles_field'),
             'arsol_pfw_permissions_settings',
-            'arsol_projects_permissions',
+            'arsol_project_manager_permissions',
             array(
                 'field' => 'project_manager_roles',
                 'description' => __('Select roles that can manage all projects, proposals, and requests.', 'arsol-pfw'),
@@ -67,10 +67,10 @@ class Permissions {
         // Project Manager Capabilities
         add_settings_field(
             'project_manager_capabilities',
-            '',
+            __('Manager Capabilities', 'arsol-pfw'),
             array($this, 'render_manager_capabilities_field'),
             'arsol_pfw_permissions_settings',
-            'arsol_projects_permissions',
+            'arsol_project_manager_permissions',
             array(
                 'description' => __('Additional capabilities for project managers. Administrators always have all permissions regardless of these settings.', 'arsol-pfw'),
                 'class' => 'arsol-pfw-manager-roles-field'
@@ -83,20 +83,28 @@ class Permissions {
             __('Manager Override Settings', 'arsol-pfw'),
             array($this, 'render_manager_override_field'),
             'arsol_pfw_permissions_settings',
-            'arsol_projects_permissions',
+            'arsol_project_manager_permissions',
             array(
                 'description' => __('Allow individual project managers to override admin settings for enabled capabilities.', 'arsol-pfw'),
                 'class' => 'arsol-pfw-manager-override-field'
             )
         );
 
+        // Customer Permissions Section
+        add_settings_section(
+            'arsol_customer_permissions',
+            __('Customer Permissions', 'arsol-pfw'),
+            array($this, 'render_customer_permissions_section'),
+            'arsol_pfw_permissions_settings'
+        );
+
         // Project User Roles
         add_settings_field(
             'project_user_roles',
-            __('Customer Permissions', 'arsol-pfw'),
+            __('Customer Roles', 'arsol-pfw'),
             array($this, 'render_roles_field'),
             'arsol_pfw_permissions_settings',
-            'arsol_projects_permissions',
+            'arsol_customer_permissions',
             array(
                 'field' => 'project_user_roles',
                 'description' => __('Select roles that can create and manage their own projects as WooCommerce customers.', 'arsol-pfw'),
@@ -110,7 +118,7 @@ class Permissions {
             __('Frontend Permissions', 'arsol-pfw'),
             array($this, 'render_select_field'),
             'arsol_pfw_permissions_settings',
-            'arsol_projects_permissions',
+            'arsol_customer_permissions',
             array(
                 'description' => __('Controls what users can do from the frontend', 'arsol-pfw'),
                 'field' => 'user_project_permissions',
@@ -131,7 +139,7 @@ class Permissions {
             __('New User Permissions', 'arsol-pfw'),
             array($this, 'render_select_field'),
             'arsol_pfw_permissions_settings',
-            'arsol_projects_permissions',
+            'arsol_customer_permissions',
             array(
                 'description' => __('Default permission level assigned to new users (only applies when "User Specific" is selected above)', 'arsol-pfw'),
                 'field' => 'default_user_permission',
@@ -165,6 +173,26 @@ class Permissions {
      */
     public function render_permissions_section() {
         echo '<p>' . esc_html__('Configure project permissions: Project managers need WooCommerce admin knowledge, while regular users just need to be WooCommerce customers.', 'arsol-pfw') . '</p>';
+    }
+
+    /**
+     * Render project manager section description
+     */
+    public function render_project_manager_section() {
+        echo '<div class="arsol-pfw-project-manager-permissions">';
+        echo '<h2>' . esc_html__('Project Manager Permissions', 'arsol-pfw') . '</h2>';
+        echo '<div id="project-manager-permissions-description"><p>' . esc_html__('Configure permissions for users who manage projects (Project Managers).', 'arsol-pfw') . '</p></div>';
+        echo '</div>';
+    }
+
+    /**
+     * Render customer permissions section description
+     */
+    public function render_customer_permissions_section() {
+        echo '<div class="arsol-pfw-customer-permissions">';
+        echo '<h2>' . esc_html__('Customer Permissions', 'arsol-pfw') . '</h2>';
+        echo '<div id="customer-permissions-description"><p>' . esc_html__('Configure permissions for users who create and manage their own projects (Customers).', 'arsol-pfw') . '</p></div>';
+        echo '</div>';
     }
 
     /**
