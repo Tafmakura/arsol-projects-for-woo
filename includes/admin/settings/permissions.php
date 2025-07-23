@@ -67,7 +67,7 @@ class Permissions {
         // Project Manager Capabilities
         add_settings_field(
             'project_manager_capabilities',
-            __('Capabilities', 'arsol-pfw'),
+            __('Admin Capabilities', 'arsol-pfw'),
             array($this, 'render_manager_capabilities_field'),
             'arsol_pfw_permissions_settings',
             'arsol_project_manager_permissions',

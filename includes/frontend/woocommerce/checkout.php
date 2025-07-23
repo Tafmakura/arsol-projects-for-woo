@@ -142,18 +142,10 @@ class Checkout {
             $user_id = get_current_user_id();
         }
         
-        // Get projects where user is post author (creator)
-        $author_projects = get_posts([
-            'post_type' => 'arsol-pfw-project',
-            'numberposts' => -1,
-            'orderby' => 'title',
-            'order' => 'ASC',
-            'author' => absint($user_id)
-        ]);
-        
-        // Get projects where user is assigned customer
+        // Only get projects where user is the assigned customer (not post author)
         $customer_projects = get_posts([
             'post_type' => 'arsol-pfw-project',
+            'post_status' => 'publish', // Only published projects
             'numberposts' => -1,
             'orderby' => 'title',
             'order' => 'ASC',
@@ -166,15 +158,7 @@ class Checkout {
             ]
         ]);
         
-        // Merge and remove duplicates
-        $all_projects = array_merge($author_projects, $customer_projects);
-        $unique_projects = [];
-        
-        foreach ($all_projects as $project) {
-            $unique_projects[$project->ID] = $project;
-        }
-        
-        return array_values($unique_projects);
+        return $customer_projects;
     }
 
     /**

@@ -296,7 +296,7 @@ class Capabilities_Handler {
             }
             
             // Check if user is the assigned project lead
-            $assigned_lead = get_post_meta($project_id, '_assigned_project_lead', true);
+            $assigned_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
             return (int) $assigned_lead === (int) $user_id;
         }
         
@@ -488,6 +488,12 @@ class Capabilities_Handler {
                 return true;
             }
             
+            // Check if user is assigned project lead
+            $project_lead_id = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
+            if ((int) $project_lead_id === (int) $user_id) {
+                return true;
+            }
+            
             return false;
         }
         
@@ -672,6 +678,12 @@ class Capabilities_Handler {
             // If it's their assigned project (customer), they can delete it
             $customer_id = get_post_meta($project_id, '_arsol_pfw_customer_id', true);
             if ((int) $customer_id === (int) $user_id) {
+                return true;
+            }
+            
+            // If it's their assigned project (project lead), they can delete it
+            $project_lead_id = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
+            if ((int) $project_lead_id === (int) $user_id) {
                 return true;
             }
             
@@ -962,6 +974,51 @@ class Capabilities_Handler {
     }
 
     /**
+     * Check if user is a project lead (assigned to any project)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @param int $project_id Project ID to check (optional)
+     * @return bool Whether user is a project lead
+     */
+    public static function is_project_lead($user_id = null, $project_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        // If project_id provided, check if user is the assigned project lead for this specific project
+        if ($project_id) {
+            $project = get_post($project_id);
+            if (!$project || $project->post_type !== 'arsol-pfw-project') {
+                return false;
+            }
+            
+            // Check if user is the assigned project lead
+            $assigned_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
+            return (int) $assigned_lead === (int) $user_id;
+        }
+        
+        // If no project_id, check if user is assigned as project lead for any project
+        $projects = get_posts([
+            'post_type' => 'arsol-pfw-project',
+            'numberposts' => -1,
+            'meta_query' => [
+                [
+                    'key' => '_arsol_pfw_project_lead',
+                    'value' => $user_id,
+                    'compare' => '='
+                ]
+            ]
+        ]);
+        
+        return !empty($projects);
+    }
+
+    /**
      * Get user's effective permission level
      *
      * @param int $user_id User ID (optional, defaults to current user)
@@ -978,6 +1035,36 @@ class Capabilities_Handler {
         
         if (self::can_create_projects($user_id) || self::can_create_requests($user_id) || self::can_create_proposals($user_id)) {
             return 'creator';
+        }
+        
+        if (self::is_project_customer($user_id)) {
+            return 'customer';
+        }
+        
+        return 'none';
+    }
+
+    /**
+     * Get user's admin permission level (includes project leads)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return string Permission level: 'manager', 'creator', 'project_lead', 'customer', or 'none'
+     */
+    public static function get_admin_permission_level($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        if (self::is_manager($user_id)) {
+            return 'manager';
+        }
+        
+        if (self::can_create_projects($user_id) || self::can_create_requests($user_id) || self::can_create_proposals($user_id)) {
+            return 'creator';
+        }
+        
+        if (self::is_project_lead($user_id)) {
+            return 'project_lead';
         }
         
         if (self::is_project_customer($user_id)) {
