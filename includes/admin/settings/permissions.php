@@ -90,6 +90,19 @@ class Permissions {
             )
         );
 
+        // Manager Default Behavior
+        add_settings_field(
+            'manager_default_behavior',
+            __('New User Permissions', 'arsol-pfw'),
+            array($this, 'render_manager_default_behavior_field'),
+            'arsol_pfw_permissions_settings',
+            'arsol_project_manager_permissions',
+            array(
+                'description' => __('Default behavior for new project managers without override settings.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-show-if-arsol-pfw-allow-manager-overrides-is-checked arsol-pfw-manager-default-behavior'
+            )
+        );
+
         // Customer Permissions Section
         add_settings_section(
             'arsol_customer_permissions',
@@ -323,7 +336,6 @@ class Permissions {
     public function render_manager_override_field($args) {
         $settings = get_option('arsol_pfw_permissions_settings', array());
         $allow_overrides = isset($settings['allow_manager_overrides']) ? $settings['allow_manager_overrides'] : false;
-        $default_behavior = isset($settings['manager_default_behavior']) ? $settings['manager_default_behavior'] : 'enable_all';
         $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
         
         echo "<div class='{$class}'>";
@@ -337,26 +349,42 @@ class Permissions {
                    value="1"
                    <?php echo $allow_overrides ? 'checked' : ''; ?>>
             <?php echo esc_html__('Allow overrides per project manager', 'arsol-pfw'); ?>
-        </label><br>
-        
-        <!-- Conditional select for default behavior -->
-        <div class="arsol-pfw-show-if-arsol-pfw-allow-manager-overrides-is-checked" style="margin-top: 10px;">
-            <select id="arsol-pfw-manager-default-behavior"
-                    name="arsol_pfw_permissions_settings[manager_default_behavior]">
-                <option value="enable_all" <?php selected($default_behavior, 'enable_all'); ?>>
-                    <?php echo esc_html__('Enable all available permissions', 'arsol-pfw'); ?>
-                </option>
-                <option value="disable_all" <?php selected($default_behavior, 'disable_all'); ?>>
-                    <?php echo esc_html__('Disable all available permissions', 'arsol-pfw'); ?>
-                </option>
-            </select>
-        </div>
+        </label>
         <?php
         
         echo "</div>";
         if (!empty($args['description'])) {
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
         }
+    }
+
+    /**
+     * Render manager default behavior field
+     */
+    public function render_manager_default_behavior_field($args) {
+        $settings = get_option('arsol_pfw_permissions_settings', array());
+        $default_behavior = isset($settings['manager_default_behavior']) ? $settings['manager_default_behavior'] : 'enable_all';
+        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
+        
+        $valid_behaviors = array('enable_all', 'disable_all');
+        
+        echo "<div class='{$class}'>";
+        
+        ?>
+        <select id="arsol-pfw-manager-default-behavior"
+                name="arsol_pfw_permissions_settings[manager_default_behavior]">
+            <?php foreach ($valid_behaviors as $behavior): ?>
+                <option value="<?php echo esc_attr($behavior); ?>" <?php selected($default_behavior, $behavior); ?>>
+                    <?php echo esc_html($behavior === 'enable_all' ? __('Enable all available permissions', 'arsol-pfw') : __('Disable all available permissions', 'arsol-pfw')); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <?php
+        
+        if (!empty($args['description'])) {
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
+        }
+        echo '</div>';
     }
 
     /**
