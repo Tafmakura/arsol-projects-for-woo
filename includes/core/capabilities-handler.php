@@ -430,15 +430,4 @@ class Capabilities_Handler {
         return self::get_effective_manager_capability($user_id, 'manage_permissions');
     }
 
-    // ========================================
-    // LEGACY COMPATIBILITY METHODS
-    // ========================================
-
-    /**
-     * Legacy method for backward compatibility
-     */
-    public static function setup_capabilities() {
-        $instance = new self();
-        $instance->add_administrator_capabilities();
-    }
 } 

@@ -536,17 +536,7 @@ class Integration {
         }
     }
 
-    /**
-     * Check if user can view the project
-     *
-     * @param int $user_id User ID
-     * @param int $project_id Project ID
-     * @return bool
-     */
-    public static function user_can_view_project($user_id, $project_id) {
-        // This method is now deprecated - use \Arsol_Projects_For_Woo\Core\Access_Handler::user_can_view_project() instead
-        return \Arsol_Projects_For_Woo\Core\Access_Handler::user_can_view_project($user_id, $project_id);
-    }
+
 
     /**
      * Get orders associated with a project using optimized WooCommerce CRUD

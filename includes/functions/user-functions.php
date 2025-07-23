@@ -252,26 +252,4 @@ function arsol_pfw_get_user_meta($user, $meta_key, $default = '') {
     return !empty($meta_value) ? $meta_value : $default;
 }
 
-/**
- * Legacy function for backward compatibility
- * 
- * @param int|\WP_User $user User ID or user object
- * @param string $format Format type
- * @param array $args Additional arguments
- * @return string Formatted user display
- */
-function arsol_pfw_format_user_display($user, $format = 'basic', $args = []) {
-    // Map old format names to new ones
-    $format_map = [
-        'basic' => 'display_name',
-        'name_email' => 'display_name',
-        'admin' => 'display_name',
-        'full' => 'full_name',
-        'email_only' => 'display_name',
-        'id_only' => 'display_name'
-    ];
-    
-    $new_format = isset($format_map[$format]) ? $format_map[$format] : 'display_name';
-    
-    return arsol_pfw_format_user($user, $new_format, false, true, false, $args);
-}
+

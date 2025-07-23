@@ -532,27 +532,10 @@ class Permissions {
             "read_private_posts",   // Can read private posts
         );
 
-        // Clean up old custom capabilities first
-        $old_custom_capabilities = array(
-            "arsol_pfw_manage",
-            "edit_arsol_pfw_projects", "edit_others_arsol_pfw_projects", "publish_arsol_pfw_projects",
-            "read_private_arsol_pfw_projects", "delete_arsol_pfw_projects", "delete_others_arsol_pfw_projects",
-            "edit_arsol_pfw_proposals", "edit_others_arsol_pfw_proposals", "publish_arsol_pfw_proposals",
-            "read_private_arsol_pfw_proposals", "delete_arsol_pfw_proposals", "delete_others_arsol_pfw_proposals",
-            "edit_arsol_pfw_requests", "edit_others_arsol_pfw_requests", "publish_arsol_pfw_requests",
-            "read_private_arsol_pfw_requests", "delete_arsol_pfw_requests", "delete_others_arsol_pfw_requests",
-            "manage_projects", "create_projects", "request_projects"
-        );
-
         foreach ($all_roles as $role_slug => $role_name) {
             $role = get_role($role_slug);
             if (!$role) {
                 continue;
-            }
-
-            // Remove old custom capabilities
-            foreach ($old_custom_capabilities as $old_cap) {
-                $role->remove_cap($old_cap);
             }
 
             // Don not mess with Administrator, Editor, Author default capabilities
@@ -587,11 +570,12 @@ class Permissions {
         if ($customer_role) {
             // Remove all frontend capabilities first
             $frontend_caps = array(
-                'arsol_pfw_frontend_create_own_projects',
-                'arsol_pfw_frontend_view_own_projects',
-                'arsol_pfw_frontend_edit_own_projects',
-                'arsol_pfw_frontend_create_own_requests',
-                'arsol_pfw_frontend_view_own_requests'
+                'publish_frontend_arsol_pfw_projects',
+                'read_frontend_arsol_pfw_projects',
+                'edit_frontend_arsol_pfw_projects',
+                'publish_frontend_arsol_pfw_requests',
+                'read_frontend_arsol_pfw_requests',
+                'edit_frontend_arsol_pfw_requests'
             );
             
             foreach ($frontend_caps as $cap) {
@@ -601,22 +585,24 @@ class Permissions {
             // Grant capabilities based on selected permission level
             switch ($frontend_permission) {
                 case 'request_projects':
-                    $customer_role->add_cap('arsol_pfw_frontend_create_own_requests');
-                    $customer_role->add_cap('arsol_pfw_frontend_view_own_requests');
+                    $customer_role->add_cap('publish_frontend_arsol_pfw_requests');
+                    $customer_role->add_cap('read_frontend_arsol_pfw_requests');
+                    $customer_role->add_cap('edit_frontend_arsol_pfw_requests');
                     break;
                     
                 case 'create_projects':
-                    $customer_role->add_cap('arsol_pfw_frontend_create_own_projects');
-                    $customer_role->add_cap('arsol_pfw_frontend_view_own_projects');
-                    $customer_role->add_cap('arsol_pfw_frontend_edit_own_projects');
+                    $customer_role->add_cap('publish_frontend_arsol_pfw_projects');
+                    $customer_role->add_cap('read_frontend_arsol_pfw_projects');
+                    $customer_role->add_cap('edit_frontend_arsol_pfw_projects');
                     break;
                     
                 case 'can_do_both':
-                    $customer_role->add_cap('arsol_pfw_frontend_create_own_projects');
-                    $customer_role->add_cap('arsol_pfw_frontend_view_own_projects');
-                    $customer_role->add_cap('arsol_pfw_frontend_edit_own_projects');
-                    $customer_role->add_cap('arsol_pfw_frontend_create_own_requests');
-                    $customer_role->add_cap('arsol_pfw_frontend_view_own_requests');
+                    $customer_role->add_cap('publish_frontend_arsol_pfw_projects');
+                    $customer_role->add_cap('read_frontend_arsol_pfw_projects');
+                    $customer_role->add_cap('edit_frontend_arsol_pfw_projects');
+                    $customer_role->add_cap('publish_frontend_arsol_pfw_requests');
+                    $customer_role->add_cap('read_frontend_arsol_pfw_requests');
+                    $customer_role->add_cap('edit_frontend_arsol_pfw_requests');
                     break;
                     
                 case 'user_specific':
@@ -635,10 +621,10 @@ class Permissions {
         
         // Define the capability mappings
         $capability_mappings = array(
-            'manage_stages' => 'arsol_pfw_manage_stages',
-            'manage_workflows' => 'arsol_pfw_manage_workflows',
-            'manage_settings' => 'arsol_pfw_manage_settings',
-            'manage_permissions' => 'arsol_pfw_manage_permissions'
+            'manage_stages' => 'manage_arsol_pfw_stages',
+            'manage_workflows' => 'manage_arsol_pfw_workflows',
+            'manage_settings' => 'manage_arsol_pfw_settings',
+            'manage_permissions' => 'manage_arsol_pfw_permissions'
         );
         
         // Remove all manager capabilities from all roles first
@@ -684,10 +670,10 @@ class Permissions {
         
         // Define the capability mappings for overrides
         $override_capability_mappings = array(
-            'manage_stages' => 'arsol_pfw_manage_stages_override',
-            'manage_workflows' => 'arsol_pfw_manage_workflows_override',
-            'manage_settings' => 'arsol_pfw_manage_settings_override',
-            'manage_permissions' => 'arsol_pfw_manage_permissions_override'
+            'manage_stages' => 'manage_arsol_pfw_stages_override',
+            'manage_workflows' => 'manage_arsol_pfw_workflows_override',
+            'manage_settings' => 'manage_arsol_pfw_settings_override',
+            'manage_permissions' => 'manage_arsol_pfw_permissions_override'
         );
 
         // Remove all override capabilities from all roles first

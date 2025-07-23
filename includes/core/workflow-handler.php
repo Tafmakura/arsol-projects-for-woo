@@ -178,18 +178,7 @@ class Workflow_Handler {
         return self::$default_stage_definitions;
     }
 
-    /**
-     * Legacy method to manage review status - currently not used
-     */
-    public function set_proposal_review_status($new_status, $old_status, $post) {
-        // Currently not implementing automatic review status changes
-        // This is reserved for future review workflow improvements
-        
-        // Removed automatic review status setting - using proposal status only
-        // if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
-        // Set proposal to pending-approval status when published');
-        // }
-    }
+
 
     public function convert_request_to_proposal() {
         $request_id = intval($_GET['request_id']);

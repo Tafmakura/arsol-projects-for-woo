@@ -863,24 +863,7 @@ class Project {
         return $this->get_meta('_arsol_pfw_requested_project_due_date');
     }
 
-    /**
-     * Get customer notice (legacy method for backward compatibility)
-     * 
-     * @return string Customer notice
-     */
-    public function get_customer_notice() {
-        return $this->get_project_customer_notice();
-    }
 
-    /**
-     * Set customer notice (legacy method for backward compatibility)
-     * 
-     * @param string $customer_notice Customer notice
-     * @return bool Success status
-     */
-    public function set_customer_notice($customer_notice) {
-        return $this->set_project_customer_notice($customer_notice);
-    }
 
     // ===== OOP Helper Methods for Admin Display =====
 
