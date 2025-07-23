@@ -179,14 +179,26 @@ class Users {
         if ($user->has_cap('arsol_pfw_manage')) {
             $capabilities[] = __('Manager', 'arsol-pfw');
         }
-        if ($user->has_cap('edit_arsol_pfw_projects')) {
-            $capabilities[] = __('Projects', 'arsol-pfw');
+        
+        // Get user's manager capabilities
+        $user_capabilities = get_user_meta($user->ID, 'arsol_pfw_manager_capabilities', true);
+        if (!is_array($user_capabilities)) {
+            $user_capabilities = array();
         }
-        if ($user->has_cap('edit_arsol_pfw_proposals')) {
+        
+        // Check for request capabilities
+        if (in_array('edit_all_requests', $user_capabilities) || in_array('create_requests', $user_capabilities) || in_array('delete_requests', $user_capabilities)) {
+            $capabilities[] = __('Requests', 'arsol-pfw');
+        }
+        
+        // Check for proposal capabilities
+        if (in_array('edit_all_proposals', $user_capabilities) || in_array('create_proposals', $user_capabilities) || in_array('delete_proposals', $user_capabilities)) {
             $capabilities[] = __('Proposals', 'arsol-pfw');
         }
-        if ($user->has_cap('edit_arsol_pfw_requests')) {
-            $capabilities[] = __('Requests', 'arsol-pfw');
+        
+        // Check for project capabilities
+        if (in_array('edit_all_projects', $user_capabilities) || in_array('create_projects', $user_capabilities) || in_array('delete_projects', $user_capabilities)) {
+            $capabilities[] = __('Projects', 'arsol-pfw');
         }
         
         return empty($capabilities) ? __('None', 'arsol-pfw') : implode(', ', $capabilities);
@@ -249,38 +261,77 @@ class Users {
                 <th><label><?php esc_html_e('Project Manager Permissions', 'arsol-pfw'); ?></label></th>
                 <td>
                     <p class="description"><?php esc_html_e('Override individual capabilities for this project manager. Only capabilities enabled in admin settings can be overridden.', 'arsol-pfw'); ?></p>
+
                     <?php
-                    $all_capabilities = array(
-                        'manage_stages' => __('Can manage stages', 'arsol-pfw'),
-                        'manage_workflows' => __('Can manage workflows', 'arsol-pfw'),
-                        'manage_settings' => __('Can manage settings', 'arsol-pfw'),
-                        'manage_permissions' => __('Can manage permissions', 'arsol-pfw'),
-                    );
-                    
-                    foreach ($all_capabilities as $cap_key => $cap_label) :
-                        // Only show checkboxes for capabilities enabled in admin settings
-                        if (!in_array($cap_key, $admin_capabilities)) {
-                            continue;
-                        }
-                        
-                        $checked = in_array($cap_key, $user_overrides) ? 'checked' : '';
-                        $disabled = !$allow_overrides ? 'disabled' : '';
+                    // Disabled checkbox for assigned projects (always checked, no save logic)
                     ?>
                     <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox"
-                               name="arsol_pfw_manager_overrides[]"
-                               value="<?php echo esc_attr($cap_key); ?>"
-                               <?php echo esc_attr($checked); ?>
-                               <?php echo esc_attr($disabled); ?>>
-                        <?php echo esc_html($cap_label); ?>
+                        <input type="checkbox" checked disabled>
+                        <?php echo esc_html__('Can manage assigned projects', 'arsol-pfw'); ?>
                     </label>
-                    <?php endforeach; ?>
-                    
-                    <?php if (!$allow_overrides) : ?>
-                    <p class="description" style="margin-top: 10px; color: #666;">
-                        <?php esc_html_e('Manager overrides are disabled in admin settings.', 'arsol-pfw'); ?>
-                    </p>
-                    <?php endif; ?>
+
+                    <?php
+                    // Get user's current capabilities
+                    $user_capabilities = get_user_meta($user->ID, 'arsol_pfw_manager_capabilities', true);
+                    if (!is_array($user_capabilities)) {
+                        $user_capabilities = array();
+                    }
+
+                    // Requests
+                    $can_edit_all_requests = in_array('edit_all_requests', $user_capabilities);
+                    $can_create_requests = in_array('create_requests', $user_capabilities);
+                    $can_delete_requests = in_array('delete_requests', $user_capabilities);
+                    ?>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" name="arsol_pfw_manager_edit_all_requests" value="1" <?php echo $can_edit_all_requests ? 'checked' : ''; ?>>
+                        <?php echo esc_html__('Can edit all requests', 'arsol-pfw'); ?>
+                    </label>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" name="arsol_pfw_manager_create_requests" value="1" <?php echo $can_create_requests ? 'checked' : ''; ?>>
+                        <?php echo esc_html__('Can create requests', 'arsol-pfw'); ?>
+                    </label>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" name="arsol_pfw_manager_delete_requests" value="1" <?php echo $can_delete_requests ? 'checked' : ''; ?>>
+                        <?php echo esc_html__('Can delete requests', 'arsol-pfw'); ?>
+                    </label>
+
+                    <?php
+                    // Proposals
+                    $can_edit_all_proposals = in_array('edit_all_proposals', $user_capabilities);
+                    $can_create_proposals = in_array('create_proposals', $user_capabilities);
+                    $can_delete_proposals = in_array('delete_proposals', $user_capabilities);
+                    ?>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" name="arsol_pfw_manager_edit_all_proposals" value="1" <?php echo $can_edit_all_proposals ? 'checked' : ''; ?>>
+                        <?php echo esc_html__('Can edit all proposals', 'arsol-pfw'); ?>
+                    </label>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" name="arsol_pfw_manager_create_proposals" value="1" <?php echo $can_create_proposals ? 'checked' : ''; ?>>
+                        <?php echo esc_html__('Can create proposals', 'arsol-pfw'); ?>
+                    </label>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" name="arsol_pfw_manager_delete_proposals" value="1" <?php echo $can_delete_proposals ? 'checked' : ''; ?>>
+                        <?php echo esc_html__('Can delete proposals', 'arsol-pfw'); ?>
+                    </label>
+
+                    <?php
+                    // Projects
+                    $can_edit_all_projects = in_array('edit_all_projects', $user_capabilities);
+                    $can_create_projects = in_array('create_projects', $user_capabilities);
+                    $can_delete_projects = in_array('delete_projects', $user_capabilities);
+                    ?>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" name="arsol_pfw_manager_edit_all_projects" value="1" <?php echo $can_edit_all_projects ? 'checked' : ''; ?>>
+                        <?php echo esc_html__('Can edit all projects', 'arsol-pfw'); ?>
+                    </label>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" name="arsol_pfw_manager_create_projects" value="1" <?php echo $can_create_projects ? 'checked' : ''; ?>>
+                        <?php echo esc_html__('Can create projects', 'arsol-pfw'); ?>
+                    </label>
+                    <label style="display: block; margin: 5px 0;">
+                        <input type="checkbox" name="arsol_pfw_manager_delete_projects" value="1" <?php echo $can_delete_projects ? 'checked' : ''; ?>>
+                        <?php echo esc_html__('Can delete projects', 'arsol-pfw'); ?>
+                    </label>
                 </td>
             </tr>
             <?php endif; ?>
@@ -394,21 +445,40 @@ class Users {
             }
         }
         
-        // Save manager override settings if posted
-        if (isset($_POST['arsol_pfw_manager_overrides'])) {
-            $overrides = array_map('sanitize_text_field', $_POST['arsol_pfw_manager_overrides']);
-            
-            // Validate override capabilities
-            $valid_capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
-            $overrides = array_intersect($overrides, $valid_capabilities);
-            
-            update_user_meta($user_id, 'arsol_pfw_manager_overrides', $overrides);
-            update_user_meta($user_id, 'arsol_pfw_manager_override_enabled', true);
-        } elseif (isset($_POST['arsol_pfw_manager_overrides']) && empty($_POST['arsol_pfw_manager_overrides'])) {
-            // User explicitly unchecked all overrides
-            update_user_meta($user_id, 'arsol_pfw_manager_overrides', array());
-            update_user_meta($user_id, 'arsol_pfw_manager_override_enabled', true);
+        // Save manager capabilities if posted
+        $manager_capabilities = array();
+
+        if (isset($_POST['arsol_pfw_manager_edit_all_requests'])) {
+            $manager_capabilities[] = 'edit_all_requests';
         }
+        if (isset($_POST['arsol_pfw_manager_create_requests'])) {
+            $manager_capabilities[] = 'create_requests';
+        }
+        if (isset($_POST['arsol_pfw_manager_delete_requests'])) {
+            $manager_capabilities[] = 'delete_requests';
+        }
+
+        if (isset($_POST['arsol_pfw_manager_edit_all_proposals'])) {
+            $manager_capabilities[] = 'edit_all_proposals';
+        }
+        if (isset($_POST['arsol_pfw_manager_create_proposals'])) {
+            $manager_capabilities[] = 'create_proposals';
+        }
+        if (isset($_POST['arsol_pfw_manager_delete_proposals'])) {
+            $manager_capabilities[] = 'delete_proposals';
+        }
+
+        if (isset($_POST['arsol_pfw_manager_edit_all_projects'])) {
+            $manager_capabilities[] = 'edit_all_projects';
+        }
+        if (isset($_POST['arsol_pfw_manager_create_projects'])) {
+            $manager_capabilities[] = 'create_projects';
+        }
+        if (isset($_POST['arsol_pfw_manager_delete_projects'])) {
+            $manager_capabilities[] = 'delete_projects';
+        }
+
+        update_user_meta($user_id, 'arsol_pfw_manager_capabilities', $manager_capabilities);
     }
     
     /**
@@ -601,6 +671,12 @@ class Users {
             if ($user->has_cap($cap)) {
                 return true;
             }
+        }
+
+        // Check for new nine-capability system
+        $user_capabilities = get_user_meta($user_id, 'arsol_pfw_manager_capabilities', true);
+        if (is_array($user_capabilities) && !empty($user_capabilities)) {
+            return true;
         }
 
         return false;
