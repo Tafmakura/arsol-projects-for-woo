@@ -143,7 +143,19 @@ class Capabilities_Handler {
      * @return array Array of override capabilities with their states
      */
     public static function get_user_manager_overrides($user_id) {
-        $capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
+        $capabilities = array(
+            // Admin capabilities
+            'manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions',
+            
+            // Project CRUD capabilities
+            'view_all_projects', 'edit_all_projects', 'delete_all_projects', 'create_projects',
+            
+            // Request CRUD capabilities
+            'view_all_requests', 'edit_all_requests', 'delete_all_requests', 'create_requests',
+            
+            // Proposal CRUD capabilities
+            'view_all_proposals', 'edit_all_proposals', 'delete_all_proposals', 'create_proposals'
+        );
         $overrides = array();
         
         foreach ($capabilities as $cap) {
@@ -201,12 +213,28 @@ class Capabilities_Handler {
 
         // Map capability names to WordPress capabilities
         $capability_mappings = array(
-            'manage_stages' => 'manage_arsol_pfw_stages',
-            'manage_workflows' => 'manage_arsol_pfw_workflows', 
-            'manage_settings' => 'manage_arsol_pfw_settings',
-            'manage_permissions' => 'manage_arsol_pfw_permissions',
+            // Admin capabilities
+            'manage_stages' => 'arsol_pfw_manage_stages',
+            'manage_workflows' => 'arsol_pfw_manage_workflows', 
+            'manage_settings' => 'arsol_pfw_manage_settings',
+            'manage_permissions' => 'arsol_pfw_manage_permissions',
+            
+            // Project CRUD capabilities
+            'view_all_projects' => 'read_private_arsol_pfw_projects',
+            'edit_all_projects' => 'edit_others_arsol_pfw_projects',
+            'delete_all_projects' => 'delete_others_arsol_pfw_projects',
             'create_projects' => 'edit_arsol_pfw_projects',
+            
+            // Request CRUD capabilities
+            'view_all_requests' => 'read_private_arsol_pfw_requests',
+            'edit_all_requests' => 'edit_others_arsol_pfw_requests',
+            'delete_all_requests' => 'delete_others_arsol_pfw_requests',
             'create_requests' => 'edit_arsol_pfw_requests',
+            
+            // Proposal CRUD capabilities
+            'view_all_proposals' => 'read_private_arsol_pfw_proposals',
+            'edit_all_proposals' => 'edit_others_arsol_pfw_proposals',
+            'delete_all_proposals' => 'delete_others_arsol_pfw_proposals',
             'create_proposals' => 'edit_arsol_pfw_proposals'
         );
 
@@ -671,6 +699,17 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
+        // Check if user has manager capabilities
+        if (self::is_manager($user_id)) {
+            return self::get_effective_manager_capability($user_id, 'edit_all_projects');
+        }
+        
+        // Check WordPress capability
         $user = get_user_by('id', $user_id);
         if (!$user) {
             return false;
@@ -690,6 +729,17 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
+        // Check if user has manager capabilities
+        if (self::is_manager($user_id)) {
+            return self::get_effective_manager_capability($user_id, 'edit_all_requests');
+        }
+        
+        // Check WordPress capability
         $user = get_user_by('id', $user_id);
         if (!$user) {
             return false;
@@ -709,6 +759,17 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
+        // Check if user has manager capabilities
+        if (self::is_manager($user_id)) {
+            return self::get_effective_manager_capability($user_id, 'edit_all_proposals');
+        }
+        
+        // Check WordPress capability
         $user = get_user_by('id', $user_id);
         if (!$user) {
             return false;
@@ -727,6 +788,11 @@ class Capabilities_Handler {
     public static function can_delete_projects($user_id = null, $project_id = null) {
         if (!$user_id) {
             $user_id = get_current_user_id();
+        }
+        
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
         }
         
         $user = get_user_by('id', $user_id);
@@ -763,7 +829,11 @@ class Capabilities_Handler {
                 return true;
             }
             
-            // If it's someone else's project, check if they can delete others
+            // If it's someone else's project, check if they can delete others with override
+            if (self::is_manager($user_id)) {
+                return self::get_effective_manager_capability($user_id, 'delete_all_projects');
+            }
+            
             return $user->has_cap('delete_others_arsol_pfw_projects');
         }
         
@@ -780,6 +850,11 @@ class Capabilities_Handler {
     public static function can_delete_requests($user_id = null, $request_id = null) {
         if (!$user_id) {
             $user_id = get_current_user_id();
+        }
+        
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
         }
         
         $user = get_user_by('id', $user_id);
@@ -810,7 +885,11 @@ class Capabilities_Handler {
                 return true;
             }
             
-            // If it's someone else's request, check if they can delete others
+            // If it's someone else's request, check if they can delete others with override
+            if (self::is_manager($user_id)) {
+                return self::get_effective_manager_capability($user_id, 'delete_all_requests');
+            }
+            
             return $user->has_cap('delete_others_arsol_pfw_requests');
         }
         
@@ -827,6 +906,11 @@ class Capabilities_Handler {
     public static function can_delete_proposals($user_id = null, $proposal_id = null) {
         if (!$user_id) {
             $user_id = get_current_user_id();
+        }
+        
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
         }
         
         $user = get_user_by('id', $user_id);
@@ -857,7 +941,11 @@ class Capabilities_Handler {
                 return true;
             }
             
-            // If it's someone else's proposal, check if they can delete others
+            // If it's someone else's proposal, check if they can delete others with override
+            if (self::is_manager($user_id)) {
+                return self::get_effective_manager_capability($user_id, 'delete_all_proposals');
+            }
+            
             return $user->has_cap('delete_others_arsol_pfw_proposals');
         }
         
@@ -875,6 +963,17 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
+        // Check if user has manager capabilities
+        if (self::is_manager($user_id)) {
+            return self::get_effective_manager_capability($user_id, 'create_projects');
+        }
+        
+        // Check WordPress capability
         $user = get_user_by('id', $user_id);
         if (!$user) {
             return false;
@@ -894,6 +993,17 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
+        // Check if user has manager capabilities
+        if (self::is_manager($user_id)) {
+            return self::get_effective_manager_capability($user_id, 'create_requests');
+        }
+        
+        // Check WordPress capability
         $user = get_user_by('id', $user_id);
         if (!$user) {
             return false;
@@ -913,6 +1023,17 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
+        // Check if user has manager capabilities
+        if (self::is_manager($user_id)) {
+            return self::get_effective_manager_capability($user_id, 'create_proposals');
+        }
+        
+        // Check WordPress capability
         $user = get_user_by('id', $user_id);
         if (!$user) {
             return false;
@@ -932,6 +1053,17 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
+        // Check if user has manager capabilities
+        if (self::is_manager($user_id)) {
+            return self::get_effective_manager_capability($user_id, 'view_all_projects');
+        }
+        
+        // Check WordPress capability
         $user = get_user_by('id', $user_id);
         if (!$user) {
             return false;
@@ -951,6 +1083,17 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
+        // Check if user has manager capabilities
+        if (self::is_manager($user_id)) {
+            return self::get_effective_manager_capability($user_id, 'view_all_requests');
+        }
+        
+        // Check WordPress capability
         $user = get_user_by('id', $user_id);
         if (!$user) {
             return false;
@@ -970,6 +1113,17 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Check if user is admin
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
+        // Check if user has manager capabilities
+        if (self::is_manager($user_id)) {
+            return self::get_effective_manager_capability($user_id, 'view_all_proposals');
+        }
+        
+        // Check WordPress capability
         $user = get_user_by('id', $user_id);
         if (!$user) {
             return false;
@@ -1101,12 +1255,87 @@ class Capabilities_Handler {
     // ========================================
 
     /**
-     * Update project manager roles
+     * Update project manager roles with new "manage all" logic
      *
-     * @param array $role_slugs Array of role slugs to assign manager capabilities
+     * @param array $role_slugs Array of role slugs
      */
     public static function update_project_manager_roles($role_slugs) {
-        self::assign_capabilities_to_roles($role_slugs, 'manager');
+        $settings = get_option('arsol_pfw_permissions_settings', array());
+        $admin_capabilities = isset($settings['project_manager_capabilities']) ? $settings['project_manager_capabilities'] : array();
+        
+        // First, remove all PFW capabilities from all roles
+        self::remove_all_capabilities();
+
+        // Then assign capabilities based on admin settings
+        foreach ($role_slugs as $role_slug) {
+            $role = get_role($role_slug);
+            if (!$role) {
+                continue;
+            }
+
+            // Always assign master capability
+            $role->add_cap('arsol_pfw_manage');
+            
+            // Assign capabilities based on admin "manage all" settings
+            if (in_array('manage_all_projects', $admin_capabilities)) {
+                // Assign all project CRUD capabilities
+                $project_caps = array(
+                    'read_private_arsol_pfw_projects',      // view_all_projects
+                    'edit_others_arsol_pfw_projects',       // edit_all_projects
+                    'delete_others_arsol_pfw_projects',     // delete_all_projects
+                    'edit_arsol_pfw_projects',              // create_projects
+                    'publish_arsol_pfw_projects',           // create_projects
+                );
+                foreach ($project_caps as $cap) {
+                    $role->add_cap($cap);
+                }
+            }
+            
+            if (in_array('manage_all_requests', $admin_capabilities)) {
+                // Assign all request CRUD capabilities
+                $request_caps = array(
+                    'read_private_arsol_pfw_requests',      // view_all_requests
+                    'edit_others_arsol_pfw_requests',       // edit_all_requests
+                    'delete_others_arsol_pfw_requests',     // delete_all_requests
+                    'edit_arsol_pfw_requests',              // create_requests
+                    'publish_arsol_pfw_requests',           // create_requests
+                );
+                foreach ($request_caps as $cap) {
+                    $role->add_cap($cap);
+                }
+            }
+            
+            if (in_array('manage_all_proposals', $admin_capabilities)) {
+                // Assign all proposal CRUD capabilities
+                $proposal_caps = array(
+                    'read_private_arsol_pfw_proposals',     // view_all_proposals
+                    'edit_others_arsol_pfw_proposals',      // edit_all_proposals
+                    'delete_others_arsol_pfw_proposals',    // delete_all_proposals
+                    'edit_arsol_pfw_proposals',             // create_proposals
+                    'publish_arsol_pfw_proposals',          // create_proposals
+                );
+                foreach ($proposal_caps as $cap) {
+                    $role->add_cap($cap);
+                }
+            }
+            
+            // Assign management capabilities
+            if (in_array('manage_stages', $admin_capabilities)) {
+                $role->add_cap('arsol_pfw_manage_stages');
+            }
+            
+            if (in_array('manage_workflows', $admin_capabilities)) {
+                $role->add_cap('arsol_pfw_manage_workflows');
+            }
+            
+            if (in_array('manage_settings', $admin_capabilities)) {
+                $role->add_cap('arsol_pfw_manage_settings');
+            }
+            
+            if (in_array('manage_permissions', $admin_capabilities)) {
+                $role->add_cap('arsol_pfw_manage_permissions');
+            }
+        }
     }
 
     /**

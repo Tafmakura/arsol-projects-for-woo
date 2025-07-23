@@ -305,15 +305,11 @@ class Permissions {
         </label><br>
         <?php
         
-        // Actual configurable capabilities
+        // Actual configurable capabilities (simplified "manage all" approach)
         $configurable_capabilities = array(
-            'create_projects' => __('Can create projects', 'arsol-pfw'),
-            'create_requests' => __('Can create requests', 'arsol-pfw'),
-            'create_proposals' => __('Can create proposals', 'arsol-pfw'),
-            'manage_assigned_projects' => __('Can manage assigned projects', 'arsol-pfw'),
+            'manage_all_projects' => __('Can manage all projects', 'arsol-pfw'),
             'manage_all_requests' => __('Can manage all requests', 'arsol-pfw'),
             'manage_all_proposals' => __('Can manage all proposals', 'arsol-pfw'),
-            'manage_all_projects' => __('Can manage all projects', 'arsol-pfw'),
             'manage_stages' => __('Can manage stages', 'arsol-pfw'),
             'manage_workflows' => __('Can manage workflows', 'arsol-pfw'),
             'manage_settings' => __('Can manage settings', 'arsol-pfw'),

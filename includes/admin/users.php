@@ -255,38 +255,108 @@ class Users {
                     <?php
                     // Show override checkboxes for capabilities enabled in admin settings
                     $capability_labels = array(
+                        // Admin capabilities (global)
                         'manage_stages' => __('Can manage stages', 'arsol-pfw'),
                         'manage_workflows' => __('Can manage workflows', 'arsol-pfw'),
                         'manage_settings' => __('Can manage settings', 'arsol-pfw'),
-                        'manage_permissions' => __('Can manage permissions', 'arsol-pfw')
+                        'manage_permissions' => __('Can manage permissions', 'arsol-pfw'),
+                        
+                        // Project CRUD capabilities (conditional on manage_all_projects)
+                        'view_all_projects' => __('Can view all projects', 'arsol-pfw'),
+                        'edit_all_projects' => __('Can edit all projects', 'arsol-pfw'),
+                        'delete_all_projects' => __('Can delete all projects', 'arsol-pfw'),
+                        'create_projects' => __('Can create projects', 'arsol-pfw'),
+                        
+                        // Request CRUD capabilities (conditional on manage_all_requests)
+                        'view_all_requests' => __('Can view all requests', 'arsol-pfw'),
+                        'edit_all_requests' => __('Can edit all requests', 'arsol-pfw'),
+                        'delete_all_requests' => __('Can delete all requests', 'arsol-pfw'),
+                        'create_requests' => __('Can create requests', 'arsol-pfw'),
+                        
+                        // Proposal CRUD capabilities (conditional on manage_all_proposals)
+                        'view_all_proposals' => __('Can view all proposals', 'arsol-pfw'),
+                        'edit_all_proposals' => __('Can edit all proposals', 'arsol-pfw'),
+                        'delete_all_proposals' => __('Can delete all proposals', 'arsol-pfw'),
+                        'create_proposals' => __('Can create proposals', 'arsol-pfw'),
                     );
 
-                    foreach ($capability_labels as $cap_key => $cap_label) {
-                        // Only show if this capability is enabled in admin settings
+                    // Admin capabilities (always shown if enabled in admin)
+                    $admin_caps = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
+                    foreach ($admin_caps as $cap_key) {
                         if (in_array($cap_key, $admin_capabilities)) {
-                            // Get user's override setting for this capability
                             $user_override = get_user_meta($user->ID, 'arsol_pfw_manager_override_' . $cap_key, true);
-                            
-                            // Determine if checkbox should be checked
-                            $checked = '';
-                            if ($user_override === '1') {
-                                $checked = 'checked';
-                            } elseif ($user_override === '0') {
-                                $checked = '';
-                            } else {
-                                // No explicit override - use admin setting (which we know is enabled)
-                                $checked = 'checked';
-                            }
-                        ?>
-                        <label style="display: block; margin: 5px 0;">
+                            $checked = ($user_override === '1' || $user_override === '') ? 'checked' : '';
+                            $conditional_class = ($cap_key === 'manage_permissions') ? ' arsol-pfw-show-if-arsol-pfw-manager-override-manage_settings-is-checked' : '';
+                            ?>
+                            <label style="display: block; margin: 5px 0;"<?php echo $conditional_class ? ' class="' . esc_attr($conditional_class) . '"' : ''; ?>>
                                 <input type="checkbox" 
                                        name="arsol_pfw_manager_override_<?php echo esc_attr($cap_key); ?>" 
                                        value="1" 
                                        <?php echo $checked; ?>>
-                                <?php echo esc_html($cap_label); ?>
-                        </label>
-                        <?php
+                                <?php echo esc_html($capability_labels[$cap_key]); ?>
+                            </label>
+                            <?php
+                        }
                     }
+                    
+                    // Project CRUD capabilities (conditional on manage_all_projects)
+                    if (in_array('manage_all_projects', $admin_capabilities)) {
+                        echo '<br><strong>' . esc_html__('Projects:', 'arsol-pfw') . '</strong><br>';
+                        $project_caps = array('view_all_projects', 'edit_all_projects', 'delete_all_projects', 'create_projects');
+                        foreach ($project_caps as $cap_key) {
+                            $user_override = get_user_meta($user->ID, 'arsol_pfw_manager_override_' . $cap_key, true);
+                            $checked = ($user_override === '1' || $user_override === '') ? 'checked' : '';
+                            $conditional_class = ($cap_key !== 'view_all_projects') ? ' arsol-pfw-show-if-arsol-pfw-manager-override-view_all_projects-is-checked' : '';
+                            ?>
+                            <label style="display: block; margin: 5px 0;"<?php echo $conditional_class ? ' class="' . esc_attr($conditional_class) . '"' : ''; ?>>
+                                <input type="checkbox" 
+                                       name="arsol_pfw_manager_override_<?php echo esc_attr($cap_key); ?>" 
+                                       value="1" 
+                                       <?php echo $checked; ?>>
+                                <?php echo esc_html($capability_labels[$cap_key]); ?>
+                            </label>
+                            <?php
+                        }
+                    }
+                    
+                    // Request CRUD capabilities (conditional on manage_all_requests)
+                    if (in_array('manage_all_requests', $admin_capabilities)) {
+                        echo '<br><strong>' . esc_html__('Requests:', 'arsol-pfw') . '</strong><br>';
+                        $request_caps = array('view_all_requests', 'edit_all_requests', 'delete_all_requests', 'create_requests');
+                        foreach ($request_caps as $cap_key) {
+                            $user_override = get_user_meta($user->ID, 'arsol_pfw_manager_override_' . $cap_key, true);
+                            $checked = ($user_override === '1' || $user_override === '') ? 'checked' : '';
+                            $conditional_class = ($cap_key !== 'view_all_requests') ? ' arsol-pfw-show-if-arsol-pfw-manager-override-view_all_requests-is-checked' : '';
+                            ?>
+                            <label style="display: block; margin: 5px 0;"<?php echo $conditional_class ? ' class="' . esc_attr($conditional_class) . '"' : ''; ?>>
+                                <input type="checkbox" 
+                                       name="arsol_pfw_manager_override_<?php echo esc_attr($cap_key); ?>" 
+                                       value="1" 
+                                       <?php echo $checked; ?>>
+                                <?php echo esc_html($capability_labels[$cap_key]); ?>
+                            </label>
+                            <?php
+                        }
+                    }
+                    
+                    // Proposal CRUD capabilities (conditional on manage_all_proposals)
+                    if (in_array('manage_all_proposals', $admin_capabilities)) {
+                        echo '<br><strong>' . esc_html__('Proposals:', 'arsol-pfw') . '</strong><br>';
+                        $proposal_caps = array('view_all_proposals', 'edit_all_proposals', 'delete_all_proposals', 'create_proposals');
+                        foreach ($proposal_caps as $cap_key) {
+                            $user_override = get_user_meta($user->ID, 'arsol_pfw_manager_override_' . $cap_key, true);
+                            $checked = ($user_override === '1' || $user_override === '') ? 'checked' : '';
+                            $conditional_class = ($cap_key !== 'view_all_proposals') ? ' arsol-pfw-show-if-arsol-pfw-manager-override-view_all_proposals-is-checked' : '';
+                            ?>
+                            <label style="display: block; margin: 5px 0;"<?php echo $conditional_class ? ' class="' . esc_attr($conditional_class) . '"' : ''; ?>>
+                                <input type="checkbox" 
+                                       name="arsol_pfw_manager_override_<?php echo esc_attr($cap_key); ?>" 
+                                       value="1" 
+                                       <?php echo $checked; ?>>
+                                <?php echo esc_html($capability_labels[$cap_key]); ?>
+                            </label>
+                            <?php
+                        }
                     }
                     ?>
                 </td>
@@ -403,7 +473,19 @@ class Users {
         }
         
         // ✅ SIMPLIFIED: Save manager override settings
-        $capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
+        $capabilities = array(
+            // Admin capabilities
+            'manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions',
+            
+            // Project CRUD capabilities
+            'view_all_projects', 'edit_all_projects', 'delete_all_projects', 'create_projects',
+            
+            // Request CRUD capabilities
+            'view_all_requests', 'edit_all_requests', 'delete_all_requests', 'create_requests',
+            
+            // Proposal CRUD capabilities
+            'view_all_proposals', 'edit_all_proposals', 'delete_all_proposals', 'create_proposals'
+        );
         
         foreach ($capabilities as $cap) {
             $field_name = 'arsol_pfw_manager_override_' . $cap;
