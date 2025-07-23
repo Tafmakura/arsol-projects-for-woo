@@ -67,7 +67,7 @@ class Permissions {
         // Project Manager Capabilities
         add_settings_field(
             'project_manager_capabilities',
-            __('Manager Capabilities', 'arsol-pfw'),
+            '',
             array($this, 'render_manager_capabilities_field'),
             'arsol_pfw_permissions_settings',
             'arsol_project_manager_permissions',
@@ -80,7 +80,7 @@ class Permissions {
         // Manager Override Settings
         add_settings_field(
             'manager_override_settings',
-            __('Manager Override Settings', 'arsol-pfw'),
+            '',
             array($this, 'render_manager_override_field'),
             'arsol_pfw_permissions_settings',
             'arsol_project_manager_permissions',
@@ -341,7 +341,6 @@ class Permissions {
         
         <!-- Conditional select for default behavior -->
         <div class="arsol-pfw-show-if-arsol-pfw-allow-manager-overrides-is-checked" style="margin-top: 10px;">
-            <label for="arsol-pfw-manager-default-behavior"><?php echo esc_html__('New Project Manager Permissions:', 'arsol-pfw'); ?></label><br>
             <select id="arsol-pfw-manager-default-behavior"
                     name="arsol_pfw_permissions_settings[manager_default_behavior]">
                 <option value="enable_all" <?php selected($default_behavior, 'enable_all'); ?>>
