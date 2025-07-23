@@ -137,6 +137,19 @@ class General {
             )
         );
 
+        // Project Manager Capabilities
+        add_settings_field(
+            'project_manager_capabilities',
+            '',
+            array($this, 'render_manager_capabilities_field'),
+            'arsol_pfw_general_settings',
+            'arsol_projects_user_permissions',
+            array(
+                'description' => __('Additional capabilities for project managers. Administrators always have all permissions regardless of these settings.', 'arsol-pfw'),
+                'class' => 'arsol-pfw-manager-roles-field'
+            )
+        );
+
         // Project User Roles
         add_settings_field(
             'project_user_roles',
@@ -162,9 +175,9 @@ class General {
                 'field' => 'user_project_permissions',
                 'options' => array(
                     'none' => __('None', 'arsol-pfw'),
-                    'request_projects' => __('Users can request projects', 'arsol-pfw'),
-                    'create_projects' => __('Users can create projects', 'arsol-pfw'),
-                    'can_do_both' => __('Can do both', 'arsol-pfw'),
+                    'request_projects' => __('All users can request projects', 'arsol-pfw'),
+                    'create_projects' => __('All users can create projects', 'arsol-pfw'),
+                    'can_do_both' => __('All users can do both', 'arsol-pfw'),
                     'user_specific' => __('Set per user', 'arsol-pfw')
                 ),
                 'class' => 'arsol-pfw-frontend-permissions'
@@ -505,6 +518,46 @@ class General {
     }
 
     /**
+     * Render manager capabilities field
+     */
+    public function render_manager_capabilities_field($args) {
+        $settings = get_option('arsol_pfw_general_settings', array());
+        $capabilities = isset($settings['project_manager_capabilities']) ? $settings['project_manager_capabilities'] : array();
+        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
+        
+        // Default all capabilities to checked if not set
+        if (empty($capabilities)) {
+            $capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
+        }
+        
+        $all_capabilities = array(
+            'manage_stages' => __('Can manage stages', 'arsol-pfw'),
+            'manage_workflows' => __('Can manage workflows', 'arsol-pfw'),
+            'manage_settings' => __('Can manage settings', 'arsol-pfw'),
+            'manage_permissions' => __('Can manage permissions settings', 'arsol-pfw'),
+        );
+
+        echo "<div class='{$class}'>";
+        foreach ($all_capabilities as $cap_key => $cap_label) {
+            $checked = in_array($cap_key, $capabilities) ? 'checked' : '';
+            ?>
+            <label for="arsol-pfw-project-manager-capability-<?php echo esc_attr($cap_key); ?>">
+                <input type="checkbox"
+                       id="arsol-pfw-project-manager-capability-<?php echo esc_attr($cap_key); ?>"
+                       name="arsol_pfw_general_settings[project_manager_capabilities][]"
+                       value="<?php echo esc_attr($cap_key); ?>"
+                       <?php echo esc_attr($checked); ?>>
+                <?php echo esc_html($cap_label); ?>
+            </label><br>
+            <?php
+        }
+        echo "</div>";
+        if (!empty($args['description'])) {
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
+        }
+    }
+
+    /**
      * Render roles field
      */
     public function render_roles_field($args) {
@@ -719,6 +772,55 @@ class General {
                     break;
             }
         }
+
+        // Manager capabilities management
+        $manager_capabilities = isset($new_value['project_manager_capabilities']) ? $new_value['project_manager_capabilities'] : array();
+        
+        // Define the capability mappings
+        $capability_mappings = array(
+            'manage_stages' => 'arsol_pfw_manage_stages',
+            'manage_workflows' => 'arsol_pfw_manage_workflows',
+            'manage_settings' => 'arsol_pfw_manage_settings',
+            'manage_permissions' => 'arsol_pfw_manage_permissions'
+        );
+        
+        // Remove all manager capabilities from all roles first
+        foreach ($all_roles as $role_slug => $role_name) {
+            $role = get_role($role_slug);
+            if (!$role) {
+                continue;
+            }
+            
+            // Skip administrator - they always have all permissions
+            if ($role_slug === 'administrator') {
+                continue;
+            }
+            
+            // Remove all manager capabilities
+            foreach ($capability_mappings as $cap) {
+                $role->remove_cap($cap);
+            }
+        }
+        
+        // Grant capabilities to selected manager roles
+        foreach ($manage_roles as $role_slug) {
+            $role = get_role($role_slug);
+            if (!$role) {
+                continue;
+            }
+            
+            // Skip administrator - they always have all permissions
+            if ($role_slug === 'administrator') {
+                continue;
+            }
+            
+            // Grant selected capabilities
+            foreach ($manager_capabilities as $cap_key) {
+                if (isset($capability_mappings[$cap_key])) {
+                    $role->add_cap($capability_mappings[$cap_key]);
+                }
+            }
+        }
     }
 
     /**
@@ -911,10 +1013,18 @@ class General {
      * @return mixed Validated input
      */
     public function validate_settings($input) {
+        // Validate comment max depth
         $input['comment_max_depth'] = intval($input['comment_max_depth']);
         if ($input['comment_max_depth'] < 0 || $input['comment_max_depth'] > 5) {
             $input['comment_max_depth'] = 5; // Default to maximum if out of range
         }
+        
+        // Validate manager capabilities
+        if (isset($input['project_manager_capabilities'])) {
+            $valid_capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
+            $input['project_manager_capabilities'] = array_intersect($input['project_manager_capabilities'], $valid_capabilities);
+        }
+        
         return $input;
     }
 }
