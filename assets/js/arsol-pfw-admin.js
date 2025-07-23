@@ -201,7 +201,13 @@ jQuery(document).ready(function($) {
                 return; // Fail quietly
             }
             
-            var currentValue = $field.val();
+            // Handle both select fields and checkboxes
+            var currentValue;
+            if ($field.attr('type') === 'checkbox') {
+                currentValue = $field.is(':checked') ? 'checked' : 'unchecked';
+            } else {
+                currentValue = $field.val();
+            }
             
             console.log('ArsolConditionalVisibility: Updating field', fieldId, 'value:', currentValue);
             

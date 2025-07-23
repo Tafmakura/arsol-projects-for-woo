@@ -144,6 +144,7 @@ class Permissions {
 
         // Note: arsol-pfw-admin script and style are now handled by the Assets class
         // which includes the settings page in its enqueue logic
+        // Checkbox conditional visibility is now handled in arsol-pfw-admin.js
     }
 
     /**
@@ -247,14 +248,21 @@ class Permissions {
             'manage_stages' => __('Can manage stages', 'arsol-pfw'),
             'manage_workflows' => __('Can manage workflows', 'arsol-pfw'),
             'manage_settings' => __('Can manage settings', 'arsol-pfw'),
-            'manage_permissions' => __('Can manage permissions settings', 'arsol-pfw'),
+            'manage_permissions' => __('Can manage permissions', 'arsol-pfw'),
         );
 
         echo "<div class='{$class}'>";
         foreach ($all_capabilities as $cap_key => $cap_label) {
             $checked = in_array($cap_key, $capabilities) ? 'checked' : '';
+            
+            // Add conditional class for permissions checkbox
+            $conditional_class = '';
+            if ($cap_key === 'manage_permissions') {
+                $conditional_class = ' arsol-pfw-show-if-arsol-pfw-project-manager-capability-manage_settings-is-checked';
+            }
+            
             ?>
-            <label for="arsol-pfw-project-manager-capability-<?php echo esc_attr($cap_key); ?>">
+            <label for="arsol-pfw-project-manager-capability-<?php echo esc_attr($cap_key); ?>"<?php echo $conditional_class ? ' class="' . esc_attr($conditional_class) . '"' : ''; ?>>
                 <input type="checkbox"
                        id="arsol-pfw-project-manager-capability-<?php echo esc_attr($cap_key); ?>"
                        name="arsol_pfw_permissions_settings[project_manager_capabilities][]"
@@ -542,6 +550,11 @@ class Permissions {
         if (isset($input['project_manager_capabilities'])) {
             $valid_capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
             $input['project_manager_capabilities'] = array_intersect($input['project_manager_capabilities'], $valid_capabilities);
+            
+            // If manage_settings is not checked, remove manage_permissions
+            if (!in_array('manage_settings', $input['project_manager_capabilities'])) {
+                $input['project_manager_capabilities'] = array_diff($input['project_manager_capabilities'], array('manage_permissions'));
+            }
         }
         
         return $input;
