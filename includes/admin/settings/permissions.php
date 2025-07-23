@@ -261,19 +261,27 @@ class Permissions {
         }
         
         echo "<div class='{$class}'>";
+        
+        // Dummy checkbox for administrator (always enabled)
+        if (isset($admin_roles['administrator'])) {
+            echo '<label>';
+            echo '<input type="checkbox" checked disabled> ';
+            echo esc_html($admin_roles['administrator']['name']);
+            echo ' <em>(' . esc_html__('always enabled', 'arsol-pfw') . ')</em>';
+            echo '</label><br>';
+        }
+        
+        // Actual configurable roles (excluding administrator)
         foreach ($admin_roles as $role => $details) {
-            $is_admin = ($role === 'administrator');
-            $checked = ($is_admin || in_array($role, $selected_roles)) ? 'checked' : '';
-            $disabled = $is_admin ? 'disabled' : '';
+            if ($role === 'administrator') {
+                continue; // Skip administrator as it's handled above
+            }
+            
+            $checked = in_array($role, $selected_roles) ? 'checked' : '';
             
             echo '<label>';
-            echo '<input type="checkbox" name="arsol_pfw_permissions_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . ' ' . $disabled . '> ';
+            echo '<input type="checkbox" name="arsol_pfw_permissions_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . '> ';
             echo esc_html($details['name']);
-            if ($is_admin) {
-                echo ' <em>(' . esc_html__('always enabled', 'arsol-pfw') . ')</em>';
-                // Add a hidden input to ensure the administrator role is always submitted
-                echo '<input type="hidden" name="arsol_pfw_permissions_settings[' . esc_attr($field_name) . '][]" value="administrator">';
-            }
             echo '</label><br>';
         }
         
@@ -310,7 +318,6 @@ class Permissions {
             <?php echo esc_html__('Can manage assigned projects', 'arsol-pfw'); ?>
             <em>(<?php echo esc_html__('always enabled', 'arsol-pfw'); ?>)</em>
         </label><br>
-        <input type="hidden" name="arsol_pfw_permissions_settings[project_manager_capabilities][]" value="manage_assigned_projects">
         <?php
         
         // Actual configurable capabilities
@@ -429,19 +436,27 @@ class Permissions {
         });
 
         echo "<div class='{$class}'>";
+        
+        // Dummy checkbox for administrator (always enabled)
+        if (isset($editable_roles['administrator'])) {
+            echo '<label>';
+            echo '<input type="checkbox" checked disabled> ';
+            echo esc_html($editable_roles['administrator']['name']);
+            echo ' <em>(' . esc_html__('always enabled', 'arsol-pfw') . ')</em>';
+            echo '</label><br>';
+        }
+        
+        // Actual configurable roles (excluding administrator)
         foreach ($editable_roles as $role => $details) {
-            $is_admin = ($role === 'administrator');
-            $checked = ($is_admin || in_array($role, $selected_roles)) ? 'checked' : '';
-            $disabled = $is_admin ? 'disabled' : '';
+            if ($role === 'administrator') {
+                continue; // Skip administrator as it's handled above
+            }
+            
+            $checked = in_array($role, $selected_roles) ? 'checked' : '';
 
             echo '<label>';
-            echo '<input type="checkbox" name="arsol_pfw_permissions_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . ' ' . $disabled . '> ';
+            echo '<input type="checkbox" name="arsol_pfw_permissions_settings[' . esc_attr($field_name) . '][]" value="' . esc_attr($role) . '" ' . $checked . '> ';
             echo esc_html($details['name']);
-            if ($is_admin) {
-                echo ' <em>(' . esc_html__('always enabled', 'arsol-pfw') . ')</em>';
-                // Add a hidden input to ensure the administrator role is always submitted
-                echo '<input type="hidden" name="arsol_pfw_permissions_settings[' . esc_attr($field_name) . '][]" value="administrator">';
-            }
             echo '</label><br>';
         }
 
