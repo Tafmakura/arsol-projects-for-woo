@@ -293,10 +293,17 @@ class Permissions {
         
         // Default all capabilities to checked if not set
         if (empty($capabilities)) {
-            $capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
+            $capabilities = array(
+                'manage_assigned_projects', 'manage_all_requests', 'manage_all_proposals', 'manage_all_projects',
+                'manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions'
+            );
         }
         
         $all_capabilities = array(
+            'manage_assigned_projects' => __('Can manage assigned projects', 'arsol-pfw'),
+            'manage_all_requests' => __('Can manage all requests', 'arsol-pfw'),
+            'manage_all_proposals' => __('Can manage all proposals', 'arsol-pfw'),
+            'manage_all_projects' => __('Can manage all projects', 'arsol-pfw'),
             'manage_stages' => __('Can manage stages', 'arsol-pfw'),
             'manage_workflows' => __('Can manage workflows', 'arsol-pfw'),
             'manage_settings' => __('Can manage settings', 'arsol-pfw'),
@@ -706,7 +713,10 @@ class Permissions {
     public function validate_settings($input) {
         // Validate manager capabilities
         if (isset($input['project_manager_capabilities'])) {
-            $valid_capabilities = array('manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions');
+            $valid_capabilities = array(
+                'manage_assigned_projects', 'manage_all_requests', 'manage_all_proposals', 'manage_all_projects',
+                'manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions'
+            );
             $input['project_manager_capabilities'] = array_intersect($input['project_manager_capabilities'], $valid_capabilities);
             
             // If manage_settings is not checked, remove manage_permissions

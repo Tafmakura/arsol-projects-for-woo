@@ -277,61 +277,72 @@ class Users {
                         $user_capabilities = array();
                     }
 
-                    // Requests
-                    $can_edit_all_requests = in_array('edit_all_requests', $user_capabilities);
-                    $can_create_requests = in_array('create_requests', $user_capabilities);
-                    $can_delete_requests = in_array('delete_requests', $user_capabilities);
-                    ?>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" name="arsol_pfw_manager_edit_all_requests" value="1" <?php echo $can_edit_all_requests ? 'checked' : ''; ?>>
-                        <?php echo esc_html__('Can edit all requests', 'arsol-pfw'); ?>
-                    </label>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" name="arsol_pfw_manager_create_requests" value="1" <?php echo $can_create_requests ? 'checked' : ''; ?>>
-                        <?php echo esc_html__('Can create requests', 'arsol-pfw'); ?>
-                    </label>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" name="arsol_pfw_manager_delete_requests" value="1" <?php echo $can_delete_requests ? 'checked' : ''; ?>>
-                        <?php echo esc_html__('Can delete requests', 'arsol-pfw'); ?>
-                    </label>
+                    // Check admin capabilities to determine which granular capabilities to show
+                    $admin_capabilities = isset($settings['project_manager_capabilities']) ? $settings['project_manager_capabilities'] : array();
 
-                    <?php
-                    // Proposals
-                    $can_edit_all_proposals = in_array('edit_all_proposals', $user_capabilities);
-                    $can_create_proposals = in_array('create_proposals', $user_capabilities);
-                    $can_delete_proposals = in_array('delete_proposals', $user_capabilities);
-                    ?>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" name="arsol_pfw_manager_edit_all_proposals" value="1" <?php echo $can_edit_all_proposals ? 'checked' : ''; ?>>
-                        <?php echo esc_html__('Can edit all proposals', 'arsol-pfw'); ?>
-                    </label>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" name="arsol_pfw_manager_create_proposals" value="1" <?php echo $can_create_proposals ? 'checked' : ''; ?>>
-                        <?php echo esc_html__('Can create proposals', 'arsol-pfw'); ?>
-                    </label>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" name="arsol_pfw_manager_delete_proposals" value="1" <?php echo $can_delete_proposals ? 'checked' : ''; ?>>
-                        <?php echo esc_html__('Can delete proposals', 'arsol-pfw'); ?>
-                    </label>
+                    // Requests - only show if manage_all_requests is enabled in admin
+                    if (in_array('manage_all_requests', $admin_capabilities)) {
+                        $can_edit_all_requests = in_array('edit_all_requests', $user_capabilities);
+                        $can_create_requests = in_array('create_requests', $user_capabilities);
+                        $can_delete_requests = in_array('delete_requests', $user_capabilities);
+                        ?>
+                        <label style="display: block; margin: 5px 0;">
+                            <input type="checkbox" name="arsol_pfw_manager_edit_all_requests" value="1" <?php echo $can_edit_all_requests ? 'checked' : ''; ?>>
+                            <?php echo esc_html__('Can edit all requests', 'arsol-pfw'); ?>
+                        </label>
+                        <label style="display: block; margin: 5px 0;">
+                            <input type="checkbox" name="arsol_pfw_manager_create_requests" value="1" <?php echo $can_create_requests ? 'checked' : ''; ?>>
+                            <?php echo esc_html__('Can create requests', 'arsol-pfw'); ?>
+                        </label>
+                        <label style="display: block; margin: 5px 0;">
+                            <input type="checkbox" name="arsol_pfw_manager_delete_requests" value="1" <?php echo $can_delete_requests ? 'checked' : ''; ?>>
+                            <?php echo esc_html__('Can delete requests', 'arsol-pfw'); ?>
+                        </label>
+                        <?php
+                    }
 
-                    <?php
-                    // Projects
-                    $can_edit_all_projects = in_array('edit_all_projects', $user_capabilities);
-                    $can_create_projects = in_array('create_projects', $user_capabilities);
-                    $can_delete_projects = in_array('delete_projects', $user_capabilities);
+                    // Proposals - only show if manage_all_proposals is enabled in admin
+                    if (in_array('manage_all_proposals', $admin_capabilities)) {
+                        $can_edit_all_proposals = in_array('edit_all_proposals', $user_capabilities);
+                        $can_create_proposals = in_array('create_proposals', $user_capabilities);
+                        $can_delete_proposals = in_array('delete_proposals', $user_capabilities);
+                        ?>
+                        <label style="display: block; margin: 5px 0;">
+                            <input type="checkbox" name="arsol_pfw_manager_edit_all_proposals" value="1" <?php echo $can_edit_all_proposals ? 'checked' : ''; ?>>
+                            <?php echo esc_html__('Can edit all proposals', 'arsol-pfw'); ?>
+                        </label>
+                        <label style="display: block; margin: 5px 0;">
+                            <input type="checkbox" name="arsol_pfw_manager_create_proposals" value="1" <?php echo $can_create_proposals ? 'checked' : ''; ?>>
+                            <?php echo esc_html__('Can create proposals', 'arsol-pfw'); ?>
+                        </label>
+                        <label style="display: block; margin: 5px 0;">
+                            <input type="checkbox" name="arsol_pfw_manager_delete_proposals" value="1" <?php echo $can_delete_proposals ? 'checked' : ''; ?>>
+                            <?php echo esc_html__('Can delete proposals', 'arsol-pfw'); ?>
+                        </label>
+                        <?php
+                    }
+
+                    // Projects - only show if manage_all_projects is enabled in admin
+                    if (in_array('manage_all_projects', $admin_capabilities)) {
+                        $can_edit_all_projects = in_array('edit_all_projects', $user_capabilities);
+                        $can_create_projects = in_array('create_projects', $user_capabilities);
+                        $can_delete_projects = in_array('delete_projects', $user_capabilities);
+                        ?>
+                        <label style="display: block; margin: 5px 0;">
+                            <input type="checkbox" name="arsol_pfw_manager_edit_all_projects" value="1" <?php echo $can_edit_all_projects ? 'checked' : ''; ?>>
+                            <?php echo esc_html__('Can edit all projects', 'arsol-pfw'); ?>
+                        </label>
+                        <label style="display: block; margin: 5px 0;">
+                            <input type="checkbox" name="arsol_pfw_manager_create_projects" value="1" <?php echo $can_create_projects ? 'checked' : ''; ?>>
+                            <?php echo esc_html__('Can create projects', 'arsol-pfw'); ?>
+                        </label>
+                        <label style="display: block; margin: 5px 0;">
+                            <input type="checkbox" name="arsol_pfw_manager_delete_projects" value="1" <?php echo $can_delete_projects ? 'checked' : ''; ?>>
+                            <?php echo esc_html__('Can delete projects', 'arsol-pfw'); ?>
+                        </label>
+                        <?php
+                    }
                     ?>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" name="arsol_pfw_manager_edit_all_projects" value="1" <?php echo $can_edit_all_projects ? 'checked' : ''; ?>>
-                        <?php echo esc_html__('Can edit all projects', 'arsol-pfw'); ?>
-                    </label>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" name="arsol_pfw_manager_create_projects" value="1" <?php echo $can_create_projects ? 'checked' : ''; ?>>
-                        <?php echo esc_html__('Can create projects', 'arsol-pfw'); ?>
-                    </label>
-                    <label style="display: block; margin: 5px 0;">
-                        <input type="checkbox" name="arsol_pfw_manager_delete_projects" value="1" <?php echo $can_delete_projects ? 'checked' : ''; ?>>
-                        <?php echo esc_html__('Can delete projects', 'arsol-pfw'); ?>
-                    </label>
                 </td>
             </tr>
             <?php endif; ?>
