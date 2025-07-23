@@ -307,6 +307,10 @@ class Permissions {
         
         // Actual configurable capabilities
         $configurable_capabilities = array(
+            'create_projects' => __('Can create projects', 'arsol-pfw'),
+            'create_requests' => __('Can create requests', 'arsol-pfw'),
+            'create_proposals' => __('Can create proposals', 'arsol-pfw'),
+            'manage_assigned_projects' => __('Can manage assigned projects', 'arsol-pfw'),
             'manage_all_requests' => __('Can manage all requests', 'arsol-pfw'),
             'manage_all_proposals' => __('Can manage all proposals', 'arsol-pfw'),
             'manage_all_projects' => __('Can manage all projects', 'arsol-pfw'),
@@ -462,8 +466,21 @@ class Permissions {
      * Update capabilities when settings are saved
      */
     public function update_capabilities($old_value, $new_value) {
-        // Use Capabilities_Handler to update capabilities from settings
-        \Arsol_Projects_For_Woo\Core\Capabilities_Handler::update_capabilities_from_settings($new_value);
+        // Use specific Capabilities_Handler methods for better separation of concerns
+        
+        // Update project manager roles if changed
+        if (isset($new_value['project_manager_roles']) && 
+            (!isset($old_value['project_manager_roles']) || 
+             $new_value['project_manager_roles'] !== $old_value['project_manager_roles'])) {
+            \Arsol_Projects_For_Woo\Core\Capabilities_Handler::update_project_manager_roles($new_value['project_manager_roles']);
+        }
+
+        // Update frontend permissions if changed
+        if (isset($new_value['user_project_permissions']) && 
+            (!isset($old_value['user_project_permissions']) || 
+             $new_value['user_project_permissions'] !== $old_value['user_project_permissions'])) {
+            \Arsol_Projects_For_Woo\Core\Capabilities_Handler::update_frontend_permissions($new_value['user_project_permissions']);
+        }
     }
 
     /**
@@ -476,6 +493,7 @@ class Permissions {
         // Validate manager capabilities
         if (isset($input['project_manager_capabilities'])) {
             $valid_capabilities = array(
+                'create_projects', 'create_requests', 'create_proposals',
                 'manage_assigned_projects', 'manage_all_requests', 'manage_all_proposals', 'manage_all_projects',
                 'manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions'
             );

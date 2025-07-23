@@ -157,15 +157,27 @@ class Capabilities_Handler {
     }
 
     /**
-     * Check if user has override for a specific capability
+     * Check if user has an override for a specific capability
      *
      * @param int $user_id User ID
      * @param string $capability Capability to check
-     * @return bool Whether user has override for this capability
+     * @return bool Whether user has an override set for this capability
      */
-    public static function has_manager_override_capability($user_id, $capability) {
+    public static function has_manager_capability_override($user_id, $capability) {
         $override_value = get_user_meta($user_id, 'arsol_pfw_manager_override_' . $capability, true);
-        return $override_value === '1';
+        return $override_value === '1' || $override_value === '0'; // Has override if value is set
+    }
+
+    /**
+     * Get user's override value for a specific capability
+     *
+     * @param int $user_id User ID
+     * @param string $capability Capability to check
+     * @return string|null Override value ('1' for enabled, '0' for disabled, null if no override)
+     */
+    public static function get_manager_capability_override($user_id, $capability) {
+        $override_value = get_user_meta($user_id, 'arsol_pfw_manager_override_' . $capability, true);
+        return ($override_value === '1' || $override_value === '0') ? $override_value : null;
     }
 
     /**
@@ -192,7 +204,10 @@ class Capabilities_Handler {
             'manage_stages' => 'manage_arsol_pfw_stages',
             'manage_workflows' => 'manage_arsol_pfw_workflows', 
             'manage_settings' => 'manage_arsol_pfw_settings',
-            'manage_permissions' => 'manage_arsol_pfw_permissions'
+            'manage_permissions' => 'manage_arsol_pfw_permissions',
+            'create_projects' => 'edit_arsol_pfw_projects',
+            'create_requests' => 'edit_arsol_pfw_requests',
+            'create_proposals' => 'edit_arsol_pfw_proposals'
         );
 
         $wp_capability = isset($capability_mappings[$capability]) ? $capability_mappings[$capability] : $capability;
@@ -212,7 +227,7 @@ class Capabilities_Handler {
         }
 
         // ✅ STEP 4: Overrides are enabled - check user override state
-        $user_override = get_user_meta($user_id, 'arsol_pfw_manager_override_' . $capability, true);
+        $user_override = self::get_manager_capability_override($user_id, $capability);
         
         if ($user_override === '1') {
             return true; // Explicitly enabled
@@ -379,7 +394,7 @@ class Capabilities_Handler {
     // ========================================
 
     /**
-     * Check if user can create projects (with override support)
+     * Check if user can create projects (default enabled, can be disabled by override)
      *
      * @param int $user_id User ID (optional, defaults to current user)
      * @return bool Whether user can create projects
@@ -389,34 +404,42 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Admins always can create
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
         // Check WordPress capability first
         $user = get_user_by('id', $user_id);
         if (!$user || !$user->has_cap('edit_arsol_pfw_projects')) {
             return false;
         }
 
-        // Check global settings
+        // Project managers: check if creation is disabled by override
+        if (self::is_manager($user_id)) {
+            $override_value = self::get_manager_capability_override($user_id, 'create_projects');
+            return $override_value !== '0'; // Return true unless explicitly disabled
+        }
+        
+        // Customers: check frontend permissions (default enabled, can be disabled)
         $settings = get_option('arsol_pfw_permissions_settings', array());
-        $global_setting = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'none';
+        $global_setting = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'create';
         
         if ($global_setting === 'none') {
             return false;
         }
         
-        if ($global_setting === 'create') {
-            return true;
-        }
-        
         if ($global_setting === 'user_specific') {
             $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
-            return $user_permission === 'create';
+            return $user_permission !== 'none';
         }
         
-        return false;
+        // Default: can create (for 'create', 'request', etc.)
+        return true;
     }
 
     /**
-     * Check if user can create requests (with override support)
+     * Check if user can create requests (default enabled, can be disabled by override)
      *
      * @param int $user_id User ID (optional, defaults to current user)
      * @return bool Whether user can create requests
@@ -426,30 +449,83 @@ class Capabilities_Handler {
             $user_id = get_current_user_id();
         }
         
+        // Admins always can create
+        if (current_user_can('manage_options')) {
+            return true;
+        }
+        
         // Check WordPress capability first
         $user = get_user_by('id', $user_id);
         if (!$user || !$user->has_cap('edit_arsol_pfw_requests')) {
             return false;
         }
 
-        // Check global settings
+        // Project managers: check if creation is disabled by override
+        if (self::is_manager($user_id)) {
+            $override_value = self::get_manager_capability_override($user_id, 'create_requests');
+            return $override_value !== '0'; // Return true unless explicitly disabled
+        }
+        
+        // Customers: check frontend permissions (default enabled, can be disabled)
         $settings = get_option('arsol_pfw_permissions_settings', array());
-        $global_setting = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'none';
+        $global_setting = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'create';
         
         if ($global_setting === 'none') {
             return false;
         }
         
-        if ($global_setting === 'request' || $global_setting === 'create') {
+        if ($global_setting === 'user_specific') {
+            $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
+            return $user_permission !== 'none';
+        }
+        
+        // Default: can create (for 'create', 'request', etc.)
+        return true;
+    }
+
+    /**
+     * Check if user can create proposals (default enabled, can be disabled by override)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can create proposals
+     */
+    public static function can_create_proposals($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        // Admins always can create
+        if (current_user_can('manage_options')) {
             return true;
+        }
+        
+        // Check WordPress capability first
+        $user = get_user_by('id', $user_id);
+        if (!$user || !$user->has_cap('edit_arsol_pfw_proposals')) {
+            return false;
+        }
+
+        // Project managers: check if creation is disabled by override
+        if (self::is_manager($user_id)) {
+            $override_value = self::get_manager_capability_override($user_id, 'create_proposals');
+            return $override_value !== '0'; // Return true unless explicitly disabled
+        }
+        
+        // Customers: check frontend permissions (default enabled, can be disabled)
+        $settings = get_option('arsol_pfw_permissions_settings', array());
+        $global_setting = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'create';
+        
+        if ($global_setting === 'none') {
+            return false;
         }
         
         if ($global_setting === 'user_specific') {
             $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
-            return in_array($user_permission, array('request', 'create'));
+            return $user_permission !== 'none';
         }
         
-        return false;
+        // Default: can create (for 'create', 'request', etc.)
+        return true;
     }
 
     /**
@@ -1018,87 +1094,19 @@ class Capabilities_Handler {
         return !empty($projects);
     }
 
-    /**
-     * Get user's effective permission level
-     *
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return string Permission level: 'manager', 'creator', 'customer', or 'none'
-     */
-    public static function get_effective_permission_level($user_id = null) {
-        if (!$user_id) {
-            $user_id = get_current_user_id();
-        }
-        
-        if (self::is_manager($user_id)) {
-            return 'manager';
-        }
-        
-        if (self::can_create_projects($user_id) || self::can_create_requests($user_id) || self::can_create_proposals($user_id)) {
-            return 'creator';
-        }
-        
-        if (self::is_project_customer($user_id)) {
-            return 'customer';
-        }
-        
-        return 'none';
-    }
 
-    /**
-     * Get user's admin permission level (includes project leads)
-     *
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return string Permission level: 'manager', 'creator', 'project_lead', 'customer', or 'none'
-     */
-    public static function get_admin_permission_level($user_id = null) {
-        if (!$user_id) {
-            $user_id = get_current_user_id();
-        }
-        
-        if (self::is_manager($user_id)) {
-            return 'manager';
-        }
-        
-        if (self::can_create_projects($user_id) || self::can_create_requests($user_id) || self::can_create_proposals($user_id)) {
-            return 'creator';
-        }
-        
-        if (self::is_project_lead($user_id)) {
-            return 'project_lead';
-        }
-        
-        if (self::is_project_customer($user_id)) {
-            return 'customer';
-        }
-        
-        return 'none';
-    }
 
     // ========================================
     // WORDPRESS CAPABILITY ASSIGNMENT METHODS
     // ========================================
 
     /**
-     * Update capabilities based on settings
-     * Called when settings are saved
+     * Update project manager roles
      *
-     * @param array $settings The settings array
+     * @param array $role_slugs Array of role slugs to assign manager capabilities
      */
-    public static function update_capabilities_from_settings($settings) {
-        // Update project manager roles
-        if (isset($settings['project_manager_roles'])) {
-            self::assign_capabilities_to_roles($settings['project_manager_roles'], 'manager');
-        }
-
-        // Update creator roles
-        if (isset($settings['creator_roles'])) {
-            self::assign_capabilities_to_roles($settings['creator_roles'], 'creator');
-        }
-
-        // Update frontend permissions for customer role
-        if (isset($settings['user_project_permissions'])) {
-            self::update_frontend_permissions($settings['user_project_permissions']);
-        }
+    public static function update_project_manager_roles($role_slugs) {
+        self::assign_capabilities_to_roles($role_slugs, 'manager');
     }
 
     /**
@@ -1106,7 +1114,7 @@ class Capabilities_Handler {
      *
      * @param string $permission_level The permission level ('none', 'request', 'create', 'user_specific')
      */
-    private static function update_frontend_permissions($permission_level) {
+    public static function update_frontend_permissions($permission_level) {
         $customer_role = get_role('customer');
         if (!$customer_role) {
             return;
@@ -1126,24 +1134,42 @@ class Capabilities_Handler {
         
         // Grant capabilities based on selected permission level
         switch ($permission_level) {
+            case 'none':
+                // No capabilities granted - creation disabled
+                break;
+                
             case 'request':
                 $customer_role->add_cap('edit_arsol_pfw_requests');
                 $customer_role->add_cap('publish_arsol_pfw_requests');
                 break;
                 
             case 'create':
+            case 'user_specific':
+            default:
+                // Default: grant all creation capabilities (can be disabled by individual settings)
                 $customer_role->add_cap('edit_arsol_pfw_projects');
                 $customer_role->add_cap('publish_arsol_pfw_projects');
+                $customer_role->add_cap('edit_arsol_pfw_requests');
+                $customer_role->add_cap('publish_arsol_pfw_requests');
                 break;
-                
-            case 'user_specific':
-                // Don't grant any global capabilities - let individual user settings handle it
-                break;
-                
-            case 'none':
-            default:
-                // No capabilities granted
-                break;
+        }
+    }
+
+    /**
+     * Update capabilities based on settings (legacy method for backward compatibility)
+     * 
+     * @deprecated Use specific update methods instead
+     * @param array $settings The settings array
+     */
+    public static function update_capabilities_from_settings($settings) {
+        // Update project manager roles
+        if (isset($settings['project_manager_roles'])) {
+            self::update_project_manager_roles($settings['project_manager_roles']);
+        }
+
+        // Update frontend permissions for customer role
+        if (isset($settings['user_project_permissions'])) {
+            self::update_frontend_permissions($settings['user_project_permissions']);
         }
     }
 
@@ -1211,111 +1237,5 @@ class Capabilities_Handler {
         }
     }
 
-    /**
-     * Get all available roles for capability assignment
-     *
-     * @return array Array of role slugs and names
-     */
-    public static function get_available_roles() {
-        $roles = wp_roles()->get_names();
-        $available_roles = array();
 
-        foreach ($roles as $role_slug => $role_name) {
-            $role = get_role($role_slug);
-            if ($role && ($role->has_cap('manage_options') || $role->has_cap('edit_posts'))) {
-                $available_roles[$role_slug] = $role_name;
-            }
-        }
-
-        return $available_roles;
-    }
-
-    /**
-     * Get roles that have specific capabilities
-     *
-     * @param string $capability Capability to check
-     * @return array Array of role slugs
-     */
-    public static function get_roles_with_capability($capability) {
-        $roles = wp_roles()->get_names();
-        $roles_with_cap = array();
-
-        foreach ($roles as $role_slug => $role_name) {
-            $role = get_role($role_slug);
-            if ($role && $role->has_cap($capability)) {
-                $roles_with_cap[] = $role_slug;
-            }
-        }
-
-        return $roles_with_cap;
-    }
-
-    /**
-     * Check if a role has specific capabilities
-     *
-     * @param string $role_slug  Role slug
-     * @param array  $capabilities Array of capabilities to check
-     * @return bool Whether role has all capabilities
-     */
-    public static function role_has_capabilities($role_slug, $capabilities) {
-        $role = get_role($role_slug);
-        if (!$role) {
-            return false;
-        }
-
-        foreach ($capabilities as $capability) {
-            if (!$role->has_cap($capability)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Get capability summary for a role
-     *
-     * @param string $role_slug Role slug
-     * @return array Array of capability information
-     */
-    public static function get_role_capability_summary($role_slug) {
-        $role = get_role($role_slug);
-        if (!$role) {
-            return array();
-        }
-
-        $capabilities = array(
-            'arsol_pfw_manage' => 'Full Plugin Access',
-            'edit_arsol_pfw_projects' => 'Edit Own Projects',
-            'edit_others_arsol_pfw_projects' => 'Edit Others Projects',
-            'publish_arsol_pfw_projects' => 'Publish Projects',
-            'delete_arsol_pfw_projects' => 'Delete Own Projects',
-            'delete_others_arsol_pfw_projects' => 'Delete Others Projects',
-            'edit_arsol_pfw_proposals' => 'Edit Own Proposals',
-            'edit_others_arsol_pfw_proposals' => 'Edit Others Proposals',
-            'publish_arsol_pfw_proposals' => 'Publish Proposals',
-            'delete_arsol_pfw_proposals' => 'Delete Own Proposals',
-            'delete_others_arsol_pfw_proposals' => 'Delete Others Proposals',
-            'edit_arsol_pfw_requests' => 'Edit Own Requests',
-            'edit_others_arsol_pfw_requests' => 'Edit Others Requests',
-            'publish_arsol_pfw_requests' => 'Publish Requests',
-            'delete_arsol_pfw_requests' => 'Delete Own Requests',
-            'delete_others_arsol_pfw_requests' => 'Delete Others Requests',
-            // Management capabilities
-            'manage_arsol_pfw_stages' => 'Manage Stages',
-            'manage_arsol_pfw_workflows' => 'Manage Workflows',
-            'manage_arsol_pfw_settings' => 'Manage Settings',
-            'manage_arsol_pfw_permissions' => 'Manage Permissions',
-        );
-
-        $summary = array();
-        foreach ($capabilities as $cap => $description) {
-            $summary[$cap] = array(
-                'description' => $description,
-                'has_cap' => $role->has_cap($cap)
-            );
-        }
-
-        return $summary;
-    }
 } 
