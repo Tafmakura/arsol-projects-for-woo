@@ -305,9 +305,11 @@ class Workflow_Handler {
         
         // Check if customer exists
         if ($proposal) {
-            $customer = new \WC_Customer($proposal->post_author);
+            $customer_id = get_post_meta($proposal_id, '_arsol_pfw_customer_id', true);
+            $customer = $customer_id ? new \WC_Customer($customer_id) : null;
             $debug_info['customer_exists'] = $customer && $customer->get_id();
             $debug_info['customer_email'] = $customer ? $customer->get_billing_email() : 'N/A';
+            $debug_info['customer_id'] = $customer_id ?: 'N/A';
         }
         
         // Check WooCommerce Subscriptions

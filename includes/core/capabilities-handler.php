@@ -470,13 +470,25 @@ class Capabilities_Handler {
             return false;
         }
 
-        // If project_id provided, check ownership
+        // If project_id provided, check ownership (post author or customer)
         if ($project_id) {
             $project = get_post($project_id);
             if (!$project || $project->post_type !== 'arsol_pfw_project') {
                 return false;
             }
-            return $project->post_author == $user_id;
+            
+            // Check if user is post author (creator)
+            if ($project->post_author == $user_id) {
+                return true;
+            }
+            
+            // Check if user is assigned customer
+            $customer_id = get_post_meta($project_id, '_arsol_pfw_customer_id', true);
+            if ((int) $customer_id === (int) $user_id) {
+                return true;
+            }
+            
+            return false;
         }
         
         return true;
@@ -500,13 +512,25 @@ class Capabilities_Handler {
             return false;
         }
 
-        // If request_id provided, check ownership
+        // If request_id provided, check ownership (post author or customer)
         if ($request_id) {
             $request = get_post($request_id);
             if (!$request || $request->post_type !== 'arsol_pfw_request') {
                 return false;
             }
-            return $request->post_author == $user_id;
+            
+            // Check if user is post author (creator)
+            if ($request->post_author == $user_id) {
+                return true;
+            }
+            
+            // Check if user is assigned customer
+            $customer_id = get_post_meta($request_id, '_arsol_pfw_customer_id', true);
+            if ((int) $customer_id === (int) $user_id) {
+                return true;
+            }
+            
+            return false;
         }
         
         return true;
@@ -530,13 +554,25 @@ class Capabilities_Handler {
             return false;
         }
 
-        // If proposal_id provided, check ownership
+        // If proposal_id provided, check ownership (post author or customer)
         if ($proposal_id) {
             $proposal = get_post($proposal_id);
             if (!$proposal || $proposal->post_type !== 'arsol_pfw_proposal') {
                 return false;
             }
-            return $proposal->post_author == $user_id;
+            
+            // Check if user is post author (creator)
+            if ($proposal->post_author == $user_id) {
+                return true;
+            }
+            
+            // Check if user is assigned customer
+            $customer_id = get_post_meta($proposal_id, '_arsol_pfw_customer_id', true);
+            if ((int) $customer_id === (int) $user_id) {
+                return true;
+            }
+            
+            return false;
         }
         
         return true;
@@ -628,8 +664,14 @@ class Capabilities_Handler {
                 return false;
             }
             
-            // If it's their own project, they can delete it
+            // If it's their own project (post author), they can delete it
             if ($project->post_author == $user_id) {
+                return true;
+            }
+            
+            // If it's their assigned project (customer), they can delete it
+            $customer_id = get_post_meta($project_id, '_arsol_pfw_customer_id', true);
+            if ((int) $customer_id === (int) $user_id) {
                 return true;
             }
             
@@ -669,8 +711,14 @@ class Capabilities_Handler {
                 return false;
             }
             
-            // If it's their own request, they can delete it
+            // If it's their own request (post author), they can delete it
             if ($request->post_author == $user_id) {
+                return true;
+            }
+            
+            // If it's their assigned request (customer), they can delete it
+            $customer_id = get_post_meta($request_id, '_arsol_pfw_customer_id', true);
+            if ((int) $customer_id === (int) $user_id) {
                 return true;
             }
             
@@ -710,8 +758,14 @@ class Capabilities_Handler {
                 return false;
             }
             
-            // If it's their own proposal, they can delete it
+            // If it's their own proposal (post author), they can delete it
             if ($proposal->post_author == $user_id) {
+                return true;
+            }
+            
+            // If it's their assigned proposal (customer), they can delete it
+            $customer_id = get_post_meta($proposal_id, '_arsol_pfw_customer_id', true);
+            if ((int) $customer_id === (int) $user_id) {
                 return true;
             }
             
@@ -856,7 +910,7 @@ class Capabilities_Handler {
     }
 
     /**
-     * Check if user is a manager (has management capabilities)
+     * Check if user is a manager
      *
      * @param int $user_id User ID (optional, defaults to current user)
      * @return bool Whether user is a manager
@@ -870,12 +924,13 @@ class Capabilities_Handler {
     }
 
     /**
-     * Check if user is a creator (can create content)
+     * Check if user is a project customer (has customer role or is assigned as customer)
      *
      * @param int $user_id User ID (optional, defaults to current user)
-     * @return bool Whether user is a creator
+     * @param int $project_id Project ID to check (optional)
+     * @return bool Whether user is a project customer
      */
-    public static function is_creator($user_id = null) {
+    public static function is_project_customer($user_id = null, $project_id = null) {
         if (!$user_id) {
             $user_id = get_current_user_id();
         }
@@ -885,16 +940,32 @@ class Capabilities_Handler {
             return false;
         }
         
-        return $user->has_cap('edit_arsol_pfw_projects') || 
-               $user->has_cap('edit_arsol_pfw_proposals') || 
-               $user->has_cap('edit_arsol_pfw_requests');
+        // Check if user has customer role
+        if (!in_array('customer', $user->roles)) {
+            return false;
+        }
+        
+        // If project_id provided, check if user is the assigned customer for this specific project
+        if ($project_id) {
+            $project = get_post($project_id);
+            if (!$project || $project->post_type !== 'arsol-pfw-project') {
+                return false;
+            }
+            
+            // Check if user is the assigned customer
+            $assigned_customer = get_post_meta($project_id, '_arsol_pfw_customer_id', true);
+            return (int) $assigned_customer === (int) $user_id;
+        }
+        
+        // If no project_id, just check if user has customer role
+        return true;
     }
 
     /**
      * Get user's effective permission level
      *
      * @param int $user_id User ID (optional, defaults to current user)
-     * @return string Permission level: 'manager', 'creator', or 'none'
+     * @return string Permission level: 'manager', 'creator', 'customer', or 'none'
      */
     public static function get_effective_permission_level($user_id = null) {
         if (!$user_id) {
@@ -905,8 +976,12 @@ class Capabilities_Handler {
             return 'manager';
         }
         
-        if (self::is_creator($user_id)) {
+        if (self::can_create_projects($user_id) || self::can_create_requests($user_id) || self::can_create_proposals($user_id)) {
             return 'creator';
+        }
+        
+        if (self::is_project_customer($user_id)) {
+            return 'customer';
         }
         
         return 'none';

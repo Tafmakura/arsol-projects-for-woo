@@ -277,16 +277,16 @@ class Users {
                                 // No explicit override - use admin setting (which we know is enabled)
                                 $checked = 'checked';
                             }
-                            ?>
-                            <label style="display: block; margin: 5px 0;">
+                        ?>
+                        <label style="display: block; margin: 5px 0;">
                                 <input type="checkbox" 
                                        name="arsol_pfw_manager_override_<?php echo esc_attr($cap_key); ?>" 
                                        value="1" 
                                        <?php echo $checked; ?>>
                                 <?php echo esc_html($cap_label); ?>
-                            </label>
-                            <?php
-                        }
+                        </label>
+                        <?php
+                    }
                     }
                     ?>
                 </td>

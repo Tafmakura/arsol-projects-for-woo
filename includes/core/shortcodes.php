@@ -219,8 +219,13 @@ class Shortcodes {
 			return false;
 		}
 		
-		// If user is logged in and owns the project
-		if (is_user_logged_in() && $project->get_author_id() == get_current_user_id()) {
+		// If user is logged in and is the post author (creator)
+		if (is_user_logged_in() && $project->get_post_author_id() == get_current_user_id()) {
+			return true;
+		}
+		
+		// If user is logged in and is the assigned customer
+		if (is_user_logged_in() && $project->get_customer_id() == get_current_user_id()) {
 			return true;
 		}
 		

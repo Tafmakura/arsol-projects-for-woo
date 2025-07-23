@@ -502,8 +502,9 @@ class Single_Controller {
             $errors[] = __('Proposal description is required.', 'arsol-pfw');
         }
         
-        // Validate customer assignment (post author)
-        if (empty($post->post_author) || $post->post_author <= 0) {
+        // Validate customer assignment (customer ID from meta)
+        $customer_id = get_post_meta($post_id, '_arsol_pfw_customer_id', true);
+        if (empty($customer_id) || $customer_id <= 0) {
             $errors[] = __('A customer must be assigned to the proposal.', 'arsol-pfw');
         }
         
@@ -724,7 +725,7 @@ class Single_Controller {
         if (!$parent_project || $parent_project->post_type !== 'arsol-pfw-project') {
             return false;
         }
-        $customer_id = $parent_project->post_author;
+        $customer_id = get_post_meta($parent_project_id, '_arsol_pfw_customer_id', true);
         $parent_project_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
         $lead_id = $parent_project_entity->get_project_lead();
         return array(

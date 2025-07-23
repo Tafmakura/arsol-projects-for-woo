@@ -98,7 +98,7 @@ class Access_Handler {
             case 'delete':
                 return self::can_delete_post($post, $post_type, $user_id);
         }
-        return false;
+            return false;
     }
 
     /**
@@ -114,17 +114,15 @@ class Access_Handler {
             return false;
         }
         
-        // Owner can always view.
+        // Post author can always view (who created the entity)
         if ((int) $post->post_author === (int) $user_id) {
             return true;
         }
 
-        // For proposals, the assigned customer can also view.
-        if ($post->post_type === 'arsol-pfw-proposal') {
-            $customer_id = get_post_meta($post->ID, '_customer_id', true);
-            if ((int) $customer_id === (int) $user_id) {
-                return true;
-            }
+        // Check if user is the assigned customer for this entity
+        $customer_id = get_post_meta($post->ID, '_arsol_pfw_customer_id', true);
+        if ((int) $customer_id === (int) $user_id) {
+            return true;
         }
 
         return false;
