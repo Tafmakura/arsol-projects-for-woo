@@ -180,7 +180,6 @@ class Permissions {
      */
     public function render_project_manager_section() {
         echo '<div class="arsol-pfw-project-manager-permissions">';
-        echo '<h2>' . esc_html__('Project Manager Permissions', 'arsol-pfw') . '</h2>';
         echo '<div id="project-manager-permissions-description"><p>' . esc_html__('Configure permissions for users who manage projects (Project Managers).', 'arsol-pfw') . '</p></div>';
         echo '</div>';
     }
@@ -190,7 +189,6 @@ class Permissions {
      */
     public function render_customer_permissions_section() {
         echo '<div class="arsol-pfw-customer-permissions">';
-        echo '<h2>' . esc_html__('Customer Permissions', 'arsol-pfw') . '</h2>';
         echo '<div id="customer-permissions-description"><p>' . esc_html__('Configure permissions for users who create and manage their own projects (Customers).', 'arsol-pfw') . '</p></div>';
         echo '</div>';
     }
