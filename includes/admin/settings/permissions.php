@@ -149,7 +149,7 @@ class Permissions {
         // Default User Permissions
         add_settings_field(
             'arsol-pfw-default-user-permission',
-            __('New User Capabilities', 'arsol-pfw'),
+            __('New User Permissions', 'arsol-pfw'),
             array($this, 'render_select_field'),
             'arsol_pfw_permissions_settings',
             'arsol_customer_permissions',
