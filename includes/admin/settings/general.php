@@ -158,12 +158,13 @@ class General {
             'arsol_pfw_general_settings',
             'arsol_projects_user_permissions',
             array(
-                'description' => __('Controls how user project permissions are handled globally', 'arsol-pfw'),
+                'description' => __('Controls what users can do from the frontend', 'arsol-pfw'),
                 'field' => 'user_project_permissions',
                 'options' => array(
                     'none' => __('None', 'arsol-pfw'),
-                    'request' => __('Users can request projects', 'arsol-pfw'),
-                    'create' => __('Users can create projects', 'arsol-pfw'),
+                    'request_projects' => __('Users can request projects', 'arsol-pfw'),
+                    'create_projects' => __('Users can create projects', 'arsol-pfw'),
+                    'can_do_both' => __('Can do both', 'arsol-pfw'),
                     'user_specific' => __('Set per user', 'arsol-pfw')
                 ),
                 'class' => 'arsol-pfw-frontend-permissions'
@@ -181,8 +182,9 @@ class General {
                 'field' => 'default_user_permission',
                 'options' => array(
                     'none' => __('None', 'arsol-pfw'),
-                    'request' => __('Can request projects', 'arsol-pfw'),
-                    'create' => __('Can create projects', 'arsol-pfw')
+                    'request_projects' => __('Can request projects', 'arsol-pfw'),
+                    'create_projects' => __('Can create projects', 'arsol-pfw'),
+                    'can_do_both' => __('Can do both', 'arsol-pfw')
                 ),
                 'class' => 'arsol-pfw-show-if-arsol-pfw-user-project-permissions-is-user_specific arsol-pfw-new-user-permissions'
             )
@@ -589,12 +591,6 @@ class General {
      * @param mixed $old_value Old settings value
      * @param mixed $new_value New settings value
      */
-    /**
-     * Update capabilities when settings are saved
-     *
-     * @param mixed $old_value Old settings value
-     * @param mixed $new_value New settings value
-     */
     public function update_capabilities($old_value, $new_value) {
         $manage_roles = isset($new_value["project_manager_roles"]) ? array_unique($new_value["project_manager_roles"]) : array("administrator");
         $create_roles = isset($new_value["project_user_roles"]) ? array_unique($new_value["project_user_roles"]) : array("administrator");
@@ -670,6 +666,57 @@ class General {
                 foreach ($create_capabilities as $cap) {
                     $role->add_cap($cap);
                 }
+            }
+        }
+
+        // Frontend permissions capability management
+        $frontend_permission = isset($new_value['user_project_permissions']) ? $new_value['user_project_permissions'] : 'none';
+        
+        // Get the customer role
+        $customer_role = get_role('customer');
+        if ($customer_role) {
+            // Remove all frontend capabilities first
+            $frontend_caps = array(
+                'arsol_pfw_frontend_create_own_projects',
+                'arsol_pfw_frontend_view_own_projects',
+                'arsol_pfw_frontend_edit_own_projects',
+                'arsol_pfw_frontend_create_own_requests',
+                'arsol_pfw_frontend_view_own_requests'
+            );
+            
+            foreach ($frontend_caps as $cap) {
+                $customer_role->remove_cap($cap);
+            }
+            
+            // Grant capabilities based on selected permission level
+            switch ($frontend_permission) {
+                case 'request_projects':
+                    $customer_role->add_cap('arsol_pfw_frontend_create_own_requests');
+                    $customer_role->add_cap('arsol_pfw_frontend_view_own_requests');
+                    break;
+                    
+                case 'create_projects':
+                    $customer_role->add_cap('arsol_pfw_frontend_create_own_projects');
+                    $customer_role->add_cap('arsol_pfw_frontend_view_own_projects');
+                    $customer_role->add_cap('arsol_pfw_frontend_edit_own_projects');
+                    break;
+                    
+                case 'can_do_both':
+                    $customer_role->add_cap('arsol_pfw_frontend_create_own_projects');
+                    $customer_role->add_cap('arsol_pfw_frontend_view_own_projects');
+                    $customer_role->add_cap('arsol_pfw_frontend_edit_own_projects');
+                    $customer_role->add_cap('arsol_pfw_frontend_create_own_requests');
+                    $customer_role->add_cap('arsol_pfw_frontend_view_own_requests');
+                    break;
+                    
+                case 'user_specific':
+                    // Don't grant any global capabilities - let individual user settings handle it
+                    break;
+                    
+                case 'none':
+                default:
+                    // No capabilities granted
+                    break;
             }
         }
     }

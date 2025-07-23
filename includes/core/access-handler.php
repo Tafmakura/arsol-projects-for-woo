@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Centralized Access Handler Class
- *
+ * 
  * Provides a unified, boolean-based interface for all access control operations.
  * It integrates global settings, user-specific settings, and WordPress-native
  * capabilities to determine access rights.
@@ -99,7 +99,7 @@ class Access_Handler {
             case 'delete':
                 return Capabilities_Handler::can_delete_project_proposal($user_id, $post_id);
         }
-        return false;
+            return false;
     }
 
     /**
@@ -125,7 +125,7 @@ class Access_Handler {
         if ($post->post_type === 'arsol-pfw-proposal') {
             $customer_id = get_post_meta($post->ID, '_customer_id', true);
             if ((int) $customer_id === (int) $user_id) {
-                return true;
+            return true;
             }
         }
 
@@ -150,21 +150,21 @@ class Access_Handler {
             return false;
         }
 
-        if ('create' === $global_permission) {
+        if ('create_projects' === $global_permission || 'can_do_both' === $global_permission) {
             return Capabilities_Handler::can_create_projects($user_id);
         }
 
-        if ('request' === $global_permission) {
+        if ('request_projects' === $global_permission) {
             // Only managers can create if global setting is "request only".
             return Capabilities_Handler::can_manage_projects($user_id);
         }
 
         if ('user_specific' === $global_permission) {
             $user_permission = self::get_user_permission_setting($user_id);
-            if ('create' === $user_permission) {
+            if ('create_projects' === $user_permission || 'can_do_both' === $user_permission) {
                 return Capabilities_Handler::can_create_projects($user_id);
             }
-            // If user-specific is 'request' or 'none', they can't create directly.
+            // If user-specific is 'request_projects' or 'none', they can't create directly.
             return Capabilities_Handler::can_manage_projects($user_id);
         }
 
@@ -185,14 +185,14 @@ class Access_Handler {
             return false;
         }
 
-        if ('request' === $global_permission || 'create' === $global_permission) {
+        if ('request_projects' === $global_permission || 'create_projects' === $global_permission || 'can_do_both' === $global_permission) {
             return Capabilities_Handler::can_create_project_requests($user_id);
         }
 
         if ('user_specific' === $global_permission) {
             $user_permission = self::get_user_permission_setting($user_id);
             // If user can create, they can also request.
-            if ('request' === $user_permission || 'create' === $user_permission) {
+            if ('request_projects' === $user_permission || 'create_projects' === $user_permission || 'can_do_both' === $user_permission) {
                 return Capabilities_Handler::can_create_project_requests($user_id);
             }
             return Capabilities_Handler::can_manage_projects($user_id);
@@ -208,18 +208,18 @@ class Access_Handler {
     /**
      * Gets the global permission setting for project creation.
      *
-     * @return string ('none', 'request', 'create', 'user_specific')
+     * @return string ('none', 'request_projects', 'create_projects', 'can_do_both', 'user_specific')
      */
     private static function get_global_permission_setting() {
         $settings = get_option('arsol_pfw_general_settings', []);
-        return isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request';
+        return isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
     }
 
     /**
      * Gets an individual user's specific permission override.
      *
      * @param int $user_id The User ID.
-     * @return string ('none', 'request', 'create')
+     * @return string ('none', 'request_projects', 'create_projects', 'can_do_both')
      */
     private static function get_user_permission_setting($user_id) {
         // Fallback to default if not set.
@@ -234,6 +234,6 @@ class Access_Handler {
      */
     private static function get_default_user_permission_setting() {
         $settings = get_option('arsol_pfw_general_settings', []);
-        return isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request';
+        return isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request_projects';
     }
 } 

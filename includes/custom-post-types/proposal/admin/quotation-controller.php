@@ -242,7 +242,7 @@ class Quotation_Controller {
                 <td class="arsol-product-column">
                     <select class="arsol-product-select" name="line_items[products][{{ data.id }}][product_id]">
                         <option value=""><?php _e('Select a product...', 'arsol-pfw'); ?></option>
-                    </select>
+                                </select>
                     <textarea class="arsol-product-details" 
                               name="line_items[products][{{ data.id }}][details]" 
                               placeholder="<?php esc_attr_e('Details...', 'arsol-pfw'); ?>"

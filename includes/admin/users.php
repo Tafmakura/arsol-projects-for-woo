@@ -206,10 +206,10 @@ class Users {
         
         // Get current settings
         $settings = get_option('arsol_pfw_general_settings', array());
-        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request';
+        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         $user_permission = get_user_meta($user->ID, 'arsol_pfw_user_permission', true);
         if (empty($user_permission)) {
-            $user_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request';
+            $user_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request_projects';
         }
         
         // Determine effective permission for display
@@ -224,8 +224,9 @@ class Users {
                 <td>
                     <select name="arsol_pfw_user_permission" id="arsol_pfw_user_permission">
                         <option value="none" <?php selected($user_permission, 'none'); ?>><?php esc_html_e('None', 'arsol-pfw'); ?></option>
-                        <option value="request" <?php selected($user_permission, 'request'); ?>><?php esc_html_e('Can request projects', 'arsol-pfw'); ?></option>
-                        <option value="create" <?php selected($user_permission, 'create'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
+                        <option value="request_projects" <?php selected($user_permission, 'request_projects'); ?>><?php esc_html_e('Can request projects', 'arsol-pfw'); ?></option>
+                        <option value="create_projects" <?php selected($user_permission, 'create_projects'); ?>><?php esc_html_e('Can create projects', 'arsol-pfw'); ?></option>
+                        <option value="can_do_both" <?php selected($user_permission, 'can_do_both'); ?>><?php esc_html_e('Can do both', 'arsol-pfw'); ?></option>
                     </select>
                     <p class="description">
                         <?php esc_html_e('This individual permission controls frontend access for creating and requesting projects.', 'arsol-pfw'); ?>
@@ -242,15 +243,26 @@ class Users {
                         $current_option = '';
                         $current_label = '';
                         
-                        if ($global_permission === 'none') {
-                            $current_option = 'none';
-                            $current_label = __('None (Global Setting)', 'arsol-pfw');
-                        } elseif ($global_permission === 'request') {
-                            $current_option = 'request';
-                            $current_label = __('Can request projects (Global Setting)', 'arsol-pfw');
-                        } elseif ($global_permission === 'create') {
-                            $current_option = 'create';
-                            $current_label = __('Can create projects (Global Setting)', 'arsol-pfw');
+                        switch ($global_permission) {
+                            case 'none':
+                                $current_option = 'none';
+                                $current_label = __('None (Global Setting)', 'arsol-pfw');
+                                break;
+                            case 'request_projects':
+                                $current_option = 'request_projects';
+                                $current_label = __('Can request projects (Global Setting)', 'arsol-pfw');
+                                break;
+                            case 'create_projects':
+                                $current_option = 'create_projects';
+                                $current_label = __('Can create projects (Global Setting)', 'arsol-pfw');
+                                break;
+                            case 'can_do_both':
+                                $current_option = 'can_do_both';
+                                $current_label = __('Can request and create projects (Global Setting)', 'arsol-pfw');
+                                break;
+                            default:
+                                $current_option = 'none';
+                                $current_label = __('None (Global Setting)', 'arsol-pfw');
                         }
                         ?>
                         <option value="<?php echo esc_attr($current_option); ?>" selected><?php echo esc_html($current_label); ?></option>
@@ -311,7 +323,7 @@ class Users {
             $permission = sanitize_text_field($_POST['arsol_pfw_user_permission']);
             
             // Validate the permission value
-            $valid_permissions = array('none', 'request', 'create');
+            $valid_permissions = array('none', 'request_projects', 'create_projects', 'can_do_both');
             if (in_array($permission, $valid_permissions)) {
                 update_user_meta($user_id, 'arsol_pfw_user_permission', $permission);
             }
@@ -413,42 +425,34 @@ class Users {
      * @return bool Whether user can create projects
      */
     public function can_user_create_projects($user_id) {
-        // First check global permission setting
+        // Get global settings
         $settings = get_option('arsol_pfw_general_settings', array());
-        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request';
-        
-        // If global permission is "none", nobody can create projects
-        if ($global_permission === 'none') {
-            return false;
-        }
-        
-        // If global permission is "create", allow anyone with WordPress capabilities to create
-        if ($global_permission === 'create') {
-            return \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_projects($user_id);
-        }
-        
-        // If global permission is "request", don't allow creating projects (only requesting)
-        if ($global_permission === 'request') {
-            // Only allow if user has management capabilities
-            return \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_manage_projects($user_id);
-        }
+        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
         // If global permission is "user_specific", check individual user permission
         if ($global_permission === 'user_specific') {
             $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
-            
-            // If user permission is "create", check WordPress capabilities
-            if ($user_permission === 'create') {
-                return \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_projects($user_id);
+            if (!$user_permission) {
+                $user_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request_projects';
             }
             
-            // If user permission is "request" or "none", don't allow creating
-            // Only allow if user has management capabilities
-            return \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_manage_projects($user_id);
+            switch ($user_permission) {
+                case 'create_projects':
+                case 'can_do_both':
+                    return true;
+                default:
+                    return false;
+            }
         }
         
-        // Default fallback - use WordPress capabilities
-        return \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_projects($user_id);
+        // Otherwise, check global permission
+        switch ($global_permission) {
+            case 'create_projects':
+            case 'can_do_both':
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -458,36 +462,34 @@ class Users {
      * @return bool Whether user can request projects
      */
     public function can_user_request_projects($user_id) {
-        // First check global permission setting
+        // Get global settings
         $settings = get_option('arsol_pfw_general_settings', array());
-        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request';
-        
-        // If global permission is "none", nobody can request projects
-        if ($global_permission === 'none') {
-            return false;
-        }
-        
-        // If global permission is "request" or "create", allow anyone with WordPress capabilities to request
-        if ($global_permission === 'request' || $global_permission === 'create') {
-            return \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_project_requests($user_id);
-        }
+        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
         // If global permission is "user_specific", check individual user permission
         if ($global_permission === 'user_specific') {
             $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
-            
-            // If user permission is "request" or "create", check WordPress capabilities
-            if ($user_permission === 'request' || $user_permission === 'create') {
-                return \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_project_requests($user_id);
+            if (!$user_permission) {
+                $user_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request_projects';
             }
             
-            // If user permission is "none", don't allow requesting
-            // Only allow if user has management capabilities
-            return \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_manage_projects($user_id);
+            switch ($user_permission) {
+                case 'request_projects':
+                case 'can_do_both':
+                    return true;
+                default:
+                    return false;
+            }
         }
         
-        // Default fallback - use WordPress capabilities
-        return \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_project_requests($user_id);
+        // Otherwise, check global permission
+        switch ($global_permission) {
+            case 'request_projects':
+            case 'can_do_both':
+                return true;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -504,7 +506,7 @@ class Users {
         
         // Check global permission setting
         $settings = get_option('arsol_pfw_general_settings', array());
-        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request';
+        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
         // If global permission is "none", nobody can do anything
         if ($global_permission === 'none') {
@@ -800,11 +802,11 @@ class Users {
      */
     public function set_default_user_permission($user_id) {
         $settings = get_option('arsol_pfw_general_settings', array());
-        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request';
+        $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
         // Only set individual permission if global setting is "user_specific"
         if ($global_permission === 'user_specific') {
-            $default_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request';
+            $default_permission = isset($settings['default_user_permission']) ? $settings['default_user_permission'] : 'request_projects';
             update_user_meta($user_id, 'arsol_pfw_user_permission', $default_permission);
         }
     }

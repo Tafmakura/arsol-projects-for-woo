@@ -44,10 +44,10 @@ class Asset_Handler {
         // Use WordPress best practices: hook into load-post.php and load-post-new.php for our CPTs
         add_action('load-post.php', array($this, 'setup_cpt_edit_assets'));
         add_action('load-post-new.php', array($this, 'setup_cpt_edit_assets'));
-        
+
         // Handle WooCommerce order pages specifically
         add_action('load-edit.php', array($this, 'setup_woocommerce_order_list_assets'));
-        
+
         // Handle settings pages and other admin areas
         add_action('admin_enqueue_scripts', array($this, 'enqueue_settings_assets'));
     }
@@ -197,7 +197,7 @@ class Asset_Handler {
             // Enqueue core plugin assets
             wp_enqueue_style('arsol-pfw-admin');
             wp_enqueue_script('arsol-pfw-admin');
-
+            
             // Enqueue CPT-specific assets
             $this->enqueue_cpt_specific_assets($screen->post_type);
 
@@ -224,7 +224,7 @@ class Asset_Handler {
         if (!$screen || $screen->post_type !== 'shop_order') {
             return;
         }
-
+        
         // Add admin_enqueue_scripts hook specifically for WooCommerce order list
         add_action('admin_enqueue_scripts', function($hook_suffix) {
             // Only enqueue on edit.php for shop_order
