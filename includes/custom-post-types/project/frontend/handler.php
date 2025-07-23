@@ -55,11 +55,10 @@ class Handler {
             return;
         }
 
-        $user_id = get_current_user_id();
-        $creation_data['user_id'] = $user_id;
-
         // Check if user can create projects
-        if (!\Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_projects($user_id)) {
+        $user_id = get_current_user_id();
+        $user = get_user_by('id', $user_id);
+        if (!$user || !($user->has_cap('edit_arsol_pfw_projects') || $user->has_cap('arsol_pfw_manage'))) {
             wc_add_notice(__('You do not have permission to create projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;
@@ -276,7 +275,8 @@ class Handler {
         }
 
         // Check if user can edit projects
-        if (!\Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_projects($user_id)) {
+        $user = get_user_by('id', $user_id);
+        if (!$user || !($user->has_cap('edit_arsol_pfw_projects') || $user->has_cap('arsol_pfw_manage'))) {
             wc_add_notice(__('You do not have permission to edit projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw'), 'error');
             wp_safe_redirect(wc_get_account_endpoint_url('projects'));
             exit;

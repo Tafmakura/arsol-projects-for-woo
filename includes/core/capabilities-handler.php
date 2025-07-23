@@ -3,8 +3,8 @@
  * Capabilities Handler Class
  *
  * Handles WordPress-native capabilities for Arsol Projects For Woo.
- * Uses proper CPT capability mapping with map_meta_cap = true.
- * Works with existing WordPress roles only - no custom roles.
+ * Uses native WordPress capability functions where possible.
+ * Only adds custom logic for override functionality.
  *
  * @package Arsol_Projects_For_Woo
  * @since 2.0.0
@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
  * Capabilities Handler Class
  * 
  * Provides WordPress-native capability management for the plugin.
- * This class handles capability assignment, removal, and checking.
+ * Uses native WordPress functions where possible, only adds custom logic for overrides.
  */
 class Capabilities_Handler {
     
@@ -133,186 +133,7 @@ class Capabilities_Handler {
     }
 
     // ========================================
-    // CAPABILITY CHECKING METHODS
-    // ========================================
-
-    /**
-     * Check if user has broad PFW management access
-     * 
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return bool Whether user can manage PFW
-     */
-    public static function can_manage_projects($user_id = null) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('arsol_pfw_manage') || $user->has_cap('manage_options'));
-        }
-        return current_user_can('arsol_pfw_manage') || current_user_can('manage_options');
-    }
-
-    /**
-     * Check if user can create projects
-     *
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return bool Whether user can create projects
-     */
-    public static function can_create_projects($user_id = null) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_projects') || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_projects') || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can create project requests
-     *
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return bool Whether user can create project requests
-     */
-    public static function can_create_project_requests($user_id = null) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_requests') || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_requests') || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can create project proposals
-     *
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return bool Whether user can create project proposals
-     */
-    public static function can_create_project_proposals($user_id = null) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_proposals') || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_proposals') || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can edit a specific project (WordPress handles ownership)
-     *
-     * @param int $user_id User ID
-     * @param int $project_id Project ID
-     * @return bool Whether user can edit the project
-     */
-    public static function can_edit_project($user_id, $project_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_project', $project_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_project', $project_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can edit a specific project request (WordPress handles ownership)
-     *
-     * @param int $user_id User ID
-     * @param int $request_id Request ID
-     * @return bool Whether user can edit the project request
-     */
-    public static function can_edit_project_request($user_id, $request_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_request', $request_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_request', $request_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can edit a specific project proposal (WordPress handles ownership)
-     *
-     * @param int $user_id User ID
-     * @param int $proposal_id Proposal ID
-     * @return bool Whether user can edit the project proposal
-     */
-    public static function can_edit_project_proposal($user_id, $proposal_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('edit_arsol_pfw_proposal', $proposal_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('edit_arsol_pfw_proposal', $proposal_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can delete a specific project (WordPress handles ownership)
-     * 
-     * @param int $user_id User ID
-     * @param int $project_id Project ID
-     * @return bool Whether user can delete the project
-     */
-    public static function can_delete_project($user_id, $project_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('delete_arsol_pfw_project', $project_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('delete_arsol_pfw_project', $project_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can delete a specific request (WordPress handles ownership)
-     * 
-     * @param int $user_id User ID
-     * @param int $request_id Request ID
-     * @return bool Whether user can delete the request
-     */
-    public static function can_delete_project_request($user_id, $request_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('delete_arsol_pfw_request', $request_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('delete_arsol_pfw_request', $request_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Check if user can delete a specific proposal (WordPress handles ownership)
-     * 
-     * @param int $user_id User ID
-     * @param int $proposal_id Proposal ID
-     * @return bool Whether user can delete the proposal
-     */
-    public static function can_delete_project_proposal($user_id, $proposal_id) {
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            return $user && ($user->has_cap('delete_arsol_pfw_proposal', $proposal_id) || $user->has_cap('arsol_pfw_manage'));
-        }
-        return current_user_can('delete_arsol_pfw_proposal', $proposal_id) || current_user_can('arsol_pfw_manage');
-    }
-
-    /**
-     * Get user permission level
-     *
-     * @param int $user_id User ID (optional, defaults to current user)
-     * @return string Permission level: 'manager', 'creator', or 'none'
-     */
-    public static function get_user_permission_level($user_id = null) {
-        if (self::can_manage_projects($user_id)) {
-            return 'manager';
-        }
-        
-        if ($user_id) {
-            $user = get_user_by('id', $user_id);
-            if ($user && ($user->has_cap('edit_arsol_pfw_projects') || 
-                         $user->has_cap('edit_arsol_pfw_proposals') || 
-                         $user->has_cap('edit_arsol_pfw_requests'))) {
-                return 'creator';
-            }
-        } else {
-            if (current_user_can('edit_arsol_pfw_projects') || 
-                current_user_can('edit_arsol_pfw_proposals') || 
-                current_user_can('edit_arsol_pfw_requests')) {
-                return 'creator';
-            }
-        }
-        
-        return 'none';
-    }
-
-    // ========================================
-    // MANAGER OVERRIDE METHODS
+    // CUSTOM LOGIC METHODS (Override System)
     // ========================================
 
     /**
@@ -356,7 +177,7 @@ class Capabilities_Handler {
      */
     public static function get_effective_manager_capability($user_id, $capability) {
         // ✅ STEP 1: Check if user has manager capabilities first
-        if (!self::can_manage_projects($user_id)) {
+        if (!current_user_can('arsol_pfw_manage') && !current_user_can('manage_options')) {
             return false;
         }
 
@@ -455,4 +276,758 @@ class Capabilities_Handler {
         return self::get_effective_manager_capability($user_id, 'manage_permissions');
     }
 
+    /**
+     * Get user permission level
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return string Permission level: 'manager', 'creator', or 'none'
+     */
+    public static function get_user_permission_level($user_id = null) {
+        if (current_user_can('arsol_pfw_manage') || current_user_can('manage_options')) {
+            return 'manager';
+        }
+        
+        if (current_user_can('edit_arsol_pfw_projects') || 
+            current_user_can('edit_arsol_pfw_proposals') || 
+            current_user_can('edit_arsol_pfw_requests')) {
+            return 'creator';
+        }
+        
+        return 'none';
+    }
+
+    /**
+     * Setup capabilities (called on plugin activation)
+     */
+    public static function setup_capabilities() {
+        $instance = new self();
+        $instance->add_administrator_capabilities();
+    }
+
+    // ========================================
+    // COMPREHENSIVE CAPABILITY METHODS WITH OVERRIDE SUPPORT
+    // ========================================
+
+    /**
+     * Check if user can create projects (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can create projects
+     */
+    public static function can_create_projects($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        // Check WordPress capability first
+        $user = get_user_by('id', $user_id);
+        if (!$user || !$user->has_cap('edit_arsol_pfw_projects')) {
+            return false;
+        }
+
+        // Check global settings
+        $settings = get_option('arsol_pfw_permissions_settings', array());
+        $global_setting = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'none';
+        
+        if ($global_setting === 'none') {
+            return false;
+        }
+        
+        if ($global_setting === 'create') {
+            return true;
+        }
+        
+        if ($global_setting === 'user_specific') {
+            $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
+            return $user_permission === 'create';
+        }
+        
+        return false;
+    }
+
+    /**
+     * Check if user can create requests (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can create requests
+     */
+    public static function can_create_requests($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        // Check WordPress capability first
+        $user = get_user_by('id', $user_id);
+        if (!$user || !$user->has_cap('edit_arsol_pfw_requests')) {
+            return false;
+        }
+
+        // Check global settings
+        $settings = get_option('arsol_pfw_permissions_settings', array());
+        $global_setting = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'none';
+        
+        if ($global_setting === 'none') {
+            return false;
+        }
+        
+        if ($global_setting === 'request' || $global_setting === 'create') {
+            return true;
+        }
+        
+        if ($global_setting === 'user_specific') {
+            $user_permission = get_user_meta($user_id, 'arsol_pfw_user_permission', true);
+            return in_array($user_permission, array('request', 'create'));
+        }
+        
+        return false;
+    }
+
+    /**
+     * Check if user can edit own projects (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @param int $project_id Project ID to check ownership
+     * @return bool Whether user can edit own projects
+     */
+    public static function can_edit_own_projects($user_id = null, $project_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        // Check WordPress capability first
+        $user = get_user_by('id', $user_id);
+        if (!$user || !$user->has_cap('edit_arsol_pfw_projects')) {
+            return false;
+        }
+
+        // If project_id provided, check ownership
+        if ($project_id) {
+            $project = get_post($project_id);
+            if (!$project || $project->post_type !== 'arsol_pfw_project') {
+                return false;
+            }
+            return $project->post_author == $user_id;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Check if user can edit own requests (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @param int $request_id Request ID to check ownership
+     * @return bool Whether user can edit own requests
+     */
+    public static function can_edit_own_requests($user_id = null, $request_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        // Check WordPress capability first
+        $user = get_user_by('id', $user_id);
+        if (!$user || !$user->has_cap('edit_arsol_pfw_requests')) {
+            return false;
+        }
+
+        // If request_id provided, check ownership
+        if ($request_id) {
+            $request = get_post($request_id);
+            if (!$request || $request->post_type !== 'arsol_pfw_request') {
+                return false;
+            }
+            return $request->post_author == $user_id;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Check if user can edit own proposals (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @param int $proposal_id Proposal ID to check ownership
+     * @return bool Whether user can edit own proposals
+     */
+    public static function can_edit_own_proposals($user_id = null, $proposal_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        // Check WordPress capability first
+        $user = get_user_by('id', $user_id);
+        if (!$user || !$user->has_cap('edit_arsol_pfw_proposals')) {
+            return false;
+        }
+
+        // If proposal_id provided, check ownership
+        if ($proposal_id) {
+            $proposal = get_post($proposal_id);
+            if (!$proposal || $proposal->post_type !== 'arsol_pfw_proposal') {
+                return false;
+            }
+            return $proposal->post_author == $user_id;
+        }
+        
+        return true;
+    }
+
+    /**
+     * Check if user can edit others' projects (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can edit others' projects
+     */
+    public static function can_edit_others_projects($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('edit_others_arsol_pfw_projects');
+    }
+
+    /**
+     * Check if user can edit others' requests (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can edit others' requests
+     */
+    public static function can_edit_others_requests($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('edit_others_arsol_pfw_requests');
+    }
+
+    /**
+     * Check if user can edit others' proposals (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can edit others' proposals
+     */
+    public static function can_edit_others_proposals($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('edit_others_arsol_pfw_proposals');
+    }
+
+    /**
+     * Check if user can delete projects (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @param int $project_id Project ID to check ownership
+     * @return bool Whether user can delete projects
+     */
+    public static function can_delete_projects($user_id = null, $project_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        // Check if user can delete own projects
+        if (!$user->has_cap('delete_arsol_pfw_projects')) {
+            return false;
+        }
+        
+        // If project_id provided, check if user can delete this specific project
+        if ($project_id) {
+            $project = get_post($project_id);
+            if (!$project || $project->post_type !== 'arsol_pfw_project') {
+                return false;
+            }
+            
+            // If it's their own project, they can delete it
+            if ($project->post_author == $user_id) {
+                return true;
+            }
+            
+            // If it's someone else's project, check if they can delete others
+            return $user->has_cap('delete_others_arsol_pfw_projects');
+        }
+        
+        return true;
+    }
+
+    /**
+     * Check if user can delete requests (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @param int $request_id Request ID to check ownership
+     * @return bool Whether user can delete requests
+     */
+    public static function can_delete_requests($user_id = null, $request_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        // Check if user can delete own requests
+        if (!$user->has_cap('delete_arsol_pfw_requests')) {
+            return false;
+        }
+        
+        // If request_id provided, check if user can delete this specific request
+        if ($request_id) {
+            $request = get_post($request_id);
+            if (!$request || $request->post_type !== 'arsol_pfw_request') {
+                return false;
+            }
+            
+            // If it's their own request, they can delete it
+            if ($request->post_author == $user_id) {
+                return true;
+            }
+            
+            // If it's someone else's request, check if they can delete others
+            return $user->has_cap('delete_others_arsol_pfw_requests');
+        }
+        
+        return true;
+    }
+
+    /**
+     * Check if user can delete proposals (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @param int $proposal_id Proposal ID to check ownership
+     * @return bool Whether user can delete proposals
+     */
+    public static function can_delete_proposals($user_id = null, $proposal_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        // Check if user can delete own proposals
+        if (!$user->has_cap('delete_arsol_pfw_proposals')) {
+            return false;
+        }
+        
+        // If proposal_id provided, check if user can delete this specific proposal
+        if ($proposal_id) {
+            $proposal = get_post($proposal_id);
+            if (!$proposal || $proposal->post_type !== 'arsol_pfw_proposal') {
+                return false;
+            }
+            
+            // If it's their own proposal, they can delete it
+            if ($proposal->post_author == $user_id) {
+                return true;
+            }
+            
+            // If it's someone else's proposal, check if they can delete others
+            return $user->has_cap('delete_others_arsol_pfw_proposals');
+        }
+        
+        return true;
+    }
+
+    /**
+     * Check if user can publish projects (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can publish projects
+     */
+    public static function can_publish_projects($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('publish_arsol_pfw_projects');
+    }
+
+    /**
+     * Check if user can publish requests (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can publish requests
+     */
+    public static function can_publish_requests($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('publish_arsol_pfw_requests');
+    }
+
+    /**
+     * Check if user can publish proposals (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can publish proposals
+     */
+    public static function can_publish_proposals($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('publish_arsol_pfw_proposals');
+    }
+
+    /**
+     * Check if user can read private projects (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can read private projects
+     */
+    public static function can_read_private_projects($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('read_private_arsol_pfw_projects');
+    }
+
+    /**
+     * Check if user can read private requests (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can read private requests
+     */
+    public static function can_read_private_requests($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('read_private_arsol_pfw_requests');
+    }
+
+    /**
+     * Check if user can read private proposals (with override support)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user can read private proposals
+     */
+    public static function can_read_private_proposals($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('read_private_arsol_pfw_proposals');
+    }
+
+    /**
+     * Check if user has full plugin access (master capability)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user has full plugin access
+     */
+    public static function has_full_access($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('arsol_pfw_manage') || $user->has_cap('manage_options');
+    }
+
+    /**
+     * Check if user is a manager (has management capabilities)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user is a manager
+     */
+    public static function is_manager($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        return self::has_full_access($user_id);
+    }
+
+    /**
+     * Check if user is a creator (can create content)
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return bool Whether user is a creator
+     */
+    public static function is_creator($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        $user = get_user_by('id', $user_id);
+        if (!$user) {
+            return false;
+        }
+        
+        return $user->has_cap('edit_arsol_pfw_projects') || 
+               $user->has_cap('edit_arsol_pfw_proposals') || 
+               $user->has_cap('edit_arsol_pfw_requests');
+    }
+
+    /**
+     * Get user's effective permission level
+     *
+     * @param int $user_id User ID (optional, defaults to current user)
+     * @return string Permission level: 'manager', 'creator', or 'none'
+     */
+    public static function get_effective_permission_level($user_id = null) {
+        if (!$user_id) {
+            $user_id = get_current_user_id();
+        }
+        
+        if (self::is_manager($user_id)) {
+            return 'manager';
+        }
+        
+        if (self::is_creator($user_id)) {
+            return 'creator';
+        }
+        
+        return 'none';
+    }
+
+    // ========================================
+    // WORDPRESS CAPABILITY ASSIGNMENT METHODS
+    // ========================================
+
+    /**
+     * Update capabilities based on settings
+     * Called when settings are saved
+     *
+     * @param array $settings The settings array
+     */
+    public static function update_capabilities_from_settings($settings) {
+        // Update project manager roles
+        if (isset($settings['project_manager_roles'])) {
+            self::assign_capabilities_to_roles($settings['project_manager_roles'], 'manager');
+        }
+
+        // Update creator roles
+        if (isset($settings['creator_roles'])) {
+            self::assign_capabilities_to_roles($settings['creator_roles'], 'creator');
+        }
+    }
+
+    /**
+     * Assign capabilities to roles based on type
+     *
+     * @param array  $role_slugs Array of role slugs
+     * @param string $type       'manager' or 'creator'
+     */
+    private static function assign_capabilities_to_roles($role_slugs, $type) {
+        // First, remove all PFW capabilities from all roles
+        self::remove_all_capabilities();
+
+        // Then assign capabilities based on type
+        foreach ($role_slugs as $role_slug) {
+            $role = get_role($role_slug);
+            if (!$role) {
+                continue;
+            }
+
+            if ($type === 'manager') {
+                // Assign manager capabilities
+                $role->add_cap('arsol_pfw_manage');
+                
+                // All project capabilities
+                $project_caps = array(
+                    'edit_arsol_pfw_projects', 'edit_others_arsol_pfw_projects', 'publish_arsol_pfw_projects',
+                    'read_private_arsol_pfw_projects', 'delete_arsol_pfw_projects', 'delete_private_arsol_pfw_projects',
+                    'delete_published_arsol_pfw_projects', 'delete_others_arsol_pfw_projects',
+                    'edit_private_arsol_pfw_projects', 'edit_published_arsol_pfw_projects',
+                );
+
+                // All proposal capabilities
+                $proposal_caps = array(
+                    'edit_arsol_pfw_proposals', 'edit_others_arsol_pfw_proposals', 'publish_arsol_pfw_proposals',
+                    'read_private_arsol_pfw_proposals', 'delete_arsol_pfw_proposals', 'delete_private_arsol_pfw_proposals',
+                    'delete_published_arsol_pfw_proposals', 'delete_others_arsol_pfw_proposals',
+                    'edit_private_arsol_pfw_proposals', 'edit_published_arsol_pfw_proposals',
+                );
+
+                // All request capabilities
+                $request_caps = array(
+                    'edit_arsol_pfw_requests', 'edit_others_arsol_pfw_requests', 'publish_arsol_pfw_requests',
+                    'read_private_arsol_pfw_requests', 'delete_arsol_pfw_requests', 'delete_private_arsol_pfw_requests',
+                    'delete_published_arsol_pfw_requests', 'delete_others_arsol_pfw_requests',
+                    'edit_private_arsol_pfw_requests', 'edit_published_arsol_pfw_requests',
+                );
+
+                $all_caps = array_merge($project_caps, $proposal_caps, $request_caps);
+                foreach ($all_caps as $cap) {
+                    $role->add_cap($cap);
+                }
+
+            } elseif ($type === 'creator') {
+                // Assign creator capabilities (limited)
+                $creator_caps = array(
+                    'edit_arsol_pfw_projects', 'edit_arsol_pfw_proposals', 'edit_arsol_pfw_requests',
+                    'publish_arsol_pfw_projects', 'publish_arsol_pfw_proposals', 'publish_arsol_pfw_requests',
+                );
+
+                foreach ($creator_caps as $cap) {
+                    $role->add_cap($cap);
+                }
+            }
+        }
+    }
+
+    /**
+     * Get all available roles for capability assignment
+     *
+     * @return array Array of role slugs and names
+     */
+    public static function get_available_roles() {
+        $roles = wp_roles()->get_names();
+        $available_roles = array();
+
+        foreach ($roles as $role_slug => $role_name) {
+            $role = get_role($role_slug);
+            if ($role && ($role->has_cap('manage_options') || $role->has_cap('edit_posts'))) {
+                $available_roles[$role_slug] = $role_name;
+            }
+        }
+
+        return $available_roles;
+    }
+
+    /**
+     * Get roles that have specific capabilities
+     *
+     * @param string $capability Capability to check
+     * @return array Array of role slugs
+     */
+    public static function get_roles_with_capability($capability) {
+        $roles = wp_roles()->get_names();
+        $roles_with_cap = array();
+
+        foreach ($roles as $role_slug => $role_name) {
+            $role = get_role($role_slug);
+            if ($role && $role->has_cap($capability)) {
+                $roles_with_cap[] = $role_slug;
+            }
+        }
+
+        return $roles_with_cap;
+    }
+
+    /**
+     * Check if a role has specific capabilities
+     *
+     * @param string $role_slug  Role slug
+     * @param array  $capabilities Array of capabilities to check
+     * @return bool Whether role has all capabilities
+     */
+    public static function role_has_capabilities($role_slug, $capabilities) {
+        $role = get_role($role_slug);
+        if (!$role) {
+            return false;
+        }
+
+        foreach ($capabilities as $capability) {
+            if (!$role->has_cap($capability)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Get capability summary for a role
+     *
+     * @param string $role_slug Role slug
+     * @return array Array of capability information
+     */
+    public static function get_role_capability_summary($role_slug) {
+        $role = get_role($role_slug);
+        if (!$role) {
+            return array();
+        }
+
+        $capabilities = array(
+            'arsol_pfw_manage' => 'Full Plugin Access',
+            'edit_arsol_pfw_projects' => 'Edit Own Projects',
+            'edit_others_arsol_pfw_projects' => 'Edit Others Projects',
+            'publish_arsol_pfw_projects' => 'Publish Projects',
+            'delete_arsol_pfw_projects' => 'Delete Own Projects',
+            'delete_others_arsol_pfw_projects' => 'Delete Others Projects',
+            'edit_arsol_pfw_proposals' => 'Edit Own Proposals',
+            'edit_others_arsol_pfw_proposals' => 'Edit Others Proposals',
+            'publish_arsol_pfw_proposals' => 'Publish Proposals',
+            'delete_arsol_pfw_proposals' => 'Delete Own Proposals',
+            'delete_others_arsol_pfw_proposals' => 'Delete Others Proposals',
+            'edit_arsol_pfw_requests' => 'Edit Own Requests',
+            'edit_others_arsol_pfw_requests' => 'Edit Others Requests',
+            'publish_arsol_pfw_requests' => 'Publish Requests',
+            'delete_arsol_pfw_requests' => 'Delete Own Requests',
+            'delete_others_arsol_pfw_requests' => 'Delete Others Requests',
+        );
+
+        $summary = array();
+        foreach ($capabilities as $cap => $description) {
+            $summary[$cap] = array(
+                'description' => $description,
+                'has_cap' => $role->has_cap($cap)
+            );
+        }
+
+        return $summary;
+    }
 } 

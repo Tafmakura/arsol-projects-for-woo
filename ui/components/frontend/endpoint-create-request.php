@@ -74,17 +74,16 @@ if ($is_edit) {
 $button_text = $is_edit ? __('Update Request', 'arsol-pfw') : __('Submit Request', 'arsol-pfw');
 $form_action = $is_edit ? 'arsol_edit_request' : 'arsol_create_request';
 
-// Check if user can create project requests
-if (!$is_edit) {
-    $user_id = get_current_user_id();
-    $can_create = \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_project_requests($user_id);
+        // Check if user can create requests
+        $user_id = get_current_user_id();
+        $user = get_user_by('id', $user_id);
+        $can_create = $user && ($user->has_cap('edit_arsol_pfw_requests') || $user->has_cap('arsol_pfw_manage'));
 
     if (!$can_create) {
         wc_add_notice(__('You do not have permission to create project requests. Please contact the administrator if you believe this is an error.', 'arsol-pfw'), 'error');
         wp_safe_redirect(wc_get_account_endpoint_url('projects'));
         exit;
     }
-}
 ?>
 
 <div class="arsol-pfw-project-request">

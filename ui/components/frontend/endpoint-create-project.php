@@ -42,9 +42,10 @@ if ($is_edit && isset($post) && $post) {
     $due_date = '';
 }
 
-// Check if user can create/edit projects
-$user_id = get_current_user_id();
-$can_create = \Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_projects($user_id);
+        // Check if user can create projects
+        $user_id = get_current_user_id();
+        $user = get_user_by('id', $user_id);
+        $can_create = $user && ($user->has_cap('edit_arsol_pfw_projects') || $user->has_cap('arsol_pfw_manage'));
 
 if (!$can_create) {
     wc_add_notice(__('You do not have permission to create projects. Please contact the administrator if you believe this is an error.', 'arsol-pfw'), 'error');

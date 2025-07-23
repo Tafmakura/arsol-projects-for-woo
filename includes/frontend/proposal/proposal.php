@@ -116,11 +116,10 @@ class Proposal_Frontend extends Frontend_Handler {
                 throw new Exception(__('You must be logged in to submit a project proposal', 'arsol-pfw'));
             }
 
+            // Check if user can create proposals
             $user_id = get_current_user_id();
-            $creation_data['user_id'] = $user_id;
-
-            // Check if user can create project proposals
-            if (!\Arsol_Projects_For_Woo\Core\Capabilities_Handler::can_create_project_proposals($user_id)) {
+            $user = get_user_by('id', $user_id);
+            if (!$user || !($user->has_cap('edit_arsol_pfw_proposals') || $user->has_cap('arsol_pfw_manage'))) {
                 throw new Exception(__('You do not have permission to create project proposals', 'arsol-pfw'));
             }
 
