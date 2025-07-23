@@ -267,7 +267,6 @@ class Permissions {
             echo '<label>';
             echo '<input type="checkbox" checked disabled> ';
             echo esc_html($admin_roles['administrator']['name']);
-            echo ' <em>(' . esc_html__('always enabled', 'arsol-pfw') . ')</em>';
             echo '</label><br>';
         }
         
@@ -316,7 +315,6 @@ class Permissions {
                    id="arsol-pfw-project-manager-capability-manage_assigned_projects"
                    checked disabled>
             <?php echo esc_html__('Can manage assigned projects', 'arsol-pfw'); ?>
-            <em>(<?php echo esc_html__('always enabled', 'arsol-pfw'); ?>)</em>
         </label><br>
         <?php
         
@@ -442,7 +440,6 @@ class Permissions {
             echo '<label>';
             echo '<input type="checkbox" checked disabled> ';
             echo esc_html($editable_roles['administrator']['name']);
-            echo ' <em>(' . esc_html__('always enabled', 'arsol-pfw') . ')</em>';
             echo '</label><br>';
         }
         
