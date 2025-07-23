@@ -268,7 +268,6 @@ class Users {
                     <label style="display: block; margin: 5px 0;">
                         <input type="checkbox" checked disabled>
                         <?php echo esc_html__('Can manage assigned projects', 'arsol-pfw'); ?>
-                        <em>(<?php echo esc_html__('always enabled', 'arsol-pfw'); ?>)</em>
                     </label>
 
                     <?php
