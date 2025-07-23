@@ -98,7 +98,7 @@ class Permissions {
             'arsol_pfw_permissions_settings',
             'arsol_project_manager_permissions',
             array(
-                'description' => __('Default behavior for new project managers without override settings.', 'arsol-pfw'),
+                'description' => __('Default permission level assigned to new project managers.', 'arsol-pfw'),
                 'class' => 'arsol-pfw-show-if-arsol-pfw-allow-manager-overrides-is-checked arsol-pfw-manager-default-behavior'
             )
         );
@@ -154,7 +154,7 @@ class Permissions {
             'arsol_pfw_permissions_settings',
             'arsol_customer_permissions',
             array(
-                'description' => __('Default permission level assigned to new users (only applies when "User Specific" is selected above)', 'arsol-pfw'),
+                'description' => __('Default permission level assigned to new customers.', 'arsol-pfw'),
                 'field' => 'default_user_permission',
                 'options' => array(
                     'none' => __('None', 'arsol-pfw'),
