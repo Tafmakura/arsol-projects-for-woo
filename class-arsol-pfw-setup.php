@@ -121,6 +121,7 @@ class Setup {
      */
     private function load_admin_files() {
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/general.php';
+        require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/permissions.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/display.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/files.php';
         require_once ARSOL_PFW_PLUGIN_DIR . 'includes/admin/settings/integrations.php';
