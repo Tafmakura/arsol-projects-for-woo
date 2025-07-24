@@ -30,11 +30,27 @@ class Permissions {
     }
 
     /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
+
+    /**
      * Setup settings after init
      */
     public function setup_settings() {
         add_action('admin_init', array($this, 'register_settings'));
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 
     /**
      * Register settings
@@ -168,6 +184,14 @@ class Permissions {
     }
 
     /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
+
+    /**
      * Enqueue admin scripts
      */
     public function enqueue_admin_scripts($hook) {
@@ -176,10 +200,26 @@ class Permissions {
             return;
         }
 
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
+
         // Note: arsol-pfw-admin script and style are now handled by the Assets class
         // which includes the settings page in its enqueue logic
         // Checkbox conditional visibility is now handled in arsol-pfw-admin.js
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 
     /**
      * Render permissions section description
@@ -187,6 +227,14 @@ class Permissions {
     public function render_permissions_section() {
         echo '<p>' . esc_html__('Configure project permissions: Project managers need WooCommerce admin knowledge, while regular users just need to be WooCommerce customers.', 'arsol-pfw') . '</p>';
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 
     /**
      * Render project manager section description
@@ -198,6 +246,14 @@ class Permissions {
     }
 
     /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
+
+    /**
      * Render customer permissions section description
      */
     public function render_customer_permissions_section() {
@@ -205,6 +261,14 @@ class Permissions {
         echo '<div id="customer-permissions-description"><p>' . esc_html__('Configure permissions for users who create and manage their own projects (Customers).', 'arsol-pfw') . '</p></div>';
         echo '</div>';
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 
     /**
      * Render manager roles field (only roles with admin access)
@@ -226,6 +290,14 @@ class Permissions {
             if (isset($details['capabilities']['manage_options']) && $details['capabilities']['manage_options']) {
                 $has_admin_access = true;
             }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
             
             // Check for WooCommerce admin capabilities
             $woocommerce_admin_caps = array(
@@ -253,12 +325,44 @@ class Permissions {
                     $has_admin_access = true;
                     break;
                 }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
             }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
             
             if ($has_admin_access) {
                 $admin_roles[$role] = $details;
             }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         
         echo "<div class='{$class}'>";
         
@@ -269,12 +373,28 @@ class Permissions {
             echo esc_html($admin_roles['administrator']['name']);
             echo '</label><br>';
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         
         // Actual configurable roles (excluding administrator)
         foreach ($admin_roles as $role => $details) {
             if ($role === 'administrator') {
                 continue; // Skip administrator as it's handled above
             }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
             
             $checked = in_array($role, $selected_roles) ? 'checked' : '';
             
@@ -283,12 +403,36 @@ class Permissions {
             echo esc_html($details['name']);
             echo '</label><br>';
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         
         if (!empty($args['description'])) {
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         echo '</div>';
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 
     /**
      * Render manager capabilities field
@@ -305,6 +449,14 @@ class Permissions {
                 'manage_stages', 'manage_workflows', 'manage_settings', 'manage_permissions'
             );
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         
         echo "<div class='{$class}'>";
         
@@ -337,6 +489,14 @@ class Permissions {
             if ($cap_key === 'manage_permissions') {
                 $conditional_class = ' arsol-pfw-show-if-arsol-pfw-project-manager-capability-manage_settings-is-checked';
             }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
             
             ?>
             <label for="arsol-pfw-project-manager-capability-<?php echo esc_attr($cap_key); ?>"<?php echo $conditional_class ? ' class="' . esc_attr($conditional_class) . '"' : ''; ?>>
@@ -349,11 +509,35 @@ class Permissions {
             </label><?php echo $conditional_class ? '' : '<br>'; ?>
             <?php
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         echo "</div>";
         if (!empty($args['description'])) {
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 
     /**
      * Render manager override field
@@ -381,7 +565,23 @@ class Permissions {
         if (!empty($args['description'])) {
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 
     /**
      * Render new user capabilities field
@@ -404,6 +604,14 @@ class Permissions {
                 $selected = ($new_project_manager_override_defaults === $value) ? 'selected' : '';
                 echo '<option value="' . esc_attr($value) . '" ' . $selected . '>' . esc_html($label) . '</option>';
             }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
             ?>
         </select>
         <?php
@@ -412,7 +620,23 @@ class Permissions {
         if (!empty($args['description'])) {
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 
 
     /**
@@ -445,12 +669,28 @@ class Permissions {
             echo esc_html($editable_roles['administrator']['name']);
             echo '</label><br>';
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         
         // Actual configurable roles (excluding administrator)
         foreach ($editable_roles as $role => $details) {
             if ($role === 'administrator') {
                 continue; // Skip administrator as it's handled above
             }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
             
             $checked = in_array($role, $selected_roles) ? 'checked' : '';
 
@@ -460,11 +700,35 @@ class Permissions {
             echo '</label><br>';
         }
 
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
+
         if (!empty($args['description'])) {
             echo '<p class="description">' . esc_html($args['description']) . '</p>';
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         echo '</div>';
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 
     /**
      * Render select field
@@ -484,6 +748,14 @@ class Permissions {
         if (strpos($field_name, '_') !== false) {
             $field_id = 'arsol-pfw-' . str_replace('_', '-', $field_name);
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         ?>
         <div class="<?php echo esc_attr($class); ?>">
         <select id="<?php echo esc_attr($field_id); ?>"
@@ -502,27 +774,29 @@ class Permissions {
     }
 
     /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
+
+    /**
      * Update capabilities when settings are saved
      */
     public function update_capabilities($old_value, $new_value) {
-        // Use specific Capabilities_Handler methods for better separation of concerns
-        
-        // Update project manager roles if changed
-        if (isset($new_value['project_manager_roles']) && 
-            (!isset($old_value['project_manager_roles']) || 
-             $new_value['project_manager_roles'] !== $old_value['project_manager_roles'])) {
-            \Arsol_Projects_For_Woo\Core\Capabilities_Handler::update_project_manager_roles($new_value['project_manager_roles']);
-        }
-
-        // Update frontend permissions if changed
-        if (isset($new_value['user_project_permissions']) && 
-            (!isset($old_value['user_project_permissions']) || 
-             $new_value['user_project_permissions'] !== $old_value['user_project_permissions'])) {
-            \Arsol_Projects_For_Woo\Core\Capabilities_Handler::update_frontend_permissions($new_value['user_project_permissions']);
-        }
+        // Simple approach: Always update all capabilities based on current settings
+        // No complex change detection - just update everything
+        \Arsol_Projects_For_Woo\Core\Capabilities_Handler::update_capabilities_from_settings($new_value);
     }
 
     /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
      * Validate settings
      *
      * @param mixed $input The input to validate
@@ -542,13 +816,45 @@ class Permissions {
             if (!in_array('manage_settings', $input['project_manager_capabilities'])) {
                 $input['project_manager_capabilities'] = array_diff($input['project_manager_capabilities'], array('manage_permissions'));
             }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         
         // ✅ SIMPLIFIED: Validate manager override setting
         if (isset($input['allow_manager_overrides'])) {
             $input['allow_manager_overrides'] = (bool) $input['allow_manager_overrides'];
         }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
         
         return $input;
     }
+
+    /**
+     * Validate settings
+     *
+     * @param mixed $input The input to validate
+     * @return mixed Validated input
+     */
+
 }
