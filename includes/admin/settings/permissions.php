@@ -90,6 +90,19 @@ class Permissions {
             )
         );
 
+        // New User Capabilities
+        add_settings_field(
+            'new_project_manager_override_defaults',
+            __('New User Capabilities', 'arsol-pfw'),
+            array($this, 'render_new_user_capabilities_field'),
+            'arsol_pfw_permissions_settings',
+            'arsol_project_manager_permissions',
+            array(
+                'description' => __('Default capabilities for new project managers', 'arsol-pfw'),
+                'class' => 'arsol-pfw-show-if-arsol-pfw-allow-manager-overrides-is-checked arsol-pfw-new-user-capabilities'
+            )
+        );
+
         // Customer Permissions Section
         add_settings_section(
             'arsol_customer_permissions',
@@ -362,28 +375,6 @@ class Permissions {
                    <?php echo $allow_overrides ? 'checked' : ''; ?>>
             <?php echo esc_html__('Allow individual project managers to override admin settings', 'arsol-pfw'); ?>
         </label>
-        
-        <?php
-        // Conditional "New Project Manager Override Defaults" field that appears when overrides are enabled
-        ?>
-        <div class="arsol-pfw-show-if-arsol-pfw-allow-manager-overrides-is-checked" style="<?php echo $allow_overrides ? '' : 'display: none;'; ?>">
-            <br>
-            <label for="arsol-pfw-new-project-manager-override-defaults"><?php esc_html_e('New Project Manager Override Defaults:', 'arsol-pfw'); ?></label>
-            <select id="arsol-pfw-new-project-manager-override-defaults" name="arsol_pfw_permissions_settings[new_project_manager_override_defaults]">
-                <?php
-                $new_project_manager_override_defaults = isset($settings['new_project_manager_override_defaults']) ? $settings['new_project_manager_override_defaults'] : 'all_enabled';
-                $override_options = array(
-                    'all_enabled' => __('Enable all available capabilities', 'arsol-pfw'),
-                    'all_disabled' => __('Disable all available capabilities', 'arsol-pfw')
-                );
-                foreach ($override_options as $value => $label) {
-                    $selected = ($new_project_manager_override_defaults === $value) ? 'selected' : '';
-                    echo '<option value="' . esc_attr($value) . '" ' . $selected . '>' . esc_html($label) . '</option>';
-                }
-                ?>
-            </select>
-            <p class="description"><?php esc_html_e('Default override state for new project managers when individual overrides are allowed.', 'arsol-pfw'); ?></p>
-        </div>
         <?php
         
         echo "</div>";
@@ -392,6 +383,36 @@ class Permissions {
         }
     }
 
+    /**
+     * Render new user capabilities field
+     */
+    public function render_new_user_capabilities_field($args) {
+        $settings = get_option('arsol_pfw_permissions_settings', array());
+        $new_project_manager_override_defaults = isset($settings['new_project_manager_override_defaults']) ? $settings['new_project_manager_override_defaults'] : 'all_enabled';
+        $class = 'arsol-pfw-setting-field ' . (isset($args['class']) ? esc_attr($args['class']) : '');
+        
+        echo "<div class='{$class}'>";
+        
+        ?>
+        <select id="arsol-pfw-new-project-manager-override-defaults" name="arsol_pfw_permissions_settings[new_project_manager_override_defaults]">
+            <?php
+            $override_options = array(
+                'all_enabled' => __('Enable all available capabilities', 'arsol-pfw'),
+                'all_disabled' => __('Disable all available capabilities', 'arsol-pfw')
+            );
+            foreach ($override_options as $value => $label) {
+                $selected = ($new_project_manager_override_defaults === $value) ? 'selected' : '';
+                echo '<option value="' . esc_attr($value) . '" ' . $selected . '>' . esc_html($label) . '</option>';
+            }
+            ?>
+        </select>
+        <?php
+        
+        echo "</div>";
+        if (!empty($args['description'])) {
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
+        }
+    }
 
 
     /**
