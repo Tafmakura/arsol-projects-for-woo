@@ -30,7 +30,7 @@ class Capabilities_Handler {
     public function __construct() {
         // Hook into plugin activation/deactivation for clean capability management
         register_activation_hook(ARSOL_PFW_PLUGIN_FILE, array($this, 'add_administrator_capabilities'));
-        register_deactivation_hook(ARSOL_PFW_PLUGIN_FILE, array($this, 'remove_all_capabilities'));
+        register_deactivation_hook(ARSOL_PFW_PLUGIN_FILE, array(__CLASS__, 'remove_all_capabilities'));
     }
 
     /**
@@ -97,7 +97,7 @@ class Capabilities_Handler {
     /**
      * Remove all PFW capabilities from all roles on plugin deactivation
      */
-    public function remove_all_capabilities() {
+    public static function remove_all_capabilities() {
         // Get all roles
         $all_roles = wp_roles()->get_names();
         
