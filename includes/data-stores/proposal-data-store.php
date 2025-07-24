@@ -176,7 +176,7 @@ class Proposal_Data_Store {
         }
         
         // Save quotation
-        $quotation = $proposal->get_proposed_project_quotation();
+        $quotation = $proposal->get_quotation();
         if ($quotation !== null) {
             $proposal->set_meta('_arsol_pfw_proposed_project_quotation', $quotation);
         }
@@ -206,7 +206,7 @@ class Proposal_Data_Store {
         }
         
         // Save costing type
-        $costing_type = $proposal->get_proposal_costing_type();
+        $costing_type = $proposal->get_costing_type();
         if ($costing_type !== null) {
             $proposal->set_meta('_arsol_pfw_proposal_costing_type', $costing_type);
         }
@@ -230,13 +230,13 @@ class Proposal_Data_Store {
         }
         
         // Save budget notes
-        $budget_notes = $proposal->get_proposal_budget_notes();
+        $budget_notes = $proposal->get_budget_notes();
         if ($budget_notes !== null) {
             $proposal->set_meta('_arsol_pfw_proposal_budget_notes', $budget_notes);
         }
         
         // Save quotation notes
-        $quotation_notes = $proposal->get_proposal_quotation_notes();
+        $quotation_notes = $proposal->get_quotation_notes();
         if ($quotation_notes !== null) {
             $proposal->set_meta('_arsol_pfw_proposal_quotation_notes', $quotation_notes);
         }

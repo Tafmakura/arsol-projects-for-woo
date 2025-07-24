@@ -87,7 +87,7 @@ class Single_Controller {
         // Get current values
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
         // Get proposal costing type
-        $proposal_costing_type = $proposal->get_proposal_costing_type();
+        $proposal_costing_type = $proposal->get_costing_type();
         if (empty($proposal_costing_type)) {
             $proposal_costing_type = 'none'; // Default to none
         }
@@ -519,7 +519,7 @@ class Single_Controller {
         
         // Get quotation line items using entity method
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-        $quotation_line_items = $proposal->get_proposed_project_quotation();
+        $quotation_line_items = $proposal->get_quotation();
         
         if (empty($quotation_line_items) || !is_array($quotation_line_items)) {
             $errors[] = __('Quotation proposals must have at least one line item.', 'arsol-pfw');

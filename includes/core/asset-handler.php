@@ -323,17 +323,17 @@ class Asset_Handler {
                     $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
                     if ($proposal && $proposal->exists()) {
                         // Get costing type to determine which data to load
-                        $costing_type = $proposal->get_proposal_costing_type();
+                        $costing_type = $proposal->get_costing_type();
                         
                         // Get quotation data using proper getter
-                        $quotation_data = $proposal->get_proposed_project_quotation();
+                        $quotation_data = $proposal->get_quotation();
                         
                         // Get budget data using proper getter
                         $budget_data = $proposal->get_budget();
                         
                         // Get notes using proper getters
-                        $budget_notes = $proposal->get_proposal_budget_notes();
-                        $quotation_notes = $proposal->get_proposal_quotation_notes();
+                        $budget_notes = $proposal->get_budget_notes();
+                        $quotation_notes = $proposal->get_quotation_notes();
                     }
                 }
 

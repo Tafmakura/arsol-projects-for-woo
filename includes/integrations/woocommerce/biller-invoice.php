@@ -500,7 +500,7 @@ class Biller_Invoice {
         
         // Get proposal costing type using Proposal entity
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $proposal_costing_type = $proposal->get_proposal_costing_type() ?: 'none';
+        $proposal_costing_type = $proposal->get_costing_type() ?: 'none';
         
         // Validate based on proposal type
         switch ($proposal_costing_type) {
@@ -544,7 +544,7 @@ class Biller_Invoice {
             case 'quotation':
                 // Quotation type requires at least one quotation line item with description and amount
                 $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-                $quotation_data = $proposal_entity->get_proposed_project_quotation();
+                $quotation_data = $proposal_entity->get_quotation();
                 $line_items = $quotation_data; // Use the quotation data directly
                 
                 if (empty($line_items) || !is_array($line_items)) {
@@ -616,7 +616,7 @@ class Biller_Invoice {
         
         // Get proposal costing type using Proposal entity
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        $proposal_costing_type = $proposal->get_proposal_costing_type() ?: 'none';
+        $proposal_costing_type = $proposal->get_costing_type() ?: 'none';
         $currency = get_woocommerce_currency(); // Use WooCommerce default currency
         $line_items = array();
         
@@ -624,7 +624,7 @@ class Biller_Invoice {
         switch ($proposal_costing_type) {
             case 'quotation':
                 // Get quotation line items
-                $line_items = $proposal->get_proposed_project_quotation() ?: array();
+                $line_items = $proposal->get_quotation() ?: array();
                 break;
                 
             case 'budget':
@@ -653,6 +653,6 @@ class Biller_Invoice {
     private function get_proposal_type($proposal_id) {
         // Use Proposal entity for costing type access
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-        return $proposal->get_proposal_costing_type() ?: 'none';
+        return $proposal->get_costing_type() ?: 'none';
     }
 }

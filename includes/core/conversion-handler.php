@@ -156,7 +156,7 @@ class Conversion_Handler {
             
             // 5. Handle WooCommerce orders (if needed)
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-            $cost_type = $proposal->get_proposal_costing_type();
+            $cost_type = $proposal->get_costing_type();
             if ($cost_type === 'quotation') {
                 error_log("ARSOL PFW DEBUG: Creating WooCommerce orders for quotation proposal");
                 $this->create_woocommerce_orders($proposal_id, $project_id);
@@ -332,7 +332,7 @@ class Conversion_Handler {
         );
         
         // Get proposal costing type
-        $proposal_costing_type = $proposal->get_proposal_costing_type();
+        $proposal_costing_type = $proposal->get_costing_type();
         error_log("ARSOL PFW DEBUG: Proposal costing type: {$proposal_costing_type}");
         
         // Copy type-specific data
@@ -344,7 +344,7 @@ class Conversion_Handler {
             }
         } elseif ($proposal_costing_type === 'quotation') {
             // Copy quotation data using entity methods
-            $quotation_data = $proposal->get_proposed_project_quotation();
+            $quotation_data = $proposal->get_quotation();
             if (!empty($quotation_data)) {
                 $project->set_project_quotation($quotation_data);
                 error_log("ARSOL PFW DEBUG: Copied quotation data using entity methods");
