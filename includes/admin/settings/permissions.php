@@ -796,12 +796,6 @@ class Permissions {
      * @param mixed $input The input to validate
      * @return mixed Validated input
      */
-
-     * Validate settings
-     *
-     * @param mixed $input The input to validate
-     * @return mixed Validated input
-     */
     public function validate_settings($input) {
         // Validate manager capabilities
         if (isset($input['project_manager_capabilities'])) {
