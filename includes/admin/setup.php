@@ -113,7 +113,7 @@ class Setup {
             $parent_slug,
             __('Settings', 'arsol-pfw'),
             __('Settings', 'arsol-pfw'),
-            'arsol_pfw_manage_settings',
+            'manage_options',
             'arsol-projects-settings',
             array($this, 'settings_page_callback'),
             99
@@ -161,18 +161,18 @@ class Setup {
     public function settings_page_callback() {
         $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
         
+        // Check if user can access settings at all
+        $can_access_settings = current_user_can('manage_options') || current_user_can('arsol_pfw_manage_settings');
+        if (!$can_access_settings) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'arsol-pfw'));
+        }
+        
         // Check if user can access permissions tab
         $can_access_permissions = current_user_can('manage_options') || current_user_can('arsol_pfw_manage_permissions');
         
         // If trying to access permissions tab without capability, redirect to general
         if ($active_tab === 'permissions' && !$can_access_permissions) {
             $active_tab = 'general';
-        }
-        
-        // Check if user can access settings at all
-        $can_access_settings = current_user_can('manage_options') || current_user_can('arsol_pfw_manage_settings');
-        if (!$can_access_settings) {
-            wp_die(__('You do not have sufficient permissions to access this page.', 'arsol-pfw'));
         }
         
         ?>
