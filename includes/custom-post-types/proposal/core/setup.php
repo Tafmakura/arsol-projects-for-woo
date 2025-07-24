@@ -156,7 +156,7 @@ class Setup {
         $request_date = $proposal->get_request_date();
         $request_title = $proposal->get_request_title();
         $request_content = $proposal->get_request_details();
-        $request_attachments = $proposal->get_request_attachments();
+        $request_attachments = $proposal->get_attachments();
 
         // Display request title if available
         if ($request_title) {

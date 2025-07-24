@@ -35,7 +35,7 @@ class Budget_Controller {
         
         // Get current values using entity methods
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
-        $budget_data = $proposal->get_proposed_project_budget();
+        $budget_data = $proposal->get_budget();
         $budget_notes = $proposal->get_proposal_budget_notes() ?: '';
 
         // Extract one-time and recurring data from budget line items

@@ -329,7 +329,7 @@ class Asset_Handler {
                         $quotation_data = $proposal->get_proposed_project_quotation();
                         
                         // Get budget data using proper getter
-                        $budget_data = $proposal->get_proposed_project_budget();
+                        $budget_data = $proposal->get_budget();
                         
                         // Get notes using proper getters
                         $budget_notes = $proposal->get_proposal_budget_notes();

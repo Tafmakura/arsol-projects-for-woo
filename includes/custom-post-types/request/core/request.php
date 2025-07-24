@@ -546,44 +546,6 @@ class Arsol_PFW_Request {
     }
 
     /**
-     * Get request customer notice
-     * 
-     * @return string Customer notice
-     */
-    public function get_request_customer_notice() {
-        return $this->get_meta('_arsol_pfw_request_customer_notice');
-    }
-
-    /**
-     * Set request customer notice
-     * 
-     * @param string $customer_notice Customer notice
-     * @return bool Success status
-     */
-    public function set_request_customer_notice($customer_notice) {
-        return $this->set_meta('_arsol_pfw_request_customer_notice', wp_kses_post($customer_notice));
-    }
-
-    /**
-     * Get request attachments
-     * 
-     * @return array Request attachments
-     */
-    public function get_request_attachments() {
-        return $this->get_meta('_arsol_pfw_request_attachments') ?: array();
-    }
-
-    /**
-     * Set request attachments
-     * 
-     * @param array $attachments Request attachments
-     * @return bool Success status
-     */
-    public function set_request_attachments($attachments) {
-        return $this->set_meta('_arsol_pfw_request_attachments', $attachments);
-    }
-
-    /**
      * Get converted to proposal flag
      * 
      * @return bool Converted to proposal
@@ -720,8 +682,6 @@ class Arsol_PFW_Request {
             '_arsol_pfw_requested_project_budget',
             '_arsol_pfw_requested_project_start_date',
             '_arsol_pfw_requested_project_due_date',
-            '_arsol_pfw_request_customer_notice',
-            '_arsol_pfw_request_attachments',
             '_arsol_pfw_request_converted_to_proposal',
             '_arsol_pfw_request_id',
             '_arsol_pfw_parent_project_id',

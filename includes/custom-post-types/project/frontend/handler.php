@@ -187,16 +187,16 @@ class Handler {
                     'currency' => $currency
                 );
                 $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
-                $project->set_project_budget($budget_data);
+                $project->set_budget($budget_data);
             }
         }
         if (!empty($start_date)) {
             $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
-            $project->set_project_start_date($start_date);
+            $project->set_start_date($start_date);
         }
         if (!empty($due_date)) {
             $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
-            $project->set_project_due_date($due_date);
+            $project->set_due_date($due_date);
         }
 
         /**
@@ -392,17 +392,17 @@ class Handler {
                 'currency' => get_woocommerce_currency()
             );
             $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
-            $project->set_project_budget($budget_data);
+            $project->set_budget($budget_data);
         }
 
         if (!empty($start_date)) {
             $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
-            $project->set_project_start_date($start_date);
+            $project->set_start_date($start_date);
         }
 
         if (!empty($due_date)) {
             $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($project_id);
-            $project->set_project_due_date($due_date);
+            $project->set_due_date($due_date);
         }
 
         /**

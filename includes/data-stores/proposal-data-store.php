@@ -170,7 +170,7 @@ class Proposal_Data_Store {
      */
     protected function save_meta($proposal) {
         // Save budget
-        $budget = $proposal->get_proposed_project_budget();
+        $budget = $proposal->get_budget();
         if ($budget !== null) {
             $proposal->set_meta('_arsol_pfw_proposed_project_budget', $budget);
         }
@@ -182,13 +182,13 @@ class Proposal_Data_Store {
         }
         
         // Save due date
-        $due_date = $proposal->get_proposed_project_due_date();
+        $due_date = $proposal->get_due_date();
         if ($due_date !== null) {
             $proposal->set_meta('_arsol_pfw_proposed_project_due_date', $due_date);
         }
         
         // Save start date
-        $start_date = $proposal->get_proposed_project_start_date();
+        $start_date = $proposal->get_start_date();
         if ($start_date !== null) {
             $proposal->set_meta('_arsol_pfw_proposed_project_start_date', $start_date);
         }

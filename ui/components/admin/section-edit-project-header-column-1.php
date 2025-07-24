@@ -26,8 +26,8 @@ $project_stage = $project->get_stage();
 $available_stages = $project->get_available_stages();
 
 $project_lead = $project->get_project_lead();
-$start_date = $project->get_project_start_date();
-$due_date = $project->get_project_due_date();
+$start_date = $project->get_start_date();
+$due_date = $project->get_due_date();
 ?>
 
 <div class="form-field-row">

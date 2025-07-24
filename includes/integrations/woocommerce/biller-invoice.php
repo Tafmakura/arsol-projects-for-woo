@@ -511,7 +511,7 @@ class Biller_Invoice {
             case 'budget':
                 // Budget type requires at least one-time budget with amount > 0
                 $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-                $budget_data = $proposal_entity->get_proposed_project_budget();
+                $budget_data = $proposal_entity->get_budget();
                 
                 // Extract one-time budget data
                 $onetime_data = array();

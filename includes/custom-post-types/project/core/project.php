@@ -494,7 +494,7 @@ class Project {
      * 
      * @return array Project budget data
      */
-    public function get_project_budget() {
+    public function get_budget() {
         return $this->get_meta('_arsol_pfw_project_budget_line_items') ?: array();
     }
 
@@ -504,27 +504,8 @@ class Project {
      * @param array $budget Project budget data
      * @return bool Success status
      */
-    public function set_project_budget($budget) {
+    public function set_budget($budget) {
         return $this->set_meta('_arsol_pfw_project_budget_line_items', $budget);
-    }
-
-    /**
-     * Get project due date
-     * 
-     * @return string Project due date
-     */
-    public function get_project_due_date() {
-        return $this->get_meta('_arsol_pfw_project_due_date');
-    }
-
-    /**
-     * Set project due date
-     * 
-     * @param string $due_date Project due date
-     * @return bool Success status
-     */
-    public function set_project_due_date($due_date) {
-        return $this->set_meta('_arsol_pfw_project_due_date', sanitize_text_field($due_date));
     }
 
     /**
@@ -551,7 +532,7 @@ class Project {
      * 
      * @return string Project start date
      */
-    public function get_project_start_date() {
+    public function get_start_date() {
         return $this->get_meta('_arsol_pfw_project_start_date');
     }
 
@@ -561,7 +542,7 @@ class Project {
      * @param string $start_date Project start date
      * @return bool Success status
      */
-    public function set_project_start_date($start_date) {
+    public function set_start_date($start_date) {
         return $this->set_meta('_arsol_pfw_project_start_date', sanitize_text_field($start_date));
     }
 
@@ -570,7 +551,7 @@ class Project {
      * 
      * @return string Project customer notice
      */
-    public function get_project_customer_notice() {
+    public function get_customer_notice() {
         return $this->get_meta('_arsol_pfw_project_customer_notice');
     }
 
@@ -580,7 +561,7 @@ class Project {
      * @param string $customer_notice Project customer notice
      * @return bool Success status
      */
-    public function set_project_customer_notice($customer_notice) {
+    public function set_customer_notice($customer_notice) {
         return $this->set_meta('_arsol_pfw_project_customer_notice', wp_kses_post($customer_notice));
     }
 
@@ -843,6 +824,22 @@ class Project {
         
         // Fallback to historical proposal due date
         return $this->get_meta('_arsol_pfw_proposed_project_due_date');
+    }
+
+    /**
+     * Get proposed project lead (cross-entity access to proposal data)
+     * 
+     * @return int|null Proposed project lead ID
+     */
+    public function get_proposed_project_lead() {
+        // First try current proposal lead
+        $current_lead = $this->get_meta('_arsol_pfw_proposal_lead');
+        if (!empty($current_lead)) {
+            return $current_lead;
+        }
+        
+        // Fallback to historical proposal lead
+        return $this->get_meta('_arsol_pfw_proposed_project_lead');
     }
 
     /**

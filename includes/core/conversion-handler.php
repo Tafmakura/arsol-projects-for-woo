@@ -62,7 +62,7 @@ class Conversion_Handler {
                 // Copy budget data
                 if (!empty($request_budget)) {
                     $proposal_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
-                    $proposal_entity->set_proposed_project_budget($request_budget);
+                    $proposal_entity->set_budget($request_budget);
                     $proposal_entity->save();
                 }
                 break;
@@ -124,7 +124,7 @@ class Conversion_Handler {
             $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project();
             $project->set_title($proposal_obj->get_title());
             $project->set_customer_id($proposal_obj->get_customer_id());
-            $project->set_project_budget($proposal_obj->get_proposed_project_budget());
+            $project->set_budget($proposal_obj->get_budget());
             $project->set_description($proposal_obj->get_description());      
             
             if (!$project) {
@@ -338,9 +338,9 @@ class Conversion_Handler {
         // Copy type-specific data
         if ($proposal_costing_type === 'budget') {
             // Copy budget data
-            $budget_data = $proposal->get_proposed_project_budget();
+            $budget_data = $proposal->get_budget();
             if (!empty($budget_data)) {
-                $project->set_project_budget($budget_data);
+                $project->set_budget($budget_data);
             }
         } elseif ($proposal_costing_type === 'quotation') {
             // Copy quotation data using entity methods

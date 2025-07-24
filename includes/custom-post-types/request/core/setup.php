@@ -150,7 +150,7 @@ class Setup {
         $requested_start_date = $request->get_requested_project_start_date();
         $requested_due_date = $request->get_requested_project_due_date();
         $request_date = $request->get_request_date();
-        $request_attachments = $request->get_request_attachments();
+        $request_attachments = $request->get_attachments();
         
         $template_path = ARSOL_PFW_PLUGIN_DIR . 'ui/components/admin/section-edit-request-header-column-2.php';
         if (file_exists($template_path)) {

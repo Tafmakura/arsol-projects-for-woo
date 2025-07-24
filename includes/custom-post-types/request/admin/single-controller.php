@@ -95,7 +95,7 @@ class Single_Controller {
 
         // Get current values using Request entity
         $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($post->ID);
-        $notice = $request->get_request_customer_notice();
+        $notice = $request->get_customer_notice();
         ?>
         <div>
             <p class="description">
@@ -167,7 +167,7 @@ class Single_Controller {
         // Save customer notice
         if (isset($_POST['request_customer_notice_section_nonce']) && wp_verify_nonce($_POST['request_customer_notice_section_nonce'], 'request_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_request_customer_notice'])) {
-                $request->set_request_customer_notice(wp_kses_post($_POST['arsol_pfw_request_customer_notice']));
+                $request->set_customer_notice(wp_kses_post($_POST['arsol_pfw_request_customer_notice']));
             }
         }
         

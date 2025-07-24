@@ -816,8 +816,8 @@ class CustomEmailManager {
         // Add project-specific variables
         if (isset($data['project_id'])) {
             $project_id = $data['project_id'];
-            $variables['project_budget'] = $this->get_project_budget($project_id);
-            $variables['project_due_date'] = $this->get_project_due_date($project_id);
+            $variables['project_budget'] = $this->get_budget($project_id);
+            $variables['project_due_date'] = $this->get_due_date($project_id);
         }
         
         return $variables;

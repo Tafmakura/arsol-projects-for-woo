@@ -99,7 +99,7 @@ class Single_Controller {
 
         // Get current values using Project entity
         $project = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post->ID);
-        $notice = $project->get_project_customer_notice();
+        $notice = $project->get_customer_notice();
         ?>
         <div>
             <p class="description">
@@ -157,8 +157,8 @@ class Single_Controller {
 
             // Set start date on the first transition to 'in-progress'
             if ($new_status === 'in-progress' && $old_status !== 'in-progress') {
-                if (empty($project->get_project_start_date())) {
-                    $project->set_project_start_date(current_time('mysql'));
+                if (empty($project->get_start_date())) {
+                    $project->set_start_date(current_time('mysql'));
                 }
             }
             
@@ -166,8 +166,8 @@ class Single_Controller {
         }
 
         // Set default start date if not already set
-        if (empty($project->get_project_start_date())) {
-            $project->set_project_start_date(current_time('mysql'));
+        if (empty($project->get_start_date())) {
+            $project->set_start_date(current_time('mysql'));
         }
 
         // Save project lead
@@ -177,18 +177,18 @@ class Single_Controller {
 
         // Save project start date
         if (isset($_POST['project_start_date'])) {
-            $project->set_project_start_date(sanitize_text_field($_POST['project_start_date']));
+            $project->set_start_date(sanitize_text_field($_POST['project_start_date']));
         }
 
         // Save project due date
         if (isset($_POST['project_due_date'])) {
-            $project->set_project_due_date(sanitize_text_field($_POST['project_due_date']));
+            $project->set_due_date(sanitize_text_field($_POST['project_due_date']));
         }
         
         // Save customer notice
         if (isset($_POST['project_customer_notice_section_nonce']) && wp_verify_nonce($_POST['project_customer_notice_section_nonce'], 'project_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_project_customer_notice'])) {
-                $project->set_project_customer_notice(wp_kses_post($_POST['arsol_pfw_project_customer_notice']));
+                $project->set_customer_notice(wp_kses_post($_POST['arsol_pfw_project_customer_notice']));
             }
         }
         

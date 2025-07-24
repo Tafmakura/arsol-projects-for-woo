@@ -495,7 +495,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return array Budget data
      */
-    public function get_proposed_project_budget() {
+    public function get_budget() {
         return $this->get_meta('_arsol_pfw_proposed_project_budget') ?: array();
     }
 
@@ -505,7 +505,7 @@ class Arsol_PFW_Proposal {
      * @param array $budget Budget data
      * @return bool Success status
      */
-    public function set_proposed_project_budget($budget) {
+    public function set_budget($budget) {
         return $this->set_meta('_arsol_pfw_proposed_project_budget', $budget);
     }
 
@@ -514,7 +514,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return array Quotation data
      */
-    public function get_proposed_project_quotation() {
+    public function get_quotation() {
         return $this->get_meta('_arsol_pfw_proposed_project_quotation') ?: array();
     }
 
@@ -524,7 +524,7 @@ class Arsol_PFW_Proposal {
      * @param array $quotation Quotation data
      * @return bool Success status
      */
-    public function set_proposed_project_quotation($quotation) {
+    public function set_quotation($quotation) {
         return $this->set_meta('_arsol_pfw_proposed_project_quotation', $quotation);
     }
 
@@ -533,7 +533,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Budget notes
      */
-    public function get_proposal_budget_notes() {
+    public function get_budget_notes() {
         return $this->get_meta('_arsol_pfw_proposal_budget_notes');
     }
 
@@ -543,7 +543,7 @@ class Arsol_PFW_Proposal {
      * @param string $notes Budget notes
      * @return bool Success status
      */
-    public function set_proposal_budget_notes($notes) {
+    public function set_budget_notes($notes) {
         return $this->set_meta('_arsol_pfw_proposal_budget_notes', wp_kses_post($notes));
     }
 
@@ -552,7 +552,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Quotation notes
      */
-    public function get_proposal_quotation_notes() {
+    public function get_quotation_notes() {
         return $this->get_meta('_arsol_pfw_proposal_quotation_notes');
     }
 
@@ -562,7 +562,7 @@ class Arsol_PFW_Proposal {
      * @param string $notes Quotation notes
      * @return bool Success status
      */
-    public function set_proposal_quotation_notes($notes) {
+    public function set_quotation_notes($notes) {
         return $this->set_meta('_arsol_pfw_proposal_quotation_notes', wp_kses_post($notes));
     }
 
@@ -571,7 +571,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Due date
      */
-    public function get_proposed_project_due_date() {
+    public function get_due_date() {
         return $this->get_meta('_arsol_pfw_proposed_project_due_date');
     }
 
@@ -581,7 +581,7 @@ class Arsol_PFW_Proposal {
      * @param string $due_date Due date
      * @return bool Success status
      */
-    public function set_proposed_project_due_date($due_date) {
+    public function set_due_date($due_date) {
         return $this->set_meta('_arsol_pfw_proposed_project_due_date', sanitize_text_field($due_date));
     }
 
@@ -590,7 +590,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return int Lead ID
      */
-    public function get_proposed_project_lead() {
+    public function get_project_lead() {
         return $this->get_meta('_arsol_pfw_proposed_project_lead');
     }
 
@@ -600,7 +600,7 @@ class Arsol_PFW_Proposal {
      * @param int $lead_id Lead ID
      * @return bool Success status
      */
-    public function set_proposed_project_lead($lead_id) {
+    public function set_project_lead($lead_id) {
         return $this->set_meta('_arsol_pfw_proposed_project_lead', (int) $lead_id);
     }
 
@@ -609,7 +609,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Start date
      */
-    public function get_proposed_project_start_date() {
+    public function get_start_date() {
         return $this->get_meta("_arsol_pfw_proposed_project_start_date");
     }
 
@@ -619,7 +619,7 @@ class Arsol_PFW_Proposal {
      * @param string $start_date Start date
      * @return bool Success status
      */
-    public function set_proposed_project_start_date($start_date) {
+    public function set_start_date($start_date) {
         return $this->set_meta('_arsol_pfw_proposed_project_start_date', sanitize_text_field($start_date));
     }
 
@@ -628,7 +628,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Expiration date
      */
-    public function get_proposal_expiration_date() {
+    public function get_expiration_date() {
         return $this->get_meta('_arsol_pfw_proposal_expiration_date');
     }
 
@@ -638,7 +638,7 @@ class Arsol_PFW_Proposal {
      * @param string $expiration_date Expiration date
      * @return bool Success status
      */
-    public function set_proposal_expiration_date($expiration_date) {
+    public function set_expiration_date($expiration_date) {
         return $this->set_meta('_arsol_pfw_proposal_expiration_date', sanitize_text_field($expiration_date));
     }
 
@@ -647,7 +647,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Costing type
      */
-    public function get_proposal_costing_type() {
+    public function get_costing_type() {
         return $this->get_meta('_arsol_pfw_proposal_costing_type') ?: 'none';
     }
 
@@ -657,7 +657,7 @@ class Arsol_PFW_Proposal {
      * @param string $costing_type Costing type
      * @return bool Success status
      */
-    public function set_proposal_costing_type($costing_type) {
+    public function set_costing_type($costing_type) {
         return $this->set_meta('_arsol_pfw_proposal_costing_type', sanitize_text_field($costing_type));
     }
 
@@ -666,7 +666,7 @@ class Arsol_PFW_Proposal {
      * 
      * @return string Customer notice
      */
-    public function get_proposal_customer_notice() {
+    public function get_customer_notice() {
         return $this->get_meta('_arsol_pfw_proposal_customer_notice');
     }
 
@@ -676,47 +676,26 @@ class Arsol_PFW_Proposal {
      * @param string $customer_notice Customer notice
      * @return bool Success status
      */
-    public function set_proposal_customer_notice($customer_notice) {
+    public function set_customer_notice($customer_notice) {
         return $this->set_meta('_arsol_pfw_proposal_customer_notice', wp_kses_post($customer_notice));
-    }
-
-
-
-    /**
-     * Get proposal secondary status
-     * 
-     * @return string Secondary status
-     */
-    public function get_proposal_secondary_status() {
-        return $this->get_meta('_arsol_pfw_proposal_secondary_status');
-    }
-
-    /**
-     * Set proposal secondary status
-     * 
-     * @param string $secondary_status Secondary status
-     * @return bool Success status
-     */
-    public function set_proposal_secondary_status($secondary_status) {
-        return $this->set_meta('_arsol_pfw_proposal_secondary_status', sanitize_text_field($secondary_status));
     }
 
     /**
      * Get proposal notes
      * 
-     * @return string Notes
+     * @return string Proposal notes
      */
-    public function get_proposal_notes() {
+    public function get_notes() {
         return $this->get_meta('_arsol_pfw_proposal_notes');
     }
 
     /**
      * Set proposal notes
      * 
-     * @param string $notes Notes
+     * @param string $notes Proposal notes
      * @return bool Success status
      */
-    public function set_proposal_notes($notes) {
+    public function set_notes($notes) {
         return $this->set_meta('_arsol_pfw_proposal_notes', wp_kses_post($notes));
     }
 

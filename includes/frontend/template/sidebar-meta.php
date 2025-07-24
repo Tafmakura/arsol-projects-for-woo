@@ -179,7 +179,7 @@ class Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = $project->get_project_start_date();
+        $start_date = $project->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -189,7 +189,7 @@ class Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = $project->get_project_due_date();
+        $due_date = $project->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -241,8 +241,8 @@ class Sidebar_Meta {
         
         // Project Lead
         $project_lead = $proposal->get_proposed_project_lead();
-        $start_date = $proposal->get_proposed_project_start_date();
-        $due_date = $proposal->get_proposed_project_due_date();
+        $start_date = $proposal->get_start_date();
+        $due_date = $proposal->get_due_date();
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);
@@ -559,7 +559,7 @@ class Sidebar_Meta {
         }
         
         // Start Date
-        $start_date = $project->get_project_start_date();
+        $start_date = $project->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -569,7 +569,7 @@ class Sidebar_Meta {
         }
         
         // Due Date
-        $due_date = $project->get_project_due_date();
+        $due_date = $project->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -616,8 +616,8 @@ class Sidebar_Meta {
         
         // Project Lead
         $project_lead = $proposal->get_proposed_project_lead();
-        $start_date = $proposal->get_proposed_project_start_date();
-        $due_date = $proposal->get_proposed_project_due_date();
+        $start_date = $proposal->get_start_date();
+        $due_date = $proposal->get_due_date();
         
         if (!empty($project_lead)) {
             $lead = get_userdata($project_lead);

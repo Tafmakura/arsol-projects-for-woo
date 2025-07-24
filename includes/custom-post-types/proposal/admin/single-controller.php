@@ -92,8 +92,8 @@ class Single_Controller {
             $proposal_costing_type = 'none'; // Default to none
         }
 
-        $start_date = $proposal->get_proposed_project_start_date();
-        $delivery_date = $proposal->get_proposed_project_due_date();
+        $start_date = $proposal->get_start_date();
+        $delivery_date = $proposal->get_due_date();
         $expiration_date = $proposal->get_proposal_expiration_date();
 
         // Get original request data for comparison
@@ -343,12 +343,12 @@ class Single_Controller {
                 }
             }
             
-            $proposal->set_proposed_project_budget($budget_data);
+            $proposal->set_budget($budget_data);
             
         } else {
             // If not budget estimates, clear budget data
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-            $proposal->set_proposed_project_budget(array());
+            $proposal->set_budget(array());
         }
 
         // Conditionally delete quotation data if it's not the selected type

@@ -173,13 +173,13 @@ class Request_Data_Store {
         }
         
         // Save customer notice
-        $customer_notice = $request->get_request_customer_notice();
+        $customer_notice = $request->get_customer_notice();
         if ($customer_notice !== null) {
             $request->set_meta('_arsol_pfw_request_customer_notice', $customer_notice);
         }
         
         // Save attachments
-        $attachments = $request->get_request_attachments();
+        $attachments = $request->get_attachments();
         if ($attachments !== null) {
             $request->set_meta('_arsol_pfw_request_attachments', $attachments);
         }

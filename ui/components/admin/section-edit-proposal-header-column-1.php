@@ -22,8 +22,8 @@ $customer_id = $proposal->get_customer_id();
 $customer = $proposal->get_customer();
 $proposal_stage = $proposal->get_stage();
 $proposal_project_lead = $proposal->get_proposed_project_lead();
-$start_date = $proposal->get_proposed_project_start_date();
-$delivery_date = $proposal->get_proposed_project_due_date();
+$start_date = $proposal->get_start_date();
+$delivery_date = $proposal->get_due_date();
 $expiration_date = $proposal->get_proposal_expiration_date();
 $proposal_costing_type = $proposal->get_proposal_costing_type();
 if (empty($proposal_costing_type)) {

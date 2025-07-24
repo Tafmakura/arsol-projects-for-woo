@@ -33,9 +33,9 @@ $customer = $project->get_customer();
 
 // Use entity methods for stage and data
 $project_stage = $project->get_stage();
-$budget = $project->get_project_budget();
-$due_date = $project->get_project_due_date();
-$start_date = $project->get_project_start_date();
+$budget = $project->get_budget();
+$due_date = $project->get_due_date();
+$start_date = $project->get_start_date();
 $project_lead = $project->get_project_lead();
 $customer_notice = $project->get_customer_notice();
 

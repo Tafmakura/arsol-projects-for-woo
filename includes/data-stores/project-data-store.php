@@ -165,19 +165,19 @@ class Project_Data_Store {
      */
     protected function save_meta($project) {
         // Save budget
-        $budget = $project->get_project_budget();
+        $budget = $project->get_budget();
         if ($budget !== null) {
             $project->set_meta('_arsol_pfw_project_budget_line_items', $budget);
         }
         
         // Save due date
-        $due_date = $project->get_project_due_date();
+        $due_date = $project->get_due_date();
         if ($due_date !== null) {
             $project->set_meta('_arsol_pfw_project_due_date', $due_date);
         }
         
         // Save start date
-        $start_date = $project->get_project_start_date();
+        $start_date = $project->get_start_date();
         if ($start_date !== null) {
             $project->set_meta('_arsol_pfw_project_start_date', $start_date);
         }
@@ -189,7 +189,7 @@ class Project_Data_Store {
         }
         
         // Save customer notice
-        $customer_notice = $project->get_project_customer_notice();
+        $customer_notice = $project->get_customer_notice();
         if ($customer_notice !== null) {
             $project->set_meta('_arsol_pfw_project_customer_notice', $customer_notice);
         }
