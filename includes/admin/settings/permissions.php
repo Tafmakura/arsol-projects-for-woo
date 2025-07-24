@@ -557,7 +557,7 @@ class Permissions {
                    name="arsol_pfw_permissions_settings[allow_manager_overrides]"
                    value="1"
                    <?php echo $allow_overrides ? 'checked' : ''; ?>>
-            <?php echo esc_html__('', 'arsol-pfw'); ?>
+            <?php echo esc_html__('Allow overrides for individual project managers', 'arsol-pfw'); ?>
         </label>
         <?php
         
