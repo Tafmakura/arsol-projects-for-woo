@@ -96,12 +96,12 @@ class Permissions {
         // Manager Override Settings
         add_settings_field(
             'allow_manager_overrides',
-            __('Allow Individual Overrides', 'arsol-pfw'),
+            '',
             array($this, 'render_manager_override_field'),
             'arsol_pfw_permissions_settings',
             'arsol_project_manager_permissions',
             array(
-                'description' => __('Allow individual project managers to override admin settings for enabled capabilities.', 'arsol-pfw'),
+                'description' => __('Allow overrides for individual project managers', 'arsol-pfw'),
                 'class' => 'arsol-pfw-manager-override-field'
             )
         );
@@ -557,7 +557,7 @@ class Permissions {
                    name="arsol_pfw_permissions_settings[allow_manager_overrides]"
                    value="1"
                    <?php echo $allow_overrides ? 'checked' : ''; ?>>
-            <?php echo esc_html__('Allow individual project managers to override admin settings', 'arsol-pfw'); ?>
+            <?php echo esc_html__('', 'arsol-pfw'); ?>
         </label>
         <?php
         
