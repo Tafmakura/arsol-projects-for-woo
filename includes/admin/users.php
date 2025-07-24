@@ -294,7 +294,7 @@ class Users {
                                        value="1" 
                                        <?php echo $checked; ?>>
                                 <?php echo esc_html($capability_labels[$cap_key]); ?>
-                            </label>
+                        </label>
                             <?php
                         }
                     }
@@ -314,8 +314,8 @@ class Users {
                                        value="1" 
                                        <?php echo $checked; ?>>
                                 <?php echo esc_html($capability_labels[$cap_key]); ?>
-                            </label>
-                            <?php
+                        </label>
+                        <?php
                         }
                     }
                     
@@ -334,8 +334,8 @@ class Users {
                                        value="1" 
                                        <?php echo $checked; ?>>
                                 <?php echo esc_html($capability_labels[$cap_key]); ?>
-                            </label>
-                            <?php
+                        </label>
+                        <?php
                         }
                     }
                     
@@ -354,8 +354,8 @@ class Users {
                                        value="1" 
                                        <?php echo $checked; ?>>
                                 <?php echo esc_html($capability_labels[$cap_key]); ?>
-                            </label>
-                            <?php
+                        </label>
+                        <?php
                         }
                     }
                     ?>

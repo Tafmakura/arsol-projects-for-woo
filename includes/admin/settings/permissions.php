@@ -374,8 +374,7 @@ class Permissions {
                 $new_project_manager_override_defaults = isset($settings['new_project_manager_override_defaults']) ? $settings['new_project_manager_override_defaults'] : 'all_enabled';
                 $override_options = array(
                     'all_enabled' => __('Enable all available capabilities', 'arsol-pfw'),
-                    'all_disabled' => __('Disable all available capabilities', 'arsol-pfw'),
-                    'custom' => __('Custom default override settings', 'arsol-pfw')
+                    'all_disabled' => __('Disable all available capabilities', 'arsol-pfw')
                 );
                 foreach ($override_options as $value => $label) {
                     $selected = ($new_project_manager_override_defaults === $value) ? 'selected' : '';

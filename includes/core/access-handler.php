@@ -121,7 +121,7 @@ class Access_Handler {
 
         // Check if user is the assigned customer for this entity
         $customer_id = get_post_meta($post->ID, '_arsol_pfw_customer_id', true);
-        if ((int) $customer_id === (int) $user_id) {
+            if ((int) $customer_id === (int) $user_id) {
             return true;
         }
 
