@@ -9,15 +9,16 @@ class Single_Controller {
     private $post_id_being_saved = null;
     
     public function __construct() {
-        // Add meta boxes for single proposal admin screen
+        // Add meta boxes
         add_action('add_meta_boxes', array($this, 'add_proposal_details_meta_box'));
-        // Save proposal data
+        
+        // Save proposal details
         add_action('save_post_arsol-pfw-proposal', array($this, 'save_proposal_details'));
-        // Set default stage when proposal is published
-        add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
-        // Initialize stage when proposal is created
+        
+        // Initialize proposal stage on creation
         add_action('wp_insert_post', array($this, 'initialize_proposal_stage'), 10, 3);
-        // Prevent proposal deletion if tied projects exist
+        
+        // Prevent deletion if proposal has associated projects
         add_action('before_delete_post', array($this, 'prevent_proposal_deletion_with_projects'));
     }
 
@@ -37,19 +38,6 @@ class Single_Controller {
         // Only set if not already set
         if (empty($current_stage)) {
             $proposal->set_stage('draft');
-        }
-    }
-
-    public function set_proposal_review_status($new_status, $old_status, $post) {
-        if ($post->post_type === 'arsol-pfw-proposal' && $new_status === 'publish' && $old_status !== 'publish') {
-            // Use the stage entity to set the initial stage
-            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
-            $current_stage = $proposal->get_stage();
-            
-            // Only set stage if it's not already set or is the default 'draft'
-            if (empty($current_stage) || $current_stage === 'draft') {
-                $proposal->set_stage('processing');
-            }
         }
     }
 

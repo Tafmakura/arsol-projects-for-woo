@@ -64,7 +64,7 @@ class Workflow_Handler {
         }
         
         // Hook into post status transitions
-        add_action('transition_post_status', array($this, 'set_proposal_review_status'), 10, 3);
+        // Note: set_proposal_review_status is handled by Single_Controller, not here
         
         // Hook for admin notices
         add_action('admin_notices', array($this, 'display_conversion_notices'));
