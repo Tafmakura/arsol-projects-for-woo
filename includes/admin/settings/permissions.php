@@ -133,7 +133,7 @@ class Permissions {
             'arsol_pfw_permissions_settings',
             'arsol_customer_permissions',
             array(
-                'description' => __('Controls what users can do from the frontend', 'arsol-pfw'),
+                'description' => __('Default frontend permissions for new project customers', 'arsol-pfw'),
                 'field' => 'user_project_permissions',
                 'options' => array(
                     'none' => __('None', 'arsol-pfw'),

@@ -113,7 +113,7 @@ class Setup {
             $parent_slug,
             __('Settings', 'arsol-pfw'),
             __('Settings', 'arsol-pfw'),
-            'manage_options',
+            'arsol_pfw_manage_settings',
             'arsol-projects-settings',
             array($this, 'settings_page_callback'),
             99
@@ -160,12 +160,29 @@ class Setup {
      */
     public function settings_page_callback() {
         $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'general';
+        
+        // Check if user can access permissions tab
+        $can_access_permissions = current_user_can('manage_options') || current_user_can('arsol_pfw_manage_permissions');
+        
+        // If trying to access permissions tab without capability, redirect to general
+        if ($active_tab === 'permissions' && !$can_access_permissions) {
+            $active_tab = 'general';
+        }
+        
+        // Check if user can access settings at all
+        $can_access_settings = current_user_can('manage_options') || current_user_can('arsol_pfw_manage_settings');
+        if (!$can_access_settings) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'arsol-pfw'));
+        }
+        
         ?>
         <div class="wrap">
             <h1><?php _e('Arsol Projects for Woo', 'arsol-pfw'); ?></h1>
             <h2 class="nav-tab-wrapper">
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=general" class="nav-tab <?php echo $active_tab == 'general' ? 'nav-tab-active' : ''; ?>"><?php _e('General', 'arsol-pfw'); ?></a>
+                <?php if ($can_access_permissions): ?>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=permissions" class="nav-tab <?php echo $active_tab == 'permissions' ? 'nav-tab-active' : ''; ?>"><?php _e('Permissions', 'arsol-pfw'); ?></a>
+                <?php endif; ?>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=display" class="nav-tab <?php echo $active_tab == 'display' ? 'nav-tab-active' : ''; ?>"><?php _e('Display', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=files" class="nav-tab <?php echo $active_tab == 'files' ? 'nav-tab-active' : ''; ?>"><?php _e('Files', 'arsol-pfw'); ?></a>
                 <a href="?post_type=arsol-pfw-project&page=arsol-projects-settings&tab=templates" class="nav-tab <?php echo $active_tab == 'templates' ? 'nav-tab-active' : ''; ?>"><?php _e('Templates', 'arsol-pfw'); ?></a>
@@ -175,7 +192,11 @@ class Setup {
             <?php
             switch ($active_tab) {
                 case 'permissions':
-                    include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/admin/page-admin-settings-permissions.php';
+                    if ($can_access_permissions) {
+                        include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/admin/page-admin-settings-permissions.php';
+                    } else {
+                        echo '<p>' . esc_html__('You do not have permission to access the Permissions settings.', 'arsol-pfw') . '</p>';
+                    }
                     break;
                 case 'display':
                     include ARSOL_PFW_PLUGIN_DIR . 'ui/templates/admin/page-admin-settings-display.php';

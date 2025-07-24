@@ -211,8 +211,8 @@ class Users {
      * @return void
      */
     public function add_user_profile_fields($user) {
-        // Only show this to administrators or users with manage capability
-        if (!current_user_can('manage_options') && !current_user_can('arsol_pfw_manage')) {
+        // Only show this to administrators or users with manage permissions capability
+        if (!current_user_can('manage_options') && !current_user_can('arsol_pfw_manage_permissions')) {
             return;
         }
         
@@ -456,8 +456,8 @@ class Users {
      * @return void
      */
     public function save_user_profile_fields($user_id) {
-        // Only allow administrators or users with manage capability to save
-        if (!current_user_can('manage_options') && !current_user_can('arsol_pfw_manage')) {
+        // Only allow administrators or users with manage permissions capability to save
+        if (!current_user_can('manage_options') && !current_user_can('arsol_pfw_manage_permissions')) {
             return;
         }
         
@@ -594,6 +594,12 @@ class Users {
      * @return bool Whether the user can create projects
      */
     public function can_user_create_projects($user_id) {
+        // Administrators always have access
+        $user = get_userdata($user_id);
+        if ($user && $user->has_cap('manage_options')) {
+            return true;
+        }
+        
         $settings = get_option('arsol_pfw_permissions_settings', array());
         $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
@@ -620,6 +626,12 @@ class Users {
      * @return bool Whether the user can request projects
      */
     public function can_user_request_projects($user_id) {
+        // Administrators always have access
+        $user = get_userdata($user_id);
+        if ($user && $user->has_cap('manage_options')) {
+            return true;
+        }
+        
         $settings = get_option('arsol_pfw_permissions_settings', array());
         $global_permission = isset($settings['user_project_permissions']) ? $settings['user_project_permissions'] : 'request_projects';
         
