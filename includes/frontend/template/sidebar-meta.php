@@ -240,7 +240,7 @@ class Sidebar_Meta {
         }
         
         // Project Lead
-        $project_lead = $proposal->get_proposed_project_lead();
+        $project_lead = $proposal->get_project_lead();
         $start_date = $proposal->get_start_date();
         $due_date = $proposal->get_due_date();
         
@@ -615,7 +615,7 @@ class Sidebar_Meta {
         }
         
         // Project Lead
-        $project_lead = $proposal->get_proposed_project_lead();
+        $project_lead = $proposal->get_project_lead();
         $start_date = $proposal->get_start_date();
         $due_date = $proposal->get_due_date();
         

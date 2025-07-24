@@ -26,10 +26,21 @@ $has_proposal_data = false;
 // If from proposal, get proposal budget/date data
 if ($proposal_id) {
     $has_proposal_data = true;
-            $budget_data = $project->get_proposed_budget();
-        $recurring_budget_data = $project->get_proposed_budget();
-    $billing_interval = $project->get_proposal_budget_recurring_billing_interval();
-    $billing_period = $project->get_proposal_budget_recurring_billing_period();
+        // Get budget data
+        $budget_data = $project->get_budget();
+        $billing_interval = '';
+        $billing_period = '';
+        
+        // Extract billing info from budget data if available
+        if (!empty($budget_data) && is_array($budget_data)) {
+            foreach ($budget_data as $budget_item) {
+                if (isset($budget_item['type']) && $budget_item['type'] === 'recurring') {
+                    $billing_interval = isset($budget_item['billing_interval']) ? $budget_item['billing_interval'] : '';
+                    $billing_period = isset($budget_item['billing_period']) ? $budget_item['billing_period'] : '';
+                    break;
+                }
+            }
+        }
     $proposed_start_date = $project->get_meta('_arsol_pfw_proposed_project_start_date');
     $proposed_due_date = $project->get_meta('_arsol_pfw_proposed_project_due_date');
     $proposed_expiration_date = $project->get_meta('_arsol_pfw_proposal_expiration_date');

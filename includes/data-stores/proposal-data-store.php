@@ -193,7 +193,7 @@ class Proposal_Data_Store {
         }
         
         // Save project lead
-        $project_lead = $proposal->get_proposed_project_lead();
+        $project_lead = $proposal->get_project_lead();
         if ($project_lead !== null) {
             $proposal->set_meta('_arsol_pfw_proposed_project_lead', $project_lead);
         }
@@ -216,22 +216,18 @@ class Proposal_Data_Store {
             $proposal->set_meta('_arsol_pfw_proposal_customer_notice', $customer_notice);
         }
         
-        // Save notes
-        $notes = $proposal->get_proposal_notes();
-        if ($notes !== null) {
-            $proposal->set_meta('_arsol_pfw_proposal_notes', $notes);
-        }
-        
-        // Save budget notes
-        $budget_notes = $proposal->get_budget_notes();
-        if ($budget_notes !== null) {
-            $proposal->set_meta('_arsol_pfw_proposal_budget_notes', $budget_notes);
-        }
-        
-        // Save quotation notes
-        $quotation_notes = $proposal->get_quotation_notes();
-        if ($quotation_notes !== null) {
-            $proposal->set_meta('_arsol_pfw_proposal_quotation_notes', $quotation_notes);
+        // Save notes based on costing type
+        $costing_type = $proposal->get_costing_type();
+        if ($costing_type === 'budget') {
+            $budget_notes = $proposal->get_budget_notes();
+            if ($budget_notes !== null) {
+                $proposal->set_meta('_arsol_pfw_proposal_notes', $budget_notes);
+            }
+        } elseif ($costing_type === 'quotation') {
+            $quotation_notes = $proposal->get_quotation_notes();
+            if ($quotation_notes !== null) {
+                $proposal->set_meta('_arsol_pfw_proposal_notes', $quotation_notes);
+            }
         }
     }
     

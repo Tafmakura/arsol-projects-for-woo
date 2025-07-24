@@ -348,7 +348,7 @@ class Single_Controller {
         // Save project lead
         if (isset($_POST['proposal_project_lead'])) {
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-            $proposal->set_proposed_project_lead(sanitize_text_field($_POST['proposal_project_lead']));
+            $proposal->set_project_lead(sanitize_text_field($_POST['proposal_project_lead']));
         }
 
         // Save expiration date

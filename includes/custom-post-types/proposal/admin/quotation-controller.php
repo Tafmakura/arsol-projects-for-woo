@@ -200,7 +200,15 @@ class Quotation_Controller {
                 <?php
                 // Use Proposal entity for notes access
                 $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
-                $notes_content = $proposal->get_proposal_notes();
+                // Get notes based on costing type
+                $costing_type = $proposal->get_costing_type();
+                if ($costing_type === 'budget') {
+                    $notes_content = $proposal->get_budget_notes();
+                } elseif ($costing_type === 'quotation') {
+                    $notes_content = $proposal->get_quotation_notes();
+                } else {
+                    $notes_content = '';
+                }
                 wp_editor(
                     $notes_content,
                     'arsol_proposal_notes',
@@ -370,13 +378,16 @@ class Quotation_Controller {
             return;
         }
         
-        // Save Notes
-        if (isset($_POST['arsol_pfw_proposal_notes'])) {
-            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-            $proposal->set_proposal_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
+        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+        
+        // Save notes based on costing type
+        $costing_type = $proposal->get_costing_type();
+        if ($costing_type === 'budget') {
+            $proposal->set_budget_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
+        } elseif ($costing_type === 'quotation') {
+            $proposal->set_quotation_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
         }
         
-        $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
         // Get proposal costing type
         $proposal_costing_type = $proposal->get_costing_type();
         if ($proposal_costing_type !== 'quotation') {
@@ -485,7 +496,8 @@ class Quotation_Controller {
         $quotation_data['currency'] = $currency_code;
         $quotation_data['currency_symbol'] = get_woocommerce_currency_symbol($currency_code);
         
-        $proposal->set_proposed_project_quotation($quotation_data);
+        // Save quotation data
+        $proposal->set_quotation($quotation_data);
         $proposal->save();
     }
 
