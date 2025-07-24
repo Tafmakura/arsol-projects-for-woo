@@ -937,7 +937,6 @@ class Arsol_PFW_Proposal {
             '_arsol_pfw_proposal_expiration_date',
             '_arsol_pfw_proposal_costing_type',
             '_arsol_pfw_proposal_customer_notice',
-            '_arsol_pfw_proposal_secondary_status',
             '_arsol_pfw_proposal_notes',
             '_arsol_pfw_parent_project_id',
             '_arsol_pfw_request_id',

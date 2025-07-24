@@ -19,7 +19,7 @@ if (!isset($proposal) || !is_object($proposal)) {
 
 $proposal_id = $proposal->get_id();
 $proposal_costing_type = $proposal->get_costing_type();
-$expiration_date = $proposal->get_proposal_expiration_date();
+$expiration_date = $proposal->get_expiration_date();
 ?>
 
 <!-- Proposal Costing Type Guidance -->

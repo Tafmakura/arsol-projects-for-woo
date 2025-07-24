@@ -251,14 +251,10 @@ class Setup {
             $proposal->set_proposed_project_lead(sanitize_text_field($_POST['proposal_project_lead']));
         }
         
-        // Save secondary status (keeping existing functionality)
-        if (isset($_POST['arsol_pfw_proposal_secondary_status'])) {
-            $secondary_status = sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
-            // Validate the value is one of the allowed options
-            if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
-                $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-                $proposal->set_meta('_arsol_pfw_proposal_secondary_status', $secondary_status);
-            }
+        // Save proposal notes
+        if (isset($_POST['arsol_pfw_proposal_notes'])) {
+            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
+            $proposal->set_meta('_arsol_pfw_proposal_notes', wp_kses_post($_POST['arsol_pfw_proposal_notes']));
         }
     }
 } 

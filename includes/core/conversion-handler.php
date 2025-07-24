@@ -236,7 +236,7 @@ class Conversion_Handler {
         // 3. Transfer request budget as proposed budget
         $request_budget = $request->get_requested_project_budget();
         if (!empty($request_budget)) {
-            $proposal->set_proposal_costing_type('budget');
+            $proposal->set_costing_type('budget');
             
             // Use array-based budget structure
             $budget_data = array(

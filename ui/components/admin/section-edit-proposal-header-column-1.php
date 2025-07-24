@@ -24,7 +24,7 @@ $proposal_stage = $proposal->get_stage();
 $proposal_project_lead = $proposal->get_proposed_project_lead();
 $start_date = $proposal->get_start_date();
 $delivery_date = $proposal->get_due_date();
-$expiration_date = $proposal->get_proposal_expiration_date();
+$expiration_date = $proposal->get_expiration_date();
 $proposal_costing_type = $proposal->get_costing_type();
 if (empty($proposal_costing_type)) {
     $proposal_costing_type = 'none'; // Default to none

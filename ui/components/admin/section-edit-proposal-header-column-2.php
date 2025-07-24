@@ -25,7 +25,7 @@ if (!isset($proposal) || !is_object($proposal)) {
 // Use variables passed from parent template
 $budget_data = $proposal->get_budget();
 $delivery_date = $proposal->get_due_date();
-$expiration_date = $proposal->get_proposal_expiration_date();
+$expiration_date = $proposal->get_expiration_date();
 $start_date = $proposal->get_start_date();
 $costing_type = $proposal->get_costing_type();
 ?>

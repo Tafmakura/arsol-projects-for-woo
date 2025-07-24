@@ -18,7 +18,6 @@ class Proposal_Data_Store {
         'costing_type' => '_arsol_pfw_proposal_costing_type',
         'parent_project_id' => '_arsol_pfw_parent_project_id',
         'customer_notice' => '_arsol_pfw_proposal_customer_notice',
-        'secondary_status' => '_arsol_pfw_proposal_secondary_status',
     );
     
     // Complex data structure meta keys (array-based)
@@ -200,7 +199,7 @@ class Proposal_Data_Store {
         }
         
         // Save expiration date
-        $expiration_date = $proposal->get_proposal_expiration_date();
+        $expiration_date = $proposal->get_expiration_date();
         if ($expiration_date !== null) {
             $proposal->set_meta('_arsol_pfw_proposal_expiration_date', $expiration_date);
         }
@@ -212,15 +211,9 @@ class Proposal_Data_Store {
         }
         
         // Save customer notice
-        $customer_notice = $proposal->get_proposal_customer_notice();
+        $customer_notice = $proposal->get_customer_notice();
         if ($customer_notice !== null) {
             $proposal->set_meta('_arsol_pfw_proposal_customer_notice', $customer_notice);
-        }
-        
-        // Save secondary status
-        $secondary_status = $proposal->get_proposal_secondary_status();
-        if ($secondary_status !== null) {
-            $proposal->set_meta('_arsol_pfw_proposal_secondary_status', $secondary_status);
         }
         
         // Save notes

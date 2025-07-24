@@ -82,7 +82,7 @@ class Single_Controller {
 
         $start_date = $proposal->get_start_date();
         $delivery_date = $proposal->get_due_date();
-        $expiration_date = $proposal->get_proposal_expiration_date();
+        $expiration_date = $proposal->get_expiration_date();
 
         // Get original request data for comparison
         $requested_budget = $proposal->get_requested_project_budget();
@@ -240,7 +240,7 @@ class Single_Controller {
         
         // Save all meta data normally (no temporary data needed)
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-        $proposal->set_proposal_costing_type($proposal_costing_type);
+        $proposal->set_costing_type($proposal_costing_type);
 
         // Handle project-tied proposal meta keys - CONSOLIDATED LOGIC
         $parent_project_id = null;
@@ -271,15 +271,6 @@ class Single_Controller {
                 'ID' => $post_id,
                 'post_title' => $custom_title
             ));
-        }
-
-        // Save secondary status
-        if (isset($_POST['arsol_pfw_proposal_secondary_status'])) {
-            $secondary_status = sanitize_text_field($_POST['arsol_pfw_proposal_secondary_status']);
-            // Validate the value is one of the allowed options
-            if (in_array($secondary_status, ['ready_for_review', 'processing'])) {
-                $proposal->set_proposal_secondary_status($secondary_status);
-            }
         }
 
         // Get currency
@@ -368,11 +359,11 @@ class Single_Controller {
         // Save proposal notes based on costing type
         if ($proposal_costing_type === 'budget') {
             // Save notes
-            $proposal->set_proposal_budget_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
+            $proposal->set_budget_notes(wp_kses_post($_POST['arsol_pfw_proposal_notes']));
         } elseif ($proposal_costing_type === 'quotation') {
             // Save proposal quotation notes
             if (isset($_POST['arsol_pfw_proposal_quotation_notes'])) {
-                $proposal->set_proposal_quotation_notes(wp_kses_post($_POST['arsol_pfw_proposal_quotation_notes']));
+                $proposal->set_quotation_notes(wp_kses_post($_POST['arsol_pfw_proposal_quotation_notes']));
             }
         }
         
@@ -380,7 +371,7 @@ class Single_Controller {
         if (isset($_POST['proposal_customer_notice_section_nonce']) && wp_verify_nonce($_POST['proposal_customer_notice_section_nonce'], 'proposal_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_proposal_customer_notice'])) {
                 $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-                $proposal->set_proposal_customer_notice(wp_kses_post($_POST['arsol_pfw_proposal_customer_notice']));
+                $proposal->set_customer_notice(wp_kses_post($_POST['arsol_pfw_proposal_customer_notice']));
                 $proposal->save();
             }
         }
@@ -756,7 +747,7 @@ class Single_Controller {
 
         // Get current values using Proposal entity
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post->ID);
-        $notice = $proposal->get_proposal_customer_notice();
+        $notice = $proposal->get_customer_notice();
         ?>
         <div>
             <p class="description">

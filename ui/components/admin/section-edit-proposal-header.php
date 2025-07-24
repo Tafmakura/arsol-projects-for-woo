@@ -31,7 +31,7 @@ if (!isset($proposal) || !is_object($proposal)) {
 $proposal_id = $proposal->get_id();
 $budget_data = $proposal->get_budget();
 $delivery_date = $proposal->get_due_date();
-$expiration_date = $proposal->get_proposal_expiration_date();
+$expiration_date = $proposal->get_expiration_date();
 $start_date = $proposal->get_start_date();
 $project_lead = $proposal->get_proposed_project_lead();
 $costing_type = $proposal->get_costing_type();
