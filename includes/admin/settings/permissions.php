@@ -362,6 +362,29 @@ class Permissions {
                    <?php echo $allow_overrides ? 'checked' : ''; ?>>
             <?php echo esc_html__('Allow individual project managers to override admin settings', 'arsol-pfw'); ?>
         </label>
+        
+        <?php
+        // Conditional "New Project Manager Override Defaults" field that appears when overrides are enabled
+        ?>
+        <div class="arsol-pfw-show-if-arsol-pfw-allow-manager-overrides-is-checked" style="<?php echo $allow_overrides ? '' : 'display: none;'; ?>">
+            <br>
+            <label for="arsol-pfw-new-project-manager-override-defaults"><?php esc_html_e('New Project Manager Override Defaults:', 'arsol-pfw'); ?></label>
+            <select id="arsol-pfw-new-project-manager-override-defaults" name="arsol_pfw_permissions_settings[new_project_manager_override_defaults]">
+                <?php
+                $new_project_manager_override_defaults = isset($settings['new_project_manager_override_defaults']) ? $settings['new_project_manager_override_defaults'] : 'all_enabled';
+                $override_options = array(
+                    'all_enabled' => __('Enable all available capabilities', 'arsol-pfw'),
+                    'all_disabled' => __('Disable all available capabilities', 'arsol-pfw'),
+                    'custom' => __('Custom default override settings', 'arsol-pfw')
+                );
+                foreach ($override_options as $value => $label) {
+                    $selected = ($new_project_manager_override_defaults === $value) ? 'selected' : '';
+                    echo '<option value="' . esc_attr($value) . '" ' . $selected . '>' . esc_html($label) . '</option>';
+                }
+                ?>
+            </select>
+            <p class="description"><?php esc_html_e('Default override state for new project managers when individual overrides are allowed.', 'arsol-pfw'); ?></p>
+        </div>
         <?php
         
         echo "</div>";
