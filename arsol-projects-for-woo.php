@@ -34,6 +34,13 @@ define('ARSOL_PFW_PLUGIN_BASENAME', plugin_basename(__FILE__));
 // Define project meta key constant for WooCommerce integration
 define('ARSOL_PFW_PROJECT_META_KEY', 'arsol-pfw/parent-project-id');
 
+// Declare HPOS compatibility
+add_action('before_woocommerce_init', function() {
+    if (class_exists('\Automattic\WooCommerce\Utilities\FeaturesUtil')) {
+        \Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility('custom_order_tables', __FILE__, true);
+    }
+});
+
 // Initialize the plugin
 add_action('plugins_loaded', function() {
     // Load the stage handler
