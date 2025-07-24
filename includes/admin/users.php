@@ -176,29 +176,53 @@ class Users {
     private function get_user_pfw_capabilities($user) {
         $capabilities = array();
         
+        // Check for master capability
         if ($user->has_cap('arsol_pfw_manage')) {
             $capabilities[] = __('Manager', 'arsol-pfw');
         }
         
-        // Get user's manager capabilities
-        $user_capabilities = get_user_meta($user->ID, 'arsol_pfw_manager_capabilities', true);
-        if (!is_array($user_capabilities)) {
-            $user_capabilities = array();
+        // Check for project capabilities
+        if ($user->has_cap('read_private_arsol_pfw_projects') || 
+            $user->has_cap('edit_others_arsol_pfw_projects') || 
+            $user->has_cap('delete_others_arsol_pfw_projects') || 
+            $user->has_cap('edit_arsol_pfw_projects') || 
+            $user->has_cap('publish_arsol_pfw_projects')) {
+            $capabilities[] = __('Projects', 'arsol-pfw');
         }
         
         // Check for request capabilities
-        if (in_array('edit_all_requests', $user_capabilities) || in_array('create_requests', $user_capabilities) || in_array('delete_requests', $user_capabilities)) {
+        if ($user->has_cap('read_private_arsol_pfw_requests') || 
+            $user->has_cap('edit_others_arsol_pfw_requests') || 
+            $user->has_cap('delete_others_arsol_pfw_requests') || 
+            $user->has_cap('edit_arsol_pfw_requests') || 
+            $user->has_cap('publish_arsol_pfw_requests')) {
             $capabilities[] = __('Requests', 'arsol-pfw');
         }
         
         // Check for proposal capabilities
-        if (in_array('edit_all_proposals', $user_capabilities) || in_array('create_proposals', $user_capabilities) || in_array('delete_proposals', $user_capabilities)) {
+        if ($user->has_cap('read_private_arsol_pfw_proposals') || 
+            $user->has_cap('edit_others_arsol_pfw_proposals') || 
+            $user->has_cap('delete_others_arsol_pfw_proposals') || 
+            $user->has_cap('edit_arsol_pfw_proposals') || 
+            $user->has_cap('publish_arsol_pfw_proposals')) {
             $capabilities[] = __('Proposals', 'arsol-pfw');
         }
         
-        // Check for project capabilities
-        if (in_array('edit_all_projects', $user_capabilities) || in_array('create_projects', $user_capabilities) || in_array('delete_projects', $user_capabilities)) {
-            $capabilities[] = __('Projects', 'arsol-pfw');
+        // Check for management capabilities
+        if ($user->has_cap('arsol_pfw_manage_stages')) {
+            $capabilities[] = __('Stages', 'arsol-pfw');
+        }
+        
+        if ($user->has_cap('arsol_pfw_manage_workflows')) {
+            $capabilities[] = __('Workflows', 'arsol-pfw');
+        }
+        
+        if ($user->has_cap('arsol_pfw_manage_settings')) {
+            $capabilities[] = __('Settings', 'arsol-pfw');
+        }
+        
+        if ($user->has_cap('arsol_pfw_manage_permissions')) {
+            $capabilities[] = __('Permissions', 'arsol-pfw');
         }
         
         return empty($capabilities) ? __('None', 'arsol-pfw') : implode(', ', $capabilities);
