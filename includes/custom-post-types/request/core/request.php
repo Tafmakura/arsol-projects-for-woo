@@ -582,6 +582,44 @@ class Arsol_PFW_Request {
     }
 
     /**
+     * Get attachments
+     * 
+     * @return array Attachments
+     */
+    public function get_attachments() {
+        return $this->get_meta('_arsol_pfw_request_attachments');
+    }
+
+    /**
+     * Set attachments
+     * 
+     * @param array $attachments Attachments
+     * @return bool Success status
+     */
+    public function set_attachments($attachments) {
+        return $this->set_meta('_arsol_pfw_request_attachments', $attachments);
+    }
+
+    /**
+     * Get customer notice
+     * 
+     * @return string Customer notice
+     */
+    public function get_customer_notice() {
+        return $this->get_meta('_arsol_pfw_request_customer_notice');
+    }
+
+    /**
+     * Set customer notice
+     * 
+     * @param string $customer_notice Customer notice
+     * @return bool Success status
+     */
+    public function set_customer_notice($customer_notice) {
+        return $this->set_meta('_arsol_pfw_request_customer_notice', $customer_notice);
+    }
+
+    /**
      * Get request ID (for internal reference)
      * 
      * @return int Request ID

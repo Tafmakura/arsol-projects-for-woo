@@ -160,10 +160,6 @@ class Single_Controller {
             $request->set_requested_project_due_date(sanitize_text_field($_POST['request_due_date']));
         }
         
-        if (isset($_POST['request_project_lead'])) {
-            $request->set_project_lead(sanitize_text_field($_POST['request_project_lead']));
-        }
-        
         // Save customer notice
         if (isset($_POST['request_customer_notice_section_nonce']) && wp_verify_nonce($_POST['request_customer_notice_section_nonce'], 'request_customer_notice_section')) {
             if (isset($_POST['arsol_pfw_request_customer_notice'])) {

@@ -394,8 +394,9 @@ class Request_Frontend extends Frontend_Handler {
             $request->set_requested_project_due_date(sanitize_text_field($data['requested_due_date']));
         }
         
-        if (!empty($data['request_project_lead'])) {
-            $request->set_project_lead(sanitize_text_field($data['request_project_lead']));
+        // Save customer notice
+        if (!empty($data['request_customer_notice'])) {
+            $request->set_customer_notice(wp_kses_post($data['request_customer_notice']));
         }
 
         // Save any additional custom fields
