@@ -23,6 +23,14 @@ class Admin {
      * Constructor
      */
     public function __construct() {
-        // Add admin functionality hooks here if needed
+        // Add capability checks for taxonomy screens
+        add_action('admin_init', array($this, 'check_taxonomy_access'));
+    }
+
+    /**
+     * Check if user can access taxonomy screens
+     */
+    public function check_taxonomy_access() {
+        \Arsol_Projects_For_Woo\Core\Access_Handler::check_taxonomy_access();
     }
 }

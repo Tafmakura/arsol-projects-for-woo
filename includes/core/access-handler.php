@@ -299,12 +299,12 @@ class Access_Handler {
     /**
      * Check access and handle no-access scenario
      *
-     * @param string $object_type Type of object
-     * @param int    $object_id   Object ID
-     * @param string $action      Action
-     * @param int    $user_id     User ID
-     * @param array  $context     Additional context data
-     * @return bool Whether access is granted
+     * @param string   $object_type   Type of object or action.
+     * @param int|null $object_id     The ID of the object (if applicable).
+     * @param string   $action        Action being performed ('view', 'edit', 'delete', 'create').
+     * @param int|null $user_id       User ID to check (defaults to current user).
+     * @param array    $context       Additional context for template display.
+     * @return bool                   True if user has access, false otherwise.
      */
     public static function check_access_and_handle($object_type, $object_id, $action = 'view', $user_id = null, $context = array()) {
         if (!self::can_access($object_type, $object_id, $action, $user_id)) {
@@ -312,5 +312,27 @@ class Access_Handler {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Check if user can access taxonomy screens
+     */
+    public static function check_taxonomy_access() {
+        global $pagenow, $taxonomy;
+        
+        // Only check on taxonomy-related pages
+        if (!in_array($pagenow, array('edit-tags.php', 'term.php'))) {
+            return;
+        }
+        
+        // Only check for our stage taxonomies
+        if (!in_array($taxonomy, array('arsol-pfw-project-stage', 'arsol-pfw-request-stage', 'arsol-pfw-proposal-stage'))) {
+            return;
+        }
+        
+        // Check if user can access stages (administrators always have access)
+        if (!current_user_can('manage_options') && !current_user_can('arsol_pfw_manage_stages')) {
+            wp_die(__('You do not have sufficient permissions to access this page.', 'arsol-pfw'));
+        }
     }
 } 

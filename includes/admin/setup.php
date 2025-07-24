@@ -58,7 +58,7 @@ class Setup {
             $parent_slug,
             __('Request Stages', 'arsol-pfw'),
             __('Request Stages', 'arsol-pfw'),
-            'manage_categories',
+            'arsol_pfw_manage_stages',
             'edit-tags.php?taxonomy=arsol-pfw-request-stage&post_type=arsol-pfw-request',
             '',
             2
@@ -80,7 +80,7 @@ class Setup {
             $parent_slug,
             __('Proposal Stages', 'arsol-pfw'),
             __('Proposal Stages', 'arsol-pfw'),
-            'manage_categories',
+            'arsol_pfw_manage_stages',
             'edit-tags.php?taxonomy=arsol-pfw-proposal-stage&post_type=arsol-pfw-proposal',
             '',
             4
@@ -102,7 +102,7 @@ class Setup {
             $parent_slug,
             __('Project Stages', 'arsol-pfw'),
             __('Project Stages', 'arsol-pfw'),
-            'manage_categories',
+            'arsol_pfw_manage_stages',
             'edit-tags.php?taxonomy=arsol-pfw-project-stage&post_type=arsol-pfw-project',
             '',
             6
