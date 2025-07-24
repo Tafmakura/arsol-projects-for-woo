@@ -101,7 +101,7 @@ class Permissions {
             'arsol_pfw_permissions_settings',
             'arsol_project_manager_permissions',
             array(
-                'description' => __('Allow individual project managers to override admin settings for enabled capabilities.', 'arsol-pfw'),
+                'description' => '',
                 'class' => 'arsol-pfw-manager-override-field'
             )
         );
