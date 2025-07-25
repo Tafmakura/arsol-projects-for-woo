@@ -141,9 +141,9 @@ class Single_Controller {
         
         <div class="major-actions">
                 <?php if ($post->post_status === 'publish'): ?>
-                    <input type="submit" id="save-post" name="save" class="button button-primary" value="<?php _e('Update', 'arsol-pfw'); ?>">
+                    <?php submit_button(__('Update', 'arsol-pfw'), 'primary', 'save', false, array('id' => 'save-post')); ?>
                 <?php else: ?>
-                    <input type="submit" id="publish" name="publish" class="button button-primary" value="<?php _e('Publish', 'arsol-pfw'); ?>">
+                    <?php submit_button(__('Publish', 'arsol-pfw'), 'primary', 'publish', false, array('id' => 'publish')); ?>
                 <?php endif; ?>
             
             <?php
