@@ -566,6 +566,32 @@ class Project {
     }
 
     /**
+     * Get project due date
+     * 
+     * @return string Due date
+     */
+    public function get_due_date() {
+        // First try project's own due date
+        $project_due_date = $this->get_meta('_arsol_pfw_project_due_date');
+        if (!empty($project_due_date)) {
+            return $project_due_date;
+        }
+        
+        // Fallback to proposed due date
+        return $this->get_proposed_due_date();
+    }
+
+    /**
+     * Set project due date
+     * 
+     * @param string $due_date Due date
+     * @return bool Success status
+     */
+    public function set_due_date($due_date) {
+        return $this->set_meta('_arsol_pfw_project_due_date', sanitize_text_field($due_date));
+    }
+
+    /**
      * Start project
      * 
      * @return bool|WP_Error Success status or error
