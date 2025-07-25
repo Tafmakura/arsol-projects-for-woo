@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
 
 class Project_Data_Store {
     
+    // Simple meta keys mapping
     protected $meta_keys = array(
         'budget'      => '_arsol_pfw_project_budget',
         'due_date'    => '_arsol_pfw_project_due_date',
@@ -15,10 +16,14 @@ class Project_Data_Store {
         'start_date'  => '_arsol_pfw_project_start_date',
         'project_lead' => '_arsol_pfw_project_lead',
         'customer_notice' => '_arsol_pfw_project_customer_notice',
+        'customer_id' => '_arsol_pfw_project_customer_id',
+        'created_via' => '_arsol_pfw_project_created_via',
     );
     
-    // Complex data structure meta keys (array-based) - inherited from proposal
+    // Complex data structure meta keys (array-based)
     protected $complex_meta_keys = array(
+        'proposal_data' => '_arsol_pfw_project_proposal',
+        'request_data' => '_arsol_pfw_proposal_request',
         'proposal_budget_data' => '_arsol_pfw_proposed_project_budget',
         'proposal_quotation_data' => '_arsol_pfw_proposed_project_quotation',
         'woocommerce_data' => '_arsol_pfw_project_woocommerce_data',
@@ -170,22 +175,16 @@ class Project_Data_Store {
             $project->set_meta('_arsol_pfw_project_budget_line_items', $budget);
         }
         
-        // Save due date
-        $due_date = $project->get_due_date();
-        if ($due_date !== null) {
-            $project->set_meta('_arsol_pfw_project_due_date', $due_date);
-        }
-        
         // Save start date
         $start_date = $project->get_start_date();
         if ($start_date !== null) {
             $project->set_meta('_arsol_pfw_project_start_date', $start_date);
         }
         
-        // Save project lead
-        $project_lead = $project->get_project_lead();
-        if ($project_lead !== null) {
-            $project->set_meta('_arsol_pfw_project_lead', $project_lead);
+        // Save due date
+        $due_date = $project->get_due_date();
+        if ($due_date !== null) {
+            $project->set_meta('_arsol_pfw_project_due_date', $due_date);
         }
         
         // Save customer notice

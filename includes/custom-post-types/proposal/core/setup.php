@@ -250,11 +250,5 @@ class Setup {
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
             $proposal->set_project_lead(sanitize_text_field($_POST['proposal_project_lead']));
         }
-        
-        // Save proposal notes
-        if (isset($_POST['arsol_pfw_proposal_notes'])) {
-            $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-            $proposal->set_meta('_arsol_pfw_proposal_notes', wp_kses_post($_POST['arsol_pfw_proposal_notes']));
-        }
     }
 } 

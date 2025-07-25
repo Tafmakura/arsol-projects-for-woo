@@ -38,11 +38,11 @@ class Conversion_Handler {
             'post_status' => 'publish',
             'post_author' => get_current_user_id(),
             'meta_input' => array(
-                '_arsol_pfw_customer_id' => $request_entity->get_customer_id(), // Customer
+                '_arsol_pfw_proposal_customer_id' => $request_entity->get_customer_id(), // Customer
                 '_arsol_pfw_proposed_project_start_date' => $request_entity->get_requested_project_start_date(),
                 '_arsol_pfw_proposed_project_due_date' => $request_entity->get_requested_project_due_date(),
                 '_arsol_pfw_request_id' => $request_id,
-                '_arsol_pfw_created_via' => 'request_conversion'
+                '_arsol_pfw_proposal_created_via' => 'request_conversion'
             )
         );
         
@@ -191,99 +191,30 @@ class Conversion_Handler {
      * @param int $proposal_id Proposal ID
      */
     private function copy_request_metadata_to_proposal($request_id, $proposal_id) {
-        // Debug: Log the start of metadata copy
-        error_log("ARSOL PFW DEBUG: Starting metadata copy from request #{$request_id} to proposal #{$proposal_id}");
-        
-        // Get request and proposal objects using factory functions
         $request = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Request($request_id);
         $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($proposal_id);
         
-        if (!$request || !$proposal) {
-            error_log("ARSOL PFW DEBUG: Failed to load request or proposal objects");
-            throw new Exception(__('Failed to load request or proposal for metadata copy.', 'arsol-pfw'));
-        }
-        
-        error_log("ARSOL PFW DEBUG: Successfully loaded request and proposal objects");
-        
-        // 1. Preserve original request content in proposal meta
-        $request_description = $request->get_description();
-        $proposal->set_request_details($request_description);
-        error_log("ARSOL PFW DEBUG: Copied request description to proposal: " . ($request_description ? substr($request_description, 0, 50) . "..." : "null"));
-        
-        // 2. Rename request meta keys with proposal context
-        $meta_mapping = array(
-            '_arsol_pfw_request_title' => '_arsol_pfw_request_title',
-            '_arsol_pfw_request_date' => '_arsol_pfw_request_date',
-            '_arsol_pfw_requested_budget' => '_arsol_pfw_requested_project_budget',
-            '_arsol_pfw_requested_start_date' => '_arsol_pfw_requested_project_start_date',
-            '_arsol_pfw_requested_due_date' => '_arsol_pfw_requested_project_due_date',
-            '_arsol_pfw_request_attachments' => '_arsol_pfw_request_attachments',
+        // Organize all request data into a single array
+        $request_data = array(
+            'id' => $request_id,
+            'title' => $request->get_title(),
+            'details' => $request->get_description(),
+            'date' => $request->get_date_created(),
+            'requested_project_budget' => $request->get_requested_project_budget(),
+            'requested_project_start_date' => $request->get_requested_project_start_date(),
+            'requested_project_due_date' => $request->get_requested_project_due_date(),
+            'attachments' => $request->get_attachments(),
+            'customer_notice' => $request->get_customer_notice(),
         );
         
-        $copied_count = 0;
-        foreach ($meta_mapping as $old_key => $new_key) {
-            $value = $request->get_meta($old_key);
-            if (!empty($value)) {
-                $proposal->set_meta($new_key, $value);
-                error_log("ARSOL PFW DEBUG: Copied meta key '{$old_key}' to '{$new_key}' with value: " . print_r($value, true));
-                $copied_count++;
-            } else {
-                error_log("ARSOL PFW DEBUG: Meta key '{$old_key}' was empty or not found");
-            }
-        }
-        error_log("ARSOL PFW DEBUG: Copied {$copied_count} mapped meta keys");
+        // Save organized request data
+        $proposal->set_request_data($request_data);
         
-        // 3. Transfer request budget as proposed budget
-        $request_budget = $request->get_requested_project_budget();
-        if (!empty($request_budget)) {
-            $proposal->set_costing_type('budget');
-            
-            // Use array-based budget structure
-            $budget_data = array(
-                'onetime' => $request_budget,
-                'type' => 'budget'
-            );
-            $proposal->set_meta('_arsol_pfw_proposed_project_budget', $budget_data);
-            error_log("ARSOL PFW DEBUG: Copied request budget using array structure: " . print_r($budget_data, true));
-        } else {
-            error_log("ARSOL PFW DEBUG: Request budget was empty");
-        }
+        // Mark request as converted
+        $request->set_converted_to_proposal(true);
+        $request->save();
         
-        // 4. Set proposal status to processing
-        $proposal->set_stage('processing');
-        error_log("ARSOL PFW DEBUG: Set proposal status to 'processing'");
-        
-        // 5. Copy custom fields and taxonomies
-        $custom_fields = $request->get_meta('', false); // Get all meta
-        $custom_copied_count = 0;
-        foreach ($custom_fields as $key => $values) {
-            if (strpos($key, '_arsol_pfw_') === 0 && !isset($meta_mapping[$key])) {
-                foreach ($values as $value) {
-                    $proposal->set_meta($key, maybe_unserialize($value));
-                    error_log("ARSOL PFW DEBUG: Copied custom field '{$key}' with value: " . print_r($value, true));
-                    $custom_copied_count++;
-                }
-            }
-        }
-        error_log("ARSOL PFW DEBUG: Copied {$custom_copied_count} custom fields");
-        
-        // Copy taxonomies
-        $taxonomies = get_object_taxonomies('arsol-pfw-request');
-        $taxonomy_copied_count = 0;
-        foreach ($taxonomies as $taxonomy) {
-            $terms = wp_get_object_terms($request_id, $taxonomy, array('fields' => 'slugs'));
-            if (!empty($terms) && !is_wp_error($terms)) {
-                wp_set_object_terms($proposal_id, $terms, $taxonomy);
-                error_log("ARSOL PFW DEBUG: Copied taxonomy '{$taxonomy}' with terms: " . print_r($terms, true));
-                $taxonomy_copied_count++;
-            }
-        }
-        error_log("ARSOL PFW DEBUG: Copied {$taxonomy_copied_count} taxonomies");
-        
-        // Save proposal entity to persist all changes
-        $proposal->save();
-        
-        error_log("ARSOL PFW DEBUG: Completed metadata copy from request #{$request_id} to proposal #{$proposal_id}");
+        error_log("ARSOL PFW DEBUG: Copied organized request data to proposal #{$proposal_id}");
     }
 
     /**
@@ -307,97 +238,68 @@ class Conversion_Handler {
         
         error_log("ARSOL PFW DEBUG: Successfully loaded proposal and project objects");
         
-        // 1. Preserve proposal content in project meta
-        $proposal_description = $proposal->get_description();
-        $project->set_meta('_arsol_pfw_project_proposal_details', $proposal_description);
-        error_log("ARSOL PFW DEBUG: Copied proposal description to project: " . ($proposal_description ? substr($proposal_description, 0, 50) . "..." : "null"));
-        
-        // 2. Rename request data with project context
-        $request_meta_mapping = array(
-            '_arsol_pfw_proposal_request_details' => '_arsol_pfw_project_request_details',
-            '_arsol_pfw_proposal_request_title' => '_arsol_pfw_project_request_title',
-            '_arsol_pfw_proposal_request_date' => '_arsol_pfw_project_request_date',
-            '_arsol_pfw_proposal_request_budget' => '_arsol_pfw_project_request_budget',
-            '_arsol_pfw_proposal_request_start_date' => '_arsol_pfw_project_request_start_date',
-            '_arsol_pfw_proposal_request_due_date' => '_arsol_pfw_project_request_due_date',
-            '_arsol_pfw_proposal_request_attachments' => '_arsol_pfw_project_request_attachments',
+        // 1. Organize all proposal data into a single array
+        $proposal_data = array(
+            'id' => $proposal_id,
+            'title' => $proposal->get_title(),
+            'description' => $proposal->get_description(),
+            'date' => $proposal->get_date_created(),
+            'proposed_project_budget' => $proposal->get_budget(),
+            'proposed_project_quotation' => $proposal->get_quotation(),
+            'proposed_project_start_date' => $proposal->get_start_date(),
+            'proposed_project_due_date' => $proposal->get_due_date(),
+            'proposed_project_lead' => $proposal->get_project_lead(),
+            'costing_type' => $proposal->get_costing_type(),
+            'customer_notice' => $proposal->get_customer_notice(),
+            'expiration_date' => $proposal->get_expiration_date(),
         );
         
-        // 3. Rename proposal data with project context
-        $proposal_meta_mapping = array(
-            '_arsol_pfw_proposal_notes' => '_arsol_pfw_project_proposal_notes',
-            '_arsol_pfw_proposal_costing_type' => '_arsol_pfw_project_proposal_costing_type',
-            '_arsol_pfw_proposed_project_lead' => '_arsol_pfw_project_lead',
-            '_arsol_pfw_proposed_project_due_date' => '_arsol_pfw_project_due_date', // Map due date to project due date
-        );
+        // 2. Organize all request data (from proposal's historical data)
+        $request_data = $proposal->get_request_data();
         
-        // Get proposal costing type
-        $proposal_costing_type = $proposal->get_costing_type();
-        error_log("ARSOL PFW DEBUG: Proposal costing type: {$proposal_costing_type}");
+        // 3. Save organized data to project
+        $project->set_proposal_data($proposal_data);
+        if (!empty($request_data)) {
+            $project->set_request_data($request_data);
+        }
         
-        // Copy type-specific data
-        if ($proposal_costing_type === 'budget') {
-            // Copy budget data
+        // 4. Copy current proposal data to project's own fields
+        $project->set_customer_id($proposal->get_customer_id());
+        $project->set_description($proposal->get_description());
+        
+        // Copy budget/quotation based on costing type
+        $costing_type = $proposal->get_costing_type();
+        if ($costing_type === 'budget') {
             $budget_data = $proposal->get_budget();
             if (!empty($budget_data)) {
                 $project->set_budget($budget_data);
             }
-        } elseif ($proposal_costing_type === 'quotation') {
-            // Copy quotation data using entity methods
+        } elseif ($costing_type === 'quotation') {
             $quotation_data = $proposal->get_quotation();
             if (!empty($quotation_data)) {
-                $project->set_project_quotation($quotation_data);
-                error_log("ARSOL PFW DEBUG: Copied quotation data using entity methods");
+                $project->set_quotation($quotation_data);
             }
         }
         
-        // 6. Combine all mappings for remaining meta
-        $meta_to_copy = array_merge($request_meta_mapping, $proposal_meta_mapping);
-        error_log("ARSOL PFW DEBUG: Total meta keys to copy: " . count($meta_to_copy));
-        
-        // 7. Copy all remaining meta data
-        $copied_count = 0;
-        foreach ($meta_to_copy as $proposal_key => $project_key) {
-            $value = $proposal->get_meta($proposal_key);
-            if ($value) {
-                $project->set_meta($project_key, $value);
-                error_log("ARSOL PFW DEBUG: Copied meta key '{$proposal_key}' to '{$project_key}' with value: " . print_r($value, true));
-                $copied_count++;
-            } else {
-                error_log("ARSOL PFW DEBUG: Meta key '{$proposal_key}' was empty or not found");
+        // 5. Set project due date (with fallback logic)
+        $project_due_date = $project->get_due_date();
+        if (empty($project_due_date)) {
+            $proposed_due_date = $proposal->get_due_date();
+            if (!empty($proposed_due_date)) {
+                $project->set_due_date($proposed_due_date);
             }
         }
-        error_log("ARSOL PFW DEBUG: Copied {$copied_count} mapped meta keys");
         
-        // 8. Historical preservation - keep original proposal field names for reference
-        $historical_fields = array(
-            '_arsol_pfw_proposed_project_start_date',
-            '_arsol_pfw_proposed_project_due_date',
-        );
-        
-        $historical_copied_count = 0;
-        foreach ($historical_fields as $field) {
-            $value = $proposal->get_meta($field);
-            if ($value) {
-                $project->set_meta($field, $value);
-                error_log("ARSOL PFW DEBUG: Copied historical field '{$field}' with value: " . print_r($value, true));
-                $historical_copied_count++;
-            }
-        }
-        error_log("ARSOL PFW DEBUG: Copied {$historical_copied_count} historical fields");
-        
-        // Store original proposal ID for reference
+        // 6. Store original proposal ID for reference
         $project->set_meta('_arsol_pfw_project_proposal_id', $proposal_id);
-        error_log("ARSOL PFW DEBUG: Stored original proposal ID: {$proposal_id}");
         
-        // Set default project status to not-started
+        // 7. Set default project status
         $project->set_stage('not-started');
-        error_log("ARSOL PFW DEBUG: Set project status to 'not-started'");
         
-        // Save project entity to persist all changes
+        // 8. Save project entity to persist all changes
         $project->save();
         
-        error_log("ARSOL PFW DEBUG: Completed metadata copy from proposal #{$proposal_id} to project #{$project_id}");
+        error_log("ARSOL PFW DEBUG: Completed organized metadata copy from proposal #{$proposal_id} to project #{$project_id}");
     }
 
     /**

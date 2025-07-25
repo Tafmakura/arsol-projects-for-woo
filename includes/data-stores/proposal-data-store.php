@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
 class Proposal_Data_Store {
     
-    // Simple meta keys (individual fields)
+    // Simple meta keys mapping
     protected $meta_keys = array(
         'description' => '_arsol_pfw_proposal_description',
         'project_lead' => '_arsol_pfw_proposed_project_lead',
@@ -18,12 +18,15 @@ class Proposal_Data_Store {
         'costing_type' => '_arsol_pfw_proposal_costing_type',
         'parent_project_id' => '_arsol_pfw_parent_project_id',
         'customer_notice' => '_arsol_pfw_proposal_customer_notice',
+        'customer_id' => '_arsol_pfw_proposal_customer_id',
+        'created_via' => '_arsol_pfw_proposal_created_via',
     );
     
     // Complex data structure meta keys (array-based)
     protected $complex_meta_keys = array(
-        'budget_data' => '_arsol_pfw_proposed_project_budget',
-        'quotation_data' => '_arsol_pfw_proposed_project_quotation',
+        'budget_data' => '_arsol_pfw_proposal_budget',
+        'quotation_data' => '_arsol_pfw_proposal_quotation',
+        'request_data' => '_arsol_pfw_proposal_request',
         'original_request_data' => '_arsol_pfw_proposal_original_request_data',
         'woocommerce_data' => '_arsol_pfw_proposal_woocommerce_data',
         'workflow_data' => '_arsol_pfw_proposal_workflow_data',
@@ -171,13 +174,13 @@ class Proposal_Data_Store {
         // Save budget
         $budget = $proposal->get_budget();
         if ($budget !== null) {
-            $proposal->set_meta('_arsol_pfw_proposed_project_budget', $budget);
+            $proposal->set_meta('_arsol_pfw_proposal_budget', $budget);
         }
         
         // Save quotation
         $quotation = $proposal->get_quotation();
         if ($quotation !== null) {
-            $proposal->set_meta('_arsol_pfw_proposed_project_quotation', $quotation);
+            $proposal->set_meta('_arsol_pfw_proposal_quotation', $quotation);
         }
         
         // Save due date
@@ -221,12 +224,12 @@ class Proposal_Data_Store {
         if ($costing_type === 'budget') {
             $budget_notes = $proposal->get_budget_notes();
             if ($budget_notes !== null) {
-                $proposal->set_meta('_arsol_pfw_proposal_notes', $budget_notes);
+                $proposal->set_meta('_arsol_pfw_proposal_budget_notes', $budget_notes);
             }
         } elseif ($costing_type === 'quotation') {
             $quotation_notes = $proposal->get_quotation_notes();
             if ($quotation_notes !== null) {
-                $proposal->set_meta('_arsol_pfw_proposal_notes', $quotation_notes);
+                $proposal->set_meta('_arsol_pfw_proposal_quotation_notes', $quotation_notes);
             }
         }
     }

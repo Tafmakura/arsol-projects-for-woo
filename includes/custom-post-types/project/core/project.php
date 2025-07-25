@@ -249,22 +249,22 @@ class Project {
     }
 
     /**
-     * Get customer ID (from meta, like WooCommerce)
+     * Get customer ID
      * 
      * @return int Customer ID
      */
     public function get_customer_id() {
-        return (int) $this->get_meta('_arsol_pfw_customer_id');
+        return (int) $this->get_meta('_arsol_pfw_project_customer_id');
     }
 
     /**
-     * Set customer ID (to meta, like WooCommerce)
+     * Set customer ID
      * 
      * @param int $customer_id Customer ID
      * @return bool Success status
      */
     public function set_customer_id($customer_id) {
-        return $this->set_meta('_arsol_pfw_customer_id', (int) $customer_id);
+        return $this->set_meta('_arsol_pfw_project_customer_id', (int) $customer_id);
     }
 
     /**
@@ -321,22 +321,22 @@ class Project {
     }
 
     /**
-     * Get how the project was created
+     * Get creation method
      * 
      * @return string Creation method
      */
     public function get_created_via() {
-        return $this->get_meta('_arsol_pfw_created_via');
+        return $this->get_meta('_arsol_pfw_project_created_via');
     }
 
     /**
-     * Set how the project was created
+     * Set creation method
      * 
      * @param string $method Creation method
      * @return bool Success status
      */
     public function set_created_via($method) {
-        return $this->set_meta('_arsol_pfw_created_via', $method);
+        return $this->set_meta('_arsol_pfw_project_created_via', $method);
     }
 
     /**
@@ -770,94 +770,277 @@ class Project {
     }
 
     /**
-     * Get proposed budget (cross-entity access to proposal data)
+     * Get historical proposal data (all proposal data in one array)
      * 
-     * @return array|string Proposed budget
+     * @return array Proposal data
+     */
+    public function get_proposal_data() {
+        return $this->get_meta('_arsol_pfw_project_proposal') ?: array();
+    }
+
+    /**
+     * Set historical proposal data (all proposal data in one array)
+     * 
+     * @param array $proposal_data Proposal data
+     * @return bool Success status
+     */
+    public function set_proposal_data($proposal_data) {
+        return $this->set_meta('_arsol_pfw_project_proposal', $proposal_data);
+    }
+
+    /**
+     * Get historical request data (all request data in one array)
+     * 
+     * @return array Request data
+     */
+    public function get_request_data() {
+        return $this->get_meta('_arsol_pfw_proposal_request') ?: array();
+    }
+    
+    public function set_request_data($request_data) {
+        return $this->set_meta('_arsol_pfw_proposal_request', $request_data);
+    }
+
+    /**
+     * Get proposed project budget (historical from proposal)
+     * 
+     * @return array Proposed budget
      */
     public function get_proposed_budget() {
-        // First try current proposal budget
-        $current_budget = $this->get_meta('_arsol_pfw_proposal_budget');
-        if (!empty($current_budget)) {
-            return $current_budget;
-        }
-        
-        // Fallback to historical proposal budget
-        return $this->get_meta('_arsol_pfw_project_proposal_budget');
+        $proposal_data = $this->get_proposal_data();
+        return isset($proposal_data['proposed_project_budget']) ? $proposal_data['proposed_project_budget'] : array();
     }
 
     /**
-     * Get requested budget (cross-entity access to request data)
+     * Set proposed project budget
      * 
-     * @return array|string Requested budget
+     * @param array $budget Proposed budget
+     * @return bool Success status
      */
-    public function get_requested_budget() {
-        return $this->get_meta('_arsol_pfw_project_requested_budget');
+    public function set_proposed_budget($budget) {
+        $proposal_data = $this->get_proposal_data();
+        $proposal_data['proposed_project_budget'] = $budget;
+        return $this->set_proposal_data($proposal_data);
     }
 
     /**
-     * Get proposed start date (cross-entity access to proposal data)
+     * Get proposed project quotation (historical from proposal)
+     * 
+     * @return array Proposed quotation
+     */
+    public function get_proposed_quotation() {
+        $proposal_data = $this->get_proposal_data();
+        return isset($proposal_data['proposed_project_quotation']) ? $proposal_data['proposed_project_quotation'] : array();
+    }
+
+    /**
+     * Set proposed project quotation
+     * 
+     * @param array $quotation Proposed quotation
+     * @return bool Success status
+     */
+    public function set_proposed_quotation($quotation) {
+        $proposal_data = $this->get_proposal_data();
+        $proposal_data['proposed_project_quotation'] = $quotation;
+        return $this->set_proposal_data($proposal_data);
+    }
+
+    /**
+     * Get proposed project start date (historical from proposal)
      * 
      * @return string Proposed start date
      */
     public function get_proposed_start_date() {
-        // First try current proposal start date
-        $current_date = $this->get_meta('_arsol_pfw_proposal_start_date');
-        if (!empty($current_date)) {
-            return $current_date;
-        }
-        
-        // Fallback to historical proposal start date
-        return $this->get_meta('_arsol_pfw_proposed_project_start_date');
+        $proposal_data = $this->get_proposal_data();
+        return isset($proposal_data['proposed_project_start_date']) ? $proposal_data['proposed_project_start_date'] : null;
     }
 
     /**
-     * Get proposed due date (cross-entity access to proposal data)
+     * Set proposed project start date
+     * 
+     * @param string $start_date Proposed start date
+     * @return bool Success status
+     */
+    public function set_proposed_start_date($start_date) {
+        $proposal_data = $this->get_proposal_data();
+        $proposal_data['proposed_project_start_date'] = sanitize_text_field($start_date);
+        return $this->set_proposal_data($proposal_data);
+    }
+
+    /**
+     * Get proposed project due date (historical from proposal)
      * 
      * @return string Proposed due date
      */
     public function get_proposed_due_date() {
-        // First try current proposal due date
-        $current_date = $this->get_meta('_arsol_pfw_proposal_due_date');
-        if (!empty($current_date)) {
-            return $current_date;
-        }
-        
-        // Fallback to historical proposal due date
-        return $this->get_meta('_arsol_pfw_proposed_project_due_date');
+        $proposal_data = $this->get_proposal_data();
+        return isset($proposal_data['proposed_project_due_date']) ? $proposal_data['proposed_project_due_date'] : null;
     }
 
     /**
-     * Get proposed project lead (cross-entity access to proposal data)
+     * Set proposed project due date
      * 
-     * @return int|null Proposed project lead ID
+     * @param string $due_date Proposed due date
+     * @return bool Success status
+     */
+    public function set_proposed_due_date($due_date) {
+        $proposal_data = $this->get_proposal_data();
+        $proposal_data['proposed_project_due_date'] = sanitize_text_field($due_date);
+        return $this->set_proposal_data($proposal_data);
+    }
+
+    /**
+     * Get proposed project lead (historical from proposal)
+     * 
+     * @return int Proposed project lead
      */
     public function get_proposed_project_lead() {
-        // First try current proposal lead
-        $current_lead = $this->get_meta('_arsol_pfw_proposal_lead');
-        if (!empty($current_lead)) {
-            return $current_lead;
-        }
-        
-        // Fallback to historical proposal lead
-        return $this->get_meta('_arsol_pfw_proposed_project_lead');
+        $proposal_data = $this->get_proposal_data();
+        return isset($proposal_data['proposed_project_lead']) ? $proposal_data['proposed_project_lead'] : null;
     }
 
     /**
-     * Get requested start date (cross-entity access to request data)
+     * Set proposed project lead
+     * 
+     * @param int $lead_id Proposed project lead
+     * @return bool Success status
+     */
+    public function set_proposed_project_lead($lead_id) {
+        $proposal_data = $this->get_proposal_data();
+        $proposal_data['proposed_project_lead'] = (int) $lead_id;
+        return $this->set_proposal_data($proposal_data);
+    }
+
+    /**
+     * Get proposal costing type (historical from proposal)
+     * 
+     * @return string Proposal costing type
+     */
+    public function get_proposal_costing_type() {
+        $proposal_data = $this->get_proposal_data();
+        return isset($proposal_data['costing_type']) ? $proposal_data['costing_type'] : null;
+    }
+
+    /**
+     * Set proposal costing type
+     * 
+     * @param string $costing_type Proposal costing type
+     * @return bool Success status
+     */
+    public function set_proposal_costing_type($costing_type) {
+        $proposal_data = $this->get_proposal_data();
+        $proposal_data['costing_type'] = sanitize_text_field($costing_type);
+        return $this->set_proposal_data($proposal_data);
+    }
+
+    /**
+     * Get proposal customer notice (historical from proposal)
+     * 
+     * @return string Proposal customer notice
+     */
+    public function get_proposal_customer_notice() {
+        $proposal_data = $this->get_proposal_data();
+        return isset($proposal_data['customer_notice']) ? $proposal_data['customer_notice'] : null;
+    }
+
+    /**
+     * Set proposal customer notice
+     * 
+     * @param string $customer_notice Proposal customer notice
+     * @return bool Success status
+     */
+    public function set_proposal_customer_notice($customer_notice) {
+        $proposal_data = $this->get_proposal_data();
+        $proposal_data['customer_notice'] = wp_kses_post($customer_notice);
+        return $this->set_proposal_data($proposal_data);
+    }
+
+    /**
+     * Get proposal expiration date (historical from proposal)
+     * 
+     * @return string Proposal expiration date
+     */
+    public function get_proposal_expiration_date() {
+        $proposal_data = $this->get_proposal_data();
+        return isset($proposal_data['expiration_date']) ? $proposal_data['expiration_date'] : null;
+    }
+
+    /**
+     * Set proposal expiration date
+     * 
+     * @param string $expiration_date Proposal expiration date
+     * @return bool Success status
+     */
+    public function set_proposal_expiration_date($expiration_date) {
+        $proposal_data = $this->get_proposal_data();
+        $proposal_data['expiration_date'] = sanitize_text_field($expiration_date);
+        return $this->set_proposal_data($proposal_data);
+    }
+
+    /**
+     * Get requested project budget (historical from request)
+     * 
+     * @return array Requested budget
+     */
+    public function get_requested_budget() {
+        $request_data = $this->get_request_data();
+        return isset($request_data['requested_project_budget']) ? $request_data['requested_project_budget'] : array();
+    }
+
+    /**
+     * Set requested project budget
+     * 
+     * @param array $budget Requested budget
+     * @return bool Success status
+     */
+    public function set_requested_budget($budget) {
+        $request_data = $this->get_request_data();
+        $request_data['requested_project_budget'] = $budget;
+        return $this->set_request_data($request_data);
+    }
+
+    /**
+     * Get requested project start date (historical from request)
      * 
      * @return string Requested start date
      */
     public function get_requested_start_date() {
-        return $this->get_meta('_arsol_pfw_project_requested_start_date');
+        $request_data = $this->get_request_data();
+        return isset($request_data['requested_project_start_date']) ? $request_data['requested_project_start_date'] : null;
     }
 
     /**
-     * Get requested due date (cross-entity access to request data)
+     * Set requested project start date
+     * 
+     * @param string $start_date Requested start date
+     * @return bool Success status
+     */
+    public function set_requested_start_date($start_date) {
+        $request_data = $this->get_request_data();
+        $request_data['requested_project_start_date'] = sanitize_text_field($start_date);
+        return $this->set_request_data($request_data);
+    }
+
+    /**
+     * Get requested project due date (historical from request)
      * 
      * @return string Requested due date
      */
     public function get_requested_due_date() {
-        return $this->get_meta('_arsol_pfw_requested_project_due_date');
+        $request_data = $this->get_request_data();
+        return isset($request_data['requested_project_due_date']) ? $request_data['requested_project_due_date'] : null;
+    }
+
+    /**
+     * Set requested project due date
+     * 
+     * @param string $due_date Requested due date
+     * @return bool Success status
+     */
+    public function set_requested_due_date($due_date) {
+        $request_data = $this->get_request_data();
+        $request_data['requested_project_due_date'] = sanitize_text_field($due_date);
+        return $this->set_request_data($request_data);
     }
 
 

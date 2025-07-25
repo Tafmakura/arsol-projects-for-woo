@@ -170,7 +170,7 @@ function arsol_pfw_get_proposals_by_budget_range($min_budget = null, $max_budget
     
     if ($min_budget !== null) {
         $meta_query[] = array(
-            'key' => '_arsol_pfw_proposal_budget',
+            'key' => '_arsol_pfw_proposed_project_budget',
             'value' => $min_budget,
             'compare' => '>=',
             'type' => 'NUMERIC',
@@ -179,7 +179,7 @@ function arsol_pfw_get_proposals_by_budget_range($min_budget = null, $max_budget
     
     if ($max_budget !== null) {
         $meta_query[] = array(
-            'key' => '_arsol_pfw_proposal_budget',
+            'key' => '_arsol_pfw_proposed_project_budget',
             'value' => $max_budget,
             'compare' => '<=',
             'type' => 'NUMERIC',

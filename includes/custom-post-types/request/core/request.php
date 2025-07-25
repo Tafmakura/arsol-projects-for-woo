@@ -252,10 +252,10 @@ class Arsol_PFW_Request {
     /**
      * Get customer ID
      * 
-     * @return int|null
+     * @return int Customer ID
      */
     public function get_customer_id() {
-        return $this->get_meta('_arsol_pfw_customer_id');
+        return $this->get_meta('_arsol_pfw_request_customer_id');
     }
 
     /**
@@ -265,7 +265,7 @@ class Arsol_PFW_Request {
      * @return bool Success status
      */
     public function set_customer_id($customer_id) {
-        return $this->set_meta('_arsol_pfw_customer_id', (int) $customer_id);
+        return $this->set_meta('_arsol_pfw_request_customer_id', (int) $customer_id);
     }
 
     /**
@@ -322,22 +322,22 @@ class Arsol_PFW_Request {
     }
 
     /**
-     * Get created via method
+     * Get creation method
      * 
-     * @return string
+     * @return string Creation method
      */
     public function get_created_via() {
-        return $this->get_meta('_arsol_pfw_created_via') ?: 'admin_creation';
+        return $this->get_meta('_arsol_pfw_request_created_via') ?: 'admin_creation';
     }
 
     /**
-     * Set created via method
+     * Set creation method
      * 
      * @param string $method Creation method
      * @return bool Success status
      */
     public function set_created_via($method) {
-        return $this->set_meta('_arsol_pfw_created_via', sanitize_text_field($method));
+        return $this->set_meta('_arsol_pfw_request_created_via', sanitize_text_field($method));
     }
 
     /**
@@ -809,60 +809,6 @@ class Arsol_PFW_Request {
         }
         
         return false;
-    }
-
-    /**
-     * Get project budget (cross-entity access for historical data)
-     * 
-     * @return array|string Project budget
-     */
-    public function get_project_budget() {
-        return $this->get_meta('_arsol_pfw_project_budget');
-    }
-
-    /**
-     * Get proposal budget (cross-entity access for historical data)
-     * 
-     * @return array|string Proposal budget
-     */
-    public function get_proposal_budget() {
-        return $this->get_meta('_arsol_pfw_proposal_budget');
-    }
-
-    /**
-     * Get project start date (cross-entity access for historical data)
-     * 
-     * @return string Project start date
-     */
-    public function get_project_start_date() {
-        return $this->get_meta('_arsol_pfw_project_start_date');
-    }
-
-    /**
-     * Get project due date (cross-entity access for historical data)
-     * 
-     * @return string Project due date
-     */
-    public function get_project_due_date() {
-        return $this->get_meta('_arsol_pfw_project_due_date');
-    }
-
-    /**
-     * Get proposal start date (cross-entity access for historical data)
-     * 
-     * @return string Proposal start date
-     */
-    public function get_proposal_start_date() {
-        return $this->get_meta('_arsol_pfw_proposal_start_date');
-    }
-
-    /**
-     * Get proposal due date (cross-entity access for historical data)
-     * 
-     * @return string Proposal due date
-     */
-    public function get_proposal_due_date() {
-        return $this->get_meta('_arsol_pfw_proposal_due_date');
     }
 
 

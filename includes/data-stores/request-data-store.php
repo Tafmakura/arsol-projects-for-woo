@@ -8,11 +8,16 @@ if (!defined('ABSPATH')) {
 
 class Request_Data_Store {
     
+    // Simple meta keys mapping
     protected $meta_keys = array(
         'budget'      => '_arsol_pfw_requested_project_budget',
         'due_date'    => '_arsol_pfw_requested_project_due_date',
-        'customer_id' => '_arsol_pfw_customer_id',
+        'customer_id' => '_arsol_pfw_request_customer_id',
         'start_date'  => '_arsol_pfw_requested_project_start_date',
+        'customer_notice' => '_arsol_pfw_request_customer_notice',
+        'attachments' => '_arsol_pfw_request_attachments',
+        'created_via' => '_arsol_pfw_request_created_via',
+        'parent_project_id' => '_arsol_pfw_parent_project_id',
     );
     
     /**
@@ -182,6 +187,12 @@ class Request_Data_Store {
         $attachments = $request->get_attachments();
         if ($attachments !== null) {
             $request->set_meta('_arsol_pfw_request_attachments', $attachments);
+        }
+        
+        // Save parent project ID
+        $parent_project_id = $request->get_parent_project_id();
+        if ($parent_project_id !== null) {
+            $request->set_meta('_arsol_pfw_parent_project_id', $parent_project_id);
         }
     }
     
