@@ -73,8 +73,8 @@ $container_class = 'arsol-header-grid';
             }
             ?>
 
-            <div class="project_data_column_container <?php echo esc_attr($container_class); ?>">
-                <div class="project_data_column">
+            <div class="arsol-pfw-project-data-column-container <?php echo esc_attr($container_class); ?>">
+                <div class="arsol-pfw-project-data-column column-1">
                     <h3><?php _e('General Settings', 'arsol-pfw'); ?></h3>
 
                         <?php
@@ -86,7 +86,7 @@ $container_class = 'arsol-header-grid';
                     ?>
                 </div>
 
-                <div class="project_data_column">
+                <div class="arsol-pfw-project-data-column column-2">
                     <h3><?php _e('Request Details', 'arsol-pfw'); ?></h3>
                     
                     <?php

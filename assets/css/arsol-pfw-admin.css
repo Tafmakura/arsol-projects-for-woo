@@ -999,7 +999,7 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
     color: #333;
 }
 
-#arsol-pfw-project-project-data .project_data_column_container {
+#arsol-pfw-project-project-data .arsol-pfw-project-data-column-container {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
@@ -1007,14 +1007,14 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 
 
 
-#arsol-pfw-project-project-data .project_data_column .form-field {
+#arsol-pfw-project-project-data .arsol-pfw-project-data-column .form-field {
     margin-bottom: 10px;
 }
 
 
 
 
-#arsol-pfw-project-project-data .project_data_column .form-field .description {
+#arsol-pfw-project-project-data .arsol-pfw-project-data-column .form-field .description {
     font-size: 12px;
     color: #666;
     margin-top: 3px;
@@ -1080,8 +1080,8 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
         grid-template-columns: 1fr;
     }
     
-    #arsol-pfw-project-project-data .arsol-header-grid .project_data_column,
-    #arsol-pfw-project-project-data .arsol-header-grid.has-col-2 .project_data_column {
+    #arsol-pfw-project-project-data .arsol-header-grid .arsol-pfw-project-data-column,
+    #arsol-pfw-project-project-data .arsol-header-grid.has-col-2 .arsol-pfw-project-data-column {
         grid-column: 1;
     }
 }
@@ -1172,8 +1172,8 @@ p.form-field._wc_other\5c /arsol-pfw\5c /parent-project-id_field {
 }
 
 /* Make labels in header container display as block */
-.project_data_column_container label {
-    display: block;
+.arsol-pfw-project-data-column-container label {
+    font-weight: 600;
 }
 
 .arsol-full-width {
