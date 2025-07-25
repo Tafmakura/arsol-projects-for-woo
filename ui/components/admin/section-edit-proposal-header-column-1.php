@@ -117,13 +117,24 @@ $available_stages = $proposal->get_available_stages();
         <label for="customer_id">
             <?php _e('Customer:', 'arsol-pfw'); ?>
         </label>
-        <select class="wc-customer-search" name="customer_id" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="arsol_pfw_ajax_search_users" data-search-type="customers" data-security="<?php echo esc_attr(wp_create_nonce('search-users')); ?>">
-            <?php if ($customer_id && $customer && is_object($customer)): ?>
+        <?php if ($is_project_tied): ?>
+            <!-- Locked customer field for project-tied proposals -->
+            <input type="hidden" name="customer_id" value="<?php echo esc_attr($customer_id); ?>">
+            <select class="arsol-disabled-select" disabled>
                 <option value="<?php echo esc_attr($customer_id); ?>" selected>
-                    <?php echo esc_html(arsol_pfw_format_user($customer_id, 'display_name', false, true, false)); ?>
+                    <?php echo ($customer && is_object($customer)) ? esc_html($customer->display_name) : __('Customer not found', 'arsol-pfw'); ?>
                 </option>
-            <?php endif; ?>
-        </select>
+            </select>
+        <?php else: ?>
+            <!-- Regular customer search field -->
+            <select class="wc-customer-search" name="customer_id" data-placeholder="<?php esc_attr_e('Search for customer...', 'arsol-pfw'); ?>" data-allow_clear="true" data-action="arsol_pfw_ajax_search_users" data-search-type="customers" data-security="<?php echo esc_attr(wp_create_nonce('search-users')); ?>">
+                <?php if ($customer_id && $customer && is_object($customer)): ?>
+                    <option value="<?php echo esc_attr($customer_id); ?>" selected>
+                        <?php echo esc_html(arsol_pfw_format_user($customer_id, 'display_name', false, true, false)); ?>
+                    </option>
+                <?php endif; ?>
+            </select>
+        <?php endif; ?>
     </p>
 </div>
 
