@@ -21,7 +21,7 @@ $proposal_id = $proposal->get_id();
 $customer_id = $proposal->get_customer_id();
 $customer = $proposal->get_customer();
 $proposal_stage = $proposal->get_stage();
-$proposal_project_lead = $proposal->get_project_lead();
+$proposal_project_manager = $proposal->get_project_manager();
 $start_date = $proposal->get_start_date();
 $delivery_date = $proposal->get_due_date();
 $expiration_date = $proposal->get_expiration_date();
@@ -44,7 +44,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
         
         // Get parent project data using CRUD methods
         $parent_customer_id = $parent_project->get_customer_id();
-        $parent_lead_id = $parent_project->get_project_lead();
+        $parent_lead_id = $parent_project->get_project_manager();
         
         $parent_project_data = array(
             'id' => $parent_project->get_id(),
@@ -56,7 +56,7 @@ if (isset($_GET['parent_project']) && !empty($_GET['parent_project'])) {
         // EXCLUSIVELY use parent project values - override completely
         $customer_id = $parent_customer_id;
         $customer = $parent_project->get_customer();
-        $proposal_project_lead = $parent_lead_id;
+        $proposal_project_manager = $parent_lead_id;
         $proposal_costing_type = 'quotation'; // Always quotation for project-tied proposals
     }
 } 
@@ -70,7 +70,7 @@ elseif ($proposal_id > 0) {
             
             // Get parent project data using CRUD methods
             $parent_customer_id = $parent_project->get_customer_id();
-            $parent_lead_id = $parent_project->get_project_lead();
+            $parent_lead_id = $parent_project->get_project_manager();
             
             $parent_project_data = array(
                 'id' => $parent_project->get_id(),
@@ -82,7 +82,7 @@ elseif ($proposal_id > 0) {
             // EXCLUSIVELY use parent project values - override completely
             $customer_id = $parent_customer_id;
             $customer = $parent_project->get_customer();
-            $proposal_project_lead = $parent_lead_id;
+            $proposal_project_manager = $parent_lead_id;
             $proposal_costing_type = 'quotation'; // Always quotation for project-tied proposals
         }
     }
@@ -140,31 +140,29 @@ $available_stages = $proposal->get_available_stages();
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="proposal_project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
-        <?php if ($is_project_tied): ?>
-            <!-- Locked project lead field for project-tied proposals -->
-            <?php 
-            $lead_user = get_userdata($proposal_project_lead);
-            if ($lead_user): ?>
+        <label for="proposal_project_manager"><?php _e('Project Manager:', 'arsol-pfw'); ?></label>
+        <?php if ($is_project_tied && $parent_project_data): ?>
+            <?php if (!empty($parent_lead_id)): ?>
+                <?php $lead_user = get_userdata($proposal_project_manager); ?>
                 <select class="arsol-disabled-select" disabled>
-                    <option selected><?php echo esc_html($lead_user->display_name . ' (' . $lead_user->user_email . ')'); ?></option>
+                    <option selected><?php echo $lead_user ? esc_html($lead_user->display_name) : __('Unknown User', 'arsol-pfw'); ?></option>
                 </select>
-                <input type="hidden" name="proposal_project_lead" value="<?php echo esc_attr($proposal_project_lead); ?>">
+                <input type="hidden" name="proposal_project_manager" value="<?php echo esc_attr($proposal_project_manager); ?>">
             <?php else: ?>
-                <!-- No project lead assigned to parent project -->
+                <!-- No project manager assigned to parent project -->
                 <select class="arsol-disabled-select" disabled>
-                    <option selected><?php _e('No project lead assigned', 'arsol-pfw'); ?></option>
+                    <option selected><?php _e('No project manager assigned', 'arsol-pfw'); ?></option>
                 </select>
-                <input type="hidden" name="proposal_project_lead" value="">
+                <input type="hidden" name="proposal_project_manager" value="">
             <?php endif; ?>
         <?php else: ?>
-            <!-- Regular project lead search field -->
+            <!-- Regular project manager search field -->
             <?php
             \Arsol_Projects_For_Woo\Admin\Users::render_project_lead_search_field(array(
-                'name' => 'proposal_project_lead',
-                'id' => 'proposal_project_lead',
-                'selected' => $proposal_project_lead,
-                'placeholder' => __('Search for project lead...', 'arsol-pfw')
+                'name' => 'proposal_project_manager',
+                'id' => 'proposal_project_manager',
+                'selected' => $proposal_project_manager,
+                'placeholder' => __('Search for project manager...', 'arsol-pfw')
             ));
             ?>
         <?php endif; ?>

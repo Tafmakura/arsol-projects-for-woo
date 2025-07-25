@@ -28,6 +28,7 @@ $available_stages = $request->get_available_stages();
 $budget = $request->get_requested_project_budget();
 $start_date = $request->get_requested_project_start_date();
 $due_date = $request->get_requested_project_due_date();
+$expiration_date = $request->get_expiration_date();
 
 // Set default stage if none set
 if (empty($request_stage)) {
@@ -82,5 +83,12 @@ if (empty($request_stage)) {
     <p class="form-field form-field-half">
         <label for="request_due_date"><?php _e('Due Date:', 'arsol-pfw'); ?></label>
         <input type="date" id="request_due_date" name="request_due_date" value="<?php echo esc_attr($due_date); ?>" class="widefat">
+    </p>
+</div>
+
+<div class="form-field-row">
+    <p class="form-field form-field-wide">
+        <label for="request_expiration_date"><?php _e('Expiration Date:', 'arsol-pfw'); ?></label>
+        <input type="date" id="request_expiration_date" name="request_expiration_date" value="<?php echo esc_attr($expiration_date); ?>" class="widefat">
     </p>
 </div>

@@ -25,7 +25,7 @@ $customer = $project->get_customer();
 $project_stage = $project->get_stage();
 $available_stages = $project->get_available_stages();
 
-$project_lead = $project->get_project_lead();
+$project_manager = $project->get_project_manager();
 $start_date = $project->get_start_date();
 $due_date = $project->get_due_date();
 ?>
@@ -47,14 +47,14 @@ $due_date = $project->get_due_date();
 
 <div class="form-field-row">
     <p class="form-field form-field-wide">
-        <label for="project_lead"><?php _e('Project Lead:', 'arsol-pfw'); ?></label>
+        <label for="project_manager"><?php _e('Project Manager:', 'arsol-pfw'); ?></label>
         <?php
-        // Use the Admin Users class method for project lead search field
+        // Use the Admin Users class method for project manager search field
         \Arsol_Projects_For_Woo\Admin\Users::render_project_lead_search_field(array(
-            'name' => 'project_lead',
-            'id' => 'project_lead',
-            'selected' => $project_lead,
-            'placeholder' => __('Search for project lead...', 'arsol-pfw')
+            'name' => 'project_manager',
+            'id' => 'project_manager',
+            'selected' => $project_manager,
+            'placeholder' => __('Search for project manager...', 'arsol-pfw')
         ));
         ?>
     </p>
