@@ -114,9 +114,7 @@ $available_stages = $proposal->get_available_stages();
 
 <div class="form-field-row">
     <p class="form-field form-field-wide wc-customer-user">
-        <label for="customer_id">
-            <?php _e('Customer:', 'arsol-pfw'); ?>
-        </label>
+        <label for="customer_id"><?php _e('Customer:', 'arsol-pfw'); ?></label>
         <?php if ($is_project_tied): ?>
             <!-- Locked customer field for project-tied proposals -->
             <input type="hidden" name="customer_id" value="<?php echo esc_attr($customer_id); ?>">
