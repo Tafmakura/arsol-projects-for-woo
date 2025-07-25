@@ -16,13 +16,13 @@ if (!defined('ABSPATH')) {
  * $project_id - Project ID
  * $old_stage - Previous stage
  * $new_stage - New stage 
- * $project_lead_id - Project lead ID
+ * $project_manager_id - Project manager ID
  * $email_heading - Email heading
  * $email - Email object
  */
 
 $customer = get_userdata($project->post_author);
-$project_lead = get_userdata($project_lead_id);
+$project_manager = get_userdata($project_manager_id);
 
 // Define contextual messages based on stage transitions
 $stage_messages = array(
@@ -84,10 +84,10 @@ echo "= " . $email_heading . " =\n\n";
             <th class="td" scope="row" style="text-align:left;"><?php _e('Current Stage:', 'arsol-pfw'); ?></th>
             <td class="td" style="text-align:left;"><?php echo esc_html(ucfirst(str_replace('-', ' ', $new_stage))); ?></td>
         </tr>
-        <?php if ($project_lead): ?>
+        <?php if ($project_manager): ?>
         <tr>
-            <th class="td" scope="row" style="text-align:left;"><?php _e('Project Lead:', 'arsol-pfw'); ?></th>
-            <td class="td" style="text-align:left;"><?php echo esc_html($project_lead->display_name); ?></td>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Project Manager:', 'arsol-pfw'); ?></th>
+            <td class="td" style="text-align:left;"><?php echo esc_html($project_manager->display_name); ?></td>
         </tr>
         <?php endif; ?>
         <tr>

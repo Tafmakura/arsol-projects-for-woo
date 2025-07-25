@@ -346,9 +346,9 @@ class Single_Controller {
         }
 
         // Save project lead
-        if (isset($_POST['proposal_project_lead'])) {
+        if (isset($_POST['proposal_project_manager'])) {
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-            $proposal->set_project_lead(sanitize_text_field($_POST['proposal_project_lead']));
+            $proposal->set_project_manager(sanitize_text_field($_POST['proposal_project_manager']));
         }
 
         // Save expiration date
@@ -706,12 +706,12 @@ class Single_Controller {
         }
         $customer_id = get_post_meta($parent_project_id, '_arsol_pfw_customer_id', true);
         $parent_project_entity = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($parent_project_id);
-        $lead_id = $parent_project_entity->get_project_lead();
+        $manager_id = $parent_project_entity->get_project_manager();
         return array(
             'id' => $parent_project_id,
             'title' => $parent_project->post_title,
             'customer_id' => $customer_id,
-            'lead_id' => $lead_id
+            'manager_id' => $manager_id
         );
     }
 

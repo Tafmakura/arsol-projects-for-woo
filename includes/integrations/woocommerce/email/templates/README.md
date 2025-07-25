@@ -70,7 +70,7 @@ Templates follow this naming pattern:
 
 ### Proposal Templates
 - `$proposal` - WP_Post object for the proposal
-- `$project_lead` - WP_User object for assigned project lead (if any)
+- `$project_manager` - WP_User object for assigned project lead (if any)
 
 ### Project Templates
 - `$project` - WP_Post object for the project

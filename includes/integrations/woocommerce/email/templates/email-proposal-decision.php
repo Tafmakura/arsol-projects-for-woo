@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
 
 do_action('woocommerce_email_header', $email_heading, $email); ?>
 
-<p><?php printf(__('Hello %s,', 'arsol-pfw'), esc_html($project_lead->first_name ?: $project_lead->display_name)); ?></p>
+<p><?php printf(__('Hello %s,', 'arsol-pfw'), esc_html($project_manager->first_name ?: $project_manager->display_name)); ?></p>
 
 <p><?php printf(__('A decision has been made on proposal #%d.', 'arsol-pfw'), $proposal->ID); ?></p>
 

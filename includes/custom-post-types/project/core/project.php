@@ -537,25 +537,6 @@ class Project {
     }
 
     /**
-     * Get project lead
-     * 
-     * @return int|null Project lead ID
-     */
-    public function get_project_lead() {
-        return $this->get_meta('_arsol_pfw_project_lead');
-    }
-
-    /**
-     * Set project lead
-     * 
-     * @param int $lead_id Project lead ID
-     * @return bool Success status
-     */
-    public function set_project_lead($lead_id) {
-        return $this->set_meta('_arsol_pfw_project_lead', (int) $lead_id);
-    }
-
-    /**
      * Get project start date
      * 
      * @return string Project start date

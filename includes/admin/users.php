@@ -744,8 +744,8 @@ class Users {
      * AJAX handler for project lead search
      * Returns JSON formatted project leads for Select2 AJAX
      */
-    public function json_search_project_leads() {
-        check_ajax_referer('search-project-leads', 'security');
+    public function json_search_project_managers() {
+        check_ajax_referer('search-project-managers', 'security');
         
         $term = isset($_GET['term']) ? sanitize_text_field($_GET['term']) : '';
         $limit = isset($_GET['limit']) ? absint($_GET['limit']) : 20;
@@ -822,7 +822,7 @@ class Users {
         
         // Add capability filtering based on search type
         switch ($search_type) {
-            case 'project_leads':
+            case 'project_managers':
                 $user_args['meta_query'] = array(
                     'relation' => 'OR',
                     array(
@@ -867,36 +867,45 @@ class Users {
      * @param array $args Array of arguments for the select field
      * @return void
      */
-    public static function render_project_lead_search_field($args = array()) {
+    public static function render_project_manager_search_field($args = array()) {
         $defaults = array(
-            'name' => 'project_lead',
-            'id' => 'project_lead',
-            'placeholder' => __('Search for project lead...', 'arsol-pfw'),
+            'name' => 'project_manager',
+            'id' => 'project_manager',
+            'placeholder' => __('Search for project manager...', 'arsol-pfw'),
             'selected' => '',
-            'class' => ''
+            'class' => 'arsol-pfw-ajax-search',
+            'style' => 'width: 100%;',
+            'required' => false,
+            'disabled' => false,
+            'readonly' => false,
+            'autocomplete' => 'off',
+            'data' => array()
         );
         
         $args = wp_parse_args($args, $defaults);
         
-        $classes = 'arsol-pfw-user-search';
-        if (!empty($args['class'])) {
-            $classes .= ' ' . esc_attr($args['class']);
+        // Build data attributes
+        $data_attrs = '';
+        foreach ($args['data'] as $key => $value) {
+            $data_attrs .= ' data-' . esc_attr($key) . '="' . esc_attr($value) . '"';
         }
         
-        echo '<select name="' . esc_attr($args['name']) . '" id="' . esc_attr($args['id']) . '" class="' . esc_attr($classes) . '" data-placeholder="' . esc_attr($args['placeholder']) . '" data-allow_clear="true" data-action="arsol_pfw_ajax_search_users" data-search-type="project_leads" data-security="' . wp_create_nonce('search-users') . '">';
-        echo '<option value="">' . esc_html($args['placeholder']) . '</option>';
+        $output = '<input type="text" 
+            name="' . esc_attr($args['name']) . '" 
+            id="' . esc_attr($args['id']) . '" 
+            value="' . esc_attr($args['selected']) . '" 
+            placeholder="' . esc_attr($args['placeholder']) . '" 
+            class="' . esc_attr($args['class']) . '" 
+            style="' . esc_attr($args['style']) . '" 
+            data-search-type="project_managers" 
+            data-security="' . wp_create_nonce('search-users') . '"' . 
+            ($args['required'] ? ' required' : '') . 
+            ($args['disabled'] ? ' disabled' : '') . 
+            ($args['readonly'] ? ' readonly' : '') . 
+            ' autocomplete="' . esc_attr($args['autocomplete']) . '"' . 
+            $data_attrs . '>';
         
-        // If there's a selected value, add it as an option
-        if (!empty($args['selected'])) {
-            $selected_user = get_userdata($args['selected']);
-            if ($selected_user) {
-                $display_name = arsol_pfw_format_user($args['selected'], 'display_name', false, true, false);
-                $display_name = wp_strip_all_tags($display_name);
-                echo '<option value="' . esc_attr($args['selected']) . '" selected="selected">' . esc_html($display_name) . '</option>';
-            }
-        }
-        
-        echo '</select>';
+        return $output;
     }
     
     /**
@@ -904,9 +913,9 @@ class Users {
      *
      * @return array Array of user IDs who can manage projects
      */
-    public static function get_project_lead_user_ids() {
-        $users = get_users(array(
-            'fields' => 'ID',
+    public static function get_project_manager_user_ids() {
+        $user_args = array(
+            'fields' => array('ID'),
             'meta_query' => array(
                 'relation' => 'OR',
                 array(
@@ -925,9 +934,10 @@ class Users {
                     'compare' => 'LIKE'
                 ),
             )
-        ));
+        );
         
-        return $users;
+        $users = get_users($user_args);
+        return wp_list_pluck($users, 'ID');
     }
     
     /**
@@ -936,22 +946,16 @@ class Users {
      * @param int $user_id User ID
      * @return string Formatted display name
      */
-    public static function format_project_lead_display($user_id) {
+    public static function format_project_manager_display($user_id) {
         $user = get_userdata($user_id);
         if (!$user) {
             return __('Unknown User', 'arsol-pfw');
         }
         
-        $display_name = '';
-        if (!empty($user->display_name)) {
-            $display_name = $user->display_name;
-        } elseif (!empty($user->first_name) || !empty($user->last_name)) {
-            $display_name = trim($user->first_name . ' ' . $user->last_name);
-        } else {
-            $display_name = $user->user_email;
-        }
+        $display_name = $user->display_name;
+        $email = $user->user_email;
         
-        return $display_name . ' (' . $user->user_email . ')';
+        return sprintf('%s (%s)', $display_name, $email);
     }
     
     /**
@@ -961,34 +965,25 @@ class Users {
      * @param string $post_type Post type
      * @return string Formatted HTML link or fallback display
      */
-    public static function create_project_lead_filter_link($user_id, $post_type = 'arsol-pfw-project') {
-        if (!$user_id) {
-            return '<span class="na">&ndash;</span>';
-        }
-        
+    public static function create_project_manager_filter_link($user_id, $post_type = 'arsol-pfw-project') {
         $user = get_userdata($user_id);
         if (!$user) {
-            return '<span class="na">&ndash;</span>';
+            return '';
         }
         
-        $display_name = '';
-        if (!empty($user->display_name)) {
-            $display_name = $user->display_name;
-        } elseif (!empty($user->first_name) || !empty($user->last_name)) {
-            $display_name = trim($user->first_name . ' ' . $user->last_name);
-        } else {
-            $display_name = $user->user_email;
-        }
-        
-        // Create filter URL
-        $filter_url = add_query_arg(array(
+        $display_name = $user->display_name;
+        $url = admin_url('edit.php');
+        $query_args = array(
             'post_type' => $post_type,
-            'project_lead' => $user_id,
-        ), admin_url('edit.php'));
+            'project_manager' => $user_id,
+        );
+        
+        $url = add_query_arg($query_args, $url);
         
         return sprintf(
-            '<a href="%s">%s</a>',
-            esc_url($filter_url),
+            '<a href="%s" title="%s">%s</a>',
+            esc_url($url),
+            esc_attr(sprintf(__('Filter by %s', 'arsol-pfw'), $display_name)),
             esc_html($display_name)
         );
     }

@@ -50,7 +50,7 @@ $due_date = $project->get_due_date();
         <label for="project_manager"><?php _e('Project Manager:', 'arsol-pfw'); ?></label>
         <?php
         // Use the Admin Users class method for project manager search field
-        \Arsol_Projects_For_Woo\Admin\Users::render_project_lead_search_field(array(
+        \Arsol_Projects_For_Woo\Admin\Users::render_project_manager_search_field(array(
             'name' => 'project_manager',
             'id' => 'project_manager',
             'selected' => $project_manager,

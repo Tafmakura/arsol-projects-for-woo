@@ -29,10 +29,10 @@ do_action('woocommerce_email_header', $email_heading, $email);
             <th class="td" scope="row" style="text-align:left;"><?php _e('Title:', 'arsol-pfw'); ?></th>
             <td class="td" style="text-align:left;"><?php echo esc_html($proposal->post_title); ?></td>
         </tr>
-        <?php if ($project_lead): ?>
+        <?php if ($project_manager): ?>
         <tr>
-            <th class="td" scope="row" style="text-align:left;"><?php _e('Project Lead:', 'arsol-pfw'); ?></th>
-            <td class="td" style="text-align:left;"><?php echo esc_html($project_lead->first_name . ' ' . $project_lead->last_name); ?></td>
+            <th class="td" scope="row" style="text-align:left;"><?php _e('Project Manager:', 'arsol-pfw'); ?></th>
+            <td class="td" style="text-align:left;"><?php echo esc_html($project_manager->first_name . ' ' . $project_manager->last_name); ?></td>
         </tr>
         <?php endif; ?>
         <tr>
@@ -53,9 +53,9 @@ do_action('woocommerce_email_header', $email_heading, $email);
 <h3><?php _e('Timeline:', 'arsol-pfw'); ?></h3>
 <p><?php _e('We typically complete proposals within 3-5 business days. You\'ll receive a notification as soon as your proposal is ready for review.', 'arsol-pfw'); ?></p>
     
-    <?php if ($project_lead): ?>
+    <?php if ($project_manager): ?>
 <h3><?php _e('Your Project Lead', 'arsol-pfw'); ?></h3>
-<p><strong><?php echo esc_html($project_lead->first_name . ' ' . $project_lead->last_name); ?></strong> <?php _e('has been assigned to your project and will be your primary point of contact throughout the proposal process.', 'arsol-pfw'); ?></p>
+<p><strong><?php echo esc_html($project_manager->first_name . ' ' . $project_manager->last_name); ?></strong> <?php _e('has been assigned to your project and will be your primary point of contact throughout the proposal process.', 'arsol-pfw'); ?></p>
     <?php endif; ?>
     
     <div style="text-align: center; margin: 25px 0;">

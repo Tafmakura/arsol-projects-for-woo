@@ -156,7 +156,7 @@ $available_stages = $proposal->get_available_stages();
         <?php else: ?>
             <!-- Regular project manager search field -->
             <?php
-            \Arsol_Projects_For_Woo\Admin\Users::render_project_lead_search_field(array(
+            \Arsol_Projects_For_Woo\Admin\Users::render_project_manager_search_field(array(
                 'name' => 'proposal_project_manager',
                 'id' => 'proposal_project_manager',
                 'selected' => $proposal_project_manager,

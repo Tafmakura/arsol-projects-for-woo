@@ -33,7 +33,7 @@ class List_Controller {
         }
         $new_columns['customer'] = __('Customer', 'arsol-pfw');
         $new_columns['project_stage'] = __('Stage', 'arsol-pfw');
-        $new_columns['project_lead'] = __('Project Lead', 'arsol-pfw');
+        $new_columns['project_manager'] = __('Project Manager', 'arsol-pfw');
         if (isset($columns['date'])) {
             $new_columns['date'] = $columns['date'];
         }
@@ -52,8 +52,8 @@ class List_Controller {
             case 'customer':
                 $this->render_customer_column_direct($post_id);
                 break;
-            case 'project_lead':
-                $this->render_project_lead_column_direct($post_id);
+            case 'project_manager':
+                $this->render_project_manager_column_direct($post_id);
                 break;
         }
     }
@@ -84,14 +84,19 @@ class List_Controller {
     }
 
     /**
-     * Render project lead column using user functions
+     * Render project manager column using user functions
      */
-    private function render_project_lead_column_direct($post_id) {
-        $lead_id = get_post_meta($post_id, '_arsol_pfw_project_lead', true);
-        if ($lead_id) {
-            echo arsol_pfw_format_user($lead_id, 'display_name', false, true, true, ['post_type' => 'arsol-pfw-project']);
+    private function render_project_manager_column_direct($post_id) {
+        $manager_id = get_post_meta($post_id, '_arsol_pfw_project_manager', true);
+        if ($manager_id) {
+            $manager = get_userdata($manager_id);
+            if ($manager) {
+                echo esc_html($manager->display_name);
+            } else {
+                echo '<span class="arsol-pfw-error">' . __('User not found', 'arsol-pfw') . '</span>';
+            }
         } else {
-            echo '<span class="na">&ndash;</span>';
+            echo '<span class="arsol-pfw-muted">' . __('Not assigned', 'arsol-pfw') . '</span>';
         }
     }
 
@@ -117,12 +122,12 @@ class List_Controller {
             echo '</select>';
 
             // Project Lead filter
-            $current_lead = isset($_GET['project_lead']) ? $_GET['project_lead'] : '';
+            $current_manager = isset($_GET['project_manager']) ? $_GET['project_manager'] : '';
             echo '<div class="arsol-user-select2-wrapper">';
-            \Arsol_Projects_For_Woo\Admin\Users::render_project_lead_search_field(array(
-                'name' => 'project_lead',
+            \Arsol_Projects_For_Woo\Admin\Users::render_project_manager_search_field(array(
+                'name' => 'project_manager',
                 'id' => 'filter-by-project-lead',
-                'selected' => $current_lead,
+                'selected' => $current_manager,
                 'placeholder' => __('Filter by project lead', 'arsol-pfw')
             ));
             echo '</div>';
@@ -158,14 +163,13 @@ class List_Controller {
 
         if ($pagenow === 'edit.php' && $typenow === 'arsol-pfw-project' && $query->is_main_query()) {
             // Filter by project lead (meta)
-            if (!empty($_GET['project_lead'])) {
+            if (!empty($_GET['project_manager'])) {
                 $meta_query = $query->get('meta_query') ?: [];
-                $meta_query[] = [
-                    'key' => '_arsol_pfw_project_lead',
-                    'value' => sanitize_text_field($_GET['project_lead']),
+                $meta_query[] = array(
+                    'key' => '_arsol_pfw_project_manager',
+                    'value' => sanitize_text_field($_GET['project_manager']),
                     'compare' => '='
-                ];
-                $query->set('meta_query', $meta_query);
+                );
             }
 
             // Filter by customer (author)

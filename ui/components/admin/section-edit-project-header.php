@@ -36,7 +36,7 @@ $project_stage = $project->get_stage();
 $budget = $project->get_budget();
 $due_date = $project->get_due_date();
 $start_date = $project->get_start_date();
-$project_lead = $project->get_project_lead();
+$project_manager = $project->get_project_manager();
 $customer_notice = $project->get_customer_notice();
 
 // Get available stages using entity method

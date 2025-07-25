@@ -27,7 +27,7 @@ class WC_Email_Proposal_Processing extends WC_Email {
         $this->placeholders   = array(
             '{proposal_id}' => '',
             '{customer_id}' => '',
-            '{project_lead_id}' => '',
+            '{project_manager_id}' => '',
         );
 
         // Listen to main workflow hook
@@ -63,21 +63,23 @@ class WC_Email_Proposal_Processing extends WC_Email {
      *
      * @param int $proposal_id Proposal ID.
      * @param int $customer_id Customer ID.
-     * @param int $project_lead_id Project Lead ID.
+     * @param int $project_manager_id Project Manager ID.
      */
-    public function trigger( $proposal_id, $customer_id, $project_lead_id ) {
+    public function trigger( $proposal_id, $customer_id, $project_manager_id ) {
         $this->setup_locale();
-
-        if ( $proposal_id && $project_lead_id ) {
-            $this->object = get_post( $proposal_id );
-            $this->placeholders['{proposal_id}'] = $proposal_id;
-            $this->placeholders['{customer_id}'] = $customer_id;
-            $this->placeholders['{project_lead_id}'] = $project_lead_id;
+        
+        if ( $proposal_id && $project_manager_id ) {
+            $this->object = wc_get_order( $proposal_id );
             
-            // Get project lead email
-            $project_lead = get_user_by( 'id', $project_lead_id );
-            if ( $project_lead ) {
-                $this->recipient = $project_lead->user_email;
+            if ( is_a( $this->object, 'WC_Order' ) ) {
+                $this->placeholders['{proposal_id}'] = $proposal_id;
+                $this->placeholders['{customer_id}'] = $customer_id;
+                $this->placeholders['{project_manager_id}'] = $project_manager_id;
+                
+                $project_manager = get_user_by( 'id', $project_manager_id );
+                if ( $project_manager ) {
+                    $this->recipient = $project_manager->user_email;
+                }
             }
         }
 
@@ -99,7 +101,7 @@ class WC_Email_Proposal_Processing extends WC_Email {
             array(
                 'proposal_id'     => $this->placeholders['{proposal_id}'],
                 'customer_id'     => $this->placeholders['{customer_id}'],
-                'project_lead_id' => $this->placeholders['{project_lead_id}'],
+                'project_manager_id' => $this->placeholders['{project_manager_id}'],
                 'email_heading'   => $this->get_heading(),
                 'sent_to_admin'   => false,
                 'plain_text'      => false,
@@ -125,7 +127,7 @@ class WC_Email_Proposal_Processing extends WC_Email {
                 'title'       => __( 'Subject', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}, {customer_id}, {project_lead_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}, {customer_id}, {project_manager_id}</code>' ),
                 'placeholder' => $this->get_default_subject(),
                 'default'     => '',
             ),
@@ -133,7 +135,7 @@ class WC_Email_Proposal_Processing extends WC_Email {
                 'title'       => __( 'Email heading', 'arsol-pfw' ),
                 'type'        => 'text',
                 'desc_tip'    => true,
-                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}, {customer_id}, {project_lead_id}</code>' ),
+                'description' => sprintf( __( 'Available placeholders: %s', 'arsol-pfw' ), '<code>{proposal_id}, {customer_id}, {project_manager_id}</code>' ),
                 'placeholder' => $this->get_default_heading(),
                 'default'     => '',
             ),

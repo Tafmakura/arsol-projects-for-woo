@@ -62,9 +62,9 @@ class WC_Email_Project_Stage extends WC_Email {
      * @param int    $project_id
      * @param string $old_stage
      * @param string $new_stage
-     * @param int    $project_lead_id
+     * @param int    $project_manager_id
      */
-    public function trigger( $project_id, $old_stage, $new_stage, $project_lead_id ) {
+    public function trigger( $project_id, $old_stage, $new_stage, $project_manager_id ) {
         
         if ( ! $this->is_enabled() || ! $project_id ) {
             return;
@@ -74,7 +74,7 @@ class WC_Email_Project_Stage extends WC_Email {
         $this->project_id              = $project_id;
         $this->old_stage              = $old_stage;
         $this->new_stage              = $new_stage;
-        $this->project_lead_id        = $project_lead_id;
+        $this->project_manager_id        = $project_manager_id;
         
         if ( ! $this->object || ! $this->get_recipient() ) {
             return;
@@ -96,7 +96,7 @@ class WC_Email_Project_Stage extends WC_Email {
                 'project_id'    => $this->project_id,
                 'old_stage'    => $this->old_stage,
                 'new_stage'    => $this->new_stage,
-                'project_lead_id' => $this->project_lead_id,
+                'project_manager_id' => $this->project_manager_id,
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => false,
@@ -120,7 +120,7 @@ class WC_Email_Project_Stage extends WC_Email {
                 'project_id'    => $this->project_id,
                 'old_stage'    => $this->old_stage,
                 'new_stage'    => $this->new_stage,
-                'project_lead_id' => $this->project_lead_id,
+                'project_manager_id' => $this->project_manager_id,
                 'email_heading' => $this->get_heading(),
                 'sent_to_admin' => false,
                 'plain_text'    => true,

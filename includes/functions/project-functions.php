@@ -111,40 +111,33 @@ function arsol_pfw_get_projects_by_post_author($user_id) {
 }
 
 /**
- * Get projects by project lead
+ * Get projects by project manager
  * 
  * @param int $user_id User ID
  * @return array Array of Arsol_PFW_Project objects
  */
-function arsol_pfw_get_projects_by_project_lead($user_id) {
+function arsol_pfw_get_projects_by_project_manager($user_id) {
     $args = array(
         'post_type' => 'arsol-pfw-project',
         'post_status' => 'publish',
         'posts_per_page' => -1,
         'meta_query' => array(
             array(
-                'key' => '_arsol_pfw_project_lead',
+                'key' => '_arsol_pfw_project_manager',
                 'value' => $user_id,
                 'compare' => '='
             )
         )
     );
     
-    $posts = get_posts($args);
-    $projects = array();
-    
-    foreach ($posts as $post) {
-        $projects[] = new \Arsol_Projects_For_Woo\Custom_Post_Types\Project($post);
-    }
-    
-    return $projects;
+    return get_posts($args);
 }
 
 /**
  * Get projects by user (customer, post author, or project lead)
  * 
  * @param int $user_id User ID
- * @param string $role 'customer', 'post_author', 'project_lead', or 'all'
+ * @param string $role 'customer', 'post_author', 'project_manager', or 'all'
  * @return array Array of Arsol_PFW_Project objects
  */
 function arsol_pfw_get_projects_by_user($user_id, $role = 'all') {
@@ -152,8 +145,8 @@ function arsol_pfw_get_projects_by_user($user_id, $role = 'all') {
         return arsol_pfw_get_projects_by_customer($user_id);
     } elseif ($role === 'post_author') {
         return arsol_pfw_get_projects_by_post_author($user_id);
-    } elseif ($role === 'project_lead') {
-        return arsol_pfw_get_projects_by_project_lead($user_id);
+    } elseif ($role === 'project_manager') {
+        return arsol_pfw_get_projects_by_project_manager($user_id);
     } else {
         // Get frontend-accessible relationships: customer and post author only
         // Project leads are admin-only and should not appear in frontend

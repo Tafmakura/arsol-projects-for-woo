@@ -165,15 +165,15 @@ class Sidebar_Meta {
             );
         }
         
-        // Project Lead
-        $project_lead = $project->get_project_lead();
-        if (!empty($project_lead)) {
-            $lead = get_userdata($project_lead);
-            if ($lead) {
-                $metadata['project_lead'] = array(
-                    'label' => __('Project Lead', 'arsol-pfw'),
-                    'value' => $lead->display_name,
-                    'type' => 'text'
+        // Project Manager
+        $project_manager = $project->get_project_manager();
+        if (!empty($project_manager)) {
+            $manager = get_userdata($project_manager);
+            if ($manager) {
+                $metadata['project_manager'] = array(
+                    'label' => __('Project Manager', 'arsol-pfw'),
+                    'value' => $manager->display_name,
+                    'type' => 'user'
                 );
             }
         }
@@ -239,22 +239,21 @@ class Sidebar_Meta {
             );
         }
         
-        // Project Lead
-        $project_lead = $proposal->get_project_lead();
-        $start_date = $proposal->get_start_date();
-        $due_date = $proposal->get_due_date();
-        
-        if (!empty($project_lead)) {
-            $lead = get_userdata($project_lead);
-            if ($lead) {
-                $metadata['project_lead'] = array(
-                    'label' => __('Project Lead', 'arsol-pfw'),
-                    'value' => $lead->display_name,
-                    'type' => 'text'
+        // Project Manager
+        $project_manager = $proposal->get_project_manager();
+        if (!empty($project_manager)) {
+            $manager = get_userdata($project_manager);
+            if ($manager) {
+                $metadata['project_manager'] = array(
+                    'label' => __('Project Manager', 'arsol-pfw'),
+                    'value' => $manager->display_name,
+                    'type' => 'user'
                 );
             }
         }
         
+        // Start Date
+        $start_date = $proposal->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -263,6 +262,8 @@ class Sidebar_Meta {
             );
         }
         
+        // Due Date
+        $due_date = $proposal->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),
@@ -545,15 +546,15 @@ class Sidebar_Meta {
             );
         }
         
-        // Project Lead
-        $project_lead = $project->get_project_lead();
-        if (!empty($project_lead)) {
-            $lead = get_userdata($project_lead);
-            if ($lead) {
-                $metadata['project_lead'] = array(
-                    'label' => __('Project Lead', 'arsol-pfw'),
-                    'value' => $lead->display_name,
-                    'type' => 'text'
+        // Project Manager
+        $project_manager = $project->get_project_manager();
+        if (!empty($project_manager)) {
+            $manager = get_userdata($project_manager);
+            if ($manager) {
+                $metadata['project_manager'] = array(
+                    'label' => __('Project Manager', 'arsol-pfw'),
+                    'value' => $manager->display_name,
+                    'type' => 'user'
                 );
             }
         }
@@ -614,22 +615,21 @@ class Sidebar_Meta {
             );
         }
         
-        // Project Lead
-        $project_lead = $proposal->get_project_lead();
-        $start_date = $proposal->get_start_date();
-        $due_date = $proposal->get_due_date();
-        
-        if (!empty($project_lead)) {
-            $lead = get_userdata($project_lead);
-            if ($lead) {
-                $metadata['project_lead'] = array(
-                    'label' => __('Project Lead', 'arsol-pfw'),
-                    'value' => $lead->display_name,
-                    'type' => 'text'
+        // Project Manager
+        $project_manager = $proposal->get_project_manager();
+        if (!empty($project_manager)) {
+            $manager = get_userdata($project_manager);
+            if ($manager) {
+                $metadata['project_manager'] = array(
+                    'label' => __('Project Manager', 'arsol-pfw'),
+                    'value' => $manager->display_name,
+                    'type' => 'user'
                 );
             }
         }
         
+        // Start Date
+        $start_date = $proposal->get_start_date();
         if (!empty($start_date)) {
             $metadata['start_date'] = array(
                 'label' => __('Start Date', 'arsol-pfw'),
@@ -638,6 +638,8 @@ class Sidebar_Meta {
             );
         }
         
+        // Due Date
+        $due_date = $proposal->get_due_date();
         if (!empty($due_date)) {
             $metadata['due_date'] = array(
                 'label' => __('Due Date', 'arsol-pfw'),

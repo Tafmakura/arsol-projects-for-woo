@@ -339,8 +339,8 @@ class Capabilities_Handler {
             }
             
             // Check if user is the assigned project lead
-            $assigned_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
-            return (int) $assigned_lead === (int) $user_id;
+            $assigned_manager = get_post_meta($project_id, '_arsol_pfw_project_manager', true);
+            return (int) $assigned_manager === (int) $user_id;
         }
         
         // If no project_id, check if user has capability to manage assigned projects
@@ -592,9 +592,9 @@ class Capabilities_Handler {
                 return true;
             }
             
-            // Check if user is assigned project lead
-            $project_lead_id = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
-            if ((int) $project_lead_id === (int) $user_id) {
+            // Check if user is assigned as project manager
+            $assigned_manager = get_post_meta($project_id, '_arsol_pfw_project_manager', true);
+            if ($assigned_manager && (int) $assigned_manager === (int) $user_id) {
                 return true;
             }
             
@@ -823,9 +823,9 @@ class Capabilities_Handler {
                 return true;
             }
             
-            // If it's their assigned project (project lead), they can delete it
-            $project_lead_id = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
-            if ((int) $project_lead_id === (int) $user_id) {
+            // If it's their assigned project (project manager), they can delete it
+            $assigned_manager = get_post_meta($project_id, '_arsol_pfw_project_manager', true);
+            if ($assigned_manager && (int) $assigned_manager === (int) $user_id) {
                 return true;
             }
             
@@ -1210,42 +1210,22 @@ class Capabilities_Handler {
      * @param int $project_id Project ID to check (optional)
      * @return bool Whether user is a project lead
      */
-    public static function is_project_lead($user_id = null, $project_id = null) {
+    public static function is_project_manager($user_id = null, $project_id = null) {
         if (!$user_id) {
             $user_id = get_current_user_id();
         }
         
-        $user = get_user_by('id', $user_id);
-        if (!$user) {
+        if (!$project_id) {
             return false;
         }
         
-        // If project_id provided, check if user is the assigned project lead for this specific project
-        if ($project_id) {
-            $project = get_post($project_id);
-            if (!$project || $project->post_type !== 'arsol-pfw-project') {
-                return false;
-            }
-            
-            // Check if user is the assigned project lead
-            $assigned_lead = get_post_meta($project_id, '_arsol_pfw_project_lead', true);
-            return (int) $assigned_lead === (int) $user_id;
+        // Check if user is assigned as project manager
+        $assigned_manager = get_post_meta($project_id, '_arsol_pfw_project_manager', true);
+        if ($assigned_manager && (int) $assigned_manager === (int) $user_id) {
+            return true;
         }
         
-        // If no project_id, check if user is assigned as project lead for any project
-        $projects = get_posts([
-            'post_type' => 'arsol-pfw-project',
-            'numberposts' => -1,
-            'meta_query' => [
-                [
-                    'key' => '_arsol_pfw_project_lead',
-                    'value' => $user_id,
-                    'compare' => '='
-                ]
-            ]
-        ]);
-        
-        return !empty($projects);
+        return false;
     }
 
 

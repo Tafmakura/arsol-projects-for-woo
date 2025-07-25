@@ -75,11 +75,11 @@ class WC_Email_Proposal_Decision extends WC_Email {
             $this->placeholders['{new_status}'] = ucfirst( str_replace( '-', ' ', $new_status ) );
             
             // Get project lead from proposal meta
-            $project_lead_id = get_post_meta( $proposal_id, 'project_lead_id', true );
-            if ( $project_lead_id ) {
-                $project_lead = get_user_by( 'id', $project_lead_id );
-                if ( $project_lead ) {
-                    $this->recipient = $project_lead->user_email;
+            $project_manager_id = get_post_meta( $proposal_id, 'project_manager_id', true );
+            if ( $project_manager_id ) {
+                $project_manager = get_user_by( 'id', $project_manager_id );
+                if ( $project_manager ) {
+                    $this->recipient = $project_manager->user_email;
                 }
             }
         }
