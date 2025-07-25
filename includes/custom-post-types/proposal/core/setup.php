@@ -245,10 +245,10 @@ class Setup {
             wp_set_object_terms($post_id, sanitize_text_field($_POST['proposal_stage']), 'arsol-pfw-proposal-stage', false);
         }
         
-        // Save project lead
-        if (isset($_POST['proposal_project_lead'])) {
+        // Save project manager
+        if (isset($_POST['proposal_project_manager'])) {
             $proposal = new \Arsol_Projects_For_Woo\Custom_Post_Types\Arsol_PFW_Proposal($post_id);
-            $proposal->set_project_lead(sanitize_text_field($_POST['proposal_project_lead']));
+            $proposal->set_project_manager(sanitize_text_field($_POST['proposal_project_manager']));
         }
     }
 } 

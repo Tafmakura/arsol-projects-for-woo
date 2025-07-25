@@ -278,6 +278,25 @@ class Project {
     }
 
     /**
+     * Get project manager
+     * 
+     * @return int|null Project manager ID
+     */
+    public function get_project_manager() {
+        return $this->get_meta('_arsol_pfw_project_manager');
+    }
+
+    /**
+     * Set project manager
+     * 
+     * @param int $manager_id Project manager ID
+     * @return bool Success status
+     */
+    public function set_project_manager($manager_id) {
+        return $this->set_meta('_arsol_pfw_project_manager', (int) $manager_id);
+    }
+
+    /**
      * Get post author ID (who created the project) - from post_author
      * 
      * @return int Post author ID
@@ -476,6 +495,15 @@ class Project {
      * @return string Project description
      */
     public function get_description() {
+        return $this->get_content();
+    }
+
+    /**
+     * Get project details (standardized name for post content)
+     * 
+     * @return string Project details
+     */
+    public function get_details() {
         return $this->get_content();
     }
 
@@ -916,24 +944,24 @@ class Project {
     }
 
     /**
-     * Get proposed project lead (historical from proposal)
+     * Get proposed project manager (historical from proposal)
      * 
-     * @return int Proposed project lead
+     * @return int|null Proposed project manager ID
      */
-    public function get_proposed_project_lead() {
+    public function get_proposed_project_manager() {
         $proposal_data = $this->get_proposal_data();
-        return isset($proposal_data['proposed_project_lead']) ? $proposal_data['proposed_project_lead'] : null;
+        return isset($proposal_data['proposed_project_manager']) ? $proposal_data['proposed_project_manager'] : null;
     }
 
     /**
-     * Set proposed project lead
+     * Set proposed project manager
      * 
-     * @param int $lead_id Proposed project lead
+     * @param int $manager_id Proposed project manager ID
      * @return bool Success status
      */
-    public function set_proposed_project_lead($lead_id) {
+    public function set_proposed_project_manager($manager_id) {
         $proposal_data = $this->get_proposal_data();
-        $proposal_data['proposed_project_lead'] = (int) $lead_id;
+        $proposal_data['proposed_project_manager'] = (int) $manager_id;
         return $this->set_proposal_data($proposal_data);
     }
 
@@ -1087,25 +1115,27 @@ class Project {
     }
 
     /**
-     * Get project lead display name
+     * Get project manager display name
      * 
-     * @return string Project lead display name
+     * @return string|null Project manager display name
      */
-    public function get_project_lead_display_name() {
-        $lead_id = $this->get_project_lead();
-        if ($lead_id) {
-            return arsol_pfw_format_user($lead_id, 'display_name', false, true, false);
+    public function get_project_manager_display_name() {
+        $manager_id = $this->get_project_manager();
+        if (!$manager_id) {
+            return null;
         }
-        return '';
+        
+        $manager = get_userdata($manager_id);
+        return $manager ? $manager->display_name : null;
     }
 
     /**
-     * Get project lead user object
+     * Get project manager user object
      * 
-     * @return WP_User|null
+     * @return WP_User|null Project manager user object
      */
-    public function get_project_lead_user() {
-        $lead_id = $this->get_project_lead();
-        return $lead_id ? get_userdata($lead_id) : null;
+    public function get_project_manager_user() {
+        $manager_id = $this->get_project_manager();
+        return $manager_id ? get_userdata($manager_id) : null;
     }
 }

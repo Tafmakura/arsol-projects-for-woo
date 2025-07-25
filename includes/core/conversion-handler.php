@@ -198,13 +198,14 @@ class Conversion_Handler {
         $request_data = array(
             'id' => $request_id,
             'title' => $request->get_title(),
-            'details' => $request->get_description(),
             'date' => $request->get_date_created(),
-            'requested_project_budget' => $request->get_requested_project_budget(),
+            'expiration_date' => $request->get_expiration_date(),
+            'customer_notice' => $request->get_customer_notice(),
+            'details' => $request->get_details(),
             'requested_project_start_date' => $request->get_requested_project_start_date(),
             'requested_project_due_date' => $request->get_requested_project_due_date(),
+            'requested_project_budget' => $request->get_requested_project_budget(),
             'attachments' => $request->get_attachments(),
-            'customer_notice' => $request->get_customer_notice(),
         );
         
         // Save organized request data
@@ -242,16 +243,17 @@ class Conversion_Handler {
         $proposal_data = array(
             'id' => $proposal_id,
             'title' => $proposal->get_title(),
-            'description' => $proposal->get_description(),
             'date' => $proposal->get_date_created(),
-            'proposed_project_budget' => $proposal->get_budget(),
-            'proposed_project_quotation' => $proposal->get_quotation(),
+            'expiration_date' => $proposal->get_expiration_date(),
+            'customer_notice' => $proposal->get_customer_notice(),
+            'details' => $proposal->get_details(),
+            'costing_type' => $proposal->get_costing_type(),
             'proposed_project_start_date' => $proposal->get_start_date(),
             'proposed_project_due_date' => $proposal->get_due_date(),
-            'proposed_project_lead' => $proposal->get_project_lead(),
-            'costing_type' => $proposal->get_costing_type(),
-            'customer_notice' => $proposal->get_customer_notice(),
-            'expiration_date' => $proposal->get_expiration_date(),
+            'proposed_project_manager' => $proposal->get_project_manager(),
+            'proposed_project_budget' => $proposal->get_budget(),
+            'proposed_project_quotation' => $proposal->get_quotation(),
+            'attachments' => $proposal->get_attachments(),
         );
         
         // 2. Organize all request data (from proposal's historical data)

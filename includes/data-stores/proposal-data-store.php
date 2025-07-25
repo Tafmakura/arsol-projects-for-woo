@@ -10,16 +10,16 @@ class Proposal_Data_Store {
     
     // Simple meta keys mapping
     protected $meta_keys = array(
-        'description' => '_arsol_pfw_proposal_description',
-        'project_lead' => '_arsol_pfw_proposed_project_lead',
-        'start_date'  => '_arsol_pfw_proposed_project_start_date',
-        'due_date'    => '_arsol_pfw_proposed_project_due_date',
-        'expiration_date' => '_arsol_pfw_proposal_expiration_date',
-        'costing_type' => '_arsol_pfw_proposal_costing_type',
-        'parent_project_id' => '_arsol_pfw_parent_project_id',
-        'customer_notice' => '_arsol_pfw_proposal_customer_notice',
+        'budget'      => '_arsol_pfw_proposal_budget',
+        'quotation'   => '_arsol_pfw_proposal_quotation',
+        'due_date'    => '_arsol_pfw_proposal_due_date',
         'customer_id' => '_arsol_pfw_proposal_customer_id',
+        'start_date'  => '_arsol_pfw_proposal_start_date',
+        'project_manager' => '_arsol_pfw_proposed_project_manager',
+        'costing_type' => '_arsol_pfw_proposal_costing_type',
+        'customer_notice' => '_arsol_pfw_proposal_customer_notice',
         'created_via' => '_arsol_pfw_proposal_created_via',
+        'parent_project_id' => '_arsol_pfw_parent_project_id',
     );
     
     // Complex data structure meta keys (array-based)
@@ -186,19 +186,19 @@ class Proposal_Data_Store {
         // Save due date
         $due_date = $proposal->get_due_date();
         if ($due_date !== null) {
-            $proposal->set_meta('_arsol_pfw_proposed_project_due_date', $due_date);
+            $proposal->set_meta('_arsol_pfw_proposal_due_date', $due_date);
         }
         
         // Save start date
         $start_date = $proposal->get_start_date();
         if ($start_date !== null) {
-            $proposal->set_meta('_arsol_pfw_proposed_project_start_date', $start_date);
+            $proposal->set_meta('_arsol_pfw_proposal_start_date', $start_date);
         }
         
-        // Save project lead
-        $project_lead = $proposal->get_project_lead();
-        if ($project_lead !== null) {
-            $proposal->set_meta('_arsol_pfw_proposed_project_lead', $project_lead);
+        // Save project manager
+        $project_manager = $proposal->get_project_manager();
+        if ($project_manager !== null) {
+            $proposal->set_meta('_arsol_pfw_proposed_project_manager', $project_manager);
         }
         
         // Save expiration date

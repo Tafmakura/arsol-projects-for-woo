@@ -470,11 +470,20 @@ class Arsol_PFW_Request {
     }
 
     /**
-     * Get request description (alias for content)
+     * Get request description
      * 
-     * @return string
+     * @return string Description
      */
     public function get_description() {
+        return $this->get_content();
+    }
+
+    /**
+     * Get request details (standardized name for post content)
+     * 
+     * @return string Request details
+     */
+    public function get_details() {
         return $this->get_content();
     }
 
@@ -809,6 +818,25 @@ class Arsol_PFW_Request {
         }
         
         return false;
+    }
+
+    /**
+     * Get request expiration date
+     * 
+     * @return string Expiration date
+     */
+    public function get_expiration_date() {
+        return $this->get_meta('_arsol_pfw_request_expiration_date');
+    }
+
+    /**
+     * Set request expiration date
+     * 
+     * @param string $expiration_date Expiration date
+     * @return bool Success status
+     */
+    public function set_expiration_date($expiration_date) {
+        return $this->set_meta('_arsol_pfw_request_expiration_date', sanitize_text_field($expiration_date));
     }
 
 

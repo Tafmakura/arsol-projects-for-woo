@@ -172,6 +172,11 @@ class Single_Controller {
             $request->set_customer_id(intval($_POST['customer_id']));
         }
         
+        // Save expiration date
+        if (isset($_POST['request_expiration_date'])) {
+            $request->set_expiration_date(sanitize_text_field($_POST['request_expiration_date']));
+        }
+        
         // Save all changes
         $request->save();
         

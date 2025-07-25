@@ -170,9 +170,9 @@ class Single_Controller {
             $project->set_start_date(current_time('mysql'));
         }
 
-        // Save project lead
-        if (isset($_POST['project_lead'])) {
-            $project->set_project_lead(sanitize_text_field($_POST['project_lead']));
+        // Save project manager
+        if (isset($_POST['project_manager'])) {
+            $project->set_project_manager(sanitize_text_field($_POST['project_manager']));
         }
 
         // Save project start date

@@ -472,11 +472,20 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal description (alias for content)
+     * Get proposal description
      * 
-     * @return string
+     * @return string Description
      */
     public function get_description() {
+        return $this->get_content();
+    }
+
+    /**
+     * Get proposal details (standardized name for post content)
+     * 
+     * @return string Proposal details
+     */
+    public function get_details() {
         return $this->get_content();
     }
 
@@ -586,22 +595,22 @@ class Arsol_PFW_Proposal {
     }
 
     /**
-     * Get proposal lead
+     * Get project manager
      * 
-     * @return int Lead ID
+     * @return int|null Project manager ID
      */
-    public function get_project_lead() {
-        return $this->get_meta('_arsol_pfw_proposed_project_lead');
+    public function get_project_manager() {
+        return $this->get_meta('_arsol_pfw_proposed_project_manager');
     }
 
     /**
-     * Set proposal lead
+     * Set project manager
      * 
-     * @param int $lead_id Lead ID
+     * @param int $manager_id Project manager ID
      * @return bool Success status
      */
-    public function set_project_lead($lead_id) {
-        return $this->set_meta('_arsol_pfw_proposed_project_lead', (int) $lead_id);
+    public function set_project_manager($manager_id) {
+        return $this->set_meta('_arsol_pfw_proposed_project_manager', (int) $manager_id);
     }
 
     /**
@@ -640,6 +649,25 @@ class Arsol_PFW_Proposal {
      */
     public function set_expiration_date($expiration_date) {
         return $this->set_meta('_arsol_pfw_proposal_expiration_date', sanitize_text_field($expiration_date));
+    }
+
+    /**
+     * Get proposal attachments
+     * 
+     * @return array Attachments
+     */
+    public function get_attachments() {
+        return $this->get_meta('_arsol_pfw_proposal_attachments') ?: array();
+    }
+
+    /**
+     * Set proposal attachments
+     * 
+     * @param array $attachments Attachments
+     * @return bool Success status
+     */
+    public function set_attachments($attachments) {
+        return $this->set_meta('_arsol_pfw_proposal_attachments', $attachments);
     }
 
     /**
@@ -955,7 +983,7 @@ class Arsol_PFW_Proposal {
             '_arsol_pfw_created_via',
             '_arsol_pfw_proposal_budget',
             '_arsol_pfw_proposal_quotation',
-            '_arsol_pfw_proposed_project_lead',
+            '_arsol_pfw_proposed_project_manager',
             '_arsol_pfw_proposed_project_start_date',
             '_arsol_pfw_proposed_project_due_date',
             '_arsol_pfw_proposal_expiration_date',

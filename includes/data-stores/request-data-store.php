@@ -18,6 +18,7 @@ class Request_Data_Store {
         'attachments' => '_arsol_pfw_request_attachments',
         'created_via' => '_arsol_pfw_request_created_via',
         'parent_project_id' => '_arsol_pfw_parent_project_id',
+        'expiration_date' => '_arsol_pfw_request_expiration_date',
     );
     
     /**
@@ -33,7 +34,7 @@ class Request_Data_Store {
         $post_data = array(
             'post_type'    => 'arsol-pfw-request',
             'post_title'   => $request->get_title(),
-            'post_content' => $request->get_description(),
+            'post_content' => $request->get_details(),
             'post_status'  => 'publish',
             'post_author'  => $user_id, // Creator (post_author)
         );
@@ -193,6 +194,12 @@ class Request_Data_Store {
         $parent_project_id = $request->get_parent_project_id();
         if ($parent_project_id !== null) {
             $request->set_meta('_arsol_pfw_parent_project_id', $parent_project_id);
+        }
+        
+        // Save expiration date
+        $expiration_date = $request->get_expiration_date();
+        if ($expiration_date !== null) {
+            $request->set_meta('_arsol_pfw_request_expiration_date', $expiration_date);
         }
     }
     

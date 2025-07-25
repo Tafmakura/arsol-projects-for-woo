@@ -10,13 +10,12 @@ class Project_Data_Store {
     
     // Simple meta keys mapping
     protected $meta_keys = array(
-        'budget'      => '_arsol_pfw_project_budget',
+        'budget'      => '_arsol_pfw_project_budget_line_items',
         'due_date'    => '_arsol_pfw_project_due_date',
-        'description' => '_arsol_pfw_project_description',
-        'start_date'  => '_arsol_pfw_project_start_date',
-        'project_lead' => '_arsol_pfw_project_lead',
-        'customer_notice' => '_arsol_pfw_project_customer_notice',
         'customer_id' => '_arsol_pfw_project_customer_id',
+        'start_date'  => '_arsol_pfw_project_start_date',
+        'project_manager' => '_arsol_pfw_project_manager',
+        'customer_notice' => '_arsol_pfw_project_customer_notice',
         'created_via' => '_arsol_pfw_project_created_via',
     );
     
