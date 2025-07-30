@@ -56,6 +56,7 @@ class Users {
         // Ajax handlers
         add_action('wp_ajax_arsol_pfw_user_action', array($this, 'handle_ajax_user_action'));
         add_action('wp_ajax_arsol_pfw_ajax_search_users', array($this, 'ajax_search'));
+        add_action('wp_ajax_arsol_json_search_project_managers', array($this, 'json_search_project_managers'));
         
         // New user registration hooks
         add_action('user_register', array($this, 'set_default_user_permission'));
@@ -873,39 +874,30 @@ class Users {
             'id' => 'project_manager',
             'placeholder' => __('Search for project manager...', 'arsol-pfw'),
             'selected' => '',
-            'class' => 'arsol-pfw-ajax-search',
-            'style' => 'width: 100%;',
-            'required' => false,
-            'disabled' => false,
-            'readonly' => false,
-            'autocomplete' => 'off',
-            'data' => array()
+            'class' => ''
         );
         
         $args = wp_parse_args($args, $defaults);
         
-        // Build data attributes
-        $data_attrs = '';
-        foreach ($args['data'] as $key => $value) {
-            $data_attrs .= ' data-' . esc_attr($key) . '="' . esc_attr($value) . '"';
+        $classes = 'arsol-pfw-user-search';
+        if (!empty($args['class'])) {
+            $classes .= ' ' . esc_attr($args['class']);
         }
         
-        $output = '<input type="text" 
-            name="' . esc_attr($args['name']) . '" 
-            id="' . esc_attr($args['id']) . '" 
-            value="' . esc_attr($args['selected']) . '" 
-            placeholder="' . esc_attr($args['placeholder']) . '" 
-            class="' . esc_attr($args['class']) . '" 
-            style="' . esc_attr($args['style']) . '" 
-            data-search-type="project_managers" 
-            data-security="' . wp_create_nonce('search-users') . '"' . 
-            ($args['required'] ? ' required' : '') . 
-            ($args['disabled'] ? ' disabled' : '') . 
-            ($args['readonly'] ? ' readonly' : '') . 
-            ' autocomplete="' . esc_attr($args['autocomplete']) . '"' . 
-            $data_attrs . '>';
+        echo '<select name="' . esc_attr($args['name']) . '" id="' . esc_attr($args['id']) . '" class="' . esc_attr($classes) . '" data-placeholder="' . esc_attr($args['placeholder']) . '" data-allow_clear="true" data-action="arsol_json_search_project_managers" data-security="' . wp_create_nonce('search-project-managers') . '" data-search-type="project_managers">';
+        echo '<option value="">' . esc_html($args['placeholder']) . '</option>';
         
-        return $output;
+        // If there's a selected value, add it as an option
+        if (!empty($args['selected'])) {
+            $selected_user = get_userdata($args['selected']);
+            if ($selected_user) {
+                $display_name = arsol_pfw_format_user($args['selected']);
+                $display_name = wp_strip_all_tags($display_name);
+                echo '<option value="' . esc_attr($args['selected']) . '" selected="selected">' . esc_html($display_name) . '</option>';
+            }
+        }
+        
+        echo '</select>';
     }
     
     /**
